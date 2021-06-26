@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2020-11-20 15:33:48 Friday by lizhengyu>
+;; Time-stamp: <2021-06-26 03:07:21 Saturday by lizhengyu>
 
 ;; Copyright (C) 2018 zhengyu li
 ;;
@@ -47,6 +47,7 @@
   (require 'quickrun)
   (require 'aggressive-indent)
   (require 'whitespace-cleanup-mode)
+  (require 'company-tabnine)
   (require 'lazy-set-key)
 
   ;; ----------------------------------------------------------
@@ -123,6 +124,8 @@
   ;; Hooks for `prog-mode'
   (add-hook 'prog-mode-hook
             (lambda ()
+              (make-local-variable 'company-backends)
+              (add-to-list 'company-backends (append-backend-with-yas 'company-tabnine))
               (linum-mode 1)
               (show-paren-mode 1)
               (autopair-mode 1)
