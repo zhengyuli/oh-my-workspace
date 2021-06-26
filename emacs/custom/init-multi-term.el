@@ -1,5 +1,5 @@
 ;;; package --- init-multi-term.el ---
-;; Time-stamp: <2020-11-24 11:31:23 Tuesday by lizhengyu>
+;; Time-stamp: <2021-06-26 02:29:45 Saturday by lizhengyu>
 
 ;; Copyright (C) 2013 zhengyu li
 ;;
@@ -69,6 +69,9 @@
 
   ;; ----------------------------------------------------------
   ;; Customize multi term key bindings
+  (customize-set-variable 'term-unbind-key-list
+						  '("C-z" "C-x" "C-c" "C-h" "C-y" "<ESC>" "<M-backspace>" "<M-DEL>"))
+
   (customize-set-variable 'term-bind-key-alist
                           '(("C-p" . term-send-raw)
                             ("C-n" . term-send-raw)
@@ -77,7 +80,8 @@
                             ("M-f" . term-send-raw-meta)
                             ("M-b" . term-send-raw-meta)
                             ("M-d" . term-send-raw-meta)
-                            ("M-<backspace>" . term-send-raw-meta)
+                            ("<M-backspace>" . term-send-backward-kill-word)
+							("<M-DEL>" . term-send-backward-kill-word)
                             ("M-." . term-send-raw-meta)
                             ("M-i" . term-interrupt-subjob)))
 
