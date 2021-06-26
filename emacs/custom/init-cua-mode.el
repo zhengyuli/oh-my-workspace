@@ -1,5 +1,5 @@
-;;; package --- init-multiple-cursors ---
-;; Time-stamp: <2021-06-26 05:06:20 Saturday by lizhengyu>
+;;; package --- init-cua-mode ---
+;; Time-stamp: <2021-06-26 05:43:12 Saturday by lizhengyu>
 
 ;; Copyright (C) 2013 zhengyu li
 ;;
@@ -26,16 +26,21 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-multiple-cursors)
+;;   (require 'init-cua-mode)
 
 ;;; Require:
-(require 'multiple-cursors-autoloads)
+(require 'cua-base)
 
 ;;; Code:
 ;; ==================================================================================
+;; Customize company related variables
+(customize-set-variable 'cua-enable-cua-keys nil)
+
+;; Enable global cua mode
+(cua-mode 1)
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-multiple-cursors)
+(provide 'init-cua-mode)
 
-;;; init-multiple-cursors ends here
+;;; init-cua-mode ends here

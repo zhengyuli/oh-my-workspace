@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2020-12-01 14:57:51 Tuesday by lizhengyu>
+;; Time-stamp: <2021-06-26 05:50:47 Saturday by lizhengyu>
 
 ;; Copyright (C) 2013 zhengyu li
 ;;
