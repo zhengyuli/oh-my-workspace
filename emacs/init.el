@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2021-09-14 03:42:35 Tuesday by lizhengyu>
+;; Time-stamp: <2021-09-15 21:59:24 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021 zhengyu li
 ;;
@@ -32,8 +32,8 @@
 
 ;;; Code:
 ;;Check Emacs version
-(if (not (string= emacs-version "27.2"))
-	(error "The configuration has only been fully tested at Emacs version 27.2."))
+(if (< (string-to-number emacs-version) 26.3)
+	(error "The Emacs version >= 26.3."))
 
 ;; Emacs configuration root path
 (defconst emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
@@ -75,7 +75,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-edit")
 (load-library "init-auto-complete")
 (load-library "init-dired")
-(load-library "init-multi-term")
+(load-library "init-terminal")
 (load-library "init-translate")
 (load-library "init-w3m")
 (load-library "init-git")
