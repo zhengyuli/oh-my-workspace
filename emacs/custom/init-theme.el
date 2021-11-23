@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2021-09-10 06:00:04 Friday by lizhengyu>
+;; Time-stamp: <2021-11-23 10:15:33 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021 zhengyu li
 ;;
@@ -118,8 +118,7 @@ Return a list of one element based on major mode."
  ;; Basic default face.
  `(default ((t :background ,emacs-config-default-background
 			   :foreground ,emacs-config-default-foreground
-			   :family ,emacs-config-default-fixed-font
-			   :height 160
+			   :height 150
 			   :width normal
 			   :weight normal)))
 
@@ -342,7 +341,7 @@ Return a list of one element based on major mode."
 
 ;; Customize `centaur-tabs' realted variables
 (customize-set-variable 'centaur-tabs-height 26)
-(customize-set-variable 'centaur-tabs-style "bar")
+(customize-set-variable 'centaur-tabs-style "zigzag")
 (customize-set-variable 'centaur-tabs-set-icons t)
 (customize-set-variable 'centaur-tabs-plain-icons t)
 (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)

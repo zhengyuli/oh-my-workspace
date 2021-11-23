@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2021-09-15 21:59:24 Wednesday by zhengyuli>
+;; Time-stamp: <2021-11-23 10:12:35 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021 zhengyu li
 ;;
@@ -33,7 +33,7 @@
 ;;; Code:
 ;;Check Emacs version
 (if (< (string-to-number emacs-version) 26.3)
-	(error "The Emacs version >= 26.3."))
+	(error "The Emacs version must be >= 26.3."))
 
 ;; Emacs configuration root path
 (defconst emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
