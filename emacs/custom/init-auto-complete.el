@@ -1,7 +1,7 @@
 ;;; package --- init-auto-complete.el ---
-;; Time-stamp: <2021-09-10 09:58:20 Friday by lizhengyu>
+;; Time-stamp: <2022-03-02 16:31:41 星期三 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -73,6 +73,7 @@
 (customize-set-variable 'company-tooltip-limit 15)
 (customize-set-variable 'company-transformers '(company-sort-by-occurrence))
 (customize-set-variable 'company-selection-wrap-around t)
+(customize-set-variable 'company-format-margin-function 'company-text-icons-margin)
 (customize-set-variable 'company-backends (mapcar 'append-backend-with-yas company-backends))
 
 ;; ==================================================================================
