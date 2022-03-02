@@ -1,7 +1,7 @@
 ;;; package --- init-basic.el ---
-;; Time-stamp: <2021-09-11 06:20:21 Saturday by lizhengyu>
+;; Time-stamp: <2022-03-02 13:09:27 星期三 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none

@@ -151,21 +151,13 @@ Changing theme is as simple as changing a string in your configuration file.
 ZSH_THEME="sonicradish"
 ```
 
-#### env.sh
+#### Others
 
-Create a new `~/.env.sh` script with the following contents:
+Append the following settings to your configuration file.
 
 ```
-#!/bin/zsh
-
 # Disable homebrew auto update
 export HOMEBREW_NO_AUTO_UPDATE="true"
-```
-
-import `~/.env.sh` script in `~/.zshrc`:
-
-```
-$ source ~/.env.sh
 ```
 
 ## Golang
@@ -184,7 +176,7 @@ Create Golang projects workspace:
 $ mkdir -p $HOME/MyGoProjects
 ```
 
-Append the following settings to your `~/.env.sh` script:
+Append the following settings to your `~/.zshrc`:
 
 ```
 # Settings for golang
@@ -216,13 +208,12 @@ Use Homebrew to download and install:
 $ brew install pyenv
 $
 # Install your prefered python version
-$ pyenv install 2.7.15
-$ pyenv install 3.7.0
+$ pyenv install 3.8.10
 ```
 
 ### Customization
 
-Append the following settings to your `~/.env.sh` script:
+Append the following settings to your `~/.zshrc`:
 
 ```
 # Settings for pyenv
@@ -241,14 +232,14 @@ $ brew install pyenv-virtualenvwrapper
 
 ### Customization
 
-Append the following settings to your `~/.env.sh` script:
+Append the following settings to your `~/.zshrc`:
 
 ```
 # Settings for pyenv-virtualenvwrapper
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
 # Activate virtualenvwrapper
-pyenv shell 2.7.15
+pyenv shell 3.8.10
 pyenv virtualenvwrapper
 ```
 
@@ -263,8 +254,8 @@ For not messing with the system Python (some system tools rely on it, etc.), we 
 Using pyenv to download and install:
 
 ```
-$ pyenv install 2.7.15
-$ pyenv global 2.7.15
+$ pyenv install 3.8.10
+$ pyenv global 3.8.10
 $ pyenv rehash
 ```
 
@@ -285,8 +276,10 @@ $ brew untap railwaycat/emacsmacport
 Installing emacs related dependencies:
 
 ```
-# Dependencies for emacs multimedia
-$ brew install mplayer
+# Dependencies for emacs netease cloud music
+$ brew install mpv
+$ brew install socat
+$ brew install npm
 $
 # Dependencies for emacs w3m
 $ brew install w3m
@@ -298,7 +291,7 @@ $
 $ brew install markdown
 $ brew install pandoc
 $
-# Dependencies for emacs dump-jump
+# Dependencies for emacs dump jump
 $ brew install ripgrep
 $
 # Dependencies for emacs c&c++ mode (please install the latest version)

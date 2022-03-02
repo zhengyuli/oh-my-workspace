@@ -1,7 +1,7 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2021-11-23 10:12:35 Tuesday by zhengyu.li>
+;; Time-stamp: <2022-03-02 13:22:58 星期三 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -93,7 +93,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-yaml-mode")
 (load-library "init-markdown-mode")
 (load-library "init-emms")
-(load-library "init-wangyi-music")
+(load-library "init-netease-cloud-music")
 (load-library "init-theme")
 (load-library "init-window")
 (load-library "init-session")

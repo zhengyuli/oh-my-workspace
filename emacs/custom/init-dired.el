@@ -1,7 +1,7 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2021-09-11 03:29:50 Saturday by lizhengyu>
+;; Time-stamp: <2022-03-02 10:20:35 星期三 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none

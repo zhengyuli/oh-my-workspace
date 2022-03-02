@@ -1,7 +1,7 @@
-;;; package --- init-wangyi-music.el ---
-;; Time-stamp: <2021-09-10 07:35:33 Friday by lizhengyu>
+;;; package --- init-netease-cloud-music.el ---
+;; Time-stamp: <2022-03-02 13:18:59 星期三 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -26,24 +26,22 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-wangyi-music)
+;;   (require 'init-netease-cloud-music)
 
 ;;; Require:
-(require 'wangyi-music-autoloads)
+(require 'netease-cloud-music-autoloads)
 
 ;;; Code:
 ;; ==================================================================================
-(defun wangyi-music-settings ()
-  "Settings for `wangyi-music'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `wangyi-music' related variables
-  (customize-set-variable 'wangyi-music-display-album t))
-
-(eval-after-load "wangyi-music" '(wangyi-music-settings))
+;; Backward compatibility, if emacs version < 27.1
+(unless (fboundp 'make-empty-file)
+  (defun make-empty-file (filename)
+    "Create an empty file."
+    (with-temp-buffer
+      (write-file filename))))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-wangyi-music)
+(provide 'init-netease-cloud-music)
 
-;;; init-wangyi-music.el ends here
+;;; init-netease-cloud-music.el ends here

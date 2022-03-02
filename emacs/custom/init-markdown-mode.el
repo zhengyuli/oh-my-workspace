@@ -1,7 +1,7 @@
-;;; package --- init-magit.el ---
-;; Time-stamp: <2021-09-14 03:40:11 Tuesday by lizhengyu>
+;;; package --- init-markdown-mode.el ---
+;; Time-stamp: <2022-03-02 13:19:33 星期三 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -26,7 +26,7 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-magit)
+;;   (require 'init-markdown-mode)
 
 ;;; Require:
 (require 'markdown-mode-autoloads)
@@ -58,4 +58,4 @@
 ;;; Provide features
 (provide 'init-markdown-mode)
 
-;;; init-magit.el ends here
+;;; init-markdown-mode.el ends here
