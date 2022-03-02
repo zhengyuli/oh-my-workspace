@@ -1,7 +1,7 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2021-09-13 03:05:43 Monday by lizhengyu>
+;; Time-stamp: <2022-03-02 19:30:05 星期三 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -84,29 +84,32 @@
   ;; ----------------------------------------------------------
   ;; Hooks for `c-mode' and `c++-mode'
   (dolist (hook '(c-mode-hook c++-mode-hook))
-	(add-hook hook
+    (add-hook hook
               (lambda ()
-                ;; Add `company-rtags' backend
-				(make-local-variable 'company-backends)
-				(add-to-list 'company-backends (append-backend-with-yas 'company-rtags))
+                (if (vc-registered (buffer-file-name))
+                    (progn
+                      ;; Add `company-rtags' backend
+                      (make-local-variable 'company-backends)
+                      (add-to-list 'company-backends (append-backend-with-yas 'company-rtags))
 
-                ;; Set flycheck checker with `rtags'
-				(flycheck-select-checker 'rtags)
+                      ;; Set flycheck checker with `rtags'
+                      (flycheck-select-checker 'rtags)
 
-                ;; Start rtags process if any
-				(rtags-start-process-unless-running)
+                      ;; Enable rtags xref
+                      (rtags-xref-enable)
 
-                ;; Enable rtags xref
-				(rtags-xref-enable)
+                      ;; Start rtags process if any
+                      (rtags-start-process-unless-running))
+                  (flycheck-select-checker 'c/c++-clang))
 
                 ;; Enable ctypes auto parse mode
-				(ctypes-auto-parse-mode 1)
+    			(ctypes-auto-parse-mode 1)
 
                 ;; Load ctypes saved previously
-				(ctypes-read-file nil nil t t)
+    			(ctypes-read-file nil nil t t)
 
                 ;; Enable google C&C++ style
-				(google-set-c-style)))))
+    			(google-set-c-style)))))
 
 (eval-after-load "cc-mode" '(cc-mode-settings))
 
