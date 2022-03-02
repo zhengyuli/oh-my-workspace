@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-02 13:22:58 星期三 by zhengyli>
+;; Time-stamp: <2022-03-02 15:43:06 星期三 by zhengyli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -73,6 +73,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 ;; Load librares
 (load-library "init-basic")
 (load-library "init-edit")
+(load-library "init-proxy")
 (load-library "init-auto-complete")
 (load-library "init-dired")
 (load-library "init-terminal")

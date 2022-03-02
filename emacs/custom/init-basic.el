@@ -1,5 +1,5 @@
 ;;; package --- init-basic.el ---
-;; Time-stamp: <2022-03-02 13:09:27 星期三 by zhengyli>
+;; Time-stamp: <2022-03-02 15:42:51 星期三 by zhengyli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -38,28 +38,6 @@
   "Display major mode and mode name."
   (interactive)
   (message "major-mode: %s, mode-name: %s" major-mode mode-name))
-
-(defun show-proxy ()
-  "Show http/https proxy."
-  (interactive)
-  (if url-proxy-services
-	  (message "Current proxy is \"%s\"" (cdr (nth 1 url-proxy-services)))
-	(message "No proxy")))
-
-(defun set-proxy (proxy)
-  "Set http/https proxy to `PROXY'."
-  (interactive "sProxy Server:")
-  (setq url-proxy-services
-		`(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
-		  ("http" . ,proxy)
-		  ("https" . ,proxy)))
-  (show-proxy))
-
-(defun unset-proxy ()
-  "Unset http/https proxy."
-  (interactive)
-  (setq url-proxy-services nil)
-  (show-proxy))
 
 ;; ==================================================================================
 ;; Customize `startup' related variables
