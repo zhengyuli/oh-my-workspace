@@ -1,7 +1,7 @@
 ;;; package --- init-edit.el ---
-;; Time-stamp: <2021-09-11 01:16:18 Saturday by lizhengyu>
+;; Time-stamp: <2022-03-03 14:16:12 星期四 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -158,7 +158,7 @@
    ("C-x M" . mc/mark-all-dwim)
    ("C-x C-u" . color-rg-search-input-in-current-file)
    ("C-x g" . color-rg-search-input)
-   ("C-x G" . color-rg-search-input-in-project)
+   ("C-x G" . color-rg-search-project)
    ("M-w" . smart-copy)
    ("M-k" . smart-kill)
    ("M-g" . goto-line)
