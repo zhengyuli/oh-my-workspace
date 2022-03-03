@@ -1,7 +1,7 @@
 ;;; package --- init-python-mode.el ---
-;; Time-stamp: <2021-09-13 03:34:03 Monday by lizhengyu>
+;; Time-stamp: <2022-03-03 13:16:22 星期四 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -70,6 +70,7 @@
 
   ;; ----------------------------------------------------------
   ;; Customize `python-mode' related variables
+  (customize-set-variable 'python-indent-guess-indent-offset-verbose nil)
   (customize-set-variable 'python-indent-offset 4)
 
   ;; ----------------------------------------------------------
