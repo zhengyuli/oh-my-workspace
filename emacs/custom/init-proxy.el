@@ -1,5 +1,5 @@
 ;;; package --- init-proxy.el ---
-;; Time-stamp: <2022-03-02 15:28:36 星期三 by zhengyli>
+;; Time-stamp: <2022-03-03 16:45:17 星期四 by zhengyli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -53,13 +53,6 @@
   (interactive)
   (setq url-proxy-services nil)
   (show-http-proxy))
-
-(defun toggle-http-proxy ()
-  "Toggle http/https proxy."
-  (interactive)
-  (if url-proxy-services
-      (unset-http-proxy)
-    (set-http-proxy)))
 
 ;; ==================================================================================
 ;;; Provide features
