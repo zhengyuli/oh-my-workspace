@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-04 11:29:51 Friday by zhengyu.li>
+;; Time-stamp: <2022-03-04 13:46:25 星期五 by zhengyli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -110,7 +110,7 @@
  '(mode-line-emphasis ((t :weight bold)))
 
  ;; Face used for buffer identification parts of the mode line
- '(mode-line-buffer-id ((t :weight bold :slant italic)))
+ '(mode-line-buffer-id ((t :weight bold :slant italic :foreground "Orange")))
 
  ;; Basic header-line face
  '(header-line ((t :background "#333333" :foreground "#E5E5E5")))
