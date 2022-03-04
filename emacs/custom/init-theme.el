@@ -1,7 +1,7 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2021-11-23 10:15:33 Tuesday by zhengyu.li>
+;; Time-stamp: <2022-03-04 10:29:13 星期五 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -31,79 +31,8 @@
 ;;; Require:
 (require 'cursor-chg)
 (require 'smooth-scrolling)
-(require 'centaur-tabs)
-(require 'powerline)
 
 ;;; Code:
-;; ==================================================================================
-
-(defun centaur-tabs-buffer-groups ()
-  "Return the list of group names the current buffer belongs to.
-Return a list of one element based on major mode."
-  (list
-   (cond
-	((memq major-mode '(magit-process-mode
-						magit-status-mode
-						magit-diff-mode
-						magit-log-mode
-						magit-file-mode
-						magit-blob-mode
-						magit-blame-mode))
-	 "Magit"
-	 )
-	((memq major-mode
-		   '(help-mode
-			 apropos-mode
-			 Info-mode
-			 Man-mode))
-	 "Help"
-	 )
-	((memq major-mode
-		   '(rmail-mode
-			 rmail-edit-mode
-			 vm-summary-mode
-			 vm-mode
-			 mail-mode
-			 mh-letter-mode
-			 mh-show-mode
-			 mh-folder-mode
-			 gnus-summary-mode
-			 message-mode
-			 gnus-group-mode
-			 gnus-article-mode
-			 score-mode
-			 gnus-browse-killed-mode))
-	 "Mail"
-	 )
-	((memq major-mode '(org-mode
-						org-agenda-mode
-						diary-mode))
-	 "OrgMode"
-	 )
-	((derived-mode-p 'dired-mode)
-	 "Dired"
-	 )
-	((derived-mode-p 'term-mode)
-	 "Terminal"
-	 )
-	((derived-mode-p 'eshell-mode)
-	 "EShell"
-	 )
-	((derived-mode-p 'w3m-mode)
-	 "W3m"
-	 )
-	((and (not (string-equal "*scratch*" (buffer-name)))
-		  (derived-mode-p 'emacs-lisp-mode))
-	 "Elisp"
-	 )
-	((string-equal "*" (substring (buffer-name) 0 1))
-	 "Emacs"
-	 )
-	(t
-	 (centaur-tabs-get-group-name (current-buffer))
-	 )
-	)))
-
 ;; ==================================================================================
 ;; Enable `custom-theme-set-faces' act immediately
 (customize-set-variable 'custom--inhibit-theme-enable nil)
@@ -171,10 +100,10 @@ Return a list of one element based on major mode."
  '(nobreak-space ((t :inverse-video t)))
 
  ;; Basic mode line face for selected window
- '(mode-line ((t :height 1.1 :background "#FF0000" :foreground "#FFFFFF")))
+ '(mode-line ((t :background "DarkOrange2" :foreground "white")))
 
  ;; Basic mode line face for non-selected windows
- '(mode-line-inactive ((t :height 1.1 :background "gray" :foreground "black")))
+ '(mode-line-inactive ((t :background "gray" :foreground "black")))
 
  ;; Basic mode line face for highlighting
  '(mode-line-highlight ((t :background "#FF0000" :foreground "#FFFFFF")))
@@ -319,47 +248,12 @@ Return a list of one element based on major mode."
  '(tooltip ((t :foreground "#000000" :background "#FFFFE0"))))
 
 ;; ==================================================================================
-;; Customize `centaur-tabs' realted faces
-(custom-set-faces
- `(centaur-tabs-default ((t :background ,emacs-config-default-background)))
- '(centaur-tabs-unselected ((t :background "#333333" :foreground "#999999")))
- '(centaur-tabs-selected ((t :background "#666666" :foreground "#00BFFF")))
- '(centaur-tabs-unselected-modified	((t :background "#333333" :foreground "#FFD700")))
- '(centaur-tabs-selected-modified ((t :background "#666666" :foreground "#FFD700"))))
-
-;; Customize `powerline' realted faces
-(custom-set-faces
- '(powerline-active1 ((t (:background "#FFD700" :foreground "black"))))
- '(powerline-active2 ((t (:background "#63B8FF" :foreground "black"))))
- '(powerline-inactive1 ((t (:background "#777777" :foreground "black"))))
- '(powerline-inactive2 ((t (:background "#999999" :foreground "black"))))
- '(mode-line-buffer-id-inactive ((t :inherit mode-line-buffer-id))))
-
-;; ==================================================================================
 ;; Customize line spacing
 (customize-set-variable 'line-spacing 3)
-
-;; Customize `centaur-tabs' realted variables
-(customize-set-variable 'centaur-tabs-height 26)
-(customize-set-variable 'centaur-tabs-style "zigzag")
-(customize-set-variable 'centaur-tabs-set-icons t)
-(customize-set-variable 'centaur-tabs-plain-icons t)
-(customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
-(customize-set-variable 'centaur-tabs-set-close-button nil)
-(customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
 
 ;; Customize `uniquify' realted variables
 (customize-set-variable 'uniquify-separator "/")
 (customize-set-variable 'uniquify-buffer-name-style 'forward)
-
-;; ==================================================================================
-;; Key bindings for `centaur-tabs'
-(lazy-set-key
- '(("M-p" . centaur-tabs-backward)
-   ("M-n" . centaur-tabs-forward)
-   ("M-P" . centaur-tabs-counsel-switch-group)
-   ("M-N" . centaur-tabs-counsel-switch-group))
- centaur-tabs-mode-map)
 
 ;; ==================================================================================
 ;; Move the mouse to the upper-right corner on any keypress
@@ -391,15 +285,6 @@ Return a list of one element based on major mode."
 
 ;; Enable global smooth scrolling mode
 (smooth-scrolling-mode 1)
-
-;; Make headline use centaur tabs default face
-(centaur-tabs-headline-match)
-
-;; Enable centaur tabs mode
-(centaur-tabs-mode 1)
-
-;; Enable powerline default theme
-(powerline-default-theme)
 
 ;; ==================================================================================
 ;;; Provide features
