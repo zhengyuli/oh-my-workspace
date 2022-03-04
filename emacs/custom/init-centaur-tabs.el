@@ -1,5 +1,5 @@
 ;;; package --- init-centaur-tabs.el ---
-;; Time-stamp: <2022-03-04 10:27:48 星期五 by zhengyli>
+;; Time-stamp: <2022-03-04 13:36:35 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,6 +29,7 @@
 ;;   (require 'init-centaur-tabs)
 
 ;;; Require:
+(require 'all-the-icons)
 (require 'centaur-tabs)
 
 ;;; Code:
@@ -111,10 +112,10 @@ Return a list of one element based on major mode."
 
 ;; ==================================================================================
 ;; Customize `centaur-tabs' realted variables
-(customize-set-variable 'centaur-tabs-height 26)
+(customize-set-variable 'centaur-tabs-height 25)
 (customize-set-variable 'centaur-tabs-style "zigzag")
 (customize-set-variable 'centaur-tabs-set-icons t)
-(customize-set-variable 'centaur-tabs-plain-icons t)
+;; (customize-set-variable 'centaur-tabs-plain-icons t)
 (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
 (customize-set-variable 'centaur-tabs-set-close-button nil)
 (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
@@ -128,6 +129,7 @@ Return a list of one element based on major mode."
    ("M-N" . centaur-tabs-counsel-switch-group))
  centaur-tabs-mode-map)
 
+;; ==================================================================================
 ;; Make headline use centaur tabs default face
 (centaur-tabs-headline-match)
 

@@ -1,5 +1,5 @@
 ;;; package --- init-basic.el ---
-;; Time-stamp: <2022-03-02 15:42:51 星期三 by zhengyli>
+;; Time-stamp: <2022-03-04 11:40:10 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -30,6 +30,8 @@
 
 ;;; Require:
 (require 'swiper-autoloads)
+(require 'cursor-chg)
+(require 'smooth-scrolling)
 (require 'lazy-set-key)
 
 ;;; Code:
@@ -57,7 +59,14 @@
 (customize-set-variable 'delete-old-versions t)
 (customize-set-variable 'version-control t)
 
-;; Customize `built-in' related variables
+;; Customize `uniquify' realted variables
+(customize-set-variable 'uniquify-separator "/")
+(customize-set-variable 'uniquify-buffer-name-style 'forward)
+
+;; Customize line spacing
+(customize-set-variable 'line-spacing 3)
+
+;; Customize user and email
 (customize-set-variable 'user-full-name "zhengyu li")
 (customize-set-variable 'user-mail-address "lizhengyu419@outlook.com")
 
@@ -101,12 +110,31 @@
 ;; Replace yes-or-no-p with y-or-no-p
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Move the mouse to the upper-right corner on any keypress
+(mouse-avoidance-mode "banish")
+
+;; Enable cursor type change when idle
+(toggle-cursor-type-when-idle 1)
+
 ;; Initialize mac system exec path
 (when (memq window-system '(mac ns))
   (require 'exec-path-from-shell)
   (setq mac-command-modifier 'super)
   (setq mac-option-modifier 'meta)
   (exec-path-from-shell-initialize))
+
+;; ==================================================================================
+;; Disable blink cursor mode
+(blink-cursor-mode -1)
+
+;; Disable tool bar mode
+(tool-bar-mode -1)
+
+;; Disable scroll bar mode
+(scroll-bar-mode -1)
+
+;; Disable global menu bar mode
+(menu-bar-mode -1)
 
 ;; Enable global auto revert mode
 (global-auto-revert-mode 1)
@@ -119,6 +147,18 @@
 
 ;; Enable global ivy mode
 (ivy-mode 1)
+
+;; Enable global column number mode
+(column-number-mode 1)
+
+;; Enable global just-in-time lock mode
+(jit-lock-mode 1)
+
+;; Enable global change cursor mode
+(change-cursor-mode 1)
+
+;; Enable global smooth scrolling mode
+(smooth-scrolling-mode 1)
 
 ;; ==================================================================================
 ;;; Provide features

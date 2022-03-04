@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-04 10:29:13 星期五 by zhengyli>
+;; Time-stamp: <2022-03-04 11:29:51 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,8 +29,6 @@
 ;;   (require 'init-theme)
 
 ;;; Require:
-(require 'cursor-chg)
-(require 'smooth-scrolling)
 
 ;;; Code:
 ;; ==================================================================================
@@ -100,10 +98,10 @@
  '(nobreak-space ((t :inverse-video t)))
 
  ;; Basic mode line face for selected window
- '(mode-line ((t :background "DarkOrange2" :foreground "white")))
+ '(mode-line ((t :height 1.1 :background "royal blue" :foreground "white")))
 
  ;; Basic mode line face for non-selected windows
- '(mode-line-inactive ((t :background "gray" :foreground "black")))
+ '(mode-line-inactive ((t :height 1.1 :background "gray" :foreground "white")))
 
  ;; Basic mode line face for highlighting
  '(mode-line-highlight ((t :background "#FF0000" :foreground "#FFFFFF")))
@@ -246,45 +244,6 @@
  ;;; Tooltip faces ------------------------------------------------------------------
  ;; Face for tooltips
  '(tooltip ((t :foreground "#000000" :background "#FFFFE0"))))
-
-;; ==================================================================================
-;; Customize line spacing
-(customize-set-variable 'line-spacing 3)
-
-;; Customize `uniquify' realted variables
-(customize-set-variable 'uniquify-separator "/")
-(customize-set-variable 'uniquify-buffer-name-style 'forward)
-
-;; ==================================================================================
-;; Move the mouse to the upper-right corner on any keypress
-(mouse-avoidance-mode "banish")
-
-;; Disable blink cursor mode
-(blink-cursor-mode -1)
-
-;; Disable tool bar mode
-(tool-bar-mode -1)
-
-;; Disable scroll bar mode
-(scroll-bar-mode -1)
-
-;; Disable global menu bar mode
-(menu-bar-mode -1)
-
-;; Enable global column number mode
-(column-number-mode 1)
-
-;; Enable global just-in-time lock mode
-(jit-lock-mode 1)
-
-;; Enable global change cursor mode
-(change-cursor-mode 1)
-
-;; Enable cursor type change when idle
-(toggle-cursor-type-when-idle 1)
-
-;; Enable global smooth scrolling mode
-(smooth-scrolling-mode 1)
 
 ;; ==================================================================================
 ;;; Provide features
