@@ -1,7 +1,7 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2021-09-13 02:47:21 Monday by lizhengyu>
+;; Time-stamp: <2022-03-04 14:21:54 星期五 by zhengyli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -97,6 +97,7 @@
   (require 'rainbow-delimiters)
   (require 'aggressive-indent)
   (require 'whitespace-cleanup-mode)
+  (require 'company-tabnine)
   (require 'lazy-set-key)
 
   ;; ----------------------------------------------------------
@@ -130,6 +131,10 @@
               ;; Disable tab characters for indentation
 			  (setq indent-tabs-mode nil)
 
+              ;; Add `company-tabnine' backend
+              (make-local-variable 'company-backends)
+              (add-to-list 'company-backends (append-backend-with-yas 'company-tabnine))
+
               ;; -----------------------------------------------
               ;; Enable linum node
               (linum-mode 1)
@@ -139,6 +144,9 @@
 
               ;; Enable autopair mode
               (autopair-mode 1)
+
+              ;; Enable aggressive indent mode
+              (aggressive-indent-mode 1)
 
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)
