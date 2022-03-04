@@ -1,5 +1,5 @@
 ;;; package --- init-basic.el ---
-;; Time-stamp: <2022-03-04 11:40:10 Friday by zhengyu.li>
+;; Time-stamp: <2022-03-04 15:40:12 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,9 +29,13 @@
 ;;   (require 'init-basic)
 
 ;;; Require:
-(require 'swiper-autoloads)
+(require 'ivy)
+(require 'ivy-rich)
+(require 'all-the-icons-ivy-rich)
+(require 'counsel)
 (require 'cursor-chg)
 (require 'smooth-scrolling)
+(require 'all-the-icons-ibuffer)
 (require 'lazy-set-key)
 
 ;;; Code:
@@ -159,6 +163,15 @@
 
 ;; Enable global smooth scrolling mode
 (smooth-scrolling-mode 1)
+
+;; Enable ivy rich mode
+(ivy-rich-mode 1)
+
+;; Enable all the icons ivy rich mode
+(all-the-icons-ivy-rich-mode 1)
+
+;; Enable all the icons ibuffer mode
+(all-the-icons-ibuffer-mode 1)
 
 ;; ==================================================================================
 ;;; Provide features

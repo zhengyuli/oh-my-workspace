@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-04 14:00:45 星期五 by zhengyli>
+;; Time-stamp: <2022-03-04 15:16:55 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -96,8 +96,8 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-emms")
 (load-library "init-netease-cloud-music")
 (load-library "init-centaur-tabs")
-(load-library "init-theme")
 (load-library "init-window")
+(load-library "init-theme")
 (load-library "init-session")
 
 ;; Load user custom settings
