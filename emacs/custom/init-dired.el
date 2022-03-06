@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-02 10:20:35 星期三 by zhengyli>
+;; Time-stamp: <2022-03-06 17:23:14 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -252,6 +252,10 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
                                (dired-async-mode 1))))
 
 (eval-after-load "dired" '(dired-settings))
+
+;; ==================================================================================
+(autoload 'dired-jump "dired-x"
+  "Jump to Dired buffer corresponding to current buffer." t)
 
 ;; ==================================================================================
 ;; Global key bindings for `dired'

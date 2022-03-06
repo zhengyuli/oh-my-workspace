@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-04 15:16:55 Friday by zhengyu.li>
+;; Time-stamp: <2022-03-06 17:54:05 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -71,13 +71,10 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (add-subdirs-to-load-path emacs-config-site-packages-path)
 
 ;; Load librares
-(load-library "init-basic")
-(load-library "init-edit")
-(load-library "init-proxy")
+(load-library "init-basic-config")
 (load-library "init-auto-complete")
 (load-library "init-dired")
 (load-library "init-terminal")
-(load-library "init-translate")
 (load-library "init-w3m")
 (load-library "init-git")
 (load-library "init-prog-mode")
