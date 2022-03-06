@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-04 15:42:08 Friday by zhengyu.li>
+;; Time-stamp: <2022-03-06 11:23:20 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -97,7 +97,6 @@
   (require 'rainbow-delimiters)
   (require 'aggressive-indent)
   (require 'whitespace-cleanup-mode)
-  (require 'company-tabnine)
   (require 'lazy-set-key)
 
   ;; ----------------------------------------------------------
@@ -130,10 +129,6 @@
 
               ;; Disable tab characters for indentation
 			  (setq indent-tabs-mode nil)
-
-              ;; Add `company-tabnine' backend
-              (make-local-variable 'company-backends)
-              (add-to-list 'company-backends (append-backend-with-yas 'company-tabnine))
 
               ;; -----------------------------------------------
               ;; Enable linum node

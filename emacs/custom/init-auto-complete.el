@@ -1,5 +1,5 @@
 ;;; package --- init-auto-complete.el ---
-;; Time-stamp: <2022-03-02 16:31:41 星期三 by zhengyli>
+;; Time-stamp: <2022-03-06 09:36:19 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -71,9 +71,9 @@
 (customize-set-variable 'company-idle-delay 0)
 (customize-set-variable 'company-minimum-prefix-length 1)
 (customize-set-variable 'company-tooltip-limit 15)
-(customize-set-variable 'company-transformers '(company-sort-by-occurrence))
 (customize-set-variable 'company-selection-wrap-around t)
 (customize-set-variable 'company-format-margin-function 'company-text-icons-margin)
+(customize-set-variable 'company-transformers '(delete-dups company-sort-by-occurrence))
 (customize-set-variable 'company-backends (mapcar 'append-backend-with-yas company-backends))
 
 ;; ==================================================================================
