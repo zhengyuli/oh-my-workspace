@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-06 17:54:05 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-07 19:26:39 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -48,10 +48,10 @@
   "Emacs configuration site packages path.")
 
 ;; Emacs configuration default background
-(defconst emacs-config-default-background "#252525" "Emacs configuration default background.")
+(defconst emacs-config-default-background "#282a36" "Emacs configuration default background.")
 
 ;; Emacs configuration default foreground
-(defconst emacs-config-default-foreground "#FFEFDF" "Emacs configuration default foreground.")
+(defconst emacs-config-default-foreground "#f8f8f2" "Emacs configuration default foreground.")
 
 ;; Emacs configuration default fixed font
 (defconst emacs-config-default-fixed-font "Source Code Pro" "Emacs configuration default fixed font.")

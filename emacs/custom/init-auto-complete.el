@@ -1,5 +1,5 @@
 ;;; package --- init-auto-complete.el ---
-;; Time-stamp: <2022-03-06 09:36:19 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-07 20:12:24 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -53,18 +53,18 @@
 ;; Customize `company' related faces
 (custom-set-faces
  '(company-tooltip ((t :background "#4D4D4D" )))
- '(company-tooltip-selection ((t :background "#8b0000")))
- '(company-tooltip-common ((t :foreground "#0000FF")))
+ '(company-tooltip-selection ((t :background "#8B0000")))
+ '(company-tooltip-common ((t :bold t :foreground "#CAFF70")))
  '(company-scrollbar-fg ((t :inherit company-tooltip)))
  '(company-scrollbar-bg ((t :inherit company-tooltip))))
 
 ;; Customize `popup' related faces
 (custom-set-faces
- '(popup-tip-face ((t :foreground "black" :background "#FFF8DC"))))
+ '(popup-tip-face ((t :foreground "#000000" :background "#FFF8DC"))))
 
 ;; Customize `company-quickhelp' related colors
 (customize-set-variable 'company-quickhelp-color-background "#FFF8DC")
-(customize-set-variable 'company-quickhelp-color-foreground "black")
+(customize-set-variable 'company-quickhelp-color-foreground "#000000")
 
 ;; ==================================================================================
 ;; Customize `company' related variables

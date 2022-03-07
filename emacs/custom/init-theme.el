@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-04 13:46:25 星期五 by zhengyli>
+;; Time-stamp: <2022-03-07 20:09:47 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -98,10 +98,10 @@
  '(nobreak-space ((t :inverse-video t)))
 
  ;; Basic mode line face for selected window
- '(mode-line ((t :height 1.1 :background "royal blue" :foreground "white")))
+ `(mode-line ((t :height 1.1 :background "#44475A" :foreground ,emacs-config-default-foreground)))
 
  ;; Basic mode line face for non-selected windows
- '(mode-line-inactive ((t :height 1.1 :background "gray" :foreground "white")))
+ `(mode-line-inactive ((t :height 1.1 :background "#D3D3D3" :foreground ,emacs-config-default-foreground)))
 
  ;; Basic mode line face for highlighting
  '(mode-line-highlight ((t :background "#FF0000" :foreground "#FFFFFF")))
@@ -110,7 +110,7 @@
  '(mode-line-emphasis ((t :weight bold)))
 
  ;; Face used for buffer identification parts of the mode line
- '(mode-line-buffer-id ((t :weight bold :slant italic :foreground "Orange")))
+ '(mode-line-buffer-id ((t :weight bold :slant italic :foreground "#FFA500")))
 
  ;; Basic header-line face
  '(header-line ((t :background "#333333" :foreground "#E5E5E5")))
