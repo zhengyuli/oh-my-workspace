@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-07 15:57:18 Monday by zhengyuli>
+;; Time-stamp: <2022-03-07 16:08:40 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -31,9 +31,9 @@
 ;;; Require:
 (require 'cursor-chg)
 (require 'smooth-scrolling)
-(require 'ivy-autoloads)
-(require 'counsel-autoloads)
-(require 'counsel-projectile-autoloads)
+(require 'ivy)
+(require 'counsel)
+(require 'counsel-projectile)
 (require 'swiper-autoloads)
 (require 'ascii-autoloads)
 (require 'undo-tree-autoloads)
