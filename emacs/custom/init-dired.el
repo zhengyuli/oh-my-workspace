@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-06 17:23:14 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-07 14:06:33 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -46,6 +46,7 @@
   (require 'dired-copy-paste)
   (require 'dired-hacks-utils)
   (require 'dired-filetype-face)
+  (require 'all-the-icons-dired)
   (require 'ztree)
   (require 'ztree-view)
   (require 'epg-config)
@@ -249,7 +250,8 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
   (add-hook 'dired-after-readin-hook 'dired-custom-sort)
   (add-hook 'dired-mode-hook (lambda ()
                                (dired-omit-mode 1)
-                               (dired-async-mode 1))))
+                               (dired-async-mode 1)
+                               (all-the-icons-dired-mode 1))))
 
 (eval-after-load "dired" '(dired-settings))
 

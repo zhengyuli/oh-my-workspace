@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-06 17:36:23 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-07 15:57:18 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -33,6 +33,7 @@
 (require 'smooth-scrolling)
 (require 'ivy-autoloads)
 (require 'counsel-autoloads)
+(require 'counsel-projectile-autoloads)
 (require 'swiper-autoloads)
 (require 'ascii-autoloads)
 (require 'undo-tree-autoloads)
@@ -156,8 +157,11 @@
   (require 'all-the-icons-ibuffer)
 
   ;; ----------------------------------------------------------
-  ;; Enable all the icons ibuffer mode
-  (all-the-icons-ibuffer-mode 1))
+  (add-hook 'ibuffer-mode-hook
+            (lambda ()
+              ;; -----------------------------------------------
+              ;; Enable all the icons ibuffer mode
+              (all-the-icons-ibuffer-mode 1))))
 
 (eval-after-load "ibuffer" '(ibuffer-settings))
 
@@ -177,27 +181,38 @@
   (customize-set-variable 'ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 
   ;; ----------------------------------------------------------
-  ;; Enable ivy mode
-  (ivy-mode 1)
+  (add-hook 'ivy-mode-hook
+            (lambda ()
+              ;; Enable ivy rich mode
+              (ivy-rich-mode 1)
 
-  ;; Enable ivy rich mode
-  (ivy-rich-mode 1)
+              ;; Enable all the icons ivy rich mode
+              (all-the-icons-ivy-rich-mode 1))))
 
-  ;; Enable all the icons ivy rich mode
-  (all-the-icons-ivy-rich-mode 1))
-
-(eval-after-load "ivy" '(ivy-settings))
-
-(defun counsel-settings ()
-  "Settings for `counsel'."
+(defun counsel-projectile-settings ()
+  "Settings for `counsel-projectile'."
 
   ;; Require
+  (require 'ivy-rich)
+  (require 'all-the-icons-ivy-rich)
 
   ;; ----------------------------------------------------------
-  ;; Enable counsel mode
-  (counsel-mode 1))
+  ;; Key unbindings for `projectile'
+  (lazy-set-key
+   '(("s-p" . projectile-command-map)
+     ("C-x p" . projectile-command-map))
+   projectile-mode-map)
 
-(eval-after-load "counsel" '(counsel-settings))
+  ;; ----------------------------------------------------------
+  (add-hook 'counsel-projectile-mode-hook
+            (lambda ()
+              ;; Enable ivy rich mode
+              (ivy-rich-mode 1)
+
+              ;; Enable all the icons ivy rich mode
+              (all-the-icons-ivy-rich-mode 1))))
+
+(eval-after-load "counsel-projectile" '(counsel-projectile-settings))
 
 ;;Customized settings for `tramp'
 (defun tramp-settings ()
@@ -360,6 +375,15 @@
 
 ;; Enable global undo tree mode
 (global-undo-tree-mode 1)
+
+;; Enable global ivy mode
+(ivy-mode 1)
+
+;; Enable global counsel mode
+(counsel-mode 1)
+
+;; Enable global counsel projectile mode
+(counsel-projectile-mode 1)
 
 ;; ==================================================================================
 ;;; Provide features
