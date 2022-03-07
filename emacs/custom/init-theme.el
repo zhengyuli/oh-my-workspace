@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-07 20:09:47 Monday by zhengyu.li>
+;; Time-stamp: <2022-03-07 20:55:35 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -98,10 +98,10 @@
  '(nobreak-space ((t :inverse-video t)))
 
  ;; Basic mode line face for selected window
- `(mode-line ((t :height 1.1 :background "#44475A" :foreground ,emacs-config-default-foreground)))
+ `(mode-line ((t :background "#44475A" :foreground ,emacs-config-default-foreground)))
 
  ;; Basic mode line face for non-selected windows
- `(mode-line-inactive ((t :height 1.1 :background "#D3D3D3" :foreground ,emacs-config-default-foreground)))
+ `(mode-line-inactive ((t :background "#D3D3D3" :foreground ,emacs-config-default-foreground)))
 
  ;; Basic mode line face for highlighting
  '(mode-line-highlight ((t :background "#FF0000" :foreground "#FFFFFF")))

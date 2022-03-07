@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-07 16:08:40 Monday by zhengyu.li>
+;; Time-stamp: <2022-03-07 20:54:18 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
