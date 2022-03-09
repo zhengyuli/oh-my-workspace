@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el ---
-;; Time-stamp: <2022-03-02 13:19:33 星期三 by zhengyli>
+;; Time-stamp: <2022-03-09 23:27:30 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -49,6 +49,7 @@
   ;; Hooks for `markdown-mode'
   (add-hook 'markdown-mode-hook
             (lambda ()
+              ;; ----------------------------------------------------------
               ;; Enable markdown format on save
               (markdownfmt-enable-on-save))))
 

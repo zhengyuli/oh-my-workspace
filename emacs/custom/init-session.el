@@ -1,7 +1,7 @@
 ;;; package --- init-session.el ---
-;; Time-stamp: <2021-09-10 07:38:18 Friday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:43:56 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -29,16 +29,26 @@
 ;;   (require 'init-session)
 
 ;;; Require:
-(require 'workgroups2)
+(require 'workgroups2-autoloads)
 
 ;;; Code:
 ;; ==================================================================================
-;; Customize workgroups2 related variables
-(customize-set-variable 'wg-session-file "~/.emacs.d/workgroups")
+(defun workgroups2-settings ()
+  "settings for `workgroups2'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize workgroups2 related variables
+  (customize-set-variable 'wg-session-file "~/.emacs.d/workgroups2"))
+
+(eval-after-load "workgroups2" '(workgroups2-settings))
 
 ;; ==================================================================================
-;; Enable global workgroups mode
-(workgroups-mode 1)
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Enable global workgroups mode
+            (workgroups-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-02 19:30:05 星期三 by zhengyli>
+;; Time-stamp: <2022-03-09 23:24:10 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -64,7 +64,6 @@
   (require 'rtags)
   (require 'rtags-xref)
   (require 'flycheck-rtags)
-  (require 'company-rtags)
   (require 'google-c-style)
 
   ;; ----------------------------------------------------------
@@ -82,16 +81,13 @@
    c-mode-base-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `c-mode' and `c++-mode'
+  ;; Hooks for `cc-mode'
   (dolist (hook '(c-mode-hook c++-mode-hook))
     (add-hook hook
               (lambda ()
+                ;; ----------------------------------------------------------
                 (if (vc-registered (buffer-file-name))
                     (progn
-                      ;; Add `company-rtags' backend
-                      (make-local-variable 'company-backends)
-                      (add-to-list 'company-backends (append-backend-with-yas 'company-rtags))
-
                       ;; Set flycheck checker with `rtags'
                       (flycheck-select-checker 'rtags)
 

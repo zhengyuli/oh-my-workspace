@@ -1,5 +1,5 @@
 ;;; package --- init-modeline.el ---
-;; Time-stamp: <2022-03-07 21:04:24 Monday by zhengyu.li>
+;; Time-stamp: <2022-03-09 23:34:27 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,12 +29,16 @@
 ;;   (require 'init-modeline)
 
 ;;; Require:
-(require 'doom-modeline)
+(require 'doom-modeline-autoloads)
 
 ;;; Code:
 ;; ==================================================================================
-;; Enable doom modeline
-(doom-modeline-mode 1)
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Enable doom modeline
+            (doom-modeline-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features

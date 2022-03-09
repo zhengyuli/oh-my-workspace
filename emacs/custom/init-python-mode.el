@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el ---
-;; Time-stamp: <2022-03-03 13:16:22 星期四 by zhengyli>
+;; Time-stamp: <2022-03-09 23:22:19 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -42,7 +42,6 @@
   (require 'sphinx-doc)
   (require 'python-docstring)
   (require 'jedi-core)
-  (require 'company-jedi)
   (require 'anaconda-mode)
   (require 'virtualenvwrapper)
 
@@ -90,13 +89,10 @@
    python-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `prog-mode'
+  ;; Hooks for `python-mode'
   (add-hook 'python-mode-hook
             (lambda ()
-              ;; Add `company-jedi' backend
-              (make-local-variable 'company-backends)
-              (add-to-list 'company-backends (append-backend-with-yas 'company-jedi))
-
+              ;; ----------------------------------------------------------
               ;; Enable sphinx doc mode
               (sphinx-doc-mode 1)
 

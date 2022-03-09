@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-06 11:23:20 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-09 23:24:32 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -30,6 +30,7 @@
 
 ;;; Require:
 (require 'iman-autoloads)
+(require 'lazy-set-key)
 
 ;;; Code:
 ;; ==================================================================================
@@ -97,7 +98,6 @@
   (require 'rainbow-delimiters)
   (require 'aggressive-indent)
   (require 'whitespace-cleanup-mode)
-  (require 'lazy-set-key)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `prog-mode'
@@ -117,10 +117,8 @@
    prog-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `xref'
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-
   ;; Hooks for `prog-mode'
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
   (add-hook 'prog-mode-hook
             (lambda ()
               ;; -----------------------------------------------

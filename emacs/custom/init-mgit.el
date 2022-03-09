@@ -1,7 +1,7 @@
-;;; package --- init-git.el ---
-;; Time-stamp: <2021-09-11 06:38:17 Saturday by lizhengyu>
+;;; package --- init-magit.el ---
+;; Time-stamp: <2022-03-09 23:17:07 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -26,7 +26,7 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-git)
+;;   (require 'init-magit)
 
 ;;; Require:
 (require 'magit-autoloads)
@@ -65,6 +65,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-git)
+(provide 'init-magit)
 
-;;; init-git.el ends here
+;;; init-magit.el ends here

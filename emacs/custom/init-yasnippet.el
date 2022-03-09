@@ -1,5 +1,5 @@
-;;; package --- init-elisp-mode.el ---
-;; Time-stamp: <2022-03-09 23:25:44 Wednesday by zhengyu.li>
+;;; package --- init-yasnippet.el ---
+;; Time-stamp: <2022-03-09 22:52:11 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -26,44 +26,43 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-elisp-mode)
+;;   (require 'init-yasnippet)
 
 ;;; Require:
+(require 'yasnippet-autoloads)
+(require 'lazy-set-key)
 
 ;;; Code:
 ;; ==================================================================================
-;; Customized settings for `elisp-mode'
-(defun elisp-mode-settings ()
-  "Settings for `elisp-mode'."
+
+(defun yasnippet-settings ()
+  "Settings for `yasnippet'."
 
   ;; Require
-  (require 'flycheck)
-  (require 'eldoc)
-  (require 'elisp-slime-nav)
-  (require 'lisp-extra-font-lock)
+  (require 'yasnippet-snippets)
 
   ;; ----------------------------------------------------------
-  ;; Customize `elisp-mode' related variables
-  (customize-set-variable 'flycheck-emacs-lisp-load-path "inherit")
+  ;; Key bindings for `yasnippet'
+  (lazy-unset-key
+   '("<tab>" "TAB")
+   yas-minor-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `elisp-mode'
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Enable eldoc mode
-              (eldoc-mode 1)
+  ;; initialize yasnippet snippets
+  (yasnippet-snippets-initialize))
 
-              ;; Enable lisp extra font lock mode
-			  (lisp-extra-font-lock-mode 1)
+(eval-after-load "yasnippet" '(yasnippet-settings))
 
-              ;; Enable elisp slime navigation mode
-              (elisp-slime-nav-mode 1))))
-
-(eval-after-load "elisp-mode" '(elisp-mode-settings))
+;; ==================================================================================
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Enable global yasnippet mode
+            (yas-global-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-elisp-mode)
+(provide 'init-yasnippet)
 
-;;; init-elisp-mode.el ends here
+;;; init-yasnippet.el ends here

@@ -1,7 +1,7 @@
 ;;; package --- init-terminal.el ---
-;; Time-stamp: <2021-09-14 03:46:01 Tuesday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:12:36 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -66,8 +66,14 @@
   ;; Hooks for `multi-term'
   (add-hook 'term-mode-hook
             (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Disable auto fill mode
               (auto-fill-mode -1)
+
+              ;; Disable yasnippet mode
               (yas-minor-mode -1)
+
+              ;; Disable company mode
               (company-mode -1))))
 
 (eval-after-load "multi-term" '(multi-term-settings))

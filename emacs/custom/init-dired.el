@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-07 14:06:33 Monday by zhengyuli>
+;; Time-stamp: <2022-03-09 23:07:05 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -208,8 +208,7 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
 
   ;; Key bindings for `dired'
   (lazy-set-key
-   '(
-     ("<return>" . dired-single-buffer)
+   '(("<return>" . dired-single-buffer)
      ("RET" . dired-single-buffer)
      ("p" . dired-hacks-previous-file)
      ("<up>" . dired-hacks-previous-file)
@@ -248,10 +247,17 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
   ;; ----------------------------------------------------------
   ;; Hooks for `dired'
   (add-hook 'dired-after-readin-hook 'dired-custom-sort)
-  (add-hook 'dired-mode-hook (lambda ()
-                               (dired-omit-mode 1)
-                               (dired-async-mode 1)
-                               (all-the-icons-dired-mode 1))))
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable dired omit mode
+              (dired-omit-mode 1)
+
+              ;; Enable dired async mode
+              (dired-async-mode 1)
+
+              ;; Enable all the icons dired mode
+              (all-the-icons-dired-mode 1))))
 
 (eval-after-load "dired" '(dired-settings))
 

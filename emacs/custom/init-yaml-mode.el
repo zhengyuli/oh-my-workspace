@@ -1,7 +1,7 @@
 ;;; package --- init-yaml-mode.el ---
-;; Time-stamp: <2021-09-14 03:35:04 Tuesday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:27:16 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -36,8 +36,6 @@
 ;; Customized settings for `yaml-mode'
 (defun yaml-mode-settings ()
   "Settings for `yaml-mode'."
-
-  ;; Require
 
   ;; ----------------------------------------------------------
   ;; Set `text-mode-map' as the parent of `yaml-mode-map'

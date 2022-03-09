@@ -1,7 +1,7 @@
 ;;; package --- init-w3m.el ---
-;; Time-stamp: <2021-09-11 06:19:44 Saturday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:14:05 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -44,7 +44,6 @@
   (require 'w3m-session)
   (require 'w3m-wget)
   (require 'w3m-lnum)
-  (require 'w3m-extension)
 
   ;; ----------------------------------------------------------
   ;; Customize `w3m' related faces

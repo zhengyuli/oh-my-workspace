@@ -1,7 +1,7 @@
 ;;; package --- init-haskell-mode.el ---
-;; Time-stamp: <2021-09-14 03:32:59 Tuesday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:26:00 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -36,8 +36,6 @@
 ;; Customized settings for `haskell-mode'
 (defun haskell-mode-settings ()
   "Settings for `haskell-mode'."
-
-  ;; Require
 
   ;; ----------------------------------------------------------
   ;; Set `prog-mode-map' as the parent of `haskell-mode-map'

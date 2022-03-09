@@ -1,7 +1,7 @@
 ;;; package --- init-groovy-mode.el ---
-;; Time-stamp: <2021-09-14 03:33:02 Tuesday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:26:39 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -48,6 +48,7 @@
   ;; Hooks for `groovy-mode'
   (add-hook 'groovy-mode-hook
             (lambda ()
+              ;; ----------------------------------------------------------
               ;; Enable groovy electric mode
               (groovy-electric-mode 1))))
 

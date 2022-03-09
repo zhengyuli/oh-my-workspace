@@ -1,7 +1,7 @@
 ;;; package --- init-go-mode.el ---
-;; Time-stamp: <2021-09-13 03:45:41 Monday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:25:13 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -50,6 +50,7 @@
   ;; Set `prog-mode-map' as the parent of `go-mode-map'
   (set-keymap-parent go-mode-map prog-mode-map)
 
+  ;; ----------------------------------------------------------
   ;; Key bindings for `go-mode'
   (lazy-set-key
    '(("M-." . godef-jump))
@@ -59,6 +60,7 @@
   ;; Hooks for `go-mode'
   (add-hook 'before-save-hook 'gofmt-before-save)
   (add-hook 'go-mode-hook (lambda ()
+                            ;; ----------------------------------------------------------
 							(go-eldoc-setup))))
 
 (eval-after-load "go-mode" '(go-mode-settings))

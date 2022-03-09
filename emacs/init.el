@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-09 14:05:55 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-09 23:17:38 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -32,8 +32,8 @@
 
 ;;; Code:
 ;;Check Emacs version
-(if (< (string-to-number emacs-version) 26.3)
-	(error "The Emacs version must be >= 26.3."))
+(unless (>= (string-to-number emacs-version) 26.3)
+  (error "The Emacs version must be >= 26.3."))
 
 ;; Emacs configuration root path
 (defconst emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
@@ -62,9 +62,8 @@
 (defun add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.
 Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
-  (progn
+  (let ((default-directory base-dir))
     (add-to-list 'load-path base-dir)
-    (setq default-directory base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
 ;; Add all sub-directories under custom and site packages to load-path
@@ -73,11 +72,12 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 
 ;; Load librares
 (load-library "init-basic-config")
-(load-library "init-auto-complete")
+(load-library "init-yasnippet")
+(load-library "init-company")
 (load-library "init-dired")
 (load-library "init-terminal")
 (load-library "init-w3m")
-(load-library "init-git")
+(load-library "init-mgit")
 (load-library "init-prog-mode")
 (load-library "init-cc-mode")
 (load-library "init-sh-script-mode")

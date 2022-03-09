@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-09 11:02:50 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-09 23:39:14 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,13 +29,13 @@
 ;;   (require 'init-basic-config)
 
 ;;; Require:
-(require 'cursor-chg)
-(require 'smooth-scrolling)
-(require 'ivy)
-(require 'counsel)
+(require 'cursor-chg-autoloads)
+(require 'smooth-scrolling-autoloads)
+(require 'ivy-autoloads)
+(require 'counsel-autoloads)
 (require 'counsel-projectile)
-(require 'which-key)
 (require 'swiper-autoloads)
+(require 'which-key-autoloads)
 (require 'ascii-autoloads)
 (require 'undo-tree-autoloads)
 (require 'browse-kill-ring-autoloads)
@@ -119,104 +119,6 @@
   (show-http-proxy))
 
 ;; ==================================================================================
-;; Customize `startup' related variables
-(customize-set-variable 'inhibit-default-init t)
-(customize-set-variable 'inhibit-startup-screen t)
-(customize-set-variable 'inhibit-startup-message t)
-(customize-set-variable 'inhibit-startup-echo-area-message t)
-
-;; Customize `time-stamp' related variables
-(customize-set-variable 'time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u")
-
-;; Customize `recentf' related variables
-(customize-set-variable 'recentf-max-saved-items 1000)
-(customize-set-variable 'recentf-exclude '("/tmp/" "ssh:"))
-
-;; Customize `files' related variables
-(customize-set-variable 'backup-directory-alist
-                        '((".*" . "~/.emacs.d/backup-files")))
-(customize-set-variable 'backup-by-copying t)
-(customize-set-variable 'delete-old-versions t)
-(customize-set-variable 'version-control t)
-
-;; Customize `uniquify' realted variables
-(customize-set-variable 'uniquify-separator "/")
-(customize-set-variable 'uniquify-buffer-name-style 'forward)
-
-;; Customize line spacing
-(customize-set-variable 'line-spacing 3)
-
-;; Customize user and email
-(customize-set-variable 'user-full-name "zhengyu li")
-(customize-set-variable 'user-mail-address "lizhengyu419@outlook.com")
-
-;; ==================================================================================
-;; customized settings for `ibuffer'
-(defun ibuffer-settings ()
-  "Settings for `ibuffer'."
-
-  ;; require
-  (require 'all-the-icons-ibuffer)
-
-  ;; ----------------------------------------------------------
-  (add-hook 'ibuffer-mode-hook
-            (lambda ()
-              ;; -----------------------------------------------
-              ;; Enable all the icons ibuffer mode
-              (all-the-icons-ibuffer-mode 1))))
-
-(eval-after-load "ibuffer" '(ibuffer-settings))
-
-;; Customized settings for `ivy'
-(defun ivy-settings ()
-  "Settings for `ivy'."
-
-  ;; Require
-  (require 'ivy-rich)
-  (require 'all-the-icons-ivy-rich)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `ivy' related variables
-  (customize-set-variable 'ivy-use-virtual-buffers t)
-  (customize-set-variable 'ivy-count-format "")
-  (customize-set-variable 'ivy-initial-inputs-alist nil)
-  (customize-set-variable 'ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
-
-  ;; ----------------------------------------------------------
-  (add-hook 'ivy-mode-hook
-            (lambda ()
-              ;; Enable ivy rich mode
-              (ivy-rich-mode 1)
-
-              ;; Enable all the icons ivy rich mode
-              (all-the-icons-ivy-rich-mode 1))))
-
-(defun counsel-projectile-settings ()
-  "Settings for `counsel-projectile'."
-
-  ;; Require
-  (require 'ivy-rich)
-  (require 'all-the-icons-ivy-rich)
-
-  ;; ----------------------------------------------------------
-  ;; Key unbindings for `projectile'
-  (lazy-set-key
-   '(("s-p" . projectile-command-map)
-     ("C-x p" . projectile-command-map))
-   projectile-mode-map)
-
-  ;; ----------------------------------------------------------
-  (add-hook 'counsel-projectile-mode-hook
-            (lambda ()
-              ;; Enable ivy rich mode
-              (ivy-rich-mode 1)
-
-              ;; Enable all the icons ivy rich mode
-              (all-the-icons-ivy-rich-mode 1))))
-
-(eval-after-load "counsel-projectile" '(counsel-projectile-settings))
-
-;;Customized settings for `tramp'
 (defun tramp-settings ()
   "Settings for `tramp'."
 
@@ -228,7 +130,6 @@
 
 (eval-after-load "tramp" '(tramp-settings))
 
-;; Customized settings for `undo-tree'
 (defun undo-tree-settings ()
   "Settings for `undo-tree'."
 
@@ -249,7 +150,6 @@
 
 (eval-after-load "undo-tree" '(undo-tree-settings))
 
-;; Customized settings for `color-rg'
 (defun color-rg-settings ()
   "Settings for `color-rg'."
 
@@ -263,7 +163,6 @@
 
 (eval-after-load "color-rg" '(color-rg-settings))
 
-;; Customized settings for `visual-regexp-steroids'
 (defun visual-regexp-steroids-settings ()
   "Settings for `visual-regexp-steroids'."
 
@@ -276,7 +175,6 @@
 
 (eval-after-load "visual-regexp-steroids" '(visual-regexp-steroids-settings))
 
-;; Customized settings for `ispell'
 (defun ispell-settings ()
   "Settings for `ispell'."
 
@@ -289,8 +187,54 @@
 
 (eval-after-load "ispell" '(ispell-settings))
 
+(defun ibuffer-settings ()
+  "Settings for `ibuffer'."
 
-;; customized settings for `avy'
+  ;; require
+  (require 'all-the-icons-ibuffer)
+
+  ;; ----------------------------------------------------------
+  ;; Enable all the icons ibuffer mode
+  (all-the-icons-ibuffer-mode 1))
+
+(eval-after-load "ibuffer" '(ibuffer-settings))
+
+(defun ivy-settings ()
+  "Settings for `ivy'."
+
+  ;; Require
+  (require 'ivy-rich)
+  (require 'all-the-icons-ivy-rich)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `ivy' related variables
+  (customize-set-variable 'ivy-use-virtual-buffers t)
+  (customize-set-variable 'ivy-count-format "")
+  (customize-set-variable 'ivy-initial-inputs-alist nil)
+  (customize-set-variable 'ivy-re-builders-alist
+                          '((t . ivy--regex-ignore-order)))
+
+  ;; ----------------------------------------------------------
+  ;; Enable ivy rich mode
+  (ivy-rich-mode 1)
+
+  ;; Enable all the icons ivy rich mode
+  (all-the-icons-ivy-rich-mode 1))
+
+(eval-after-load "ivy" '(ivy-settings))
+
+(defun counsel-projectile-settings ()
+  "Settings for `counsel-projectile'."
+
+  ;; ----------------------------------------------------------
+  ;; Key unbindings for `projectile'
+  (lazy-set-key
+   '(("s-p" . projectile-command-map)
+     ("C-x p" . projectile-command-map))
+   projectile-mode-map))
+
+(eval-after-load "counsel-projectile" '(counsel-projectile-settings))
+
 (defun avy-settings ()
   "settings for `avy'."
 
@@ -298,14 +242,14 @@
   ;; Customize `avy' related faces
   (custom-set-faces
    '(avy-background-face ((t :foreground "#90EE90")))
-   `(avy-lead-face ((t :background "#D2691E" :foreground ,emacs-config-default-background)))
+   `(avy-lead-face ((t :background "#D2691E"
+                       :foreground ,emacs-config-default-background)))
    '(avy-lead-face-0 ((t :inherit 'avy-lead-face)))
    '(avy-lead-face-1 ((t :inherit 'avy-lead-face)))
    '(avy-lead-face-2 ((t :inherit 'avy-lead-face)))))
 
 (eval-after-load "avy" '(avy-settings))
 
-;; customized settings for `which-key'
 (defun which-key-settings ()
   "settings for `which-key'."
 
@@ -346,23 +290,6 @@
    ("M-+" . text-scale-increase)))
 
 ;; ==================================================================================
-;; Replace yes-or-no-p with y-or-no-p
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; Move the mouse to the upper-right corner on any keypress
-(mouse-avoidance-mode "banish")
-
-;; Enable cursor type change when idle
-(toggle-cursor-type-when-idle 1)
-
-;; Initialize mac system exec path
-(when (memq window-system '(mac ns))
-  (require 'exec-path-from-shell)
-  (setq mac-command-modifier 'super)
-  (setq mac-option-modifier 'meta)
-  (exec-path-from-shell-initialize))
-
-;; ==================================================================================
 ;; Update timestamp before saving files
 (add-hook 'before-save-hook 'time-stamp)
 
@@ -372,51 +299,104 @@
 ;; Delete trailing whitespace before saving files
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;; ==================================================================================
-;; Disable blink cursor mode
-(blink-cursor-mode -1)
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Customize `startup' related variables
+            (customize-set-variable 'inhibit-default-init t)
+            (customize-set-variable 'inhibit-startup-screen t)
+            (customize-set-variable 'inhibit-startup-message t)
+            (customize-set-variable 'inhibit-startup-echo-area-message t)
 
-;; Disable tool bar mode
-(tool-bar-mode -1)
+            ;; Customize `time-stamp' related variables
+            (customize-set-variable 'time-stamp-format
+                                    "%Y-%02m-%02d %02H:%02M:%02S %:a by %u")
 
-;; Disable scroll bar mode
-(scroll-bar-mode -1)
+            ;; Customize `recentf' related variables
+            (customize-set-variable 'recentf-max-saved-items 1000)
+            (customize-set-variable 'recentf-exclude '("/tmp/" "ssh:"))
 
-;; Disable global menu bar mode
-(menu-bar-mode -1)
+            ;; Customize `files' related variables
+            (customize-set-variable 'backup-directory-alist
+                                    '((".*" . "~/.emacs.d/backup-files")))
+            (customize-set-variable 'backup-by-copying t)
+            (customize-set-variable 'delete-old-versions t)
+            (customize-set-variable 'version-control t)
 
-;; Enable global auto revert mode
-(global-auto-revert-mode 1)
+            ;; Customize `uniquify' realted variables
+            (customize-set-variable 'uniquify-separator "/")
+            (customize-set-variable 'uniquify-buffer-name-style 'forward)
 
-;; Enable global recentf mode
-(recentf-mode 1)
+            ;; Customize line spacing
+            (customize-set-variable 'line-spacing 3)
 
-;; Enable global column number mode
-(column-number-mode 1)
+            ;; Customize user and email
+            (customize-set-variable 'user-full-name "zhengyu li")
+            (customize-set-variable 'user-mail-address "lizhengyu419@outlook.com")
 
-;; Enable global just-in-time lock mode
-(jit-lock-mode 1)
+            ;; ----------------------------------------------------------
+            ;; Replace yes-or-no-p with y-or-no-p
+            (fset 'yes-or-no-p 'y-or-n-p)
 
-;; Enable global change cursor mode
-(change-cursor-mode 1)
+            ;; Move the mouse to the upper-right corner on any keypress
+            (mouse-avoidance-mode "banish")
 
-;; Enable global smooth scrolling mode
-(smooth-scrolling-mode 1)
+            ;; Initialize mac system exec path
+            (when (memq window-system '(mac ns))
+              (require 'exec-path-from-shell)
+              (setq mac-command-modifier 'super)
+              (setq mac-option-modifier 'meta)
+              (exec-path-from-shell-initialize))
 
-;; Enable global undo tree mode
-(global-undo-tree-mode 1)
+            ;; Enable cursor type change when idle
+            (toggle-cursor-type-when-idle 1)
 
-;; Enable global ivy mode
-(ivy-mode 1)
+            ;; ----------------------------------------------------------
+            ;; Disable blink cursor mode
+            (blink-cursor-mode -1)
 
-;; Enable global counsel mode
-(counsel-mode 1)
+            ;; Disable tool bar mode
+            (tool-bar-mode -1)
 
-;; Enable global counsel projectile mode
-(counsel-projectile-mode 1)
+            ;; Disable scroll bar mode
+            (scroll-bar-mode -1)
 
-;; Enable global which key mode
-(which-key-mode 1)
+            ;; Disable global menu bar mode
+            (menu-bar-mode -1)
+
+            ;; Enable global auto revert mode
+            (global-auto-revert-mode 1)
+
+            ;; Enable global recentf mode
+            (recentf-mode 1)
+
+            ;; Enable global column number mode
+            (column-number-mode 1)
+
+            ;; Enable global just-in-time lock mode
+            (jit-lock-mode 1)
+
+            ;; Enable global change cursor mode
+            (change-cursor-mode 1)
+
+            ;; Enable global smooth scrolling mode
+            (smooth-scrolling-mode 1)
+
+            ;; Enable global undo tree mode
+            (global-undo-tree-mode 1)
+
+            ;; Enable global ivy mode
+            (ivy-mode 1)
+
+            ;; Enable global counsel mode
+            (counsel-mode 1)
+
+            ;; Enable global counsel projectile mode
+            (counsel-projectile-mode 1)
+
+            ;; Enable global which key mode
+            (which-key-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features

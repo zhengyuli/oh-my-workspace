@@ -1,7 +1,7 @@
 ;;; package --- init-scala-mode.el ---
-;; Time-stamp: <2021-09-14 03:32:53 Tuesday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:26:20 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -36,8 +36,6 @@
 ;; Customized settings for `scala-mode'
 (defun scala-mode-settings ()
   "Settings for `scala-mode'."
-
-  ;; Require
 
   ;; ----------------------------------------------------------
   ;; Set `prog-mode-map' as the parent of `scala-mode-map'

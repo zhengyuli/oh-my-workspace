@@ -1,7 +1,7 @@
 ;;; package --- init-window.el ---
-;; Time-stamp: <2021-09-10 05:50:35 Friday by lizhengyu>
+;; Time-stamp: <2022-03-09 23:40:32 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -29,7 +29,7 @@
 ;;   (require 'init-window)
 
 ;;; Require:
-(require 'winum)
+(require 'winum-autoloads)
 (require 'lazy-set-key)
 
 ;;; Code:
@@ -50,6 +50,27 @@
 		 'fullboth)))))
 
 ;; ==================================================================================
+(defun winum-settings ()
+  "Settings for `winum'."
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `winum'
+  (lazy-set-key
+   '(("M-0" . winum-select-window-0-or-10)
+     ("M-1" . winum-select-window-1)
+     ("M-2" . winum-select-window-2)
+     ("M-3" . winum-select-window-3)
+     ("M-4" . winum-select-window-4)
+     ("M-5" . winum-select-window-5)
+     ("M-6" . winum-select-window-6)
+     ("M-7" . winum-select-window-7)
+     ("M-8" . winum-select-window-8)
+     ("M-9" . winum-select-window-9))
+   winum-keymap))
+
+(eval-after-load "winum" '(winum-settings))
+
+;; ==================================================================================
 ;; Global key bindings for `window'
 (lazy-set-key
  '(("C-<f10>" . toggle-fullscreen)
@@ -58,26 +79,16 @@
    ("C-<down>" . shrink-window)
    ("C-<up>" . enlarge-window)))
 
-;; Key bindings for `winum'
-(lazy-set-key
- '(("M-0" . winum-select-window-0-or-10)
-   ("M-1" . winum-select-window-1)
-   ("M-2" . winum-select-window-2)
-   ("M-3" . winum-select-window-3)
-   ("M-4" . winum-select-window-4)
-   ("M-5" . winum-select-window-5)
-   ("M-6" . winum-select-window-6)
-   ("M-7" . winum-select-window-7)
-   ("M-8" . winum-select-window-8)
-   ("M-9" . winum-select-window-9))
- winum-keymap)
-
 ;; ==================================================================================
-;; Enable winum mode
-(winum-mode 1)
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Enable winum mode
+            (winum-mode 1)
 
-;; Toggle full screen
-(toggle-fullscreen)
+            ;; Toggle full screen
+            (toggle-fullscreen)))
 
 ;; ==================================================================================
 ;;; Provide features
