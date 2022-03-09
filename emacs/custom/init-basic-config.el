@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-09 10:45:50 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-09 11:02:50 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -34,6 +34,7 @@
 (require 'ivy)
 (require 'counsel)
 (require 'counsel-projectile)
+(require 'which-key)
 (require 'swiper-autoloads)
 (require 'ascii-autoloads)
 (require 'undo-tree-autoloads)
@@ -304,6 +305,15 @@
 
 (eval-after-load "avy" '(avy-settings))
 
+;; customized settings for `which-key'
+(defun which-key-settings ()
+  "settings for `which-key'."
+
+  ;; ----------------------------------------------------------
+  (which-key-setup-side-window-right))
+
+(eval-after-load "which-key" '(which-key-settings))
+
 ;; ==================================================================================
 ;; Global key bindings for `basic'
 (lazy-set-key
@@ -404,6 +414,9 @@
 
 ;; Enable global counsel projectile mode
 (counsel-projectile-mode 1)
+
+;; Enable global which key mode
+(which-key-mode 1)
 
 ;; ==================================================================================
 ;;; Provide features
