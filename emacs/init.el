@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-07 21:04:56 Monday by zhengyu.li>
+;; Time-stamp: <2022-03-09 14:05:55 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -62,8 +62,9 @@
 (defun add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.
 Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
-  (let ((default-directory (concat base-dir "/")))
+  (progn
     (add-to-list 'load-path base-dir)
+    (setq default-directory base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
 ;; Add all sub-directories under custom and site packages to load-path
