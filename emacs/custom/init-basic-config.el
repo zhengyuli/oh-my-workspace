@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-10 21:17:10 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 21:21:50 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -354,8 +354,8 @@
             (mouse-avoidance-mode "banish")
 
             ;; Initialize mac system exec path
-            (if (memq window-system '(mac ns))
-                (require 'exec-path-from-shell)
+            (when (memq window-system '(mac ns))
+              (require 'exec-path-from-shell)
               (setq mac-command-modifier 'super)
               (setq mac-option-modifier 'meta)
               (exec-path-from-shell-initialize))

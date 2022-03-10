@@ -1,5 +1,5 @@
 ;;; package --- init-window.el ---
-;; Time-stamp: <2022-03-10 14:00:16 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 21:35:01 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -46,9 +46,8 @@
 		 (if (boundp 'old-fullscreen)
 			 old-fullscreen
 		   nil)
-	   (progn
-		 (setq old-fullscreen current-value)
-		 'fullboth)))))
+	   (setq old-fullscreen current-value)
+	   'fullboth))))
 
 ;; ==================================================================================
 (defun winum-settings ()

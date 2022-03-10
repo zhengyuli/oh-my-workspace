@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-10 10:20:17 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 21:32:16 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -71,9 +71,8 @@
   (or tags-suffix
       (setq tags-suffix (read-string "Regexp:")))
   (if (equal tags-suffix "")
-      (message "tags suffix is null")
-    (progn
-      (setq tags-suffix (replace-regexp-in-string "[ ]+" "\" -o -name \"" tags-suffix)))
+      (warn "tags suffix is null")
+    (setq tags-suffix (replace-regexp-in-string "[ ]+" "\" -o -name \"" tags-suffix))
     (with-temp-buffer
       (cd tags-storage-directory)
 	  (message "indexing tags ... .. .")

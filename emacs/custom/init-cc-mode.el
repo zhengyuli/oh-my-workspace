@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-09 23:24:10 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 21:28:19 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -86,26 +86,26 @@
     (add-hook hook
               (lambda ()
                 ;; ----------------------------------------------------------
-                (if (vc-registered (buffer-file-name))
-                    (progn
-                      ;; Set flycheck checker with `rtags'
-                      (flycheck-select-checker 'rtags)
+                (if (not (vc-registered (buffer-file-name)))
+                    (flycheck-select-checker 'c/c++-clang)
 
-                      ;; Enable rtags xref
-                      (rtags-xref-enable)
+                  ;; Set flycheck checker with `rtags'
+                  (flycheck-select-checker 'rtags)
 
-                      ;; Start rtags process if any
-                      (rtags-start-process-unless-running))
-                  (flycheck-select-checker 'c/c++-clang))
+                  ;; Enable rtags xref
+                  (rtags-xref-enable)
+
+                  ;; Start rtags process if any
+                  (rtags-start-process-unless-running))
 
                 ;; Enable ctypes auto parse mode
-    			(ctypes-auto-parse-mode 1)
+    		    (ctypes-auto-parse-mode 1)
 
                 ;; Load ctypes saved previously
-    			(ctypes-read-file nil nil t t)
+    		    (ctypes-read-file nil nil t t)
 
                 ;; Enable google C&C++ style
-    			(google-set-c-style)))))
+    		    (google-set-c-style)))))
 
 (eval-after-load "cc-mode" '(cc-mode-settings))
 

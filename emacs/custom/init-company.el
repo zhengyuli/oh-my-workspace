@@ -1,5 +1,5 @@
 ;;; package --- init-company.el ---
-;; Time-stamp: <2022-03-10 14:26:17 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 21:35:50 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -65,12 +65,11 @@
       (add-hook hook
                 (lambda ()
                   ;; ----------------------------------------------------------
-                  (if (vc-registered (buffer-file-name))
-                      (progn
-                        ;; Add `company-rtags' backend
-                        (make-local-variable 'company-backends)
-                        (add-to-list 'company-backends
-                                     (append-company-backend-with-yas 'company-rtags))))))))
+                  (when (vc-registered (buffer-file-name))
+                    ;; Add `company-rtags' backend
+                    (make-local-variable 'company-backends)
+                    (add-to-list 'company-backends
+                                 (append-company-backend-with-yas 'company-rtags)))))))
 
   (eval-after-load "cc-mode" '(cc-mode-company-settings))
 
