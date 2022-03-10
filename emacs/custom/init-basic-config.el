@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-10 16:20:54 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 17:41:22 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -309,9 +309,6 @@
             ;; Customize `uniquify' realted variables
             (customize-set-variable 'uniquify-separator "/")
             (customize-set-variable 'uniquify-buffer-name-style 'forward)
-
-            ;; Customize line spacing
-            (customize-set-variable 'line-spacing 3)
 
             ;; Customize user and email
             (customize-set-variable 'user-full-name emacs-config-user)

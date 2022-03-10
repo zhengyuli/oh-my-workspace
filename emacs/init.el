@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-10 15:39:14 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 18:38:57 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -31,41 +31,10 @@
 ;;; Require:
 
 ;;; Code:
-;;Check Emacs version
-(unless (>= (string-to-number emacs-version) 26.3)
-  (error "The Emacs version must be >= 26.3."))
-
-;; Emacs configuration root path
-(defconst emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
-  "Emacs configuration root path.")
-
-;; Emacs configuration custom path to load custom settings
-(defconst emacs-config-custom-path (concat emacs-config-root-path "custom/")
-  "Emacs configuration custom path.")
-
-;; Emacs configuration site packages path to load 3rd party settings
-(defconst emacs-config-site-packages-path (concat emacs-config-root-path "site-packages/")
-  "Emacs configuration site packages path.")
-
-;; Emacs configuration background
-(if (display-graphic-p)
-    (defconst emacs-config-background "#282A36" "Emacs configuration background.")
-  (defconst emacs-config-background "underlined" "Emacs configuration background."))
-
-;; Emacs configuration foreground
-(defconst emacs-config-foreground "#F8F8F2" "Emacs configuration foreground.")
-
-;; Emacs configuration fixed font
-(defconst emacs-config-fixed-font "Source Code Pro" "Emacs configuration fixed font.")
-
-;; Emacs configuration variable font
-(defconst emacs-config-variable-font "Sans Serif" "Emacs configuration variable font.")
-
-;; Emacs configuration user
-(defconst emacs-config-user "_EMACS_CONFIG_USER_" "Emacs configuration user.")
-
-;; Emacs configuration email
-(defconst emacs-config-email "_EMACS_CONFIG_EMAIL_" "Emacs configuration email.")
+;; ==================================================================================
+(defun font-exists-p (font)
+  "Check if font exists."
+  (if (null (x-list-fonts font)) nil t))
 
 (defun add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.
@@ -74,6 +43,50 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
+;; ==================================================================================
+;; Check Emacs version
+(unless (>= (string-to-number emacs-version) 26.3)
+  (error "The Emacs version must be >= 26.3."))
+
+(unless (font-exists-p "Source Code Pro")
+  (error "Missing \"Source Code Pro\" font, please install."))
+
+(unless (font-exists-p "Source Serif Pro")
+  (error "Missing \"Source Serif Pro\" font, please install."))
+
+;; ==================================================================================
+;; Emacs configuration root path
+(defvar emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
+  "Emacs configuration root path.")
+
+;; Emacs configuration custom path to load custom settings
+(defvar emacs-config-custom-path (concat emacs-config-root-path "custom/")
+  "Emacs configuration custom path.")
+
+;; Emacs configuration site packages path to load 3rd party settings
+(defvar emacs-config-site-packages-path (concat emacs-config-root-path "site-packages/")
+  "Emacs configuration site packages path.")
+
+;; Emacs configuration background
+(defvar emacs-config-background (if (display-graphic-p) "#282A36" "underlined")
+  "Emacs configuration background.")
+
+;; Emacs configuration foreground
+(defvar emacs-config-foreground "#F8F8F2" "Emacs configuration foreground.")
+
+;; Emacs configuration fixed font
+(defvar emacs-config-fixed-font "Source Code Pro" "Emacs configuration fixed font.")
+
+;; Emacs configuration fixed serif font
+(defvar emacs-config-fixed-serif-font "Source Serif Pro" "Emacs configuration fixed serif font.")
+
+;; Emacs configuration user
+(defvar emacs-config-user "_EMACS_CONFIG_USER_" "Emacs configuration user.")
+
+;; Emacs configuration email
+(defvar emacs-config-email "_EMACS_CONFIG_EMAIL_" "Emacs configuration email.")
+
+;; ==================================================================================
 ;; Add all sub-directories under custom and site packages to load-path
 (add-subdirs-to-load-path emacs-config-custom-path)
 (add-subdirs-to-load-path emacs-config-site-packages-path)
