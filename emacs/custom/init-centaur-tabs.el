@@ -1,5 +1,5 @@
 ;;; package --- init-centaur-tabs.el ---
-;; Time-stamp: <2022-03-10 10:06:22 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 11:04:20 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -42,7 +42,7 @@
   ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs' realted faces
   (custom-set-faces
-   `(centaur-tabs-default ((t :background ,emacs-config-default-background)))
+   `(centaur-tabs-default ((t :background ,emacs-config-background)))
    '(centaur-tabs-unselected ((t :background "#333333" :foreground "#999999")))
    '(centaur-tabs-selected ((t :background "#666666" :foreground "#00BFFF")))
    '(centaur-tabs-unselected-modified	((t :background "#333333" :foreground "#FFD700")))

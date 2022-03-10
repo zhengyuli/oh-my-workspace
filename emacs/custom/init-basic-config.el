@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-10 09:08:54 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 13:39:41 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -42,9 +42,9 @@
 (require 'expand-region-autoloads)
 (require 'multiple-cursors-autoloads)
 (require 'visual-regexp-steroids-autoloads)
+(require 'ag-autoloads)
 (require 'goto-chg-autoloads)
 (require 'avy-autoloads)
-(require 'color-rg-autoloads)
 (require 'lazy-set-key)
 
 ;;; Code:
@@ -150,19 +150,6 @@
 
 (eval-after-load "undo-tree" '(undo-tree-settings))
 
-(defun color-rg-settings ()
-  "Settings for `color-rg'."
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `color-rg'
-  (lazy-set-key
-   '(("p" . color-rg-jump-prev-keyword)
-     ("n" . color-rg-jump-next-keyword)
-     ("o" . color-rg-open-file-and-stay))
-   color-rg-mode-map))
-
-(eval-after-load "color-rg" '(color-rg-settings))
-
 (defun visual-regexp-steroids-settings ()
   "Settings for `visual-regexp-steroids'."
 
@@ -190,7 +177,7 @@
 (defun ibuffer-settings ()
   "Settings for `ibuffer'."
 
-  ;; require
+  ;; Require
   (require 'all-the-icons-ibuffer)
 
   ;; ----------------------------------------------------------
@@ -236,19 +223,35 @@
 (eval-after-load "counsel-projectile" '(counsel-projectile-settings))
 
 (defun avy-settings ()
-  "settings for `avy'."
+  "Settings for `avy'."
 
   ;; ----------------------------------------------------------
   ;; Customize `avy' related faces
   (custom-set-faces
    '(avy-background-face ((t :foreground "#90EE90")))
    `(avy-lead-face ((t :background "#D2691E"
-                       :foreground ,emacs-config-default-background)))
+                       :foreground ,emacs-config-background)))
    '(avy-lead-face-0 ((t :inherit 'avy-lead-face)))
    '(avy-lead-face-1 ((t :inherit 'avy-lead-face)))
    '(avy-lead-face-2 ((t :inherit 'avy-lead-face)))))
 
 (eval-after-load "avy" '(avy-settings))
+
+(defun ag-settings ()
+  "Settings for `ag'."
+
+  ;; Require
+  (require 'wgrep-ag)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `wgrep' related variables
+  (customize-set-variable 'wgrep-enable-key "r")
+  (customize-set-variable 'wgrep-auto-save-buffer t)
+
+  ;; Hooks for `ag'
+  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
+(eval-after-load "ag" '(ag-settings))
 
 (defun which-key-settings ()
   "settings for `which-key'."
@@ -257,8 +260,6 @@
   (which-key-setup-side-window-right))
 
 (eval-after-load "which-key" '(which-key-settings))
-
-;; ==================================================================================
 
 ;; ==================================================================================
 ;; Update timestamp before saving files
@@ -303,8 +304,8 @@
             (customize-set-variable 'line-spacing 3)
 
             ;; Customize user and email
-            (customize-set-variable 'user-full-name "zhengyu li")
-            (customize-set-variable 'user-mail-address "lizhengyu419@outlook.com")
+            (customize-set-variable 'user-full-name emacs-config-user)
+            (customize-set-variable 'user-mail-address emacs-config-email)
 
             ;; ----------------------------------------------------------
             ;; Global key bindings for basic config
@@ -321,9 +322,10 @@
                ("C-x TAB" . smart-indent)
                ("C-x m" . set-rectangular-region-anchor)
                ("C-x M" . mc/mark-all-dwim)
-               ("C-x C-u" . color-rg-search-input-in-current-file)
-               ("C-x g" . color-rg-search-input)
-               ("C-x G" . color-rg-search-project)
+               ("C-x g" . ag-regexp)
+               ("C-x G" . ag-project-regexp)
+               ("C-x f" . ag-dired-regexp)
+               ("C-x F" . ag-project-dired-regexp)
                ("C-; c" . avy-goto-char)
                ("C-; w" . avy-goto-word-0)
                ("C-; l" . avy-goto-line)

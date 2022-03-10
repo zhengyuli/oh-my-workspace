@@ -1,5 +1,5 @@
 ;;; package --- init-window.el ---
-;; Time-stamp: <2022-03-10 10:22:40 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 13:54:37 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -30,6 +30,7 @@
 
 ;;; Require:
 (require 'winum-autoloads)
+(require 'zoom-autoloads)
 (require 'lazy-set-key)
 
 ;;; Code:
@@ -70,6 +71,23 @@
 
 (eval-after-load "winum" '(winum-settings))
 
+(defun zoom-settings ()
+  "Settings for `zoom'."
+
+  ;; ----------------------------------------------------------
+  (defun size-callback ()
+    "Callback for zoom size."
+    (cond ((> (frame-pixel-width) 1280)
+           '(90 . 0.75))
+          (t
+           '(0.5 . 0.5))))
+
+  ;; ----------------------------------------------------------
+  ;; Customize `zoom' related variables
+  (customize-set-variable 'zoom-size 'size-callback))
+
+(eval-after-load "zoom" '(zoom-settings))
+
 ;; ==================================================================================
 ;; Settings after init
 (add-hook 'after-init-hook
@@ -86,6 +104,9 @@
             ;; ----------------------------------------------------------
             ;; Enable winum mode
             (winum-mode 1)
+
+            ;; Enable zoom mode
+            (zoom-mode 1)
 
             ;; Toggle full screen
             (toggle-fullscreen)))

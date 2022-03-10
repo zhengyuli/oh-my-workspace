@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-08 14:01:28 星期二 by zhengyli>
+;; Time-stamp: <2022-03-10 11:05:26 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -43,8 +43,8 @@
  'local-custom-theme
  ;;; Basic faces --------------------------------------------------------------------
  ;; Basic default face.
- `(default ((t :background ,emacs-config-default-background
-			   :foreground ,emacs-config-default-foreground
+ `(default ((t :background ,emacs-config-background
+			   :foreground ,emacs-config-foreground
 			   :height 150
 			   :width normal
 			   :weight normal)))
@@ -62,13 +62,13 @@
  '(underline ((t :underline t)))
 
  ;; The basic fixed pitch face
- '(fixed-pitch ((t :family ,emacs-config-default-fixed-font)))
+ '(fixed-pitch ((t :family ,emacs-config-fixed-font)))
 
  ;; The basic fixed pitch face with serifs
- '(fixed-pitch-serif ((t :family ,emacs-config-default-fixed-font)))
+ '(fixed-pitch-serif ((t :family ,emacs-config-fixed-font)))
 
  ;; The basic variable-pitch face.
- '(variable-pitch ((t :family ,emacs-config-default-variable-font)))
+ '(variable-pitch ((t :family ,emacs-config-variable-font)))
 
  ;; Basic face for shadowed text
  '(shadow ((t :foreground "#B3B3B3")))
@@ -98,10 +98,10 @@
  '(nobreak-space ((t :inverse-video t)))
 
  ;; Basic mode line face for selected window
- `(mode-line ((t :background "#44475A" :foreground ,emacs-config-default-foreground)))
+ `(mode-line ((t :background "#44475A" :foreground ,emacs-config-foreground)))
 
  ;; Basic mode line face for non-selected windows
- `(mode-line-inactive ((t :background ,emacs-config-default-background :foreground "#6D6D6D")))
+ `(mode-line-inactive ((t :background ,emacs-config-background :foreground "#6D6D6D")))
 
  ;; Basic mode line face for highlighting
  '(mode-line-highlight ((t :background "#FF0000" :foreground "#FFFFFF")))
@@ -131,7 +131,7 @@
  '(minibuffer-prompt ((t :foreground "#63B8FF")))
 
  ;; Basic face for the fringes to the left and right of windows under X
- `(fringe ((t :background ,emacs-config-default-background)))
+ `(fringe ((t :background ,emacs-config-background)))
 
  ;; Basic face for the scroll bar colors under X
  '(scroll-bar ((t nil)))

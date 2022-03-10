@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-10 10:17:03 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 13:31:07 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -273,9 +273,7 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
             ;; Global key bindings for `dired'
             (lazy-set-key
              '(("C-x C-d" . dired)
-               ("C-x d" . dired-jump)
-               ("C-x f" . find-name-dired)
-               ("C-x F" . find-grep-dired)))))
+               ("C-x d" . dired-jump)))))
 
 ;; ==================================================================================
 ;;; Provide features

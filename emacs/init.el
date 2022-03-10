@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-09 23:17:38 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 11:05:37 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -47,17 +47,23 @@
 (defconst emacs-config-site-packages-path (concat emacs-config-root-path "site-packages/")
   "Emacs configuration site packages path.")
 
-;; Emacs configuration default background
-(defconst emacs-config-default-background "#282a36" "Emacs configuration default background.")
+;; Emacs configuration background
+(defconst emacs-config-background "#282A36" "Emacs configuration background.")
 
-;; Emacs configuration default foreground
-(defconst emacs-config-default-foreground "#f8f8f2" "Emacs configuration default foreground.")
+;; Emacs configuration foreground
+(defconst emacs-config-foreground "#F8F8F2" "Emacs configuration foreground.")
 
-;; Emacs configuration default fixed font
-(defconst emacs-config-default-fixed-font "Source Code Pro" "Emacs configuration default fixed font.")
+;; Emacs configuration fixed font
+(defconst emacs-config-fixed-font "Source Code Pro" "Emacs configuration fixed font.")
 
-;; Emacs configuration default variable font
-(defconst emacs-config-default-variable-font "Sans Serif" "Emacs configuration default variable font.")
+;; Emacs configuration variable font
+(defconst emacs-config-variable-font "Sans Serif" "Emacs configuration variable font.")
+
+;; Emacs configuration user
+(defconst emacs-config-user "_EMACS_CONFIG_USER_" "Emacs configuration user.")
+
+;; Emacs configuration email
+(defconst emacs-config-email "_EMACS_CONFIG_EMAIL_" "Emacs configuration email.")
 
 (defun add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.

@@ -1,5 +1,5 @@
 ;;; package --- init-w3m.el ---
-;; Time-stamp: <2022-03-10 10:22:07 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 11:04:24 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -48,7 +48,7 @@
   ;; ----------------------------------------------------------
   ;; Customize `w3m' related faces
   (custom-set-faces
-   `(w3m-tab-background ((t (:background ,emacs-config-default-background))))
+   `(w3m-tab-background ((t (:background ,emacs-config-background))))
    '(w3m-tab-mouse ((t (:background "#666666" :foreground "#FFD700"))))
    '(w3m-tab-selected ((t (:background "#666666" :foreground "#00BFFF"))))
    '(w3m-tab-selected-background ((t (:background "#666666" :foreground "#00BFFF"))))
