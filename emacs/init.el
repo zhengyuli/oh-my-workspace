@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-10 19:21:08 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 21:47:55 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -100,7 +100,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-dired")
 (load-library "init-terminal")
 (load-library "init-w3m")
-(load-library "init-mgit")
+(load-library "init-magit")
 (load-library "init-prog-mode")
 (load-library "init-cc-mode")
 (load-library "init-sh-script-mode")
