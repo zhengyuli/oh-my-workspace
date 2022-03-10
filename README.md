@@ -291,8 +291,8 @@ $
 $ brew install markdown
 $ brew install pandoc
 $
-# Dependencies for emacs dumb jump (version >= 13.0.0)
-$ brew install ripgrep
+# Dependencies for ag
+$ brew install ag
 $
 # Dependencies for emacs c&c++ mode (please install the latest version)
 $ brew install rtags
