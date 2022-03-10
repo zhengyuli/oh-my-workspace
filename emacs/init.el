@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-10 18:38:57 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 19:21:08 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -34,7 +34,9 @@
 ;; ==================================================================================
 (defun font-exists-p (font)
   "Check if font exists."
-  (if (null (x-list-fonts font)) nil t))
+  (if (display-graphic-p)
+      (if (null (x-list-fonts font)) nil t)
+    t))
 
 (defun add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.

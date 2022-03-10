@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-10 18:59:17 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 19:10:38 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -35,6 +35,7 @@
 (defun get-font-height ()
   "Get font height based on pixel."
   (cond
+   ((not (display-graphic-p)) 1)
    ((> (display-pixel-width) 2000) 160)
    (t 128)))
 
