@@ -1,5 +1,5 @@
 ;;; package --- init-company.el ---
-;; Time-stamp: <2022-03-10 10:13:23 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 14:26:17 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -122,8 +122,8 @@
   (company-quickhelp-mode 1)
 
   ;; Enable quickhelp terminal mode if any
-  (if (not (display-graphic-p))
-	  (company-quickhelp-terminal-mode 1)))
+  (unless (display-graphic-p)
+    (company-quickhelp-terminal-mode 1)))
 
 (eval-after-load "company" '(company-settings))
 

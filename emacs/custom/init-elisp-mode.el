@@ -1,5 +1,5 @@
 ;;; package --- init-elisp-mode.el ---
-;; Time-stamp: <2022-03-09 23:25:44 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 14:09:49 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -41,6 +41,7 @@
   (require 'eldoc)
   (require 'elisp-slime-nav)
   (require 'lisp-extra-font-lock)
+  (require 'rainbow-mode)
 
   ;; ----------------------------------------------------------
   ;; Customize `elisp-mode' related variables
@@ -58,7 +59,10 @@
 			  (lisp-extra-font-lock-mode 1)
 
               ;; Enable elisp slime navigation mode
-              (elisp-slime-nav-mode 1))))
+              (elisp-slime-nav-mode 1)
+
+              ;; Enable rainbow mode
+              (rainbow-mode 1))))
 
 (eval-after-load "elisp-mode" '(elisp-mode-settings))
 

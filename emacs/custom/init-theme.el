@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-10 11:05:26 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 15:45:32 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -101,7 +101,7 @@
  `(mode-line ((t :background "#44475A" :foreground ,emacs-config-foreground)))
 
  ;; Basic mode line face for non-selected windows
- `(mode-line-inactive ((t :background ,emacs-config-background :foreground "#6D6D6D")))
+ '(mode-line-inactive ((t :background "#a1a1a1" :foreground "#ebebeb")))
 
  ;; Basic mode line face for highlighting
  '(mode-line-highlight ((t :background "#FF0000" :foreground "#FFFFFF")))
@@ -113,7 +113,7 @@
  '(mode-line-buffer-id ((t :weight bold :slant italic :foreground "#FFA500")))
 
  ;; Basic header-line face
- '(header-line ((t :background "#333333" :foreground "#E5E5E5")))
+ `(header-line ((t :background ,emacs-config-background :foreground "#E5E5E5")))
 
  ;; Face used for vertical window dividers on ttys
  '(vertical-border ((t nil)))

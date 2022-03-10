@@ -1,5 +1,5 @@
 ;;; package --- init-window.el ---
-;; Time-stamp: <2022-03-10 13:54:37 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 14:00:16 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -75,7 +75,7 @@
   "Settings for `zoom'."
 
   ;; ----------------------------------------------------------
-  (defun size-callback ()
+  (defun zoom-size-callback ()
     "Callback for zoom size."
     (cond ((> (frame-pixel-width) 1280)
            '(90 . 0.75))
@@ -84,7 +84,7 @@
 
   ;; ----------------------------------------------------------
   ;; Customize `zoom' related variables
-  (customize-set-variable 'zoom-size 'size-callback))
+  (customize-set-variable 'zoom-size 'zoom-size-callback))
 
 (eval-after-load "zoom" '(zoom-settings))
 
