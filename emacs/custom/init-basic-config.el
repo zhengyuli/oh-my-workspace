@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-10 13:39:41 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 16:20:54 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -244,12 +244,22 @@
   (require 'wgrep-ag)
 
   ;; ----------------------------------------------------------
+  ;; Customize `ag' related variables
+  (customize-set-variable 'ag-reuse-buffers t)
+  (customize-set-variable 'ag-reuse-window t)
+
   ;; Customize `wgrep' related variables
   (customize-set-variable 'wgrep-enable-key "r")
   (customize-set-variable 'wgrep-auto-save-buffer t)
 
+  ;; ----------------------------------------------------------
   ;; Hooks for `ag'
-  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+  (add-hook 'ag-mode-hook 'wgrep-ag-setup)
+  (add-hook 'ag-search-finished-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              (select-window
+               (get-buffer-window (ag/buffer-name "" "" ""))))))
 
 (eval-after-load "ag" '(ag-settings))
 
@@ -322,8 +332,8 @@
                ("C-x TAB" . smart-indent)
                ("C-x m" . set-rectangular-region-anchor)
                ("C-x M" . mc/mark-all-dwim)
-               ("C-x g" . ag-regexp)
-               ("C-x G" . ag-project-regexp)
+               ("C-x g" . ag)
+               ("C-x G" . ag-project)
                ("C-x f" . ag-dired-regexp)
                ("C-x F" . ag-project-dired-regexp)
                ("C-; c" . avy-goto-char)
