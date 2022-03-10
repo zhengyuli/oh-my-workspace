@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-10 18:42:49 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 18:59:17 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -32,6 +32,12 @@
 
 ;;; Code:
 ;; ==================================================================================
+(defun get-font-height ()
+  "Get font height based on pixel."
+  (cond
+   ((> (display-pixel-width) 2000) 160)
+   (t 128)))
+
 ;; Enable `custom-theme-set-faces' act immediately
 (customize-set-variable 'custom--inhibit-theme-enable nil)
 
@@ -46,7 +52,7 @@
  `(default ((t :background ,emacs-config-background
 			   :foreground ,emacs-config-foreground
                :family ,emacs-config-fixed-font
-			   :height 160
+			   :height ,(get-font-height)
 			   :width normal
 			   :weight normal)))
 
