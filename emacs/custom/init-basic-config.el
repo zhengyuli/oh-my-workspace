@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-10 17:41:22 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 20:55:04 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -343,8 +343,8 @@
                ("M-M" . er/expand-region)
                ("M-o" . goto-last-change)
                ("M-y" . browse-kill-ring)
-               ("M-_" . text-scale-decrease)
-               ("M-+" . text-scale-increase)))
+               ("M--" . text-scale-decrease)
+               ("M-=" . text-scale-increase)))
 
             ;; ----------------------------------------------------------
             ;; Replace yes-or-no-p with y-or-no-p
