@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-10 19:10:38 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-10 20:08:42 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -36,7 +36,7 @@
   "Get font height based on pixel."
   (cond
    ((not (display-graphic-p)) 1)
-   ((> (display-pixel-width) 2000) 160)
+   ((> (display-pixel-width) 1500) 140)
    (t 128)))
 
 ;; Enable `custom-theme-set-faces' act immediately
