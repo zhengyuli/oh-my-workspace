@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-09 23:07:05 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 10:17:03 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -266,12 +266,16 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
   "Jump to Dired buffer corresponding to current buffer." t)
 
 ;; ==================================================================================
-;; Global key bindings for `dired'
-(lazy-set-key
- '(("C-x C-d" . dired)
-   ("C-x d" . dired-jump)
-   ("C-x f" . find-name-dired)
-   ("C-x F" . find-grep-dired)))
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Global key bindings for `dired'
+            (lazy-set-key
+             '(("C-x C-d" . dired)
+               ("C-x d" . dired-jump)
+               ("C-x f" . find-name-dired)
+               ("C-x F" . find-grep-dired)))))
 
 ;; ==================================================================================
 ;;; Provide features

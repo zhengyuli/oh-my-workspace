@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-09 23:39:14 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 09:08:54 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -259,35 +259,6 @@
 (eval-after-load "which-key" '(which-key-settings))
 
 ;; ==================================================================================
-;; Global key bindings for `basic'
-(lazy-set-key
- '(("C-x C-b" . ibuffer)
-   ("C-x k" . kill-this-buffer)
-   ("C-x b" . counsel-ibuffer)
-   ("C-x B" . counsel-recentf)
-   ("C-x C-f" . counsel-find-file)
-   ("M-x" . counsel-M-x)
-   ("C-s" . swiper-isearch)
-   ("C-r" . swiper-isearch-backward)
-   ("C-x <tab>" . smart-indent)
-   ("C-x TAB" . smart-indent)
-   ("C-x m" . set-rectangular-region-anchor)
-   ("C-x M" . mc/mark-all-dwim)
-   ("C-x C-u" . color-rg-search-input-in-current-file)
-   ("C-x g" . color-rg-search-input)
-   ("C-x G" . color-rg-search-project)
-   ("C-; c" . avy-goto-char)
-   ("C-; w" . avy-goto-word-0)
-   ("C-; l" . avy-goto-line)
-   ("M-w" . smart-copy)
-   ("M-k" . smart-kill)
-   ("M-g" . goto-line)
-   ("M-m" . set-mark-command)
-   ("M-M" . er/expand-region)
-   ("M-o" . goto-last-change)
-   ("M-y" . browse-kill-ring)
-   ("M-_" . text-scale-decrease)
-   ("M-+" . text-scale-increase)))
 
 ;; ==================================================================================
 ;; Update timestamp before saving files
@@ -334,6 +305,37 @@
             ;; Customize user and email
             (customize-set-variable 'user-full-name "zhengyu li")
             (customize-set-variable 'user-mail-address "lizhengyu419@outlook.com")
+
+            ;; ----------------------------------------------------------
+            ;; Global key bindings for basic config
+            (lazy-set-key
+             '(("C-x C-b" . ibuffer)
+               ("C-x k" . kill-this-buffer)
+               ("C-x b" . counsel-ibuffer)
+               ("C-x B" . counsel-recentf)
+               ("C-x C-f" . counsel-find-file)
+               ("M-x" . counsel-M-x)
+               ("C-s" . swiper-isearch)
+               ("C-r" . swiper-isearch-backward)
+               ("C-x <tab>" . smart-indent)
+               ("C-x TAB" . smart-indent)
+               ("C-x m" . set-rectangular-region-anchor)
+               ("C-x M" . mc/mark-all-dwim)
+               ("C-x C-u" . color-rg-search-input-in-current-file)
+               ("C-x g" . color-rg-search-input)
+               ("C-x G" . color-rg-search-project)
+               ("C-; c" . avy-goto-char)
+               ("C-; w" . avy-goto-word-0)
+               ("C-; l" . avy-goto-line)
+               ("M-w" . smart-copy)
+               ("M-k" . smart-kill)
+               ("M-g" . goto-line)
+               ("M-m" . set-mark-command)
+               ("M-M" . er/expand-region)
+               ("M-o" . goto-last-change)
+               ("M-y" . browse-kill-ring)
+               ("M-_" . text-scale-decrease)
+               ("M-+" . text-scale-increase)))
 
             ;; ----------------------------------------------------------
             ;; Replace yes-or-no-p with y-or-no-p

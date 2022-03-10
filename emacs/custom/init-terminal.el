@@ -1,5 +1,5 @@
 ;;; package --- init-terminal.el ---
-;; Time-stamp: <2022-03-09 23:12:36 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 10:21:20 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -79,9 +79,13 @@
 (eval-after-load "multi-term" '(multi-term-settings))
 
 ;; ==================================================================================
-;; Global key bindings for `multi-term'
-(lazy-set-key
- '(("<f9>" . multi-term)))
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Global key bindings for `multi-term'
+            (lazy-set-key
+             '(("<f9>" . multi-term)))))
 
 ;; ==================================================================================
 ;;; Provide features

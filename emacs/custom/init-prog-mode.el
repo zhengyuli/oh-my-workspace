@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-09 23:24:32 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 10:20:17 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -153,10 +153,14 @@
 (eval-after-load "prog-mode" '(prog-mode-settings))
 
 ;; ==================================================================================
-;; Global key bindings for `prog-mode'
-(lazy-set-key
- '(("C-c m" . iman)
-   ("C-<f7>" . generate-tag-table)))
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Global key bindings for `prog-mode'
+            (lazy-set-key
+             '(("C-c m" . iman)
+               ("C-<f7>" . generate-tag-table)))))
 
 ;; ==================================================================================
 ;;; Provide features

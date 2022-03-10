@@ -1,5 +1,5 @@
 ;;; package --- init-window.el ---
-;; Time-stamp: <2022-03-09 23:40:32 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 10:22:40 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -71,18 +71,18 @@
 (eval-after-load "winum" '(winum-settings))
 
 ;; ==================================================================================
-;; Global key bindings for `window'
-(lazy-set-key
- '(("C-<f10>" . toggle-fullscreen)
-   ("C-<left>" . shrink-window-horizontally)
-   ("C-<right>" . enlarge-window-horizontally)
-   ("C-<down>" . shrink-window)
-   ("C-<up>" . enlarge-window)))
-
-;; ==================================================================================
 ;; Settings after init
 (add-hook 'after-init-hook
           (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Global key bindings for `window'
+            (lazy-set-key
+             '(("C-<f10>" . toggle-fullscreen)
+               ("C-<left>" . shrink-window-horizontally)
+               ("C-<right>" . enlarge-window-horizontally)
+               ("C-<down>" . shrink-window)
+               ("C-<up>" . enlarge-window)))
+
             ;; ----------------------------------------------------------
             ;; Enable winum mode
             (winum-mode 1)

@@ -1,5 +1,5 @@
 ;;; package --- init-w3m.el ---
-;; Time-stamp: <2022-03-09 23:14:05 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 10:22:07 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -106,10 +106,14 @@
 (eval-after-load "w3m" '(w3m-settings))
 
 ;; ==================================================================================
-;; Global key bindings for `w3m'
-(lazy-set-key
- '(("C-x C-z" . toggle-w3m-with-other-buffer)
-   ("<f8>" . w3m-search-google-web-en)))
+;; Settings after init
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Global key bindings for `w3m'
+            (lazy-set-key
+             '(("C-x C-z" . toggle-w3m-with-other-buffer)
+               ("<f8>" . w3m-search-google-web-en)))))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,5 +1,5 @@
 ;;; package --- init-company.el ---
-;; Time-stamp: <2022-03-09 23:04:07 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 10:13:23 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

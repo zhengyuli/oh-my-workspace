@@ -1,5 +1,5 @@
 ;;; package --- init-centaur-tabs.el ---
-;; Time-stamp: <2022-03-09 23:33:22 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-10 10:06:22 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -40,74 +40,6 @@
   (require 'all-the-icons)
 
   ;; ----------------------------------------------------------
-  (defun centaur-tabs-buffer-groups ()
-    "Return the list of group names the current buffer belongs to.
-Return a list of one element based on major mode."
-    (list
-     (cond
-	  ((memq major-mode '(magit-process-mode
-						  magit-status-mode
-						  magit-diff-mode
-						  magit-log-mode
-						  magit-file-mode
-						  magit-blob-mode
-						  magit-blame-mode))
-	   "Magit"
-	   )
-	  ((memq major-mode
-		     '(help-mode
-			   apropos-mode
-			   Info-mode
-			   Man-mode))
-	   "Help"
-	   )
-	  ((memq major-mode
-		     '(rmail-mode
-			   rmail-edit-mode
-			   vm-summary-mode
-			   vm-mode
-			   mail-mode
-			   mh-letter-mode
-			   mh-show-mode
-			   mh-folder-mode
-			   gnus-summary-mode
-			   message-mode
-			   gnus-group-mode
-			   gnus-article-mode
-			   score-mode
-			   gnus-browse-killed-mode))
-	   "Mail"
-	   )
-	  ((memq major-mode '(org-mode
-						  org-agenda-mode
-						  diary-mode))
-	   "OrgMode"
-	   )
-	  ((derived-mode-p 'dired-mode)
-	   "Dired"
-	   )
-	  ((derived-mode-p 'term-mode)
-	   "Terminal"
-	   )
-	  ((derived-mode-p 'eshell-mode)
-	   "EShell"
-	   )
-	  ((derived-mode-p 'w3m-mode)
-	   "W3m"
-	   )
-	  ((and (not (string-equal "*scratch*" (buffer-name)))
-		    (derived-mode-p 'emacs-lisp-mode))
-	   "Elisp"
-	   )
-	  ((string-equal "*" (substring (buffer-name) 0 1))
-	   "Emacs"
-	   )
-	  (t
-	   (centaur-tabs-get-group-name (current-buffer))
-	   )
-	  )))
-
-  ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs' realted faces
   (custom-set-faces
    `(centaur-tabs-default ((t :background ,emacs-config-default-background)))
@@ -121,7 +53,6 @@ Return a list of one element based on major mode."
   (customize-set-variable 'centaur-tabs-height 25)
   (customize-set-variable 'centaur-tabs-style "zigzag")
   (customize-set-variable 'centaur-tabs-set-icons t)
-  ;; (customize-set-variable 'centaur-tabs-plain-icons t)
   (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
   (customize-set-variable 'centaur-tabs-set-close-button nil)
   (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
