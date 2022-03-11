@@ -305,7 +305,9 @@ $ go get golang.org/x/tools/cmd/guru
 
 #### Customization
 
-Install Source Code Pro font from: https://github.com/adobe-fonts/source-code-pro
+Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
+
+Install Source Serif Pro font from: https://fonts.google.com/specimen/Source+Serif+Pro
 
 Append the following settings to your `~/.virtualenvs/postmkvirtualenv`:
 

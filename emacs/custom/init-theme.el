@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-10 21:18:53 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-11 20:28:27 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -46,9 +46,7 @@
  `(default ((t :background ,emacs-config-background
 			   :foreground ,emacs-config-foreground
                :family ,emacs-config-fixed-font
-			   :height ,(if (memq window-system '(mac ns))
-                            (ceiling (* 1.15 (face-attribute 'default :height)))
-                          (face-attribute 'default :height))
+			   :height ,emacs-config-font-size
 			   :width normal
 			   :weight normal)))
 

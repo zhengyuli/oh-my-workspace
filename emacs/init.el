@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-10 21:47:55 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-11 20:26:51 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -81,6 +81,9 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 
 ;; Emacs configuration fixed serif font
 (defvar emacs-config-fixed-serif-font "Source Serif Pro" "Emacs configuration fixed serif font.")
+
+;; Emacs configuration font size
+(defvar emacs-config-font-size 150 "Emacs configuration font size.")
 
 ;; Emacs configuration user
 (defvar emacs-config-user "_EMACS_CONFIG_USER_" "Emacs configuration user.")

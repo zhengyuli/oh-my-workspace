@@ -1,5 +1,5 @@
 ;;; package --- init-window.el ---
-;; Time-stamp: <2022-03-10 21:35:01 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-11 19:43:39 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -105,10 +105,10 @@
             (winum-mode 1)
 
             ;; Enable zoom mode
-            (zoom-mode 1)
+            (zoom-mode 1)))
 
-            ;; Toggle full screen
-            (toggle-fullscreen)))
+;; Settings after emacs startup
+(add-hook 'emacs-startup-hook 'toggle-fullscreen)
 
 ;; ==================================================================================
 ;;; Provide features
