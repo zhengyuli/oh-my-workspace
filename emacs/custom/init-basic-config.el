@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-10 21:21:50 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-11 09:45:34 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -244,9 +244,13 @@
   (require 'wgrep-ag)
 
   ;; ----------------------------------------------------------
+  (defadvice ag/next-error-function (after ag/next-error-function-after activate)
+    (select-window
+     (get-buffer-window (ag/buffer-name "" "" ""))))
+
+  ;; ----------------------------------------------------------
   ;; Customize `ag' related variables
   (customize-set-variable 'ag-reuse-buffers t)
-  (customize-set-variable 'ag-reuse-window t)
 
   ;; Customize `wgrep' related variables
   (customize-set-variable 'wgrep-enable-key "r")

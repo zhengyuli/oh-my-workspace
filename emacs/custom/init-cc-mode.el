@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-10 21:28:19 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-11 09:06:01 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -32,8 +32,8 @@
 
 ;;; Code:
 ;; ==================================================================================
-(defun rtags-cmake-export-commands (root-dir)
-  "Call `cmake' to export `compile_commands.json' for rtags to index."
+(defun generate-compile-commands (root-dir)
+  "Call `cmake' to generate `compile_commands.json' for rtags to index."
   (interactive (list (read-directory-name "Project root directory: " "./")))
   (let ((source-dir root-dir)
 		(build-dir (expand-file-name ".cmake_rtags_build" root-dir)))
@@ -50,7 +50,7 @@
 		(source-dir root-dir)
 		(build-dir (expand-file-name ".cmake_rtags_build" root-dir)))
 	(cond ((file-exists-p (expand-file-name "CMakeLists.txt" source-dir))
-		   (rtags-cmake-export-commands source-dir))
+		   (generate-compile-commands source-dir))
 		  (t (error "Unsupported C/C++ project, should be managed by cmake...")))
 	(shell-command (concat rtags-exec-path " -J " build-dir) nil "*_RTAGS_Index_Errors_*")))
 
