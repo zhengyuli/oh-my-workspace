@@ -319,7 +319,6 @@ Append the following settings to your `~/.virtualenvs/postmkvirtualenv`:
 ```
 # Dependencies for emacs python-mode
 pip install "python-lsp-server[all]"
-pip install pylint
 
 # Other tools
 pip install ipython
