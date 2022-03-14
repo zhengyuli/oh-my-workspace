@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-14 19:50:07 Monday by zhengyuli>
+;; Time-stamp: <2022-03-14 21:57:52 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -47,8 +47,8 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 
 ;; ==================================================================================
 ;; Check Emacs version
-(unless (>= (string-to-number emacs-version) 26.3)
-  (error "The Emacs version must be >= 26.3."))
+(unless (>= (string-to-number emacs-version) 27.1)
+  (error "The Emacs version must be >= 27.1."))
 
 (unless (font-exists-p "Source Code Pro")
   (error "Missing \"Source Code Pro\" font, please install."))

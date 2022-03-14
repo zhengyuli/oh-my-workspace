@@ -1,5 +1,5 @@
 ;;; package --- init-lsp-mode.el ---
-;; Time-stamp: <2022-03-14 19:49:29 Monday by zhengyuli>
+;; Time-stamp: <2022-03-14 21:56:50 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -40,6 +40,12 @@
   (require 'lsp-ui)
 
   ;; ----------------------------------------------------------
+  ;; Customize `gc-cons-threshold' to 100MB
+  (customize-set-variable 'gc-cons-threshold (* 100 1024 1024))
+
+  ;; Customize `read-process-output-max' to 3MB, default 4k is too low
+  (customize-set-variable 'read-process-output-max (* 3 1024 1024))
+
   ;; Customize `lsp-mode' related variables
   (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
   (customize-set-variable 'lsp-idle-delay 0.5))
