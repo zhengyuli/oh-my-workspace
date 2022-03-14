@@ -1,5 +1,5 @@
 ;;; package --- init-theme.el ---
-;; Time-stamp: <2022-03-11 20:28:27 Friday by zhengyuli>
+;; Time-stamp: <2022-03-14 10:41:32 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -43,7 +43,8 @@
  'local-custom-theme
  ;;; Basic faces --------------------------------------------------------------------
  ;; Basic default face.
- `(default ((t :background ,emacs-config-background
+ `(default ((((type tty)))
+            (t :background ,emacs-config-background
 			   :foreground ,emacs-config-foreground
                :family ,emacs-config-fixed-font
 			   :height ,emacs-config-font-size
@@ -114,7 +115,8 @@
  '(mode-line-buffer-id ((t :weight bold :slant italic :foreground "#FFA500")))
 
  ;; Basic header-line face
- `(header-line ((t :background ,emacs-config-background :foreground "#E5E5E5")))
+ `(header-line ((((type tty)))
+                (t :background ,emacs-config-background :foreground "#E5E5E5")))
 
  ;; Face used for vertical window dividers on ttys
  '(vertical-border ((t nil)))
@@ -216,7 +218,7 @@
  '(font-lock-builtin-face ((t :foreground "#8ABEB7")))
 
  ;; Face name to use for function names
- '(font-lock-function-name-face ((t :foreground "#50BB00" :height 1.1)))
+ '(font-lock-function-name-face ((t :foreground "#50BB00" :height 1.1 :slant italic :bold t)))
 
  ;; Face name to use for variable names
  '(font-lock-variable-name-face ((t :foreground "#3A5FCD")))

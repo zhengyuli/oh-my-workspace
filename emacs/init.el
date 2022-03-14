@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-11 20:26:51 Friday by zhengyuli>
+;; Time-stamp: <2022-03-14 10:35:51 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -70,8 +70,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
   "Emacs configuration site packages path.")
 
 ;; Emacs configuration background
-(defvar emacs-config-background (if (display-graphic-p) "#282A36" "underlined")
-  "Emacs configuration background.")
+(defvar emacs-config-background "#282A36" "Emacs configuration background.")
 
 ;; Emacs configuration foreground
 (defvar emacs-config-foreground "#F8F8F2" "Emacs configuration foreground.")
