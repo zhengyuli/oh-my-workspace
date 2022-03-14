@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-10 21:32:16 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 15:58:03 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -93,9 +93,9 @@
   (require 'etags)
   (require 'dumb-jump)
   (require 'flycheck)
+  (require 'flycheck-clang-tidy)
   (require 'quickrun)
   (require 'rainbow-delimiters)
-  (require 'aggressive-indent)
   (require 'whitespace-cleanup-mode)
 
   ;; ----------------------------------------------------------
@@ -117,7 +117,8 @@
 
   ;; ----------------------------------------------------------
   ;; Hooks for `prog-mode'
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  (add-hook 'flycheck-mode-hook 'flycheck-clang-tidy-setup)
+  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
   (add-hook 'prog-mode-hook
             (lambda ()
               ;; -----------------------------------------------
@@ -136,9 +137,6 @@
 
               ;; Enable autopair mode
               (autopair-mode 1)
-
-              ;; Enable aggressive indent mode
-              (aggressive-indent-mode 1)
 
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)

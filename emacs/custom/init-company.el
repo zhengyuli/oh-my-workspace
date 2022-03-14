@@ -1,5 +1,5 @@
 ;;; package --- init-company.el ---
-;; Time-stamp: <2022-03-10 21:35:50 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 14:45:13 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -30,7 +30,6 @@
 
 ;;; Require:
 (require 'company-autoloads)
-(require 'lazy-set-key)
 
 ;;; Code:
 ;; ==================================================================================
@@ -38,10 +37,10 @@
   "Settings for `company'."
 
   ;; Require
+  (require 'company-box)
   (require 'company-quickhelp)
   (require 'company-quickhelp-terminal)
   (require 'company-yasnippet)
-  (require 'company-rtags)
   (require 'company-jedi)
 
   ;; ----------------------------------------------------------
@@ -56,23 +55,6 @@
               '(:with company-yasnippet))))
 
   ;; ----------------------------------------------------------
-  (defun cc-mode-company-settings ()
-    "Settings for `cc-mode' company backends."
-
-    ;; ----------------------------------------------------------
-    ;; Hooks for `cc-mode'
-    (dolist (hook '(c-mode-hook c++-mode-hook))
-      (add-hook hook
-                (lambda ()
-                  ;; ----------------------------------------------------------
-                  (when (vc-registered (buffer-file-name))
-                    ;; Add `company-rtags' backend
-                    (make-local-variable 'company-backends)
-                    (add-to-list 'company-backends
-                                 (append-company-backend-with-yas 'company-rtags)))))))
-
-  (eval-after-load "cc-mode" '(cc-mode-company-settings))
-
   (defun python-mode-company-settings ()
     "Settings for `python-mode' company backends."
 
@@ -116,13 +98,23 @@
   (customize-set-variable 'company-backends
                           (mapcar 'append-company-backend-with-yas company-backends))
 
-  ;; ----------------------------------------------------------
-  ;; Enable global company quickhelp mode
-  (company-quickhelp-mode 1)
+  ;; customize `company-box' related variables
+  (customize-set-variable 'company-box-scrollbar nil)
+  (customize-set-variable 'company-box-doc-enable t)
 
-  ;; Enable quickhelp terminal mode if any
-  (unless (display-graphic-p)
-    (company-quickhelp-terminal-mode 1)))
+  ;; ----------------------------------------------------------
+  ;; Hooks for `company'
+  (add-hook 'company-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable quickhelp terminal mode if any
+              (if (display-graphic-p)
+                  ;; Enable company box mode for graphic mode
+                  (company-box-mode 1)
+                ;; Enable quickhelp terminal mode for on-graphic mode
+                (progn
+                  (company-quickhelp-mode 1)
+                  (company-quickhelp-terminal-mode 1))))))
 
 (eval-after-load "company" '(company-settings))
 

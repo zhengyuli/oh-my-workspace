@@ -1,5 +1,5 @@
 ;;; package --- init-session.el ---
-;; Time-stamp: <2022-03-10 10:33:32 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 12:19:27 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -33,7 +33,16 @@
 
 ;;; Code:
 ;; ==================================================================================
+(defun workgroups2-settings ()
+  "Settings for `workgroups2'."
 
+  ;; ----------------------------------------------------------
+  ;; Customize `workgroups2' related variables
+  (customize-set-variable 'wg-control-frames nil))
+
+(eval-after-load "workgroups2" '(workgroups2-settings))
+
+;; ==================================================================================
 ;; Settings after init
 (add-hook 'after-init-hook
           (lambda ()

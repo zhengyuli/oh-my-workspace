@@ -301,6 +301,11 @@ $
 $ go get github.com/rogpeppe/godef
 $ go get golang.org/x/tools/cmd/gorename
 $ go get golang.org/x/tools/cmd/guru
+$
+# dependencies for C&C++ flycheck mode
+$ brew install llvm
+$ ln -s "/usr/local/opt/llvm/bin/clang-format" "/usr/local/bin/clang-format"
+$ ln -s "/usr/local/opt/llvm/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 ```
 
 #### Customization

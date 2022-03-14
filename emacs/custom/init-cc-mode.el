@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-11 09:06:01 Friday by zhengyu.li>
+;; Time-stamp: <2022-03-14 16:13:49 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -33,70 +33,55 @@
 ;;; Code:
 ;; ==================================================================================
 (defun generate-compile-commands (root-dir)
-  "Call `cmake' to generate `compile_commands.json' for rtags to index."
+  "Call `cmake' to generate `compile_commands.json' for clangd to index."
   (interactive (list (read-directory-name "Project root directory: " "./")))
   (let ((source-dir root-dir)
-		(build-dir (expand-file-name ".cmake_rtags_build" root-dir)))
+		(build-dir (expand-file-name "build" root-dir)))
 	(shell-command
 	 (format "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S %s -B %s" source-dir build-dir)
 	 nil "*_CMAKE_Export_Errors_*")))
 
-(defun rtags-index-project (root-dir)
-  "Call `rtags-rc' to index project."
-  (interactive (list (read-directory-name "Project root directory: " "./")))
-  (let ((rtags-exec-path (if (executable-find "rc")
-							 (executable-find "rc")
-						   (executable-find "rtags-rc")))
-		(source-dir root-dir)
-		(build-dir (expand-file-name ".cmake_rtags_build" root-dir)))
-	(cond ((file-exists-p (expand-file-name "CMakeLists.txt" source-dir))
-		   (generate-compile-commands source-dir))
-		  (t (error "Unsupported C/C++ project, should be managed by cmake...")))
-	(shell-command (concat rtags-exec-path " -J " build-dir) nil "*_RTAGS_Index_Errors_*")))
-
 ;; ==================================================================================
 ;; Customized settings for `cc-mode'
 (defun cc-mode-settings ()
-  "Settings for `cc-mode'."
-
-  ;; Require
-  (require 'ctypes)
-  (require 'rtags)
-  (require 'rtags-xref)
-  (require 'flycheck-rtags)
-  (require 'google-c-style)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `c-mode' and `c++-mode' mode related variables
-  (customize-set-variable 'ctypes-file-name "~/.emacs.d/ctypes")
-  (customize-set-variable 'ctypes-write-types-at-exit t)
-  (customize-set-variable 'rtags-completions-enabled t)
-  (customize-set-variable 'rtags-autostart-diagnostics t)
+  "settings for `cc-mode'."
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `cc-mode'
   (lazy-set-key
    '(("C-c C-c" . smart-comment)
      ("C-c k" . smart-uncomment))
-   c-mode-base-map)
+   c-mode-base-map))
+
+(eval-after-load "cc-mode" '(cc-mode-settings))
+
+;; Customized settings for `c-mode' and `c++-mode' mode
+(defun c&c++-mode-settings ()
+  "Settings for `c-mode' and `c++-mode' mode."
+
+  ;; Require
+  (require 'ctypes)
+  (require 'lsp-mode)
+  (require 'lsp-modeline)
+  (require 'lsp-ui)
+  (require 'google-c-style)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `cc-mode'
+  ;; Customize `ctypes' related variables
+  (customize-set-variable 'ctypes-file-name "~/.emacs.d/ctypes")
+  (customize-set-variable 'ctypes-write-types-at-exit t)
+
+  ;; Customize `lsp-mode' related variables
+  (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
+  (customize-set-variable 'lsp-idle-delay 0.1)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks for `c-mode' and `c++-mode'
   (dolist (hook '(c-mode-hook c++-mode-hook))
     (add-hook hook
               (lambda ()
-                ;; ----------------------------------------------------------
-                (if (not (vc-registered (buffer-file-name)))
-                    (flycheck-select-checker 'c/c++-clang)
-
-                  ;; Set flycheck checker with `rtags'
-                  (flycheck-select-checker 'rtags)
-
-                  ;; Enable rtags xref
-                  (rtags-xref-enable)
-
-                  ;; Start rtags process if any
-                  (rtags-start-process-unless-running))
+                ;; Enable lsp mode
+                (lsp-deferred)
 
                 ;; Enable ctypes auto parse mode
     		    (ctypes-auto-parse-mode 1)
@@ -104,10 +89,10 @@
                 ;; Load ctypes saved previously
     		    (ctypes-read-file nil nil t t)
 
-                ;; Enable google C&C++ style
+                ;; Enable google cc style
     		    (google-set-c-style)))))
 
-(eval-after-load "cc-mode" '(cc-mode-settings))
+(eval-after-load "cc-mode" '(c&c++-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features
