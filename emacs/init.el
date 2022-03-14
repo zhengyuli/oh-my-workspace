@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-14 10:35:51 Monday by zhengyuli>
+;; Time-stamp: <2022-03-14 19:50:07 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -104,6 +104,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-w3m")
 (load-library "init-magit")
 (load-library "init-prog-mode")
+(load-library "init-lsp-mode")
 (load-library "init-cc-mode")
 (load-library "init-sh-script-mode")
 (load-library "init-python-mode")

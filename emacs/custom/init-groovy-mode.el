@@ -1,5 +1,5 @@
 ;;; package --- init-groovy-mode.el ---
-;; Time-stamp: <2022-03-09 23:26:39 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:55:43 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -45,7 +45,7 @@
   (set-keymap-parent groovy-mode-map prog-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `groovy-mode'
+  ;; Hooks
   (add-hook 'groovy-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------

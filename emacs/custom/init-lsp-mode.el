@@ -1,5 +1,5 @@
-;;; package --- init-session.el ---
-;; Time-stamp: <2022-03-14 19:56:40 Monday by zhengyuli>
+;;; package --- init-lsp-mode.el ---
+;; Time-stamp: <2022-03-14 19:49:29 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -26,32 +26,28 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-session)
+;;   (require 'init-lsp-mode)
 
 ;;; Require:
-(require 'workgroups2-autoloads)
 
 ;;; Code:
 ;; ==================================================================================
-(defun workgroups2-settings ()
-  "Settings for `workgroups2'."
+(defun lsp-mode-settings ()
+  "Settings for `lsp-mode'."
+
+  ;; Require
+  (require 'lsp-modeline)
+  (require 'lsp-ui)
 
   ;; ----------------------------------------------------------
-  ;; Customize `workgroups2' related variables
-  (customize-set-variable 'wg-control-frames nil))
+  ;; Customize `lsp-mode' related variables
+  (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
+  (customize-set-variable 'lsp-idle-delay 0.5))
 
-(eval-after-load "workgroups2" '(workgroups2-settings))
-
-;; ==================================================================================
-;; Hooks
-(add-hook 'after-init-hook
-          (lambda ()
-            ;; ----------------------------------------------------------
-            ;; Enable global workgroups mode
-            (workgroups-mode 1)))
+(eval-after-load "lsp-mode" '(lsp-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-session)
+(provide 'init-lsp-mode)
 
-;;; init-session.el ends here
+;;; init-lsp-mode.el ends here

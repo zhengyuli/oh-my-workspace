@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-14 16:13:49 Monday by zhengyuli>
+;; Time-stamp: <2022-03-14 20:05:59 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -61,28 +61,19 @@
 
   ;; Require
   (require 'ctypes)
-  (require 'lsp-mode)
-  (require 'lsp-modeline)
-  (require 'lsp-ui)
   (require 'google-c-style)
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Customize `ctypes' related variables
   (customize-set-variable 'ctypes-file-name "~/.emacs.d/ctypes")
   (customize-set-variable 'ctypes-write-types-at-exit t)
 
-  ;; Customize `lsp-mode' related variables
-  (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
-  (customize-set-variable 'lsp-idle-delay 0.1)
-
   ;; ----------------------------------------------------------
-  ;; Hooks for `c-mode' and `c++-mode'
+  ;; Hooks
   (dolist (hook '(c-mode-hook c++-mode-hook))
     (add-hook hook
               (lambda ()
-                ;; Enable lsp mode
-                (lsp-deferred)
-
                 ;; Enable ctypes auto parse mode
     		    (ctypes-auto-parse-mode 1)
 
@@ -90,7 +81,10 @@
     		    (ctypes-read-file nil nil t t)
 
                 ;; Enable google cc style
-    		    (google-set-c-style)))))
+    		    (google-set-c-style)
+
+                ;; Enable lsp mode
+                (lsp-deferred)))))
 
 (eval-after-load "cc-mode" '(c&c++-mode-settings))
 

@@ -1,5 +1,5 @@
 ;;; package --- init-yasnippet.el ---
-;; Time-stamp: <2022-03-09 22:52:11 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:57:14 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -54,7 +54,7 @@
 (eval-after-load "yasnippet" '(yasnippet-settings))
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------

@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el ---
-;; Time-stamp: <2022-03-09 23:27:30 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:56:45 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -46,7 +46,7 @@
   (customize-set-variable 'markdown-enable-math t)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `markdown-mode'
+  ;; Hooks
   (add-hook 'markdown-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------

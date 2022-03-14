@@ -1,5 +1,5 @@
 ;;; package --- init-company.el ---
-;; Time-stamp: <2022-03-14 14:45:13 Monday by zhengyuli>
+;; Time-stamp: <2022-03-14 20:07:30 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -41,7 +41,6 @@
   (require 'company-quickhelp)
   (require 'company-quickhelp-terminal)
   (require 'company-yasnippet)
-  (require 'company-jedi)
 
   ;; ----------------------------------------------------------
   (defun append-company-backend-with-yas (backend)
@@ -53,22 +52,6 @@
 				  backend
 			    (list backend))
               '(:with company-yasnippet))))
-
-  ;; ----------------------------------------------------------
-  (defun python-mode-company-settings ()
-    "Settings for `python-mode' company backends."
-
-    ;; ----------------------------------------------------------
-    ;; Hooks for `python-mode'
-    (add-hook 'python-mode-hook
-              (lambda ()
-                ;; ----------------------------------------------------------
-                ;; Add `company-jedi' backend
-                (make-local-variable 'company-backends)
-                (add-to-list 'company-backends
-                             (append-company-backend-with-yas 'company-jedi)))))
-
-  (eval-after-load "python" '(python-mode-company-settings))
 
   ;; ----------------------------------------------------------
   ;; Customize `company' related faces
@@ -103,7 +86,7 @@
   (customize-set-variable 'company-box-doc-enable t)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `company'
+  ;; Hooks
   (add-hook 'company-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -119,7 +102,7 @@
 (eval-after-load "company" '(company-settings))
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------

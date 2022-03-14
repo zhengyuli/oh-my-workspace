@@ -1,5 +1,5 @@
 ;;; package --- init-modeline.el ---
-;; Time-stamp: <2022-03-09 23:34:27 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:55:30 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -33,7 +33,7 @@
 
 ;;; Code:
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------

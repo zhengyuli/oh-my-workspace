@@ -1,5 +1,5 @@
 ;;; package --- init-elisp-mode.el ---
-;; Time-stamp: <2022-03-10 14:09:49 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:54:23 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -48,7 +48,7 @@
   (customize-set-variable 'flycheck-emacs-lisp-load-path "inherit")
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `elisp-mode'
+  ;; Hooks
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------

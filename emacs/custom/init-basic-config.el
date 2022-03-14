@@ -1,5 +1,5 @@
 ;;; package --- init-basic-config.el ---
-;; Time-stamp: <2022-03-11 09:45:34 Friday by zhengyu.li>
+;; Time-stamp: <2022-03-14 20:03:50 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -205,7 +205,7 @@
   ;; Enable ivy rich mode
   (ivy-rich-mode 1)
 
-  ;; Enable all the icons ivy rich mode
+  ;; Enable global all the icons ivy rich mode
   (all-the-icons-ivy-rich-mode 1))
 
 (eval-after-load "ivy" '(ivy-settings))
@@ -257,8 +257,9 @@
   (customize-set-variable 'wgrep-auto-save-buffer t)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `ag'
+  ;; Hooks
   (add-hook 'ag-mode-hook 'wgrep-ag-setup)
+
   (add-hook 'ag-search-finished-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -276,16 +277,7 @@
 (eval-after-load "which-key" '(which-key-settings))
 
 ;; ==================================================================================
-;; Update timestamp before saving files
-(add-hook 'before-save-hook 'time-stamp)
-
-;; Update copyright before saving files
-(add-hook 'before-save-hook 'copyright-update)
-
-;; Delete trailing whitespace before saving files
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------
@@ -411,7 +403,21 @@
             (counsel-projectile-mode 1)
 
             ;; Enable global which key mode
-            (which-key-mode 1)))
+            (which-key-mode 1)
+
+            ;; ----------------------------------------------------------
+            ;; Hooks
+            (add-hook 'before-save-hook
+                      (lambda ()
+                        ;; ----------------------------------------------------------
+                        ;; Update timestamp
+                        (time-stamp)
+
+                        ;; Update copyright
+                        (copyright-update)
+
+                        ;; Delete trailing whitespace
+                        (delete-trailing-whitespace)))))
 
 ;; ==================================================================================
 ;;; Provide features

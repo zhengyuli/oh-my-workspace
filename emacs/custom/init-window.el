@@ -1,5 +1,5 @@
 ;;; package --- init-window.el ---
-;; Time-stamp: <2022-03-11 19:43:39 Friday by zhengyuli>
+;; Time-stamp: <2022-03-14 19:55:37 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -88,7 +88,7 @@
 (eval-after-load "zoom" '(zoom-settings))
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------
@@ -106,9 +106,6 @@
 
             ;; Enable zoom mode
             (zoom-mode 1)))
-
-;; Settings after emacs startup
-(add-hook 'emacs-startup-hook 'toggle-fullscreen)
 
 ;; ==================================================================================
 ;;; Provide features

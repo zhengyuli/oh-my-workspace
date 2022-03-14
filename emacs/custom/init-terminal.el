@@ -1,5 +1,5 @@
 ;;; package --- init-terminal.el ---
-;; Time-stamp: <2022-03-10 10:21:20 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:54:53 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -63,7 +63,7 @@
      ("M-i" . term-interrupt-subjob)))
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `multi-term'
+  ;; Hooks
   (add-hook 'term-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -79,7 +79,7 @@
 (eval-after-load "multi-term" '(multi-term-settings))
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------

@@ -1,5 +1,5 @@
 ;;; package --- init-go-mode.el ---
-;; Time-stamp: <2022-03-09 23:25:13 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:54:12 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -57,8 +57,9 @@
    go-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `go-mode'
+  ;; Hooks
   (add-hook 'before-save-hook 'gofmt-before-save)
+
   (add-hook 'go-mode-hook (lambda ()
                             ;; ----------------------------------------------------------
 							(go-eldoc-setup))))

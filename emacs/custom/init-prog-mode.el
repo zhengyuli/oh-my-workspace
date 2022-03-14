@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-14 15:58:03 Monday by zhengyuli>
+;; Time-stamp: <2022-03-14 20:11:44 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -61,25 +61,6 @@
          (backward-sexp))
         (t (message "couldn't find matched paren"))))
 
-(defun generate-tag-table (&optional tags-target-directory tags-storage-directory tags-suffix)
-  "Generate tag table for `TAGS-TARGET-DIRECTORY' in `TAGS-STORAGE-DIRECTORY' by `TAGS-SUFFIX'."
-  (interactive)
-  (or tags-target-directory
-      (setq tags-target-directory (read-directory-name "Target directory: ")))
-  (or tags-storage-directory
-      (setq tags-storage-directory (read-directory-name "Storage directory: ")))
-  (or tags-suffix
-      (setq tags-suffix (read-string "Regexp:")))
-  (if (equal tags-suffix "")
-      (warn "tags suffix is null")
-    (setq tags-suffix (replace-regexp-in-string "[ ]+" "\" -o -name \"" tags-suffix))
-    (with-temp-buffer
-      (cd tags-storage-directory)
-	  (message "indexing tags ... .. .")
-      (shell-command
-       (format "find %s -name \"%s\" | xargs etags" tags-target-directory tags-suffix))
-      (message "tags index done!"))))
-
 ;; ==================================================================================
 ;; Customized settings for `prog-mode'
 (defun prog-mode-settings ()
@@ -90,7 +71,6 @@
   (require 'paren)
   (require 'autopair)
   (require 'xref)
-  (require 'etags)
   (require 'dumb-jump)
   (require 'flycheck)
   (require 'flycheck-clang-tidy)
@@ -108,7 +88,6 @@
      ("C-c M-a" . beginning-of-defun)
      ("C-c M-e" . end-of-defun)
      ("C-]" . jump-to-matched-paren)
-     ("<f7>" . visit-tags-table)
 	 ("M-r" . xref-find-references)
      ("M-." . xref-find-definitions)
      ("M-," . xref-pop-marker-stack)
@@ -116,9 +95,11 @@
    prog-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `prog-mode'
+  ;; Hooks
   (add-hook 'flycheck-mode-hook 'flycheck-clang-tidy-setup)
+
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
+
   (add-hook 'prog-mode-hook
             (lambda ()
               ;; -----------------------------------------------
@@ -150,7 +131,7 @@
 (eval-after-load "prog-mode" '(prog-mode-settings))
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------

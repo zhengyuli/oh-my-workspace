@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el ---
-;; Time-stamp: <2022-03-09 23:22:19 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-14 20:12:47 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -38,12 +38,10 @@
 
   ;; Require
   (require 'flycheck)
-  (require 'py-yapf)
   (require 'sphinx-doc)
   (require 'python-docstring)
-  (require 'jedi-core)
-  (require 'anaconda-mode)
   (require 'virtualenvwrapper)
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   (defun sphinx-doc-format ()
@@ -60,11 +58,9 @@
 				  (executable-find "flake8"))))
 
   (defadvice venv-workon (after venv-workon-after activate)
-    (jedi:stop-server)
 	(flycheck-virtualenv-set-python-executables))
 
   (defadvice venv-deactivate (after venv-deactivate-after activate)
-    (jedi:stop-server)
 	(flycheck-virtualenv-set-python-executables))
 
   ;; ----------------------------------------------------------
@@ -81,15 +77,11 @@
   (lazy-set-key
    '(("C-c C-c" . smart-comment)
      ("C-c k" . smart-uncomment)
-	 ("M-r" . anaconda-mode-find-references)
-     ("M-." . jedi:goto-definition)
-     ("M-," . jedi:goto-definition-pop-marker)
-     ("M-*" . jedi:show-doc)
      ("C-c d f" . sphinx-doc-format))
    python-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `python-mode'
+  ;; Hooks
   (add-hook 'python-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -103,7 +95,10 @@
               (venv-initialize-interactive-shells)
 
               ;; Setup python virtual env flycheck checker
-			  (flycheck-virtualenv-set-python-executables))))
+			  (flycheck-virtualenv-set-python-executables)
+
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "python" '(python-mode-settings))
 

@@ -1,5 +1,5 @@
 ;;; package --- init-centaur-tabs.el ---
-;; Time-stamp: <2022-03-10 15:42:03 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:56:50 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -73,7 +73,7 @@
 (eval-after-load "centaur-tabs" '(centaur-tabs-settings))
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------

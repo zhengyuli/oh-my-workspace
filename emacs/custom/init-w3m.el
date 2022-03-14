@@ -1,5 +1,5 @@
 ;;; package --- init-w3m.el ---
-;; Time-stamp: <2022-03-10 11:04:24 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:55:50 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -106,7 +106,7 @@
 (eval-after-load "w3m" '(w3m-settings))
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------

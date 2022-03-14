@@ -217,6 +217,7 @@ Append the following settings to your `~/.zshrc`:
 
 ```
 # Settings for pyenv
+eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 ```
 
@@ -224,10 +225,10 @@ eval "$(pyenv init -)"
 
 ### Installation
 
-Using homebrew to download and install:
+Using git to download and install:
 
 ```
-$ brew install pyenv-virtualenvwrapper
+$ git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
 ```
 
 ### Customization
@@ -304,8 +305,7 @@ $ go get golang.org/x/tools/cmd/guru
 $
 # dependencies for C&C++ flycheck mode
 $ brew install llvm
-$ ln -s "/usr/local/opt/llvm/bin/clang-format" "/usr/local/bin/clang-format"
-$ ln -s "/usr/local/opt/llvm/bin/clang-tidy" "/usr/local/bin/clang-tidy"
+$ ln -s /usr/local/opt/llvm/bin/clang-tidy /usr/local/bin/clang-tidy
 ```
 
 #### Customization
@@ -318,9 +318,7 @@ Append the following settings to your `~/.virtualenvs/postmkvirtualenv`:
 
 ```
 # Dependencies for emacs python-mode
-pip install yapf
-pip install jedi==0.17.2
-pip install epc
+pip install "python-lsp-server[all]"
 pip install pylint
 
 # Other tools

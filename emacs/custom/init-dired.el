@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-10 13:31:07 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-14 19:57:08 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -245,8 +245,9 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
    dired-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Hooks for `dired'
+  ;; Hooks
   (add-hook 'dired-after-readin-hook 'dired-custom-sort)
+
   (add-hook 'dired-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -266,7 +267,7 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
   "Jump to Dired buffer corresponding to current buffer." t)
 
 ;; ==================================================================================
-;; Settings after init
+;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------
