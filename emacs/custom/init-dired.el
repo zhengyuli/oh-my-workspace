@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-15 14:33:42 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 15:51:55 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -227,7 +227,8 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
               (dired-async-mode 1)
 
               ;; Enable all the icons dired mode
-              (all-the-icons-dired-mode 1))))
+              (when (display-graphic-p)
+                (all-the-icons-dired-mode 1)))))
 
 (eval-after-load "dired" '(dired-settings))
 
