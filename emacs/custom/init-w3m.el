@@ -1,5 +1,5 @@
 ;;; package --- init-w3m.el ---
-;; Time-stamp: <2022-03-15 13:43:31 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 14:33:01 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -42,18 +42,6 @@
   (require 'w3m-favicon)
   (require 'w3m-session)
   (require 'w3m-lnum)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `w3m' related faces
-  (custom-set-faces
-   `(w3m-tab-background ((t (:background ,emacs-config-background))))
-   '(w3m-tab-mouse ((t (:background "#666666" :foreground "#FFD700"))))
-   '(w3m-tab-selected ((t (:background "#666666" :foreground "#00BFFF"))))
-   '(w3m-tab-selected-background ((t (:background "#666666" :foreground "#00BFFF"))))
-   '(w3m-tab-selected-retrieving ((t (:background "#666666" :foreground "#00BFFF"))))
-   '(w3m-tab-unselected ((t (:background "#333333" :foreground "#999999"))))
-   '(w3m-tab-unselected-retrieving ((t (:background "#333333" :foreground "#999999"))))
-   '(w3m-tab-unselected-unseen ((t (:background "#333333" :foreground "#999999")))))
 
   ;; ----------------------------------------------------------
   ;; Customize `browse-url' related variables

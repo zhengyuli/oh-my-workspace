@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-15 10:57:22 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 14:33:42 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -144,36 +144,6 @@ If `WITH-FULL-PATH' is t and `ONLY-PATH' is t, return only file path."
         (forward-line 2)
         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
     (set-buffer-modified-p nil))
-
-  ;; ----------------------------------------------------------
-  ;; Customize `dired' related faces
-  (custom-set-faces
-   '(dired-directory ((t :foreground "#00AAFF" :height 1.1)))
-   '(dired-flagged ((t (:foreground "#FF0000" :height 1.1))))
-   '(dired-header ((t (:foreground "#EE0000" :height 1.1))))
-   '(dired-ignored ((t (:foreground "#FFFFFF" :height 1.1))))
-   '(dired-mark ((t (:foreground "#FF1493" :height 1.1))))
-   '(dired-marked ((t (:foreground "#FFFF00" :height 1.1))))
-   '(dired-perm-write ((t (:foreground "#FF0000" :height 1.1))))
-   '(dired-symlink ((t (:foreground "#999999" :height 1.1))))
-   '(dired-warning ((t (:foreground "#FFD700" :height 1.1)))))
-
-  ;; Customize `dired-filetype-face' related faces
-  (custom-set-faces
-   '(dired-filetype-js ((t (:foreground "#00FF00" :height 1.1))))
-   '(dired-filetype-xml ((t (:foreground "#00FF00" :height 1.1))))
-   '(dired-filetype-omit ((t (:foreground "#B3B3B3" :height 1.1))))
-   '(dired-filetype-link ((t (:foreground "#FFFF00" :height 1.1))))
-   '(dired-filetype-music ((t (:foreground "#00FFFF" :height 1.1))))
-   '(dired-filetype-video ((t (:foreground "#FF337F" :height 1.1))))
-   '(dired-filetype-plain ((t (:foreground "#FFFFFF" :height 1.1))))
-   '(dired-filetype-image ((t (:foreground "#BB0000" :height 1.1))))
-   '(dired-filetype-source ((t (:foreground "#00FF00" :height 1.1))))
-   '(dired-filetype-common ((t (:foreground "#FFC0CB" :height 1.1))))
-   '(dired-filetype-execute ((t (:foreground "#FF0000" :height 1.1))))
-   '(dired-filetype-program ((t (:foreground "#EE0000" :height 1.1))))
-   '(dired-filetype-document ((t (:foreground "#AAAAFF" :height 1.1))))
-   '(dired-filetype-compress ((t (:foreground "#FFD700" :height 1.1)))))
 
   ;; ----------------------------------------------------------
   ;; Customize `dired' related variables

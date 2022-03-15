@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-15 13:44:23 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 15:09:20 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,6 +29,7 @@
 ;;   (require 'init)
 
 ;;; Require:
+(load-library 'package)
 
 ;;; Code:
 ;; ==================================================================================
@@ -43,12 +44,6 @@
 ;; Emacs configuration site packages path to load 3rd party settings
 (defvar emacs-config-site-packages-path (concat emacs-config-root-path "site-packages/")
   "Emacs configuration site packages path.")
-
-;; Emacs configuration background
-(defvar emacs-config-background "#282A36" "Emacs configuration background.")
-
-;; Emacs configuration foreground
-(defvar emacs-config-foreground "#F8F8F2" "Emacs configuration foreground.")
 
 ;; Emacs configuration fixed font
 (defvar emacs-config-fixed-font "Source Code Pro" "Emacs configuration fixed font.")
@@ -221,7 +216,6 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            dired-filetype-face
            all-the-icons-dired
            ztree
-           ztree-view
            ;; init-w3m.el
            w3m
            ;; init-magit.el
@@ -252,9 +246,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-dired")
 (load-library "init-w3m")
 (load-library "init-magit")
-(load-library "init-emms")
-(load-library "init-netease-cloud-music")
-(load-library "init-theme")
+(load-library "init-entertainment")
 
 ;; Load user custom settings
 (if (not (file-exists-p "~/.emacs.d/custom.el"))

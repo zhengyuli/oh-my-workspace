@@ -1,5 +1,5 @@
 ;;; package --- init-magit.el ---
-;; Time-stamp: <2022-03-15 13:41:49 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 14:34:59 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2022 zhengyu li
 ;;
@@ -47,21 +47,6 @@
 ;; Define `git' related aliases
 (defalias 'git-status 'magit-status)
 (defalias 'git-log 'magit-log-all)
-
-;; ==================================================================================
-;; Customized settings for `magit'
-(defun magit-settings ()
-  "Settings for `magit'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize magit related faces
-  (custom-set-faces
-   '(magit-diff-added ((t (:background "#919191" :foreground "white"))))
-   '(magit-diff-removed ((t (:background "#474747" :foreground "white"))))
-   '(magit-diff-added-highlight ((t (:background "#EE1289" :foreground "white"))))
-   '(magit-diff-removed-highlight ((t (:background "#54FF9F" :foreground "black"))))))
-
-(eval-after-load "magit" '(magit-settings))
 
 ;; ==================================================================================
 ;;; Provide features

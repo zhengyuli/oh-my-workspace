@@ -1,5 +1,5 @@
 ;;; package --- init-base-config.el ---
-;; Time-stamp: <2022-03-15 12:17:29 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 15:08:48 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -49,6 +49,7 @@
 (load-library "company-autoloads")
 (load-library "centaur-tabs-autoloads")
 (load-library "doom-modeline-autoloads")
+(load-library "doom-themes-autoloads")
 (load-library "winum-autoloads")
 (load-library "zoom-autoloads")
 (load-library "workgroups2-autoloads")
@@ -250,22 +251,6 @@
 (eval-after-load "counsel-projectile" '(counsel-projectile-settings))
 
 ;; ==================================================================================
-(defun avy-settings ()
-  "Settings for `avy'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `avy' related faces
-  (custom-set-faces
-   '(avy-background-face ((t :foreground "#90EE90")))
-   `(avy-lead-face ((t :background "#D2691E"
-                       :foreground ,emacs-config-background)))
-   '(avy-lead-face-0 ((t :inherit 'avy-lead-face)))
-   '(avy-lead-face-1 ((t :inherit 'avy-lead-face)))
-   '(avy-lead-face-2 ((t :inherit 'avy-lead-face)))))
-
-(eval-after-load "avy" '(avy-settings))
-
-;; ==================================================================================
 (defun ag-settings ()
   "Settings for `ag'."
 
@@ -347,23 +332,6 @@
               '(:with company-yasnippet))))
 
   ;; ----------------------------------------------------------
-  ;; Customize `company' related faces
-  (custom-set-faces
-   '(company-tooltip ((t :background "#4D4D4D" )))
-   '(company-tooltip-selection ((t :background "#8B0000")))
-   '(company-tooltip-common ((t :bold t :foreground "#CAFF70")))
-   '(company-scrollbar-fg ((t :inherit company-tooltip)))
-   '(company-scrollbar-bg ((t :inherit company-tooltip))))
-
-  ;; Customize `popup' related faces
-  (custom-set-faces
-   '(popup-tip-face ((t :foreground "#000000" :background "#FFF8DC"))))
-
-  ;; Customize `company-quickhelp' related colors
-  (customize-set-variable 'company-quickhelp-color-background "#FFF8DC")
-  (customize-set-variable 'company-quickhelp-color-foreground "#000000")
-
-  ;; ----------------------------------------------------------
   ;; Customize `company' related variables
   (customize-set-variable 'company-idle-delay 0)
   (customize-set-variable 'company-minimum-prefix-length 1)
@@ -400,17 +368,6 @@
 
   ;; Require
   (require 'all-the-icons)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `centaur-tabs' realted faces
-  (custom-set-faces
-   `(centaur-tabs-default ((t
-                            :background ,emacs-config-background
-                            :foreground ,emacs-config-background)))
-   '(centaur-tabs-unselected ((t :background "#333333" :foreground "#999999")))
-   '(centaur-tabs-selected ((t :background "#666666" :foreground "#00BFFF")))
-   '(centaur-tabs-unselected-modified	((t :background "#333333" :foreground "#FFD700")))
-   '(centaur-tabs-selected-modified ((t :background "#666666" :foreground "#FFD700"))))
 
   ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs' realted variables
@@ -527,6 +484,24 @@
               (company-mode -1))))
 
 (eval-after-load "multi-term" '(multi-term-settings))
+
+;; ==================================================================================
+;; Customized settings for `doom-themes'
+(defun doom-themes-settings ()
+  "Settings for `doom-themes'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize font settings
+  (set-face-attribute 'default nil :font emacs-config-fixed-font :height emacs-config-font-size)
+  (set-face-attribute 'fixed-pitch nil :font emacs-config-fixed-font)
+  (set-face-attribute 'fixed-pitch-serif nil :font emacs-config-fixed-serif-font)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `doom-themes' related variables
+  (customize-set-variable 'doom-themes-enable-bold t)
+  (customize-set-variable 'doom-themes-enable-italic t))
+
+(eval-after-load "doom-themes" '(doom-themes-settings))
 
 ;; ==================================================================================
 ;; Hooks
@@ -689,8 +664,14 @@
 (add-hook 'emacs-startup-hook
           (lambda ()
             ;; ----------------------------------------------------------
+            ;; Load doom theme
+            (load-theme 'doom-one t)
+
             ;; Enable global workgroups mode
-            (workgroups-mode 1)))
+            (workgroups-mode 1)
+
+            ;; Toggle full screen
+            (toggle-fullscreen)))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,5 +1,5 @@
 ;;; package --- init-entertainment.el.el ---
-;; Time-stamp: <2022-03-15 13:40:26 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 14:32:33 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -53,12 +53,6 @@
   (require 'emms-playlist-mode)
   (require 'emms-playlist-sort)
   (require 'emms-source-file)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `emms' related faces
-  (custom-set-faces
-   '(emms-playlist-track-face ((t (:foreground "#00FF00"))))
-   '(emms-playlist-selected-face ((t (:foreground "#00FFFF")))))
 
   ;; ----------------------------------------------------------
   ;; Customize `emms' related variables
