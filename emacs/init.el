@@ -29,7 +29,7 @@
 ;;   (require 'init)
 
 ;;; Require:
-(load-library 'package)
+(load-library "package")
 
 ;;; Code:
 ;; ==================================================================================
