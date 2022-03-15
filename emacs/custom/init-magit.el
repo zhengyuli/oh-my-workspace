@@ -1,5 +1,5 @@
 ;;; package --- init-magit.el ---
-;; Time-stamp: <2022-03-10 21:51:24 Thursday by zhengyu.li>
+;; Time-stamp: <2022-03-15 13:41:49 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-magit)
 
 ;;; Require:
-(require 'magit-autoloads)
+(load-library "magit-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

@@ -1,5 +1,5 @@
 ;;; package --- init-haskell-mode.el ---
-;; Time-stamp: <2022-03-09 23:26:00 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-15 13:41:22 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-haskell-mode)
 
 ;;; Require:
-(require 'haskell-mode-autoloads)
+(load-library "haskell-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

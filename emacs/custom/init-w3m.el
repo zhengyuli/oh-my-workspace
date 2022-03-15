@@ -1,5 +1,5 @@
 ;;; package --- init-w3m.el ---
-;; Time-stamp: <2022-03-14 19:55:50 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 13:43:31 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,8 +29,7 @@
 ;;   (require 'init-w3m)
 
 ;;; Require:
-(require 'w3m-extension-autoloads)
-(require 'lazy-set-key)
+(load-library "w3m-autoloads")
 
 ;;; Code:
 ;; ==================================================================================
@@ -42,7 +41,6 @@
   (require 'browse-url)
   (require 'w3m-favicon)
   (require 'w3m-session)
-  (require 'w3m-wget)
   (require 'w3m-lnum)
 
   ;; ----------------------------------------------------------
@@ -74,9 +72,6 @@
   (lazy-set-key
    '(("1" . w3m-session-save)
      ("2" . w3m-session-select)
-     ("3" . w3m-search-dict-cn)
-     ("4" . w3m-search-google-web-en)
-     ("5" . w3m-search-emacswiki)
      ("b" . w3m-previous-form)
      ("f" . w3m-next-form)
      ("B" . w3m-previous-anchor)
@@ -87,8 +82,6 @@
      ("-" . w3m-zoom-out-image)
      ("n" . next-line)
      ("p" . previous-line)
-     ("<down>" . w3m-visual-scroll-up)
-     ("<up>" . w3m-visual-scroll-down)
      ("h" . w3m-history)
      ("P" . w3m-view-previous-page)
      ("F" . w3m-view-next-page)
@@ -96,7 +89,6 @@
      ("C" . w3m-delete-other-buffers)
      ("d" . w3m-wget)
      ("o" . w3m-lnum-goto)
-     ("l" . w3m-copy-link-in-region)
      ("<" . w3m-shift-left)
      (">" . w3m-shift-right)
      ("<f5>" . w3m-reload-this-page)
@@ -104,16 +96,6 @@
    w3m-mode-map))
 
 (eval-after-load "w3m" '(w3m-settings))
-
-;; ==================================================================================
-;; Hooks
-(add-hook 'after-init-hook
-          (lambda ()
-            ;; ----------------------------------------------------------
-            ;; Global key bindings for `w3m'
-            (lazy-set-key
-             '(("C-x C-z" . toggle-w3m-with-other-buffer)
-               ("<f8>" . w3m-search-google-web-en)))))
 
 ;; ==================================================================================
 ;;; Provide features

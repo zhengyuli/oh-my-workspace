@@ -1,5 +1,5 @@
 ;;; package --- init-dired.el ---
-;; Time-stamp: <2022-03-14 19:57:08 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 10:57:22 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,6 @@
 ;;   (require 'init-dired)
 
 ;;; Require:
-(require 'lazy-set-key)
 
 ;;; Code:
 ;; ==================================================================================

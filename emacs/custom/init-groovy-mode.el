@@ -1,5 +1,5 @@
 ;;; package --- init-groovy-mode.el ---
-;; Time-stamp: <2022-03-14 19:55:43 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 13:41:04 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-groovy-mode)
 
 ;;; Require:
-(require 'groovy-mode-autoloads)
+(load-library "groovy-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================
@@ -37,20 +37,9 @@
 (defun groovy-mode-settings ()
   "Settings for `groovy-mode'."
 
-  ;; Require
-  (require 'groovy-electric)
-
   ;; ----------------------------------------------------------
   ;; Set `prog-mode-map' as the parent of `groovy-mode-map'
-  (set-keymap-parent groovy-mode-map prog-mode-map)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'groovy-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Enable groovy electric mode
-              (groovy-electric-mode 1))))
+  (set-keymap-parent groovy-mode-map prog-mode-map))
 
 (eval-after-load "groovy-mode" '(groovy-mode-settings))
 

@@ -1,5 +1,5 @@
 ;;; package --- init-scala-mode.el ---
-;; Time-stamp: <2022-03-09 23:26:20 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-15 13:42:54 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-scala-mode)
 
 ;;; Require:
-(require 'scala-mode-autoloads)
+(load-library "scala-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

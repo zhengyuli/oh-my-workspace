@@ -1,5 +1,5 @@
 ;;; package --- init-cmake-mode.el ---
-;; Time-stamp: <2022-03-09 23:26:52 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-15 13:38:56 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-cmake-mode)
 
 ;;; Require:
-(require 'cmake-mode-autoloads)
+(load-library "cmake-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

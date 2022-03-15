@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el ---
-;; Time-stamp: <2022-03-14 19:56:45 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 13:42:02 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-markdown-mode)
 
 ;;; Require:
-(require 'markdown-mode-autoloads)
+(load-library "markdown-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

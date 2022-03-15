@@ -1,5 +1,5 @@
 ;;; package --- init-go-mode.el ---
-;; Time-stamp: <2022-03-14 19:54:12 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 13:40:47 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-go-mode)
 
 ;;; Require:
-(require 'go-mode-autoloads)
+(load-library "go-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

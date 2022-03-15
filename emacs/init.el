@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-14 21:57:52 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 13:44:23 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -31,31 +31,6 @@
 ;;; Require:
 
 ;;; Code:
-;; ==================================================================================
-(defun font-exists-p (font)
-  "Check if font exists."
-  (if (display-graphic-p)
-      (if (null (x-list-fonts font)) nil t)
-    t))
-
-(defun add-subdirs-to-load-path (base-dir)
-  "Add subdirs to load path.
-Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
-  (let ((default-directory base-dir))
-    (add-to-list 'load-path base-dir)
-    (normal-top-level-add-subdirs-to-load-path)))
-
-;; ==================================================================================
-;; Check Emacs version
-(unless (>= (string-to-number emacs-version) 27.1)
-  (error "The Emacs version must be >= 27.1."))
-
-(unless (font-exists-p "Source Code Pro")
-  (error "Missing \"Source Code Pro\" font, please install."))
-
-(unless (font-exists-p "Source Serif Pro")
-  (error "Missing \"Source Serif Pro\" font, please install."))
-
 ;; ==================================================================================
 ;; Emacs configuration root path
 (defvar emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
@@ -91,20 +66,177 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (defvar emacs-config-email "_EMACS_CONFIG_EMAIL_" "Emacs configuration email.")
 
 ;; ==================================================================================
-;; Add all sub-directories under custom and site packages to load-path
+(defun font-exists-p (font)
+  "Check if font exists."
+  (if (display-graphic-p)
+      (if (null (x-list-fonts font)) nil t)
+    t))
+
+(defun add-subdirs-to-load-path (base-dir)
+  "Add subdirs to load path.
+Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
+  (let ((default-directory base-dir))
+    (add-to-list 'load-path base-dir)
+    (normal-top-level-add-subdirs-to-load-path)))
+
+(defun lazy-set-key (key-alist &optional keymap key-prefix)
+  "This function is to little type when define key binding.
+`KEYMAP' is a add keymap for some binding, default is `current-global-map'.
+`KEY-ALIST' is a alist contain main-key and command.
+`KEY-PREFIX' is a add prefix for some binding, default is nil."
+  (let (key def)
+    (or keymap (setq keymap (current-global-map)))
+    (if key-prefix
+        (setq key-prefix (concat key-prefix " "))
+      (setq key-prefix ""))
+    (dolist (element key-alist)
+      (setq key (car element))
+      (setq def (cdr element))
+      (cond ((stringp key) (setq key (read-kbd-macro (concat key-prefix key))))
+            ((vectorp key) nil)
+            (t (signal 'wrong-type-argument (list 'array key))))
+      (define-key keymap key def))))
+
+(defun lazy-unset-key (key-list &optional keymap)
+  "This function is to little type when unset key binding.
+`KEYMAP' is add keymap for some binding, default is `current-global-map'
+`KEY-LIST' is list contain key."
+  (let (key)
+    (or keymap (setq keymap (current-global-map)))
+    (dolist (key key-list)
+      (cond ((stringp key) (setq key (read-kbd-macro (concat key))))
+            ((vectorp key) nil)
+            (t (signal 'wrong-type-argument (list 'array key))))
+      (define-key keymap key nil))))
+
+;; ==================================================================================
+;; Basic check
+(unless (>= (string-to-number emacs-version) 27.1)
+  (error "The Emacs version must be >= 27.1."))
+
+(unless (font-exists-p "Source Code Pro")
+  (error "Missing \"Source Code Pro\" font, please install."))
+
+(unless (font-exists-p "Source Serif Pro")
+  (error "Missing \"Source Serif Pro\" font, please install."))
+
+;; ==================================================================================
+;; Add custom directory to load-path
 (add-subdirs-to-load-path emacs-config-custom-path)
 (add-subdirs-to-load-path emacs-config-site-packages-path)
 
+;; Initialize package manager
+;; Add package archives
+(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+
+;; Initialize packages
+(package-initialize)
+
+;; Refresh package list if any
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+;; Install packages
+(dolist (pkg
+         '(
+           ;; init-basic-config.el
+           beacon
+           smooth-scrolling
+           ivy
+           ivy-rich
+           all-the-icons
+           all-the-icons-ibuffer
+           all-the-icons-ivy-rich
+           counsel
+           counsel-projectile
+           swiper
+           which-key
+           visual-ascii-mode
+           undo-tree
+           browse-kill-ring
+           expand-region
+           multiple-cursors
+           visual-regexp-steroids
+           ag
+           wgrep-ag
+           goto-chg
+           avy
+           yasnippet
+           company
+           company-box
+           company-quickhelp
+           company-quickhelp-terminal
+           popup
+           centaur-tabs
+           doom-modeline
+           winum
+           zoom
+           workgroups2
+           multi-term
+           exec-path-from-shell
+           ;; init-program-base-config.el
+           dumb-jump
+           flycheck
+           flycheck-clang-tidy
+           quickrun
+           rainbow-delimiters
+           whitespace-cleanup-mode
+           lsp-mode
+           lsp-ui
+           ;; init-cc-mode.el
+           google-c-style
+           ;; init-python-mode.el
+           sphinx-doc
+           python-docstring
+           virtualenvwrapper
+           ;; init-go-mode.el
+           go-mode
+           go-eldoc
+           ;; init-elisp-mode.el
+           elisp-slime-nav
+           lisp-extra-font-lock
+           rainbow-mode
+           ;; init-haskell-mode.el
+           haskell-mode
+           ;; init-scala-mode.el
+           scala-mode
+           ;; init-groovy-mode.el
+           groovy-mode
+           ;; init-cmake-mode
+           cmake-mode
+           ;; init-dockerfile-mode.el
+           dockerfile-mode
+           ;; init-yaml-mode.el
+           yaml-mode
+           ;; init-markdown-mode.el
+           markdown-mode
+           markdownfmt
+           ;; init-dired.el
+           async
+           dired-single
+           dired-filter
+           dired-subtree
+           dired-hacks-utils
+           dired-filetype-face
+           all-the-icons-dired
+           ztree
+           ztree-view
+           ;; init-w3m.el
+           w3m
+           ;; init-magit.el
+           magit
+           ;; init-entertainment.el
+           emms
+           netease-cloud-music
+           ))
+  (unless (package-installed-p pkg)
+    (package-install pkg)))
+
+;; ==================================================================================
 ;; Load librares
-(load-library "init-basic-config")
-(load-library "init-yasnippet")
-(load-library "init-company")
-(load-library "init-dired")
-(load-library "init-terminal")
-(load-library "init-w3m")
-(load-library "init-magit")
-(load-library "init-prog-mode")
-(load-library "init-lsp-mode")
+(load-library "init-base-config")
+(load-library "init-program-base-config")
 (load-library "init-cc-mode")
 (load-library "init-sh-script-mode")
 (load-library "init-python-mode")
@@ -117,13 +249,12 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-dockerfile-mode")
 (load-library "init-yaml-mode")
 (load-library "init-markdown-mode")
+(load-library "init-dired")
+(load-library "init-w3m")
+(load-library "init-magit")
 (load-library "init-emms")
 (load-library "init-netease-cloud-music")
-(load-library "init-centaur-tabs")
-(load-library "init-modeline")
-(load-library "init-window")
 (load-library "init-theme")
-(load-library "init-session")
 
 ;; Load user custom settings
 (if (not (file-exists-p "~/.emacs.d/custom.el"))

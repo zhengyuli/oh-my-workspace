@@ -1,5 +1,5 @@
 ;;; package --- init-dockerfile-mode.el
-;; Time-stamp: <2022-03-09 23:27:05 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-15 13:39:19 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-dockerfile-mode)
 
 ;;; Require:
-(require 'dockerfile-mode-autoloads)
+(load-library "dockerfile-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

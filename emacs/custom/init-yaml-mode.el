@@ -1,5 +1,5 @@
 ;;; package --- init-yaml-mode.el ---
-;; Time-stamp: <2022-03-09 23:27:16 Wednesday by zhengyu.li>
+;; Time-stamp: <2022-03-15 13:44:00 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;   (require 'init-yaml-mode)
 
 ;;; Require:
-(require 'yaml-mode-autoloads)
+(load-library "yaml-mode-autoloads")
 
 ;;; Code:
 ;; ==================================================================================

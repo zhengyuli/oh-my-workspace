@@ -1,7 +1,7 @@
 ;;; package --- init-sh-script-mode.el ---
-;; Time-stamp: <2022-03-14 20:15:51 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 12:39:34 Tuesday by zhengyuli>
 
-;; Copyright (C) 2021 zhengyu li
+;; Copyright (C) 2021, 2022 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -34,9 +34,6 @@
 ;; Customized settings for `sh-script' mode
 (defun sh-script-settings ()
   "Settings for `sh-script'."
-
-  ;; Require
-  (require 'lazy-set-key)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `sh-mode'

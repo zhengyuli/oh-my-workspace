@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-14 20:05:59 Monday by zhengyuli>
+;; Time-stamp: <2022-03-15 08:40:27 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -60,7 +60,6 @@
   "Settings for `c-mode' and `c++-mode' mode."
 
   ;; Require
-  (require 'ctypes)
   (require 'google-c-style)
   (require 'lsp-mode)
 
@@ -74,12 +73,6 @@
   (dolist (hook '(c-mode-hook c++-mode-hook))
     (add-hook hook
               (lambda ()
-                ;; Enable ctypes auto parse mode
-    		    (ctypes-auto-parse-mode 1)
-
-                ;; Load ctypes saved previously
-    		    (ctypes-read-file nil nil t t)
-
                 ;; Enable google cc style
     		    (google-set-c-style)
 
