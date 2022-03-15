@@ -1,5 +1,5 @@
 ;;; package --- init-entertainment.el.el ---
-;; Time-stamp: <2022-03-15 14:32:33 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 17:08:57 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -30,7 +30,6 @@
 
 ;;; Require:
 (load-library "emms-autoloads")
-(load-library "netease-cloud-music-autoloads")
 
 ;;; Code:
 ;; ==================================================================================
