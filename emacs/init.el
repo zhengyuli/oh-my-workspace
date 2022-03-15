@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-15 15:18:17 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 16:20:42 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -140,6 +140,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            smooth-scrolling
            ivy
            ivy-rich
+           ivy-prescient
            all-the-icons
            all-the-icons-ibuffer
            all-the-icons-ivy-rich
@@ -159,6 +160,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            avy
            yasnippet
            company
+           company-prescient
            company-box
            company-quickhelp
            company-quickhelp-terminal

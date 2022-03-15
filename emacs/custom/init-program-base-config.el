@@ -1,5 +1,5 @@
 ;;; package --- init-program-base-config.el ---
-;; Time-stamp: <2022-03-15 10:50:13 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 16:17:16 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -145,7 +145,15 @@
 
   ;; Customize `lsp-mode' related variables
   (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
-  (customize-set-variable 'lsp-idle-delay 0.5))
+  (customize-set-variable 'lsp-idle-delay 0.5)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'lsp-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp ui doc show
+              (lsp-ui-doc-mode 1))))
 
 (eval-after-load "lsp-mode" '(lsp-mode-settings))
 

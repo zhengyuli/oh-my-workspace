@@ -1,5 +1,5 @@
 ;;; package --- init-base-config.el ---
-;; Time-stamp: <2022-03-15 15:08:48 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 16:19:24 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -32,6 +32,7 @@
 (load-library "beacon-autoloads")
 (load-library "smooth-scrolling-autoloads")
 (load-library "ivy-autoloads")
+(load-library "ivy-prescient-autoloads")
 (load-library "counsel-autoloads")
 (load-library "counsel-projectile")
 (load-library "swiper-autoloads")
@@ -47,6 +48,7 @@
 (load-library "avy-autoloads")
 (load-library "yasnippet-autoloads")
 (load-library "company-autoloads")
+(load-library "company-prescient-autoloads")
 (load-library "centaur-tabs-autoloads")
 (load-library "doom-modeline-autoloads")
 (load-library "doom-themes-autoloads")
@@ -233,7 +235,10 @@
   (ivy-rich-mode 1)
 
   ;; Enable global all the icons ivy rich mode
-  (all-the-icons-ivy-rich-mode 1))
+  (all-the-icons-ivy-rich-mode 1)
+
+  ;; Enable ivy prescient mode
+  (ivy-prescient-mode 1))
 
 (eval-after-load "ivy" '(ivy-settings))
 
@@ -358,7 +363,10 @@
                 ;; Enable quickhelp terminal mode for on-graphic mode
                 (progn
                   (company-quickhelp-mode 1)
-                  (company-quickhelp-terminal-mode 1))))))
+                  (company-quickhelp-terminal-mode 1)))
+
+              ;; Enable company prescient mode
+              (company-prescient-mode 1))))
 
 (eval-after-load "company" '(company-settings))
 
