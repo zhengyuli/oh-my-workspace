@@ -378,7 +378,6 @@
   (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
   (customize-set-variable 'centaur-tabs-set-close-button nil)
   (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
-  (customize-set-variable 'centaur-tabs-background-color emacs-config-background)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `centaur-tabs'
