@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-15 16:20:42 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 16:50:53 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -224,9 +224,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            ;; init-magit.el
            magit
            ;; init-entertainment.el
-           emms
-           netease-cloud-music
-           ))
+           emms))
   (unless (package-installed-p pkg)
     (package-install pkg)))
 
