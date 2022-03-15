@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-15 15:09:20 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 15:18:17 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -165,6 +165,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            popup
            centaur-tabs
            doom-modeline
+           doom-themes
            winum
            zoom
            workgroups2
