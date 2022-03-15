@@ -1,5 +1,5 @@
 ;;; package --- init-go-mode.el ---
-;; Time-stamp: <2022-03-15 13:40:47 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 21:34:46 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -33,6 +33,7 @@
 
 ;;; Code:
 ;; ==================================================================================
+;; Customized settings for `go-mode'
 (defun go-mode-settings ()
   "Settings for `go-mode'."
 

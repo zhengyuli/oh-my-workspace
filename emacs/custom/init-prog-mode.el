@@ -1,5 +1,5 @@
-;;; package --- init-program-base-config.el ---
-;; Time-stamp: <2022-03-15 16:17:16 Tuesday by zhengyuli>
+;;; package --- init-prog-mode.el ---
+;; Time-stamp: <2022-03-15 21:46:14 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -26,7 +26,7 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-program-base-config)
+;;   (require 'init-prog-mode)
 
 ;;; Require:
 
@@ -129,6 +129,7 @@
 (eval-after-load "prog-mode" '(prog-mode-settings))
 
 ;; ==================================================================================
+;; Customized settings for `lsp-mode'
 (defun lsp-mode-settings ()
   "Settings for `lsp-mode'."
 
@@ -159,6 +160,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-program-base-config)
+(provide 'init-prog-mode)
 
-;;; init-program-base-config.el ends here
+;;; init-prog-mode.el ends here

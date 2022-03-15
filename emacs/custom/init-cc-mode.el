@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-15 08:40:27 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 21:45:44 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -32,16 +32,6 @@
 
 ;;; Code:
 ;; ==================================================================================
-(defun generate-compile-commands (root-dir)
-  "Call `cmake' to generate `compile_commands.json' for clangd to index."
-  (interactive (list (read-directory-name "Project root directory: " "./")))
-  (let ((source-dir root-dir)
-		(build-dir (expand-file-name "build" root-dir)))
-	(shell-command
-	 (format "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S %s -B %s" source-dir build-dir)
-	 nil "*_CMAKE_Export_Errors_*")))
-
-;; ==================================================================================
 ;; Customized settings for `cc-mode'
 (defun cc-mode-settings ()
   "settings for `cc-mode'."
@@ -54,32 +44,6 @@
    c-mode-base-map))
 
 (eval-after-load "cc-mode" '(cc-mode-settings))
-
-;; Customized settings for `c-mode' and `c++-mode' mode
-(defun c&c++-mode-settings ()
-  "Settings for `c-mode' and `c++-mode' mode."
-
-  ;; Require
-  (require 'google-c-style)
-  (require 'lsp-mode)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `ctypes' related variables
-  (customize-set-variable 'ctypes-file-name "~/.emacs.d/ctypes")
-  (customize-set-variable 'ctypes-write-types-at-exit t)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (dolist (hook '(c-mode-hook c++-mode-hook))
-    (add-hook hook
-              (lambda ()
-                ;; Enable google cc style
-    		    (google-set-c-style)
-
-                ;; Enable lsp mode
-                (lsp-deferred)))))
-
-(eval-after-load "cc-mode" '(c&c++-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features

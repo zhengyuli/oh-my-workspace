@@ -1,5 +1,5 @@
-;;; package --- init-entertainment.el.el ---
-;; Time-stamp: <2022-03-15 17:08:57 Tuesday by zhengyuli>
+;;; package --- init-emms.el.el ---
+;; Time-stamp: <2022-03-15 21:42:12 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -26,7 +26,7 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-entertainment.el)
+;;   (require 'init-emms.el)
 
 ;;; Require:
 (load-library "emms-autoloads")
@@ -86,6 +86,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-entertainment.el)
+(provide 'init-emms.el)
 
-;;; init-entertainment.el.el ends here
+;;; init-emms.el.el ends here

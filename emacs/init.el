@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-15 16:50:53 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-15 21:46:27 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -134,9 +134,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 
 ;; Install packages
 (dolist (pkg
-         '(
-           ;; init-basic-config.el
-           beacon
+         '(beacon
            smooth-scrolling
            ivy
            ivy-rich
@@ -173,7 +171,6 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            workgroups2
            multi-term
            exec-path-from-shell
-           ;; init-program-base-config.el
            dumb-jump
            flycheck
            flycheck-clang-tidy
@@ -182,35 +179,23 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            whitespace-cleanup-mode
            lsp-mode
            lsp-ui
-           ;; init-cc-mode.el
            google-c-style
-           ;; init-python-mode.el
            sphinx-doc
            python-docstring
            virtualenvwrapper
-           ;; init-go-mode.el
            go-mode
            go-eldoc
-           ;; init-elisp-mode.el
            elisp-slime-nav
            lisp-extra-font-lock
            rainbow-mode
-           ;; init-haskell-mode.el
            haskell-mode
-           ;; init-scala-mode.el
            scala-mode
-           ;; init-groovy-mode.el
            groovy-mode
-           ;; init-cmake-mode
            cmake-mode
-           ;; init-dockerfile-mode.el
            dockerfile-mode
-           ;; init-yaml-mode.el
            yaml-mode
-           ;; init-markdown-mode.el
            markdown-mode
            markdownfmt
-           ;; init-dired.el
            async
            dired-single
            dired-filter
@@ -219,35 +204,33 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
            dired-filetype-face
            all-the-icons-dired
            ztree
-           ;; init-w3m.el
            w3m
-           ;; init-magit.el
            magit
-           ;; init-entertainment.el
            emms))
   (unless (package-installed-p pkg)
     (package-install pkg)))
 
 ;; ==================================================================================
 ;; Load librares
-(load-library "init-base-config")
-(load-library "init-program-base-config")
+(load-library "init-base")
+(load-library "init-prog-mode")
 (load-library "init-cc-mode")
-(load-library "init-sh-script-mode")
+(load-library "init-c&c++-mode")
 (load-library "init-python-mode")
 (load-library "init-go-mode")
 (load-library "init-elisp-mode")
 (load-library "init-haskell-mode")
 (load-library "init-scala-mode")
 (load-library "init-groovy-mode")
-(load-library "init-cmake-mode")
+(load-library "init-sh-script-mode")
 (load-library "init-dockerfile-mode")
+(load-library "init-cmake-mode")
 (load-library "init-yaml-mode")
 (load-library "init-markdown-mode")
 (load-library "init-dired")
 (load-library "init-w3m")
 (load-library "init-magit")
-(load-library "init-entertainment")
+(load-library "init-emms")
 
 ;; Load user custom settings
 (if (not (file-exists-p "~/.emacs.d/custom.el"))

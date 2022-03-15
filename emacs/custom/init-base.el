@@ -1,5 +1,5 @@
-;;; package --- init-base-config.el ---
-;; Time-stamp: <2022-03-15 16:19:24 Tuesday by zhengyuli>
+;;; package --- init-base.el ---
+;; Time-stamp: <2022-03-15 21:37:10 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -26,13 +26,12 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-base-config)
+;;   (require 'init-base)
 
 ;;; Require:
 (load-library "beacon-autoloads")
 (load-library "smooth-scrolling-autoloads")
 (load-library "ivy-autoloads")
-(load-library "ivy-prescient-autoloads")
 (load-library "counsel-autoloads")
 (load-library "counsel-projectile")
 (load-library "swiper-autoloads")
@@ -48,14 +47,13 @@
 (load-library "avy-autoloads")
 (load-library "yasnippet-autoloads")
 (load-library "company-autoloads")
-(load-library "company-prescient-autoloads")
-(load-library "centaur-tabs-autoloads")
-(load-library "doom-modeline-autoloads")
-(load-library "doom-themes-autoloads")
 (load-library "winum-autoloads")
 (load-library "zoom-autoloads")
 (load-library "workgroups2-autoloads")
 (load-library "multi-term-autoloads")
+(load-library "centaur-tabs-autoloads")
+(load-library "doom-modeline-autoloads")
+(load-library "doom-themes-autoloads")
 
 ;;; Code:
 ;; ==================================================================================
@@ -220,6 +218,7 @@
 
   ;; Require
   (require 'ivy-rich)
+  (require 'ivy-prescient)
   (require 'all-the-icons-ivy-rich)
 
   ;; ----------------------------------------------------------
@@ -234,11 +233,11 @@
   ;; Enable ivy rich mode
   (ivy-rich-mode 1)
 
-  ;; Enable global all the icons ivy rich mode
-  (all-the-icons-ivy-rich-mode 1)
+;; Enable ivy prescient mode
+  (ivy-prescient-mode 1)
 
-  ;; Enable ivy prescient mode
-  (ivy-prescient-mode 1))
+  ;; Enable global all the icons ivy rich mode
+  (all-the-icons-ivy-rich-mode 1))
 
 (eval-after-load "ivy" '(ivy-settings))
 
@@ -320,10 +319,8 @@
   "Settings for `company'."
 
   ;; Require
-  (require 'company-box)
-  (require 'company-quickhelp)
-  (require 'company-quickhelp-terminal)
   (require 'company-yasnippet)
+  (require 'company-prescient)
 
   ;; ----------------------------------------------------------
   (defun append-company-backend-with-yas (backend)
@@ -358,45 +355,25 @@
               ;; ----------------------------------------------------------
               ;; Enable quickhelp terminal mode if any
               (if (display-graphic-p)
-                  ;; Enable company box mode for graphic mode
-                  (company-box-mode 1)
-                ;; Enable quickhelp terminal mode for on-graphic mode
+                  (progn
+                    (require 'company-box)
+
+                    ;; Enable company box mode for graphic mode
+                    (company-box-mode 1))
                 (progn
+                  (require 'company-quickhelp)
+                  (require 'company-quickhelp-terminal)
+
+                  ;; Enable company quickhelp mode
                   (company-quickhelp-mode 1)
+
+                  ;; Enable company quickhelp terminal mode
                   (company-quickhelp-terminal-mode 1)))
 
               ;; Enable company prescient mode
               (company-prescient-mode 1))))
 
 (eval-after-load "company" '(company-settings))
-
-;; ==================================================================================
-(defun centaur-tabs-settings ()
-  "Settings for `centaur-tabs'."
-
-  ;; Require
-  (require 'all-the-icons)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `centaur-tabs' realted variables
-  (customize-set-variable 'centaur-tabs-height 25)
-  (customize-set-variable 'centaur-tabs-style "zigzag")
-  (if (display-graphic-p)
-      (customize-set-variable 'centaur-tabs-set-icons t))
-  (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
-  (customize-set-variable 'centaur-tabs-set-close-button nil)
-  (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `centaur-tabs'
-  (lazy-set-key
-   '(("M-p" . centaur-tabs-backward)
-     ("M-n" . centaur-tabs-forward)
-     ("M-P" . centaur-tabs-counsel-switch-group)
-     ("M-N" . centaur-tabs-counsel-switch-group))
-   centaur-tabs-mode-map))
-
-(eval-after-load "centaur-tabs" '(centaur-tabs-settings))
 
 ;; ==================================================================================
 (defun winum-settings ()
@@ -446,6 +423,34 @@
   (customize-set-variable 'wg-control-frames nil))
 
 (eval-after-load "workgroups2" '(workgroups2-settings))
+
+;; ==================================================================================
+(defun centaur-tabs-settings ()
+  "Settings for `centaur-tabs'."
+
+  ;; Require
+  (require 'all-the-icons)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `centaur-tabs' realted variables
+  (customize-set-variable 'centaur-tabs-height 25)
+  (customize-set-variable 'centaur-tabs-style "zigzag")
+  (if (display-graphic-p)
+      (customize-set-variable 'centaur-tabs-set-icons t))
+  (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
+  (customize-set-variable 'centaur-tabs-set-close-button nil)
+  (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `centaur-tabs'
+  (lazy-set-key
+   '(("M-p" . centaur-tabs-backward)
+     ("M-n" . centaur-tabs-forward)
+     ("M-P" . centaur-tabs-counsel-switch-group)
+     ("M-N" . centaur-tabs-counsel-switch-group))
+   centaur-tabs-mode-map))
+
+(eval-after-load "centaur-tabs" '(centaur-tabs-settings))
 
 ;; ==================================================================================
 ;;Customized settings for `multi-term'
@@ -682,6 +687,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-base-config)
+(provide 'init-base)
 
-;;; init-base-config.el ends here
+;;; init-base.el ends here
