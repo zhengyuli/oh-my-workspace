@@ -277,11 +277,6 @@ $ brew untap railwaycat/emacsmacport
 Installing emacs related dependencies:
 
 ```
-# Dependencies for emacs netease cloud music
-$ brew install mpv
-$ brew install socat
-$ brew install npm
-$
 # Dependencies for emacs w3m
 $ brew install w3m
 $
@@ -292,22 +287,19 @@ $
 $ brew install markdown
 $ brew install pandoc
 $
-# Dependencies for ag
+# Dependencies for emacs ag
 $ brew install ag
-$
-# Dependencies for emacs c&c++ mode (please install the latest version)
-$ brew install rtags
 $
 # Dependencies for emacs golang mode
 $ go get github.com/rogpeppe/godef
 $ go get golang.org/x/tools/cmd/gorename
 $ go get golang.org/x/tools/cmd/guru
 $
-# dependencies for C&C++ flycheck mode
+# dependencies for emacs C&C++ flycheck mode
 $ brew install llvm
 $ ln -s /usr/local/opt/llvm/bin/clang-tidy /usr/local/bin/clang-tidy
 $
-# Dependencies for emacs lsp-mode for python
+# Dependencies for emacs python lsp server of lsp-mode
 $ pip install "python-lsp-server[all]"
 
 ```

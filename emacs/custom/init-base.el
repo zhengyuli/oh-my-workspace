@@ -1,5 +1,5 @@
 ;;; package --- init-base.el ---
-;; Time-stamp: <2022-03-16 20:21:13 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-16 22:05:43 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -703,8 +703,9 @@
             ;; ----------------------------------------------------------
             ;; Global key bindings for basic config
             (lazy-set-key
-             '(
+             '(;; Kill current buffer
                ("C-x k" . kill-this-buffer)
+               ;; Activate mark
                ("M-m" . set-mark-command)
                ;; Smart edit
                ("C-x <tab>" . smart-indent)
@@ -740,6 +741,8 @@
                ("C-; w" . avy-goto-word-0)
                ("C-; l" . avy-goto-line)
                ("M-g" . goto-line)
+               ;; Switch window
+               ("C-x o" . switch-window)
                ;; Multi term
                ("<f9>" . multi-term)
                ;; Dired
