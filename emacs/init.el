@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-16 13:44:00 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-16 19:59:17 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -224,7 +224,6 @@ Return a list of installed packages or nil for every skipped package."
  'dumb-jump
  ;; ******************************
  'lsp-mode
- 'lsp-ui
  ;; ==============================
  ;; init-c&c++-mode.el
  'google-c-style

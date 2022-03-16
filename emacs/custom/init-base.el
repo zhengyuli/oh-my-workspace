@@ -1,5 +1,5 @@
 ;;; package --- init-base.el ---
-;; Time-stamp: <2022-03-16 12:22:28 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-16 20:21:13 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -818,6 +818,9 @@
             ;; ----------------------------------------------------------
             ;; Load doom theme
             (load-theme 'doom-one t)
+
+            ;; Toggle fullscreen
+            (toggle-fullscreen)
 
             ;; Enable global workgroups mode
             (workgroups-mode 1)))
