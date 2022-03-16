@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-16 12:39:19 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-16 13:44:00 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -232,7 +232,7 @@ Return a list of installed packages or nil for every skipped package."
  ;; init-python-mode.el
  'sphinx-doc
  'python-docstring
- 'virtualenvwrapper
+ 'pyvenv
  ;; ==============================
  ;; init-go-mode.el
  'go-mode

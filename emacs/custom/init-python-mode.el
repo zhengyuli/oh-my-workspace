@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el ---
-;; Time-stamp: <2022-03-14 20:12:47 Monday by zhengyuli>
+;; Time-stamp: <2022-03-16 13:42:48 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -40,7 +40,7 @@
   (require 'flycheck)
   (require 'sphinx-doc)
   (require 'python-docstring)
-  (require 'virtualenvwrapper)
+  (require 'pyvenv)
   (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
@@ -57,11 +57,13 @@
 	  (setq-local flycheck-python-flake8-executable
 				  (executable-find "flake8"))))
 
-  (defadvice venv-workon (after venv-workon-after activate)
-	(flycheck-virtualenv-set-python-executables))
+  (defadvice pyvenv-workon (after venv-workon-after activate)
+	(flycheck-virtualenv-set-python-executables)
+    (lsp-restart-workspace))
 
-  (defadvice venv-deactivate (after venv-deactivate-after activate)
-	(flycheck-virtualenv-set-python-executables))
+  (defadvice pyvenv-deactivate (after venv-deactivate-after activate)
+	(flycheck-virtualenv-set-python-executables)
+    (lsp-restart-workspace))
 
   ;; ----------------------------------------------------------
   ;; Customize `python-mode' related variables
@@ -96,6 +98,9 @@
 
               ;; Setup python virtual env flycheck checker
 			  (flycheck-virtualenv-set-python-executables)
+
+              ;; Enable pyvenv mode
+              (pyvenv-mode 1)
 
               ;; Enable lsp mode
               (lsp-deferred))))
