@@ -1,5 +1,5 @@
 ;;; package --- init-base.el ---
-;; Time-stamp: <2022-03-15 21:37:10 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-16 12:22:28 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -29,31 +29,6 @@
 ;;   (require 'init-base)
 
 ;;; Require:
-(load-library "beacon-autoloads")
-(load-library "smooth-scrolling-autoloads")
-(load-library "ivy-autoloads")
-(load-library "counsel-autoloads")
-(load-library "counsel-projectile")
-(load-library "swiper-autoloads")
-(load-library "which-key-autoloads")
-(load-library "visual-ascii-mode-autoloads")
-(load-library "undo-tree-autoloads")
-(load-library "browse-kill-ring-autoloads")
-(load-library "expand-region-autoloads")
-(load-library "multiple-cursors-autoloads")
-(load-library "visual-regexp-steroids-autoloads")
-(load-library "ag-autoloads")
-(load-library "goto-chg-autoloads")
-(load-library "avy-autoloads")
-(load-library "yasnippet-autoloads")
-(load-library "company-autoloads")
-(load-library "winum-autoloads")
-(load-library "zoom-autoloads")
-(load-library "workgroups2-autoloads")
-(load-library "multi-term-autoloads")
-(load-library "centaur-tabs-autoloads")
-(load-library "doom-modeline-autoloads")
-(load-library "doom-themes-autoloads")
 
 ;;; Code:
 ;; ==================================================================================
@@ -126,6 +101,16 @@
   (setq url-proxy-services nil)
   (show-http-proxy))
 
+(defun get-git-user-name ()
+  "Get git user name."
+  (interactive)
+  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.name"))))
+
+(defun get-git-user-email ()
+  "Get git user email."
+  (interactive)
+  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.email"))))
+
 (defun toggle-fullscreen ()
   "Toggle full screen."
   (interactive)
@@ -141,18 +126,31 @@
        'fullboth))))
 
 ;; ==================================================================================
-(defun tramp-settings ()
-  "Settings for `tramp'."
+;; Customized settings for `visual-regexp-steroids'
+(defun visual-regexp-steroids-settings ()
+  "Settings for `visual-regexp-steroids'."
 
   ;; ----------------------------------------------------------
-  ;; Customize `tramp' related variables
-  (customize-set-variable 'tramp-default-method "ssh")
-  (customize-set-variable 'password-cache-expiry 3600)
-  (customize-set-variable 'tramp-auto-save-directory "~/.emacs.d/tramp-auto-save"))
+  ;; Key bindings for `vr/minibuffer-keymap'
+  (lazy-set-key
+   '(("C-p" . previous-history-element)
+     ("C-n" . next-history-element))
+   vr/minibuffer-keymap))
 
-(eval-after-load "tramp" '(tramp-settings))
+(eval-after-load "visual-regexp-steroids" '(visual-regexp-steroids-settings))
 
 ;; ==================================================================================
+;; Customized settings for `which-key'
+(defun which-key-settings ()
+  "settings for `which-key'."
+
+  ;; ----------------------------------------------------------
+  (which-key-setup-side-window-right))
+
+(eval-after-load "which-key" '(which-key-settings))
+
+;; ==================================================================================
+;; Customized settings for `undo-tree'
 (defun undo-tree-settings ()
   "Settings for `undo-tree'."
 
@@ -174,45 +172,7 @@
 (eval-after-load "undo-tree" '(undo-tree-settings))
 
 ;; ==================================================================================
-(defun visual-regexp-steroids-settings ()
-  "Settings for `visual-regexp-steroids'."
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `vr/minibuffer-keymap'
-  (lazy-set-key
-   '(("C-p" . previous-history-element)
-     ("C-n" . next-history-element))
-   vr/minibuffer-keymap))
-
-(eval-after-load "visual-regexp-steroids" '(visual-regexp-steroids-settings))
-
-;; ==================================================================================
-(defun ispell-settings ()
-  "Settings for `ispell'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `ispell' related variables
-  (customize-set-variable 'ispell-program-name "aspell")
-  (customize-set-variable 'ispell-extra-args '("--lang=en" "--reverse"))
-  (customize-set-variable 'ispell-silently-savep t)
-  (customize-set-variable 'ispell-dictionary "english"))
-
-(eval-after-load "ispell" '(ispell-settings))
-
-;; ==================================================================================
-(defun ibuffer-settings ()
-  "Settings for `ibuffer'."
-
-  ;; Require
-  (require 'all-the-icons-ibuffer)
-
-  ;; ----------------------------------------------------------
-  ;; Enable all the icons ibuffer mode
-  (all-the-icons-ibuffer-mode 1))
-
-(eval-after-load "ibuffer" '(ibuffer-settings))
-
-;; ==================================================================================
+;; Customized settings for `ivy'
 (defun ivy-settings ()
   "Settings for `ivy'."
 
@@ -233,7 +193,7 @@
   ;; Enable ivy rich mode
   (ivy-rich-mode 1)
 
-;; Enable ivy prescient mode
+  ;; Enable ivy prescient mode
   (ivy-prescient-mode 1)
 
   ;; Enable global all the icons ivy rich mode
@@ -242,6 +202,7 @@
 (eval-after-load "ivy" '(ivy-settings))
 
 ;; ==================================================================================
+;; Customized settings for `counsel-projectile'
 (defun counsel-projectile-settings ()
   "Settings for `counsel-projectile'."
 
@@ -255,6 +216,7 @@
 (eval-after-load "counsel-projectile" '(counsel-projectile-settings))
 
 ;; ==================================================================================
+;; Customized settings for `ag'
 (defun ag-settings ()
   "Settings for `ag'."
 
@@ -287,15 +249,7 @@
 (eval-after-load "ag" '(ag-settings))
 
 ;; ==================================================================================
-(defun which-key-settings ()
-  "settings for `which-key'."
-
-  ;; ----------------------------------------------------------
-  (which-key-setup-side-window-right))
-
-(eval-after-load "which-key" '(which-key-settings))
-
-;; ==================================================================================
+;; Customized settings for `yasnippet'
 (defun yasnippet-settings ()
   "Settings for `yasnippet'."
 
@@ -315,6 +269,7 @@
 (eval-after-load "yasnippet" '(yasnippet-settings))
 
 ;; ==================================================================================
+;; Customized settings for `company'
 (defun company-settings ()
   "Settings for `company'."
 
@@ -353,7 +308,6 @@
   (add-hook 'company-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
-              ;; Enable quickhelp terminal mode if any
               (if (display-graphic-p)
                   (progn
                     (require 'company-box)
@@ -376,6 +330,7 @@
 (eval-after-load "company" '(company-settings))
 
 ;; ==================================================================================
+;; Customized settings for `winum'
 (defun winum-settings ()
   "Settings for `winum'."
 
@@ -397,6 +352,7 @@
 (eval-after-load "winum" '(winum-settings))
 
 ;; ==================================================================================
+;; Customized settings for `zoom'
 (defun zoom-settings ()
   "Settings for `zoom'."
 
@@ -415,16 +371,7 @@
 (eval-after-load "zoom" '(zoom-settings))
 
 ;; ==================================================================================
-(defun workgroups2-settings ()
-  "Settings for `workgroups2'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `workgroups2' related variables
-  (customize-set-variable 'wg-control-frames nil))
-
-(eval-after-load "workgroups2" '(workgroups2-settings))
-
-;; ==================================================================================
+;; Customized settings for `centaur-tabs'
 (defun centaur-tabs-settings ()
   "Settings for `centaur-tabs'."
 
@@ -451,6 +398,24 @@
    centaur-tabs-mode-map))
 
 (eval-after-load "centaur-tabs" '(centaur-tabs-settings))
+
+;; ==================================================================================
+;; Customized settings for `doom-themes'
+(defun doom-themes-settings ()
+  "Settings for `doom-themes'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize font settings
+  (set-face-attribute 'default nil :font emacs-config-fixed-font :height emacs-config-font-size)
+  (set-face-attribute 'fixed-pitch nil :font emacs-config-fixed-font)
+  (set-face-attribute 'fixed-pitch-serif nil :font emacs-config-fixed-serif-font)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `doom-themes' related variables
+  (customize-set-variable 'doom-themes-enable-bold t)
+  (customize-set-variable 'doom-themes-enable-italic t))
+
+(eval-after-load "doom-themes" '(doom-themes-settings))
 
 ;; ==================================================================================
 ;;Customized settings for `multi-term'
@@ -498,24 +463,202 @@
 (eval-after-load "multi-term" '(multi-term-settings))
 
 ;; ==================================================================================
-;; Customized settings for `doom-themes'
-(defun doom-themes-settings ()
-  "Settings for `doom-themes'."
+;; Customized settings for `workgroups2'
+(defun workgroups2-settings ()
+  "Settings for `workgroups2'."
 
   ;; ----------------------------------------------------------
-  ;; Customize font settings
-  (set-face-attribute 'default nil :font emacs-config-fixed-font :height emacs-config-font-size)
-  (set-face-attribute 'fixed-pitch nil :font emacs-config-fixed-font)
-  (set-face-attribute 'fixed-pitch-serif nil :font emacs-config-fixed-serif-font)
+  ;; Customize `workgroups2' related variables
+  (customize-set-variable 'wg-control-frames nil))
 
-  ;; ----------------------------------------------------------
-  ;; Customize `doom-themes' related variables
-  (customize-set-variable 'doom-themes-enable-bold t)
-  (customize-set-variable 'doom-themes-enable-italic t))
-
-(eval-after-load "doom-themes" '(doom-themes-settings))
+(eval-after-load "workgroups2" '(workgroups2-settings))
 
 ;; ==================================================================================
+;; Customized settings for `dired'
+(defun dired-settings ()
+  "Settings for `dired'."
+
+  ;; Require
+  (require 'ztree)
+  (require 'ztree-view)
+  (require 'epg-config)
+  (require 'epa-dired)
+  (require 'dired-x)
+  (require 'dired-filter)
+  (require 'dired-async)
+  (require 'dired-hacks-utils)
+  (require 'dired-filetype-face)
+  (require 'all-the-icons-dired)
+  (require 'dired-copy-paste)
+  (require 'dired-custom-extension)
+
+  ;; ----------------------------------------------------------
+  ;; Customized magit related faces
+  (custom-set-faces
+   '(dired-header ((t (:foreground "#EE0000" :height 1.1))))
+   '(dired-directory ((t (:foreground "#51AFEF" :height 1.1))))
+   '(dired-mark ((t (:foreground "#FF1493" :inverse-video nil))))
+   '(dired-marked ((t (:foreground "#FFFF00" :inverse-video nil)))))
+
+  ;; ----------------------------------------------------------
+  ;; Customize `dired' related variables
+  (customize-set-variable 'dired-dwim-target t)
+  (customize-set-variable 'dired-recursive-copies 'always)
+  (customize-set-variable 'dired-recursive-deletes 'always)
+
+  ;; Customize `dired-x' related variables
+  (customize-set-variable 'dired-bind-info nil)
+  (customize-set-variable 'dired-omit-extensions (append dired-omit-extensions '(".cache")))
+  (customize-set-variable 'dired-omit-files (concat dired-omit-files "\\|^\\.\\|^semantic.cache$\\|^CVS$"))
+
+  ;; Customize `epg-config' related variables
+  (customize-set-variable 'epg-pinentry-mode 'loopback)
+
+  ;; ----------------------------------------------------------
+  ;; Define `dired' related aliases
+  (defalias 'dired-encrypt 'epa-dired-do-encrypt)
+  (defalias 'dired-decrypt 'epa-dired-do-decrypt)
+  (defalias 'dired-sign 'epa-dired-do-sign)
+  (defalias 'dired-verify 'epa-dired-do-verify)
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `ztree-view'
+  (lazy-set-key
+   '(("<return>" . ztree-perform-soft-action)
+     ("RET" . ztree-perform-soft-action)
+     ("o" . other-window)
+     ("n" . next-line)
+     ("p" . previous-line))
+   ztree-mode-map)
+
+  ;; Key bindings for `dired'
+  (lazy-set-key
+   '(("<return>" . dired-single-buffer)
+     ("RET" . dired-single-buffer)
+     ("p" . dired-hacks-previous-file)
+     ("n" . dired-hacks-next-file)
+     ("M-," . dired-goto-first-line)
+     ("M-." . dired-goto-last-line)
+     ("h" . dired-up-directory-single)
+     ("C-s" . isearch-forward)
+     ("C-r" . isearch-backward)
+     ("C-k" . dired-do-delete)
+     ("k" . kill-this-buffer)
+     ("r" . wdired-change-to-wdired-mode)
+     ("M-o" . dired-omit-mode)
+     ("E" . dired-do-touch)
+     ("B" . dired-backup-file)
+     ("?" . dired-get-size)
+     ("d" . dired-diff)
+     ("D" . ztree-diff)
+     ("z" . dired-do-compress)
+     ("Z" . dired-do-compress)
+     ("M-w" . dired-copy-paste-do-copy)
+     ("M-k" . dired-copy-paste-do-cut)
+     ("C-y" . dired-copy-paste-do-paste)
+     ("/m" . dired-mark-files-regexp)
+     ("/*" . dired-filter-by-regexp)
+     ("/." . dired-filter-by-extension)
+     ("C-c n" . dired-get-file-name-without-path)
+     ("C-c N" . dired-get-file-name-with-path)
+     ("C-c p" . dired-get-file-name-only-path))
+   dired-mode-map)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'dired-after-readin-hook 'dired-custom-sort)
+
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable dired omit mode
+              (dired-omit-mode 1)
+
+              ;; Enable dired async mode
+              (dired-async-mode 1)
+
+              ;; Enable all the icons dired mode
+              (when (display-graphic-p)
+                (all-the-icons-dired-mode 1)))))
+
+(eval-after-load "dired" '(dired-settings))
+
+(autoload 'dired-jump "dired-x"
+  "Jump to Dired buffer corresponding to current buffer." t)
+
+;; ==================================================================================
+;; Customized settings for `magit'
+(defun magit-settings ()
+  "Settings for `magit'."
+
+  ;; ----------------------------------------------------------
+  ;; Customized magit related faces
+  (custom-set-faces
+   '(magit-diff-added ((t (:background "#919191" :foreground "white"))))
+   '(magit-diff-removed ((t (:background "#474747" :foreground "white"))))
+   '(magit-diff-added-highlight ((t (:background "#EE1289" :foreground "white"))))
+   '(magit-diff-removed-highlight ((t (:background "#54FF9F" :foreground "black"))))))
+
+(eval-after-load "magit" '(magit-settings))
+
+(defalias 'git-status 'magit-status)
+(defalias 'git-log 'magit-log-all)
+
+;; ==================================================================================
+;; Customized settings for `w3m'
+(defun w3m-settings ()
+  "Settings for `w3m'."
+
+  ;; Require
+  (require 'browse-url)
+  (require 'w3m-favicon)
+  (require 'w3m-session)
+  (require 'w3m-lnum)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `browse-url' related variables
+  (customize-set-variable 'browse-url-browser-function 'w3m-browse-url)
+  (customize-set-variable 'browse-url-new-window-flag t)
+
+  ;; Customize `w3m' related variables
+  (customize-set-variable 'w3m-make-new-session t)
+  (customize-set-variable 'w3m-use-header-line-title t)
+  (customize-set-variable 'w3m-default-display-inline-images t)
+  (customize-set-variable 'w3m-favicon-use-cache-file t)
+  (customize-set-variable 'w3m-session-load-crashed-sessions t)
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `w3m'
+  (lazy-set-key
+   '(("1" . w3m-session-save)
+     ("2" . w3m-session-select)
+     ("b" . w3m-previous-form)
+     ("f" . w3m-next-form)
+     ("B" . w3m-previous-anchor)
+     ("<tab>" . w3m-next-anchor)
+     ("TAB" . w3m-next-anchor)
+     ("e" . w3m-edit-current-url)
+     ("+" . w3m-zoom-in-image)
+     ("-" . w3m-zoom-out-image)
+     ("n" . next-line)
+     ("p" . previous-line)
+     ("h" . w3m-history)
+     ("P" . w3m-view-previous-page)
+     ("F" . w3m-view-next-page)
+     ("c" . w3m-delete-buffer)
+     ("C" . w3m-delete-other-buffers)
+     ("d" . w3m-wget)
+     ("o" . w3m-lnum-goto)
+     ("<" . w3m-shift-left)
+     (">" . w3m-shift-right)
+     ("<f5>" . w3m-reload-this-page)
+     ("M-<f5>" . w3m-reload-all-pages))
+   w3m-mode-map))
+
+(eval-after-load "w3m" '(w3m-settings))
+
+;; ==================================================================================
+
 ;; Hooks
 (add-hook 'after-init-hook
           (lambda ()
@@ -549,53 +692,64 @@
             (customize-set-variable 'user-full-name emacs-config-user)
             (customize-set-variable 'user-mail-address emacs-config-email)
 
+            ;; Replace yes-or-no-p with y-or-no-p
+            (fset 'yes-or-no-p 'y-or-n-p)
+
+            ;; Customize `mac' system realted variables
+            (when (memq window-system '(mac ns))
+              (customize-set-variable 'mac-command-modifier 'super)
+              (customize-set-variable 'mac-option-modifier 'meta))
+
             ;; ----------------------------------------------------------
             ;; Global key bindings for basic config
             (lazy-set-key
-             '(("C-x C-b" . ibuffer)
+             '(
                ("C-x k" . kill-this-buffer)
+               ("M-m" . set-mark-command)
+               ;; Smart edit
+               ("C-x <tab>" . smart-indent)
+               ("C-x TAB" . smart-indent)
+               ("M-w" . smart-copy)
+               ("M-k" . smart-kill)
+               ;; Expand region
+               ("M-M" . er/expand-region)
+               ;; Multi cursors
+               ("C-x m" . set-rectangular-region-anchor)
+               ("C-x M" . mc/mark-all-dwim)
+               ;; Browse kill ring
+               ("M-Y" . browse-kill-ring)
+               ;; Goto last change
+               ("M-o" . goto-last-change)
+               ;; Counsel
+               ("M-x" . counsel-M-x)
                ("C-x b" . counsel-ibuffer)
                ("C-x B" . counsel-recentf)
                ("C-x C-f" . counsel-find-file)
-               ("M-x" . counsel-M-x)
+               ;; Swiper
                ("C-s" . swiper-isearch)
                ("C-r" . swiper-isearch-backward)
-               ("C-x <tab>" . smart-indent)
-               ("C-x TAB" . smart-indent)
-               ("C-x m" . set-rectangular-region-anchor)
-               ("C-x M" . mc/mark-all-dwim)
+               ;; Color moccur
+               ("C-x C-u" . occur-by-moccur)
+               ;; Ag
                ("C-x g" . ag)
                ("C-x G" . ag-project)
                ("C-x f" . ag-dired-regexp)
                ("C-x F" . ag-project-dired-regexp)
+               ;; Avy
                ("C-; c" . avy-goto-char)
                ("C-; w" . avy-goto-word-0)
                ("C-; l" . avy-goto-line)
-               ("M-w" . smart-copy)
-               ("M-k" . smart-kill)
                ("M-g" . goto-line)
-               ("M-m" . set-mark-command)
-               ("M-M" . er/expand-region)
-               ("M-o" . goto-last-change)
-               ("M-y" . browse-kill-ring)
-               ("M--" . text-scale-decrease)
-               ("M-=" . text-scale-increase)
-               ("C-<f10>" . toggle-fullscreen)
-               ("C-<left>" . shrink-window-horizontally)
-               ("C-<right>" . enlarge-window-horizontally)
-               ("C-<down>" . shrink-window)
-               ("C-<up>" . enlarge-window)
-               ("<f9>" . multi-term)))
+               ;; Multi term
+               ("<f9>" . multi-term)
+               ;; Dired
+               ("C-x C-d" . dired)
+               ("C-x d" . dired-jump)))
 
             ;; ----------------------------------------------------------
-            ;; Replace yes-or-no-p with y-or-no-p
-            (fset 'yes-or-no-p 'y-or-n-p)
-
             ;; Initialize mac system exec path
             (when (memq window-system '(mac ns))
               (require 'exec-path-from-shell)
-              (setq mac-command-modifier 'super)
-              (setq mac-option-modifier 'meta)
               (exec-path-from-shell-initialize))
 
             ;; ----------------------------------------------------------
@@ -626,6 +780,9 @@
             ;; Enable global smooth scrolling mode
             (smooth-scrolling-mode 1)
 
+            ;; Enable global which key mode
+            (which-key-mode 1)
+
             ;; Enable global undo tree mode
             (global-undo-tree-mode 1)
 
@@ -638,20 +795,11 @@
             ;; Enable global counsel projectile mode
             (counsel-projectile-mode 1)
 
-            ;; Enable global which key mode
-            (which-key-mode 1)
-
             ;; Enable global yasnippet mode
             (yas-global-mode 1)
 
             ;; Enable global company mode
             (global-company-mode 1)
-
-            ;; Enable centaur tabs mode
-            (centaur-tabs-mode 1)
-
-            ;; Enable doom modeline
-            (doom-modeline-mode 1)
 
             ;; Enable winum mode
             (winum-mode 1)
@@ -659,19 +807,11 @@
             ;; Enable zoom mode
             (zoom-mode 1)
 
-            ;; ----------------------------------------------------------
-            ;; Hooks
-            (add-hook 'before-save-hook
-                      (lambda ()
-                        ;; ----------------------------------------------------------
-                        ;; Update timestamp
-                        (time-stamp)
+            ;; Enable centaur tabs mode
+            (centaur-tabs-mode 1)
 
-                        ;; Update copyright
-                        (copyright-update)
-
-                        ;; Delete trailing whitespace
-                        (delete-trailing-whitespace)))))
+            ;; Enable doom modeline
+            (doom-modeline-mode 1)))
 
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -680,10 +820,19 @@
             (load-theme 'doom-one t)
 
             ;; Enable global workgroups mode
-            (workgroups-mode 1)
+            (workgroups-mode 1)))
 
-            ;; Toggle full screen
-            (toggle-fullscreen)))
+(add-hook 'before-save-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Update timestamp
+            (time-stamp)
+
+            ;; Update copyright
+            (copyright-update)
+
+            ;; Delete trailing whitespace
+            (delete-trailing-whitespace)))
 
 ;; ==================================================================================
 ;;; Provide features

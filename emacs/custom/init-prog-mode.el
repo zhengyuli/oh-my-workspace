@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-15 21:46:14 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-16 10:25:59 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -66,15 +66,15 @@
 
   ;; Require
   (require 'linum)
-  (require 'paren)
-  (require 'autopair)
   (require 'xref)
-  (require 'dumb-jump)
+  (require 'paren)
+  (require 'phi-autopair)
+  (require 'rainbow-delimiters)
   (require 'flycheck)
   (require 'flycheck-clang-tidy)
-  (require 'quickrun)
-  (require 'rainbow-delimiters)
   (require 'whitespace-cleanup-mode)
+  (require 'dumb-jump)
+  (require 'quickrun)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `prog-mode'
@@ -115,7 +115,7 @@
               (show-paren-mode 1)
 
               ;; Enable autopair mode
-              (autopair-mode 1)
+              (phi-autopair-mode 1)
 
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)

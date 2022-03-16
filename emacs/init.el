@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-15 21:46:27 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-16 12:39:19 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -74,6 +74,17 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
+(defun ensure-package-installed (&rest packages)
+  "Assure every package is installed, ask for installation if it’s not.
+
+Return a list of installed packages or nil for every skipped package."
+  (mapcar
+   (lambda (package)
+     (if (package-installed-p package)
+         nil
+       (package-install package)))
+   packages))
+
 (defun lazy-set-key (key-alist &optional keymap key-prefix)
   "This function is to little type when define key binding.
 `KEYMAP' is a add keymap for some binding, default is `current-global-map'.
@@ -133,82 +144,126 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
   (package-refresh-contents))
 
 ;; Install packages
-(dolist (pkg
-         '(beacon
-           smooth-scrolling
-           ivy
-           ivy-rich
-           ivy-prescient
-           all-the-icons
-           all-the-icons-ibuffer
-           all-the-icons-ivy-rich
-           counsel
-           counsel-projectile
-           swiper
-           which-key
-           visual-ascii-mode
-           undo-tree
-           browse-kill-ring
-           expand-region
-           multiple-cursors
-           visual-regexp-steroids
-           ag
-           wgrep-ag
-           goto-chg
-           avy
-           yasnippet
-           company
-           company-prescient
-           company-box
-           company-quickhelp
-           company-quickhelp-terminal
-           popup
-           centaur-tabs
-           doom-modeline
-           doom-themes
-           winum
-           zoom
-           workgroups2
-           multi-term
-           exec-path-from-shell
-           dumb-jump
-           flycheck
-           flycheck-clang-tidy
-           quickrun
-           rainbow-delimiters
-           whitespace-cleanup-mode
-           lsp-mode
-           lsp-ui
-           google-c-style
-           sphinx-doc
-           python-docstring
-           virtualenvwrapper
-           go-mode
-           go-eldoc
-           elisp-slime-nav
-           lisp-extra-font-lock
-           rainbow-mode
-           haskell-mode
-           scala-mode
-           groovy-mode
-           cmake-mode
-           dockerfile-mode
-           yaml-mode
-           markdown-mode
-           markdownfmt
-           async
-           dired-single
-           dired-filter
-           dired-subtree
-           dired-hacks-utils
-           dired-filetype-face
-           all-the-icons-dired
-           ztree
-           w3m
-           magit
-           emms))
-  (unless (package-installed-p pkg)
-    (package-install pkg)))
+(ensure-package-installed
+ ;; ==============================
+ ;; init-base.el
+ 'beacon
+ 'smooth-scrolling
+ ;; ******************************
+ 'exec-path-from-shell
+ ;; ******************************
+ 'expand-region
+ 'multiple-cursors
+ 'visual-regexp-steroids
+ ;; ******************************
+ 'which-key
+ 'undo-tree
+ 'browse-kill-ring
+ 'goto-chg
+ ;; ******************************
+ 'all-the-icons
+ ;; ******************************
+ 'ivy
+ 'ivy-rich
+ 'ivy-prescient
+ 'all-the-icons-ivy-rich
+ ;; ******************************
+ 'counsel
+ 'counsel-projectile
+ ;; ******************************
+ 'swiper
+ ;; ******************************
+ 'color-moccur
+ ;; ******************************
+ 'ag
+ 'wgrep-ag
+ ;; ******************************
+ 'avy
+ ;; ******************************
+ 'popup
+ ;; ******************************
+ 'yasnippet
+ ;; ******************************
+ 'company
+ 'company-prescient
+ 'company-box
+ 'company-quickhelp
+ 'company-quickhelp-terminal
+ ;; ******************************
+ 'winum
+ 'zoom
+ 'centaur-tabs
+ 'doom-modeline
+ 'doom-themes
+ ;; ******************************
+ 'workgroups2
+ ;; ******************************
+ 'multi-term
+ ;; ******************************
+ 'async
+ 'ztree
+ ;; ******************************
+ 'dired-single
+ 'dired-filter
+ 'dired-subtree
+ 'dired-hacks-utils
+ 'dired-filetype-face
+ 'all-the-icons-dired
+ ;; ******************************
+ 'magit
+ ;; ******************************
+ 'w3m
+ ;; ==============================
+ ;; init-prog-mode.el
+ 'phi-autopair
+ 'rainbow-delimiters
+ 'flycheck
+ 'flycheck-clang-tidy
+ 'whitespace-cleanup-mode
+ 'quickrun
+ 'dumb-jump
+ ;; ******************************
+ 'lsp-mode
+ 'lsp-ui
+ ;; ==============================
+ ;; init-c&c++-mode.el
+ 'google-c-style
+ ;; ==============================
+ ;; init-python-mode.el
+ 'sphinx-doc
+ 'python-docstring
+ 'virtualenvwrapper
+ ;; ==============================
+ ;; init-go-mode.el
+ 'go-mode
+ 'go-eldoc
+ ;; ==============================
+ ;; init-elisp-mode.el
+ 'elisp-slime-nav
+ 'lisp-extra-font-lock
+ 'rainbow-mode
+ ;; ==============================
+ ;; init-haskell-mode.el
+ 'haskell-mode
+ ;; ==============================
+ ;; init-scala-mode.el
+ 'scala-mode
+ ;; ==============================
+ ;; init-groovy-mode.el
+ 'groovy-mode
+ ;; ==============================
+ ;; init-cmake-mode.el
+ 'cmake-mode
+ ;; ==============================
+ ;; init-dockerfile-mode.el
+ 'dockerfile-mode
+ ;; ==============================
+ ;; init-yaml-mode.el
+ 'yaml-mode
+ ;; ==============================
+ ;; init-markdown-mode.el
+ 'markdown-mode
+ 'markdownfmt)
 
 ;; ==================================================================================
 ;; Load librares
@@ -227,10 +282,6 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
 (load-library "init-cmake-mode")
 (load-library "init-yaml-mode")
 (load-library "init-markdown-mode")
-(load-library "init-dired")
-(load-library "init-w3m")
-(load-library "init-magit")
-(load-library "init-emms")
 
 ;; Load user custom settings
 (if (not (file-exists-p "~/.emacs.d/custom.el"))
