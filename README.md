@@ -306,6 +306,10 @@ $
 # dependencies for C&C++ flycheck mode
 $ brew install llvm
 $ ln -s /usr/local/opt/llvm/bin/clang-tidy /usr/local/bin/clang-tidy
+$
+# Dependencies for emacs lsp-mode for python
+$ pip install "python-lsp-server[all]"
+
 ```
 
 #### Customization
@@ -313,16 +317,6 @@ $ ln -s /usr/local/opt/llvm/bin/clang-tidy /usr/local/bin/clang-tidy
 Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
 
 Install Source Serif Pro font from: https://fonts.google.com/specimen/Source+Serif+Pro
-
-Append the following settings to your `~/.virtualenvs/postmkvirtualenv`:
-
-```
-# Dependencies for emacs python-mode
-pip install "python-lsp-server[all]"
-
-# Other tools
-pip install ipython
-```
 
 Setup emacs configurations:
 

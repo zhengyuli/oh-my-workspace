@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el ---
-;; Time-stamp: <2022-03-16 13:42:48 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-16 14:12:13 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -92,9 +92,6 @@
 
               ;; Enable python docstring mode
               (python-docstring-mode 1)
-
-              ;; Initialize python virtual env interactive shells
-              (venv-initialize-interactive-shells)
 
               ;; Setup python virtual env flycheck checker
 			  (flycheck-virtualenv-set-python-executables)
