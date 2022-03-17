@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-16 21:22:09 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-17 08:22:49 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -71,7 +71,6 @@
   (require 'phi-autopair)
   (require 'rainbow-delimiters)
   (require 'flycheck)
-  (require 'flycheck-clang-tidy)
   (require 'whitespace-cleanup-mode)
   (require 'dumb-jump)
   (require 'quickrun)
@@ -94,8 +93,6 @@
 
   ;; ----------------------------------------------------------
   ;; Hooks
-  (add-hook 'flycheck-mode-hook 'flycheck-clang-tidy-setup)
-
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 
   (add-hook 'prog-mode-hook

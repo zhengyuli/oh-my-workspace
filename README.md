@@ -295,10 +295,6 @@ $ go get github.com/rogpeppe/godef
 $ go get golang.org/x/tools/cmd/gorename
 $ go get golang.org/x/tools/cmd/guru
 $
-# dependencies for emacs C&C++ flycheck mode
-$ brew install llvm
-$ ln -s /usr/local/opt/llvm/bin/clang-tidy /usr/local/bin/clang-tidy
-$
 # Dependencies for emacs python lsp server of lsp-mode
 $ pip install "python-lsp-server[all]"
 

@@ -1,5 +1,5 @@
 ;;; package --- init-base.el ---
-;; Time-stamp: <2022-03-16 22:05:43 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-17 09:01:06 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -596,8 +596,8 @@
   (custom-set-faces
    '(magit-diff-added ((t (:background "#919191" :foreground "white"))))
    '(magit-diff-removed ((t (:background "#474747" :foreground "white"))))
-   '(magit-diff-added-highlight ((t (:background "#EE1289" :foreground "white"))))
-   '(magit-diff-removed-highlight ((t (:background "#54FF9F" :foreground "black"))))))
+   '(magit-diff-added-highlight ((t (:background "#B22222" :foreground "white"))))
+   '(magit-diff-removed-highlight ((t (:background "#FFE4C4" :foreground "black"))))))
 
 (eval-after-load "magit" '(magit-settings))
 

@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-16 22:06:00 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-17 08:23:14 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -219,7 +219,6 @@ Return a list of installed packages or nil for every skipped package."
  'phi-autopair
  'rainbow-delimiters
  'flycheck
- 'flycheck-clang-tidy
  'whitespace-cleanup-mode
  'quickrun
  'dumb-jump
