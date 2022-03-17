@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:01 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 13:47:10 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -707,6 +707,8 @@
                ("C-x k" . kill-this-buffer)
                ;; Activate mark
                ("M-m" . set-mark-command)
+               ;; Ibuffer
+               ("C-x C-b" . ibuffer)
                ;; Smart edit
                ("C-x <tab>" . smart-indent)
                ("C-x TAB" . smart-indent)
