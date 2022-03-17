@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-17 08:22:49 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 09:18:06 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -68,7 +68,7 @@
   (require 'linum)
   (require 'xref)
   (require 'paren)
-  (require 'phi-autopair)
+  (require 'smartparens-config)
   (require 'rainbow-delimiters)
   (require 'flycheck)
   (require 'whitespace-cleanup-mode)
@@ -111,8 +111,8 @@
               ;; Enable show paren mode
               (show-paren-mode 1)
 
-              ;; Enable autopair mode
-              (phi-autopair-mode 1)
+              ;; Enable smart parens mode
+              (smartparens-mode 1)
 
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)

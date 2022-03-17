@@ -1,5 +1,5 @@
 ;;; package --- init-base.el ---
-;; Time-stamp: <2022-03-17 09:01:06 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 09:40:10 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -740,7 +740,7 @@
                ("C-; c" . avy-goto-char)
                ("C-; w" . avy-goto-word-0)
                ("C-; l" . avy-goto-line)
-               ("M-g" . goto-line)
+               ("M-g" . avy-goto-line)
                ;; Switch window
                ("C-x o" . switch-window)
                ;; Multi term

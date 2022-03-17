@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-15 21:45:44 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-17 09:38:12 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -41,7 +41,15 @@
   (lazy-set-key
    '(("C-c C-c" . smart-comment)
      ("C-c k" . smart-uncomment))
-   c-mode-base-map))
+   c-mode-base-map)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+               ;; -----------------------------------------------
+               ;; Toggle hungry delete
+              (c-toggle-hungry-state 1))))
 
 (eval-after-load "cc-mode" '(cc-mode-settings))
 

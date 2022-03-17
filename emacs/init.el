@@ -1,5 +1,5 @@
 ;;; package --- init.el ---
-;; Time-stamp: <2022-03-17 08:23:14 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 09:13:52 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -216,7 +216,7 @@ Return a list of installed packages or nil for every skipped package."
  'w3m
  ;; ==============================
  ;; init-prog-mode.el
- 'phi-autopair
+ 'smartparens
  'rainbow-delimiters
  'flycheck
  'whitespace-cleanup-mode
