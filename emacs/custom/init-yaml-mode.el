@@ -1,5 +1,5 @@
-;;; package --- init-yaml-mode.el ---
-;; Time-stamp: <2022-03-16 08:52:21 Wednesday by zhengyuli>
+;;; package --- init-yaml-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:15:00 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

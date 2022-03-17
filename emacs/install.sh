@@ -4,7 +4,7 @@
 # Name: install.sh
 # Purpose: Emacs configurations setup script
 #
-# Time-stamp: <2022-03-10 12:00:26 Thursday by zhengyu.li>
+# Time-stamp: <2022-03-17 11:53:02 Thursday by zhengyuli>
 #
 # Author: zhengyu li
 # Created: 2014-03-26
@@ -30,8 +30,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 cp -v ${BASE_DIR}/init.el ${EMACS_CONFIG_FILE}
+${SED_CMD} s:"init\.el":$".emacs":g ${EMACS_CONFIG_FILE}
 ${SED_CMD} s:_EMACS_CONFIG_ROOT_PATH_:${BASE_DIR}/:g ${EMACS_CONFIG_FILE}
 ${SED_CMD} s:_EMACS_CONFIG_USER_:"${USER_NAME}":g ${EMACS_CONFIG_FILE}
 ${SED_CMD} s:_EMACS_CONFIG_EMAIL_:"${USER_EMAIL}":g ${EMACS_CONFIG_FILE}
 
-echo "Success!!"
+echo "Install successfully!!"

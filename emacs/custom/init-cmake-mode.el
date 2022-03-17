@@ -1,5 +1,5 @@
-;;; package --- init-cmake-mode.el ---
-;; Time-stamp: <2022-03-15 13:38:56 Tuesday by zhengyuli>
+;;; package --- init-cmake-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:12 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

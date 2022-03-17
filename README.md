@@ -52,7 +52,7 @@ Use Homebrew to download and install:
 $ brew cask install iterm2
 ```
 
-### Customization
+### Configure
 
 #### Theme
 
@@ -92,15 +92,27 @@ $ brew install zsh
 Install Oh My Zsh:
 
 ```
-$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+$ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 $ chsh -s $(which zsh)
 ```
 
-### Customization
+### Configure
 
 The out-of-the-box configuration is usable but you probably want to customise it to suit your needs.
 
-The Official [Wiki](https://github.com/robbyrussell/oh-my-zsh/wiki) contains a lot of useful information if you want to deep dive into what you can do with Oh My Zsh, but we'll cover the basics here.
+The Official [Wiki](https://github.com/ohmyzsh/ohmyzsh/wiki) contains a lot of useful information if you want to deep dive into what you can do with Oh My Zsh, but we'll cover the basics here.
+
+#### Themes
+
+Changing theme is as simple as changing a string in your configuration file.
+
+```
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+ZSH_THEME="sonicradish"
+```
 
 #### Plugins
 
@@ -116,39 +128,27 @@ $
 $ git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 ```
 
-Add daily used plguins:
+Configure daily used plguins:
 
 ```
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff"
+
 # Which plugins would you like to load?
 # Standard plugins can be found in ~/.oh-my-zsh/plugins/*
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-   fzf
-   git
-   docker
-   iterm2
-   autojump
-   history
-   zsh-autosuggestions
-   zsh-syntax-highlighting
+    history
+    fzf
+    autojump
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    brew
+    git
+    docker
+    web-search
 )
-
-# Key bindings for autosuggestions plugin
-bindkey '^],' autosuggest-accept
-```
-
-#### Themes
-
-Changing theme is as simple as changing a string in your configuration file.
-
-```
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="sonicradish"
 ```
 
 #### Others
@@ -168,7 +168,7 @@ Go is an open source programming language.
 
 Download the latest version from [https://golang.org/dl/]() and install manually.
 
-### Customization
+### Configure
 
 Create Golang projects workspace:
 
@@ -179,7 +179,7 @@ $ mkdir -p $HOME/MyGoProjects
 Append the following settings to your `~/.zshrc`:
 
 ```
-# Settings for golang
+# Path to your go projects
 export GOPATH=$HOME/MyGoProjects
 
 # Update $PATH
@@ -211,12 +211,12 @@ $
 $ pyenv install 3.8.10
 ```
 
-### Customization
+### Configure
 
 Append the following settings to your `~/.zshrc`:
 
 ```
-# Settings for pyenv
+# initialize pyenv
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 ```
@@ -231,16 +231,19 @@ Using git to download and install:
 $ git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
 ```
 
-### Customization
+### Configure
 
 Append the following settings to your `~/.zshrc`:
 
 ```
-# Settings for pyenv-virtualenvwrapper
+# To get virtualenvwrapper to create a virtual environment using 
+# pyvenv instead of virtualenv.
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
-# Activate virtualenvwrapper
+# Activate shell python
 pyenv shell 3.8.10
+
+# Activate virtualenvwrapper
 pyenv virtualenvwrapper
 ```
 
@@ -300,7 +303,7 @@ $ pip install "python-lsp-server[all]"
 
 ```
 
-#### Customization
+#### Configure
 
 Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
 

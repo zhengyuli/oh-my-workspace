@@ -1,5 +1,5 @@
-;;; package --- init-prog-mode.el ---
-;; Time-stamp: <2022-03-17 09:18:06 Thursday by zhengyuli>
+;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:44 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

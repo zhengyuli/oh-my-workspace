@@ -1,5 +1,5 @@
-;;; package --- init-elisp-mode.el ---
-;; Time-stamp: <2022-03-14 19:54:23 Monday by zhengyuli>
+;;; package --- init-elisp-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:20 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

@@ -1,5 +1,5 @@
-;;; package --- init-haskell-mode.el ---
-;; Time-stamp: <2022-03-16 08:51:45 Wednesday by zhengyuli>
+;;; package --- init-haskell-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:36 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

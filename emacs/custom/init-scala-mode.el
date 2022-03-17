@@ -1,5 +1,5 @@
-;;; package --- init-scala-mode.el ---
-;; Time-stamp: <2022-03-16 08:52:07 Wednesday by zhengyuli>
+;;; package --- init-scala-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:52 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

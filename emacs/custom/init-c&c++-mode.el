@@ -1,5 +1,5 @@
-;;; package --- init-c&c++-mode.el ---
-;; Time-stamp: <2022-03-15 21:24:23 Tuesday by zhengyuli>
+;;; package --- init-c&c++-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:05 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

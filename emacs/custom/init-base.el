@@ -1,5 +1,5 @@
-;;; package --- init-base.el ---
-;; Time-stamp: <2022-03-17 09:40:10 Thursday by zhengyuli>
+;;; package --- init-base.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:01 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

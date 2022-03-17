@@ -1,5 +1,5 @@
-;;; package --- init-sh-script-mode.el ---
-;; Time-stamp: <2022-03-15 12:39:34 Tuesday by zhengyuli>
+;;; package --- init-sh-script-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:55 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;

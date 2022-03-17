@@ -1,5 +1,5 @@
-;;; package --- init-cc-mode.el ---
-;; Time-stamp: <2022-03-17 09:38:12 Thursday by zhengyuli>
+;;; package --- init-cc-mode.el -*- lexical-binding:t -*-
+;; Time-stamp: <2022-03-17 11:14:08 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
