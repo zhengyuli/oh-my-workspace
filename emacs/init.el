@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:12:43 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 20:51:15 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -224,6 +224,8 @@ Return a list of installed packages or nil for every skipped package."
  'dumb-jump
  ;; ******************************
  'lsp-mode
+ ;; ******************************
+ 'dap-mode
  ;; ==============================
  ;; init-c&c++-mode.el
  'google-c-style

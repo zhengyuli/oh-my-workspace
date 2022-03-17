@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:44 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 20:50:14 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -76,6 +76,10 @@
   (require 'quickrun)
 
   ;; ----------------------------------------------------------
+  ;; Customize `flycheck' related variables
+  (customize-set-variable 'flycheck-indication-mode 'left-margin)
+
+  ;; ----------------------------------------------------------
   ;; Key bindings for `prog-mode'
   (lazy-set-key
    '(("<return>" . newline-and-indent)
@@ -144,6 +148,51 @@
   (customize-set-variable 'lsp-headerline-breadcrumb-enable nil))
 
 (eval-after-load "lsp-mode" '(lsp-mode-settings))
+
+;; ==================================================================================
+;; Customized settings for `dap-mode'
+(defun dap-mode-settings ()
+  "Settings for `dap-mode'."
+
+  ;; Require
+  (require 'dap-hydra)
+
+  ;; ----------------------------------------------------------
+  (defun get-dap-server-log-buffer ()
+    "Get dap server log buffer."
+    (interactive)
+    (process-buffer
+     (dap--debug-session-program-proc (dap--cur-session-or-die))))
+
+  (defun dap-go-to-server-log-buffer (&optional no-select)
+    "Go to server log buffer."
+    (interactive)
+    (let ((win (display-buffer-in-side-window
+                (get-dap-server-log-buffer)
+                `((side . bottom) (slot . 5) (window-width . 0.20)))))
+      (set-window-dedicated-p win t)
+      (unless no-select (select-window win))
+      (fit-window-to-buffer win 20 10)))
+
+  ;; ----------------------------------------------------------
+  ;; Customize `dap-mode' related variables
+  (customize-set-variable 'dap-auto-configure-features
+                          '(sessions locals breakpoints expressions))
+
+  ;; ----------------------------------------------------------
+  (add-hook 'dap-session-created-hook
+            (lambda (arg)
+              ;; ----------------------------------------------------------
+              (delete-window
+               (get-buffer-window (get-dap-server-log-buffer)))
+              (dap-go-to-server-log-buffer)))
+
+  (add-hook 'dap-stopped-hook
+            (lambda (arg)
+              ;; ----------------------------------------------------------
+              (call-interactively #'dap-hydra))))
+
+(eval-after-load "dap-mode" '(dap-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features

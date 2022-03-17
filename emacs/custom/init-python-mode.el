@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:48 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 19:22:00 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -42,6 +42,7 @@
   (require 'python-docstring)
   (require 'pyvenv)
   (require 'lsp-mode)
+  (require 'dap-python)
 
   ;; ----------------------------------------------------------
   (defun sphinx-doc-format ()

@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 13:47:10 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-17 19:28:49 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -725,7 +725,7 @@
                ("M-o" . goto-last-change)
                ;; Counsel
                ("M-x" . counsel-M-x)
-               ("C-x b" . counsel-ibuffer)
+               ("C-x b" . counsel-switch-buffer)
                ("C-x B" . counsel-recentf)
                ("C-x C-f" . counsel-find-file)
                ;; Swiper
@@ -808,9 +808,6 @@
 
             ;; Enable winum mode
             (winum-mode 1)
-
-            ;; Enable zoom mode
-            (zoom-mode 1)
 
             ;; Enable centaur tabs mode
             (centaur-tabs-mode 1)
