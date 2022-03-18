@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 20:50:14 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-18 09:30:05 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -158,21 +158,21 @@
   (require 'dap-hydra)
 
   ;; ----------------------------------------------------------
-  (defun get-dap-server-log-buffer ()
-    "Get dap server log buffer."
-    (interactive)
-    (process-buffer
-     (dap--debug-session-program-proc (dap--cur-session-or-die))))
-
   (defun dap-go-to-server-log-buffer (&optional no-select)
     "Go to server log buffer."
     (interactive)
-    (let ((win (display-buffer-in-side-window
-                (get-dap-server-log-buffer)
-                `((side . bottom) (slot . 5) (window-width . 0.20)))))
-      (set-window-dedicated-p win t)
-      (unless no-select (select-window win))
-      (fit-window-to-buffer win 20 10)))
+    (let* ((buffer (process-buffer
+                    (dap--debug-session-program-proc
+                     (dap--cur-session-or-die))))
+           (old-win (get-buffer-window buffer))
+           (new-win (display-buffer-in-side-window
+                     buffer
+                     `((side . bottom) (slot . 5) (window-width . 0.20)))))
+      (when old-win
+        (delete-window old-win))
+      (set-window-dedicated-p new-win t)
+      (unless no-select (select-window new-win))
+      (fit-window-to-buffer new-win 20 10)))
 
   ;; ----------------------------------------------------------
   ;; Customize `dap-mode' related variables
@@ -183,8 +183,7 @@
   (add-hook 'dap-session-created-hook
             (lambda (arg)
               ;; ----------------------------------------------------------
-              (delete-window
-               (get-buffer-window (get-dap-server-log-buffer)))
+              ;; Go to debug session server log buffer
               (dap-go-to-server-log-buffer)))
 
   (add-hook 'dap-stopped-hook
