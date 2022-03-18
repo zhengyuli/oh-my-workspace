@@ -1,5 +1,5 @@
 ;;; package --- init-c&c++-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:05 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-18 16:30:53 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -49,11 +49,25 @@
   ;; Require
   (require 'google-c-style)
   (require 'lsp-mode)
+  (require 'dap-mode)
+  (require 'dap-lldb)
 
   ;; ----------------------------------------------------------
   ;; Customize `ctypes' related variables
   (customize-set-variable 'ctypes-file-name "~/.emacs.d/ctypes")
   (customize-set-variable 'ctypes-write-types-at-exit t)
+
+  ;; Customize `dap-lldb' related variables
+  (customize-set-variable 'dap-lldb-debug-program '("lldb-vscode"))
+
+  ;; ----------------------------------------------------------
+  ;; Register debug template
+  (dap-register-debug-template "LLDB (VS Code) :: Run Configuration"
+                               (list :type "lldb-vscode"
+                                     :cwd "${workspaceFolder}"
+                                     :request "launch"
+                                     :program "${workspaceFolder}/${fileBasenameNoExtension}"
+                                     :name "LLDB (VS Code) :: Run configuration"))
 
   ;; ----------------------------------------------------------
   ;; Hooks
@@ -64,7 +78,10 @@
     		    (google-set-c-style)
 
                 ;; Enable lsp mode
-                (lsp-deferred)))))
+                (lsp-deferred)
+
+                ;; Enable dap mode
+                (dap-auto-configure-mode 1)))))
 
 (eval-after-load "cc-mode" '(c&c++-mode-settings))
 

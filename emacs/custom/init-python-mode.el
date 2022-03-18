@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 19:22:00 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-18 16:31:28 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -42,6 +42,7 @@
   (require 'python-docstring)
   (require 'pyvenv)
   (require 'lsp-mode)
+  (require 'dap-mode)
   (require 'dap-python)
 
   ;; ----------------------------------------------------------
@@ -101,7 +102,10 @@
               (pyvenv-mode 1)
 
               ;; Enable lsp mode
-              (lsp-deferred))))
+              (lsp-deferred)
+
+              ;; Enable dap mode
+              (dap-auto-configure-mode 1))))
 
 (eval-after-load "python" '(python-mode-settings))
 

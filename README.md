@@ -160,6 +160,25 @@ Append the following settings to your configuration file.
 export HOMEBREW_NO_AUTO_UPDATE="true"
 ```
 
+## LLVM
+
+The LLVM Project is a collection of modular and reusable compiler and toolchain technologies.
+
+### Installation
+
+Use Homebrew to download and install:
+
+```
+$ brew install llvm
+```
+
+### Configure
+Append the following settings to your `~/.zshrc`:
+
+```
+$ echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
+```
+
 ## Golang
 
 Go is an open source programming language.
@@ -183,7 +202,7 @@ Append the following settings to your `~/.zshrc`:
 export GOPATH=$HOME/MyGoProjects
 
 # Update $PATH
-export PATH=$GOPATH/bin:$HOME/bin:/usr/local/bin:$PATH
+export PATH=$GOPATH/bin:$PATH
 ```
 
 Install golang related dependencies:
@@ -280,27 +299,27 @@ $ brew untap railwaycat/emacsmacport
 Installing emacs related dependencies:
 
 ```
-# Dependencies for emacs w3m
-$ brew install w3m
-$
 # Dependencies for emacs easypg
 $ brew install gnupg
 $
-# Dependencies for emacs markdown
-$ brew install markdown
-$ brew install pandoc
-$
 # Dependencies for emacs ag
 $ brew install ag
+$
+# Dependencies for emacs w3m
+$ brew install w3m
+$
+# Dependencies for emacs python lsp mode
+$ pip install "python-lsp-server[all]"
+$ pip install "ptvsd>=4.2"
 $
 # Dependencies for emacs golang mode
 $ go get github.com/rogpeppe/godef
 $ go get golang.org/x/tools/cmd/gorename
 $ go get golang.org/x/tools/cmd/guru
 $
-# Dependencies for emacs python lsp server of lsp-mode
-$ pip install "python-lsp-server[all]"
-
+# Dependencies for emacs markdown
+$ brew install markdown
+$ brew install pandoc
 ```
 
 #### Configure
