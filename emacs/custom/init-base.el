@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 19:28:49 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-18 21:03:59 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -819,7 +819,7 @@
           (lambda ()
             ;; ----------------------------------------------------------
             ;; Load doom theme
-            (load-theme 'doom-one t)
+            (load-theme 'doom-xcode t)
 
             ;; Toggle fullscreen
             (toggle-fullscreen)
