@@ -131,7 +131,7 @@ $ git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/cu
 Configure daily used plguins:
 
 ```
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff"
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#a9a9a9"
 
 # Which plugins would you like to load?
 # Standard plugins can be found in ~/.oh-my-zsh/plugins/*
