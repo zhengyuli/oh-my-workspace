@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-18 21:03:59 Friday by zhengyuli>
+;; Time-stamp: <2022-03-19 21:55:48 Saturday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -381,7 +381,7 @@
   ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs' realted variables
   (customize-set-variable 'centaur-tabs-height 25)
-  (customize-set-variable 'centaur-tabs-style "zigzag")
+  (customize-set-variable 'centaur-tabs-style "bar")
   (if (display-graphic-p)
       (customize-set-variable 'centaur-tabs-set-icons t))
   (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
