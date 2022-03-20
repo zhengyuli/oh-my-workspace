@@ -316,9 +316,6 @@ $
 # Dependencies for emacs ag
 $ brew install ag
 $
-# Dependencies for emacs w3m
-$ brew install w3m
-$
 # Dependencies for emacs c&c++ lsp mode and dap mode
 # Please make sure **clangd** and **lldb-vscode** have been installed
 # Mac platform:
