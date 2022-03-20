@@ -131,7 +131,7 @@ $ git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/cu
 Configure daily used plguins:
 
 ```
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff"
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#a9a9a9"
 
 # Which plugins would you like to load?
 # Standard plugins can be found in ~/.oh-my-zsh/plugins/*
@@ -235,7 +235,7 @@ $ pyenv install 3.8.10
 Append the following settings to your `~/.zshrc`:
 
 ```
-# initialize pyenv
+# Initialize pyenv
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 ```
@@ -308,7 +308,14 @@ $
 # Dependencies for emacs w3m
 $ brew install w3m
 $
-# Dependencies for emacs python lsp mode
+# Dependencies for emacs c&c++ lsp mode and dap mode
+# Please make sure **clangd** and **lldb-vscode** have been installed,
+# For Mac please follow llvm installation section described above.
+# For other linux distribution e.g. ubuntu please follow the following
+# instructions to install them.
+$ sudo apt-get install clang clang-tools
+$
+# Dependencies for emacs python lsp mode and dap mode
 $ pip install "python-lsp-server[all]"
 $ pip install "ptvsd>=4.2"
 $
