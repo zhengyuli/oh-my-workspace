@@ -111,7 +111,7 @@ Changing theme is as simple as changing a string in your configuration file.
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="sonicradish"
+ZSH_THEME="agnoster"
 ```
 
 #### Plugins
@@ -123,7 +123,10 @@ Add plugins to your shell by adding the name of the plugin to the plugin array i
 Download custom plugins:
 
 ```
+$ brew install fzf
+$
 $ git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+$ brew install autosuggestions
 $
 $ git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 ```
