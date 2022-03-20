@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-20 13:00:58 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-20 19:22:41 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -147,8 +147,6 @@ Return a list of installed packages or nil for every skipped package."
 (ensure-package-installed
  ;; ==============================
  ;; init-base.el
- 'dashboard
- ;; ******************************
  'beacon
  'smooth-scrolling
  ;; ******************************
@@ -201,6 +199,12 @@ Return a list of installed packages or nil for every skipped package."
  ;; ******************************
  'workgroups2
  ;; ******************************
+ 'dashboard
+ ;; ******************************
+ 'helpful
+ ;; ******************************
+ 'restart-emacs
+ ;; ******************************
  'multi-term
  ;; ******************************
  'async
@@ -215,7 +219,7 @@ Return a list of installed packages or nil for every skipped package."
  ;; ******************************
  'magit
  ;; ******************************
- 'w3m
+ 'eww-lnum
  ;; ==============================
  ;; init-prog-mode.el
  'smartparens

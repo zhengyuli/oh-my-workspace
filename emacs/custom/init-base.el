@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-20 12:59:43 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-20 21:35:15 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -101,16 +101,6 @@
   (setq url-proxy-services nil)
   (show-http-proxy))
 
-(defun get-git-user-name ()
-  "Get git user name."
-  (interactive)
-  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.name"))))
-
-(defun get-git-user-email ()
-  "Get git user email."
-  (interactive)
-  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.email"))))
-
 (defun toggle-fullscreen ()
   "Toggle full screen."
   (interactive)
@@ -124,30 +114,6 @@
            nil)
        (setq old-fullscreen current-value)
        'fullboth))))
-
-;; ==================================================================================
-;; Customized settings for `dashboard'
-(defun dashboard-settings ()
-  "Settings for `dashboard'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `dashboard' related variables
-  (customize-set-variable 'dashboard-banner-logo-title
-                          (format "Welcome to %s\'s Emacs" emacs-config-user))
-  (customize-set-variable 'dashboard-set-heading-icons t)
-  (customize-set-variable 'dashboard-set-file-icons t)
-  (customize-set-variable 'dashboard-set-navigator t)
-  (customize-set-variable 'dashboard-center-content t)
-  (customize-set-variable 'dashboard-items
-                          '((recents  . 5)
-                            (bookmarks . 5)
-                            (projects . 5)
-                            (agenda . 5)
-                            (registers . 5)))
-  (customize-set-variable 'dashboard-projects-switch-function
-                          'counsel-projectile-switch-project-by-name))
-
-(eval-after-load "dashboard" '(dashboard-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `visual-regexp-steroids'
@@ -402,6 +368,37 @@
   (require 'all-the-icons)
 
   ;; ----------------------------------------------------------
+  ;; Customized groups policy
+  (defun centaur-tabs-buffer-groups ()
+    "`centaur-tabs-buffer-groups' control buffers' group rules."
+    (list
+     (cond
+      ((derived-mode-p 'term-mode)
+       "Terminal")
+      ((derived-mode-p 'dired-mode)
+       "Dired")
+      ((derived-mode-p 'eww-mode)
+       "Eww")
+      ((or (string-equal "*" (substring (buffer-name) 0 1))
+           (memq major-mode '(magit-process-mode
+                              magit-status-mode
+                              magit-diff-mode
+                              magit-log-mode
+                              magit-file-mode
+                              magit-blob-mode
+                              magit-blame-mode
+                              )))
+       "Emacs")
+      ((derived-mode-p 'prog-mode)
+       mode-name)
+      ((memq major-mode '(org-mode org-agenda-mode diary-mode))
+       "Org")
+      ((derived-mode-p 'markdown-mode)
+       "Markdown")
+      (t
+       (centaur-tabs-get-group-name (current-buffer))))))
+
+  ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs' realted variables
   (customize-set-variable 'centaur-tabs-height 25)
   (customize-set-variable 'centaur-tabs-style "bar")
@@ -439,6 +436,30 @@
   (customize-set-variable 'doom-themes-enable-italic t))
 
 (eval-after-load "doom-themes" '(doom-themes-settings))
+
+;; ==================================================================================
+;; Customized settings for `dashboard'
+(defun dashboard-settings ()
+  "Settings for `dashboard'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `dashboard' related variables
+  (customize-set-variable 'dashboard-banner-logo-title
+                          (format "Welcome to %s\'s Emacs" emacs-config-user))
+  (customize-set-variable 'dashboard-set-heading-icons t)
+  (customize-set-variable 'dashboard-set-file-icons t)
+  (customize-set-variable 'dashboard-set-navigator t)
+  (customize-set-variable 'dashboard-center-content t)
+  (customize-set-variable 'dashboard-items
+                          '((recents  . 5)
+                            (bookmarks . 5)
+                            (projects . 5)
+                            (agenda . 5)
+                            (registers . 5)))
+  (customize-set-variable 'dashboard-projects-switch-function
+                          'counsel-projectile-switch-project-by-name))
+
+(eval-after-load "dashboard" '(dashboard-settings))
 
 ;; ==================================================================================
 ;;Customized settings for `multi-term'
@@ -531,8 +552,11 @@
 
   ;; Customize `dired-x' related variables
   (customize-set-variable 'dired-bind-info nil)
-  (customize-set-variable 'dired-omit-extensions (append dired-omit-extensions '(".cache")))
-  (customize-set-variable 'dired-omit-files (concat dired-omit-files "\\|^\\.\\|^semantic.cache$\\|^CVS$"))
+  (customize-set-variable 'dired-omit-extensions
+                          (append dired-omit-extensions '(".cache")))
+  (customize-set-variable 'dired-omit-files
+                          (concat dired-omit-files
+                                  "\\|^\\.\\|^semantic.cache$\\|^CVS$"))
 
   ;; Customize `epg-config' related variables
   (customize-set-variable 'epg-pinentry-mode 'loopback)
@@ -610,6 +634,16 @@
   "Jump to Dired buffer corresponding to current buffer." t)
 
 ;; ==================================================================================
+(defun get-git-user-name ()
+  "Get git user name."
+  (interactive)
+  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.name"))))
+
+(defun get-git-user-email ()
+  "Get git user email."
+  (interactive)
+  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.email"))))
+
 ;; Customized settings for `magit'
 (defun magit-settings ()
   "Settings for `magit'."
@@ -628,61 +662,93 @@
 (defalias 'git-log 'magit-log-all)
 
 ;; ==================================================================================
-;; Customized settings for `w3m'
-(defun w3m-settings ()
-  "Settings for `w3m'."
+(defun eww-bing/search ()
+  "Search the web for the text in the region or at the point by
+bing search engine."
+  (interactive)
+  (let ((eww-search-prefix "https://cn.bing.com/search?q="))
+    (call-interactively 'eww-search-words)))
+
+(defun eww-google/search ()
+  "Search the web for the text in the region or at the point by
+google search engine."
+  (interactive)
+  (let ((eww-search-prefix "https://www.google.com/search?q="))
+    (call-interactively 'eww-search-words)))
+
+(defun eww-github/search ()
+  "Search the web for the text in the region or at the point by
+github search engine."
+  (interactive)
+  (let ((eww-search-prefix "https://github.com/search?q="))
+    (call-interactively 'eww-search-words)))
+
+(defun eww-wiki/search ()
+  "Search the web for the text in the region or at the point by
+wiki search engine."
+  (interactive)
+  (let ((eww-search-prefix "https://en.wikipedia.org/wiki/"))
+    (call-interactively 'eww-search-words)))
+
+(defun eww-quit ()
+  "Quit and kill current eww buffer."
+  (interactive)
+  (unless (derived-mode-p 'eww-mode)
+    (error "Not a eww buffer."))
+  (kill-this-buffer))
+
+;; Customized settings for `eww'
+(defun eww-settings ()
+  "Settings for `eww'."
 
   ;; Require
   (require 'browse-url)
-  (require 'w3m-favicon)
-  (require 'w3m-session)
-  (require 'w3m-lnum)
+  (require 'eww-lnum)
 
   ;; ----------------------------------------------------------
   ;; Customize `browse-url' related variables
-  (customize-set-variable 'browse-url-browser-function 'w3m-browse-url)
-  (customize-set-variable 'browse-url-new-window-flag t)
+  (customize-set-variable 'browse-url-browser-function 'eww-browse-url)
 
-  ;; Customize `w3m' related variables
-  (customize-set-variable 'w3m-make-new-session t)
-  (customize-set-variable 'w3m-use-header-line-title t)
-  (customize-set-variable 'w3m-default-display-inline-images t)
-  (customize-set-variable 'w3m-favicon-use-cache-file t)
-  (customize-set-variable 'w3m-session-load-crashed-sessions t)
+  ;; Customize `eww' related variables
+  (customize-set-variable 'eww-search-prefix "https://www.google.com/search?q=")
 
   ;; ----------------------------------------------------------
-  ;; Key bindings for `w3m'
+  ;; Key bindings for `eww'
   (lazy-set-key
-   '(("1" . w3m-session-save)
-     ("2" . w3m-session-select)
-     ("b" . w3m-previous-form)
-     ("f" . w3m-next-form)
-     ("B" . w3m-previous-anchor)
-     ("<tab>" . w3m-next-anchor)
-     ("TAB" . w3m-next-anchor)
-     ("e" . w3m-edit-current-url)
-     ("+" . w3m-zoom-in-image)
-     ("-" . w3m-zoom-out-image)
+   '(("r" . eww-reload)
+     ("b" . eww-add-bookmark)
+     ("B" . eww-list-bookmarks)
      ("n" . next-line)
      ("p" . previous-line)
-     ("h" . w3m-history)
-     ("P" . w3m-view-previous-page)
-     ("F" . w3m-view-next-page)
-     ("c" . w3m-delete-buffer)
-     ("C" . w3m-delete-other-buffers)
-     ("d" . w3m-wget)
-     ("o" . w3m-lnum-goto)
-     ("<" . w3m-shift-left)
-     (">" . w3m-shift-right)
-     ("<f5>" . w3m-reload-this-page)
-     ("M-<f5>" . w3m-reload-all-pages))
-   w3m-mode-map))
+     ("N" . eww-forward-url)
+     ("P" . eww-back-url)
+     ("h" . eww-list-histories)
+     ("j" . eww-open-in-new-buffer)
+     ("d" . eww-download)
+     ("o" . eww-lnum-follow)
+     ("s" . eww-search-words)
+     ("F" . eww-toggle-fonts)
+     ("C" . eww-toggle-colors)
+     ("e" . eww-browse-with-external-browser)
+     ("x" . eww-quit))
+   eww-mode-map))
 
-(eval-after-load "w3m" '(w3m-settings))
+(eval-after-load "eww" '(eww-settings))
 
 ;; ==================================================================================
-
 ;; Hooks
+(add-hook 'before-save-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Update timestamp
+            (time-stamp)
+
+            ;; Update copyright
+            (copyright-update)
+
+            ;; Delete trailing whitespace
+            (delete-trailing-whitespace)))
+
 (add-hook 'after-init-hook
           (lambda ()
             ;; ----------------------------------------------------------
@@ -765,23 +831,25 @@
                ("C-; c" . avy-goto-char)
                ("C-; w" . avy-goto-word-0)
                ("C-; l" . avy-goto-line)
-               ("M-g" . avy-goto-line)
                ;; Switch window
                ("C-x o" . switch-window)
+               ;; Helpful
+               ("C-h f" . helpful-callable)
+               ("C-h v" . helpful-variable)
+               ("C-h k" . helpful-key)
                ;; Multi term
                ("<f9>" . multi-term)
                ;; Dired
                ("C-x C-d" . dired)
-               ("C-x d" . dired-jump)))
+               ("C-x d" . dired-jump)
+               ;; Eww
+               ("C-x C-g" . eww-search-words)))
 
             ;; ----------------------------------------------------------
             ;; Initialize mac system exec path
             (when (memq window-system '(mac ns))
               (require 'exec-path-from-shell)
               (exec-path-from-shell-initialize))
-
-            ;; Setup dashboard
-            (dashboard-setup-startup-hook)
 
             ;; ----------------------------------------------------------
             ;; Disable tool bar mode
@@ -804,6 +872,9 @@
 
             ;; Enable global just-in-time lock mode
             (jit-lock-mode 1)
+
+            ;; Enable prettify symbol mode
+            (prettify-symbols-mode 1)
 
             ;; Enable global beacon mode
             (beacon-mode 1)
@@ -853,17 +924,8 @@
             ;; Enable global workgroups mode
             (workgroups-mode 1)))
 
-(add-hook 'before-save-hook
-          (lambda ()
-            ;; ----------------------------------------------------------
-            ;; Update timestamp
-            (time-stamp)
-
-            ;; Update copyright
-            (copyright-update)
-
-            ;; Delete trailing whitespace
-            (delete-trailing-whitespace)))
+;; Setup `'dashboard' startup hook
+(dashboard-setup-startup-hook)
 
 ;; ==================================================================================
 ;;; Provide features

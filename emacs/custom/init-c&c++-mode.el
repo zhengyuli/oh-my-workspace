@@ -1,5 +1,5 @@
 ;;; package --- init-c&c++-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-18 16:30:53 Friday by zhengyuli>
+;; Time-stamp: <2022-03-20 21:14:28 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -63,11 +63,12 @@
   ;; ----------------------------------------------------------
   ;; Register debug template
   (dap-register-debug-template "LLDB (VS Code) :: Run Configuration"
-                               (list :type "lldb-vscode"
-                                     :cwd "${workspaceFolder}"
-                                     :request "launch"
-                                     :program "${workspaceFolder}/${fileBasenameNoExtension}"
-                                     :name "LLDB (VS Code) :: Run configuration"))
+                               (list
+                                :type "lldb-vscode"
+                                :cwd "${workspaceFolder}"
+                                :request "launch"
+                                :program "${workspaceFolder}/${fileBasenameNoExtension}"
+                                :name "LLDB (VS Code) :: Run configuration"))
 
   ;; ----------------------------------------------------------
   ;; Hooks

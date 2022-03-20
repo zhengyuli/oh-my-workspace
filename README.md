@@ -54,6 +54,14 @@ $ brew cask install iterm2
 
 ### Configure
 
+#### Fonts
+
+Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
+
+Install Source Serif Pro font from: https://fonts.google.com/specimen/Source+Serif+Pro
+
+Select the **Source Code Pro** font through `iTerm2->Preferences->Profiles->Text->Font`.
+
 #### Theme
 
 Download Solarized theme for iTerm2:
@@ -312,10 +320,10 @@ $
 $ brew install w3m
 $
 # Dependencies for emacs c&c++ lsp mode and dap mode
-# Please make sure **clangd** and **lldb-vscode** have been installed,
-# For Mac please follow llvm installation section described above.
-# For other linux distribution e.g. ubuntu please follow the following
-# instructions to install them.
+# Please make sure **clangd** and **lldb-vscode** have been installed
+# Mac platform:
+$ brew install llvm
+# Ubuntu platform:
 $ sudo apt-get install clang clang-tools
 $
 # Dependencies for emacs python lsp mode and dap mode
@@ -333,10 +341,6 @@ $ brew install pandoc
 ```
 
 #### Configure
-
-Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
-
-Install Source Serif Pro font from: https://fonts.google.com/specimen/Source+Serif+Pro
 
 Setup emacs configurations:
 
