@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-19 21:55:48 Saturday by zhengyu.li>
+;; Time-stamp: <2022-03-20 12:59:43 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -126,6 +126,30 @@
        'fullboth))))
 
 ;; ==================================================================================
+;; Customized settings for `dashboard'
+(defun dashboard-settings ()
+  "Settings for `dashboard'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `dashboard' related variables
+  (customize-set-variable 'dashboard-banner-logo-title
+                          (format "Welcome to %s\'s Emacs" emacs-config-user))
+  (customize-set-variable 'dashboard-set-heading-icons t)
+  (customize-set-variable 'dashboard-set-file-icons t)
+  (customize-set-variable 'dashboard-set-navigator t)
+  (customize-set-variable 'dashboard-center-content t)
+  (customize-set-variable 'dashboard-items
+                          '((recents  . 5)
+                            (bookmarks . 5)
+                            (projects . 5)
+                            (agenda . 5)
+                            (registers . 5)))
+  (customize-set-variable 'dashboard-projects-switch-function
+                          'counsel-projectile-switch-project-by-name))
+
+(eval-after-load "dashboard" '(dashboard-settings))
+
+;; ==================================================================================
 ;; Customized settings for `visual-regexp-steroids'
 (defun visual-regexp-steroids-settings ()
   "Settings for `visual-regexp-steroids'."
@@ -209,8 +233,7 @@
   ;; ----------------------------------------------------------
   ;; Key unbindings for `projectile'
   (lazy-set-key
-   '(("s-p" . projectile-command-map)
-     ("C-x p" . projectile-command-map))
+   '(("C-x p" . projectile-command-map))
    projectile-mode-map))
 
 (eval-after-load "counsel-projectile" '(counsel-projectile-settings))
@@ -756,6 +779,9 @@
             (when (memq window-system '(mac ns))
               (require 'exec-path-from-shell)
               (exec-path-from-shell-initialize))
+
+            ;; Setup dashboard
+            (dashboard-setup-startup-hook)
 
             ;; ----------------------------------------------------------
             ;; Disable tool bar mode

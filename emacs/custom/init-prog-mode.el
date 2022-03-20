@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-18 16:56:17 Friday by zhengyuli>
+;; Time-stamp: <2022-03-20 12:59:18 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -187,11 +187,6 @@
   ;; Customize `dap-mode' related variables
   (customize-set-variable 'dap-auto-configure-features
                           '(sessions locals breakpoints expressions))
-
-  ;; ----------------------------------------------------------
-  (lazy-set-key
-   '(("s-d s-d" . dap-hydra))
-   dap-mode-map)
 
   ;; ----------------------------------------------------------
   (add-hook 'dap-session-created-hook
