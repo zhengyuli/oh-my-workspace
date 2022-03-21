@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-20 19:22:41 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-21 11:08:18 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -205,7 +205,7 @@ Return a list of installed packages or nil for every skipped package."
  ;; ******************************
  'restart-emacs
  ;; ******************************
- 'multi-term
+ 'vterm
  ;; ******************************
  'async
  'ztree

@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-20 21:35:15 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-21 11:55:29 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -374,7 +374,9 @@
     (list
      (cond
       ((derived-mode-p 'term-mode)
-       "Terminal")
+       "Term")
+      ((derived-mode-p 'vterm-mode)
+       "VTerm")
       ((derived-mode-p 'dired-mode)
        "Dired")
       ((derived-mode-p 'eww-mode)
@@ -462,33 +464,20 @@
 (eval-after-load "dashboard" '(dashboard-settings))
 
 ;; ==================================================================================
-;;Customized settings for `multi-term'
-(defun multi-term-settings ()
-  "Settings for `multi-term'."
+;;Customized settings for `vterm'
+(defun vterm-settings ()
+  "Settings for `vterm'."
 
   ;; ----------------------------------------------------------
   ;; Customize `terminal' related variables
   (customize-set-variable 'ring-bell-function 'ignore)
 
   ;; ----------------------------------------------------------
-  ;; Key bindings for `multi-term'
-  (customize-set-variable
-   'term-unbind-key-list
-   '("C-z" "C-x" "C-c" "C-h" "C-y" "<ESC>" "<M-backspace>" "<M-DEL>"))
-
-  (customize-set-variable
-   'term-bind-key-alist
-   '(("C-p" . term-send-raw)
-     ("C-n" . term-send-raw)
-     ("C-r" . term-send-raw)
-     ("C-y" . term-paste)
-     ("M-f" . term-send-raw-meta)
-     ("M-b" . term-send-raw-meta)
-     ("M-d" . term-send-raw-meta)
-     ("<M-backspace>" . term-send-backward-kill-word)
-     ("<M-DEL>" . term-send-backward-kill-word)
-     ("M-." . term-send-raw-meta)
-     ("M-i" . term-interrupt-subjob)))
+  ;; Key bindings for `vterm'
+  (lazy-set-key
+   '(("C-g" . vterm-send-C-g)
+     ("C-u" . vterm-send-C-u))
+   vterm-mode-map)
 
   ;; ----------------------------------------------------------
   ;; Hooks
@@ -504,7 +493,7 @@
               ;; Disable company mode
               (company-mode -1))))
 
-(eval-after-load "multi-term" '(multi-term-settings))
+(eval-after-load "vterm" '(vterm-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `workgroups2'
@@ -837,8 +826,8 @@ wiki search engine."
                ("C-h f" . helpful-callable)
                ("C-h v" . helpful-variable)
                ("C-h k" . helpful-key)
-               ;; Multi term
-               ("<f9>" . multi-term)
+               ;; Vterm
+               ("C-x C-t" . vterm)
                ;; Dired
                ("C-x C-d" . dired)
                ("C-x d" . dired-jump)
