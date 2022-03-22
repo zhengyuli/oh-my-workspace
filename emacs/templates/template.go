@@ -1,4 +1,4 @@
-// Copyright (C) `(format-time-string "%Y")` `user-full-name`
+// Copyright (c) `(format-time-string "%Y")` `user-full-name`
 //
 // Licensed under the GPL License version 3.0
 //
@@ -16,6 +16,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ======================================================================
 
-// ${0:brief}.
+// ${1:brief}.
 
 package `(file-name-nondirectory (directory-file-name (file-name-directory buffer-file-name)))`
+
+$0

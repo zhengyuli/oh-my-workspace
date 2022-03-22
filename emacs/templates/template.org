@@ -1,0 +1,3 @@
+#+STARTUP: showall
+
+$0

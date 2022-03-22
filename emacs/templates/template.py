@@ -1,4 +1,4 @@
-# Copyright (C) `(format-time-string "%Y")` `user-full-name`
+# Copyright (c) `(format-time-string "%Y")` `user-full-name`
 #
 # Licensed under the GPL License version 3.0
 #
@@ -18,5 +18,7 @@
 
 """${1:brief}.
 
-${0:detail}
+${2:detail}
 """
+
+$0
