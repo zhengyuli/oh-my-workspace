@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-21 11:55:29 Monday by zhengyuli>
+;; Time-stamp: <2022-03-22 09:59:53 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -651,6 +651,22 @@
 (defalias 'git-log 'magit-log-all)
 
 ;; ==================================================================================
+;; Customized settings for `go-translate'
+(defun go-translate-settings ()
+  "Settings for `go-translate'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `go-translate' related variables
+  (customize-set-variable 'gts-translate-list '(("en" "zh")))
+  (customize-set-variable 'gts-default-translator
+                          (gts-translator
+                           :picker (gts-prompt-picker)
+                           :engines (list (gts-bing-engine) (gts-google-engine))
+                           :render (gts-buffer-render))))
+
+(eval-after-load "go-translate" '(go-translate-settings))
+
+;; ==================================================================================
 (defun eww-bing/search ()
   "Search the web for the text in the region or at the point by
 bing search engine."
@@ -831,6 +847,8 @@ wiki search engine."
                ;; Dired
                ("C-x C-d" . dired)
                ("C-x d" . dired-jump)
+               ;; Go translate
+               ("C-x C-p" . gts-do-translate)
                ;; Eww
                ("C-x C-g" . eww-search-words)))
 

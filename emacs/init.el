@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-21 11:08:18 Monday by zhengyuli>
+;; Time-stamp: <2022-03-22 09:53:10 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -219,6 +219,8 @@ Return a list of installed packages or nil for every skipped package."
  ;; ******************************
  'magit
  ;; ******************************
+ 'go-translate
+ ;; ******************************
  'eww-lnum
  ;; ==============================
  ;; init-prog-mode.el
@@ -268,6 +270,9 @@ Return a list of installed packages or nil for every skipped package."
  ;; init-yaml-mode.el
  'yaml-mode
  ;; ==============================
+ ;; init-org-mode.el
+ 'org-bullets
+ ;; ==============================
  ;; init-markdown-mode.el
  'markdown-mode
  'markdownfmt)
@@ -288,6 +293,7 @@ Return a list of installed packages or nil for every skipped package."
 (load-library "init-dockerfile-mode")
 (load-library "init-cmake-mode")
 (load-library "init-yaml-mode")
+(load-library "init-org-mode")
 (load-library "init-markdown-mode")
 
 ;; Load user custom settings
