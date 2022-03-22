@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 10:57:39 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-22 20:58:18 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -82,7 +82,11 @@ Return a list of installed packages or nil for every skipped package."
    (lambda (package)
      (if (package-installed-p package)
          nil
-       (package-install package)))
+       (condition-case nil
+           (package-install package)
+         (error
+          (package-refresh-contents)
+          (package-install package)))))
    packages))
 
 (defun lazy-set-key (key-alist &optional keymap key-prefix)
@@ -192,12 +196,9 @@ Return a list of installed packages or nil for every skipped package."
  ;; ******************************
  'winum
  'switch-window
- 'zoom
  'centaur-tabs
  'doom-modeline
  'doom-themes
- ;; ******************************
- 'workgroups2
  ;; ******************************
  'dashboard
  ;; ******************************
@@ -225,6 +226,7 @@ Return a list of installed packages or nil for every skipped package."
  ;; ==============================
  ;; init-prog-mode.el
  'smartparens
+ 'hungry-delete
  'rainbow-delimiters
  'flycheck
  'whitespace-cleanup-mode

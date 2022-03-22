@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-20 12:59:18 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-22 20:53:00 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -69,6 +69,7 @@
   (require 'xref)
   (require 'paren)
   (require 'smartparens-config)
+  (require 'hungry-delete)
   (require 'rainbow-delimiters)
   (require 'flycheck)
   (require 'whitespace-cleanup-mode)
@@ -117,6 +118,9 @@
 
               ;; Enable smart parens mode
               (smartparens-mode 1)
+
+              ;; Enable hungry delete mode
+              (hungry-delete-mode 1)
 
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)

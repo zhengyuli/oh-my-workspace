@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 16:30:35 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-22 20:35:45 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -408,25 +408,6 @@
 (eval-after-load "winum" '(winum-settings))
 
 ;; ==================================================================================
-;; Customized settings for `zoom'
-(defun zoom-settings ()
-  "Settings for `zoom'."
-
-  ;; ----------------------------------------------------------
-  (defun zoom-size-callback ()
-    "Callback for zoom size."
-    (cond ((> (frame-pixel-width) 1280)
-           '(90 . 0.75))
-          (t
-           '(0.5 . 0.5))))
-
-  ;; ----------------------------------------------------------
-  ;; Customize `zoom' related variables
-  (customize-set-variable 'zoom-size 'zoom-size-callback))
-
-(eval-after-load "zoom" '(zoom-settings))
-
-;; ==================================================================================
 ;; Customized settings for `centaur-tabs'
 (defun centaur-tabs-settings ()
   "Settings for `centaur-tabs'."
@@ -561,17 +542,6 @@
               (company-mode -1))))
 
 (eval-after-load "vterm" '(vterm-settings))
-
-;; ==================================================================================
-;; Customized settings for `workgroups2'
-(defun workgroups2-settings ()
-  "Settings for `workgroups2'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `workgroups2' related variables
-  (customize-set-variable 'wg-control-frames nil))
-
-(eval-after-load "workgroups2" '(workgroups2-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `dired'
@@ -996,10 +966,7 @@ wiki search engine."
             (load-theme 'doom-xcode t)
 
             ;; Toggle fullscreen
-            (toggle-fullscreen)
-
-            ;; Enable global workgroups mode
-            (workgroups-mode 1)))
+            (toggle-fullscreen)))
 
 ;; Setup `'dashboard' startup hook
 (dashboard-setup-startup-hook)
