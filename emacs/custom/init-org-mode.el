@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-21 21:32:27 Monday by zhengyuli>
+;; Time-stamp: <2022-03-22 11:12:06 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -51,7 +51,7 @@
               ;; Enable org bullets mode
               (org-bullets-mode 1))))
 
-(eval-after-load "org-mode" '(org-mode-settings))
+(eval-after-load "org" '(org-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features

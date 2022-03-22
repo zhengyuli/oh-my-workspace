@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 09:59:53 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-22 16:30:35 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -317,6 +317,73 @@
               (company-prescient-mode 1))))
 
 (eval-after-load "company" '(company-settings))
+
+;; ==================================================================================
+;; Customized settings for `autoinsert'
+(defun autoinsert-settings ()
+  "Settings for `autoinsert'."
+
+  ;; ----------------------------------------------------------
+  (defun define-auto-insert-custom (condition action)
+    "Custom implementation of `define-auto-insert'."
+    (let ((elt (assoc condition auto-insert-alist)))
+      (if elt
+          (setcdr elt action)
+        (add-to-list 'auto-insert-alist (cons condition action)))))
+
+  (defun autoinsert-yas-expand ()
+    "Replace text in yasnippet template."
+    (yas-expand-snippet (buffer-string) (point-min) (point-max)))
+
+  ;; ----------------------------------------------------------
+  ;; Customize `autoinsert' related variables
+  (customize-set-variable 'auto-insert 'other)
+  (customize-set-variable 'auto-insert-directory
+                          (concat emacs-config-root-path "templates/"))
+
+  ;; ----------------------------------------------------------
+  ;; Templates
+  (define-auto-insert-custom
+    '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
+    ["template.h" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.\\([Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C / C++ program")
+    ["template.c" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.py\\'" . "Python header")
+    ["template.py" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.go\\'" . "Golang header")
+    ["template.go" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.el\\'" . "Emacs Lisp header")
+    ["template.el" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.hs\\'" . "Haskell header")
+    ["template.hs" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.\\(scala\\|sbt\\|worksheet\\.sc\\)\\'" . "Scala header")
+    ["template.scala" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.g\\(?:ant\\|roovy\\|radle\\)\\'" . "Groovy header")
+    ["template.groovy" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.sh\\'" . "Shell script header")
+    ["template.sh" autoinsert-yas-expand])
+
+  (define-auto-insert-custom
+    '("\\.org\\'" . "Org header")
+    ["template.org" autoinsert-yas-expand]))
+
+(eval-after-load "autoinsert" '(autoinsert-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `winum'
@@ -909,6 +976,9 @@ wiki search engine."
 
             ;; Enable global company mode
             (global-company-mode 1)
+
+            ;; Enable global autoinsert mode
+            (auto-insert-mode 1)
 
             ;; Enable winum mode
             (winum-mode 1)
