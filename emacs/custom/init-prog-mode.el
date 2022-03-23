@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 13:05:45 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 15:07:30 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -71,7 +71,9 @@
   (require 'smartparens-config)
   (require 'hungry-delete)
   (require 'rainbow-delimiters)
+  (require 'hl-todo)
   (require 'flycheck)
+  (require 'flyspell)
   (require 'whitespace-cleanup-mode)
   (require 'dumb-jump)
   (require 'quickrun)
@@ -124,6 +126,9 @@
 
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)
+
+              ;; enable highlight todo mode
+              (hl-todo-mode 1)
 
               ;; Enable whitespace cleanup mode
               (whitespace-cleanup-mode 1)

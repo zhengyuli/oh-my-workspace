@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 13:14:49 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 15:05:52 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -195,6 +195,7 @@ Return a list of installed packages or nil for every skipped package."
  'company-quickhelp-terminal
  ;; ******************************
  'flyspell-correct
+ 'flyspell-correct-avy-menu
  ;; ******************************
  'winum
  'switch-window
@@ -230,6 +231,7 @@ Return a list of installed packages or nil for every skipped package."
  'smartparens
  'hungry-delete
  'rainbow-delimiters
+ 'hl-todo
  'flycheck
  'whitespace-cleanup-mode
  'quickrun
@@ -270,6 +272,9 @@ Return a list of installed packages or nil for every skipped package."
  ;; ==============================
  ;; init-dockerfile-mode.el
  'dockerfile-mode
+  ;; ==============================
+ ;; init-text-mode.el
+ 'mixed-pitch
  ;; ==============================
  ;; init-yaml-mode.el
  'yaml-mode

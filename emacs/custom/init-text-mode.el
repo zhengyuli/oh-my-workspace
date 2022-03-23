@@ -34,11 +34,19 @@
 ;; Customized settings for `text-mode'
 (defun text-mode-settings ()
   "Settings for `text-mode'."
+
+  ;; Require
+  (require 'mixed-pitch)
+  (require 'flyspell)
+
   ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'text-mode-hook
             (lambda ()
               ;; -----------------------------------------------
+              ;; Enable mixed pitch mode
+              (mixed-pitch-mode 1)
+
               ;; Enable visual line mode
               (visual-line-mode 1)
 

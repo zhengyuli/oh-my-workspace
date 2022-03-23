@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 13:08:18 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 14:50:45 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -174,8 +174,7 @@
   ;; ----------------------------------------------------------
   ;; Customize `ivy' related variables
   (customize-set-variable 'ivy-use-virtual-buffers t)
-  (customize-set-variable 'ivy-count-format "")
-  (customize-set-variable 'ivy-initial-inputs-alist nil)
+  (customize-set-variable 'ivy-count-format "(%d/%d) ")
   (customize-set-variable 'ivy-re-builders-alist
                           '((t . ivy--regex-ignore-order)))
 
@@ -398,6 +397,16 @@
   (customize-set-variable 'flyspell-issue-message-flag nil))
 
 (eval-after-load "flyspell" '(flyspell-settings))
+
+;; ==================================================================================
+;; Customized settings for `flyspell-correct'
+(defun flyspell-correct-settings ()
+  "Settings for `flyspell-correct'."
+
+  ;; Require
+  (require 'flyspell-correct-avy-menu))
+
+(eval-after-load "flyspell-correct" '(flyspell-correct-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `winum'
@@ -1006,3 +1015,5 @@ wiki search engine."
 (provide 'init-base)
 
 ;;; init-base.el ends here
+
+; LocalWords:  alist
