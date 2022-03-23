@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 18:13:11 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 20:46:35 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -38,11 +38,6 @@
 
   ;; Require
   (require 'org-bullets)
-
-  ;; ----------------------------------------------------------
-  ;; Customized `org-mode' related faces
-  (unless (display-graphic-p)
-    (set-face-foreground 'org-hide "black"))
 
   ;; ----------------------------------------------------------
   ;; Customize `org-mode' related variables
