@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 11:12:06 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-23 13:21:27 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -41,6 +41,11 @@
 
   ;; ----------------------------------------------------------
   ;; Customize `org-mode' related variables
+  (customize-set-variable 'org-startup-indented t)
+  (customize-set-variable 'org-pretty-entities t)
+  (customize-set-variable 'org-hide-emphasis-markers t)
+  (customize-set-variable 'org-startup-with-inline-images t)
+  (customize-set-variable 'org-image-actual-width '(300))
   (customize-set-variable 'org-catch-invisible-edits t)
 
   ;; ----------------------------------------------------------
