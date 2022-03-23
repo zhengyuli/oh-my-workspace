@@ -4,7 +4,7 @@ This guide includes all kinds of configurations of daily used tools on mac.
 
 ## Command Line Tools
 
-The Command Line Tool package gives Mac terminal users many commonly used tools, utilities, compilers, and many other useful commands that are usually found in default linux installations.
+The Command Line Tool package gives Mac terminal users many commonly used tools, utilities, compilers, and many other useful commands that are usually found in default Linux installations.
 
 ### Installation
 
@@ -315,6 +315,9 @@ $ brew install gnupg
 $
 # Dependencies for emacs ag
 $ brew install ag
+$
+# Dependencies for flyspell
+$ brew install aspell
 $
 # Dependencies for emacs c&c++ lsp mode and dap mode
 # Please make sure **clangd** and **lldb-vscode** have been installed

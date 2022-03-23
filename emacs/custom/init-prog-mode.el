@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 20:53:00 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-23 13:05:45 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -129,7 +129,10 @@
               (whitespace-cleanup-mode 1)
 
               ;; Enable flycheck mode
-              (flycheck-mode 1))))
+              (flycheck-mode 1)
+
+              ;; enable flyspell program mode
+              (flyspell-prog-mode))))
 
 (eval-after-load "prog-mode" '(prog-mode-settings))
 

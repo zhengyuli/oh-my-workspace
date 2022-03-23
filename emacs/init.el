@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 20:58:18 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-23 13:14:49 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -194,6 +194,8 @@ Return a list of installed packages or nil for every skipped package."
  'company-quickhelp
  'company-quickhelp-terminal
  ;; ******************************
+ 'flyspell-correct
+ ;; ******************************
  'winum
  'switch-window
  'centaur-tabs
@@ -295,6 +297,7 @@ Return a list of installed packages or nil for every skipped package."
 (load-library "init-sh-script-mode")
 (load-library "init-dockerfile-mode")
 (load-library "init-cmake-mode")
+(load-library "init-text-mode")
 (load-library "init-yaml-mode")
 (load-library "init-org-mode")
 (load-library "init-markdown-mode")

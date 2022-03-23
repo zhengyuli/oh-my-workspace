@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 10:10:54 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 13:08:18 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -384,6 +384,20 @@
     ["template.org" autoinsert-yas-expand]))
 
 (eval-after-load "autoinsert" '(autoinsert-settings))
+
+;; ==================================================================================
+;; Customized settings for `flyspell'
+(defun flyspell-settings ()
+  "Settings for `flyspell'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `ispell' realted variables
+  (customize-set-variable 'ispell-program-name "aspell")
+
+  ;; Customize `flyspell' realted variables
+  (customize-set-variable 'flyspell-issue-message-flag nil))
+
+(eval-after-load "flyspell" '(flyspell-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `winum'
@@ -880,6 +894,10 @@ wiki search engine."
                ("C-; c" . avy-goto-char)
                ("C-; w" . avy-goto-word-0)
                ("C-; l" . avy-goto-line)
+               ;; Flyspell correct
+               ("C-: c" . flyspell-correct-wrapper)
+               ("C-: p" . flyspell-correct-previous)
+               ("C-: n" . flyspell-correct-next)
                ;; Switch window
                ("C-x o" . switch-window)
                ;; Helpful
