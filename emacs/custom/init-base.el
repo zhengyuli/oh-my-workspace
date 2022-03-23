@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 20:35:45 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-23 09:31:44 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -745,11 +745,16 @@ wiki search engine."
 
   ;; Require
   (require 'browse-url)
+  (require 'shr)
   (require 'eww-lnum)
 
   ;; ----------------------------------------------------------
   ;; Customize `browse-url' related variables
   (customize-set-variable 'browse-url-browser-function 'eww-browse-url)
+
+  ;; Customize `shr' related variables
+  (customize-set-variable 'shr-use-fonts nil)
+  (customize-set-variable 'shr-width 120)
 
   ;; Customize `eww' related variables
   (customize-set-variable 'eww-search-prefix "https://www.google.com/search?q=")
