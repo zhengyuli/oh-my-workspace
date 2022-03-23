@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 21:27:39 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 21:39:29 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -765,6 +765,7 @@ wiki search engine."
   (require 'browse-url)
   (require 'shr)
   (require 'eww-lnum)
+  (require 'mixed-pitch)
 
   ;; ----------------------------------------------------------
   ;; Customize `browse-url' related variables
@@ -795,7 +796,15 @@ wiki search engine."
      ("C" . eww-toggle-colors)
      ("e" . eww-browse-with-external-browser)
      ("x" . eww-quit))
-   eww-mode-map))
+   eww-mode-map)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'eww-mode-hook
+            (lambda ()
+              ;; -----------------------------------------------
+              ;; Enable mixed pitch mode
+              (mixed-pitch-mode 1))))
 
 (eval-after-load "eww" '(eww-settings))
 

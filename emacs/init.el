@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 21:31:56 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 21:40:15 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -226,6 +226,7 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
  'go-translate
  ;; ******************************
  'eww-lnum
+ 'mixed-pitch
  ;; ==============================
  ;; init-prog-mode.el
  'smartparens
@@ -272,9 +273,6 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
  ;; ==============================
  ;; init-dockerfile-mode.el
  'dockerfile-mode
-  ;; ==============================
- ;; init-text-mode.el
- 'mixed-pitch
  ;; ==============================
  ;; init-yaml-mode.el
  'yaml-mode
