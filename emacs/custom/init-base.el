@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 09:31:44 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 10:10:54 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -588,13 +588,6 @@
   (customize-set-variable 'epg-pinentry-mode 'loopback)
 
   ;; ----------------------------------------------------------
-  ;; Define `dired' related aliases
-  (defalias 'dired-encrypt 'epa-dired-do-encrypt)
-  (defalias 'dired-decrypt 'epa-dired-do-decrypt)
-  (defalias 'dired-sign 'epa-dired-do-sign)
-  (defalias 'dired-verify 'epa-dired-do-verify)
-
-  ;; ----------------------------------------------------------
   ;; Key bindings for `ztree-view'
   (lazy-set-key
    '(("<return>" . ztree-perform-soft-action)
@@ -626,6 +619,10 @@
      ("D" . ztree-diff)
      ("z" . dired-do-compress)
      ("Z" . dired-do-compress)
+     (": e" . epa-dired-do-encrypt)
+     (": d" . epa-dired-do-decrypt)
+     (": s" . epa-dired-do-sign)
+     (": v" . epa-dired-do-verify)
      ("M-w" . dired-copy-paste-do-copy)
      ("M-k" . dired-copy-paste-do-cut)
      ("C-y" . dired-copy-paste-do-paste)
@@ -683,9 +680,6 @@
    '(magit-diff-removed-highlight ((t (:background "#FFE4C4" :foreground "black"))))))
 
 (eval-after-load "magit" '(magit-settings))
-
-(defalias 'git-status 'magit-status)
-(defalias 'git-log 'magit-log-all)
 
 ;; ==================================================================================
 ;; Customized settings for `go-translate'
@@ -781,6 +775,14 @@ wiki search engine."
    eww-mode-map))
 
 (eval-after-load "eww" '(eww-settings))
+
+;; ==================================================================================
+;; Alias
+(defalias 'git-status 'magit-status)
+(defalias 'git-log 'magit-log-all)
+
+(defalias 'increase-text 'text-scale-increase)
+(defalias 'decrease-text 'text-scale-decrease)
 
 ;; ==================================================================================
 ;; Hooks
@@ -884,6 +886,11 @@ wiki search engine."
                ("C-h f" . helpful-callable)
                ("C-h v" . helpful-variable)
                ("C-h k" . helpful-key)
+               ;; Scale text
+               ("C-x =" . text-scale-increase)
+               ("C-x _" . text-scale-decrease)
+               ("C-x +" . text-scale-increase)
+               ("C-x -" . text-scale-decrease)
                ;; Vterm
                ("C-x C-t" . vterm)
                ;; Dired
