@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 20:46:01 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 21:27:39 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -502,6 +502,7 @@
   (set-face-attribute 'default nil :font emacs-config-fixed-font :height emacs-config-font-size)
   (set-face-attribute 'fixed-pitch nil :font emacs-config-fixed-font)
   (set-face-attribute 'fixed-pitch-serif nil :font emacs-config-fixed-serif-font)
+  (set-face-attribute 'variable-pitch nil :font emacs-config-variable-font)
 
   ;; ----------------------------------------------------------
   ;; Customize `doom-themes' related variables
@@ -770,7 +771,6 @@ wiki search engine."
   (customize-set-variable 'browse-url-browser-function 'eww-browse-url)
 
   ;; Customize `shr' related variables
-  (customize-set-variable 'shr-use-fonts nil)
   (customize-set-variable 'shr-width 120)
 
   ;; Customize `eww' related variables

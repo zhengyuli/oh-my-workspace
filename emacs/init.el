@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 15:05:52 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 21:31:56 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -51,6 +51,9 @@
 ;; Emacs configuration fixed serif font
 (defvar emacs-config-fixed-serif-font "Source Serif Pro" "Emacs configuration fixed serif font.")
 
+;; Emacs configuration variable font
+(defvar emacs-config-variable-font "Helvetica" "Emacs configuration variable font.")
+
 ;; Emacs configuration font size
 (defvar emacs-config-font-size 150 "Emacs configuration font size.")
 
@@ -61,18 +64,12 @@
 (defvar emacs-config-email "_EMACS_CONFIG_EMAIL_" "Emacs configuration email.")
 
 ;; ==================================================================================
-(defun font-exists-p (font)
-  "Check if font exists."
-  (if (display-graphic-p)
-      (if (null (x-list-fonts font)) nil t)
-    t))
-
-(defun add-subdirs-to-load-path (base-dir)
-  "Add subdirs to load path.
-Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
-  (let ((default-directory base-dir))
-    (add-to-list 'load-path base-dir)
-    (normal-top-level-add-subdirs-to-load-path)))
+(defun ensure-font-installed (font)
+  "Assure font is installed."
+  (when (and
+         (display-graphic-p)
+         (null (x-list-fonts font)))
+    (error (format "Missing \"%s\" font, please install." font))))
 
 (defun ensure-package-installed (&rest packages)
   "Assure every package is installed, ask for installation if it’s not.
@@ -88,6 +85,13 @@ Return a list of installed packages or nil for every skipped package."
           (package-refresh-contents)
           (package-install package)))))
    packages))
+
+(defun add-subdirs-to-load-path (base-dir)
+  "Add subdirs to load path.
+Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
+  (let ((default-directory base-dir))
+    (add-to-list 'load-path base-dir)
+    (normal-top-level-add-subdirs-to-load-path)))
 
 (defun lazy-set-key (key-alist &optional keymap key-prefix)
   "This function is to little type when define key binding.
@@ -124,17 +128,13 @@ Return a list of installed packages or nil for every skipped package."
 (unless (>= (string-to-number emacs-version) 27.1)
   (error "The Emacs version must be >= 27.1."))
 
-(unless (font-exists-p "Source Code Pro")
-  (error "Missing \"Source Code Pro\" font, please install."))
+(ensure-font-installed emacs-config-fixed-font)
 
-(unless (font-exists-p "Source Serif Pro")
-  (error "Missing \"Source Serif Pro\" font, please install."))
+(ensure-font-installed emacs-config-fixed-serif-font)
+
+(ensure-font-installed emacs-config-variable-font)
 
 ;; ==================================================================================
-;; Add custom directory to load-path
-(add-subdirs-to-load-path emacs-config-custom-path)
-(add-subdirs-to-load-path emacs-config-site-packages-path)
-
 ;; Initialize package manager
 ;; Add package archives
 (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/") t)
@@ -288,7 +288,11 @@ Return a list of installed packages or nil for every skipped package."
  'markdownfmt)
 
 ;; ==================================================================================
-;; Load librares
+;; Add custom directory to load-path
+(add-subdirs-to-load-path emacs-config-custom-path)
+(add-subdirs-to-load-path emacs-config-site-packages-path)
+
+;; Load user defined libraries
 (load-library "init-base")
 (load-library "init-prog-mode")
 (load-library "init-cc-mode")
