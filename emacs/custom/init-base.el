@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 14:50:45 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-23 18:11:05 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -586,7 +586,7 @@
   (require 'dired-custom-extension)
 
   ;; ----------------------------------------------------------
-  ;; Customized magit related faces
+  ;; Customized `dired' related faces
   (custom-set-faces
    '(dired-header ((t (:foreground "#EE0000" :height 1.1))))
    '(dired-directory ((t (:foreground "#51AFEF" :height 1.1))))
@@ -695,7 +695,7 @@
   "Settings for `magit'."
 
   ;; ----------------------------------------------------------
-  ;; Customized magit related faces
+  ;; Customized `magit' related faces
   (custom-set-faces
    '(magit-diff-added ((t (:background "#919191" :foreground "white"))))
    '(magit-diff-removed ((t (:background "#474747" :foreground "white"))))
