@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 20:46:35 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-24 12:53:58 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -38,14 +38,19 @@
 
   ;; Require
   (require 'org-bullets)
+  (require 'org-appear)
 
   ;; ----------------------------------------------------------
   ;; Customize `org-mode' related variables
-  (customize-set-variable 'org-startup-indented t)
+  (if (display-graphic-p)
+      (progn
+        (customize-set-variable 'org-startup-indented t)
+          (customize-set-variable 'org-startup-with-inline-images t)
+          (customize-set-variable 'org-image-actual-width '(300)))
+    (customize-set-variable 'org-startup-indented nil))
+
   (customize-set-variable 'org-pretty-entities t)
   (customize-set-variable 'org-hide-emphasis-markers t)
-  (customize-set-variable 'org-startup-with-inline-images t)
-  (customize-set-variable 'org-image-actual-width '(300))
   (customize-set-variable 'org-catch-invisible-edits t)
 
   ;; ----------------------------------------------------------
@@ -54,7 +59,11 @@
             (lambda ()
               ;; ----------------------------------------------------------
               ;; Enable org bullets mode
-              (org-bullets-mode 1))))
+              (when (display-graphic-p)
+                (org-bullets-mode 1))
+
+              ;; Enable org appear mode
+              (org-appear-mode 1))))
 
 (eval-after-load "org" '(org-mode-settings))
 

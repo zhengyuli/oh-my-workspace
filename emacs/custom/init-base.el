@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 21:39:29 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-24 12:30:12 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -1012,13 +1012,6 @@ wiki search engine."
             ;; ----------------------------------------------------------
             ;; Load doom theme
             (load-theme 'doom-xcode t)
-
-            ;; For tty, reset the background color of default face
-            (unless (and (display-graphic-p)
-                         (string-equal
-                          (face-attribute 'default :background)
-                          "unspecified-bg"))
-              (set-face-background 'default "black"))
 
             ;; Toggle fullscreen
             (toggle-fullscreen)))
