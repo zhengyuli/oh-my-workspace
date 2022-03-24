@@ -64,15 +64,18 @@ Select the **Source Code Pro** font through `iTerm2->Preferences->Profiles->Text
 
 #### Theme
 
-Download Solarized theme for iTerm2:
+Download Solarized and Dracula themes for iTerm2:
 
 ```
 $ git clone https://github.com/altercation/solarized
+$ git clone https://github.com/dracula/iterm.git
 ```
 
 Import Solarized dark theme through `iTerm2->Preferences->Profiles->Colors->Color Presets->Import`.
 
-Select the **Solorized Dark** theme through `iTerm2->Preferences->Profiles->Colors->Color Presets->Solorized Dark`.
+Select **Solorized Dark** theme through `iTerm2->Preferences->Profiles->Colors->Color Presets->Solorized Dark`.
+
+Select **Dracula** theme through `iTerm2->Preferences->Profiles->Colors->Color Presets->Dracula`.
 
 #### Key Bindings
 
