@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 15:37:59 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-24 16:33:53 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -778,7 +778,7 @@ wiki search engine."
   (customize-set-variable 'shr-width 120)
 
   ;; Customize `eww' related variables
-  (customize-set-variable 'eww-search-prefix "https://www.google.com/search?q=")
+  (customize-set-variable 'eww-search-prefix "https://cn.bing.com/search?q=")
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `eww'
