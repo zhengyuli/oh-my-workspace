@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 12:59:37 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-24 14:42:36 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -701,7 +701,8 @@
    '(magit-diff-added ((t (:background "#919191" :foreground "white"))))
    '(magit-diff-removed ((t (:background "#474747" :foreground "white"))))
    '(magit-diff-added-highlight ((t (:background "#B22222" :foreground "white"))))
-   '(magit-diff-removed-highlight ((t (:background "#FFE4C4" :foreground "black"))))))
+   '(magit-diff-removed-highlight ((t (:background "#98FB98" :foreground "black"))))
+   '(magit-diff-hunk-heading-highlight ((t (:background "#383838" :foreground "white"))))))
 
 (eval-after-load "magit" '(magit-settings))
 

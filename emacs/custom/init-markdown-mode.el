@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:41 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-24 14:35:29 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -49,6 +49,12 @@
   (add-hook 'markdown-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
+              ;; Set buffer column width
+              (setq fill-column 120)
+
+              ;; Enable auto fill mode
+              (auto-fill-mode 1)
+
               ;; Enable markdown format on save
               (markdownfmt-enable-on-save))))
 

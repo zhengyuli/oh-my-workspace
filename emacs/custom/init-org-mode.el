@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 13:52:13 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-24 14:33:59 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -43,6 +43,7 @@
   ;; ----------------------------------------------------------
   ;; Customize `org-mode' related variables
   (customize-set-variable 'org-startup-indented t)
+  (customize-set-variable 'org-startup-truncated t)
   (customize-set-variable 'org-startup-with-inline-images t)
   (customize-set-variable 'org-image-actual-width '(300))
   (customize-set-variable 'org-pretty-entities t)
@@ -56,6 +57,9 @@
               ;; ----------------------------------------------------------
               ;; Set buffer column width
               (setq fill-column 120)
+
+              ;; Enable auto fill mode
+              (auto-fill-mode 1)
 
               ;; Enable org bullets mode
               (org-bullets-mode 1)
