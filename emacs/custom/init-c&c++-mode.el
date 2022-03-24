@@ -1,5 +1,5 @@
 ;;; package --- init-c&c++-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 14:18:21 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-24 10:36:15 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -48,6 +48,7 @@
 
   ;; Require
   (require 'google-c-style)
+  (require 'doxymacs)
   (require 'lsp-mode)
   (require 'dap-mode)
   (require 'dap-lldb)
@@ -77,6 +78,9 @@
               (lambda ()
                 ;; Enable google cc style
     		    (google-set-c-style)
+
+                ;; Enable doxymacs mode
+                (doxymacs-mode 1)
 
                 ;; Enable lsp mode
                 (lsp-deferred)
