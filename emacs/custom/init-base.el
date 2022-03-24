@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 14:42:36 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-24 15:37:59 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -518,6 +518,8 @@
 
   ;; ----------------------------------------------------------
   ;; Customize `dashboard' related variables
+  (customize-set-variable 'dashboard-startup-banner
+                          (concat emacs-config-root-path "banners/totoro.png"))
   (customize-set-variable 'dashboard-banner-logo-title
                           (format "Welcome to %s\'s Emacs" emacs-config-user))
   (customize-set-variable 'dashboard-set-heading-icons t)
