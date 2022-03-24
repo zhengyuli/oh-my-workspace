@@ -1,150 +1,131 @@
-# Oh My Workspace Configurations
-
+* Oh My Workspace Configurations
 This guide includes all kinds of configurations of daily used tools on mac.
 
-## Command Line Tools
+** Command Line Tools
+The Command Line Tool package gives Mac terminal users many commonly used tools, utilities, compilers, and many other
+useful commands that are usually found in default Linux installations.
 
-The Command Line Tool package gives Mac terminal users many commonly used tools, utilities, compilers, and many other useful commands that are usually found in default Linux installations.
-
-### Installation
-
+*** Installation
 Use xcode-select to download and install:
 
-```
+#+BEGIN_SRC shell
 $ xcode-select --install
-```
+#+END_SRC
 
-## Homebrew
+** Homebrew
+*[[https://brew.sh/][Homebrew]]* the most popular package manager on mac.
 
-**[Homebrew](https://brew.sh/)** the most popular package manager on mac.
+*** Installation
+1. Install homebrew:
 
-### Installation
+#+BEGIN_SRC shell
+  $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+#+END_SRC
 
-Install homebrew:
+2. Add */usr/local/bin* to the $PATH:
 
-```
-$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
-
-Add `/usr/local/bin` to the $PATH:
-
-```
+#+BEGIN_SRC shell
 $ echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc
-```
+#+END_SRC
 
-Self-check and update brew:
+3. Self-check and update brew:
 
-```
+#+BEGIN_SRC
 $ brew doctor && brew update
-```
+#+END_SRC
 
-## Iterm2
+** iTerm2
+*[[https://www.iterm2.com/][iTerm2]]* is a replacement for Terminal and the successor to iTerm. It brings the terminal into the modern age with
+features you never knew you always wanted.
 
-**[iTerm2](https://www.iterm2.com/)** is a replacement for Terminal and the successor to iTerm.
-
-It brings the terminal into the modern age with features you never knew you always wanted.
-
-### Installation
-
+*** Installation
 Use Homebrew to download and install:
 
-```
+#+BEGIN_SRC shell
 $ brew cask install iterm2
-```
+#+END_SRC
 
-### Configure
+*** Configure
+**** Fonts
+1.  Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
 
-#### Fonts
+2. Install Source Serif Pro font from: https://fonts.google.com/specimen/Source+Serif+Pro
 
-Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
+3. Select the **Source Code Pro** font through *iTerm2->Preferences->Profiles->Text->Font*.
 
-Install Source Serif Pro font from: https://fonts.google.com/specimen/Source+Serif+Pro
+**** Theme
+1. Download Dracula theme for iTerm2:
 
-Select the **Source Code Pro** font through `iTerm2->Preferences->Profiles->Text->Font`.
-
-#### Theme
-
-Download Solarized and Dracula themes for iTerm2:
-
-```
-$ git clone https://github.com/altercation/solarized
+#+BEGIN_SRC
 $ git clone https://github.com/dracula/iterm.git
-```
+#+END_SRC
 
-Import Solarized dark theme through `iTerm2->Preferences->Profiles->Colors->Color Presets->Import`.
+2. Import theme through *iTerm2->Preferences->Profiles->Colors->Color Presets->Import*.
 
-Select **Solorized Dark** theme through `iTerm2->Preferences->Profiles->Colors->Color Presets->Solorized Dark`.
+3. Select **Dracula** theme through *iTerm2->Preferences->Profiles->Colors->Color Presets->Dracula*.
 
-Select **Dracula** theme through `iTerm2->Preferences->Profiles->Colors->Color Presets->Dracula`.
-
-#### Key Bindings
-
-Configure shortcuts through `iTerm2->Preferences->Keys->Key Mappings` panel.
+**** Key Bindings
+Configure shortcuts through *iTerm2->Preferences->Keys->Key Mappings* panel.
 
 | Action       | Key Mapping |
-|:-------------|:------------|
+|--------------+-------------|
 | Previous Tab | ⇧⌘P         |
 | Next Tab     | ⇧⌘N         |
 
-## Zsh + Oh My Zsh
+** Zsh + Oh My Zsh
+*[[http://zsh.sourceforge.net/][Z shell]]* (also known as zsh) is a Unix shell that is built on top of bash (the default shell for macOS).
 
-**[Z shell](http://zsh.sourceforge.net/)** (also known as zsh) is a Unix shell that is built on top of bash (the default shell for macOS).
+*[[https://ohmyz.sh/][Oh My Zsh]]* is an open source, community-driven framework for managing your zsh configuration. It comes with a bunch of
+features out of the box and improves your terminal experience.
 
-**[Oh My Zsh](https://ohmyz.sh/)** is an open source, community-driven framework for managing your zsh configuration. It comes with a bunch of features out of the box and improves your terminal experience.
+*** Installation
+1. Use Homebrew to download and install:
 
-### Installation
-
-Use Homebrew to download and install:
-
-```
+#+BEGIN_SRC shell
 $ brew install zsh
-```
+#+END_SRC
 
-Install Oh My Zsh:
+2. Install Oh My Zsh:
 
-```
+#+BEGIN_SRC shell
 $ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 $ chsh -s $(which zsh)
-```
+#+END_SRC
 
-### Configure
-
+*** Configure
 The out-of-the-box configuration is usable but you probably want to customise it to suit your needs.
 
-The Official [Wiki](https://github.com/ohmyzsh/ohmyzsh/wiki) contains a lot of useful information if you want to deep dive into what you can do with Oh My Zsh, but we'll cover the basics here.
+The Official [[https://github.com/ohmyzsh/ohmyzsh/wiki)][Wiki]] contains a lot of useful information if you want to deep dive into what you can do with Oh My Zsh, but
+we'll cover the basics here.
 
-#### Themes
-
+*** Themes
 Changing theme is as simple as changing a string in your configuration file.
 
-```
+#+BEGIN_SRC shell
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="agnoster"
-```
+#+END_SRC
 
-#### Plugins
+**** Plugins
+Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be added to *~/.oh-my-zsh/custom/plugins/*.
 
-Standard plugins can be found in `~/.oh-my-zsh/plugins/*`, custom plugins may be added to `~/.oh-my-zsh/custom/plugins/`.
+1. Download custom plugins:
 
-Add plugins to your shell by adding the name of the plugin to the plugin array in your `~/.zshrc`.
-
-Download custom plugins:
-
-```
+#+BEGIN_SRC  shell
 $ brew install fzf
 $
 $ git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 $ brew install autosuggestions
 $
 $ git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-```
+#+END_SRC
 
-Configure daily used plguins:
+2. Configure daily used plugins in your ~/.zshrc':
 
-```
+#+BEGIN_SRC  shell
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#a9a9a9"
 
 # Which plugins would you like to load?
@@ -163,113 +144,100 @@ plugins=(
     docker
     web-search
 )
-```
+#+END_SRC
 
-#### Others
-
+**** Others
 Append the following settings to your configuration file.
 
-```
+#+BEGIN_SRC shell
 # Disable homebrew auto update
 export HOMEBREW_NO_AUTO_UPDATE="true"
-```
+#+END_SRC
 
-## LLVM
-
+** LLVM
 The LLVM Project is a collection of modular and reusable compiler and toolchain technologies.
 
-### Installation
-
+*** Installation
 Use Homebrew to download and install:
 
-```
+#+BEGIN_SRC shell
 $ brew install llvm
-```
+#+END_SRC
 
-### Configure
-Append the following settings to your `~/.zshrc`:
+*** Configure
+Append the following settings to your *~/.zshrc*:
 
-```
+#+BEGIN_SRC shell
 $ echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
-```
+#+END_SRC
 
-## Golang
-
+** Golang
 Go is an open source programming language.
 
-### Installation
+*** Installation
+Download the latest version from [[https://golang.org/dl/][Golang Site]] and install manually.
 
-Download the latest version from [https://golang.org/dl/]() and install manually.
-
-### Configure
-
+*** Configure
 Create Golang projects workspace:
 
-```
+#+BEGIN_SRC shell
 $ mkdir -p $HOME/MyGoProjects
-```
+#+END_SRC
 
-Append the following settings to your `~/.zshrc`:
+Append the following settings to your *~/.zshrc*:
 
-```
+#+BEGIN_SRC shell
 # Path to your go projects
 export GOPATH=$HOME/MyGoProjects
 
 # Update $PATH
 export PATH=$GOPATH/bin:$PATH
-```
+#+END_SRC
 
 Install golang related dependencies:
 
-```
+#+BEGIN_SRC shell
 $ go get golang.org/x/tools/cmd/godoc
 $ go get github.com/rogpeppe/godef
 $ go get github.com/nsf/gocode
-```
+#+END_SRC
 
-## Pyenv
+** Pyenv
+pyenv is a very popular python management tool. It lets you easily switch between multiple versions of Python.
 
-pyenv is a very popular python management tool.
-
-It lets you easily switch between multiple versions of Python.
-
-### Installation
-
+*** Installation
 Use Homebrew to download and install:
 
-```
+#+BEGIN_SRC shell
 $ brew install pyenv
 $
 # Install your prefered python version
 $ pyenv install 3.8.10
-```
+#+END_SRC
 
-### Configure
+*** Configure
+Append the following settings to your *~/.zshrc*:
 
-Append the following settings to your `~/.zshrc`:
-
-```
+#+BEGIN_SRC shell
 # Initialize pyenv
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
-```
+#+END_SRC
 
-## pyenv-virtualenvwrapper
+** pyenv-virtualenvwrapper
 
-### Installation
-
+*** Installation
 Using git to download and install:
 
-```
+#+BEGIN_SRC shell
 $ git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
-```
+#+END_SRC
 
-### Configure
+*** Configure
+Append the following settings to your *~/.zshrc*:
 
-Append the following settings to your `~/.zshrc`:
-
-```
-# To get virtualenvwrapper to create a virtual environment using 
+#+BEGIN_SRC shell
+# To get virtualenvwrapper to create a virtual environment using
 # pyvenv instead of virtualenv.
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
@@ -278,41 +246,37 @@ pyenv shell 3.8.10
 
 # Activate virtualenvwrapper
 pyenv virtualenvwrapper
-```
+#+END_SRC
 
-## Python
-
-macOS, like Linux, ships with Python already installed.
+** Python
+MacOS, like Linux, ships with Python already installed.
 
 For not messing with the system Python (some system tools rely on it, etc.), we need install our own version(s).
 
-### Installation
-
+*** Installation
 Using pyenv to download and install:
 
-```
+#+BEGIN_SRC shell
 $ pyenv install 3.8.10
 $ pyenv global 3.8.10
 $ pyenv rehash
-```
+#+END_SRC
 
-### Emacs
-
+** Emacs
 Emacs is an extensible, customizable, free/libre text editor — and more.
 
-### Installation
+*** Installation
+1. Using homebrew to download and install:
 
-Using homebrew to download and install:
-
-```
+#+BEGIN_SRC shell
 $ brew tap railwaycat/emacsmacport
 $ brew cask install emacs-mac
 $ brew untap railwaycat/emacsmacport
-```
+#+END_SRC
 
-Installing emacs related dependencies:
+2. Installing emacs related dependencies:
 
-```
+#+BEGIN_SRC shell
 # Dependencies for emacs easypg
 $ brew install gnupg
 $
@@ -341,12 +305,11 @@ $
 # Dependencies for emacs markdown
 $ brew install markdown
 $ brew install pandoc
-```
+#+END_SRC
 
-#### Configure
-
+*** Configure
 Setup emacs configurations:
 
-```
+#+BEGIN_SRC shell
 $ ./emacs/install.sh
-```
+#+END_SRC
