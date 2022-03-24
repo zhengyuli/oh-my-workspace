@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 16:33:53 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-24 18:13:52 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -725,6 +725,22 @@
 (eval-after-load "go-translate" '(go-translate-settings))
 
 ;; ==================================================================================
+;; Customize settings for `org-roam'
+(defun org-roam-settings ()
+  "Settings for `org-roam'."
+
+  ;; Require
+  (require 'org-roam-protocol)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `org-roam' related variables
+  (customize-set-variable 'org-roam-directory "OrgRoamNotes")
+  (customize-set-variable 'org-roam-node-display-template
+                          (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))))
+
+(eval-after-load "org-roam" '(org-roam-settings))
+
+;; ==================================================================================
 (defun eww-bing/search ()
   "Search the web for the text in the region or at the point by
 bing search engine."
@@ -771,11 +787,23 @@ wiki search engine."
   (require 'mixed-pitch)
 
   ;; ----------------------------------------------------------
+  (defun eww-rename-buffer ()
+    "Rename `eww-mode' buffer so sites open in new page."
+    (let ((title (plist-get eww-data :title)))
+      (when (eq major-mode 'eww-mode )
+        (if title
+            (rename-buffer (concat "EWW " title ) t)
+          (rename-buffer "eww" t)))))
+
+  ;; ----------------------------------------------------------
   ;; Customize `browse-url' related variables
   (customize-set-variable 'browse-url-browser-function 'eww-browse-url)
 
   ;; Customize `shr' related variables
   (customize-set-variable 'shr-width 120)
+
+  ;; Customize `eww-lnum' related variables
+  (customize-set-variable 'eww-lnum-quick-browsing nil)
 
   ;; Customize `eww' related variables
   (customize-set-variable 'eww-search-prefix "https://cn.bing.com/search?q=")
@@ -807,7 +835,9 @@ wiki search engine."
             (lambda ()
               ;; -----------------------------------------------
               ;; Enable mixed pitch mode
-              (mixed-pitch-mode 1))))
+              (mixed-pitch-mode 1)))
+
+  (add-hook 'eww-after-render-hook 'eww-rename-buffer))
 
 (eval-after-load "eww" '(eww-settings))
 
@@ -937,6 +967,13 @@ wiki search engine."
                ("C-x d" . dired-jump)
                ;; Go translate
                ("C-x C-p" . gts-do-translate)
+               ;; Org roam
+               ("C-c n f" . org-roam-node-find)
+               ("C-c n i" . org-roam-node-insert)
+               ("C-c n g" . org-roam-graph)
+               ("C-c n c" . org-roam-capture)
+               ("C-c n l" . org-roam-buffer-toggle)
+               ("C-c n j" . org-roam-dailies-capture-today)
                ;; Eww
                ("C-x C-g" . eww-search-words)))
 
@@ -1008,7 +1045,10 @@ wiki search engine."
             (centaur-tabs-mode 1)
 
             ;; Enable doom modeline
-            (doom-modeline-mode 1)))
+            (doom-modeline-mode 1)
+
+            ;; Enable org roam db auto sync mode
+            (org-roam-db-autosync-mode 1)))
 
 (add-hook 'emacs-startup-hook
           (lambda ()
