@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 14:33:59 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-25 11:07:00 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,8 +37,53 @@
   "Settings for `org-mode'."
 
   ;; Require
+  (require 'org-tempo)
   (require 'org-bullets)
   (require 'org-appear)
+
+  ;; ----------------------------------------------------------
+  ;; Redefinition of `org-tempo-add-block' with uppercase keyword support
+  (defun org-tempo-add-block (entry)
+    "Add block entry from `org-structure-template-alist'."
+    (let* ((key (format "<%s" (car entry)))
+           (name (cdr entry))
+           (name_prefix (car (split-string name " ")))
+           (name_post (string-join (cdr (split-string name " ")) " "))
+           (special (member name '("src" "export"))))
+      (tempo-define-template (format "org-%s" (replace-regexp-in-string " " "-" name))
+                             `(,(format "#+BEGIN_%s%s"
+                                        (string-join (list (upcase name_prefix) name_post) " ")
+                                        (if special " " ""))
+                               ,(when special 'p) '> n ,(unless special 'p) n
+                               ,(format "#+END_%s" (upcase name_prefix))
+                               >)
+                             key
+                             (format "Insert a %s block" name)
+                             'org-tempo-tags)))
+
+  ;; Redefinition of `org-tempo-add-keyword' with uppercase keyword support
+  (defun org-tempo-add-keyword (entry)
+    "Add keyword entry from `org-tempo-keywords-alist'."
+    (let* ((key (format "<%s" (car entry)))
+           (name (cdr entry)))
+      (tempo-define-template (format "org-%s" (replace-regexp-in-string " " "-" name))
+                             `(,(format "#+%s: " (upcase name)) p '>)
+                             key
+                             (format "Insert a %s keyword" name)
+                             'org-tempo-tags)))
+
+  ;; Redefinition of `org-tempo--include-file' with uppercase keyword support
+  (defun org-tempo--include-file ()
+    "Add #+include: and a file name."
+    (let ((inhibit-quit t))
+      (unless (with-local-quit
+                (prog1 t
+                  (insert
+                   (format "#+INCLUDE: %S "
+                           (file-relative-name
+                            (read-file-name "Include file: "))))))
+        (insert "<I")
+        (setq quit-flag nil))))
 
   ;; ----------------------------------------------------------
   ;; Customize `org-mode' related variables
