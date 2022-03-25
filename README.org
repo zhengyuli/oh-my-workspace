@@ -9,7 +9,7 @@ useful commands that are usually found in default Linux installations.
 Use xcode-select to download and install:
 
 #+BEGIN_SRC shell
-$ xcode-select --install
+  xcode-select --install
 #+END_SRC
 
 ** Homebrew
@@ -19,19 +19,19 @@ $ xcode-select --install
 1. Install homebrew:
 
 #+BEGIN_SRC shell
-  $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 #+END_SRC
 
 2. Add */usr/local/bin* to the $PATH:
 
 #+BEGIN_SRC shell
-$ echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc
+  echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc
 #+END_SRC
 
 3. Self-check and update brew:
 
-#+BEGIN_SRC
-$ brew doctor && brew update
+#+BEGIN_SRC shell
+  brew doctor && brew update
 #+END_SRC
 
 ** iTerm2
@@ -42,7 +42,7 @@ features you never knew you always wanted.
 Use Homebrew to download and install:
 
 #+BEGIN_SRC shell
-$ brew cask install iterm2
+  brew cask install iterm2
 #+END_SRC
 
 *** Configure
@@ -56,8 +56,8 @@ $ brew cask install iterm2
 **** Theme
 1. Download Dracula theme for iTerm2:
 
-#+BEGIN_SRC
-$ git clone https://github.com/dracula/iterm.git
+#+BEGIN_SRC shell
+  git clone https://github.com/dracula/iterm.git
 #+END_SRC
 
 2. Import theme through *iTerm2->Preferences->Profiles->Colors->Color Presets->Import*.
@@ -82,14 +82,14 @@ features out of the box and improves your terminal experience.
 1. Use Homebrew to download and install:
 
 #+BEGIN_SRC shell
-$ brew install zsh
+  brew install zsh
 #+END_SRC
 
 2. Install Oh My Zsh:
 
 #+BEGIN_SRC shell
-$ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-$ chsh -s $(which zsh)
+  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  chsh -s $(which zsh)
 #+END_SRC
 
 *** Configure
@@ -115,12 +115,12 @@ Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be
 1. Download custom plugins:
 
 #+BEGIN_SRC  shell
-$ brew install fzf
-$
-$ git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-$ brew install autosuggestions
-$
-$ git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+  brew install fzf
+
+  git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+  brew install autosuggestions
+
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 #+END_SRC
 
 2. Configure daily used plugins in your ~/.zshrc':
@@ -150,8 +150,8 @@ plugins=(
 Append the following settings to your configuration file.
 
 #+BEGIN_SRC shell
-# Disable homebrew auto update
-export HOMEBREW_NO_AUTO_UPDATE="true"
+  # Disable homebrew auto update
+  export HOMEBREW_NO_AUTO_UPDATE="true"
 #+END_SRC
 
 ** LLVM
@@ -161,14 +161,14 @@ The LLVM Project is a collection of modular and reusable compiler and toolchain 
 Use Homebrew to download and install:
 
 #+BEGIN_SRC shell
-$ brew install llvm
+  brew install llvm
 #+END_SRC
 
 *** Configure
 Append the following settings to your *~/.zshrc*:
 
 #+BEGIN_SRC shell
-$ echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
+  echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
 #+END_SRC
 
 ** Golang
@@ -181,25 +181,25 @@ Download the latest version from [[https://golang.org/dl/][Golang Site]] and ins
 Create Golang projects workspace:
 
 #+BEGIN_SRC shell
-$ mkdir -p $HOME/MyGoProjects
+  mkdir -p $HOME/MyGoProjects
 #+END_SRC
 
 Append the following settings to your *~/.zshrc*:
 
 #+BEGIN_SRC shell
-# Path to your go projects
-export GOPATH=$HOME/MyGoProjects
+  # Path to your go projects
+  export GOPATH=$HOME/MyGoProjects
 
-# Update $PATH
-export PATH=$GOPATH/bin:$PATH
+  # Update $PATH
+  export PATH=$GOPATH/bin:$PATH
 #+END_SRC
 
 Install golang related dependencies:
 
 #+BEGIN_SRC shell
-$ go get golang.org/x/tools/cmd/godoc
-$ go get github.com/rogpeppe/godef
-$ go get github.com/nsf/gocode
+  go get golang.org/x/tools/cmd/godoc
+  go get github.com/rogpeppe/godef
+  go get github.com/nsf/gocode
 #+END_SRC
 
 ** Pyenv
@@ -209,19 +209,19 @@ pyenv is a very popular python management tool. It lets you easily switch betwee
 Use Homebrew to download and install:
 
 #+BEGIN_SRC shell
-$ brew install pyenv
-$
-# Install your prefered python version
-$ pyenv install 3.8.10
+  brew install pyenv
+
+  # Install your prefered python version
+  pyenv install 3.8.10
 #+END_SRC
 
 *** Configure
 Append the following settings to your *~/.zshrc*:
 
 #+BEGIN_SRC shell
-# Initialize pyenv
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
+  # Initialize pyenv
+  eval "$(pyenv init --path)"
+  eval "$(pyenv init -)"
 #+END_SRC
 
 ** pyenv-virtualenvwrapper
@@ -230,22 +230,22 @@ eval "$(pyenv init -)"
 Using git to download and install:
 
 #+BEGIN_SRC shell
-$ git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
+  git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
 #+END_SRC
 
 *** Configure
 Append the following settings to your *~/.zshrc*:
 
 #+BEGIN_SRC shell
-# To get virtualenvwrapper to create a virtual environment using
-# pyvenv instead of virtualenv.
-export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
+  # To get virtualenvwrapper to create a virtual environment using
+  # pyvenv instead of virtualenv.
+  export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
-# Activate shell python
-pyenv shell 3.8.10
+  # Activate shell python
+  pyenv shell 3.8.10
 
-# Activate virtualenvwrapper
-pyenv virtualenvwrapper
+  # Activate virtualenvwrapper
+  pyenv virtualenvwrapper
 #+END_SRC
 
 ** Python
@@ -257,9 +257,9 @@ For not messing with the system Python (some system tools rely on it, etc.), we 
 Using pyenv to download and install:
 
 #+BEGIN_SRC shell
-$ pyenv install 3.8.10
-$ pyenv global 3.8.10
-$ pyenv rehash
+  pyenv install 3.8.10
+  pyenv global 3.8.10
+  pyenv rehash
 #+END_SRC
 
 ** Emacs
@@ -269,47 +269,47 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
 1. Using homebrew to download and install:
 
 #+BEGIN_SRC shell
-$ brew tap railwaycat/emacsmacport
-$ brew cask install emacs-mac
-$ brew untap railwaycat/emacsmacport
+  brew tap railwaycat/emacsmacport
+  brew cask install emacs-mac
+  brew untap railwaycat/emacsmacport
 #+END_SRC
 
 2. Installing emacs related dependencies:
 
 #+BEGIN_SRC shell
-# Dependencies for emacs easypg
-$ brew install gnupg
-$
-# Dependencies for emacs ag
-$ brew install ag
-$
-# Dependencies for flyspell
-$ brew install aspell
-$
-# Dependencies for emacs c&c++ lsp mode and dap mode
-# Please make sure **clangd** and **lldb-vscode** have been installed
-# Mac platform:
-$ brew install llvm
-# Ubuntu platform:
-$ sudo apt-get install clang clang-tools
-$
-# Dependencies for emacs python lsp mode and dap mode
-$ pip install "python-lsp-server[all]"
-$ pip install "ptvsd>=4.2"
-$
-# Dependencies for emacs golang mode
-$ go get github.com/rogpeppe/godef
-$ go get golang.org/x/tools/cmd/gorename
-$ go get golang.org/x/tools/cmd/guru
-$
-# Dependencies for emacs markdown
-$ brew install markdown
-$ brew install pandoc
+  # Dependencies for emacs easypg
+  brew install gnupg
+
+  # Dependencies for emacs ag
+  brew install ag
+
+  # Dependencies for flyspell
+  brew install aspell
+
+  # Dependencies for emacs c&c++ lsp mode and dap mode
+  # Please make sure **clangd** and **lldb-vscode** have been installed
+  # Mac platform:
+  brew install llvm
+  # Ubuntu platform:
+  sudo apt-get install clang clang-tools
+
+  # Dependencies for emacs python lsp mode and dap mode
+  pip install "python-lsp-server[all]"
+  pip install "ptvsd>=4.2"
+
+  # Dependencies for emacs golang mode
+  go get github.com/rogpeppe/godef
+  go get golang.org/x/tools/cmd/gorename
+  go get golang.org/x/tools/cmd/guru
+
+  # Dependencies for emacs markdown
+  brew install markdown
+  brew install pandoc
 #+END_SRC
 
 *** Configure
 Setup emacs configurations:
 
 #+BEGIN_SRC shell
-$ ./emacs/install.sh
+  ./emacs/install.sh
 #+END_SRC
