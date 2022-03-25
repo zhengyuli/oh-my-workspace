@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 18:13:52 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-25 09:46:39 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -279,7 +279,7 @@
   ;; ----------------------------------------------------------
   ;; Customize `company' related variables
   (customize-set-variable 'company-idle-delay 0)
-  (customize-set-variable 'company-minimum-prefix-length 1)
+  (customize-set-variable 'company-minimum-prefix-length 2)
   (customize-set-variable 'company-tooltip-limit 15)
   (customize-set-variable 'company-selection-wrap-around t)
   (customize-set-variable 'company-format-margin-function 'company-text-icons-margin)
@@ -444,6 +444,8 @@
     "`centaur-tabs-buffer-groups' control buffers' group rules."
     (list
      (cond
+      ((derived-mode-p 'dashboard-mode)
+       "Dashboard")
       ((derived-mode-p 'term-mode)
        "Term")
       ((derived-mode-p 'vterm-mode)
