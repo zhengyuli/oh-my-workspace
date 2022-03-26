@@ -216,8 +216,8 @@ Use homebrew to download and install:
 #+BEGIN_SRC
   # Define the IMAP4 Account name, opening a section for its parameters.
   IMAPAccount outlook
-  Host outlook.office365.com
-  User imap-mail.outlook.com
+  Host imap-mail.outlook.com
+  User lizhengyu419@outlook.com
   PassCmd "pass mbsync/outlook"
   SSLType IMAPS
   SSLVersion TLSv1.2
