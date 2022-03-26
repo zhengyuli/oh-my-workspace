@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 18:14:26 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-26 08:11:29 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -205,21 +205,20 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
  ;; ******************************
  'dashboard
  ;; ******************************
- 'helpful
- ;; ******************************
  'restart-emacs
  ;; ******************************
- 'vterm
+ 'helpful
  ;; ******************************
  'async
  'ztree
- ;; ******************************
  'dired-single
  'dired-filter
  'dired-subtree
  'dired-hacks-utils
  'dired-filetype-face
  'all-the-icons-dired
+ ;; ******************************
+ 'vterm
  ;; ******************************
  'magit
  ;; ******************************
@@ -229,6 +228,8 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
  ;; ******************************
  'eww-lnum
  'mixed-pitch
+ ;; ******************************
+ 'mu4e-alert
  ;; ==============================
  ;; init-prog-mode.el
  'smartparens

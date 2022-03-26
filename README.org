@@ -39,7 +39,7 @@ Use xcode-select to download and install:
 features you never knew you always wanted.
 
 *** Installation
-Use Homebrew to download and install:
+Use homebrew to download and install:
 
 #+BEGIN_SRC shell
   brew cask install iterm2
@@ -79,7 +79,7 @@ Configure shortcuts through *iTerm2->Preferences->Keys->Key Mappings* panel.
 features out of the box and improves your terminal experience.
 
 *** Installation
-1. Use Homebrew to download and install:
+1. Use homebrew to download and install:
 
 #+BEGIN_SRC shell
   brew install zsh
@@ -123,7 +123,7 @@ Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be
   git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 #+END_SRC
 
-2. Configure daily used plugins in your ~/.zshrc':
+2. Configure daily used plugins in your _~/.zshrc_:
 
 #+BEGIN_SRC  shell
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#a9a9a9"
@@ -154,18 +154,125 @@ Append the following settings to your configuration file.
   export HOMEBREW_NO_AUTO_UPDATE="true"
 #+END_SRC
 
+** GnuPG
+GnuPG is a complete and free implementation of the OpenPGP standard as defined by RFC4880 (also known as PGP). GnuPG
+allows you to encrypt and sign your data and communications; it features a versatile key management system, along with
+access modules for all kinds of public key directories. GnuPG, also known as GPG, is a command line tool with features
+for easy integration with other applications. A wealth of frontend applications and libraries are available. GnuPG also
+provides support for S/MIME and Secure Shell (ssh).
+
+*** Installation
+Use homebrew to download and install:
+
+#+BEGIN_SRC  shell
+  brew install gnupg
+  brew install pinentry-mac
+#+END_SRC
+
+*** Configure
+ Generate a new gpg key by:
+
+#+BEGIN_SRC  shell
+  gpg --full-generate-key
+#+END_SRC
+
+** Pass
+Password management should be simple and follow Unix philosophy. With pass, each password lives inside of a gpg
+encrypted file whose filename is the title of the website or resource that requires the password. These encrypted files
+may be organized into meaningful folder hierarchies, copied from computer to computer, and, in general, manipulated
+using standard command line file management utilities.
+
+*** Installation
+Use homebrew to download and install:
+
+#+BEGIN_SRC shell
+  brew install pass
+#+END_SRC
+
+*** Configure
+Select a gpg key to initialize pass:
+
+#+BEGIN_SRC  shell
+  gpg --list-keys
+  pass init "selected gpg id"
+#+END_SRC
+
+** Mail
+isync is a command line application which synchronizes mailboxes; currently Maildir and IMAP4 mailboxes are
+supported. New messages, message deletions and flag changes can be propagated both ways. isync is suitable for use in
+IMAP-disconnected mode.
+
+*** Installation
+Use homebrew to download and install:
+
+#+BEGIN_SRC  shell
+  brew install isync
+  brew install mu
+#+END_SRC
+
+*** Configure
+
+1. Copy the following configure to your _~/.mbsyncrc_ and replace *email_name_xxx* with your own email account.
+
+#+BEGIN_SRC
+  # Define the IMAP4 Account name, opening a section for its parameters.
+  IMAPAccount outlook
+  Host outlook.office365.com
+  User email_name_xxx@outlook.com
+  PassCmd "gpg --quiet --for-your-eyes-only --no-tty --decrypt ~/.password-store/mbsync/outlook.gpg"
+  SSLType IMAPS
+  SSLVersion TLSv1.2
+  AuthMechs LOGIN
+  CertificateFile /usr/local/etc/ca-certificates/cert.pem
+  Timeout 120
+  PipelineDepth 50
+
+  # Define the IMAP4 Store name, opening a section for its parameters.
+  IMAPStore outlook-remote
+  Account outlook
+
+  # Define the Maildir Store name, opening a section for its parameters.
+  MaildirStore outlook-local
+  Path ~/MyMail/email_name_xxx@outlook.com/
+  Inbox ~/MyMail/email_name_xxx@outlook.com/Inbox
+  SubFolders Verbatim
+
+  # Define the Channel name, opening a section for its parameters.
+  Channel outlook
+  Far :outlook-remote:
+  Near :outlook-local:
+  Patterns *
+  Sync All
+  Create Near
+  Expunge None
+  SyncState *
+#+END_SRC
+
+2. Synchronize email and initialize mu index
+
+#+BEGIN_SRC  shell
+  # Generate password for your email account
+  pass insert mbsync/outlook
+
+  # Check mbsync config is correct
+  mbsync -a
+
+  # Initialize mu
+  mu init -m ~/MyMail/email_name_xxx@outlook.com --my-address=email_name_xxx@outlook.com
+#+END_SRC
+
 ** LLVM
 The LLVM Project is a collection of modular and reusable compiler and toolchain technologies.
 
 *** Installation
-Use Homebrew to download and install:
+Use homebrew to download and install:
 
 #+BEGIN_SRC shell
   brew install llvm
 #+END_SRC
 
 *** Configure
-Append the following settings to your *~/.zshrc*:
+Append the following settings to your _~/.zshrc_:
 
 #+BEGIN_SRC shell
   echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
@@ -184,7 +291,7 @@ Create Golang projects workspace:
   mkdir -p $HOME/MyGoProjects
 #+END_SRC
 
-Append the following settings to your *~/.zshrc*:
+Append the following settings to your _~/.zshrc_:
 
 #+BEGIN_SRC shell
   # Path to your go projects
@@ -206,7 +313,7 @@ Install golang related dependencies:
 pyenv is a very popular python management tool. It lets you easily switch between multiple versions of Python.
 
 *** Installation
-Use Homebrew to download and install:
+Use homebrew to download and install:
 
 #+BEGIN_SRC shell
   brew install pyenv
@@ -216,7 +323,7 @@ Use Homebrew to download and install:
 #+END_SRC
 
 *** Configure
-Append the following settings to your *~/.zshrc*:
+Append the following settings to your _~/.zshrc_:
 
 #+BEGIN_SRC shell
   # Initialize pyenv
@@ -234,7 +341,7 @@ Using git to download and install:
 #+END_SRC
 
 *** Configure
-Append the following settings to your *~/.zshrc*:
+Append the following settings to your _~/.zshrc_:
 
 #+BEGIN_SRC shell
   # To get virtualenvwrapper to create a virtual environment using
@@ -277,9 +384,6 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
 2. Installing emacs related dependencies:
 
 #+BEGIN_SRC shell
-  # Dependencies for emacs easypg
-  brew install gnupg
-
   # Dependencies for emacs ag
   brew install ag
 

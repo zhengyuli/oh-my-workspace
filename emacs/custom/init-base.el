@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-25 09:46:39 Friday by zhengyuli>
+;; Time-stamp: <2022-03-26 08:15:00 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -454,6 +454,16 @@
        "Dired")
       ((derived-mode-p 'eww-mode)
        "Eww")
+      ((string-equal "mu4e" (substring mode-name 0 4))
+       "Mu4e")
+      ((derived-mode-p 'prog-mode)
+       mode-name)
+      ((derived-mode-p 'markdown-mode)
+       "Markdown")
+      ((or (derived-mode-p 'org-mode)
+           (derived-mode-p 'org-agenda-mode)
+           (derived-mode-p 'diary-mode))
+       "Org")
       ((or (string-equal "*" (substring (buffer-name) 0 1))
            (memq major-mode '(magit-process-mode
                               magit-status-mode
@@ -461,15 +471,8 @@
                               magit-log-mode
                               magit-file-mode
                               magit-blob-mode
-                              magit-blame-mode
-                              )))
+                              magit-blame-mode)))
        "Emacs")
-      ((derived-mode-p 'prog-mode)
-       mode-name)
-      ((memq major-mode '(org-mode org-agenda-mode diary-mode))
-       "Org")
-      ((derived-mode-p 'markdown-mode)
-       "Markdown")
       (t
        (centaur-tabs-get-group-name (current-buffer))))))
 
@@ -538,38 +541,6 @@
                           'counsel-projectile-switch-project-by-name))
 
 (eval-after-load "dashboard" '(dashboard-settings))
-
-;; ==================================================================================
-;;Customized settings for `vterm'
-(defun vterm-settings ()
-  "Settings for `vterm'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `terminal' related variables
-  (customize-set-variable 'ring-bell-function 'ignore)
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `vterm'
-  (lazy-set-key
-   '(("C-g" . vterm-send-C-g)
-     ("C-u" . vterm-send-C-u))
-   vterm-mode-map)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'term-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Disable auto fill mode
-              (auto-fill-mode -1)
-
-              ;; Disable yasnippet mode
-              (yas-minor-mode -1)
-
-              ;; Disable company mode
-              (company-mode -1))))
-
-(eval-after-load "vterm" '(vterm-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `dired'
@@ -683,6 +654,38 @@
 
 (autoload 'dired-jump "dired-x"
   "Jump to Dired buffer corresponding to current buffer." t)
+
+;; ==================================================================================
+;;Customized settings for `vterm'
+(defun vterm-settings ()
+  "Settings for `vterm'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `terminal' related variables
+  (customize-set-variable 'ring-bell-function 'ignore)
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `vterm'
+  (lazy-set-key
+   '(("C-g" . vterm-send-C-g)
+     ("C-u" . vterm-send-C-u))
+   vterm-mode-map)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'term-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Disable auto fill mode
+              (auto-fill-mode -1)
+
+              ;; Disable yasnippet mode
+              (yas-minor-mode -1)
+
+              ;; Disable company mode
+              (company-mode -1))))
+
+(eval-after-load "vterm" '(vterm-settings))
 
 ;; ==================================================================================
 (defun get-git-user-name ()
@@ -844,9 +847,52 @@ wiki search engine."
 (eval-after-load "eww" '(eww-settings))
 
 ;; ==================================================================================
+;; Customized settings for `mu4e'
+(defun mu4e-settings ()
+  "Settings for `mu4e'."
+
+  ;; Require
+  (require 'ivy)
+  (require 'message)
+  (require 'smtpmail)
+  (require 'mu4e-alert)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `message' related variables
+  (customize-set-variable 'message-kill-buffer-on-exit t)
+  (customize-set-variable 'message-citation-line-function
+                          'message-insert-formatted-citation-line)
+  (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
+
+  ;; Customize `smtpmail' related variables
+  (customize-set-variable 'mail-user-agent 'mu4e-user-agent)
+  (customize-set-variable 'smtpmail-default-smtp-server "smtp-mail.outlook.com")
+  (customize-set-variable 'smtpmail-smtp-server "smtp-mail.outlook.com")
+  (customize-set-variable 'smtpmail-smtp-service 587)
+
+  ;; Customize `mu4e' related variables
+  (customize-set-variable 'mu4e-view-show-addresses t)
+  (customize-set-variable 'mu4e-view-show-images t)
+  (customize-set-variable 'mu4e-headers-date-format "%y/%m/%d")
+  (customize-set-variable 'mu4e-change-filenames-when-moving t)
+  (customize-set-variable 'mu4e-completing-read-function 'ivy-completing-read)
+  (customize-set-variable 'mu4e-get-mail-command "mbsync -a")
+  (customize-set-variable 'mu4e-attachment-dir "~/Downloads")
+  (customize-set-variable 'mu4e-refile-folder "/Archive")
+  (customize-set-variable 'mu4e-sent-folder "/Sent")
+  (customize-set-variable 'mu4e-drafts-folder "/Drafts")
+  (customize-set-variable 'mu4e-trash-folder "/Trash"))
+
+(eval-after-load "mu4e" '(mu4e-settings))
+
+(autoload 'mu4e "mu4e" "start mu4e, then show the main view" t)
+
+;; ==================================================================================
 ;; Alias
 (defalias 'git-status 'magit-status)
 (defalias 'git-log 'magit-log-all)
+
+(defalias 'email 'mu4e)
 
 (defalias 'increase-text 'text-scale-increase)
 (defalias 'decrease-text 'text-scale-decrease)
