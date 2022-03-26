@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-23 15:07:30 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-26 21:18:55 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -99,6 +99,10 @@
    prog-mode-map)
 
   ;; ----------------------------------------------------------
+  ;; Enable global show paren mode
+  (show-paren-mode 1)
+
+  ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
 
@@ -115,14 +119,14 @@
               ;; Enable linum node
               (linum-mode 1)
 
-              ;; Enable show paren mode
-              (show-paren-mode 1)
-
               ;; Enable smart parens mode
               (smartparens-mode 1)
 
               ;; Enable hungry delete mode
               (hungry-delete-mode 1)
+
+              ;; Enable prettify symbol mode
+              (prettify-symbols-mode 1)
 
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)
@@ -199,6 +203,10 @@
   ;; Customize `dap-mode' related variables
   (customize-set-variable 'dap-auto-configure-features
                           '(sessions locals breakpoints expressions))
+
+  ;; ----------------------------------------------------------
+  ;; Enable global dap mode
+  (dap-auto-configure-mode 1)
 
   ;; ----------------------------------------------------------
   (add-hook 'dap-session-created-hook

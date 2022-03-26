@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 15:03:31 Saturday by zhengyuli>
+;; Time-stamp: <2022-03-26 21:09:58 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -83,21 +83,31 @@
   "Show http/https proxy."
   (interactive)
   (if url-proxy-services
-      (message "Current http proxy is \"%s\"" (cdr (nth 1 url-proxy-services)))
+      (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
     (message "No http proxy")))
 
 (defun set-http-proxy (proxy)
-  "Set http/https proxy to `PROXY'."
+  "Set http/https proxy."
   (interactive "sHTTP Proxy Server:")
-  (setq url-proxy-services
-        `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
-          ("http" . ,proxy)
-          ("https" . ,proxy)))
-  (show-http-proxy))
+  (let* ((parsed-url (url-generic-parse-url proxy))
+         (proxy-no-scheme
+          (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
+    (when (url-type parsed-url)
+      (setenv "http_proxy" proxy)
+      (setenv "https_proxy" proxy)
+      (setenv "all_proxy" proxy))
+    (setq url-proxy-services
+          `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
+            ("http" . ,proxy-no-scheme)
+            ("https" . ,proxy-no-scheme)))
+    (show-http-proxy)))
 
 (defun unset-http-proxy ()
   "Unset http/https proxy."
   (interactive)
+  (setenv "http_proxy")
+  (setenv "https_proxy")
+  (setenv "all_proxy")
   (setq url-proxy-services nil)
   (show-http-proxy))
 
@@ -175,14 +185,13 @@
   ;; Customize `ivy' related variables
   (customize-set-variable 'ivy-use-virtual-buffers t)
   (customize-set-variable 'ivy-count-format "(%d/%d) ")
-  (customize-set-variable 'ivy-re-builders-alist
-                          '((t . ivy--regex-ignore-order)))
+  (customize-set-variable 'ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 
   ;; ----------------------------------------------------------
-  ;; Enable ivy rich mode
+  ;; Enable global ivy rich mode
   (ivy-rich-mode 1)
 
-  ;; Enable ivy prescient mode
+  ;; Enable global ivy prescient mode
   (ivy-prescient-mode 1)
 
   ;; Enable global all the icons ivy rich mode
@@ -227,7 +236,6 @@
   ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'ag-mode-hook 'wgrep-ag-setup)
-
   (add-hook 'ag-search-finished-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -264,6 +272,8 @@
   ;; Require
   (require 'company-yasnippet)
   (require 'company-prescient)
+  (require 'company-quickhelp)
+  (require 'company-box)
 
   ;; ----------------------------------------------------------
   (defun append-company-backend-with-yas (backend)
@@ -292,28 +302,23 @@
   (customize-set-variable 'company-box-doc-enable t)
 
   ;; ----------------------------------------------------------
+  ;; Enable global company prescient mode
+  (company-prescient-mode 1)
+
+  ;; Enable global company quickhelp mode
+  (company-quickhelp-mode 1)
+
+  ;; Enable global company quickhelp for terminal mode
+  (unless (display-graphic-p)
+    (company-quickhelp-terminal-mode 1))
+
+  ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'company-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
-              (if (display-graphic-p)
-                  (progn
-                    (require 'company-box)
-
-                    ;; Enable company box mode for graphic mode
-                    (company-box-mode 1))
-                (progn
-                  (require 'company-quickhelp)
-                  (require 'company-quickhelp-terminal)
-
-                  ;; Enable company quickhelp mode
-                  (company-quickhelp-mode 1)
-
-                  ;; Enable company quickhelp terminal mode
-                  (company-quickhelp-terminal-mode 1)))
-
-              ;; Enable company prescient mode
-              (company-prescient-mode 1))))
+              ;; Enable company box mode
+              (company-box-mode 1))))
 
 (eval-after-load "company" '(company-settings))
 
@@ -421,7 +426,7 @@
 
   ;; ----------------------------------------------------------
   ;; Clear the cache (required after each change to #'auth-source-pass-search)
-  (auth-source-pass-enable))
+  (auth-source-forget-all-cached))
 
 (eval-after-load "auth-source" '(auth-source-settings))
 
@@ -453,7 +458,8 @@
   "Settings for `centaur-tabs'."
 
   ;; Require
-  (require 'all-the-icons)
+  (require 'centaur-tabs-elements)
+  (require 'centaur-tabs-functions)
 
   ;; ----------------------------------------------------------
   ;; Customized groups policy
@@ -494,13 +500,15 @@
        (centaur-tabs-get-group-name (current-buffer))))))
 
   ;; ----------------------------------------------------------
-  ;; Customize `centaur-tabs' realted variables
+  ;; Customize `centaur-tabs-elements' realted variables
   (customize-set-variable 'centaur-tabs-height 25)
   (customize-set-variable 'centaur-tabs-style "bar")
-  (if (display-graphic-p)
-      (customize-set-variable 'centaur-tabs-set-icons t))
   (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
   (customize-set-variable 'centaur-tabs-set-close-button nil)
+  (when (display-graphic-p)
+    (customize-set-variable 'centaur-tabs-set-icons t))
+
+  ;; Customize `centaur-tabs-functions' realted variables
   (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
 
   ;; ----------------------------------------------------------
@@ -519,8 +527,11 @@
 (defun doom-modeline-settings ()
   "Settings for `doom-modeline'."
 
+  ;; Require
+  (require 'doom-modeline-core)
+
   ;; ----------------------------------------------------------
-  ;; Customize `doom-modeline' related variables
+  ;; Customize `doom-modeline-core' related variables
   (customize-set-variable 'doom-modeline-mu4e t))
 
 (eval-after-load "doom-modeline" '(doom-modeline-settings))
@@ -530,8 +541,11 @@
 (defun doom-themes-settings ()
   "Settings for `doom-themes'."
 
+  ;; Require
+  (require 'faces)
+
   ;; ----------------------------------------------------------
-  ;; Customize font settings
+  ;; Customize builtin `faces' related faces
   (set-face-attribute 'default nil :font emacs-config-fixed-font :height emacs-config-font-size)
   (set-face-attribute 'fixed-pitch nil :font emacs-config-fixed-font)
   (set-face-attribute 'fixed-pitch-serif nil :font emacs-config-fixed-serif-font)
@@ -549,8 +563,13 @@
 (defun dashboard-settings ()
   "Settings for `dashboard'."
 
+  (require 'dashboard-widgets)
+
   ;; ----------------------------------------------------------
   ;; Customize `dashboard' related variables
+  (customize-set-variable 'dashboard-center-content t)
+
+  ;; Customize `dashboard-widgets' related variables
   (customize-set-variable 'dashboard-startup-banner
                           (concat emacs-config-root-path "banners/totoro.png"))
   (customize-set-variable 'dashboard-banner-logo-title
@@ -558,7 +577,6 @@
   (customize-set-variable 'dashboard-set-heading-icons t)
   (customize-set-variable 'dashboard-set-file-icons t)
   (customize-set-variable 'dashboard-set-navigator t)
-  (customize-set-variable 'dashboard-center-content t)
   (customize-set-variable 'dashboard-items
                           '((recents  . 5)
                             (bookmarks . 5)
@@ -571,6 +589,19 @@
 (eval-after-load "dashboard" '(dashboard-settings))
 
 ;; ==================================================================================
+;; Customized settings for `epa'
+(defun epa-settings ()
+  "Settings for `epa'."
+
+  ;; Require
+  (require 'epg-config)
+
+  ;; Customize `epg-config' related variables
+  (customize-set-variable 'epg-pinentry-mode 'loopback))
+
+(eval-after-load "epa" '(epa-settings))
+
+;; ==================================================================================
 ;; Customized settings for `dired'
 (defun dired-settings ()
   "Settings for `dired'."
@@ -578,7 +609,6 @@
   ;; Require
   (require 'ztree)
   (require 'ztree-view)
-  (require 'epg-config)
   (require 'epa-dired)
   (require 'dired-x)
   (require 'dired-filter)
@@ -607,12 +637,11 @@
   (customize-set-variable 'dired-bind-info nil)
   (customize-set-variable 'dired-omit-extensions
                           (append dired-omit-extensions '(".cache")))
-  (customize-set-variable 'dired-omit-files
-                          (concat dired-omit-files
-                                  "\\|^\\.\\|^semantic.cache$\\|^CVS$"))
+  (customize-set-variable 'dired-omit-files (concat dired-omit-files
+                                                    "\\|^\\.\\|^semantic.cache$\\|^CVS$"))
 
-  ;; Customize `epg-config' related variables
-  (customize-set-variable 'epg-pinentry-mode 'loopback)
+  ;; Customize `dired-filter' related variables
+  (customize-set-variable 'dired-filter-stack '())
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `ztree-view'
@@ -662,6 +691,10 @@
    dired-mode-map)
 
   ;; ----------------------------------------------------------
+  ;; Enable global dired async mode
+  (dired-async-mode 1)
+
+  ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'dired-after-readin-hook 'dired-custom-sort)
 
@@ -671,12 +704,8 @@
               ;; Enable dired omit mode
               (dired-omit-mode 1)
 
-              ;; Enable dired async mode
-              (dired-async-mode 1)
-
               ;; Enable all the icons dired mode
-              (when (display-graphic-p)
-                (all-the-icons-dired-mode 1)))))
+              (all-the-icons-dired-mode 1))))
 
 (eval-after-load "dired" '(dired-settings))
 
@@ -687,10 +716,6 @@
 ;;Customized settings for `vterm'
 (defun vterm-settings ()
   "Settings for `vterm'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `terminal' related variables
-  (customize-set-variable 'ring-bell-function 'ignore)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `vterm'
@@ -730,8 +755,11 @@
 (defun magit-settings ()
   "Settings for `magit'."
 
+  ;; Require
+  (require 'magit-diff)
+
   ;; ----------------------------------------------------------
-  ;; Customized `magit' related faces
+  ;; Customized `magit-diff' related faces
   (custom-set-faces
    '(magit-diff-added ((t (:background "#919191" :foreground "white"))))
    '(magit-diff-removed ((t (:background "#474747" :foreground "white"))))
@@ -746,9 +774,15 @@
 (defun go-translate-settings ()
   "Settings for `go-translate'."
 
+  ;; Require
+  (require 'gts-core)
+  (require 'go-translate)
+
   ;; ----------------------------------------------------------
-  ;; Customize `go-translate' related variables
+  ;; Customize `gts-core' related variables
   (customize-set-variable 'gts-translate-list '(("en" "zh")))
+
+  ;; Customize `go-translate' related variables
   (customize-set-variable 'gts-default-translator
                           (gts-translator
                            :picker (gts-prompt-picker)
@@ -763,11 +797,14 @@
   "Settings for `org-roam'."
 
   ;; Require
+  (require 'org-roam-node)
   (require 'org-roam-protocol)
 
   ;; ----------------------------------------------------------
   ;; Customize `org-roam' related variables
   (customize-set-variable 'org-roam-directory "OrgRoamNotes")
+
+  ;; Customize `org-roam-node' related variables
   (customize-set-variable 'org-roam-node-display-template
                           (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))))
 
@@ -891,7 +928,7 @@ wiki search engine."
   (require 'mu4e-context)
 
   ;; ----------------------------------------------------------
-  ;; Customize `mu4e-headers' related faces
+  ;; Customize `mu4e-vars' related faces
   (custom-set-faces
    '(mu4e-unread-face ((t (:foreground "#54ff9f"))))
    '(mu4e-header-highlight-face ((t :foreground "#ff83fa" :underline t))))
@@ -913,7 +950,7 @@ wiki search engine."
   (customize-set-variable 'smtpmail-debug-info t)
   (customize-set-variable 'smtpmail-stream-type 'starttls)
 
-  ;; Customize `mu4e' related variables
+  ;; Customize `mu4e-vars' related variables
   (customize-set-variable 'mu4e-get-mail-command "mbsync -a")
   (customize-set-variable 'mu4e-completing-read-function 'completing-read)
   (customize-set-variable 'mu4e-change-filenames-when-moving t)
@@ -944,6 +981,7 @@ wiki search engine."
   (customize-set-variable 'mu4e-compose-dont-reply-to-self t)
   (customize-set-variable 'mu4e-compose-keep-self-cc nil)
 
+  ;; Customize `mu4e-context' related variables
   (setq mu4e-contexts
         `(,(make-mu4e-context
             :name "Personal"
@@ -1022,6 +1060,9 @@ wiki search engine."
             ;; Customize `uniquify' realted variables
             (customize-set-variable 'uniquify-separator "/")
             (customize-set-variable 'uniquify-buffer-name-style 'forward)
+
+            ;; Disable ring bell
+            (customize-set-variable 'ring-bell-function 'ignore)
 
             ;; Customize user and email
             (customize-set-variable 'user-full-name emacs-config-user)
@@ -1136,9 +1177,6 @@ wiki search engine."
 
             ;; Enable global just-in-time lock mode
             (jit-lock-mode 1)
-
-            ;; Enable prettify symbol mode
-            (prettify-symbols-mode 1)
 
             ;; Enable global beacon mode
             (beacon-mode 1)

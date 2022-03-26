@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-18 16:31:28 Friday by zhengyuli>
+;; Time-stamp: <2022-03-26 21:21:55 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -85,6 +85,10 @@
    python-mode-map)
 
   ;; ----------------------------------------------------------
+  ;; Enable global pyvenv mode
+  (pyvenv-mode 1)
+
+  ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'python-mode-hook
             (lambda ()
@@ -98,14 +102,8 @@
               ;; Setup python virtual env flycheck checker
 			  (flycheck-virtualenv-set-python-executables)
 
-              ;; Enable pyvenv mode
-              (pyvenv-mode 1)
-
               ;; Enable lsp mode
-              (lsp-deferred)
-
-              ;; Enable dap mode
-              (dap-auto-configure-mode 1))))
+              (lsp-deferred))))
 
 (eval-after-load "python" '(python-mode-settings))
 

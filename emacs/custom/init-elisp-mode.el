@@ -1,5 +1,5 @@
 ;;; package --- init-elisp-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:20 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-26 21:15:12 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -44,7 +44,7 @@
   (require 'rainbow-mode)
 
   ;; ----------------------------------------------------------
-  ;; Customize `elisp-mode' related variables
+  ;; Customize `flycheck' related variables
   (customize-set-variable 'flycheck-emacs-lisp-load-path "inherit")
 
   ;; ----------------------------------------------------------
