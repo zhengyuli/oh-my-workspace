@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 08:11:29 Saturday by zhengyuli>
+;; Time-stamp: <2022-03-26 13:19:33 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -58,10 +58,10 @@
 (defvar emacs-config-font-size 150 "Emacs configuration font size.")
 
 ;; Emacs configuration user
-(defvar emacs-config-user "_EMACS_CONFIG_USER_" "Emacs configuration user.")
+(defvar emacs-config-user "Zhengyu Li" "Emacs configuration user.")
 
 ;; Emacs configuration email
-(defvar emacs-config-email "_EMACS_CONFIG_EMAIL_" "Emacs configuration email.")
+(defvar emacs-config-email "lizhengyu419@outlook.com" "Emacs configuration email.")
 
 ;; ==================================================================================
 (defun ensure-font-installed (font)
@@ -88,7 +88,7 @@ Return a list of installed packages or nil for every skipped package."
 
 (defun add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.
-Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
+Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (let ((default-directory base-dir))
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
@@ -224,6 +224,8 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
  ;; ******************************
  'go-translate
  ;; ******************************
+ 'gnuplot
+ ;; ******************************
  'org-roam
  ;; ******************************
  'eww-lnum
@@ -281,9 +283,9 @@ Look up all subdirs under `BASE-DIR' recrusively and add them into load path."
  'yaml-mode
  ;; ==============================
  ;; init-org-mode.el
- 'gnuplot
  'org-bullets
  'org-appear
+ 'valign
  ;; ==============================
  ;; init-markdown-mode.el
  'markdown-mode

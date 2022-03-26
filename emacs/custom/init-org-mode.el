@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-25 11:07:00 Friday by zhengyuli>
+;; Time-stamp: <2022-03-26 10:50:19 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -40,6 +40,7 @@
   (require 'org-tempo)
   (require 'org-bullets)
   (require 'org-appear)
+  (require 'valign)
 
   ;; ----------------------------------------------------------
   ;; Redefinition of `org-tempo-add-block' with uppercase keyword support
@@ -110,7 +111,10 @@
               (org-bullets-mode 1)
 
               ;; Enable org appear mode
-              (org-appear-mode 1))))
+              (org-appear-mode 1)
+
+              ;; enable valign mode
+              (valign-mode 1))))
 
 (eval-after-load "org" '(org-mode-settings))
 

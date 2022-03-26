@@ -166,7 +166,6 @@ Use homebrew to download and install:
 
 #+BEGIN_SRC  shell
   brew install gnupg
-  brew install pinentry-mac
 #+END_SRC
 
 *** Configure
@@ -212,14 +211,14 @@ Use homebrew to download and install:
 
 *** Configure
 
-1. Copy the following configure to your _~/.mbsyncrc_ and replace *email_name_xxx* with your own email account.
+1. Copy the following configure to your _~/.mbsyncrc_
 
 #+BEGIN_SRC
   # Define the IMAP4 Account name, opening a section for its parameters.
   IMAPAccount outlook
   Host outlook.office365.com
-  User email_name_xxx@outlook.com
-  PassCmd "gpg --quiet --for-your-eyes-only --no-tty --decrypt ~/.password-store/mbsync/outlook.gpg"
+  User imap-mail.outlook.com
+  PassCmd "pass mbsync/outlook"
   SSLType IMAPS
   SSLVersion TLSv1.2
   AuthMechs LOGIN
@@ -233,8 +232,8 @@ Use homebrew to download and install:
 
   # Define the Maildir Store name, opening a section for its parameters.
   MaildirStore outlook-local
-  Path ~/MyMail/email_name_xxx@outlook.com/
-  Inbox ~/MyMail/email_name_xxx@outlook.com/Inbox
+  Path ~/.mail/outlook/
+  Inbox ~/.mail/outlook/Inbox
   SubFolders Verbatim
 
   # Define the Channel name, opening a section for its parameters.
@@ -251,14 +250,19 @@ Use homebrew to download and install:
 2. Synchronize email and initialize mu index
 
 #+BEGIN_SRC  shell
-  # Generate password for your email account
+  # Generate password for your imap email account
   pass insert mbsync/outlook
 
-  # Check mbsync config is correct
+  # Generate password for your smtp email account
+  pass insert smtp-mail.outlook.com/lizhengyu419@outlook.com
+
+  # Synchronize email with remote
+  mkdir -p ~/.mail/outlook
   mbsync -a
 
-  # Initialize mu
-  mu init -m ~/MyMail/email_name_xxx@outlook.com --my-address=email_name_xxx@outlook.com
+  # Initialize mu index
+  mu init -m ~/.mail/outlook --my-address=lizhengyu419@outlook.com
+  mu index
 #+END_SRC
 
 ** LLVM

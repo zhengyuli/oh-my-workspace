@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 08:15:00 Saturday by zhengyuli>
+;; Time-stamp: <2022-03-26 15:03:31 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -409,6 +409,23 @@
 (eval-after-load "flyspell-correct" '(flyspell-correct-settings))
 
 ;; ==================================================================================
+;; Customized settings for `auth-source'
+(defun auth-source-settings ()
+  "Settings for `auth-source'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `auth-source' realted variables
+  (customize-set-variable 'auth-source-debug t)
+  (customize-set-variable 'auth-source-do-cache nil)
+  (customize-set-variable 'auth-sources '(password-store))
+
+  ;; ----------------------------------------------------------
+  ;; Clear the cache (required after each change to #'auth-source-pass-search)
+  (auth-source-pass-enable))
+
+(eval-after-load "auth-source" '(auth-source-settings))
+
+;; ==================================================================================
 ;; Customized settings for `winum'
 (defun winum-settings ()
   "Settings for `winum'."
@@ -496,6 +513,17 @@
    centaur-tabs-mode-map))
 
 (eval-after-load "centaur-tabs" '(centaur-tabs-settings))
+
+;; ==================================================================================
+;; Customized settings for `doom-modeline'
+(defun doom-modeline-settings ()
+  "Settings for `doom-modeline'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `doom-modeline' related variables
+  (customize-set-variable 'doom-modeline-mu4e t))
+
+(eval-after-load "doom-modeline" '(doom-modeline-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `doom-themes'
@@ -852,10 +880,21 @@ wiki search engine."
   "Settings for `mu4e'."
 
   ;; Require
-  (require 'ivy)
   (require 'message)
+  (require 'mm-encode)
+  (require 'simple)
   (require 'smtpmail)
-  (require 'mu4e-alert)
+  (require 'mu4e-vars)
+  (require 'mu4e-headers)
+  (require 'mu4e-view)
+  (require 'mu4e-compose)
+  (require 'mu4e-context)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `mu4e-headers' related faces
+  (custom-set-faces
+   '(mu4e-unread-face ((t (:foreground "#54ff9f"))))
+   '(mu4e-header-highlight-face ((t :foreground "#ff83fa" :underline t))))
 
   ;; ----------------------------------------------------------
   ;; Customize `message' related variables
@@ -864,24 +903,69 @@ wiki search engine."
                           'message-insert-formatted-citation-line)
   (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
 
-  ;; Customize `smtpmail' related variables
+  ;; Customize `mm-encode' related variables
+  (customize-set-variable 'mm-sign-option 'guided)
+
+  ;; Customize default email composition package
   (customize-set-variable 'mail-user-agent 'mu4e-user-agent)
-  (customize-set-variable 'smtpmail-default-smtp-server "smtp-mail.outlook.com")
-  (customize-set-variable 'smtpmail-smtp-server "smtp-mail.outlook.com")
-  (customize-set-variable 'smtpmail-smtp-service 587)
+
+  ;; Customize `smtpmail' related variables
+  (customize-set-variable 'smtpmail-debug-info t)
+  (customize-set-variable 'smtpmail-stream-type 'starttls)
 
   ;; Customize `mu4e' related variables
-  (customize-set-variable 'mu4e-view-show-addresses t)
-  (customize-set-variable 'mu4e-view-show-images t)
-  (customize-set-variable 'mu4e-headers-date-format "%y/%m/%d")
-  (customize-set-variable 'mu4e-change-filenames-when-moving t)
-  (customize-set-variable 'mu4e-completing-read-function 'ivy-completing-read)
   (customize-set-variable 'mu4e-get-mail-command "mbsync -a")
+  (customize-set-variable 'mu4e-completing-read-function 'completing-read)
+  (customize-set-variable 'mu4e-change-filenames-when-moving t)
+  (customize-set-variable 'mu4e-context-policy 'pick-first)
+  (customize-set-variable 'mu4e-display-update-status-in-modeline t)
+  (customize-set-variable 'mu4e-compose-complete-addresses t)
+  (customize-set-variable 'mu4e-index-update-error-warning nil)
+
   (customize-set-variable 'mu4e-attachment-dir "~/Downloads")
   (customize-set-variable 'mu4e-refile-folder "/Archive")
   (customize-set-variable 'mu4e-sent-folder "/Sent")
   (customize-set-variable 'mu4e-drafts-folder "/Drafts")
-  (customize-set-variable 'mu4e-trash-folder "/Trash"))
+  (customize-set-variable 'mu4e-trash-folder "/Trash")
+
+  (customize-set-variable 'mu4e-headers-fields '((:human-date . 20)
+                                                 (:flags . 6)
+                                                 (:mailing-list . 10)
+                                                 (:from . 22)
+                                                 (:subject . nil)))
+  (customize-set-variable 'mu4e-headers-date-format "%d-%m-%Y %H:%M")
+  (customize-set-variable 'mu4e-headers-include-related t)
+
+  (customize-set-variable 'mu4e-view-show-addresses t)
+  (customize-set-variable 'mu4e-view-show-images t)
+  (customize-set-variable 'mu4e-use-fancy-chars t)
+
+  (customize-set-variable 'mu4e-compose-context-policy nil)
+  (customize-set-variable 'mu4e-compose-dont-reply-to-self t)
+  (customize-set-variable 'mu4e-compose-keep-self-cc nil)
+
+  (setq mu4e-contexts
+        `(,(make-mu4e-context
+            :name "Personal"
+            :enter-func (lambda ()
+                          (mu4e-message "Entering personal context")
+                          (when (string-match-p (buffer-name (current-buffer)) "mu4e-main")
+                            (revert-buffer)))
+            :leave-func (lambda ()
+                          (mu4e-message "Leaving personal context")
+                          (when (string-match-p (buffer-name (current-buffer)) "mu4e-main")
+                            (revert-buffer)))
+            :match-func (lambda (msg)
+                          (when msg
+                            (or (mu4e-message-contact-field-matches msg :to "lizhengyu419@outlook")
+                                (mu4e-message-contact-field-matches msg :from "lizhengyu419@outlook")
+                                (mu4e-message-contact-field-matches msg :cc "lizhengyu419@outlook")
+                                (mu4e-message-contact-field-matches msg :bcc "lizhengyu419@outlook"))))
+            :vars '((user-mail-address . "lizhengyu419@outlook.com")
+                    (smtpmail-smtp-user . "lizhengyu419@outlook.com")
+                    (smtpmail-smtp-server . "smtp-mail.outlook.com")
+                    (smtpmail-smtp-service . 587 )
+                    (mu4e-compose-signature . "Best Wishes\nZhengyu Li"))))))
 
 (eval-after-load "mu4e" '(mu4e-settings))
 
@@ -1096,7 +1180,10 @@ wiki search engine."
             (doom-modeline-mode 1)
 
             ;; Enable org roam db auto sync mode
-            (org-roam-db-autosync-mode 1)))
+            (org-roam-db-autosync-mode 1)
+
+            ;; Enable mu4e alert display on mode line
+            (mu4e-alert-enable-mode-line-display)))
 
 (add-hook 'emacs-startup-hook
           (lambda ()
