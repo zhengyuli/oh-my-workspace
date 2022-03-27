@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-27 10:57:09 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-27 19:17:55 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -462,54 +462,12 @@
   (require 'centaur-tabs-functions)
 
   ;; ----------------------------------------------------------
-  ;; Customized groups policy
-  ;; (defun centaur-tabs-buffer-groups ()
-  ;;   "`centaur-tabs-buffer-groups' control buffers' group rules."
-  ;;   (list
-  ;;    (cond
-  ;;     ((derived-mode-p 'dashboard-mode)
-  ;;      "Dashboard")
-  ;;     ((derived-mode-p 'term-mode)
-  ;;      "Term")
-  ;;     ((derived-mode-p 'vterm-mode)
-  ;;      "VTerm")
-  ;;     ((derived-mode-p 'dired-mode)
-  ;;      "Dired")
-  ;;     ((derived-mode-p 'eww-mode)
-  ;;      "Eww")
-  ;;     ((string-equal "mu4e" (substring mode-name 0 4))
-  ;;      "Mu4e")
-  ;;     ((derived-mode-p 'prog-mode)
-  ;;      mode-name)
-  ;;     ((derived-mode-p 'markdown-mode)
-  ;;      "Markdown")
-  ;;     ((or (derived-mode-p 'org-mode)
-  ;;          (derived-mode-p 'org-agenda-mode)
-  ;;          (derived-mode-p 'diary-mode))
-  ;;      "Org")
-  ;;     ((or (string-equal "*" (substring (buffer-name) 0 1))
-  ;;          (memq major-mode '(magit-process-mode
-  ;;                             magit-status-mode
-  ;;                             magit-diff-mode
-  ;;                             magit-log-mode
-  ;;                             magit-file-mode
-  ;;                             magit-blob-mode
-  ;;                             magit-blame-mode)))
-  ;;      "Emacs")
-  ;;     (t
-  ;;      (centaur-tabs-get-group-name (current-buffer))))))
-
-  ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs-elements' realted variables
   (customize-set-variable 'centaur-tabs-height 25)
   (customize-set-variable 'centaur-tabs-style "bar")
   (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
   (customize-set-variable 'centaur-tabs-set-close-button nil)
-  (when (display-graphic-p)
-    (customize-set-variable 'centaur-tabs-set-icons t))
-
-  ;; Customize `centaur-tabs-functions' realted variables
-  (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
+  (customize-set-variable 'centaur-tabs-set-icons t)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `centaur-tabs'
