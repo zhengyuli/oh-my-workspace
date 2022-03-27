@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 13:19:33 Saturday by zhengyuli>
+;; Time-stamp: <2022-03-27 10:49:40 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -206,6 +206,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'dashboard
  ;; ******************************
  'restart-emacs
+ ;; ******************************
+ 'pinentry
  ;; ******************************
  'helpful
  ;; ******************************

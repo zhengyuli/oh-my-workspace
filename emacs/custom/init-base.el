@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 21:09:58 Saturday by zhengyuli>
+;; Time-stamp: <2022-03-27 10:57:09 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -463,41 +463,41 @@
 
   ;; ----------------------------------------------------------
   ;; Customized groups policy
-  (defun centaur-tabs-buffer-groups ()
-    "`centaur-tabs-buffer-groups' control buffers' group rules."
-    (list
-     (cond
-      ((derived-mode-p 'dashboard-mode)
-       "Dashboard")
-      ((derived-mode-p 'term-mode)
-       "Term")
-      ((derived-mode-p 'vterm-mode)
-       "VTerm")
-      ((derived-mode-p 'dired-mode)
-       "Dired")
-      ((derived-mode-p 'eww-mode)
-       "Eww")
-      ((string-equal "mu4e" (substring mode-name 0 4))
-       "Mu4e")
-      ((derived-mode-p 'prog-mode)
-       mode-name)
-      ((derived-mode-p 'markdown-mode)
-       "Markdown")
-      ((or (derived-mode-p 'org-mode)
-           (derived-mode-p 'org-agenda-mode)
-           (derived-mode-p 'diary-mode))
-       "Org")
-      ((or (string-equal "*" (substring (buffer-name) 0 1))
-           (memq major-mode '(magit-process-mode
-                              magit-status-mode
-                              magit-diff-mode
-                              magit-log-mode
-                              magit-file-mode
-                              magit-blob-mode
-                              magit-blame-mode)))
-       "Emacs")
-      (t
-       (centaur-tabs-get-group-name (current-buffer))))))
+  ;; (defun centaur-tabs-buffer-groups ()
+  ;;   "`centaur-tabs-buffer-groups' control buffers' group rules."
+  ;;   (list
+  ;;    (cond
+  ;;     ((derived-mode-p 'dashboard-mode)
+  ;;      "Dashboard")
+  ;;     ((derived-mode-p 'term-mode)
+  ;;      "Term")
+  ;;     ((derived-mode-p 'vterm-mode)
+  ;;      "VTerm")
+  ;;     ((derived-mode-p 'dired-mode)
+  ;;      "Dired")
+  ;;     ((derived-mode-p 'eww-mode)
+  ;;      "Eww")
+  ;;     ((string-equal "mu4e" (substring mode-name 0 4))
+  ;;      "Mu4e")
+  ;;     ((derived-mode-p 'prog-mode)
+  ;;      mode-name)
+  ;;     ((derived-mode-p 'markdown-mode)
+  ;;      "Markdown")
+  ;;     ((or (derived-mode-p 'org-mode)
+  ;;          (derived-mode-p 'org-agenda-mode)
+  ;;          (derived-mode-p 'diary-mode))
+  ;;      "Org")
+  ;;     ((or (string-equal "*" (substring (buffer-name) 0 1))
+  ;;          (memq major-mode '(magit-process-mode
+  ;;                             magit-status-mode
+  ;;                             magit-diff-mode
+  ;;                             magit-log-mode
+  ;;                             magit-file-mode
+  ;;                             magit-blob-mode
+  ;;                             magit-blame-mode)))
+  ;;      "Emacs")
+  ;;     (t
+  ;;      (centaur-tabs-get-group-name (current-buffer))))))
 
   ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs-elements' realted variables
@@ -590,16 +590,15 @@
 
 ;; ==================================================================================
 ;; Customized settings for `epa'
-(defun epa-settings ()
-  "Settings for `epa'."
+(defun epg-config-settings ()
+  "Settings for `epg-config'."
 
-  ;; Require
-  (require 'epg-config)
-
+  ;; ----------------------------------------------------------
   ;; Customize `epg-config' related variables
-  (customize-set-variable 'epg-pinentry-mode 'loopback))
+  (customize-set-variable 'epg-pinentry-mode 'loopback)
+  (customize-set-variable 'epg-debug t))
 
-(eval-after-load "epa" '(epa-settings))
+(eval-after-load "epg-config" '(epg-config-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `dired'
@@ -943,7 +942,7 @@ wiki search engine."
   ;; Customize `mm-encode' related variables
   (customize-set-variable 'mm-sign-option 'guided)
 
-  ;; Customize default email composition package
+  ;; Customize `simple' related composition package
   (customize-set-variable 'mail-user-agent 'mu4e-user-agent)
 
   ;; Customize `smtpmail' related variables
@@ -951,7 +950,9 @@ wiki search engine."
   (customize-set-variable 'smtpmail-stream-type 'starttls)
 
   ;; Customize `mu4e-vars' related variables
-  (customize-set-variable 'mu4e-get-mail-command "mbsync -a")
+  (customize-set-variable 'mu4e-get-mail-command
+                          (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
+  (customize-set-variable 'mu4e-update-interval 300)
   (customize-set-variable 'mu4e-completing-read-function 'completing-read)
   (customize-set-variable 'mu4e-change-filenames-when-moving t)
   (customize-set-variable 'mu4e-context-policy 'pick-first)
@@ -1003,7 +1004,15 @@ wiki search engine."
                     (smtpmail-smtp-user . "lizhengyu419@outlook.com")
                     (smtpmail-smtp-server . "smtp-mail.outlook.com")
                     (smtpmail-smtp-service . 587 )
-                    (mu4e-compose-signature . "Best Wishes\nZhengyu Li"))))))
+                    (mu4e-compose-signature . "Best Wishes\nZhengyu Li")))))
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'mu4e-compose-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Set buffer column width
+              (set-fill-column 75))))
 
 (eval-after-load "mu4e" '(mu4e-settings))
 
@@ -1219,6 +1228,9 @@ wiki search engine."
 
             ;; Enable org roam db auto sync mode
             (org-roam-db-autosync-mode 1)
+
+            ;; Start pinentry server
+            (pinentry-start)
 
             ;; Enable mu4e alert display on mode line
             (mu4e-alert-enable-mode-line-display)))

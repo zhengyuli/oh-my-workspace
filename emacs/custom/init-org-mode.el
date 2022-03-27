@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 10:50:19 Saturday by zhengyuli>
+;; Time-stamp: <2022-03-27 10:12:07 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -53,7 +53,9 @@
            (special (member name '("src" "export"))))
       (tempo-define-template (format "org-%s" (replace-regexp-in-string " " "-" name))
                              `(,(format "#+BEGIN_%s%s"
-                                        (string-join (list (upcase name_prefix) name_post) " ")
+                                        (if (equal "" name_post)
+                                            (upcase name_prefix)
+                                          (string-join (list (upcase name_prefix) name_post) " "))
                                         (if special " " ""))
                                ,(when special 'p) '> n ,(unless special 'p) n
                                ,(format "#+END_%s" (upcase name_prefix))
@@ -102,7 +104,7 @@
             (lambda ()
               ;; ----------------------------------------------------------
               ;; Set buffer column width
-              (setq fill-column 120)
+              (set-fill-column 120)
 
               ;; Enable auto fill mode
               (auto-fill-mode 1)

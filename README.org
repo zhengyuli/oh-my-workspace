@@ -101,7 +101,7 @@ we'll cover the basics here.
 *** Themes
 Changing theme is as simple as changing a string in your configuration file.
 
-#+BEGIN_SRC shell
+#+BEGIN_SRC
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -114,7 +114,7 @@ Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be
 
 1. Download custom plugins:
 
-#+BEGIN_SRC  shell
+#+BEGIN_SRC shell
   brew install fzf
 
   git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
@@ -125,7 +125,7 @@ Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be
 
 2. Configure daily used plugins in your _~/.zshrc_:
 
-#+BEGIN_SRC  shell
+#+BEGIN_SRC
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#a9a9a9"
 
 # Which plugins would you like to load?
@@ -149,9 +149,9 @@ plugins=(
 **** Others
 Append the following settings to your configuration file.
 
-#+BEGIN_SRC shell
-  # Disable homebrew auto update
-  export HOMEBREW_NO_AUTO_UPDATE="true"
+#+BEGIN_SRC
+# Disable homebrew auto update
+export HOMEBREW_NO_AUTO_UPDATE="true"
 #+END_SRC
 
 ** GnuPG
@@ -164,14 +164,14 @@ provides support for S/MIME and Secure Shell (ssh).
 *** Installation
 Use homebrew to download and install:
 
-#+BEGIN_SRC  shell
+#+BEGIN_SRC shell
   brew install gnupg
 #+END_SRC
 
 *** Configure
  Generate a new gpg key by:
 
-#+BEGIN_SRC  shell
+#+BEGIN_SRC shell
   gpg --full-generate-key
 #+END_SRC
 
@@ -191,7 +191,7 @@ Use homebrew to download and install:
 *** Configure
 Select a gpg key to initialize pass:
 
-#+BEGIN_SRC  shell
+#+BEGIN_SRC shell
   gpg --list-keys
   pass init "selected gpg id"
 #+END_SRC
@@ -204,7 +204,7 @@ IMAP-disconnected mode.
 *** Installation
 Use homebrew to download and install:
 
-#+BEGIN_SRC  shell
+#+BEGIN_SRC shell
   brew install isync
   brew install mu
 #+END_SRC
@@ -214,42 +214,56 @@ Use homebrew to download and install:
 1. Copy the following configure to your _~/.mbsyncrc_
 
 #+BEGIN_SRC
-  # Define the IMAP4 Account name, opening a section for its parameters.
-  IMAPAccount outlook
-  Host imap-mail.outlook.com
-  User lizhengyu419@outlook.com
-  PassCmd "pass mbsync/outlook"
-  SSLType IMAPS
-  SSLVersion TLSv1.2
-  AuthMechs LOGIN
-  CertificateFile /usr/local/etc/ca-certificates/cert.pem
-  Timeout 120
-  PipelineDepth 50
+# Define the IMAP4 Account name, opening a section for its parameters.
+IMAPAccount outlook
+Host imap-mail.outlook.com
+User lizhengyu419@outlook.com
+PassCmd "pass mbsync/outlook"
+SSLType IMAPS
+SSLVersion TLSv1.2
+AuthMechs LOGIN
+CertificateFile /usr/local/etc/ca-certificates/cert.pem
+Timeout 120
+PipelineDepth 50
 
-  # Define the IMAP4 Store name, opening a section for its parameters.
-  IMAPStore outlook-remote
-  Account outlook
+# Define the IMAP4 Store name, opening a section for its parameters.
+IMAPStore outlook-remote
+Account outlook
 
-  # Define the Maildir Store name, opening a section for its parameters.
-  MaildirStore outlook-local
-  Path ~/.mail/outlook/
-  Inbox ~/.mail/outlook/Inbox
-  SubFolders Verbatim
+# Define the Maildir Store name, opening a section for its parameters.
+MaildirStore outlook-local
+Path ~/.mail/outlook/
+Inbox ~/.mail/outlook/Inbox
+SubFolders Verbatim
 
-  # Define the Channel name, opening a section for its parameters.
-  Channel outlook
-  Far :outlook-remote:
-  Near :outlook-local:
-  Patterns *
-  Sync All
-  Create Near
-  Expunge None
-  SyncState *
+# Define the Channel name, opening a section for its parameters.
+Channel outlook
+Far :outlook-remote:
+Near :outlook-local:
+Patterns *
+Sync All
+Create Near
+Expunge None
+SyncState *
 #+END_SRC
 
-2. Synchronize email and initialize mu index
+2. Copy the following configure to your _~/.gnupg/gpg-agent.conf_
 
-#+BEGIN_SRC  shell
+#+BEGIN_SRC
+allow-emacs-pinentry
+default-cache-ttl 34560000
+max-cache-ttl 34560000
+#+END_SRC
+
+3. Reload gpg-agent
+
+#+BEGIN_SRC shell
+  gpgconf --reload gpg-agent
+#+END_SRC
+
+4. Synchronize email and initialize mu index
+
+#+BEGIN_SRC shell
   # Generate password for your imap email account
   pass insert mbsync/outlook
 
@@ -329,10 +343,10 @@ Use homebrew to download and install:
 *** Configure
 Append the following settings to your _~/.zshrc_:
 
-#+BEGIN_SRC shell
-  # Initialize pyenv
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
+#+BEGIN_SRC
+# Initialize pyenv
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
 #+END_SRC
 
 ** pyenv-virtualenvwrapper
@@ -347,16 +361,16 @@ Using git to download and install:
 *** Configure
 Append the following settings to your _~/.zshrc_:
 
-#+BEGIN_SRC shell
-  # To get virtualenvwrapper to create a virtual environment using
-  # pyvenv instead of virtualenv.
-  export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
+#+BEGIN_SRC
+# To get virtualenvwrapper to create a virtual environment using
+# pyvenv instead of virtualenv.
+export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
-  # Activate shell python
-  pyenv shell 3.8.10
+# Activate shell python
+pyenv shell 3.8.10
 
-  # Activate virtualenvwrapper
-  pyenv virtualenvwrapper
+# Activate virtualenvwrapper
+pyenv virtualenvwrapper
 #+END_SRC
 
 ** Python
