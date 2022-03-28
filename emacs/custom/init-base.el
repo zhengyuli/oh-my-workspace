@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-27 19:17:55 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-28 11:50:01 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -462,12 +462,55 @@
   (require 'centaur-tabs-functions)
 
   ;; ----------------------------------------------------------
+  ;; Redefinition of `centaur-tabs-buffer-groups'
+  (defun centaur-tabs-buffer-groups ()
+    "`centaur-tabs-buffer-groups' control buffers' group rules."
+    (list
+     (cond
+      ((derived-mode-p 'dashboard-mode)
+       "Dashboard")
+      ((derived-mode-p 'vterm-mode)
+       "Vterm")
+      ((or (string-equal "*" (substring (buffer-name) 0 1))
+           (memq major-mode '(magit-process-mode
+                              magit-status-mode
+                              magit-diff-mode
+                              magit-log-mode
+                              magit-file-mode
+                              magit-blob-mode
+                              magit-blame-mode)))
+       "Emacs")
+      ((memq major-mode '(helpful-mode
+                          help-mode))
+       "Help")
+      ((derived-mode-p 'dired-mode)
+       "Dired")
+      ((derived-mode-p 'prog-mode)
+       "ProgMode")
+      ((memq major-mode '(org-mode
+                          org-agenda-clockreport-mode
+                          org-src-mode
+                          org-agenda-mode
+                          org-beamer-mode
+                          org-indent-mode
+                          org-bullets-mode
+                          org-cdlatex-mode
+                          org-agenda-log-mode
+                          diary-mode))
+       "OrgMode")
+      (t
+       (centaur-tabs-get-group-name (current-buffer))))))
+
+  ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs-elements' realted variables
   (customize-set-variable 'centaur-tabs-height 25)
   (customize-set-variable 'centaur-tabs-style "bar")
-  (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
+  (customize-set-variable 'centaur-tabs-set-bar 'under)
   (customize-set-variable 'centaur-tabs-set-close-button nil)
   (customize-set-variable 'centaur-tabs-set-icons t)
+  (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
+  (customize-set-variable 'centaur-tabs-show-count t)
+  (customize-set-variable 'centaur-tabs-cycle-scope 'tabs)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `centaur-tabs'
@@ -542,7 +585,15 @@
                             (agenda . 5)
                             (registers . 5)))
   (customize-set-variable 'dashboard-projects-switch-function
-                          'counsel-projectile-switch-project-by-name))
+                          'counsel-projectile-switch-project-by-name)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'dashboard-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable local centaur tabs mode
+              (centaur-tabs-local-mode 1))))
 
 (eval-after-load "dashboard" '(dashboard-settings))
 
@@ -579,7 +630,7 @@
   ;; ----------------------------------------------------------
   ;; Customized `dired' related faces
   (custom-set-faces
-   '(dired-header ((t (:foreground "#EE0000" :height 1.1))))
+   '(dired-header ((t (:foreground "#EE82EE" :height 1.1))))
    '(dired-directory ((t (:foreground "#51AFEF" :height 1.1))))
    '(dired-mark ((t (:foreground "#FF1493" :inverse-video nil))))
    '(dired-marked ((t (:foreground "#FFFF00" :inverse-video nil)))))
@@ -683,7 +734,7 @@
 
   ;; ----------------------------------------------------------
   ;; Hooks
-  (add-hook 'term-mode-hook
+  (add-hook 'vterm-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
               ;; Disable auto fill mode
@@ -759,7 +810,7 @@
 
   ;; ----------------------------------------------------------
   ;; Customize `org-roam' related variables
-  (customize-set-variable 'org-roam-directory "OrgRoamNotes")
+  (customize-set-variable 'org-roam-directory "~/OrgRoamNotes")
 
   ;; Customize `org-roam-node' related variables
   (customize-set-variable 'org-roam-node-display-template
@@ -997,8 +1048,15 @@ wiki search engine."
             ;; Update copyright
             (copyright-update)
 
-            ;; Delete trailing whitespace
+            ;; Delete trailing white space
             (delete-trailing-whitespace)))
+
+;; Setup dashboard startup hook
+;; Be careful, `dashboard-setup-startup-hook' will update `after-init-hook' and
+;; `emacs-startup-hook' hooks, so, if you want the dashboard to take affection at
+;; the end of startup, you should place the following line configuration before
+;; all other `after-init-hook' configurations.
+(dashboard-setup-startup-hook)
 
 (add-hook 'after-init-hook
           (lambda ()
@@ -1100,8 +1158,8 @@ wiki search engine."
                ("C-x _" . text-scale-decrease)
                ("C-x +" . text-scale-increase)
                ("C-x -" . text-scale-decrease)
-               ;; Vterm
-               ("C-x C-t" . vterm)
+               ;; Multi vterm
+               ("C-x C-t" . multi-vterm)
                ;; Dired
                ("C-x C-d" . dired)
                ("C-x d" . dired-jump)
@@ -1188,10 +1246,7 @@ wiki search engine."
             (org-roam-db-autosync-mode 1)
 
             ;; Start pinentry server
-            (pinentry-start)
-
-            ;; Enable mu4e alert display on mode line
-            (mu4e-alert-enable-mode-line-display)))
+            (pinentry-start)))
 
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -1201,9 +1256,6 @@ wiki search engine."
 
             ;; Toggle fullscreen
             (toggle-fullscreen)))
-
-;; Setup `'dashboard' startup hook
-(dashboard-setup-startup-hook)
 
 ;; ==================================================================================
 ;;; Provide features

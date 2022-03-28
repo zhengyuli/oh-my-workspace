@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-24 14:35:29 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-28 11:29:06 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,6 +37,7 @@
   "Settings for `markdown-mode'."
 
   ;; Require
+  (require 'valign)
   (require 'markdownfmt)
 
   ;; ----------------------------------------------------------
@@ -54,6 +55,9 @@
 
               ;; Enable auto fill mode
               (auto-fill-mode 1)
+
+              ;; enable valign mode
+              (valign-mode 1)
 
               ;; Enable markdown format on save
               (markdownfmt-enable-on-save))))
