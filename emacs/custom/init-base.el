@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-28 11:50:01 Monday by zhengyuli>
+;; Time-stamp: <2022-03-28 12:07:56 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -1262,5 +1262,3 @@ wiki search engine."
 (provide 'init-base)
 
 ;;; init-base.el ends here
-
-; LocalWords:  alist

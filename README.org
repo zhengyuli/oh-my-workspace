@@ -101,13 +101,13 @@ we'll cover the basics here.
 *** Themes
 Changing theme is as simple as changing a string in your configuration file.
 
-#+BEGIN_SRC
+#+BEGIN_EXAMPLE
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="agnoster"
-#+END_SRC
+#+END_EXAMPLE
 
 **** Plugins
 Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be added to *~/.oh-my-zsh/custom/plugins/*.
@@ -125,7 +125,7 @@ Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be
 
 2. Configure daily used plugins in your _~/.zshrc_:
 
-#+BEGIN_SRC
+#+BEGIN_EXAMPLE
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#a9a9a9"
 
 # Which plugins would you like to load?
@@ -144,15 +144,15 @@ plugins=(
     docker
     web-search
 )
-#+END_SRC
+#+END_EXAMPLE
 
 **** Others
 Append the following settings to your configuration file.
 
-#+BEGIN_SRC
+#+BEGIN_EXAMPLE
 # Disable homebrew auto update
 export HOMEBREW_NO_AUTO_UPDATE="true"
-#+END_SRC
+#+END_EXAMPLE
 
 ** GnuPG
 GnuPG is a complete and free implementation of the OpenPGP standard as defined by RFC4880 (also known as PGP). GnuPG
@@ -210,10 +210,9 @@ Use homebrew to download and install:
 #+END_SRC
 
 *** Configure
-
 1. Copy the following configure to your _~/.mbsyncrc_
 
-#+BEGIN_SRC
+#+BEGIN_EXAMPLE
 # Define the IMAP4 Account name, opening a section for its parameters.
 IMAPAccount outlook
 Host imap-mail.outlook.com
@@ -245,15 +244,15 @@ Sync All
 Create Near
 Expunge None
 SyncState *
-#+END_SRC
+#+END_EXAMPLE
 
 2. Copy the following configure to your _~/.gnupg/gpg-agent.conf_
 
-#+BEGIN_SRC
+#+BEGIN_EXAMPLE
 allow-emacs-pinentry
 default-cache-ttl 34560000
 max-cache-ttl 34560000
-#+END_SRC
+#+END_EXAMPLE
 
 3. Reload gpg-agent
 
@@ -311,13 +310,13 @@ Create Golang projects workspace:
 
 Append the following settings to your _~/.zshrc_:
 
-#+BEGIN_SRC shell
-  # Path to your go projects
-  export GOPATH=$HOME/MyGoProjects
+#+BEGIN_EXAMPLE
+# Path to your go projects
+export GOPATH=$HOME/MyGoProjects
 
-  # Update $PATH
-  export PATH=$GOPATH/bin:$PATH
-#+END_SRC
+# Update $PATH
+export PATH=$GOPATH/bin:$PATH
+#+END_EXAMPLE
 
 Install golang related dependencies:
 
@@ -343,11 +342,11 @@ Use homebrew to download and install:
 *** Configure
 Append the following settings to your _~/.zshrc_:
 
-#+BEGIN_SRC
+#+BEGIN_EXAMPLE
 # Initialize pyenv
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
-#+END_SRC
+#+END_EXAMPLE
 
 ** pyenv-virtualenvwrapper
 
@@ -361,7 +360,7 @@ Using git to download and install:
 *** Configure
 Append the following settings to your _~/.zshrc_:
 
-#+BEGIN_SRC
+#+BEGIN_EXAMPLE
 # To get virtualenvwrapper to create a virtual environment using
 # pyvenv instead of virtualenv.
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
@@ -371,7 +370,7 @@ pyenv shell 3.8.10
 
 # Activate virtualenvwrapper
 pyenv virtualenvwrapper
-#+END_SRC
+#+END_EXAMPLE
 
 ** Python
 MacOS, like Linux, ships with Python already installed.
@@ -430,8 +429,18 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
 #+END_SRC
 
 *** Configure
-Setup emacs configurations:
+1. Setup emacs configurations:
 
 #+BEGIN_SRC shell
   ./emacs/install.sh
+#+END_SRC
+
+2. Append the following proxy settings to _~/.emacs.d/custom.el_ if needed:
+
+#+BEGIN_SRC lisp
+  (defun enable-proxy ()
+    (interactive)
+    (set-http-proxy "http://proxyhost:port"))
+
+  (defalias 'disable-proxy 'unset-http-proxy)
 #+END_SRC

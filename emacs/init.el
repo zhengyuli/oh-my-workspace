@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-28 08:25:55 Monday by zhengyuli>
+;; Time-stamp: <2022-03-28 12:36:45 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -52,7 +52,7 @@
 (defvar emacs-config-fixed-serif-font "Source Serif Pro" "Emacs configuration fixed serif font.")
 
 ;; Emacs configuration variable font
-(defvar emacs-config-variable-font "Helvetica" "Emacs configuration variable font.")
+(defvar emacs-config-variable-font "Times New Roman" "Emacs configuration variable font.")
 
 ;; Emacs configuration font size
 (defvar emacs-config-font-size 150 "Emacs configuration font size.")
