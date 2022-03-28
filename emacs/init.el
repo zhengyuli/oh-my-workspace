@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-28 12:36:45 Monday by zhengyuli>
+;; Time-stamp: <2022-03-28 13:47:20 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -231,8 +231,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; ******************************
  'org-roam
  ;; ******************************
- 'eww-lnum
  'mixed-pitch
+ ;; ******************************
+ 'eww-lnum
  ;; ******************************
  'mu4e-alert
  ;; ==============================

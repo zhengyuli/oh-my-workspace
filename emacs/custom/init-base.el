@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-28 12:07:56 Monday by zhengyuli>
+;; Time-stamp: <2022-03-28 13:51:51 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -469,8 +469,15 @@
      (cond
       ((derived-mode-p 'dashboard-mode)
        "Dashboard")
+      ((memq major-mode '(helpful-mode
+                          help-mode))
+       "Help")
+      ((derived-mode-p 'dired-mode)
+       "Dired")
       ((derived-mode-p 'vterm-mode)
        "Vterm")
+      ((derived-mode-p 'eww-mode)
+       "Eww")
       ((or (string-equal "*" (substring (buffer-name) 0 1))
            (memq major-mode '(magit-process-mode
                               magit-status-mode
@@ -480,11 +487,6 @@
                               magit-blob-mode
                               magit-blame-mode)))
        "Emacs")
-      ((memq major-mode '(helpful-mode
-                          help-mode))
-       "Help")
-      ((derived-mode-p 'dired-mode)
-       "Dired")
       ((derived-mode-p 'prog-mode)
        "ProgMode")
       ((memq major-mode '(org-mode
