@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-29 12:49:32 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-29 13:06:08 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -1252,9 +1252,6 @@ wiki search engine."
 
 (add-hook 'emacs-startup-hook
           (lambda ()
-            ;; Require
-            (require 'textsize)
-
             ;; ----------------------------------------------------------
             ;; Enable global textsize mode
             (textsize-mode 1)
