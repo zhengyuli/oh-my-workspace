@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-28 13:47:20 Monday by zhengyuli>
+;; Time-stamp: <2022-03-29 12:44:47 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -53,9 +53,6 @@
 
 ;; Emacs configuration variable font
 (defvar emacs-config-variable-font "Times New Roman" "Emacs configuration variable font.")
-
-;; Emacs configuration font size
-(defvar emacs-config-font-size 150 "Emacs configuration font size.")
 
 ;; Emacs configuration user
 (defvar emacs-config-user "Zhengyu Li" "Emacs configuration user.")

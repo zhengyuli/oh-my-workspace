@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-28 13:51:51 Monday by zhengyuli>
+;; Time-stamp: <2022-03-29 12:49:32 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -549,7 +549,7 @@
 
   ;; ----------------------------------------------------------
   ;; Customize builtin `faces' related faces
-  (set-face-attribute 'default nil :font emacs-config-fixed-font :height emacs-config-font-size)
+  (set-face-attribute 'default nil :font emacs-config-fixed-font)
   (set-face-attribute 'fixed-pitch nil :font emacs-config-fixed-font)
   (set-face-attribute 'fixed-pitch-serif nil :font emacs-config-fixed-serif-font)
   (set-face-attribute 'variable-pitch nil :font emacs-config-variable-font)
@@ -1252,7 +1252,13 @@ wiki search engine."
 
 (add-hook 'emacs-startup-hook
           (lambda ()
+            ;; Require
+            (require 'textsize)
+
             ;; ----------------------------------------------------------
+            ;; Enable global textsize mode
+            (textsize-mode 1)
+
             ;; Load doom theme
             (load-theme 'doom-dracula t)
 
