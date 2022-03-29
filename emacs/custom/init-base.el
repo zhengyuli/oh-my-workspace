@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-29 13:06:08 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-29 13:48:33 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -507,7 +507,6 @@
   ;; Customize `centaur-tabs-elements' realted variables
   (customize-set-variable 'centaur-tabs-height 25)
   (customize-set-variable 'centaur-tabs-style "bar")
-  (customize-set-variable 'centaur-tabs-set-bar 'under)
   (customize-set-variable 'centaur-tabs-set-close-button nil)
   (customize-set-variable 'centaur-tabs-set-icons t)
   (customize-set-variable 'centaur-tabs-gray-out-icons 'buffer)
@@ -715,7 +714,8 @@
               (dired-omit-mode 1)
 
               ;; Enable all the icons dired mode
-              (all-the-icons-dired-mode 1))))
+              (unless (display-graphic-p)
+                (all-the-icons-dired-mode 1)))))
 
 (eval-after-load "dired" '(dired-settings))
 
