@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-30 12:40:17 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-30 13:28:32 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -716,9 +716,6 @@
 
 (eval-after-load "dired" '(dired-settings))
 
-(autoload 'dired-jump "dired-x"
-  "Jump to Dired buffer corresponding to current buffer." t)
-
 ;; ==================================================================================
 ;;Customized settings for `vterm'
 (defun vterm-settings ()
@@ -1136,6 +1133,10 @@ wiki search engine."
                ("C-x b" . counsel-switch-buffer)
                ("C-x B" . counsel-recentf)
                ("C-x C-f" . counsel-find-file)
+               ("C-h f" . counsel-describe-function)
+               ("C-h v" . counsel-describe-variable)
+               ("C-h o" . counsel-describe-symbol)
+               ("C-h b" . counsel-descbinds)
                ;; Swiper
                ("C-s" . swiper-isearch)
                ("C-r" . swiper-isearch-backward)
@@ -1164,8 +1165,8 @@ wiki search engine."
                ;; Multi vterm
                ("C-x C-t" . multi-vterm)
                ;; Dired
-               ("C-x C-d" . dired)
-               ("C-x d" . dired-jump)
+               ("C-x C-d" . counsel-dired)
+               ("C-x d" . counsel-dired-jump)
                ;; Go translate
                ("C-x C-p" . gts-do-translate)
                ;; Org roam
