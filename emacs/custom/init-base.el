@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-29 13:48:33 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-30 12:40:17 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -469,9 +469,6 @@
      (cond
       ((derived-mode-p 'dashboard-mode)
        "Dashboard")
-      ((memq major-mode '(helpful-mode
-                          help-mode))
-       "Help")
       ((derived-mode-p 'dired-mode)
        "Dired")
       ((derived-mode-p 'vterm-mode)
@@ -714,7 +711,7 @@
               (dired-omit-mode 1)
 
               ;; Enable all the icons dired mode
-              (unless (display-graphic-p)
+              (when (display-graphic-p)
                 (all-the-icons-dired-mode 1)))))
 
 (eval-after-load "dired" '(dired-settings))
@@ -936,6 +933,7 @@ wiki search engine."
   (require 'mu4e-view)
   (require 'mu4e-compose)
   (require 'mu4e-context)
+  (require 'mu4e-alert)
 
   ;; ----------------------------------------------------------
   ;; Customize `mu4e-vars' related faces
@@ -1016,6 +1014,13 @@ wiki search engine."
                     (smtpmail-smtp-server . "smtp-mail.outlook.com")
                     (smtpmail-smtp-service . 587 )
                     (mu4e-compose-signature . "Best Wishes\nZhengyu Li")))))
+
+  ;; ----------------------------------------------------------
+  ;; Enable desktop notifications for unread emails
+  (mu4e-alert-enable-notifications)
+
+  ;; Enable display of unread emails in mode-line
+  (mu4e-alert-enable-mode-line-display)
 
   ;; ----------------------------------------------------------
   ;; Hooks
@@ -1151,10 +1156,6 @@ wiki search engine."
                ("C-: n" . flyspell-correct-next)
                ;; Switch window
                ("C-x o" . switch-window)
-               ;; Helpful
-               ("C-h f" . helpful-callable)
-               ("C-h v" . helpful-variable)
-               ("C-h k" . helpful-key)
                ;; Scale text
                ("C-x =" . text-scale-increase)
                ("C-x _" . text-scale-decrease)
