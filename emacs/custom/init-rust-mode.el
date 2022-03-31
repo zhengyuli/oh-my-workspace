@@ -36,6 +36,31 @@
 (defun rust-mode-settings ()
   "Settings for `rust-mode'."
 
+  ;; Require
+  (require 'rust-rustfmt)
+  (require 'lsp-mode)
+  (require 'dap-mode)
+  (require 'dap-lldb)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `rust-mode' related variables
+  (customize-set-variable 'rust-format-on-save t)
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `rust-mode'
+  (lazy-unset-key
+   '("C-c C-c C-u"
+     "C-c C-c C-k"
+     "C-c C-c C-t"
+     "C-c C-c C-r"
+     "C-c C-c C-l")
+   rust-mode-map)
+
+  (lazy-set-key
+   '(("C-c C-c" . comment-line)
+     ("C-x C-;" . rust-run))
+   rust-mode-map)
+
   ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'rust-mode-hook

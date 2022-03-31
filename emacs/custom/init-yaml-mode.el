@@ -1,5 +1,5 @@
 ;;; package --- init-yaml-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:41:40 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:21:02 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -35,6 +35,9 @@
 ;; Customized settings for `yaml-mode'
 (defun yaml-mode-settings ()
   "Settings for `yaml-mode'."
+
+  ;; Require
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks

@@ -1,5 +1,5 @@
 ;;; package --- init-scala-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:08:21 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:20:39 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -35,6 +35,9 @@
 ;; Customized settings for `scala-mode'
 (defun scala-mode-settings ()
   "Settings for `scala-mode'."
+
+  ;; Require
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks

@@ -1,5 +1,5 @@
 ;;; package --- init-haskell-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:07:10 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:20:22 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -35,6 +35,9 @@
 ;; Customized settings for `haskell-mode'
 (defun haskell-mode-settings ()
   "Settings for `haskell-mode'."
+
+  ;; Require
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks

@@ -1,5 +1,5 @@
 ;;; package --- init-groovy-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:06:46 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:20:12 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -35,6 +35,9 @@
 ;; Customized settings for `groovy-mode'
 (defun groovy-mode-settings ()
   "Settings for `groovy-mode'."
+
+  ;; Require
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks

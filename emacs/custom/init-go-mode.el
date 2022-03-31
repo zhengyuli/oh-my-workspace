@@ -1,5 +1,5 @@
 ;;; package --- init-go-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:23:17 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:20:04 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -38,6 +38,7 @@
 
   ;; Require
   (require 'go-eldoc)
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Load golang related envs
@@ -62,10 +63,8 @@
                             ;; Enable lsp mode
                             (lsp-deferred)
 
-                            ;; Make `after-save-hook' buffer local
-                            (make-variable-buffer-local 'after-save-hook)
                             ;; Format buffer before save
-                            (add-hook 'before-save-hook 'gofmt-before-save))))
+                            (add-hook 'before-save-hook 'gofmt-before-save nil t))))
 
 (eval-after-load "go-mode" '(go-mode-settings))
 

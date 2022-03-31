@@ -1,5 +1,5 @@
 ;;; package --- init-dockerfile-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:05:23 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:19:45 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -35,6 +35,9 @@
 ;; Customized settings for `dockerfile-mode'
 (defun dockerfile-mode-settings ()
   "Settings for `dockerfile-mode'."
+
+  ;; Require
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks

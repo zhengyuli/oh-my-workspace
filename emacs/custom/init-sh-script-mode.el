@@ -1,5 +1,5 @@
 ;;; package --- init-sh-script-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:14:26 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:20:48 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -34,6 +34,9 @@
 ;; Customized settings for `sh-script' mode
 (defun sh-script-settings ()
   "Settings for `sh-script'."
+
+  ;; Require
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `sh-mode'

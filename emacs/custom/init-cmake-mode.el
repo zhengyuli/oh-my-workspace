@@ -1,5 +1,5 @@
 ;;; package --- init-cmake-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:04:17 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 19:19:30 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -35,6 +35,9 @@
 ;; Customized settings for `cmake-mode'
 (defun cmake-mode-settings ()
   "Settings for `cmake-mode'."
+
+  ;; Require
+  (require 'lsp-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks
