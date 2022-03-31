@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-28 11:29:06 Monday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:34:05 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -50,8 +50,8 @@
   (add-hook 'markdown-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
-              ;; Set buffer column width
-              (setq fill-column 120)
+              ;; Set buffer column width to 120
+              (setq-local fill-column 120)
 
               ;; Enable auto fill mode
               (auto-fill-mode 1)
@@ -59,8 +59,10 @@
               ;; enable valign mode
               (valign-mode 1)
 
-              ;; Enable markdown format on save
-              (markdownfmt-enable-on-save))))
+              ;; Make `after-save-hook' buffer local
+              (make-variable-buffer-local 'after-save-hook)
+              ;; Format buffer before save
+              (add-hook 'before-save-hook 'markdownfmt-format-buffer))))
 
 (eval-after-load "markdown-mode" '(markdown-mode-settings))
 

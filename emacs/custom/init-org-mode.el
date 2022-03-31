@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-27 10:12:07 Sunday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:34:20 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -103,8 +103,8 @@
   (add-hook 'org-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
-              ;; Set buffer column width
-              (set-fill-column 120)
+              ;; Set buffer column width to 120
+              (setq-local fill-column 120)
 
               ;; Enable auto fill mode
               (auto-fill-mode 1)

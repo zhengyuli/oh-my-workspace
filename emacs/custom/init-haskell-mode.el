@@ -1,5 +1,5 @@
 ;;; package --- init-haskell-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:36 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:07:10 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,8 +37,12 @@
   "Settings for `haskell-mode'."
 
   ;; ----------------------------------------------------------
-  ;; Set `prog-mode-map' as the parent of `haskell-mode-map'
-  (set-keymap-parent haskell-mode-map prog-mode-map))
+  ;; Hooks
+  (add-hook 'haskell-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "haskell-mode" '(haskell-mode-settings))
 

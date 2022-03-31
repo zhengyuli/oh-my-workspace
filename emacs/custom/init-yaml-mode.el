@@ -1,5 +1,5 @@
 ;;; package --- init-yaml-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:15:00 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:41:40 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,8 +37,12 @@
   "Settings for `yaml-mode'."
 
   ;; ----------------------------------------------------------
-  ;; Set `text-mode-map' as the parent of `yaml-mode-map'
-  (set-keymap-parent yaml-mode-map text-mode-map))
+  ;; Hooks
+  (add-hook 'yaml-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "yaml-mode" '(yaml-mode-settings))
 

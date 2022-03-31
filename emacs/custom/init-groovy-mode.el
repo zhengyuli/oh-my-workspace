@@ -1,5 +1,5 @@
 ;;; package --- init-groovy-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:30 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:06:46 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,8 +37,12 @@
   "Settings for `groovy-mode'."
 
   ;; ----------------------------------------------------------
-  ;; Set `prog-mode-map' as the parent of `groovy-mode-map'
-  (set-keymap-parent groovy-mode-map prog-mode-map))
+  ;; Hooks
+  (add-hook 'groovy-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "groovy-mode" '(groovy-mode-settings))
 

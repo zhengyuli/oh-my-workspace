@@ -1,5 +1,5 @@
 ;;; package --- init-dockerfile-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:16 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:05:23 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,8 +37,12 @@
   "Settings for `dockerfile-mode'."
 
   ;; ----------------------------------------------------------
-  ;; Set `prog-mode-map' as the parent of `dockerfile-mode-map'
-  (set-keymap-parent dockerfile-mode-map prog-mode-map))
+  ;; Hooks
+  (add-hook 'dockerfile-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "dockerfile-mode" '(dockerfile-mode-settings))
 

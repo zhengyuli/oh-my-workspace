@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 21:18:55 Saturday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:34:55 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -87,15 +87,15 @@
   (lazy-set-key
    '(("<return>" . newline-and-indent)
 	 ("RET" . newline-and-indent)
-	 ("C-c C-c" . smart-comment)
-     ("C-c k" . smart-uncomment)
      ("C-c M-a" . beginning-of-defun)
      ("C-c M-e" . end-of-defun)
      ("C-]" . jump-to-matched-paren)
 	 ("M-r" . xref-find-references)
      ("M-." . xref-find-definitions)
      ("M-," . xref-pop-marker-stack)
-     ("C-0" . quickrun))
+	 ("C-c C-c" . smart-comment)
+     ("C-c C-k" . smart-uncomment)
+     ("C-c C-;" . quickrun))
    prog-mode-map)
 
   ;; ----------------------------------------------------------
@@ -110,10 +110,10 @@
             (lambda ()
               ;; -----------------------------------------------
               ;; Set tab width with 4 white spaces
-			  (setq tab-width 4)
+			  (setq-local tab-width 4)
 
               ;; Disable tab characters for indentation
-			  (setq indent-tabs-mode nil)
+			  (setq-local indent-tabs-mode nil)
 
               ;; -----------------------------------------------
               ;; Enable linum node

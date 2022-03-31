@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-30 13:28:32 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-31 09:44:42 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -399,7 +399,13 @@
   (customize-set-variable 'ispell-program-name "aspell")
 
   ;; Customize `flyspell' realted variables
-  (customize-set-variable 'flyspell-issue-message-flag nil))
+  (customize-set-variable 'flyspell-issue-message-flag nil)
+
+  ;; ----------------------------------------------------------
+  ;; Key unbindings for `undo-tree'
+  (lazy-unset-key
+   '("C-," "C-." "C-;")
+   flyspell-mode-map))
 
 (eval-after-load "flyspell" '(flyspell-settings))
 

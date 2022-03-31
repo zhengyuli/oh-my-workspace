@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-30 12:33:06 Wednesday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:45:40 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -270,6 +270,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; init-scala-mode.el
  'scala-mode
  ;; ==============================
+ ;; init-rust-mode.el
+ 'rust-mode
+ ;; ==============================
  ;; init-groovy-mode.el
  'groovy-mode
  ;; ==============================
@@ -306,6 +309,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (load-library "init-elisp-mode")
 (load-library "init-haskell-mode")
 (load-library "init-scala-mode")
+(load-library "init-rust-mode")
 (load-library "init-groovy-mode")
 (load-library "init-sh-script-mode")
 (load-library "init-dockerfile-mode")

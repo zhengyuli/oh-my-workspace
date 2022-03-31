@@ -1,5 +1,5 @@
 ;;; package --- init-go-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:24 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:23:17 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -47,10 +47,6 @@
     (exec-path-from-shell-copy-env "GOPATH"))
 
   ;; ----------------------------------------------------------
-  ;; Set `prog-mode-map' as the parent of `go-mode-map'
-  (set-keymap-parent go-mode-map prog-mode-map)
-
-  ;; ----------------------------------------------------------
   ;; Key bindings for `go-mode'
   (lazy-set-key
    '(("M-." . godef-jump))
@@ -58,11 +54,18 @@
 
   ;; ----------------------------------------------------------
   ;; Hooks
-  (add-hook 'before-save-hook 'gofmt-before-save)
-
   (add-hook 'go-mode-hook (lambda ()
                             ;; ----------------------------------------------------------
-							(go-eldoc-setup))))
+                            ;; Setup go eldoc
+							(go-eldoc-setup)
+
+                            ;; Enable lsp mode
+                            (lsp-deferred)
+
+                            ;; Make `after-save-hook' buffer local
+                            (make-variable-buffer-local 'after-save-hook)
+                            ;; Format buffer before save
+                            (add-hook 'before-save-hook 'gofmt-before-save))))
 
 (eval-after-load "go-mode" '(go-mode-settings))
 

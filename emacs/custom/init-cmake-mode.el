@@ -1,5 +1,5 @@
 ;;; package --- init-cmake-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 16:08:18 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:04:17 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,8 +37,12 @@
   "Settings for `cmake-mode'."
 
   ;; ----------------------------------------------------------
-  ;; Set `prog-mode-map' as the parent of `cmake-mode-map'
-  (set-keymap-parent cmake-mode-map prog-mode-map))
+  ;; Hooks
+  (add-hook 'cmake-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "cmake-mode" '(cmake-mode-settings))
 

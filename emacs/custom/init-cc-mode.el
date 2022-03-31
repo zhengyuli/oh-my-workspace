@@ -1,5 +1,5 @@
 ;;; package --- init-cc-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-22 20:56:19 Tuesday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:28:14 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -40,7 +40,7 @@
   ;; Key bindings for `cc-mode'
   (lazy-set-key
    '(("C-c C-c" . smart-comment)
-     ("C-c k" . smart-uncomment))
+     ("C-c C-k" . smart-uncomment))
    c-mode-base-map))
 
 (eval-after-load "cc-mode" '(cc-mode-settings))

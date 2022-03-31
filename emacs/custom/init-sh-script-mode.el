@@ -1,5 +1,5 @@
 ;;; package --- init-sh-script-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:55 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:14:26 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -39,8 +39,16 @@
   ;; Key bindings for `sh-mode'
   (lazy-set-key
    '(("C-c C-c" . smart-comment)
-     ("C-c k" . smart-uncomment))
-   sh-mode-map))
+     ("C-c C-k" . smart-uncomment))
+   sh-mode-map)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'sh-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "sh-script" '(sh-script-settings))
 

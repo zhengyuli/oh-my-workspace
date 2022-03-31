@@ -1,5 +1,5 @@
 ;;; package --- init-scala-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-17 11:14:52 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:08:21 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -37,8 +37,12 @@
   "Settings for `scala-mode'."
 
   ;; ----------------------------------------------------------
-  ;; Set `prog-mode-map' as the parent of `scala-mode-map'
-  (set-keymap-parent scala-mode-map prog-mode-map))
+  ;; Hooks
+  (add-hook 'scala-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "scala-mode" '(scala-mode-settings))
 
