@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:34:55 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 13:19:56 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -32,20 +32,6 @@
 
 ;;; Code:
 ;; ==================================================================================
-(defun smart-comment ()
-  "If mark is active, comment region, else comment current line."
-  (interactive)
-  (if mark-active
-      (comment-region (region-beginning) (region-end))
-    (comment-region (line-beginning-position) (line-end-position))))
-
-(defun smart-uncomment ()
-  "If region is active, uncomment region else uncomment current line."
-  (interactive)
-  (if mark-active
-      (uncomment-region (region-beginning) (region-end))
-    (uncomment-region (line-beginning-position) (line-end-position))))
-
 (defun jump-to-matched-paren ()
   "Jump to the matched parenthese."
   (interactive)
@@ -86,16 +72,15 @@
   ;; Key bindings for `prog-mode'
   (lazy-set-key
    '(("<return>" . newline-and-indent)
-	 ("RET" . newline-and-indent)
+     ("RET" . newline-and-indent)
      ("C-c M-a" . beginning-of-defun)
      ("C-c M-e" . end-of-defun)
      ("C-]" . jump-to-matched-paren)
-	 ("M-r" . xref-find-references)
+     ("C-c C-c" . comment-line)
+     ("M-r" . xref-find-references)
      ("M-." . xref-find-definitions)
      ("M-," . xref-pop-marker-stack)
-	 ("C-c C-c" . smart-comment)
-     ("C-c C-k" . smart-uncomment)
-     ("C-c C-;" . quickrun))
+     ("C-x C-;" . quickrun))
    prog-mode-map)
 
   ;; ----------------------------------------------------------
@@ -110,10 +95,10 @@
             (lambda ()
               ;; -----------------------------------------------
               ;; Set tab width with 4 white spaces
-			  (setq-local tab-width 4)
+              (setq-local tab-width 4)
 
               ;; Disable tab characters for indentation
-			  (setq-local indent-tabs-mode nil)
+              (setq-local indent-tabs-mode nil)
 
               ;; -----------------------------------------------
               ;; Enable linum node
