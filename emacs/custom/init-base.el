@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 09:44:42 Thursday by zhengyuli>
+;; Time-stamp: <2022-03-31 11:53:07 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -236,6 +236,7 @@
   ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'ag-mode-hook 'wgrep-ag-setup)
+
   (add-hook 'ag-search-finished-hook
             (lambda ()
               ;; ----------------------------------------------------------
