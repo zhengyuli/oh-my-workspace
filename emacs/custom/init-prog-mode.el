@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 13:19:56 Thursday by zhengyuli>
+;; Time-stamp: <2022-04-01 09:10:16 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -146,8 +146,16 @@
   (customize-set-variable 'read-process-output-max (* 3 1024 1024))
 
   ;; Customize `lsp-mode' related variables
-  (customize-set-variable 'lsp-headerline-breadcrumb-enable nil))
+  (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
   (customize-set-variable 'lsp-enable-dap-auto-configure nil)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'lsp-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable which key integration
+              (lsp-enable-which-key-integration))))
 
 (eval-after-load "lsp-mode" '(lsp-mode-settings))
 
@@ -194,6 +202,7 @@
   (dap-auto-configure-mode 1)
 
   ;; ----------------------------------------------------------
+  ;; Hooks
   (add-hook 'dap-session-created-hook
             (lambda (arg)
               ;; ----------------------------------------------------------

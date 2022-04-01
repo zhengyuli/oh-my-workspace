@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 18:54:47 Thursday by zhengyuli>
+;; Time-stamp: <2022-04-01 14:58:37 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -124,6 +124,17 @@
            nil)
        (setq old-fullscreen current-value)
        'fullboth))))
+
+(defun adjust-window-split-thresholds ()
+  "Adjust window split thresholds."
+  (interactive)
+  (if (>= (frame-pixel-width) (frame-pixel-height))
+      (progn
+        (setq split-height-threshold (frame-height))
+        (setq split-width-threshold  (/ (frame-width) 2)))
+    (progn
+      (setq split-height-threshold (frame-height))
+      (setq split-width-threshold  (frame-width)))))
 
 ;; ==================================================================================
 ;; Customized settings for `visual-regexp-steroids'
@@ -1270,6 +1281,12 @@ wiki search engine."
 
             ;; Toggle fullscreen
             (toggle-fullscreen)))
+
+(add-hook 'window-configuration-change-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            ;; Adjust window split thresholds
+            (adjust-window-split-thresholds)))
 
 ;; ==================================================================================
 ;;; Provide features

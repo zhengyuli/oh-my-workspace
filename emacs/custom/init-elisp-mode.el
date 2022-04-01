@@ -1,5 +1,5 @@
 ;;; package --- init-elisp-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-26 21:15:12 Saturday by zhengyuli>
+;; Time-stamp: <2022-04-01 15:00:34 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -52,6 +52,9 @@
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
+              ;; Disable flycheck
+              (flycheck-mode -1)
+
               ;; Enable eldoc mode
               (eldoc-mode 1)
 
