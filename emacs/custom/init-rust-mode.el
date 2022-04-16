@@ -39,12 +39,23 @@
   ;; Require
   (require 'rust-rustfmt)
   (require 'lsp-mode)
+  (require 'lsp-rust)
   (require 'dap-mode)
   (require 'dap-lldb)
 
   ;; ----------------------------------------------------------
   ;; Customize `rust-mode' related variables
   (customize-set-variable 'rust-format-on-save t)
+
+  ;; Customize `lsp-rust' related variables
+  (customize-set-variable 'lsp-rust-analyzer-server-display-inlay-hints t)
+  (customize-set-variable 'lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (customize-set-variable 'lsp-rust-analyzer-display-chaining-hints t)
+  (customize-set-variable 'lsp-rust-analyzer-display-chaining-hints t)
+  (customize-set-variable 'lsp-rust-analyzer-display-closure-return-type-hints t)
+
+  ;; Customize `dap-lldb' related variables
+  (customize-set-variable 'dap-lldb-debug-program '("lldb-vscode"))
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `rust-mode'
