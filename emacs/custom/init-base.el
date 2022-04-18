@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-04-01 19:19:15 Friday by zhengyuli>
+;; Time-stamp: <2022-04-18 08:57:39 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -709,9 +709,9 @@
      ("/m" . dired-mark-files-regexp)
      ("/*" . dired-filter-by-regexp)
      ("/." . dired-filter-by-extension)
-     ("C-c n" . dired-get-file-name-without-path)
-     ("C-c N" . dired-get-file-name-with-path)
-     ("C-c p" . dired-get-file-name-only-path))
+     ("; n" . dired-get-file-name-without-path)
+     ("; N" . dired-get-file-name-with-path)
+     ("; p" . dired-get-file-name-only-path))
    dired-mode-map)
 
   ;; ----------------------------------------------------------
