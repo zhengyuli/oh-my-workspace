@@ -44,6 +44,21 @@
   (require 'dap-lldb)
 
   ;; ----------------------------------------------------------
+  (defun rust-debug-target-program-path ()
+    "The function to get the path of the rust program to be debugged."
+    (interactive)
+    (let* ((project-path (vc-root-dir))
+           (project-name (if project-path
+                             (file-name-nondirectory
+                              (directory-file-name project-path))
+                           nil))
+           (default-directory (if project-path
+                                  (expand-file-name "target/debug/" project-path)
+                                (file-name-directory (buffer-file-name))))
+           (target-path (read-file-name "The rust program to be debugged: " nil project-name)))
+      (expand-file-name target-path)))
+
+  ;; ----------------------------------------------------------
   ;; Customize `rust-mode' related variables
   (customize-set-variable 'rust-format-on-save t)
 
@@ -53,9 +68,6 @@
   (customize-set-variable 'lsp-rust-analyzer-display-chaining-hints t)
   (customize-set-variable 'lsp-rust-analyzer-display-chaining-hints t)
   (customize-set-variable 'lsp-rust-analyzer-display-closure-return-type-hints t)
-
-  ;; Customize `dap-lldb' related variables
-  (customize-set-variable 'dap-lldb-debug-program '("lldb-vscode"))
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `rust-mode'
@@ -77,6 +89,10 @@
   (add-hook 'rust-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
+              ;; Set rust dap lldb debugged program function
+              (setq-local dap-lldb-debugged-program-function
+                          'rust-debug-target-program-path)
+
               ;; Enable lsp mode
               (lsp-deferred))))
 

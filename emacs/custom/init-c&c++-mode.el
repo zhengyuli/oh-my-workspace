@@ -1,5 +1,5 @@
 ;;; package --- init-c&c++-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 17:54:41 Thursday by zhengyuli>
+;; Time-stamp: <2022-04-22 12:01:25 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -54,14 +54,30 @@
   (require 'dap-lldb)
 
   ;; ----------------------------------------------------------
-  ;; Customize `dap-lldb' related variables
-  (customize-set-variable 'dap-lldb-debug-program '("lldb-vscode"))
+  (defun c&c++-debug-target-program-path ()
+    "The function to get the path of the c&c++ program to be debugged."
+    (interactive)
+    (let* ((project-path (vc-root-dir))
+           (project-name (if project-path
+                             (file-name-nondirectory
+                              (directory-file-name project-path))
+                           nil))
+           (default-directory (if project-path
+                                  (expand-file-name "build/" project-path)
+                                (file-name-directory (buffer-file-name))))
+           (target-path (read-file-name "The c&c++ program to be debugged: " nil project-name)))
+      (expand-file-name target-path)))
 
   ;; ----------------------------------------------------------
   ;; Hooks
   (dolist (hook '(c-mode-hook c++-mode-hook))
     (add-hook hook
               (lambda ()
+                ;; ----------------------------------------------------------
+                ;; Set c&c++ dap lldb debugged program function
+                (setq-local dap-lldb-debugged-program-function
+                            'c&c++-debug-target-program-path)
+
                 ;; Enable google cc style
     		    (google-set-c-style)
 

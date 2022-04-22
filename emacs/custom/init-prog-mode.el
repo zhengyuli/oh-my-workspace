@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-04-01 09:10:16 Friday by zhengyuli>
+;; Time-stamp: <2022-04-22 09:27:58 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -217,6 +217,17 @@
               (call-interactively #'dap-hydra))))
 
 (eval-after-load "dap-mode" '(dap-mode-settings))
+
+;; ==================================================================================
+;; Customized settings for `dap-mode'
+(defun dap-lldb-settings ()
+  "Settings for `dap-lldb'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `dap-lldb' related variables
+  (customize-set-variable 'dap-lldb-debug-program '("lldb-vscode")))
+
+(eval-after-load "dap-lldb" '(dap-lldb-settings))
 
 ;; ==================================================================================
 ;;; Provide features
