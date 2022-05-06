@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-04-22 09:27:58 Friday by zhengyuli>
+;; Time-stamp: <2022-05-06 14:10:10 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -59,7 +59,6 @@
   (require 'rainbow-delimiters)
   (require 'hl-todo)
   (require 'flycheck)
-  (require 'flyspell)
   (require 'whitespace-cleanup-mode)
   (require 'dumb-jump)
   (require 'quickrun)
@@ -123,10 +122,7 @@
               (whitespace-cleanup-mode 1)
 
               ;; Enable flycheck mode
-              (flycheck-mode 1)
-
-              ;; enable flyspell program mode
-              (flyspell-prog-mode))))
+              (flycheck-mode 1))))
 
 (eval-after-load "prog-mode" '(prog-mode-settings))
 
