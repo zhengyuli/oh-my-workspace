@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-11 12:08:41 Wednesday by zhengyuli>
+;; Time-stamp: <2022-05-11 12:47:46 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -41,8 +41,6 @@
   (require 'org-bullets)
   (require 'org-appear)
   (require 'valign)
-  ;; Load other ob-*
-  (require 'ob-rust)
 
   ;; ----------------------------------------------------------
   ;; Redefinition of `org-tempo-add-block' with uppercase keyword support
