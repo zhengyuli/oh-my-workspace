@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 11:45:40 Thursday by zhengyuli>
+;; Time-stamp: <2022-05-11 11:58:20 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -289,6 +289,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'org-bullets
  'org-appear
  'valign
+ 'ob-rust
  ;; ==============================
  ;; init-markdown-mode.el
  'markdown-mode
