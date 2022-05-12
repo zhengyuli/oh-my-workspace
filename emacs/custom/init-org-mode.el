@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-11 12:47:46 Wednesday by zhengyuli>
+;; Time-stamp: <2022-05-12 10:33:17 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -43,6 +43,36 @@
   (require 'valign)
 
   ;; ----------------------------------------------------------
+  ;; Redefinition of `org-babel-confirm-evaluate' to load babel
+  ;; library dynamically.
+  (defun org-babel-confirm-evaluate (info)
+    "Confirm evaluation of the code block INFO."
+    (let* ((evalp (org-babel-check-confirm-evaluate info))
+           (lang (nth 0 info))
+           (name (nth 4 info))
+           (name-string (if name (format " (%s) " name) " ")))
+      (pcase evalp
+        (`nil nil)
+        (`t (progn
+              (require (intern (concat "ob-" lang)))
+              t))
+        (`query (or
+                 (and (not (bound-and-true-p
+                            org-babel-confirm-evaluate-answer-no))
+                      (if (yes-or-no-p
+                           (format "Evaluate this %s code block%son your system? "
+                                   lang name-string))
+                          (progn
+                            (require (intern (concat "ob-" lang)))
+                            t)
+                        nil))
+                 (progn
+                   (message "Evaluation of this %s code block%sis aborted."
+                            lang name-string)
+                   nil)))
+        (x (error "Unexpected value `%s' from `org-babel-check-confirm-evaluate'" x)))))
+
+
   ;; Redefinition of `org-tempo-add-block' with uppercase keyword support
   (defun org-tempo-add-block (entry)
     "Add block entry from `org-structure-template-alist'."
