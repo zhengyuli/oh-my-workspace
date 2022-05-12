@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-12 10:33:17 Thursday by zhengyuli>
+;; Time-stamp: <2022-05-12 13:04:25 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -149,6 +149,44 @@
               (valign-mode 1))))
 
 (eval-after-load "org" '(org-mode-settings))
+
+;; ==================================================================================
+;; Customized settings for `org-tree-slide'
+(defun org-tree-slide-mode-settings ()
+  "Settings for `org-tree-slide-mode'."
+
+  ;; ----------------------------------------------------------
+  (defun exit-org-tree-slide-mode ()
+    "Exit `org-tree-slide-mode'."
+    (interactive)
+    (org-tree-slide-mode -1)
+    (text-scale-mode -1)
+    (read-only-mode -1))
+
+  ;; ----------------------------------------------------------
+  ;; Key unbindings for `org-tree-slide-mode'
+  (lazy-set-key
+   '(("M-p"  . org-tree-slide-move-previous-tree)
+     ("M-n"  . org-tree-slide-move-next-tree)
+     ("<up>"  . org-tree-slide-move-previous-tree)
+     ("<down>"  . org-tree-slide-move-next-tree)
+     ("p"  . org-tree-slide-move-previous-tree)
+     ("n"  . org-tree-slide-move-next-tree)
+     ("q" . exit-org-tree-slide-mode)
+     ("Q" . exit-org-tree-slide-mode)
+     ("M-w" . toggle-buffer-writable))
+   org-tree-slide-mode-map)
+
+  (add-hook 'org-tree-slide-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Enable read only mode
+              (read-only-mode 1)
+
+              ;; Increase font scale
+              (text-scale-increase 1))))
+
+(eval-after-load "org-tree-slide" '(org-tree-slide-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-04-18 08:57:39 Monday by zhengyuli>
+;; Time-stamp: <2022-05-12 13:04:43 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -78,6 +78,13 @@
   (if mark-active
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
+
+(defun toggle-buffer-writable ()
+    "Toggle buffer writable."
+    (interactive)
+    (if buffer-read-only
+        (read-only-mode -1)
+      (read-only-mode 1)))
 
 (defun show-http-proxy ()
   "Show http/https proxy."
