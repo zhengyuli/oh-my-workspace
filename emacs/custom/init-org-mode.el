@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-12 13:04:25 Thursday by zhengyuli>
+;; Time-stamp: <2022-05-16 09:27:39 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -159,9 +159,7 @@
   (defun exit-org-tree-slide-mode ()
     "Exit `org-tree-slide-mode'."
     (interactive)
-    (org-tree-slide-mode -1)
-    (text-scale-mode -1)
-    (read-only-mode -1))
+    (org-tree-slide-mode -1))
 
   ;; ----------------------------------------------------------
   ;; Key unbindings for `org-tree-slide-mode'
@@ -177,16 +175,29 @@
      ("M-w" . toggle-buffer-writable))
    org-tree-slide-mode-map)
 
-  (add-hook 'org-tree-slide-mode-hook
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'org-tree-slide-play-hook
             (lambda ()
               ;; ----------------------------------------------------------
               ;; Enable read only mode
               (read-only-mode 1)
 
-              ;; Increase font scale
-              (text-scale-increase 1))))
+              ;; Enable text scale mode
+              (text-scale-increase 2)))
+
+  (add-hook 'org-tree-slide-stop-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Disable read only mode
+              (read-only-mode -1)
+
+              ;; Disable text scale mode
+              (text-scale-mode -1))))
 
 (eval-after-load "org-tree-slide" '(org-tree-slide-mode-settings))
+
+(defalias 'org-slide 'org-tree-slide-mode)
 
 ;; ==================================================================================
 ;;; Provide features
