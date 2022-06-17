@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-12 11:06:03 Thursday by zhengyuli>
+;; Time-stamp: <2022-06-17 21:59:17 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -285,6 +285,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; init-yaml-mode.el
  'yaml-mode
  ;; ==============================
+ ;; init-plantuml-mode.el
+ 'plantuml-mode
+ ;; ==============================
  ;; init-org-mode.el
  'org-bullets
  'org-appear
@@ -318,6 +321,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (load-library "init-cmake-mode")
 (load-library "init-text-mode")
 (load-library "init-yaml-mode")
+(load-library "init-plantuml-mode")
 (load-library "init-org-mode")
 (load-library "init-markdown-mode")
 

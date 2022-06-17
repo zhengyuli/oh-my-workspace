@@ -326,6 +326,12 @@ Install golang related dependencies:
   go get github.com/nsf/gocode
 #+END_SRC
 
+** Rust
+Rust is an open source language empowering everyone to build reliable and efficient software.
+
+*** Installation
+Download the latest rustup from [[w3m:https://www.rust-lang.org/tools/install][Rust Site]] and install manually.
+
 ** Pyenv
 pyenv is a very popular python management tool. It lets you easily switch between multiple versions of Python.
 
@@ -426,6 +432,9 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
   # Dependencies for emacs markdown
   brew install markdown
   brew install pandoc
+
+  # Dependencies for emacs plantuml
+  brew install plantuml
 #+END_SRC
 
 *** Configure

@@ -1,8 +1,8 @@
-;;; package --- ${1:`(file-name-nondirectory (buffer-file-name))`} -*- lexical-binding:t -*-
+;;; package --- init-plantuml-mode.el -*- lexical-binding:t -*-
 
-;; Copyright (c) `(format-time-string "%Y")` `user-full-name`
+;; Copyright (c) 2022 Zhengyu Li
 ;;
-;; Author: chieftain <`user-mail-address`>
+;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
 ;;
 ;; This file is not part of GNU Emacs.
@@ -25,17 +25,24 @@
 ;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require '`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`)
+;;   (require 'init-plantuml-mode)
 
 ;;; Require:
-$0
+
 
 ;;; Code:
 ;; ==================================================================================
+(defun plantuml-mode-settings ()
+  "Settings for `plantuml-mode'."
 
+  ;; ----------------------------------------------------------
+  ;; Customize `plantuml-mode' related variables
+  (customize-set-variable 'plantuml-default-exec-mode 'executable))
+
+(eval-after-load "plantuml-mode" '(plantuml-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide '`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`)
+(provide 'init-plantuml-mode)
 
-;;; $1 ends here
+;;; init-plantuml-mode.el ends here

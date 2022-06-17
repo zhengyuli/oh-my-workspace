@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-16 09:27:39 Monday by zhengyuli>
+;; Time-stamp: <2022-06-17 22:05:27 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -127,6 +127,10 @@
   (customize-set-variable 'org-pretty-entities t)
   (customize-set-variable 'org-hide-emphasis-markers t)
   (customize-set-variable 'org-catch-invisible-edits t)
+
+  ;; ----------------------------------------------------------
+  ;; Customize `ob-plantuml' related variables
+  (customize-set-variable 'org-plantuml-exec-mode 'plantuml)
 
   ;; ----------------------------------------------------------
   ;; Hooks
