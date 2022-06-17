@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-06-17 22:05:27 Friday by zhengyuli>
+;; Time-stamp: <2022-06-18 07:31:41 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -129,10 +129,6 @@
   (customize-set-variable 'org-catch-invisible-edits t)
 
   ;; ----------------------------------------------------------
-  ;; Customize `ob-plantuml' related variables
-  (customize-set-variable 'org-plantuml-exec-mode 'plantuml)
-
-  ;; ----------------------------------------------------------
   ;; Hooks
   (add-hook 'org-mode-hook
             (lambda ()
@@ -153,6 +149,17 @@
               (valign-mode 1))))
 
 (eval-after-load "org" '(org-mode-settings))
+
+;; ==================================================================================
+;; Customized settings for `ob-plantuml'
+(defun ob-plantuml-settings ()
+  "Settings for `ob-plantuml'"
+
+  ;; ----------------------------------------------------------
+  ;; Customize `ob-plantuml' related variables
+  (customize-set-variable 'org-plantuml-exec-mode 'plantuml))
+
+(eval-after-load "ob-plantuml" '(ob-plantuml-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `org-tree-slide'
