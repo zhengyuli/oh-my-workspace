@@ -1,5 +1,5 @@
 ;;; package --- init-org-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-06-18 07:31:41 Saturday by zhengyuli>
+;; Time-stamp: <2022-06-18 21:30:54 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -130,6 +130,8 @@
 
   ;; ----------------------------------------------------------
   ;; Hooks
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+
   (add-hook 'org-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
