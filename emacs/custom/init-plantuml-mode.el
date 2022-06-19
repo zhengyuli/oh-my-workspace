@@ -36,8 +36,41 @@
   "Settings for `plantuml-mode'."
 
   ;; ----------------------------------------------------------
+  (defun plantuml-completion-at-point ()
+  "Function used for `completion-at-point-functions' in `plantuml-mode'."
+  (let ((bounds (bounds-of-thing-at-point 'symbol))
+        (keywords plantuml-kwdList))
+    (when (and bounds keywords)
+      (list (car bounds)
+            (cdr bounds)
+            keywords
+            :exclusve 'no
+            :company-docsig #'identity))))
+
+  (defun plantuml-format-buffer ()
+    "Format plantuml buffer."
+    (interactive)
+    (mark-whole-buffer)
+    (smart-indent))
+
+  ;; ----------------------------------------------------------
+  ;; Fix, add destroy indent for activate block
+  (defvar plantuml-indent-regexp-activate-end "^\s*\\(deactivate\\|destroy\\)\s+.+$")
+
+  ;; ----------------------------------------------------------
   ;; Customize `plantuml-mode' related variables
-  (customize-set-variable 'plantuml-default-exec-mode 'executable))
+  (customize-set-variable 'plantuml-default-exec-mode 'executable)
+  (customize-set-variable 'plantuml-indent-level 4)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'plantuml-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              (add-hook 'completion-at-point-functions 'plantuml-completion-at-point nil t)
+
+              ;; Format buffer before save
+              (add-hook 'before-save-hook 'plantuml-format-buffer nil t))))
 
 (eval-after-load "plantuml-mode" '(plantuml-mode-settings))
 
