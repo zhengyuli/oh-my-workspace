@@ -50,7 +50,6 @@
   (defun plantuml-format-buffer ()
     "Format plantuml buffer."
     (interactive)
-    (mark-whole-buffer)
     (smart-indent))
 
   ;; ----------------------------------------------------------
