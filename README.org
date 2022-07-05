@@ -332,6 +332,17 @@ Rust is an open source language empowering everyone to build reliable and effici
 *** Installation
 Download the latest rustup from [[w3m:https://www.rust-lang.org/tools/install][Rust Site]] and install manually.
 
+*** Configure
+Install rust related dependencies:
+
+#+BEGIN_SRC shell
+  # Install rust analyzer
+  brew install rust-analyzer
+
+  # Install rust source code
+  rustup component add rust-src
+#+END_SRC
+
 ** Pyenv
 pyenv is a very popular python management tool. It lets you easily switch between multiple versions of Python.
 
@@ -339,6 +350,7 @@ pyenv is a very popular python management tool. It lets you easily switch betwee
 Use homebrew to download and install:
 
 #+BEGIN_SRC shell
+  # Install pyenv
   brew install pyenv
 
   # Install your prefered python version
