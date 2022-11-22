@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-04-22 10:10:25 Friday by zhengyuli>
+;; Time-stamp: <2022-11-22 08:42:18 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -79,7 +79,7 @@
   ;; ----------------------------------------------------------
   ;; Key bindings for `python-mode'
   (lazy-set-key
-   '(("C-c C-c" . smart-comment)
+   '(("C-c C-c" . comment-line)
      ("C-c d f" . sphinx-doc-format))
    python-mode-map)
 

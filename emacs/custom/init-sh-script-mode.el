@@ -1,5 +1,5 @@
 ;;; package --- init-sh-script-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 19:20:48 Thursday by zhengyuli>
+;; Time-stamp: <2022-11-22 08:47:21 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022 zhengyu li
 ;;
@@ -41,8 +41,7 @@
   ;; ----------------------------------------------------------
   ;; Key bindings for `sh-mode'
   (lazy-set-key
-   '(("C-c C-c" . smart-comment)
-     ("C-c C-k" . smart-uncomment))
+   '(("C-c C-c" . comment-line))
    sh-mode-map)
 
   ;; ----------------------------------------------------------
