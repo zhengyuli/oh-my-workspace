@@ -444,6 +444,7 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
   # Dependencies for emacs markdown
   brew install markdown
   brew install pandoc
+  go get -u github.com/shurcooL/markdownfmt
 
   # Dependencies for emacs plantuml
   brew install plantuml
