@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-03-30 14:03:34 星期四 by zhengyu.li>
+;; Time-stamp: <2023-03-30 19:53:49 星期四 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -236,6 +236,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'eww-lnum
  ;; ******************************
  'mu4e-alert
+ ;; ******************************
+ 'password-store
+ 'pass
  ;; ==============================
  ;; init-prog-mode.el
  'smartparens
