@@ -1,6 +1,6 @@
 ;;; package --- init-text-mode.el -*- lexical-binding:t -*-
 
-;; Copyright (c) 2022 zhengyuli
+;; Copyright (c) 2022, 2023 zhengyuli
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -45,7 +45,7 @@
             (lambda ()
               ;; -----------------------------------------------
               ;; Enable mixed pitch mode
-              (mixed-pitch-mode 1)
+              ;; (mixed-pitch-mode 1)
 
               ;; Enable visual line mode
               (visual-line-mode 1)

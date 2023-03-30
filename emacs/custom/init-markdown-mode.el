@@ -1,7 +1,7 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 18:19:57 Thursday by zhengyuli>
+;; Time-stamp: <2023-03-30 18:12:47 星期四 by zhengyu.li>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -58,6 +58,10 @@
 
               ;; enable valign mode
               (valign-mode 1)
+
+              ;; Copy the global before-save-hook to a local hook
+              (setq-local before-save-hook
+                          (default-value 'before-save-hook))
 
               ;; Format buffer before save
               (add-hook 'before-save-hook 'markdownfmt-format-buffer nil t))))

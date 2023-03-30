@@ -1,6 +1,6 @@
 ;;; package --- init-plantuml-mode.el -*- lexical-binding:t -*-
 
-;; Copyright (c) 2022 Zhengyu Li
+;; Copyright (c) 2022, 2023 Zhengyu Li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -66,7 +66,15 @@
   (add-hook 'plantuml-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
+              ;; Copy the global completion-at-point-functions to a local hook
+              (setq-local completion-at-point-functions
+                          (default-value 'completion-at-point-functions))
+
               (add-hook 'completion-at-point-functions 'plantuml-completion-at-point nil t)
+
+              ;; Copy the global before-save-hook to a local hook
+              (setq-local before-save-hook
+                          (default-value 'before-save-hook))
 
               ;; Format buffer before save
               (add-hook 'before-save-hook 'plantuml-format-buffer nil t))))

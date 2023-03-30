@@ -1,7 +1,7 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-12 13:04:43 Thursday by zhengyuli>
+;; Time-stamp: <2023-03-30 17:58:39 星期四 by zhengyu.li>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -416,6 +416,7 @@
   ;; ----------------------------------------------------------
   ;; Customize `ispell' realted variables
   (customize-set-variable 'ispell-program-name "aspell")
+  (customize-set-variable 'ispell-dictionary "american")
 
   ;; Customize `flyspell' realted variables
   (customize-set-variable 'flyspell-issue-message-flag nil)
@@ -1056,6 +1057,36 @@ wiki search engine."
 (eval-after-load "mu4e" '(mu4e-settings))
 
 (autoload 'mu4e "mu4e" "start mu4e, then show the main view" t)
+
+;; ==================================================================================
+;; Customized settings for AI related
+
+;; Initialize OpenAI GPT token
+(defun initialize-gpt-token ()
+  "Initialize gpt token"
+  (let ((output (string-trim (shell-command-to-string "pass openai/gpt-api-token"))))
+    (if (string-prefix-p "Error" output)
+        (message "Failed to load gpt API token, please set it by \"pass insert -e openai/gpt-api-token\".")
+      (setenv "OPENAI_API_KEY" output))))
+
+;; Settings for `mind-wave'
+(defun mind-wave-settings ()
+  "Settings for `mind-wave'."
+
+  ;; Initialize gpt token
+  (initialize-gpt-token)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'mind-wave-chat-mode-hook
+            (lambda ()
+              (setq-local before-save-hook
+                          (default-value 'before-save-hook)))))
+
+(eval-after-load "mind-wave" '(mind-wave-settings))
+
+(autoload 'mind-wave-chat-mode "mind-wave" "Mind wave chat mode." t)
+(add-to-list 'auto-mode-alist '("\\.chat$" . mind-wave-chat-mode))
 
 ;; ==================================================================================
 ;; Alias

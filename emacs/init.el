@@ -1,7 +1,7 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-06-17 21:59:17 Friday by zhengyuli>
+;; Time-stamp: <2023-03-30 14:03:34 星期四 by zhengyu.li>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -37,13 +37,17 @@
 (defvar emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
   "Emacs configuration root path.")
 
-;; Emacs configuration custom path to load custom settings
-(defvar emacs-config-custom-path (concat emacs-config-root-path "custom/")
-  "Emacs configuration custom path.")
+;; Emacs configuration temp packages path to load 3rd packages which are not stable
+(defvar emacs-config-temp-packages-path (concat user-emacs-directory "temp-packages/")
+  "Emacs configuration custom site packages path.")
 
-;; Emacs configuration site packages path to load 3rd party settings
-(defvar emacs-config-site-packages-path (concat emacs-config-root-path "site-packages/")
-  "Emacs configuration site packages path.")
+;; Emacs configuration custom path to load custom settings
+(defvar emacs-config-custom-settings-path (concat emacs-config-root-path "custom/")
+  "Emacs configuration custom settings path.")
+
+;; Emacs configuration custom site packages path to load 3rd party settings
+(defvar emacs-config-custom-site-packages-path (concat emacs-config-root-path "site-packages/")
+  "Emacs configuration custom site packages path.")
 
 ;; Emacs configuration fixed font
 (defvar emacs-config-fixed-font "Source Code Pro" "Emacs configuration fixed font.")
@@ -300,9 +304,14 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'markdownfmt)
 
 ;; ==================================================================================
+;; Create the temporary packages directory if any
+(unless (file-directory-p emacs-config-temp-packages-path)
+  (make-directory emacs-config-temp-packages-path))
+
 ;; Add custom directory to load-path
-(add-subdirs-to-load-path emacs-config-custom-path)
-(add-subdirs-to-load-path emacs-config-site-packages-path)
+(add-subdirs-to-load-path emacs-config-temp-packages-path)
+(add-subdirs-to-load-path emacs-config-custom-settings-path)
+(add-subdirs-to-load-path emacs-config-custom-site-packages-path)
 
 ;; Load user defined libraries
 (load-library "init-base")
