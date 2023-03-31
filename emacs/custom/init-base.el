@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-03-30 20:04:21 Thursday by zhengyu.li>
+;; Time-stamp: <2023-03-31 13:45:20 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1068,7 +1068,7 @@ wiki search engine."
 
   (let ((gpt-api-token (password-store-get "openai/gpt-api-token")))
     (if gpt-api-token
-        (setenv "OPENAI_API_KEY" output)
+        (setenv "OPENAI_API_KEY" gpt-api-token)
       (message "Failed to load gpt API token, please set it by \"pass insert -e openai/gpt-api-token\"."))))
 
 ;; Settings for `mind-wave'
