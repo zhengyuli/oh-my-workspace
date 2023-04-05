@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-03-31 13:45:20 Friday by zhengyu.li>
+;; Time-stamp: <2023-04-05 21:35:42 Wednesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -501,6 +501,9 @@
        "Vterm")
       ((derived-mode-p 'eww-mode)
        "Eww")
+      ((and (> (length (buffer-name)) 4)
+            (string-equal (substring (buffer-name) -4) ".gpt"))
+       "GPT")
       ((or (string-equal "*" (substring (buffer-name) 0 1))
            (memq major-mode '(magit-process-mode
                               magit-status-mode
@@ -1059,36 +1062,36 @@ wiki search engine."
 (autoload 'mu4e "mu4e" "start mu4e, then show the main view" t)
 
 ;; ==================================================================================
-;; Customized settings for AI related
+(defun gpt-new(name)
+  "Create a new gptel session."
+  (interactive "sNew session name: ")
+  (gptel (concat name ".gpt") gptel-api-key))
 
-;; Initialize OpenAI GPT token
-(defun initialize-gpt-token ()
-  "Initialize gpt token"
-  (interactive)
+;; Settings for `gptel'
+(defun gptel-settings ()
+  "Settings for `gptel'."
 
-  (let ((gpt-api-token (password-store-get "openai/gpt-api-token")))
-    (if gpt-api-token
-        (setenv "OPENAI_API_KEY" gpt-api-token)
-      (message "Failed to load gpt API token, please set it by \"pass insert -e openai/gpt-api-token\"."))))
-
-;; Settings for `mind-wave'
-(defun mind-wave-settings ()
-  "Settings for `mind-wave'."
-
-  ;; Initialize gpt token
-  (initialize-gpt-token)
+  ;; Require
+  (require 'gptel-transient)
 
   ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'mind-wave-chat-mode-hook
-            (lambda ()
-              (setq-local before-save-hook
-                          (default-value 'before-save-hook)))))
+  ;; Customize `gptel' related variables
+  (customize-set-variable 'gptel-api-key (password-store-get "openai/gpt-api-token"))
+  (customize-set-variable 'gptel-playback t)
 
-(eval-after-load "mind-wave" '(mind-wave-settings))
+  (setq gptel-default-session "default.gpt")
+  (setq gptel-default-mode 'markdown-mode)
 
-(autoload 'mind-wave-chat-mode "mind-wave" "Mind wave chat mode." t)
-(add-to-list 'auto-mode-alist '("\\.chat$" . mind-wave-chat-mode))
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `gptel'
+  (lazy-set-key
+   '(("C-<return>" . gptel-send)
+     ("C-RET" . gptel-send)
+     ("C-S-<return>" . gptel-send-menu)
+     ("C-S-RET" . gptel-send-menu))
+   gptel-mode-map))
+
+(eval-after-load "gptel" '(gptel-settings))
 
 ;; ==================================================================================
 ;; Alias
@@ -1099,6 +1102,8 @@ wiki search engine."
 
 (defalias 'increase-text 'text-scale-increase)
 (defalias 'decrease-text 'text-scale-decrease)
+
+(defalias 'gpt 'gptel)
 
 ;; ==================================================================================
 ;; Hooks
