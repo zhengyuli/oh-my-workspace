@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-05 21:35:42 Wednesday by zhengyuli>
+;; Time-stamp: <2023-04-06 18:16:06 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -501,6 +501,9 @@
        "Vterm")
       ((derived-mode-p 'eww-mode)
        "Eww")
+      ((and (> (length (buffer-name)) 16)
+            (string-equal (substring (buffer-name) 0 16) "*xwidget webkit:"))
+       "Webkit")
       ((and (> (length (buffer-name)) 4)
             (string-equal (substring (buffer-name) -4) ".gpt"))
        "GPT")
@@ -899,9 +902,6 @@ wiki search engine."
           (rename-buffer "eww" t)))))
 
   ;; ----------------------------------------------------------
-  ;; Customize `browse-url' related variables
-  (customize-set-variable 'browse-url-browser-function 'eww-browse-url)
-
   ;; Customize `shr' related variables
   (customize-set-variable 'shr-use-fonts nil)
   (customize-set-variable 'shr-width 120)

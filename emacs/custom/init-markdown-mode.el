@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-03-30 18:12:47 星期四 by zhengyu.li>
+;; Time-stamp: <2023-04-06 18:51:02 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -39,11 +39,76 @@
   ;; Require
   (require 'valign)
   (require 'markdownfmt)
+  (require 'impatient-mode)
+
+  ;; ----------------------------------------------------------
+  (defun markdown-impatient-mode-filter (buffer)
+    "Markdown filter for impatient-mode"
+    (princ
+     (with-temp-buffer
+       (let ((tmpname (buffer-name)))
+         (set-buffer buffer)
+         (set-buffer (markdown tmpname))
+         (format "
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Markdown Preview</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet'
+          href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
+          integrity='sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg=='
+          crossorigin='anonymous'>
+    <!-- https://github.com/sindresorhus/github-markdown-css -->
+    <link rel='stylesheet' href=
+          'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/github.min.css'>
+    <!-- https://highlightjs.org -->
+
+    <style>
+      .markdown-body {
+          box-sizing: border-box;
+          margin: 0 auto;
+          max-width: 980px;
+          min-width: 200px;
+          padding: 45px;
+      }
+
+      @media (max-width: 767px) {
+          .markdown-body {
+              padding: 15px;
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <article class='markdown-body'>
+      %s
+    </article>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js'></script>
+    <script id='MathJax-script' src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+  </body>
+</html>" (buffer-string))))
+     (current-buffer)))
+
+  (defun markdown-live-preview ()
+    "Markdown live preview."
+    (interactive)
+    (let ((browse-url-browser-function 'xwidget-webkit-browse-url))
+      (delete-other-windows)
+      (split-window-right)
+      (other-window 1)
+      (imp-visit-buffer)
+      (switch-to-buffer xwidget-webkit-last-session-buffer)))
 
   ;; ----------------------------------------------------------
   ;; Customize `markdown-mode' related variables
-  (customize-set-variable 'markdown-command "pandoc")
+  (customize-set-variable 'markdown-live-preview-window-function 'pop-to-buffer)
+  (customize-set-variable 'markdown-command "pandoc -s --mathjax")
   (customize-set-variable 'markdown-enable-math t)
+  (customize-set-variable 'markdown-display-remote-images t)
 
   ;; ----------------------------------------------------------
   ;; Hooks
@@ -59,9 +124,14 @@
               ;; enable valign mode
               (valign-mode 1)
 
+              ;; Enable impatient mode
+              (impatient-mode 1)
+
+              ;; Setup user defined impatient mode filter
+              (imp-set-user-filter 'markdown-impatient-mode-filter)
+
               ;; Copy the global before-save-hook to a local hook
-              (setq-local before-save-hook
-                          (default-value 'before-save-hook))
+              (setq-local before-save-hook (default-value 'before-save-hook))
 
               ;; Format buffer before save
               (add-hook 'before-save-hook 'markdownfmt-format-buffer nil t))))

@@ -321,9 +321,9 @@ export PATH=$GOPATH/bin:$PATH
 Install golang related dependencies:
 
 #+BEGIN_SRC shell
-  go get golang.org/x/tools/cmd/godoc
-  go get github.com/rogpeppe/godef
-  go get github.com/nsf/gocode
+  go install golang.org/x/tools/cmd/godoc@latest
+  go install github.com/rogpeppe/godef@latest
+  go install github.com/nsf/gocode@latest
 #+END_SRC
 
 ** Rust
@@ -354,7 +354,7 @@ Use homebrew to download and install:
   brew install pyenv
 
   # Install your prefered python version
-  pyenv install 3.8.10
+  pyenv install 3.9.1
 #+END_SRC
 
 *** Configure
@@ -384,7 +384,7 @@ Append the following settings to your _~/.zshrc_:
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
 # Activate shell python
-pyenv shell 3.8.10
+pyenv shell 3.9.1
 
 # Activate virtualenvwrapper
 pyenv virtualenvwrapper
@@ -399,8 +399,8 @@ For not messing with the system Python (some system tools rely on it, etc.), we 
 Using pyenv to download and install:
 
 #+BEGIN_SRC shell
-  pyenv install 3.8.10
-  pyenv global 3.8.10
+  pyenv install 3.9.1
+  pyenv global 3.9.1
   pyenv rehash
 #+END_SRC
 
@@ -437,14 +437,14 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
   pip install "ptvsd>=4.2"
 
   # Dependencies for emacs golang mode
-  go get github.com/rogpeppe/godef
-  go get golang.org/x/tools/cmd/gorename
-  go get golang.org/x/tools/cmd/guru
+  go install github.com/rogpeppe/godef@latest
+  go install golang.org/x/tools/cmd/gorename@latest
+  go install golang.org/x/tools/cmd/guru@latest
 
   # Dependencies for emacs markdown
   brew install markdown
   brew install pandoc
-  go get -u github.com/shurcooL/markdownfmt
+  go install github.com/shurcooL/markdownfmt@latest
 
   # Dependencies for emacs plantuml
   brew install plantuml
