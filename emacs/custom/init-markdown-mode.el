@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-06 18:51:02 Thursday by zhengyuli>
+;; Time-stamp: <2023-04-06 20:43:35 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -115,26 +115,28 @@
   (add-hook 'markdown-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
-              ;; Set buffer column width to 120
-              (setq-local fill-column 120)
-
-              ;; Enable auto fill mode
-              (auto-fill-mode 1)
-
-              ;; enable valign mode
-              (valign-mode 1)
-
               ;; Enable impatient mode
               (impatient-mode 1)
 
               ;; Setup user defined impatient mode filter
               (imp-set-user-filter 'markdown-impatient-mode-filter)
 
-              ;; Copy the global before-save-hook to a local hook
-              (setq-local before-save-hook (default-value 'before-save-hook))
+              (if (not (string-suffix-p ".gpt" (buffer-name)))
+                  (progn
+                    ;; Set buffer column width to 120
+                    (setq-local fill-column 120)
 
-              ;; Format buffer before save
-              (add-hook 'before-save-hook 'markdownfmt-format-buffer nil t))))
+                    ;; Enable auto fill mode
+                    (auto-fill-mode 1)
+
+                    ;; enable valign mode
+                    (valign-mode 1)
+
+                    ;; Copy the global before-save-hook to a local hook
+                    (setq-local before-save-hook (default-value 'before-save-hook))
+
+                    ;; Format buffer before save
+                    (add-hook 'before-save-hook 'markdownfmt-format-buffer nil t))))))
 
 (eval-after-load "markdown-mode" '(markdown-mode-settings))
 

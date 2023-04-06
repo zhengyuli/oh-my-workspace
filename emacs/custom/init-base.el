@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-06 18:16:06 Thursday by zhengyuli>
+;; Time-stamp: <2023-04-06 20:38:17 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -501,13 +501,11 @@
        "Vterm")
       ((derived-mode-p 'eww-mode)
        "Eww")
-      ((and (> (length (buffer-name)) 16)
-            (string-equal (substring (buffer-name) 0 16) "*xwidget webkit:"))
+      ((string-prefix-p"*xwidget webkit:" (buffer-name))
        "Webkit")
-      ((and (> (length (buffer-name)) 4)
-            (string-equal (substring (buffer-name) -4) ".gpt"))
+      ((string-suffix-p ".gpt" (buffer-name))
        "GPT")
-      ((or (string-equal "*" (substring (buffer-name) 0 1))
+      ((or (string-prefix-p "*" (buffer-name))
            (memq major-mode '(magit-process-mode
                               magit-status-mode
                               magit-diff-mode
@@ -1089,7 +1087,21 @@ wiki search engine."
      ("C-RET" . gptel-send)
      ("C-S-<return>" . gptel-send-menu)
      ("C-S-RET" . gptel-send-menu))
-   gptel-mode-map))
+   gptel-mode-map)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'gptel-mode-hook
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Disable auto fill mode
+              (auto-fill-mode -1)
+
+              ;; Disable yasnippet mode
+              (yas-minor-mode -1)
+
+              ;; Disable company mode
+              (company-mode -1))))
 
 (eval-after-load "gptel" '(gptel-settings))
 
