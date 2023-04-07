@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-06 20:38:17 Thursday by zhengyuli>
+;; Time-stamp: <2023-04-07 09:35:47 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -778,12 +778,12 @@
 (defun get-git-user-name ()
   "Get git user name."
   (interactive)
-  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.name"))))
+  (message (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.name"))))
 
 (defun get-git-user-email ()
   "Get git user email."
   (interactive)
-  (print (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.email"))))
+  (message (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.email"))))
 
 ;; Customized settings for `magit'
 (defun magit-settings ()
@@ -1094,8 +1094,8 @@ wiki search engine."
   (add-hook 'gptel-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
-              ;; Disable auto fill mode
-              (auto-fill-mode -1)
+              ;; Set buffer column width to 1000
+              (setq-local fill-column 1000)
 
               ;; Disable yasnippet mode
               (yas-minor-mode -1)
