@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-05 21:55:16 Wednesday by zhengyuli>
+;; Time-stamp: <2023-04-08 10:29:51 星期六 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -306,7 +306,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; ==============================
  ;; init-markdown-mode.el
  'markdown-mode
- 'markdownfmt)
+ 'markdownfmt
+ 'impatient-mode)
 
 ;; ==================================================================================
 ;; Create the temporary packages directory if any
