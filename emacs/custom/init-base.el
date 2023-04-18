@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-07 09:35:47 Friday by zhengyuli>
+;; Time-stamp: <2023-04-18 17:08:29 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -501,7 +501,7 @@
        "Vterm")
       ((derived-mode-p 'eww-mode)
        "Eww")
-      ((string-prefix-p"*xwidget webkit:" (buffer-name))
+      ((string-prefix-p "*xwidget webkit:" (buffer-name))
        "Webkit")
       ((string-suffix-p ".gpt" (buffer-name))
        "GPT")
@@ -1060,10 +1060,10 @@ wiki search engine."
 (autoload 'mu4e "mu4e" "start mu4e, then show the main view" t)
 
 ;; ==================================================================================
-(defun gpt-new(name)
+(defun gpt-new (name)
   "Create a new gptel session."
   (interactive "sNew session name: ")
-  (gptel (concat name ".gpt") gptel-api-key))
+  (gptel (concat name ".gpt") (password-store-get "openai/gpt-api-token")))
 
 ;; Settings for `gptel'
 (defun gptel-settings ()
@@ -1104,6 +1104,23 @@ wiki search engine."
               (company-mode -1))))
 
 (eval-after-load "gptel" '(gptel-settings))
+
+;; ==================================================================================
+(defun upgrade-packages ()
+  "Upgrade all packages installed."
+  (interactive)
+  (package-refresh-contents)
+  (auto-package-update-now))
+
+;; Settings for `auto-package-update'
+(defun auto-package-update-settings ()
+  "Settings for `auto-package-update'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `auto-package-update' related variables
+  (customize-set-variable 'auto-package-update-delete-old-versions t))
+
+(eval-after-load "auto-package-update" '(auto-package-update-settings))
 
 ;; ==================================================================================
 ;; Alias

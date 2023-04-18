@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-05 21:55:16 Wednesday by zhengyuli>
+;; Time-stamp: <2023-04-18 14:03:02 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -241,6 +241,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'pass
  ;; ******************************
  'gptel
+ ;; ******************************
+ 'auto-package-update
  ;; ==============================
  ;; init-prog-mode.el
  'smartparens

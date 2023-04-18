@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-07 09:11:40 Friday by zhengyuli>
+;; Time-stamp: <2023-04-07 10:19:09 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -49,48 +49,48 @@
        (let ((tmpname (buffer-name)))
          (set-buffer buffer)
          (set-buffer (markdown tmpname))
-         (format "
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Markdown Preview</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet'
-          href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
-          integrity='sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg=='
-          crossorigin='anonymous'>
-    <!-- https://github.com/sindresorhus/github-markdown-css -->
-    <link rel='stylesheet' href=
-          'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/github.min.css'>
-    <!-- https://highlightjs.org -->
+         (format
+          "<!DOCTYPE html>
+           <html>
+             <head>
+               <title>Markdown Preview</title>
+               <meta name='viewport' content='width=device-width, initial-scale=1'>
+               <link rel='stylesheet'
+                     href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
+                     integrity='sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg=='
+                     crossorigin='anonymous'>
+               <!-- https://github.com/sindresorhus/github-markdown-css -->
+               <link rel='stylesheet' href=
+                     'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/github.min.css'>
+               <!-- https://highlightjs.org -->
 
-    <style>
-      .markdown-body {
-          box-sizing: border-box;
-          margin: 0 auto;
-          max-width: 980px;
-          min-width: 200px;
-          padding: 45px;
-      }
+               <style>
+                 .markdown-body {
+                     box-sizing: border-box;
+                     margin: 0 auto;
+                     max-width: 980px;
+                     min-width: 200px;
+                     padding: 45px;
+                 }
 
-      @media (max-width: 767px) {
-          .markdown-body {
-              padding: 15px;
-          }
-      }
-    </style>
-  </head>
-  <body>
-    <article class='markdown-body'>
-      %s
-    </article>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js'></script>
-    <script id='MathJax-script' src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>
-    <script>
-      hljs.highlightAll();
-    </script>
-  </body>
-</html>" (buffer-string))))
+                 @media (max-width: 767px) {
+                     .markdown-body {
+                         padding: 15px;
+                     }
+                 }
+               </style>
+             </head>
+             <body>
+               <article class='markdown-body'>
+                 %s
+               </article>
+               <script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js'></script>
+               <script id='MathJax-script' src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>
+               <script>
+                 hljs.highlightAll();
+               </script>
+             </body>
+           </html>" (buffer-string))))
      (current-buffer)))
 
   (defun markdown-live-preview ()
