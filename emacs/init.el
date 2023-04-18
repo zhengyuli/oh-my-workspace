@@ -308,7 +308,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; ==============================
  ;; init-markdown-mode.el
  'markdown-mode
- 'markdownfmt)
+ 'markdownfmt
+ 'impatient-mode)
 
 ;; ==================================================================================
 ;; Create the temporary packages directory if any
