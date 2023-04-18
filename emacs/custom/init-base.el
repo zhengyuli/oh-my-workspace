@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-18 17:08:29 Tuesday by zhengyuli>
+;; Time-stamp: <2023-04-18 18:36:27 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -754,8 +754,7 @@
   ;; ----------------------------------------------------------
   ;; Key bindings for `vterm'
   (lazy-set-key
-   '(("C-g" . vterm-send-C-g)
-     ("C-u" . vterm-send-C-u))
+   '(("C-g" . vterm--self-insert))
    vterm-mode-map)
 
   ;; ----------------------------------------------------------
