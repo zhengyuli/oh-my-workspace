@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-18 18:36:27 Tuesday by zhengyuli>
+;; Time-stamp: <2023-04-21 15:23:34 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -85,38 +85,6 @@
     (if buffer-read-only
         (read-only-mode -1)
       (read-only-mode 1)))
-
-(defun show-http-proxy ()
-  "Show http/https proxy."
-  (interactive)
-  (if url-proxy-services
-      (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
-    (message "No http proxy")))
-
-(defun set-http-proxy (proxy)
-  "Set http/https proxy."
-  (interactive "sHTTP Proxy Server:")
-  (let* ((parsed-url (url-generic-parse-url proxy))
-         (proxy-no-scheme
-          (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
-    (when (url-type parsed-url)
-      (setenv "http_proxy" proxy)
-      (setenv "https_proxy" proxy)
-      (setenv "all_proxy" proxy))
-    (setq url-proxy-services
-          `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
-            ("http" . ,proxy-no-scheme)
-            ("https" . ,proxy-no-scheme)))
-    (show-http-proxy)))
-
-(defun unset-http-proxy ()
-  "Unset http/https proxy."
-  (interactive)
-  (setenv "http_proxy")
-  (setenv "https_proxy")
-  (setenv "all_proxy")
-  (setq url-proxy-services nil)
-  (show-http-proxy))
 
 (defun toggle-fullscreen ()
   "Toggle full screen."
@@ -440,23 +408,6 @@
 (eval-after-load "flyspell-correct" '(flyspell-correct-settings))
 
 ;; ==================================================================================
-;; Customized settings for `auth-source'
-(defun auth-source-settings ()
-  "Settings for `auth-source'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `auth-source' realted variables
-  (customize-set-variable 'auth-source-debug t)
-  (customize-set-variable 'auth-source-do-cache nil)
-  (customize-set-variable 'auth-sources '(password-store))
-
-  ;; ----------------------------------------------------------
-  ;; Clear the cache (required after each change to #'auth-source-pass-search)
-  (auth-source-forget-all-cached))
-
-(eval-after-load "auth-source" '(auth-source-settings))
-
-;; ==================================================================================
 ;; Customized settings for `winum'
 (defun winum-settings ()
   "Settings for `winum'."
@@ -774,12 +725,12 @@
 (eval-after-load "vterm" '(vterm-settings))
 
 ;; ==================================================================================
-(defun get-git-user-name ()
+(defun git-user-name ()
   "Get git user name."
   (interactive)
   (message (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.name"))))
 
-(defun get-git-user-email ()
+(defun git-user-email ()
   "Get git user email."
   (interactive)
   (message (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.email"))))
@@ -943,6 +894,20 @@ wiki search engine."
 (eval-after-load "eww" '(eww-settings))
 
 ;; ==================================================================================
+;; Customized settings for `auth-source'
+(defun auth-source-settings ()
+  "Settings for `auth-source'."
+
+  ;; Require
+  (require 'auth-source-pass)
+
+  ;; ----------------------------------------------------------
+  ;; Enable auth source pass
+  (auth-source-pass-enable))
+
+(eval-after-load "auth-source" '(auth-source-settings))
+
+;; ==================================================================================
 ;; Customized settings for `mu4e'
 (defun mu4e-settings ()
   "Settings for `mu4e'."
@@ -1062,7 +1027,7 @@ wiki search engine."
 (defun gpt-new (name)
   "Create a new gptel session."
   (interactive "sNew session name: ")
-  (gptel (concat name ".gpt") (password-store-get "openai/gpt-api-token")))
+  (gptel (concat name ".gpt")))
 
 ;; Settings for `gptel'
 (defun gptel-settings ()
@@ -1073,10 +1038,9 @@ wiki search engine."
 
   ;; ----------------------------------------------------------
   ;; Customize `gptel' related variables
-  (customize-set-variable 'gptel-api-key (password-store-get "openai/gpt-api-token"))
   (customize-set-variable 'gptel-playback t)
 
-  (setq gptel-default-session "default.gpt")
+  (setq gptel-default-session "chat.gpt")
   (setq gptel-default-mode 'markdown-mode)
 
   ;; ----------------------------------------------------------
@@ -1105,7 +1069,7 @@ wiki search engine."
 (eval-after-load "gptel" '(gptel-settings))
 
 ;; ==================================================================================
-(defun upgrade-packages ()
+(defun auto-package-upgrade-all ()
   "Upgrade all packages installed."
   (interactive)
   (package-refresh-contents)
@@ -1128,10 +1092,12 @@ wiki search engine."
 
 (defalias 'email 'mu4e)
 
+(defalias 'gpt 'gptel)
+
+(defalias 'upgrade-packages 'auto-package-upgrade-all)
+
 (defalias 'increase-text 'text-scale-increase)
 (defalias 'decrease-text 'text-scale-decrease)
-
-(defalias 'gpt 'gptel)
 
 ;; ==================================================================================
 ;; Hooks

@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-18 14:03:02 Tuesday by zhengyuli>
+;; Time-stamp: <2023-04-21 14:21:25 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -124,6 +124,38 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
             (t (signal 'wrong-type-argument (list 'array key))))
       (define-key keymap key nil))))
 
+(defun show-http-proxy ()
+  "Show http/https proxy."
+  (interactive)
+  (if url-proxy-services
+      (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
+    (message "No http proxy")))
+
+(defun set-http-proxy (proxy)
+  "Set http/https proxy."
+  (interactive "sHTTP Proxy Server:")
+  (let* ((parsed-url (url-generic-parse-url proxy))
+         (proxy-no-scheme
+          (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
+    (when (url-type parsed-url)
+      (setenv "http_proxy" proxy)
+      (setenv "https_proxy" proxy)
+      (setenv "all_proxy" proxy))
+    (setq url-proxy-services
+          `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
+            ("http" . ,proxy-no-scheme)
+            ("https" . ,proxy-no-scheme)))
+    (show-http-proxy)))
+
+(defun unset-http-proxy ()
+  "Unset http/https proxy."
+  (interactive)
+  (setenv "http_proxy")
+  (setenv "https_proxy")
+  (setenv "all_proxy")
+  (setq url-proxy-services nil)
+  (show-http-proxy))
+
 ;; ==================================================================================
 ;; Basic check
 (unless (>= (string-to-number emacs-version) 27.1)
@@ -136,6 +168,11 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (ensure-font-installed emacs-config-variable-font)
 
 ;; ==================================================================================
+;; Load proxy settings before packge installation
+(if (not (file-exists-p "~/.emacs.d/proxy_settings.el"))
+    (shell-command "touch ~/.emacs.d/proxy_settings.el"))
+(load-file "~/.emacs.d/proxy_settings.el")
+
 ;; Initialize package manager
 ;; Add package archives
 (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/") t)
@@ -343,8 +380,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (load-library "init-markdown-mode")
 
 ;; Load user custom settings
-(if (not (file-exists-p "~/.emacs.d/custom.el"))
-    (shell-command "touch ~/.emacs.d/custom.el"))
-(load-file "~/.emacs.d/custom.el")
+(if (not (file-exists-p "~/.emacs.d/custom_settings.el"))
+    (shell-command "touch ~/.emacs.d/custom_settings.el"))
+(load-file "~/.emacs.d/custom_settings.el")
 
 ;;; init.el ends here

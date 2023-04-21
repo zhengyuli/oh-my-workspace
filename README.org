@@ -457,7 +457,7 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
   ./emacs/install.sh
 #+END_SRC
 
-2. Append the following proxy settings to _~/.emacs.d/custom.el_ if needed:
+2. Append the following proxy settings to _~/.emacs.d/proxy_settings.el_ if needed:
 
 #+BEGIN_SRC lisp
   (defun enable-proxy ()
@@ -465,4 +465,10 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
     (set-http-proxy "http://proxyhost:port"))
 
   (defalias 'disable-proxy 'unset-http-proxy)
+#+END_SRC
+
+3. Append the following settings to _~/.emacs.d/custom_settings.el_ if needed:
+
+#+BEGIN_SRC lisp
+  (customize-set-variable 'textsize-default-points 18)
 #+END_SRC
