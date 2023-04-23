@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-07 10:19:09 Friday by zhengyuli>
+;; Time-stamp: <2023-04-23 13:20:58 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -96,12 +96,10 @@
   (defun markdown-live-preview ()
     "Markdown live preview."
     (interactive)
-    (let ((browse-url-browser-function 'xwidget-webkit-browse-url))
-      (delete-other-windows)
-      (split-window-right)
-      (other-window 1)
-      (imp-visit-buffer)
-      (switch-to-buffer xwidget-webkit-last-session-buffer)))
+    (let ((browse-url-browser-function (if (featurep 'xwidget-internal)
+                                           'xwidget-webkit-browse-url
+                                         'browse-url-default-browser)))
+      (imp-visit-buffer)))
 
   ;; ----------------------------------------------------------
   ;; Customize `markdown-mode' related variables
