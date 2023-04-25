@@ -196,8 +196,19 @@ Select a gpg key to initialize pass:
   pass init "selected gpg id"
 #+END_SRC
 
-** Mail
-isync is a command line application which synchronizes mailboxes; currently Maildir and IMAP4 mailboxes are
+** ChatGPT
+ChatGPT is a pre-trained language model based on the Generative Pre-trained Transformer (GPT) architecture that is
+fine-tuned for conversational tasks such as chatbot interactions.
+
+*** Configure
+
+#+BEGIN_SRC shell
+  # Configure GPT API token
+  pass insert openai.com/apikey
+#+END_SRC
+
+** EMail
+isync is a command line application which synchronizes mail boxes; currently Maildir and IMAP4 mailboxes are
 supported. New messages, message deletions and flag changes can be propagated both ways. isync is suitable for use in
 IMAP-disconnected mode.
 

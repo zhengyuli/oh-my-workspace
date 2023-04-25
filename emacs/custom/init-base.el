@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-21 15:23:34 Friday by zhengyu.li>
+;; Time-stamp: <2023-04-25 13:51:37 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -480,6 +480,12 @@
        "OrgMode")
       (t
        (centaur-tabs-get-group-name (current-buffer))))))
+
+  ;; ----------------------------------------------------------
+  ;; Customized `centaur-tabs-elements' related faces
+  (custom-set-faces
+   '(centaur-tabs-selected ((t (:bold t :background "#31343E" :foreground "#28cd41"))))
+   '(centaur-tabs-selected-modified ((t (:bold t :background "#31343E" :foreground "#ff9300")))))
 
   ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs-elements' realted variables
