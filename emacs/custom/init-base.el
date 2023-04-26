@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-26 14:19:26 Wednesday by zhengyu.li>
+;; Time-stamp: <2023-04-26 14:52:05 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -428,6 +428,17 @@
    winum-keymap))
 
 (eval-after-load "winum" '(winum-settings))
+
+;; ==================================================================================
+;; Customized settings for `dimmer'
+(defun dimmer-settings ()
+  "Settings for `dimmer'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `dimmer' realted variables
+  (customize-set-variable 'dimmer-fraction 0.40))
+
+(eval-after-load "dimmer" '(dimmer-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `centaur-tabs'
@@ -1300,6 +1311,9 @@ wiki search engine."
 
             ;; Enable winum mode
             (winum-mode 1)
+
+            ;; Enable dimmer mode
+            (dimmer-mode 1)
 
             ;; Enable centaur tabs mode
             (centaur-tabs-mode 1)
