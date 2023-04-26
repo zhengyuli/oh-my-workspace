@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-25 13:51:37 Tuesday by zhengyu.li>
+;; Time-stamp: <2023-04-26 14:19:26 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1043,9 +1043,6 @@ wiki search engine."
   (require 'gptel-transient)
 
   ;; ----------------------------------------------------------
-  ;; Customize `gptel' related variables
-  (customize-set-variable 'gptel-playback t)
-
   (setq gptel-default-session "chat.gpt")
   (setq gptel-default-mode 'markdown-mode)
 
@@ -1054,8 +1051,8 @@ wiki search engine."
   (lazy-set-key
    '(("C-<return>" . gptel-send)
      ("C-RET" . gptel-send)
-     ("C-S-<return>" . gptel-send-menu)
-     ("C-S-RET" . gptel-send-menu))
+     ("C-S-<return>" . gptel-menu)
+     ("C-S-RET" . gptel-menu))
    gptel-mode-map)
 
   ;; ----------------------------------------------------------
@@ -1192,6 +1189,9 @@ wiki search engine."
                ("M-Y" . browse-kill-ring)
                ;; Goto last change
                ("M-o" . goto-last-change)
+               ;; Swiper
+               ("C-s" . swiper-isearch)
+               ("C-r" . swiper-isearch-backward)
                ;; Counsel
                ("M-x" . counsel-M-x)
                ("C-x b" . counsel-switch-buffer)
@@ -1201,9 +1201,6 @@ wiki search engine."
                ("C-h v" . counsel-describe-variable)
                ("C-h o" . counsel-describe-symbol)
                ("C-h b" . counsel-descbinds)
-               ;; Swiper
-               ("C-s" . swiper-isearch)
-               ("C-r" . swiper-isearch-backward)
                ;; Color moccur
                ("C-x C-u" . occur-by-moccur)
                ;; Ag

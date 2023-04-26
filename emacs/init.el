@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-21 14:21:25 Friday by zhengyu.li>
+;; Time-stamp: <2023-04-26 14:13:44 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -210,10 +210,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'ivy-prescient
  'all-the-icons-ivy-rich
  ;; ******************************
+ 'swiper
+ ;; ******************************
  'counsel
  'counsel-projectile
- ;; ******************************
- 'swiper
  ;; ******************************
  'color-moccur
  ;; ******************************
