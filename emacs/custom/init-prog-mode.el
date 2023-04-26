@@ -1,7 +1,7 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-05-06 14:10:10 Friday by zhengyuli>
+;; Time-stamp: <2023-04-26 16:33:15 Wednesday by zhengyu.li>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -143,7 +143,6 @@
 
   ;; Customize `lsp-mode' related variables
   (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
-  (customize-set-variable 'lsp-enable-dap-auto-configure nil)
 
   ;; ----------------------------------------------------------
   ;; Hooks
@@ -187,15 +186,6 @@
         (set-window-dedicated-p new-win t)
         (unless no-select (select-window new-win))
         (fit-window-to-buffer new-win 20 10))))
-
-  ;; ----------------------------------------------------------
-  ;; Customize `dap-mode' related variables
-  (customize-set-variable 'dap-auto-configure-features
-                          '(sessions locals breakpoints expressions))
-
-  ;; ----------------------------------------------------------
-  ;; Enable global dap mode
-  (dap-auto-configure-mode 1)
 
   ;; ----------------------------------------------------------
   ;; Hooks
