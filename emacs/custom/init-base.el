@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-26 14:52:05 Wednesday by zhengyu.li>
+;; Time-stamp: <2023-04-26 16:36:23 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -436,7 +436,7 @@
 
   ;; ----------------------------------------------------------
   ;; Customize `dimmer' realted variables
-  (customize-set-variable 'dimmer-fraction 0.40))
+  (customize-set-variable 'dimmer-fraction 0.30))
 
 (eval-after-load "dimmer" '(dimmer-settings))
 
