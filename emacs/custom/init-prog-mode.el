@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-26 16:33:15 Wednesday by zhengyu.li>
+;; Time-stamp: <2023-04-27 10:59:19 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -56,12 +56,15 @@
   (require 'paren)
   (require 'smartparens-config)
   (require 'hungry-delete)
+  (require 'hideshow)
   (require 'rainbow-delimiters)
   (require 'hl-todo)
   (require 'flycheck)
   (require 'whitespace-cleanup-mode)
   (require 'dumb-jump)
   (require 'quickrun)
+  (require 'format-all)
+  (require 'devdocs)
 
   ;; ----------------------------------------------------------
   ;; Customize `flycheck' related variables
@@ -79,7 +82,9 @@
      ("M-r" . xref-find-references)
      ("M-." . xref-find-definitions)
      ("M-," . xref-pop-marker-stack)
-     ("C-x C-;" . quickrun))
+     ("C-x C-;" . quickrun)
+     ("C-h C-d" . devdocs-lookup)
+     ("C-h C-s" . devdocs-search))
    prog-mode-map)
 
   ;; ----------------------------------------------------------
@@ -112,6 +117,9 @@
               ;; Enable prettify symbol mode
               (prettify-symbols-mode 1)
 
+              ;; Enable hide show mode
+              (hs-minor-mode 1)
+
               ;; Enable rainbow delimiters mode
               (rainbow-delimiters-mode 1)
 
@@ -122,7 +130,10 @@
               (whitespace-cleanup-mode 1)
 
               ;; Enable flycheck mode
-              (flycheck-mode 1))))
+              (flycheck-mode 1)
+
+              ;; Enable format all mode
+              (format-all-mode 1))))
 
 (eval-after-load "prog-mode" '(prog-mode-settings))
 

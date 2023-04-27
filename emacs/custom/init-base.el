@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-26 16:36:23 Wednesday by zhengyu.li>
+;; Time-stamp: <2023-04-27 10:41:38 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1172,6 +1172,9 @@ wiki search engine."
             ;; Replace yes-or-no-p with y-or-no-p
             (fset 'yes-or-no-p 'y-or-n-p)
 
+            (when (featurep 'xwidget-internal)
+              (customize-set-variable 'browse-url-browser-function 'xwidget-webkit-browse-url))
+
             ;; Customize `mac' system realted variables
             (when (memq window-system '(mac ns))
               (customize-set-variable 'mac-command-modifier 'super)
@@ -1193,6 +1196,9 @@ wiki search engine."
                ("M-k" . smart-kill)
                ;; Expand region
                ("M-M" . er/expand-region)
+               ;; Move text
+               ("C-S-p" . move-text-up)
+               ("C-S-n" . move-text-down)
                ;; Multi cursors
                ("C-x m" . set-rectangular-region-anchor)
                ("C-x M" . mc/mark-all-dwim)

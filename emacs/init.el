@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-26 14:30:56 Wednesday by zhengyu.li>
+;; Time-stamp: <2023-04-27 10:26:37 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -194,6 +194,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; ******************************
  'exec-path-from-shell
  ;; ******************************
+ 'move-text
  'expand-region
  'multiple-cursors
  'visual-regexp-steroids
@@ -291,6 +292,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'whitespace-cleanup-mode
  'quickrun
  'dumb-jump
+ 'format-all
+ 'devdocs
  ;; ******************************
  'lsp-mode
  ;; ******************************

@@ -1,5 +1,5 @@
 ;;; package --- init-go-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-03-30 17:49:53 星期四 by zhengyu.li>
+;; Time-stamp: <2023-04-27 09:58:04 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -61,14 +61,7 @@
 							(go-eldoc-setup)
 
                             ;; Enable lsp mode
-                            (lsp-deferred)
-
-                            ;; Copy the global before-save-hook to a local hook
-                            (setq-local before-save-hook
-                                        (default-value 'before-save-hook))
-
-                            ;; Format buffer before save
-                            (add-hook 'before-save-hook 'gofmt-before-save nil t))))
+                            (lsp-deferred))))
 
 (eval-after-load "go-mode" '(go-mode-settings))
 

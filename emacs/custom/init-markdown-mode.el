@@ -1,5 +1,5 @@
 ;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-25 13:25:27 Tuesday by zhengyu.li>
+;; Time-stamp: <2023-04-27 10:42:21 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -96,10 +96,7 @@
   (defun markdown-live-preview ()
     "Markdown live preview."
     (interactive)
-    (let ((browse-url-browser-function (if (featurep 'xwidget-internal)
-                                           'xwidget-webkit-browse-url
-                                         'browse-url-default-browser)))
-      (imp-visit-buffer)))
+    (imp-visit-buffer))
 
   ;; ----------------------------------------------------------
   ;; Customize `markdown-mode' related variables
@@ -126,13 +123,7 @@
               (auto-fill-mode 1)
 
               ;; enable valign mode
-              (valign-mode 1)
-
-              ;; Copy the global before-save-hook to a local hook
-              (setq-local before-save-hook (default-value 'before-save-hook))
-
-              ;; Format buffer before save
-              (add-hook 'before-save-hook 'markdownfmt-format-buffer nil t))))
+              (valign-mode 1))))
 
 (eval-after-load "markdown-mode" '(markdown-mode-settings))
 
