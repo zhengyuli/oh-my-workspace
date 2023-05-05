@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-27 10:41:38 Thursday by zhengyuli>
+;; Time-stamp: <2023-05-05 20:22:51 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -112,9 +112,12 @@
       (setq split-width-threshold  (frame-width)))))
 
 ;; ==================================================================================
-;; Customized settings for `visual-regexp-steroids'
-(defun visual-regexp-steroids-settings ()
-  "Settings for `visual-regexp-steroids'."
+;; Customized settings for `visual-regexp'
+(defun visual-regexp-settings ()
+  "Settings for `visual-regexp'."
+
+  ;; Require
+  (require 'visual-regexp-steroids)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `vr/minibuffer-keymap'
@@ -123,7 +126,7 @@
      ("C-n" . next-history-element))
    vr/minibuffer-keymap))
 
-(eval-after-load "visual-regexp-steroids" '(visual-regexp-steroids-settings))
+(eval-after-load "visual-regexp" '(visual-regexp-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `which-key'
