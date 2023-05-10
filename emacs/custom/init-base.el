@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-05 20:22:51 Friday by zhengyuli>
+;; Time-stamp: <2023-05-10 14:38:06 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -595,6 +595,20 @@
               (centaur-tabs-local-mode 1))))
 
 (eval-after-load "dashboard" '(dashboard-settings))
+
+;; ==================================================================================
+;; Customized settings for `textsize'
+(defun textsize-settings ()
+  "Settings for `textsize'."
+
+  ;; ----------------------------------------------------------
+  ;; Customize `textsize' related variables
+  (customize-set-variable 'textsize-monitor-size-thresholds
+                          '((0 . -2) (350 . 0) (500 . 1)))
+  (customize-set-variable 'textsize-pixel-pitch-thresholds
+                          '((0 . 6) (0.12 . 4) (0.18 . 2) (0.25 . -1))))
+
+(eval-after-load "textsize" '(textsize-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `epa'
