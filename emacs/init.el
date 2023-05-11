@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-27 10:26:37 Thursday by zhengyuli>
+;; Time-stamp: <2023-05-11 09:09:17 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -63,6 +63,9 @@
 
 ;; Emacs configuration email
 (defvar emacs-config-email "lizhengyu419@outlook.com" "Emacs configuration email.")
+
+;; Emacs configuration proxy
+(defvar emacs-http-proxy nil "Emacs configuration http proxy, default is nil.")
 
 ;; ==================================================================================
 (defun ensure-font-installed (font)
@@ -132,8 +135,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (message "No http proxy")))
 
 (defun set-http-proxy (proxy)
-  "Set http/https proxy."
-  (interactive "sHTTP Proxy Server:")
+  "Set HTTP/HTTPS proxy."
+  (interactive (list (read-string
+                      (format "HTTP Proxy Server [%s]: " emacs-http-proxy)
+                      nil nil emacs-http-proxy)))
   (let* ((parsed-url (url-generic-parse-url proxy))
          (proxy-no-scheme
           (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
@@ -147,6 +152,12 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
             ("https" . ,proxy-no-scheme)))
     (show-http-proxy)))
 
+(defun enable-http-proxy ()
+  (interactive)
+  (if emacs-http-proxy
+      (set-http-proxy emacs-http-proxy)
+    (warn "Default emacs http proxy is nil, please configure it first.")))
+
 (defun unset-http-proxy ()
   "Unset http/https proxy."
   (interactive)
@@ -155,6 +166,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (setenv "all_proxy")
   (setq url-proxy-services nil)
   (show-http-proxy))
+
+(defalias 'disable-http-proxy 'unset-http-proxy)
 
 ;; ==================================================================================
 ;; Basic check
@@ -168,10 +181,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (ensure-font-installed emacs-config-variable-font)
 
 ;; ==================================================================================
-;; Load proxy settings before packge installation
-(if (not (file-exists-p "~/.emacs.d/proxy_settings.el"))
-    (shell-command "touch ~/.emacs.d/proxy_settings.el"))
-(load-file "~/.emacs.d/proxy_settings.el")
+;; Try to enable HTTP proxy
+(enable-http-proxy)
 
 ;; Initialize package manager
 ;; Add package archives
