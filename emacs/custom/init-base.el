@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-10 14:38:06 Wednesday by zhengyu.li>
+;; Time-stamp: <2023-05-12 13:36:08 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -606,7 +606,7 @@
   (customize-set-variable 'textsize-monitor-size-thresholds
                           '((0 . -2) (350 . 0) (500 . 1)))
   (customize-set-variable 'textsize-pixel-pitch-thresholds
-                          '((0 . 6) (0.12 . 4) (0.18 . 2) (0.25 . -1))))
+                          '((0 . 6) (0.12 . 4) (0.18 . 2) (0.20 . 1) (0.25 . -1))))
 
 (eval-after-load "textsize" '(textsize-settings))
 
