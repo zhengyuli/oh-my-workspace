@@ -1,7 +1,7 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-11-22 08:42:18 Tuesday by zhengyuli>
+;; Time-stamp: <2023-05-16 20:12:47 星期二 by zhengyu.li>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -52,21 +52,6 @@
     (sphinx-doc)
     (python-docstring-fill))
 
-  (defun flycheck-virtualenv-set-python-executables ()
-	(let ((exec-path (python-shell-calculate-exec-path)))
-	  (setq-local flycheck-python-pylint-executable
-				  (executable-find "pylint"))
-	  (setq-local flycheck-python-flake8-executable
-				  (executable-find "flake8"))))
-
-  (defadvice pyvenv-workon (after venv-workon-after activate)
-	(flycheck-virtualenv-set-python-executables)
-    (lsp-restart-workspace))
-
-  (defadvice pyvenv-deactivate (after venv-deactivate-after activate)
-	(flycheck-virtualenv-set-python-executables)
-    (lsp-restart-workspace))
-
   ;; ----------------------------------------------------------
   ;; Customize `python-mode' related variables
   (customize-set-variable 'python-indent-guess-indent-offset-verbose nil)
@@ -89,6 +74,12 @@
 
   ;; ----------------------------------------------------------
   ;; Hooks
+  (add-hook 'pyvenv-post-activate-hooks
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Restart python
+              (pyvenv-restart-python)))
+
   (add-hook 'python-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -97,9 +88,6 @@
 
               ;; Enable python docstring mode
               (python-docstring-mode 1)
-
-              ;; Setup python virtual env flycheck checker
-			  (flycheck-virtualenv-set-python-executables)
 
               ;; Enable lsp mode
               (lsp-deferred))))
