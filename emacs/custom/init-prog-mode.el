@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-27 10:59:19 Thursday by zhengyuli>
+;; Time-stamp: <2023-05-17 09:45:48 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -154,6 +154,7 @@
 
   ;; Customize `lsp-mode' related variables
   (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
+  (customize-set-variable 'lsp-enable-indentation nil)
 
   ;; ----------------------------------------------------------
   ;; Hooks

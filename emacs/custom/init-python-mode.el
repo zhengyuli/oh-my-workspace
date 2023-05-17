@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-16 20:12:47 星期二 by zhengyu.li>
+;; Time-stamp: <2023-05-17 09:41:22 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -56,10 +56,6 @@
   ;; Customize `python-mode' related variables
   (customize-set-variable 'python-indent-guess-indent-offset-verbose nil)
   (customize-set-variable 'python-indent-offset 4)
-
-  ;; ----------------------------------------------------------
-  ;; Define `python-mode' related aliases
-  (defalias 'python-format 'py-yapf-buffer)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `python-mode'
