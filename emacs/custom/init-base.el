@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-12 13:36:08 Friday by zhengyuli>
+;; Time-stamp: <2023-05-17 15:48:07 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1075,12 +1075,10 @@ wiki search engine."
   (setq gptel-default-mode 'markdown-mode)
 
   ;; ----------------------------------------------------------
-  ;; Key bindings for `gptel'
+  ;; Key bindings for `gptel-mode-map'
   (lazy-set-key
-   '(("C-<return>" . gptel-send)
-     ("C-RET" . gptel-send)
-     ("C-S-<return>" . gptel-menu)
-     ("C-S-RET" . gptel-menu))
+   '(("C-RET" . gptel-send)
+     ("C-<return>" . gptel-send))
    gptel-mode-map)
 
   ;; ----------------------------------------------------------
@@ -1272,7 +1270,10 @@ wiki search engine."
                ("C-c n l" . org-roam-buffer-toggle)
                ("C-c n j" . org-roam-dailies-capture-today)
                ;; Eww
-               ("C-x C-g" . eww-search-words)))
+               ("C-x C-g" . eww-search-words)
+               ;; ChatGPT
+               ("C-S-<return>" . gptel-menu)
+               ("C-S-RET" . gptel-menu)))
 
             ;; ----------------------------------------------------------
             ;; Initialize mac system exec path

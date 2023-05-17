@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-11 09:09:17 Thursday by zhengyu.li>
+;; Time-stamp: <2023-05-17 10:54:43 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -317,6 +317,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'sphinx-doc
  'python-docstring
  'pyvenv
+ 'python-black
+ 'py-isort
  ;; ==============================
  ;; init-go-mode.el
  'go-mode

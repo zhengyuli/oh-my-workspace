@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-17 09:41:22 星期三 by zhengyu.li>
+;; Time-stamp: <2023-05-17 11:17:40 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -41,6 +41,8 @@
   (require 'sphinx-doc)
   (require 'python-docstring)
   (require 'pyvenv)
+  (require 'py-isort)
+  (require 'python-black)
   (require 'lsp-mode)
   (require 'dap-mode)
   (require 'dap-python)
@@ -70,6 +72,9 @@
 
   ;; ----------------------------------------------------------
   ;; Hooks
+  (add-hook 'before-save-hook 'py-isort-before-save)
+
+
   (add-hook 'pyvenv-post-activate-hooks
             (lambda ()
               ;; ----------------------------------------------------------
@@ -84,6 +89,9 @@
 
               ;; Enable python docstring mode
               (python-docstring-mode 1)
+
+              ;; Enable python black format mode
+              (python-black-on-save-mode 1)
 
               ;; Enable lsp mode
               (lsp-deferred))))

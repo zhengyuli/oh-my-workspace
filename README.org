@@ -446,6 +446,8 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
   # Dependencies for emacs python lsp mode and dap mode
   pip install "python-lsp-server[all]"
   pip install "ptvsd>=4.2"
+  pip install black
+  pip install black-macchiato
 
   # Dependencies for emacs golang mode
   go install github.com/rogpeppe/godef@latest
