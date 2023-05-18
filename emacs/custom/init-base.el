@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-17 15:48:07 星期三 by zhengyu.li>
+;; Time-stamp: <2023-05-18 11:42:07 星期四 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1344,6 +1344,9 @@ wiki search engine."
 
             ;; Enable doom modeline
             (doom-modeline-mode 1)
+
+            ;; Enable modeline display mode
+            (display-time-mode 1)
 
             ;; Enable org roam db auto sync mode
             (org-roam-db-autosync-mode 1)

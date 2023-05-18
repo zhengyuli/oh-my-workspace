@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-17 11:17:40 星期三 by zhengyu.li>
+;; Time-stamp: <2023-05-18 10:40:05 星期四 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -31,6 +31,25 @@
 ;;; Require:
 
 ;;; Code:
+;; ==================================================================================
+;; Customized settings for `pyvenv'
+(defun pyvenv-settings ()
+  "Settings for `pyvenv'."
+
+  ;; ----------------------------------------------------------
+  ;; Enable global pyvenv mode
+  (pyvenv-mode 1)
+
+  ;; ----------------------------------------------------------
+  ;; Hooks
+  (add-hook 'pyvenv-post-activate-hooks
+            (lambda ()
+              ;; ----------------------------------------------------------
+              ;; Restart python
+              (pyvenv-restart-python))))
+
+(eval-after-load "pyvenv" '(pyvenv-settings))
+
 ;; ==================================================================================
 ;; Customized settings for `python-mode'
 (defun python-mode-settings ()
@@ -67,20 +86,7 @@
    python-mode-map)
 
   ;; ----------------------------------------------------------
-  ;; Enable global pyvenv mode
-  (pyvenv-mode 1)
-
-  ;; ----------------------------------------------------------
   ;; Hooks
-  (add-hook 'before-save-hook 'py-isort-before-save)
-
-
-  (add-hook 'pyvenv-post-activate-hooks
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Restart python
-              (pyvenv-restart-python)))
-
   (add-hook 'python-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
@@ -94,7 +100,14 @@
               (python-black-on-save-mode 1)
 
               ;; Enable lsp mode
-              (lsp-deferred))))
+              (lsp-deferred)
+
+              ;; Copy the global before-save-hook to a local hook
+              (setq-local before-save-hook
+                          (default-value 'before-save-hook))
+
+              ;; Format buffer before save
+              (add-hook 'before-save-hook 'py-isort-before-save nil t))))
 
 (eval-after-load "python" '(python-mode-settings))
 
