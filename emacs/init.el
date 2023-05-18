@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-17 10:54:43 星期三 by zhengyu.li>
+;; Time-stamp: <2023-05-18 21:34:12 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -248,12 +248,14 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'flyspell-correct-avy-menu
  ;; ******************************
  'winum
+ 'zoom
  'dimmer
  'switch-window
  'centaur-tabs
+ 'emojify
  'doom-modeline
- 'textsize
  'doom-themes
+ 'textsize
  ;; ******************************
  'dashboard
  ;; ******************************

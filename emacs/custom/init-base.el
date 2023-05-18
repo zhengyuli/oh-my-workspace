@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-18 15:11:32 星期四 by zhengyu.li>
+;; Time-stamp: <2023-05-18 21:31:02 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -521,6 +521,21 @@
    centaur-tabs-mode-map))
 
 (eval-after-load "centaur-tabs" '(centaur-tabs-settings))
+
+;; ==================================================================================
+;; Customized settings for `zoom'
+(defun zoom-settings ()
+  "Settings for `zoom'."
+
+  (defun size-callback ()
+    (cond ((> (frame-pixel-width) 1280) '(90 . 0.75))
+          (t '(0.5 . 0.5))))
+
+  ;; ----------------------------------------------------------
+  ;; Customize `zoom' related variables
+  (customize-set-variable 'zoom-size 'size-callback))
+
+(eval-after-load "zoom" '(zoom-settings))
 
 ;; ==================================================================================
 ;; Customized settings for `doom-modeline'
@@ -1338,14 +1353,23 @@ wiki search engine."
             ;; Enable winum mode
             (winum-mode 1)
 
+            ;; Enable zoom mode
+            (zoom-mode 1)
+
             ;; Enable dimmer mode
             (dimmer-mode 1)
 
             ;; Enable centaur tabs mode
             (centaur-tabs-mode 1)
 
+            ;; Enable global emojify mode
+            (global-emojify-mode 1)
+
             ;; Enable doom modeline
             (doom-modeline-mode 1)
+
+            ;; Enable global emojify modeline mode
+            (global-emojify-mode-line-mode 1)
 
             ;; Enable modeline display mode
             (display-time-mode 1)
