@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-18 11:42:07 星期四 by zhengyu.li>
+;; Time-stamp: <2023-05-18 15:11:32 星期四 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1122,6 +1122,8 @@ wiki search engine."
 (defalias 'email 'mu4e)
 
 (defalias 'gpt 'gptel)
+
+(defalias 'refresh-auth-cache 'auth-source-forget-all-cached)
 
 (defalias 'upgrade-packages 'auto-package-upgrade-all)
 

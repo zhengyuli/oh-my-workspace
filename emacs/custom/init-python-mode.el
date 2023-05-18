@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-18 10:40:05 星期四 by zhengyu.li>
+;; Time-stamp: <2023-05-18 12:01:08 星期四 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -59,7 +59,6 @@
   (require 'flycheck)
   (require 'sphinx-doc)
   (require 'python-docstring)
-  (require 'pyvenv)
   (require 'py-isort)
   (require 'python-black)
   (require 'lsp-mode)
@@ -96,18 +95,18 @@
               ;; Enable python docstring mode
               (python-docstring-mode 1)
 
-              ;; Enable python black format mode
-              (python-black-on-save-mode 1)
-
-              ;; Enable lsp mode
-              (lsp-deferred)
-
               ;; Copy the global before-save-hook to a local hook
               (setq-local before-save-hook
                           (default-value 'before-save-hook))
 
               ;; Format buffer before save
-              (add-hook 'before-save-hook 'py-isort-before-save nil t))))
+              (add-hook 'before-save-hook 'py-isort-before-save nil t)
+
+              ;; Enable python black format mode
+              (python-black-on-save-mode 1)
+
+              ;; Enable lsp mode
+              (lsp-deferred))))
 
 (eval-after-load "python" '(python-mode-settings))
 
