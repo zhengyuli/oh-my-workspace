@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-18 21:34:12 Thursday by zhengyuli>
+;; Time-stamp: <2023-05-22 11:40:35 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -293,6 +293,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'pass
  ;; ******************************
  'gptel
+ ;; ******************************
+ 'hackernews
  ;; ******************************
  'auto-package-update
  ;; ==============================

@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-18 21:31:02 Thursday by zhengyuli>
+;; Time-stamp: <2023-05-22 14:01:45 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -466,8 +466,10 @@
        "Vterm")
       ((derived-mode-p 'eww-mode)
        "Eww")
-      ((string-prefix-p "*xwidget webkit:" (buffer-name))
-       "Webkit")
+      ((derived-mode-p 'xwidget-webkit-mode)
+       "Xwidget Webkit")
+      ((derived-mode-p 'hackernews-mode)
+       "Hacker News")
       ((string-suffix-p ".gpt" (buffer-name))
        "GPT")
       ((or (string-prefix-p "*" (buffer-name))
@@ -844,6 +846,20 @@
 (eval-after-load "org-roam" '(org-roam-settings))
 
 ;; ==================================================================================
+;; Settings for xwidget
+(defun xwidget-settings ()
+  "Settings for `xwidget'."
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `xwidget-webkit-mode'
+  (lazy-set-key
+   '(("n" . xwidget-webkit-scroll-up-line)
+     ("p" . xwidget-webkit-scroll-down-line))
+   xwidget-webkit-mode-map))
+
+(eval-after-load "xwidget" '(xwidget-settings))
+
+;; ==================================================================================
 (defun eww-bing/search ()
   "Search the web for the text in the region or at the point by
 bing search engine."
@@ -1090,7 +1106,7 @@ wiki search engine."
   (setq gptel-default-mode 'markdown-mode)
 
   ;; ----------------------------------------------------------
-  ;; Key bindings for `gptel-mode-map'
+  ;; Key bindings for `gptel'
   (lazy-set-key
    '(("C-RET" . gptel-send)
      ("C-<return>" . gptel-send))
@@ -1111,6 +1127,19 @@ wiki search engine."
               (company-mode -1))))
 
 (eval-after-load "gptel" '(gptel-settings))
+
+;; ==================================================================================
+;; Settings for `hackernews'
+(defun hackernews-settings()
+  "Settings for `hackernews'."
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `hackernews'
+  (lazy-unset-key
+   '("g")
+   hackernews-mode-map))
+
+(eval-after-load "hackernews" '(hackernews-settings))
 
 ;; ==================================================================================
 (defun auto-package-upgrade-all ()
