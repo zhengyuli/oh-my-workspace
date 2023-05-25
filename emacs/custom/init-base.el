@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-22 14:01:45 Monday by zhengyuli>
+;; Time-stamp: <2023-05-25 11:47:30 星期四 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -886,6 +886,13 @@ github search engine."
 wiki search engine."
   (interactive)
   (let ((eww-search-prefix "https://en.wikipedia.org/wiki/"))
+    (call-interactively 'eww-search-words)))
+
+(defun eww-ebook/search ()
+  "Search the ebook the text in the region or at the point by
+z-lib search engine."
+  (interactive)
+  (let ((eww-search-prefix "https://z-lib.is/s?q="))
     (call-interactively 'eww-search-words)))
 
 (defun eww-quit ()
