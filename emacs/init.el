@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-22 11:40:35 Monday by zhengyuli>
+;; Time-stamp: <2023-05-26 11:44:40 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -65,7 +65,7 @@
 (defvar emacs-config-email "lizhengyu419@outlook.com" "Emacs configuration email.")
 
 ;; Emacs configuration proxy
-(defvar emacs-http-proxy nil "Emacs configuration http proxy, default is nil.")
+(defvar emacs-http-proxy "_EMACS_HTTP_PROXY_" "Emacs configuration http proxy, default is nil.")
 
 ;; ==================================================================================
 (defun ensure-font-installed (font)
@@ -142,10 +142,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (let* ((parsed-url (url-generic-parse-url proxy))
          (proxy-no-scheme
           (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
-    (when (url-type parsed-url)
-      (setenv "http_proxy" proxy)
-      (setenv "https_proxy" proxy)
-      (setenv "all_proxy" proxy))
+    (setenv "http_proxy" proxy)
+    (setenv "https_proxy" proxy)
+    (setenv "all_proxy" proxy)
     (setq url-proxy-services
           `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
             ("http" . ,proxy-no-scheme)

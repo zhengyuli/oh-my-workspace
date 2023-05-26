@@ -401,6 +401,15 @@ pyenv shell 3.9.1
 pyenv virtualenvwrapper
 #+END_EXAMPLE
 
+Append the following settings to your ~/.virtualenvs/postmkvirtualenv
+
+#+BEGIN_EXAMPLE
+pip install "python-lsp-server[all]"
+pip install "ptvsd>=4.2"
+pip install black
+pip install black-macchiato
+#+END_EXAMPLE
+
 ** Python
 MacOS, like Linux, ships with Python already installed.
 
