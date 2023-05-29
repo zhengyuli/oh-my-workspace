@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-25 11:47:30 星期四 by zhengyu.li>
+;; Time-stamp: <2023-05-29 20:39:48 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -470,7 +470,7 @@
        "Xwidget Webkit")
       ((derived-mode-p 'hackernews-mode)
        "Hacker News")
-      ((string-suffix-p ".gpt" (buffer-name))
+      ((string-prefix-p "*ChatGPT*" (buffer-name))
        "GPT")
       ((or (string-prefix-p "*" (buffer-name))
            (memq major-mode '(magit-process-mode
@@ -1096,28 +1096,19 @@ z-lib search engine."
 (autoload 'mu4e "mu4e" "start mu4e, then show the main view" t)
 
 ;; ==================================================================================
-(defun gpt-new (name)
+(defun gpt-new ()
   "Create a new gptel session."
-  (interactive "sNew session name: ")
-  (gptel (concat name ".gpt")))
+  (interactive)
+  (let ((current-prefix-arg '(4)))
+    (call-interactively #'gptel)))
 
 ;; Settings for `gptel'
 (defun gptel-settings ()
   "Settings for `gptel'."
 
-  ;; Require
-  (require 'gptel-transient)
-
   ;; ----------------------------------------------------------
-  (setq gptel-default-session "chat.gpt")
-  (setq gptel-default-mode 'markdown-mode)
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `gptel'
-  (lazy-set-key
-   '(("C-RET" . gptel-send)
-     ("C-<return>" . gptel-send))
-   gptel-mode-map)
+  ;; Customize `gptel' related variables
+  (customize-set-variable gptel-default-mode 'markdown-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks
@@ -1134,6 +1125,8 @@ z-lib search engine."
               (company-mode -1))))
 
 (eval-after-load "gptel" '(gptel-settings))
+
+(autoload 'gptel-request "gptel" "Request a response from ChatGPT for PROMPT.")
 
 ;; ==================================================================================
 ;; Settings for `hackernews'
@@ -1325,8 +1318,10 @@ z-lib search engine."
                ;; Eww
                ("C-x C-g" . eww-search-words)
                ;; ChatGPT
-               ("C-S-<return>" . gptel-menu)
-               ("C-S-RET" . gptel-menu)))
+               ("C-RET" . gptel-send)
+               ("C-<return>" . gptel-send)
+               ("C-S-RET" . gptel-menu)
+               ("C-S-<return>" . gptel-menu)))
 
             ;; ----------------------------------------------------------
             ;; Initialize mac system exec path

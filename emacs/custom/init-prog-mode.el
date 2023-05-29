@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-17 09:45:48 星期三 by zhengyu.li>
+;; Time-stamp: <2023-05-29 20:53:58 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -44,6 +44,58 @@
              (forward-char))
          (backward-sexp))
         (t (message "couldn't find matched paren"))))
+
+(defun gpt-refactor-code (start end)
+  (interactive "r")
+  (if (region-active-p)
+      (let ((prompt
+             (concat "Please help me refactor the following code. Please reply with the refactoring explanation in english, refactored code, and diff between two versions. Please ignore the comments and strings in the code during the refactoring. If the code remains unchanged after refactoring, please say 'No need to refactor'. This is code block: "
+                     (buffer-substring-no-properties start end)))
+            (system "You are a large language model and a careful programmer."))
+        (gptel-request prompt
+                       :stream t
+                       :system system)
+        (message "Waiting..."))
+    (message "Error: No active region selected.")))
+
+(defun gpt-comment-code (start end)
+  (interactive "r")
+  (if (region-active-p)
+      (let ((prompt
+             (concat "Please add code comments written in english to the following code, only output the code with the comments and without any additional text, prompt, note. This is code block: "
+                     (buffer-substring-no-properties start end)))
+            (system "You are a large language model and a careful programmer."))
+        (gptel-request prompt
+                       :stream t
+                       :system system)
+        (message "Waiting..."))
+    (message "Error: No active region selected.")))
+
+(defun gpt-document-code (start end)
+  (interactive "r")
+  (if (region-active-p)
+      (let ((prompt
+             (concat "Please generate API documentation for the following code in a style that conforms to the specifications of the programming language, the documentation includes brief and detailed description, parameters and usage example, only output the code with the documentation and without any additional text, prompt, note. This is code block: "
+                     (buffer-substring-no-properties start end)))
+            (system "You are a large language model and a careful programmer."))
+        (gptel-request prompt
+                       :stream t
+                       :system system)
+        (message "Waiting..."))
+    (message "Error: No active region selected.")))
+
+(defun gpt-explain-code (start end)
+  (interactive "r")
+  (if (region-active-p)
+      (let ((prompt
+             (concat "Please explain in detail the meaning of the following code in english, leave a blank line between each sentence. This is code block: "
+                     (buffer-substring-no-properties start end)))
+            (system "You are a large language model and a careful programmer."))
+        (gptel-request prompt
+                       :stream t
+                       :system system)
+        (message "Waiting..."))
+    (message "Error: No active region selected.")))
 
 ;; ==================================================================================
 ;; Customized settings for `prog-mode'
