@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-29 20:39:48 星期一 by zhengyu.li>
+;; Time-stamp: <2023-05-30 22:48:13 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1096,6 +1096,9 @@ z-lib search engine."
 (autoload 'mu4e "mu4e" "start mu4e, then show the main view" t)
 
 ;; ==================================================================================
+;; Require
+(require 'awesome-chatgpt-prompts)
+
 (defun gpt-new ()
   "Create a new gptel session."
   (interactive)
