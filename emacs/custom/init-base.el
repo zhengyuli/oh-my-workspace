@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-06 16:42:06 Tuesday by zhengyu.li>
+;; Time-stamp: <2023-06-07 11:20:31 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -35,7 +35,7 @@
 (defun get-mode-name ()
   "Display major mode and mode name."
   (interactive)
-  (message "major-mode: %s, mode-name: %s" major-mode mode-name))
+  (message "major-mode: %s, mode-name: %s" major-mode (car mode-name)))
 
 (defun indent-buffer ()
   "Automatic format current buffer."
@@ -280,12 +280,16 @@
   ;; Customize `company' related variables
   (customize-set-variable 'company-idle-delay 0)
   (customize-set-variable 'company-minimum-prefix-length 2)
+  (customize-set-variable 'company-tooltip-idle-delay 0)
   (customize-set-variable 'company-tooltip-limit 15)
   (customize-set-variable 'company-selection-wrap-around t)
   (customize-set-variable 'company-format-margin-function 'company-text-icons-margin)
   (customize-set-variable 'company-transformers '(delete-dups company-sort-by-occurrence))
   (customize-set-variable 'company-backends
                           (mapcar 'append-company-backend-with-yas company-backends))
+
+  ;; Customize `company-dabbrev' related variables
+  (customize-set-variable 'company-dabbrev-downcase nil)
 
   ;; customize `company-box' related variables
   (customize-set-variable 'company-box-scrollbar nil)
@@ -1111,7 +1115,7 @@ z-lib search engine."
 
   ;; ----------------------------------------------------------
   ;; Customize `gptel' related variables
-  (customize-set-variable gptel-default-mode 'markdown-mode)
+  (customize-set-variable 'gptel-default-mode 'markdown-mode)
 
   ;; ----------------------------------------------------------
   ;; Hooks
@@ -1245,6 +1249,9 @@ z-lib search engine."
               (customize-set-variable 'mac-option-modifier 'meta))
 
             ;; ----------------------------------------------------------
+            ;; Remap '<return>' to 'RET'
+            (define-key key-translation-map (kbd "<return>") (kbd "RET"))
+
             ;; Global key bindings for basic config
             (lazy-set-key
              '(;; Kill current buffer
