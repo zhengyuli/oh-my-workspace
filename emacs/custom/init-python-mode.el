@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-05-18 12:01:08 星期四 by zhengyu.li>
+;; Time-stamp: <2023-06-22 20:37:49 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -31,6 +31,32 @@
 ;;; Require:
 
 ;;; Code:
+;; ==================================================================================
+(defun pip-check-and-install (package)
+  "Check if a Python package is installed. If not, install it."
+  (unless (string-match-p (regexp-quote (concat "not found: " package))
+                          (shell-command-to-string (concat "pip show " package)))
+    (shell-command (concat "pip install " package))))
+
+(defun install-python-libs-if-not-exists ()
+  "Install the Python libraries if they're not already installed."
+  (interactive)
+  (pip-check-and-install "python-lsp-server[all]")
+  (pip-check-and-install "pylint")
+  (pip-check-and-install "black")
+  (pip-check-and-install "black-macchiato"))
+
+(defun after-poetry-venv-workon (&rest _)
+  "Function to be run after `poetry-venv-workon'."
+  (install-python-libs-if-not-exists))
+
+(defun after-pyvenv-workon (&rest _)
+  "Function to be run after `pyvenv-workon'."
+  (install-python-libs-if-not-exists))
+
+(advice-add 'poetry-venv-workon :after #'after-poetry-venv-workon)
+(advice-add 'pyvenv-workon :after #'after-pyvenv-workon)
+
 ;; ==================================================================================
 ;; Customized settings for `pyvenv'
 (defun pyvenv-settings ()
