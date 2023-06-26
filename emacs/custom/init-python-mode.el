@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-26 10:18:05 Monday by zhengyu.li>
+;; Time-stamp: <2023-06-26 15:05:20 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -32,27 +32,28 @@
 
 ;;; Code:
 ;; ==================================================================================
+(defvar python-dev-packages
+  '("'python-lsp-server[all]'"
+    "pylint"
+    "black"
+    "black-macchiato")
+  "A list of packages required for a Python development environment.")
+
 (defun pip-check-and-install (package)
   "Check if a Python package is installed. If not, install it."
   (unless (string-match-p (regexp-quote (concat "not found: " package))
                           (shell-command-to-string (concat "pip show " package)))
     (shell-command (concat "pip install " package))))
 
-(defun install-python-libs-if-not-exists ()
-  "Install the Python libraries if they're not already installed."
-  (interactive)
-  (pip-check-and-install "'python-lsp-server[all]'")
-  (pip-check-and-install "pylint")
-  (pip-check-and-install "black")
-  (pip-check-and-install "black-macchiato"))
-
 (defun after-poetry-venv-workon (&rest _)
   "Function to be run after `poetry-venv-workon'."
-  (install-python-libs-if-not-exists))
+  (dolist (package python-dev-packages)
+    (pip-check-and-install package)))
 
 (defun after-pyvenv-workon (&rest _)
   "Function to be run after `pyvenv-workon'."
-  (install-python-libs-if-not-exists))
+  (dolist (package python-dev-packages)
+    (pip-check-and-install package)))
 
 (advice-add 'poetry-venv-workon :after #'after-poetry-venv-workon)
 (advice-add 'pyvenv-workon :after #'after-pyvenv-workon)
