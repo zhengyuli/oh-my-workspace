@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-26 15:05:20 Monday by zhengyu.li>
+;; Time-stamp: <2023-06-26 15:51:53 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -33,7 +33,7 @@
 ;;; Code:
 ;; ==================================================================================
 (defvar python-dev-packages
-  '("'python-lsp-server[all]'"
+  '("python-lsp-server[all]"
     "pylint"
     "black"
     "black-macchiato")
@@ -41,9 +41,12 @@
 
 (defun pip-check-and-install (package)
   "Check if a Python package is installed. If not, install it."
-  (unless (string-match-p (regexp-quote (concat "not found: " package))
-                          (shell-command-to-string (concat "pip show " package)))
-    (shell-command (concat "pip install " package))))
+  (let ((pkg (if (string-match ".*\\[.*\\]" package)
+                 (car (split-string package "\\["))
+               package)))
+    (if (string-match-p (concat "not found: " pkg)
+                        (shell-command-to-string (concat "pip show " pkg)))
+        (shell-command (regexp-quote (concat "pip install " package))))))
 
 (defun after-poetry-venv-workon (&rest _)
   "Function to be run after `poetry-venv-workon'."
