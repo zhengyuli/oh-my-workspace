@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-22 20:37:49 Thursday by zhengyuli>
+;; Time-stamp: <2023-06-26 10:18:05 Monday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -41,7 +41,7 @@
 (defun install-python-libs-if-not-exists ()
   "Install the Python libraries if they're not already installed."
   (interactive)
-  (pip-check-and-install "python-lsp-server[all]")
+  (pip-check-and-install "'python-lsp-server[all]'")
   (pip-check-and-install "pylint")
   (pip-check-and-install "black")
   (pip-check-and-install "black-macchiato"))
