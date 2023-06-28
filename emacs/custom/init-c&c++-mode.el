@@ -1,7 +1,7 @@
 ;;; package --- init-c&c++-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-04-22 12:01:25 Friday by zhengyuli>
+;; Time-stamp: <2023-06-28 15:17:15 星期三 by zhengyu.li>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -74,6 +74,8 @@
     (add-hook hook
               (lambda ()
                 ;; ----------------------------------------------------------
+                (setq-local dap-lldb-debug-program `(,(executable-find "lldb-vscode")))
+
                 ;; Set c&c++ dap lldb debugged program function
                 (setq-local dap-lldb-debugged-program-function
                             'c&c++-debug-target-program-path)

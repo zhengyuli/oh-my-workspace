@@ -1,6 +1,6 @@
 ;;; package --- init-rust-mode.el -*- lexical-binding:t -*-
 
-;; Copyright (c) 2022 Zhengyu Li
+;; Copyright (c) 2022, 2023 Zhengyu Li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -89,6 +89,8 @@
   (add-hook 'rust-mode-hook
             (lambda ()
               ;; ----------------------------------------------------------
+              (setq-local dap-lldb-debug-program `(,(executable-find "lldb-vscode")))
+
               ;; Set rust dap lldb debugged program function
               (setq-local dap-lldb-debugged-program-function
                           'rust-debug-target-program-path)

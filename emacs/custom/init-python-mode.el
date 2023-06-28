@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 11:29:01 星期三 by zhengyu.li>
+;; Time-stamp: <2023-06-28 15:19:08 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -82,6 +82,68 @@
 (eval-after-load "pyvenv" '(pyvenv-settings))
 
 ;; ==================================================================================
+;; Customized settings for `dap-python'
+(defun dap-python-settings ()
+  "Settings for `dap-python'."
+
+  ;; Require
+  (require 'with-venv)
+
+  ;; ----------------------------------------------------------
+  ;; Redefine `dap-python--pyenv-executable-find' defined in `dap-python'
+  (defun dap-python--pyenv-executable-find (command)
+    "Find executable COMMAND, taking pyenv shims into account.
+If the executable is a system executable and not in the same path
+as the pyenv version then also return nil. This works around
+https://github.com/pyenv/pyenv-which-ext."
+    (with-venv (executable-find command)))
+
+  ;; ----------------------------------------------------------
+  ;; Customize `dap-python' related variables
+  (customize-set-variable 'dap-python-debugger 'debugpy)
+
+  (dap-register-debug-template "Python :: Run file (buffer)"
+                               (list :type "python"
+                                     :args ""
+                                     :justMyCode nil
+                                     :cwd nil
+                                     :module nil
+                                     :program nil
+                                     :request "launch"
+                                     :name "Python :: Run file (buffer)"))
+
+  (dap-register-debug-template "Python :: Run file from project directory"
+                               (list :type "python"
+                                     :args ""
+                                     :justMyCode nil
+                                     :cwd "${workspaceFolder}"
+                                     :module nil
+                                     :program nil
+                                     :request "launch"))
+
+  (dap-register-debug-template "Python :: Run pytest (buffer)"
+                               (list :type "python"
+                                     :args ""
+                                     :justMyCode nil
+                                     :cwd nil
+                                     :program nil
+                                     :module "pytest"
+                                     :request "launch"
+                                     :name "Python :: Run pytest (buffer)"))
+
+  (dap-register-debug-provider "python-test-at-point" 'dap-python--populate-test-at-point)
+  (dap-register-debug-template "Python :: Run pytest (at point)"
+                               (list :type "python"
+                                     :args ""
+                                     :justMyCode nil
+                                     :program nil
+                                     :module "pytest"
+                                     :request "launch"
+                                     :name "Python :: Run pytest (at point)")))
+
+(eval-after-load "dap-python" '(dap-python-settings))
+
+;; ==================================================================================
 ;; Customized settings for `python-mode'
 (defun python-mode-settings ()
   "Settings for `python-mode'."
@@ -103,19 +165,10 @@
     (sphinx-doc)
     (python-docstring-fill))
 
-  ;; Redefine `dap-python--pyenv-executable-find' defined in `dap-python'
-  (defun dap-python--pyenv-executable-find (command)
-    "Find executable COMMAND, taking pyenv shims into account.
-If the executable is a system executable and not in the same path
-as the pyenv version then also return nil. This works around
-https://github.com/pyenv/pyenv-which-ext."
-    (with-venv (executable-find command)))
-
   ;; ----------------------------------------------------------
   ;; Customize `python-mode' related variables
   (customize-set-variable 'python-indent-guess-indent-offset-verbose nil)
   (customize-set-variable 'python-indent-offset 4)
-  (customize-set-variable 'dap-python-debugger 'debugpy)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `python-mode'
