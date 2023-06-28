@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-26 15:51:53 Monday by zhengyu.li>
+;; Time-stamp: <2023-06-28 11:29:01 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -36,8 +36,9 @@
   '("python-lsp-server[all]"
     "pylint"
     "black"
-    "black-macchiato")
-  "A list of packages required for a Python development environment.")
+    "black-macchiato"
+    "debugpy")
+  "A list of packages to setup python development environment.")
 
 (defun pip-check-and-install (package)
   "Check if a Python package is installed. If not, install it."
@@ -102,10 +103,19 @@
     (sphinx-doc)
     (python-docstring-fill))
 
+  ;; Redefine `dap-python--pyenv-executable-find' defined in `dap-python'
+  (defun dap-python--pyenv-executable-find (command)
+    "Find executable COMMAND, taking pyenv shims into account.
+If the executable is a system executable and not in the same path
+as the pyenv version then also return nil. This works around
+https://github.com/pyenv/pyenv-which-ext."
+    (with-venv (executable-find command)))
+
   ;; ----------------------------------------------------------
   ;; Customize `python-mode' related variables
   (customize-set-variable 'python-indent-guess-indent-offset-verbose nil)
   (customize-set-variable 'python-indent-offset 4)
+  (customize-set-variable 'dap-python-debugger 'debugpy)
 
   ;; ----------------------------------------------------------
   ;; Key bindings for `python-mode'

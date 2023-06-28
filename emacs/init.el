@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-22 07:43:15 Thursday by zhengyuli>
+;; Time-stamp: <2023-06-28 11:29:18 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -324,6 +324,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'pyvenv
  'python-black
  'py-isort
+ 'with-venv
  ;; ==============================
  ;; init-go-mode.el
  'go-mode
