@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-07 11:20:31 星期三 by zhengyu.li>
+;; Time-stamp: <2023-06-28 11:35:29 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -1395,7 +1395,7 @@ z-lib search engine."
             (winum-mode 1)
 
             ;; Enable zoom mode
-            (zoom-mode 1)
+            ;; (zoom-mode 1)
 
             ;; Enable dimmer mode
             (dimmer-mode 1)
