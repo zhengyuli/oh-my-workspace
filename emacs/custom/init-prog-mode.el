@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 15:17:48 星期三 by zhengyu.li>
+;; Time-stamp: <2023-06-28 20:07:11 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -175,40 +175,12 @@
   (require 'dap-hydra)
 
   ;; ----------------------------------------------------------
-  (defun dap-go-to-server-log-buffer (&optional no-select)
-    "Go to server log buffer."
-    (interactive)
-    (let* ((buffer (if (dap--cur-session)
-                       (process-buffer
-                        (dap--debug-session-program-proc
-                         (dap--cur-session)))
-                     nil))
-           (old-win (if buffer
-                        (get-buffer-window buffer)
-                      nil))
-           (new-win (if buffer
-                        (display-buffer-in-side-window
-                         buffer
-                         `((side . bottom) (slot . 5) (window-width . 0.20)))
-                      nil)))
-      (when old-win
-        (delete-window old-win))
-
-      (when new-win
-        (set-window-dedicated-p new-win t)
-        (unless no-select (select-window new-win))
-        (fit-window-to-buffer new-win 20 10))))
+  ;; Customize `dap-mode' related variables
+  (customize-set-variable 'dap-auto-configure-features
+                          '(sessions locals breakpoints expressions tooltip))
 
   ;; ----------------------------------------------------------
   ;; Hooks
-  (add-hook 'dap-session-created-hook
-            (lambda (arg)
-              ;; ----------------------------------------------------------
-              ;; Go to debug session output buffer
-              (if (dap--debug-session-program-proc (dap--cur-session))
-                  (dap-go-to-server-log-buffer)
-                (dap-go-to-output-buffer))))
-
   (add-hook 'dap-stopped-hook
             (lambda (arg)
               ;; ----------------------------------------------------------

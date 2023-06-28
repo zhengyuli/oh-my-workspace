@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 15:19:08 星期三 by zhengyu.li>
+;; Time-stamp: <2023-06-28 20:11:21 星期三 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -119,27 +119,7 @@ https://github.com/pyenv/pyenv-which-ext."
                                      :cwd "${workspaceFolder}"
                                      :module nil
                                      :program nil
-                                     :request "launch"))
-
-  (dap-register-debug-template "Python :: Run pytest (buffer)"
-                               (list :type "python"
-                                     :args ""
-                                     :justMyCode nil
-                                     :cwd nil
-                                     :program nil
-                                     :module "pytest"
-                                     :request "launch"
-                                     :name "Python :: Run pytest (buffer)"))
-
-  (dap-register-debug-provider "python-test-at-point" 'dap-python--populate-test-at-point)
-  (dap-register-debug-template "Python :: Run pytest (at point)"
-                               (list :type "python"
-                                     :args ""
-                                     :justMyCode nil
-                                     :program nil
-                                     :module "pytest"
-                                     :request "launch"
-                                     :name "Python :: Run pytest (at point)")))
+                                     :request "launch")))
 
 (eval-after-load "dap-python" '(dap-python-settings))
 
