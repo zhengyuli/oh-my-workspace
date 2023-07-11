@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 11:35:29 星期三 by zhengyu.li>
+;; Time-stamp: <2023-07-11 11:37:36 Tuesday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -150,7 +150,7 @@
   ;; ----------------------------------------------------------
   ;; Key unbindings for `undo-tree'
   (lazy-unset-key
-   '("C-x u" "M-_")
+   '("C-x u" "M-_" "C-_")
    undo-tree-map)
 
   ;; Key bindings for `undo-tree'
@@ -266,7 +266,7 @@
   (require 'company-box)
 
   ;; ----------------------------------------------------------
-  (defun append-company-backend-with-yas (backend)
+  (defun company-mode/backend-with-yas (backend)
     "Append `BACKEND' with company-yas."
     (if (and (listp backend)
              (member 'company-yasnippet backend))
@@ -279,21 +279,24 @@
   ;; ----------------------------------------------------------
   ;; Customize `company' related variables
   (customize-set-variable 'company-idle-delay 0)
-  (customize-set-variable 'company-minimum-prefix-length 2)
+  (customize-set-variable 'company-minimum-prefix-length 1)
+  (customize-set-variable 'company-require-match 'never)
   (customize-set-variable 'company-tooltip-idle-delay 0)
   (customize-set-variable 'company-tooltip-limit 15)
   (customize-set-variable 'company-selection-wrap-around t)
   (customize-set-variable 'company-format-margin-function 'company-text-icons-margin)
   (customize-set-variable 'company-transformers '(delete-dups company-sort-by-occurrence))
   (customize-set-variable 'company-backends
-                          (mapcar 'append-company-backend-with-yas company-backends))
+                          (mapcar 'company-mode/backend-with-yas company-backends))
 
   ;; Customize `company-dabbrev' related variables
   (customize-set-variable 'company-dabbrev-downcase nil)
 
   ;; customize `company-box' related variables
+  (customize-set-variable 'company-box-backends-colors nil)
   (customize-set-variable 'company-box-scrollbar nil)
   (customize-set-variable 'company-box-doc-enable t)
+  (customize-set-variable 'company-box-doc-delay 0.1)
 
   ;; ----------------------------------------------------------
   ;; Enable global company prescient mode
@@ -1216,8 +1219,19 @@ z-lib search engine."
                                     "%Y-%02m-%02d %02H:%02M:%02S %:a by %u")
 
             ;; Customize `recentf' related variables
-            (customize-set-variable 'recentf-max-saved-items 1000)
-            (customize-set-variable 'recentf-exclude '("/tmp/" "ssh:"))
+            (customize-set-variable 'recentf-max-saved-items 200)
+            (customize-set-variable 'recentf-exclude '((expand-file-name package-user-dir)
+                                                       ".cache"
+                                                       ".cask"
+                                                       ".elfeed"
+                                                       "bookmarks"
+                                                       "cache"
+                                                       "ido.*"
+                                                       "persp-confs"
+                                                       "recentf"
+                                                       "undo-tree-hist"
+                                                       "url"
+                                                       "COMMIT_EDITMSG\\'"))
 
             ;; Customize `files' related variables
             (customize-set-variable 'backup-directory-alist
@@ -1311,6 +1325,8 @@ z-lib search engine."
                ("C-x _" . text-scale-decrease)
                ("C-x +" . text-scale-increase)
                ("C-x -" . text-scale-decrease)
+               ;; Undo window layout
+               ("C-_" . winner-undo)
                ;; Multi vterm
                ("C-x C-t" . multi-vterm)
                ;; Dired
@@ -1355,6 +1371,9 @@ z-lib search engine."
             ;; Enable global recentf mode
             (recentf-mode 1)
 
+            ;; Enable save place mode
+            (save-place-mode 1)
+
             ;; Enable global column number mode
             (column-number-mode 1)
 
@@ -1393,6 +1412,9 @@ z-lib search engine."
 
             ;; Enable winum mode
             (winum-mode 1)
+
+            ;; Enable winner mode
+            (winner-mode 1)
 
             ;; Enable zoom mode
             ;; (zoom-mode 1)
