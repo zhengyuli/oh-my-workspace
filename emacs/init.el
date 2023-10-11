@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 11:29:18 星期三 by zhengyu.li>
+;; Time-stamp: <2023-10-11 10:38:32 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023 zhengyu li
 ;;
@@ -213,6 +213,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'undo-tree
  'browse-kill-ring
  'goto-chg
+ 'goto-line-preview
  ;; ******************************
  'all-the-icons
  ;; ******************************
