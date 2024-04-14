@@ -1,7 +1,7 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-07-11 11:37:36 Tuesday by zhengyuli>
+;; Time-stamp: <2024-04-14 22:00:02 Sunday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -1291,6 +1291,8 @@ z-lib search engine."
                ("M-Y" . browse-kill-ring)
                ;; Goto last change
                ("M-o" . goto-last-change)
+               ("M-g g" . goto-line-preview)
+               ("M-g M-g" . goto-line-preview)
                ;; Swiper
                ("C-s" . swiper-isearch)
                ("C-r" . swiper-isearch-backward)

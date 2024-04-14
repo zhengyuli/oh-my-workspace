@@ -1,7 +1,7 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 20:07:11 星期三 by zhengyu.li>
+;; Time-stamp: <2024-04-14 22:02:05 Sunday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -155,6 +155,14 @@
   ;; Customize `lsp-mode' related variables
   (customize-set-variable 'lsp-headerline-breadcrumb-enable nil)
   (customize-set-variable 'lsp-enable-indentation nil)
+
+  ;; ----------------------------------------------------------
+  ;; Key bindings for `prog-mode'
+  (lazy-set-key
+   '(("M-r" . xref-find-references)
+     ("M-." . xref-find-definitions)
+     ("M-," . xref-pop-marker-stack))
+   prog-mode-map)
 
   ;; ----------------------------------------------------------
   ;; Hooks
