@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-04-14 22:00:02 Sunday by zhengyuli>
+;; Time-stamp: <2024-05-06 18:04:54 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -1422,7 +1422,7 @@ z-lib search engine."
             ;; (zoom-mode 1)
 
             ;; Enable dimmer mode
-            (dimmer-mode 1)
+            ;; (dimmer-mode 1)
 
             ;; Enable centaur tabs mode
             (centaur-tabs-mode 1)

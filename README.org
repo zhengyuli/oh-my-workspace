@@ -19,13 +19,13 @@ Use xcode-select to download and install:
 1. Install homebrew:
 
 #+BEGIN_SRC shell
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #+END_SRC
 
 2. Add */usr/local/bin* to the $PATH:
 
 #+BEGIN_SRC shell
-  echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc
+  echo 'export PATH="$(brew --prefix)/bin:$PATH"' >> ~/.zshrc
 #+END_SRC
 
 3. Self-check and update brew:
@@ -42,14 +42,14 @@ features you never knew you always wanted.
 Use homebrew to download and install:
 
 #+BEGIN_SRC shell
-  brew cask install iterm2
+  brew install --cask iterm2
 #+END_SRC
 
 *** Configure
 **** Fonts
-1.  Install Source Code Pro font from: https://fonts.google.com/specimen/Source+Code+Pro
+1.  Install Source Code Pro font from: https://www.fontsquirrel.com/fonts/source-code-pro
 
-2. Install Source Serif Pro font from: https://fonts.google.com/specimen/Source+Serif+Pro
+2. Install Source Serif Pro font from: https://www.fontsquirrel.com/fonts/source-serif-pro
 
 3. Select the **Source Code Pro** font through *iTerm2->Preferences->Profiles->Text->Font*.
 
@@ -109,6 +109,20 @@ Changing theme is as simple as changing a string in your configuration file.
 ZSH_THEME="agnoster"
 #+END_EXAMPLE
 
+You can also install 3rd themes you like.
+
+#+BEGIN_SRC shell
+git clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+ZSH_THEME="powerlevel10k/powerlevel10k"
+#+END_EXAMPLE
+
 **** Plugins
 Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be added to *~/.oh-my-zsh/custom/plugins/*.
 
@@ -117,32 +131,30 @@ Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be
 #+BEGIN_SRC shell
   brew install fzf
 
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
   brew install autosuggestions
+  git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 
   git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+
+  git clone https://github.com/zsh-users/zsh-completions ~/.oh-my-zsh/custom/plugins/zsh-completions
 #+END_SRC
 
 2. Configure daily used plugins in your _~/.zshrc_:
 
 #+BEGIN_EXAMPLE
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#a9a9a9"
-
 # Which plugins would you like to load?
 # Standard plugins can be found in ~/.oh-my-zsh/plugins/*
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    history
-    fzf
-    autojump
-    zsh-autosuggestions
-    zsh-syntax-highlighting
     brew
     git
-    docker
-    web-search
+    fzf
+    autojump
+    zsh-completions
+    zsh-autosuggestions
+    zsh-syntax-highlighting
 )
 #+END_EXAMPLE
 
@@ -394,9 +406,6 @@ Append the following settings to your _~/.zshrc_:
 # pyvenv instead of virtualenv.
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 
-# Activate shell python
-pyenv shell 3.9.1
-
 # Activate virtualenvwrapper
 pyenv virtualenvwrapper
 #+END_EXAMPLE
@@ -477,4 +486,10 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
 
 #+BEGIN_SRC shell
   ./emacs/install.sh
+#+END_SRC
+
+After setup, start emacs and install the fonts which are depended by other packages in emacs.
+#+BEGIN_SRC
+M-x all-the-icons-install-fonts
+M-x nerd-icons-install-fonts
 #+END_SRC
