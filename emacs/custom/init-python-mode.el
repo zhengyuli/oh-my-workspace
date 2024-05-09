@@ -1,7 +1,7 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 20:11:21 星期三 by zhengyu.li>
+;; Time-stamp: <2024-05-09 23:45:01 Thursday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -67,6 +67,9 @@
 (defun pyvenv-settings ()
   "Settings for `pyvenv'."
 
+  ;; Require
+  (require 'lsp-mode)
+
   ;; ----------------------------------------------------------
   ;; Enable global pyvenv mode
   (pyvenv-mode 1)
@@ -77,7 +80,8 @@
             (lambda ()
               ;; ----------------------------------------------------------
               ;; Restart python
-              (pyvenv-restart-python))))
+              (pyvenv-restart-python)
+              (call-interactively 'lsp-restart-workspace))))
 
 (eval-after-load "pyvenv" '(pyvenv-settings))
 
