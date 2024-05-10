@@ -1,7 +1,7 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-10-11 10:38:32 Wednesday by zhengyu.li>
+;; Time-stamp: <2024-05-10 11:37:41 Friday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -139,7 +139,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (interactive (list (read-string
                       (format "HTTP Proxy Server [%s]: " emacs-http-proxy)
                       nil nil emacs-http-proxy)))
-  (let* ((parsed-url (url-generic-parse-url proxy))
+  (let* ((proxy (if (string-match-p "https?://" proxy)
+                    proxy
+                  (concat "http://" proxy)))
+         (parsed-url (url-generic-parse-url proxy))
          (proxy-no-scheme
           (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
     (setenv "http_proxy" proxy)
