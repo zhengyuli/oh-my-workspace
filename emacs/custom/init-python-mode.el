@@ -1,5 +1,5 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-05-09 23:45:01 Thursday by zhengyuli>
+;; Time-stamp: <2024-05-10 08:36:14 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -81,7 +81,9 @@
               ;; ----------------------------------------------------------
               ;; Restart python
               (pyvenv-restart-python)
-              (call-interactively 'lsp-restart-workspace))))
+
+              ;; Restart lsp workspace
+              (call-interactively 'lsp-workspace-restart))))
 
 (eval-after-load "pyvenv" '(pyvenv-settings))
 
