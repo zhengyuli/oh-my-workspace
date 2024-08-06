@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-05-06 18:04:54 Monday by zhengyuli>
+;; Time-stamp: <2024-08-06 13:27:11 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -507,8 +507,11 @@
   ;; ----------------------------------------------------------
   ;; Customized `centaur-tabs-elements' related faces
   (custom-set-faces
-   '(centaur-tabs-selected ((t (:bold t :background "#31343E" :foreground "#28cd41"))))
-   '(centaur-tabs-selected-modified ((t (:bold t :background "#31343E" :foreground "#ff9300")))))
+   '(centaur-tabs-selected ((t (:bold t :foreground "#28cd41"))))
+   '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300")))))
+
+  (set-face-attribute centaur-tabs-display-line nil
+                      :background (face-background 'default))
 
   ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs-elements' realted variables
@@ -1424,9 +1427,6 @@ z-lib search engine."
             ;; Enable dimmer mode
             ;; (dimmer-mode 1)
 
-            ;; Enable centaur tabs mode
-            (centaur-tabs-mode 1)
-
             ;; Enable global emojify mode
             (global-emojify-mode 1)
 
@@ -1453,6 +1453,9 @@ z-lib search engine."
 
             ;; Load doom theme
             (load-theme 'doom-dracula t)
+
+            ;; Enable centaur tabs mode
+            (centaur-tabs-mode 1)
 
             ;; Toggle fullscreen
             (toggle-fullscreen)))

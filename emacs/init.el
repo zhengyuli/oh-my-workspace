@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-05-10 11:37:41 Friday by zhengyuli>
+;; Time-stamp: <2024-08-06 09:59:01 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -24,12 +24,6 @@
 ;;; Commentary:
 
 ;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init)
-
-;;; Require:
-(load-library "package")
 
 ;;; Code:
 ;; ==================================================================================
@@ -65,7 +59,7 @@
 (defvar emacs-config-email "lizhengyu419@outlook.com" "Emacs configuration email.")
 
 ;; Emacs configuration proxy
-(defvar emacs-http-proxy "_EMACS_HTTP_PROXY_" "Emacs configuration http proxy, default is nil.")
+(defvar emacs-http-proxy nil "Emacs configuration http proxy, default is nil.")
 
 ;; ==================================================================================
 (defun ensure-font-installed (font)
