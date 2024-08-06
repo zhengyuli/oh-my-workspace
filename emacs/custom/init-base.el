@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-08-06 13:27:11 Tuesday by zhengyu.li>
+;; Time-stamp: <2024-08-06 17:55:09 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -150,7 +150,7 @@
   ;; ----------------------------------------------------------
   ;; Key unbindings for `undo-tree'
   (lazy-unset-key
-   '("C-x u" "M-_" "C-_")
+   '("C-x u" "M-_")
    undo-tree-map)
 
   ;; Key bindings for `undo-tree'
@@ -508,10 +508,13 @@
   ;; Customized `centaur-tabs-elements' related faces
   (custom-set-faces
    '(centaur-tabs-selected ((t (:bold t :foreground "#28cd41"))))
-   '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300")))))
+   '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300"))))
+   '(centaur-tabs-unselected ((t (:bold t :foreground "grey"))))
+   '(centaur-tabs-unselected-modified ((t (:bold t :foreground "#ff9300")))))
 
   (set-face-attribute centaur-tabs-display-line nil
-                      :background (face-background 'default))
+                      :inherit 'default
+                      :box nil :overline nil :underline nil)
 
   ;; ----------------------------------------------------------
   ;; Customize `centaur-tabs-elements' realted variables
@@ -1421,6 +1424,9 @@ z-lib search engine."
             ;; Enable winner mode
             (winner-mode 1)
 
+            ;; Enable centaur tabs mode
+            (centaur-tabs-mode 1)
+
             ;; Enable zoom mode
             ;; (zoom-mode 1)
 
@@ -1440,7 +1446,7 @@ z-lib search engine."
             (display-time-mode 1)
 
             ;; Enable org roam db auto sync mode
-            (org-roam-db-autosync-mode 1)
+            ;; (org-roam-db-autosync-mode 1)
 
             ;; Start pinentry server
             (pinentry-start)))
@@ -1452,10 +1458,9 @@ z-lib search engine."
             (textsize-mode 1)
 
             ;; Load doom theme
-            (load-theme 'doom-dracula t)
-
-            ;; Enable centaur tabs mode
-            (centaur-tabs-mode 1)
+            (if (display-graphic-p)
+                (load-theme 'doom-dracula t)
+              (load-theme 'doom-dracula))
 
             ;; Toggle fullscreen
             (toggle-fullscreen)))

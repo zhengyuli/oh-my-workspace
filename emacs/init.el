@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-08-06 09:59:01 Tuesday by zhengyu.li>
+;; Time-stamp: <2024-08-06 15:55:33 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -24,6 +24,9 @@
 ;;; Commentary:
 
 ;;
+
+;;; Require
+(require 'package)
 
 ;;; Code:
 ;; ==================================================================================
@@ -133,26 +136,27 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (interactive (list (read-string
                       (format "HTTP Proxy Server [%s]: " emacs-http-proxy)
                       nil nil emacs-http-proxy)))
-  (let* ((proxy (if (string-match-p "https?://" proxy)
-                    proxy
-                  (concat "http://" proxy)))
-         (parsed-url (url-generic-parse-url proxy))
-         (proxy-no-scheme
-          (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
-    (setenv "http_proxy" proxy)
-    (setenv "https_proxy" proxy)
-    (setenv "all_proxy" proxy)
-    (setq url-proxy-services
-          `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
-            ("http" . ,proxy-no-scheme)
-            ("https" . ,proxy-no-scheme)))
-    (show-http-proxy)))
+  (if (not (string-empty-p proxy))
+      (let* ((proxy (if (string-match-p "https?://" proxy)
+                        proxy
+                      (concat "http://" proxy)))
+             (parsed-url (url-generic-parse-url proxy))
+             (proxy-no-scheme
+              (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
+        (setenv "http_proxy" proxy)
+        (setenv "https_proxy" proxy)
+        (setenv "all_proxy" proxy)
+        (setq url-proxy-services
+              `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
+                ("http" . ,proxy-no-scheme)
+                ("https" . ,proxy-no-scheme)))
+        (show-http-proxy))
+    (warn "Proxy url could not be empty.")))
 
 (defun enable-http-proxy ()
   (interactive)
   (if emacs-http-proxy
-      (set-http-proxy emacs-http-proxy)
-    (warn "Default emacs http proxy is nil, please configure it first.")))
+      (set-http-proxy emacs-http-proxy)))
 
 (defun unset-http-proxy ()
   "Unset http/https proxy."
@@ -252,6 +256,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'emojify
  'doom-modeline
  'doom-themes
+ 'dracula-theme
  'textsize
  ;; ******************************
  'dashboard

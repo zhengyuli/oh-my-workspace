@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-04-14 22:02:05 Sunday by zhengyuli>
+;; Time-stamp: <2024-08-06 15:21:14 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -51,7 +51,6 @@
   "Settings for `prog-mode'."
 
   ;; Require
-  (require 'linum)
   (require 'xref)
   (require 'paren)
   (require 'smartparens-config)
@@ -106,7 +105,7 @@
 
               ;; -----------------------------------------------
               ;; Enable linum node
-              (linum-mode 1)
+              (display-line-numbers-mode 1)
 
               ;; Enable smart parens mode
               (smartparens-mode 1)
