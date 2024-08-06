@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-08-06 15:55:33 Tuesday by zhengyu.li>
+;; Time-stamp: <2024-08-06 18:10:52 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -256,7 +256,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'emojify
  'doom-modeline
  'doom-themes
- 'dracula-theme
  'textsize
  ;; ******************************
  'dashboard

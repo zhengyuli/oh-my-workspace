@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-08-06 17:55:09 Tuesday by zhengyu.li>
+;; Time-stamp: <2024-08-06 18:09:34 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -1458,9 +1458,8 @@ z-lib search engine."
             (textsize-mode 1)
 
             ;; Load doom theme
-            (if (display-graphic-p)
-                (load-theme 'doom-dracula t)
-              (load-theme 'doom-dracula))
+            (when (display-graphic-p)
+                (load-theme 'doom-dracula t))
 
             ;; Toggle fullscreen
             (toggle-fullscreen)))
