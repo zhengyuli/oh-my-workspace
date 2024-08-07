@@ -1,7 +1,11 @@
 * Oh My Workspace Configurations
-This guide includes all kinds of configurations of daily used tools on mac.
+Welcome to the Oh-My-Workspace repository!
 
-** Command Line Tools
+This project is a comprehensive workspace configuration to streamline your development workflow. It integrates a wide
+array of tools and dependencies to enhance your development experience, making it a powerful and efficient workspace for
+developers.
+
+** Command Line Tools (Mac)
 The Command Line Tool package gives Mac terminal users many commonly used tools, utilities, compilers, and many other
 useful commands that are usually found in default Linux installations.
 
@@ -12,8 +16,8 @@ Use xcode-select to download and install:
   xcode-select --install
 #+END_SRC
 
-** Homebrew
-*[[https://brew.sh/][Homebrew]]* the most popular package manager on mac.
+** Homebrew (Mac)
+*[[https://brew.sh/][Homebrew,]]* the most popular package manager on mac.
 
 *** Installation
 1. Install homebrew:
@@ -28,18 +32,17 @@ Use xcode-select to download and install:
   echo 'export PATH="$(brew --prefix)/bin:$PATH"' >> ~/.zshrc
 #+END_SRC
 
-3. Self-check and update brew:
+3. Self-check and update:
 
 #+BEGIN_SRC shell
   brew doctor && brew update
 #+END_SRC
 
-** iTerm2
+** iTerm2 (Mac)
 *[[https://www.iterm2.com/][iTerm2]]* is a replacement for Terminal and the successor to iTerm. It brings the terminal into the modern age with
 features you never knew you always wanted.
 
 *** Installation
-Use homebrew to download and install:
 
 #+BEGIN_SRC shell
   brew install --cask iterm2
@@ -73,19 +76,22 @@ Configure shortcuts through *iTerm2->Preferences->Keys->Key Mappings* panel.
 | Next Tab     | ⇧⌘N         |
 
 ** Zsh + Oh My Zsh
-*[[http://zsh.sourceforge.net/][Z shell]]* (also known as zsh) is a Unix shell that is built on top of bash (the default shell for macOS).
+*[[http://zsh.sourceforge.net/][Z shell]]* (also known as zsh) is a Unix shell that is built on top of bash.
 
 *[[https://ohmyz.sh/][Oh My Zsh]]* is an open source, community-driven framework for managing your zsh configuration. It comes with a bunch of
 features out of the box and improves your terminal experience.
 
 *** Installation
-1. Use homebrew to download and install:
 
+Mac:
 #+BEGIN_SRC shell
   brew install zsh
 #+END_SRC
 
-2. Install Oh My Zsh:
+Ubuntu:
+#+BEGIN_SRC shell
+  sudo apt -y install zsh
+#+END_SRC
 
 #+BEGIN_SRC shell
   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -128,14 +134,19 @@ Standard plugins can be found in *~/.oh-my-zsh/plugins/**, custom plugins may be
 
 1. Download custom plugins:
 
+Mac:
 #+BEGIN_SRC shell
-  brew install fzf
+  brew install fzf autojump
+#+END_SRC
 
-  brew install autosuggestions
+Ubuntu:
+#+BEGIN_SRC shell
+  sudo apt -y install fzf autojump
+#+END_SRC
+
+#+BEGIN_SRC shell
   git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-
   git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-
   git clone https://github.com/zsh-users/zsh-completions ~/.oh-my-zsh/custom/plugins/zsh-completions
 #+END_SRC
 
@@ -161,6 +172,7 @@ plugins=(
 **** Others
 Append the following settings to your configuration file.
 
+Mac:
 #+BEGIN_EXAMPLE
 # Disable homebrew auto update
 export HOMEBREW_NO_AUTO_UPDATE="true"
@@ -174,10 +186,15 @@ for easy integration with other applications. A wealth of frontend applications 
 provides support for S/MIME and Secure Shell (ssh).
 
 *** Installation
-Use homebrew to download and install:
 
+Mac:
 #+BEGIN_SRC shell
   brew install gnupg
+#+END_SRC
+
+Ubuntu:
+#+BEGIN_SRC shell
+  sudo apt -y install gnupg
 #+END_SRC
 
 *** Configure
@@ -194,10 +211,15 @@ may be organized into meaningful folder hierarchies, copied from computer to com
 using standard command line file management utilities.
 
 *** Installation
-Use homebrew to download and install:
 
+Mac:
 #+BEGIN_SRC shell
   brew install pass
+#+END_SRC
+
+Ubuntu:
+#+BEGIN_SRC shell
+  sudo apt -y install pass
 #+END_SRC
 
 *** Configure
@@ -225,11 +247,15 @@ supported. New messages, message deletions and flag changes can be propagated bo
 IMAP-disconnected mode.
 
 *** Installation
-Use homebrew to download and install:
 
+Mac:
 #+BEGIN_SRC shell
-  brew install isync
-  brew install mu
+  brew install isync mu
+#+END_SRC
+
+Ubuntu:
+#+BEGIN_SRC shell
+  sudo apt -y install isync mu
 #+END_SRC
 
 *** Configure
@@ -305,15 +331,21 @@ max-cache-ttl 7200
 The LLVM Project is a collection of modular and reusable compiler and toolchain technologies.
 
 *** Installation
-Use homebrew to download and install:
 
+Mac:
 #+BEGIN_SRC shell
   brew install llvm
 #+END_SRC
 
-*** Configure
-Append the following settings to your _~/.zshrc_:
+Ubuntu:
+#+BEGIN_SRC shell
+  sudo apt -y install llvm
+#+END_SRC
 
+*** Configure
+
+Mac:
+Append the following settings to your _~/.zshrc_:
 #+BEGIN_SRC shell
   echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
 #+END_SRC
@@ -358,10 +390,19 @@ Download the latest rustup from [[w3m:https://www.rust-lang.org/tools/install][R
 *** Configure
 Install rust related dependencies:
 
+Mac:
 #+BEGIN_SRC shell
   # Install rust analyzer
   brew install rust-analyzer
+#+END_SRC
 
+Ubuntu:
+#+BEGIN_SRC shell
+  # Install rust analyzer
+  sudo apt -y install rust-analyzer
+#+END_SRC
+
+#+BEGIN_SRC shell
   # Install rust source code
   rustup component add rust-src
 #+END_SRC
@@ -370,14 +411,9 @@ Install rust related dependencies:
 pyenv is a very popular python management tool. It lets you easily switch between multiple versions of Python.
 
 *** Installation
-Use homebrew to download and install:
 
 #+BEGIN_SRC shell
-  # Install pyenv
-  brew install pyenv
-
-  # Install your prefered python version
-  pyenv install 3.9.1
+  curl https://pyenv.run | bash
 #+END_SRC
 
 *** Configure
@@ -439,14 +475,21 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
 *** Installation
 1. Using homebrew to download and install:
 
+Mac:
 #+BEGIN_SRC shell
   brew tap railwaycat/emacsmacport
   brew cask install emacs-mac
   brew untap railwaycat/emacsmacport
 #+END_SRC
 
+Ubuntu:
+#+BEGIN_SRC shell
+  sudo snap install emacs --classic
+#+END_SRC
+
 2. Installing emacs related dependencies:
 
+Mac:
 #+BEGIN_SRC shell
   # Dependencies for emacs ag
   brew install ag
@@ -458,9 +501,36 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
   # Please make sure **clangd** and **lldb-vscode** have been installed
   # Mac platform:
   brew install llvm
-  # Ubuntu platform:
-  sudo apt-get install clang clang-tools
 
+  # Dependencies for emacs markdown
+  brew install markdown
+  brew install pandoc
+
+  # Dependencies for emacs plantuml
+  brew install plantuml
+#+END_SRC
+
+Ubuntu:
+#+BEGIN_SRC shell
+  # Dependencies for emacs ag
+  sudo apt -y install silversearcher-ag
+
+  # Dependencies for flyspell
+  sudo apt -y install  aspell
+
+  # Dependencies for emacs c&c++ lsp mode and dap mode
+  # Please make sure **clangd** and **lldb-vscode** have been installed
+  sudo apt -y install clang clang-tools
+
+  # Dependencies for emacs markdown
+  sudo apt -y install markdown
+  sudo apt -y install pandoc
+
+  # Dependencies for emacs plantuml
+  sudo apt -y install plantuml
+#+END_SRC
+
+#+BEGIN_SRC shell
   # Dependencies for emacs python lsp mode and dap mode
   pip install "python-lsp-server[all]"
   pip install "ptvsd>=4.2"
@@ -473,23 +543,19 @@ Emacs is an extensible, customizable, free/libre text editor — and more.
   go install golang.org/x/tools/cmd/guru@latest
 
   # Dependencies for emacs markdown
-  brew install markdown
-  brew install pandoc
   go install github.com/shurcooL/markdownfmt@latest
-
-  # Dependencies for emacs plantuml
-  brew install plantuml
 #+END_SRC
 
 *** Configure
 1. Setup emacs configurations:
 
+Install emacs configuration.
 #+BEGIN_SRC shell
   ./emacs/install.sh
 #+END_SRC
 
 After setup, start emacs and install the fonts which are depended by other packages in emacs.
-#+BEGIN_SRC
-M-x all-the-icons-install-fonts
-M-x nerd-icons-install-fonts
+#+BEGIN_SRC shell
+  M-x all-the-icons-install-fonts
+  M-x nerd-icons-install-fonts
 #+END_SRC
