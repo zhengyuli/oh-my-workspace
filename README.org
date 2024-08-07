@@ -491,6 +491,9 @@ Ubuntu:
 
 Mac:
 #+BEGIN_SRC shell
+  # Dependencies for installing lsp server
+  brew install npm
+
   # Dependencies for emacs ag
   brew install ag
 
@@ -512,6 +515,9 @@ Mac:
 
 Ubuntu:
 #+BEGIN_SRC shell
+  # Dependencies for installing lsp server
+  sudo apt -y install npm
+
   # Dependencies for emacs ag
   sudo apt -y install silversearcher-ag
 
