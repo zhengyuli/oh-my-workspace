@@ -1,5 +1,5 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-08-06 15:21:14 Tuesday by zhengyu.li>
+;; Time-stamp: <2024-09-19 11:25:47 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -64,6 +64,7 @@
   (require 'quickrun)
   (require 'format-all)
   (require 'devdocs)
+  (require 'emojify)
 
   ;; ----------------------------------------------------------
   ;; Customize `flycheck' related variables
@@ -132,7 +133,10 @@
               (flycheck-mode 1)
 
               ;; Enable format all mode
-              (format-all-mode 1))))
+              (format-all-mode 1)
+
+              ;; Disable emojify mode
+              (emojify-mode -1))))
 
 (eval-after-load "prog-mode" '(prog-mode-settings))
 
