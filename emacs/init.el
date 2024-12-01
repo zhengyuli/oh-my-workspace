@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-08-06 18:10:52 Tuesday by zhengyu.li>
+;; Time-stamp: <2024-12-01 22:45:40 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -266,7 +266,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; ******************************
  'async
  'ztree
- 'dired-single
  'dired-filter
  'dired-subtree
  'dired-hacks-utils
