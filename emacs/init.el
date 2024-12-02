@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-12-01 22:45:40 Sunday by zhengyuli>
+;; Time-stamp: <2024-12-02 21:23:38 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -238,6 +238,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'popup
  ;; ******************************
  'yasnippet
+ 'yasnippet-snippets
  ;; ******************************
  'company
  'company-prescient
