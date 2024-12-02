@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-08-08 09:31:11 星期四 by zhengyu.li>
+;; Time-stamp: <2024-12-02 22:11:48 Monday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
 ;;
@@ -286,8 +286,8 @@
   (customize-set-variable 'company-selection-wrap-around t)
   (customize-set-variable 'company-format-margin-function 'company-text-icons-margin)
   (customize-set-variable 'company-transformers '(delete-dups company-sort-by-occurrence))
-  (customize-set-variable 'company-backends
-                          (mapcar 'company-mode/backend-with-yas company-backends))
+  ;; (customize-set-variable 'company-backends
+  ;;                         (mapcar 'company-mode/backend-with-yas company-backends))
 
   ;; Customize `company-dabbrev' related variables
   (customize-set-variable 'company-dabbrev-downcase nil)
