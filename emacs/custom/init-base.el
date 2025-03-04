@@ -1,7 +1,7 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-12-02 22:11:48 Monday by zhengyuli>
+;; Time-stamp: <2025-10-04 14:43:40 Saturday by zhengyu.li>
 
-;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -1125,6 +1125,14 @@ z-lib search engine."
   ;; ----------------------------------------------------------
   ;; Customize `gptel' related variables
   (customize-set-variable 'gptel-default-mode 'markdown-mode)
+  (customize-set-variable 'gptel-backend
+                          (gptel-make-openai "DeepSeek"
+                            :host "api.deepseek.com"
+                            :endpoint "/chat/completions"
+                            :stream t
+                            :key 'gptel-api-key
+                            :models '(deepseek-chat deepseek-reasoner)))
+  (customize-set-variable 'gptel-model 'deepseek-chat)
 
   ;; ----------------------------------------------------------
   ;; Hooks
