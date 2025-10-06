@@ -175,9 +175,9 @@ configure_claude() {
             env: {
                 ANTHROPIC_AUTH_TOKEN: apiKey,
                 ANTHROPIC_BASE_URL: "'"$API_BASE_URL"'",
-                ANTHROPIC_DEFAULT_HAIKU_MODEL": "'"$DEFAULT_HAIKU_MODEL"'",
-                ANTHROPIC_DEFAULT_OPUS_MODEL": "'"$DEFAULT_OPUS_MODEL"'",
-                ANTHROPIC_DEFAULT_SONNET_MODEL": "'"$DEFAULT_SONNET_MODEL"'",
+                ANTHROPIC_DEFAULT_HAIKU_MODEL: "'"$DEFAULT_HAIKU_MODEL"'",
+                ANTHROPIC_DEFAULT_OPUS_MODEL: "'"$DEFAULT_OPUS_MODEL"'",
+                ANTHROPIC_DEFAULT_SONNET_MODEL: "'"$DEFAULT_SONNET_MODEL"'",
                 API_TIMEOUT_MS: "'"$API_TIMEOUT_MS"'",
             }
         }, null, 2), "utf-8");
