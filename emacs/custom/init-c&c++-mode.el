@@ -1,7 +1,7 @@
 ;;; package --- init-c&c++-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-06-28 15:17:15 星期三 by zhengyu.li>
+;; Time-stamp: <2025-10-18 18:26:44 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2025, 2025 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -48,10 +48,7 @@
 
   ;; Require
   (require 'google-c-style)
-  (require 'doxymacs)
   (require 'lsp-mode)
-  (require 'dap-mode)
-  (require 'dap-lldb)
 
   ;; ----------------------------------------------------------
   (defun c&c++-debug-target-program-path ()
@@ -74,17 +71,8 @@
     (add-hook hook
               (lambda ()
                 ;; ----------------------------------------------------------
-                (setq-local dap-lldb-debug-program `(,(executable-find "lldb-vscode")))
-
-                ;; Set c&c++ dap lldb debugged program function
-                (setq-local dap-lldb-debugged-program-function
-                            'c&c++-debug-target-program-path)
-
                 ;; Enable google cc style
     		    (google-set-c-style)
-
-                ;; Enable doxymacs mode
-                (doxymacs-mode 1)
 
                 ;; Enable lsp mode
                 (lsp-deferred)))))

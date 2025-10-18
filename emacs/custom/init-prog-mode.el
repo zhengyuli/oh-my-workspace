@@ -1,7 +1,7 @@
 ;;; package --- init-prog-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-09-19 11:25:47 Thursday by zhengyu.li>
+;; Time-stamp: <2025-10-18 18:23:05 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -176,28 +176,6 @@
               (lsp-enable-which-key-integration))))
 
 (eval-after-load "lsp-mode" '(lsp-mode-settings))
-
-;; ==================================================================================
-;; Customized settings for `dap-mode'
-(defun dap-mode-settings ()
-  "Settings for `dap-mode'."
-
-  ;; Require
-  (require 'dap-hydra)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `dap-mode' related variables
-  (customize-set-variable 'dap-auto-configure-features
-                          '(sessions locals breakpoints expressions tooltip))
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'dap-stopped-hook
-            (lambda (arg)
-              ;; ----------------------------------------------------------
-              (call-interactively #'dap-hydra))))
-
-(eval-after-load "dap-mode" '(dap-mode-settings))
 
 ;; ==================================================================================
 ;;; Provide features

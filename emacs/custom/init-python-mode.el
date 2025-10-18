@@ -1,7 +1,7 @@
 ;;; package --- init-python-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-05-10 08:36:14 Friday by zhengyuli>
+;; Time-stamp: <2025-10-18 18:24:50 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -88,48 +88,6 @@
 (eval-after-load "pyvenv" '(pyvenv-settings))
 
 ;; ==================================================================================
-;; Customized settings for `dap-python'
-(defun dap-python-settings ()
-  "Settings for `dap-python'."
-
-  ;; Require
-  (require 'with-venv)
-
-  ;; ----------------------------------------------------------
-  ;; Redefine `dap-python--pyenv-executable-find' defined in `dap-python'
-  (defun dap-python--pyenv-executable-find (command)
-    "Find executable COMMAND, taking pyenv shims into account.
-If the executable is a system executable and not in the same path
-as the pyenv version then also return nil. This works around
-https://github.com/pyenv/pyenv-which-ext."
-    (with-venv (executable-find command)))
-
-  ;; ----------------------------------------------------------
-  ;; Customize `dap-python' related variables
-  (customize-set-variable 'dap-python-debugger 'debugpy)
-
-  (dap-register-debug-template "Python :: Run file (buffer)"
-                               (list :type "python"
-                                     :args ""
-                                     :justMyCode nil
-                                     :cwd nil
-                                     :module nil
-                                     :program nil
-                                     :request "launch"
-                                     :name "Python :: Run file (buffer)"))
-
-  (dap-register-debug-template "Python :: Run file from project directory"
-                               (list :type "python"
-                                     :args ""
-                                     :justMyCode nil
-                                     :cwd "${workspaceFolder}"
-                                     :module nil
-                                     :program nil
-                                     :request "launch")))
-
-(eval-after-load "dap-python" '(dap-python-settings))
-
-;; ==================================================================================
 ;; Customized settings for `python-mode'
 (defun python-mode-settings ()
   "Settings for `python-mode'."
@@ -141,8 +99,6 @@ https://github.com/pyenv/pyenv-which-ext."
   (require 'py-isort)
   (require 'python-black)
   (require 'lsp-mode)
-  (require 'dap-mode)
-  (require 'dap-python)
 
   ;; ----------------------------------------------------------
   (defun sphinx-doc-format ()

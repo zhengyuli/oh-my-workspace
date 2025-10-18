@@ -1,7 +1,7 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2024-12-02 21:23:38 Monday by zhengyuli>
+;; Time-stamp: <2025-10-18 18:27:42 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2025 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -280,23 +280,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; ******************************
  'go-translate
  ;; ******************************
- 'gnuplot
- ;; ******************************
- 'org-roam
- ;; ******************************
  'mixed-pitch
- ;; ******************************
- 'eww-lnum
- ;; ******************************
- 'mu4e-alert
  ;; ******************************
  'password-store
  'pass
- ;; ******************************
- 'csv
- 'gptel
- ;; ******************************
- 'hackernews
  ;; ******************************
  'auto-package-update
  ;; ==============================
@@ -313,8 +300,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  'devdocs
  ;; ******************************
  'lsp-mode
- ;; ******************************
- 'dap-mode
  ;; ==============================
  ;; init-c&c++-mode.el
  'google-c-style
@@ -340,15 +325,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; init-haskell-mode.el
  'haskell-mode
  ;; ==============================
- ;; init-scala-mode.el
- 'scala-mode
- ;; ==============================
- ;; init-rust-mode.el
- 'rust-mode
- ;; ==============================
- ;; init-groovy-mode.el
- 'groovy-mode
- ;; ==============================
  ;; init-cmake-mode.el
  'cmake-mode
  ;; ==============================
@@ -357,16 +333,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  ;; ==============================
  ;; init-yaml-mode.el
  'yaml-mode
- ;; ==============================
- ;; init-plantuml-mode.el
- 'plantuml-mode
- ;; ==============================
- ;; init-org-mode.el
- 'org-bullets
- 'org-appear
- 'org-tree-slide
- 'valign
- 'ob-rust
  ;; ==============================
  ;; init-markdown-mode.el
  'markdown-mode
@@ -392,16 +358,11 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (load-library "init-go-mode")
 (load-library "init-elisp-mode")
 (load-library "init-haskell-mode")
-(load-library "init-scala-mode")
-(load-library "init-rust-mode")
-(load-library "init-groovy-mode")
 (load-library "init-sh-script-mode")
 (load-library "init-dockerfile-mode")
 (load-library "init-cmake-mode")
 (load-library "init-text-mode")
 (load-library "init-yaml-mode")
-(load-library "init-plantuml-mode")
-(load-library "init-org-mode")
 (load-library "init-markdown-mode")
 
 ;; Load user custom settings

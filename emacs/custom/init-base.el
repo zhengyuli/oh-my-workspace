@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2025-10-04 14:43:40 Saturday by zhengyu.li>
+;; Time-stamp: <2025-10-18 18:28:48 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
@@ -471,14 +471,6 @@
        "Dired")
       ((derived-mode-p 'vterm-mode)
        "Vterm")
-      ((derived-mode-p 'eww-mode)
-       "Eww")
-      ((derived-mode-p 'xwidget-webkit-mode)
-       "Xwidget Webkit")
-      ((derived-mode-p 'hackernews-mode)
-       "Hacker News")
-      ((string-prefix-p "*ChatGPT*" (buffer-name))
-       "GPT")
       ((or (string-prefix-p "*" (buffer-name))
            (memq major-mode '(magit-process-mode
                               magit-status-mode
@@ -840,145 +832,6 @@
 (eval-after-load "go-translate" '(go-translate-settings))
 
 ;; ==================================================================================
-;; Customize settings for `org-roam'
-(defun org-roam-settings ()
-  "Settings for `org-roam'."
-
-  ;; Require
-  (require 'org-roam-node)
-  (require 'org-roam-protocol)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `org-roam' related variables
-  (customize-set-variable 'org-roam-directory "~/OrgRoamNotes")
-
-  ;; Customize `org-roam-node' related variables
-  (customize-set-variable 'org-roam-node-display-template
-                          (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))))
-
-(eval-after-load "org-roam" '(org-roam-settings))
-
-;; ==================================================================================
-;; Settings for xwidget
-(defun xwidget-settings ()
-  "Settings for `xwidget'."
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `xwidget-webkit-mode'
-  (lazy-set-key
-   '(("n" . xwidget-webkit-scroll-up-line)
-     ("p" . xwidget-webkit-scroll-down-line))
-   xwidget-webkit-mode-map))
-
-(eval-after-load "xwidget" '(xwidget-settings))
-
-;; ==================================================================================
-(defun eww-bing/search ()
-  "Search the web for the text in the region or at the point by
-bing search engine."
-  (interactive)
-  (let ((eww-search-prefix "https://cn.bing.com/search?q="))
-    (call-interactively 'eww-search-words)))
-
-(defun eww-google/search ()
-  "Search the web for the text in the region or at the point by
-google search engine."
-  (interactive)
-  (let ((eww-search-prefix "https://www.google.com/search?q="))
-    (call-interactively 'eww-search-words)))
-
-(defun eww-github/search ()
-  "Search the web for the text in the region or at the point by
-github search engine."
-  (interactive)
-  (let ((eww-search-prefix "https://github.com/search?q="))
-    (call-interactively 'eww-search-words)))
-
-(defun eww-wiki/search ()
-  "Search the web for the text in the region or at the point by
-wiki search engine."
-  (interactive)
-  (let ((eww-search-prefix "https://en.wikipedia.org/wiki/"))
-    (call-interactively 'eww-search-words)))
-
-(defun eww-ebook/search ()
-  "Search the ebook the text in the region or at the point by
-z-lib search engine."
-  (interactive)
-  (let ((eww-search-prefix "https://z-lib.is/s?q="))
-    (call-interactively 'eww-search-words)))
-
-(defun eww-quit ()
-  "Quit and kill current eww buffer."
-  (interactive)
-  (unless (derived-mode-p 'eww-mode)
-    (error "Not a eww buffer."))
-  (kill-this-buffer))
-
-;; Customized settings for `eww'
-(defun eww-settings ()
-  "Settings for `eww'."
-
-  ;; Require
-  (require 'browse-url)
-  (require 'shr)
-  (require 'eww-lnum)
-  (require 'mixed-pitch)
-
-  ;; ----------------------------------------------------------
-  (defun eww-rename-buffer ()
-    "Rename `eww-mode' buffer so sites open in new page."
-    (let ((title (plist-get eww-data :title)))
-      (when (eq major-mode 'eww-mode )
-        (if title
-            (rename-buffer (concat "EWW " title ) t)
-          (rename-buffer "eww" t)))))
-
-  ;; ----------------------------------------------------------
-  ;; Customize `shr' related variables
-  (customize-set-variable 'shr-use-fonts nil)
-  (customize-set-variable 'shr-width 120)
-
-  ;; Customize `eww-lnum' related variables
-  (customize-set-variable 'eww-lnum-quick-browsing nil)
-
-  ;; Customize `eww' related variables
-  (customize-set-variable 'eww-search-prefix "https://cn.bing.com/search?q=")
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `eww'
-  (lazy-set-key
-   '(("r" . eww-reload)
-     ("b" . eww-add-bookmark)
-     ("B" . eww-list-bookmarks)
-     ("n" . next-line)
-     ("p" . previous-line)
-     ("N" . eww-forward-url)
-     ("P" . eww-back-url)
-     ("h" . eww-list-histories)
-     ("j" . eww-open-in-new-buffer)
-     ("d" . eww-download)
-     ("o" . eww-lnum-follow)
-     ("s" . eww-search-words)
-     ("F" . eww-toggle-fonts)
-     ("C" . eww-toggle-colors)
-     ("e" . eww-browse-with-external-browser)
-     ("x" . eww-quit))
-   eww-mode-map)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'eww-mode-hook
-            (lambda ()
-              ;; -----------------------------------------------
-              ;; Enable mixed pitch mode
-              (mixed-pitch-mode 1)))
-
-  (add-hook 'eww-after-render-hook 'eww-rename-buffer))
-
-(eval-after-load "eww" '(eww-settings))
-
-;; ==================================================================================
 ;; Customized settings for `auth-source'
 (defun auth-source-settings ()
   "Settings for `auth-source'."
@@ -991,179 +844,6 @@ z-lib search engine."
   (auth-source-pass-enable))
 
 (eval-after-load "auth-source" '(auth-source-settings))
-
-;; ==================================================================================
-;; Customized settings for `mu4e'
-(defun mu4e-settings ()
-  "Settings for `mu4e'."
-
-  ;; Require
-  (require 'message)
-  (require 'mm-encode)
-  (require 'simple)
-  (require 'smtpmail)
-  (require 'mu4e-vars)
-  (require 'mu4e-headers)
-  (require 'mu4e-view)
-  (require 'mu4e-compose)
-  (require 'mu4e-context)
-  (require 'mu4e-alert)
-
-  ;; ----------------------------------------------------------
-  ;; Customize `mu4e-vars' related faces
-  (custom-set-faces
-   '(mu4e-unread-face ((t (:foreground "#54ff9f"))))
-   '(mu4e-header-highlight-face ((t :foreground "#ff83fa" :underline t))))
-
-  ;; ----------------------------------------------------------
-  ;; Customize `message' related variables
-  (customize-set-variable 'message-kill-buffer-on-exit t)
-  (customize-set-variable 'message-citation-line-function
-                          'message-insert-formatted-citation-line)
-  (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
-
-  ;; Customize `mm-encode' related variables
-  (customize-set-variable 'mm-sign-option 'guided)
-
-  ;; Customize `simple' related composition package
-  (customize-set-variable 'mail-user-agent 'mu4e-user-agent)
-
-  ;; Customize `smtpmail' related variables
-  (customize-set-variable 'smtpmail-debug-info t)
-  (customize-set-variable 'smtpmail-stream-type 'starttls)
-
-  ;; Customize `mu4e-vars' related variables
-  (customize-set-variable 'mu4e-get-mail-command
-                          (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
-  (customize-set-variable 'mu4e-update-interval 300)
-  (customize-set-variable 'mu4e-completing-read-function 'completing-read)
-  (customize-set-variable 'mu4e-change-filenames-when-moving t)
-  (customize-set-variable 'mu4e-context-policy 'pick-first)
-  (customize-set-variable 'mu4e-display-update-status-in-modeline t)
-  (customize-set-variable 'mu4e-compose-complete-addresses t)
-  (customize-set-variable 'mu4e-index-update-error-warning nil)
-
-  (customize-set-variable 'mu4e-attachment-dir "~/Downloads")
-  (customize-set-variable 'mu4e-refile-folder "/Archive")
-  (customize-set-variable 'mu4e-sent-folder "/Sent")
-  (customize-set-variable 'mu4e-drafts-folder "/Drafts")
-  (customize-set-variable 'mu4e-trash-folder "/Trash")
-
-  (customize-set-variable 'mu4e-headers-fields '((:human-date . 20)
-                                                 (:flags . 6)
-                                                 (:mailing-list . 10)
-                                                 (:from . 22)
-                                                 (:subject . nil)))
-  (customize-set-variable 'mu4e-headers-date-format "%d-%m-%Y %H:%M")
-  (customize-set-variable 'mu4e-headers-include-related t)
-
-  (customize-set-variable 'mu4e-view-show-addresses t)
-  (customize-set-variable 'mu4e-view-show-images t)
-  (customize-set-variable 'mu4e-use-fancy-chars t)
-
-  (customize-set-variable 'mu4e-compose-context-policy nil)
-  (customize-set-variable 'mu4e-compose-dont-reply-to-self t)
-  (customize-set-variable 'mu4e-compose-keep-self-cc nil)
-
-  ;; Customize `mu4e-context' related variables
-  (setq mu4e-contexts
-        `(,(make-mu4e-context
-            :name "Personal"
-            :enter-func (lambda ()
-                          (mu4e-message "Entering personal context")
-                          (when (string-match-p (buffer-name (current-buffer)) "mu4e-main")
-                            (revert-buffer)))
-            :leave-func (lambda ()
-                          (mu4e-message "Leaving personal context")
-                          (when (string-match-p (buffer-name (current-buffer)) "mu4e-main")
-                            (revert-buffer)))
-            :match-func (lambda (msg)
-                          (when msg
-                            (or (mu4e-message-contact-field-matches msg :to "lizhengyu419@outlook")
-                                (mu4e-message-contact-field-matches msg :from "lizhengyu419@outlook")
-                                (mu4e-message-contact-field-matches msg :cc "lizhengyu419@outlook")
-                                (mu4e-message-contact-field-matches msg :bcc "lizhengyu419@outlook"))))
-            :vars '((user-mail-address . "lizhengyu419@outlook.com")
-                    (smtpmail-smtp-user . "lizhengyu419@outlook.com")
-                    (smtpmail-smtp-server . "smtp-mail.outlook.com")
-                    (smtpmail-smtp-service . 587 )
-                    (mu4e-compose-signature . "Best Wishes\nZhengyu Li")))))
-
-  ;; ----------------------------------------------------------
-  ;; Enable desktop notifications for unread emails
-  (mu4e-alert-enable-notifications)
-
-  ;; Enable display of unread emails in mode-line
-  (mu4e-alert-enable-mode-line-display)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'mu4e-compose-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Set buffer column width
-              (set-fill-column 75))))
-
-(eval-after-load "mu4e" '(mu4e-settings))
-
-(autoload 'mu4e "mu4e" "start mu4e, then show the main view" t)
-
-;; ==================================================================================
-;; Require
-(require 'awesome-chatgpt-prompts)
-
-(defun gpt-new ()
-  "Create a new gptel session."
-  (interactive)
-  (let ((current-prefix-arg '(4)))
-    (call-interactively #'gptel)))
-
-;; Settings for `gptel'
-(defun gptel-settings ()
-  "Settings for `gptel'."
-
-  ;; ----------------------------------------------------------
-  ;; Customize `gptel' related variables
-  (customize-set-variable 'gptel-default-mode 'markdown-mode)
-  (customize-set-variable 'gptel-backend
-                          (gptel-make-openai "DeepSeek"
-                            :host "api.deepseek.com"
-                            :endpoint "/chat/completions"
-                            :stream t
-                            :key 'gptel-api-key
-                            :models '(deepseek-chat deepseek-reasoner)))
-  (customize-set-variable 'gptel-model 'deepseek-chat)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'gptel-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Set buffer column width to 1000
-              (setq-local fill-column 1000)
-
-              ;; Disable yasnippet mode
-              (yas-minor-mode -1)
-
-              ;; Disable company mode
-              (company-mode -1))))
-
-(eval-after-load "gptel" '(gptel-settings))
-
-(autoload 'gptel-request "gptel" "Request a response from ChatGPT for PROMPT.")
-
-;; ==================================================================================
-;; Settings for `hackernews'
-(defun hackernews-settings()
-  "Settings for `hackernews'."
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `hackernews'
-  (lazy-unset-key
-   '("g")
-   hackernews-mode-map))
-
-(eval-after-load "hackernews" '(hackernews-settings))
 
 ;; ==================================================================================
 (defun auto-package-upgrade-all ()
@@ -1349,21 +1029,7 @@ z-lib search engine."
                ("C-x C-d" . counsel-dired)
                ("C-x d" . counsel-dired-jump)
                ;; Go translate
-               ("C-x C-p" . gts-do-translate)
-               ;; Org roam
-               ("C-c n f" . org-roam-node-find)
-               ("C-c n i" . org-roam-node-insert)
-               ("C-c n g" . org-roam-graph)
-               ("C-c n c" . org-roam-capture)
-               ("C-c n l" . org-roam-buffer-toggle)
-               ("C-c n j" . org-roam-dailies-capture-today)
-               ;; Eww
-               ("C-x C-g" . eww-search-words)
-               ;; ChatGPT
-               ("C-RET" . gptel-send)
-               ("C-<return>" . gptel-send)
-               ("C-S-RET" . gptel-menu)
-               ("C-S-<return>" . gptel-menu)))
+               ("C-x C-p" . gts-do-translate)))
 
             ;; ----------------------------------------------------------
             ;; Initialize mac system exec path
@@ -1452,9 +1118,6 @@ z-lib search engine."
 
             ;; Enable modeline display mode
             (display-time-mode 1)
-
-            ;; Enable org roam db auto sync mode
-            ;; (org-roam-db-autosync-mode 1)
 
             ;; Start pinentry server
             (pinentry-start)))
