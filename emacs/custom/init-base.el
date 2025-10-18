@@ -1,5 +1,5 @@
 ;;; package --- init-base.el -*- lexical-binding:t -*-
-;; Time-stamp: <2025-10-18 18:28:48 Saturday by zhengyuli>
+;; Time-stamp: <2025-10-18 20:35:13 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
@@ -367,14 +367,6 @@
   (define-auto-insert-custom
     '("\\.hs\\'" . "Haskell header")
     ["template.hs" autoinsert-yas-expand])
-
-  (define-auto-insert-custom
-    '("\\.\\(scala\\|sbt\\|worksheet\\.sc\\)\\'" . "Scala header")
-    ["template.scala" autoinsert-yas-expand])
-
-  (define-auto-insert-custom
-    '("\\.g\\(?:ant\\|roovy\\|radle\\)\\'" . "Groovy header")
-    ["template.groovy" autoinsert-yas-expand])
 
   (define-auto-insert-custom
     '("\\.sh\\'" . "Shell script header")
@@ -866,10 +858,6 @@
 ;; Alias
 (defalias 'git-status 'magit-status)
 (defalias 'git-log 'magit-log-all)
-
-(defalias 'email 'mu4e)
-
-(defalias 'gpt 'gptel)
 
 (defalias 'refresh-auth-cache 'auth-source-forget-all-cached)
 

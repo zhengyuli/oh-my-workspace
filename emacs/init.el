@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2025-10-18 18:27:42 Saturday by zhengyuli>
+;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2025 zhengyu li
 ;;
@@ -63,6 +63,10 @@
 
 ;; Emacs configuration proxy
 (defvar emacs-http-proxy nil "Emacs configuration http proxy, default is nil.")
+
+;; GC optimization for faster startup
+(defvar gc-cons-threshold-original gc-cons-threshold "Original value of gc-cons-threshold.")
+(defvar gc-cons-percentage-original gc-cons-percentage "Original value of gc-cons-percentage.")
 
 ;; ==================================================================================
 (defun ensure-font-installed (font)
@@ -173,6 +177,18 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; Basic check
 (unless (>= (string-to-number emacs-version) 27.1)
   (error "The Emacs version must be >= 27.1."))
+
+;; Set high GC thresholds during startup
+(setq gc-cons-threshold 100000000)
+(setq gc-cons-percentage 0.6)
+
+;; Hook to restore GC settings after startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            ;; ----------------------------------------------------------
+            (setq gc-cons-threshold gc-cons-threshold-original)
+            (setq gc-cons-percentage gc-cons-percentage-original)
+            (message "GC settings restored to normal values")))
 
 (ensure-font-installed emacs-config-fixed-font)
 
@@ -351,17 +367,16 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; Load user defined libraries
 (load-library "init-base")
-(load-library "init-prog-mode")
-(load-library "init-cc-mode")
+(load-library "init-text-mode")
+(load-library "init-programming-base")
+(load-library "init-elisp-mode")
 (load-library "init-c&c++-mode")
 (load-library "init-python-mode")
 (load-library "init-go-mode")
-(load-library "init-elisp-mode")
 (load-library "init-haskell-mode")
 (load-library "init-sh-script-mode")
 (load-library "init-dockerfile-mode")
 (load-library "init-cmake-mode")
-(load-library "init-text-mode")
 (load-library "init-yaml-mode")
 (load-library "init-markdown-mode")
 
