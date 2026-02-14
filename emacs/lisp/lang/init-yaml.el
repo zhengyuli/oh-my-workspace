@@ -1,9 +1,9 @@
-;;; package --- init-cmake-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 19:19:30 Thursday by zhengyuli>
+;;; init-yaml.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
-;; Author: zhengyu li <lizhengyu419@outlook.com>
+;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
 
 ;; This file is not part of GNU Emacs.
@@ -22,35 +22,19 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-cmake-mode)
-
-;;; Require:
+;; YAML mode configuration.
 
 ;;; Code:
+
 ;; ==================================================================================
-;; Customized settings for `cmake-mode'
-(defun cmake-mode-settings ()
-  "Settings for `cmake-mode'."
-
-  ;; Require
-  (require 'lsp-mode)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'cmake-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Enable lsp mode
-              (lsp-deferred))))
-
-(eval-after-load "cmake-mode" '(cmake-mode-settings))
+;; YAML mode
+(use-package yaml-mode
+  :defer t
+  :hook (yaml-mode . lsp-deferred))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-cmake-mode)
+(provide 'init-yaml)
 
-;;; init-cmake-mode.el ends here
+;;; init-yaml.el ends here

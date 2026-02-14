@@ -22,75 +22,73 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
-;;; Require
-(require 'package)
+;; Emacs configuration entry point.
+;; This file bootstraps use-package and loads all configuration modules.
 
 ;;; Code:
+
 ;; ==================================================================================
+;; Basic check
+(unless (>= (string-to-number emacs-version) 30.2)
+  (error "The Emacs version must be >= 30.2."))
+
+;; ==================================================================================
+;; Early initialization 
+;; GC 调优 - 启动时增大阈值，加快启动速度
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6)
+
+;; 阻止 package.el 过早加载
+(setq package-enable-at-startup nil)
+
+;; 阻止 UI 元素短暂显示 (避免启动时闪烁)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
+
+;; 原生编译设置 (Emacs 29+)
+(when (boundp 'native-comp-deferred-compilation)
+  (setq native-comp-deferred-compilation t))
+
+;; ==================================================================================
+;; Global variables
 ;; Emacs configuration root path
-(defvar emacs-config-root-path "_EMACS_CONFIG_ROOT_PATH_"
+(defvar emacs-config-root-path "/Users/zhengyu.li/oh-my-workspace/emacs"
   "Emacs configuration root path.")
 
-;; Emacs configuration temp packages path to load 3rd packages which are not stable
-(defvar emacs-config-temp-packages-path (concat user-emacs-directory "temp-packages/")
-  "Emacs configuration custom site packages path.")
-
-;; Emacs configuration custom path to load custom settings
-(defvar emacs-config-custom-settings-path (concat emacs-config-root-path "custom/")
+(defvar emacs-config-custom-settings-path (concat emacs-config-root-path "/lisp/")
   "Emacs configuration custom settings path.")
 
-;; Emacs configuration custom site packages path to load 3rd party settings
-(defvar emacs-config-custom-site-packages-path (concat emacs-config-root-path "site-packages/")
+(defvar emacs-config-custom-site-packages-path (concat emacs-config-root-path "/site-packages/")
   "Emacs configuration custom site packages path.")
 
-;; Emacs configuration fixed font
-(defvar emacs-config-fixed-font "Source Code Pro" "Emacs configuration fixed font.")
+;; Fonts
+(defvar emacs-config-fixed-font "Source Code Pro"
+  "Emacs configuration fixed font.")
+(defvar emacs-config-fixed-serif-font "Source Serif Pro"
+  "Emacs configuration fixed serif font.")
+(defvar emacs-config-variable-font "Times New Roman"
+  "Emacs configuration variable font.")
 
-;; Emacs configuration fixed serif font
-(defvar emacs-config-fixed-serif-font "Source Serif Pro" "Emacs configuration fixed serif font.")
+;; User info
+(defvar emacs-config-user "Zhengyu Li"
+  "Emacs configuration user.")
+(defvar emacs-config-email "lizhengyu419@outlook.com"
+  "Emacs configuration email.")
 
-;; Emacs configuration variable font
-(defvar emacs-config-variable-font "Times New Roman" "Emacs configuration variable font.")
+;; Proxy
+(defvar emacs-http-proxy nil
+  "Emacs configuration http proxy, default is nil.")
 
-;; Emacs configuration user
-(defvar emacs-config-user "Zhengyu Li" "Emacs configuration user.")
-
-;; Emacs configuration email
-(defvar emacs-config-email "lizhengyu419@outlook.com" "Emacs configuration email.")
-
-;; Emacs configuration proxy
-(defvar emacs-http-proxy nil "Emacs configuration http proxy, default is nil.")
-
-;; GC optimization for faster startup
-(defvar gc-cons-threshold-original gc-cons-threshold "Original value of gc-cons-threshold.")
-(defvar gc-cons-percentage-original gc-cons-percentage "Original value of gc-cons-percentage.")
+;; GC optimization - save original values
+(defvar gc-cons-threshold-original gc-cons-threshold
+  "Original value of gc-cons-threshold.")
+(defvar gc-cons-percentage-original gc-cons-percentage
+  "Original value of gc-cons-percentage.")
 
 ;; ==================================================================================
-(defun ensure-font-installed (font)
-  "Assure font is installed."
-  (when (and
-         (display-graphic-p)
-         (null (x-list-fonts font)))
-    (error (format "Missing \"%s\" font, please install." font))))
-
-(defun ensure-package-installed (&rest packages)
-  "Assure every package is installed, ask for installation if it’s not.
-
-Return a list of installed packages or nil for every skipped package."
-  (mapcar
-   (lambda (package)
-     (if (package-installed-p package)
-         nil
-       (condition-case nil
-           (package-install package)
-         (error
-          (package-refresh-contents)
-          (package-install package)))))
-   packages))
-
+;; Helper function for load-path
 (defun add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.
 Look up all subdirs under `BASE-DIR' recursively and add them into load path."
@@ -98,109 +96,15 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
-(defun lazy-set-key (key-alist &optional keymap key-prefix)
-  "This function is to little type when define key binding.
-`KEYMAP' is a add keymap for some binding, default is `current-global-map'.
-`KEY-ALIST' is a alist contain main-key and command.
-`KEY-PREFIX' is a add prefix for some binding, default is nil."
-  (let (key def)
-    (or keymap (setq keymap (current-global-map)))
-    (if key-prefix
-        (setq key-prefix (concat key-prefix " "))
-      (setq key-prefix ""))
-    (dolist (element key-alist)
-      (setq key (car element))
-      (setq def (cdr element))
-      (cond ((stringp key) (setq key (read-kbd-macro (concat key-prefix key))))
-            ((vectorp key) nil)
-            (t (signal 'wrong-type-argument (list 'array key))))
-      (define-key keymap key def))))
-
-(defun lazy-unset-key (key-list &optional keymap)
-  "This function is to little type when unset key binding.
-`KEYMAP' is add keymap for some binding, default is `current-global-map'
-`KEY-LIST' is list contain key."
-  (let (key)
-    (or keymap (setq keymap (current-global-map)))
-    (dolist (key key-list)
-      (cond ((stringp key) (setq key (read-kbd-macro (concat key))))
-            ((vectorp key) nil)
-            (t (signal 'wrong-type-argument (list 'array key))))
-      (define-key keymap key nil))))
-
-(defun show-http-proxy ()
-  "Show http/https proxy."
-  (interactive)
-  (if url-proxy-services
-      (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
-    (message "No http proxy")))
-
-(defun set-http-proxy (proxy)
-  "Set HTTP/HTTPS proxy."
-  (interactive (list (read-string
-                      (format "HTTP Proxy Server [%s]: " emacs-http-proxy)
-                      nil nil emacs-http-proxy)))
-  (if (not (string-empty-p proxy))
-      (let* ((proxy (if (string-match-p "https?://" proxy)
-                        proxy
-                      (concat "http://" proxy)))
-             (parsed-url (url-generic-parse-url proxy))
-             (proxy-no-scheme
-              (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
-        (setenv "http_proxy" proxy)
-        (setenv "https_proxy" proxy)
-        (setenv "all_proxy" proxy)
-        (setq url-proxy-services
-              `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
-                ("http" . ,proxy-no-scheme)
-                ("https" . ,proxy-no-scheme)))
-        (show-http-proxy))
-    (warn "Proxy url could not be empty.")))
-
-(defun enable-http-proxy ()
-  (interactive)
-  (if emacs-http-proxy
-      (set-http-proxy emacs-http-proxy)))
-
-(defun unset-http-proxy ()
-  "Unset http/https proxy."
-  (interactive)
-  (setenv "http_proxy")
-  (setenv "https_proxy")
-  (setenv "all_proxy")
-  (setq url-proxy-services nil)
-  (show-http-proxy))
-
-(defalias 'disable-http-proxy 'unset-http-proxy)
+;; ==================================================================================
+;; Add custom directories to load-path first
+(add-subdirs-to-load-path emacs-config-custom-settings-path)
+(add-subdirs-to-load-path emacs-config-custom-site-packages-path)
 
 ;; ==================================================================================
-;; Basic check
-(unless (>= (string-to-number emacs-version) 27.1)
-  (error "The Emacs version must be >= 27.1."))
+;; Package manager setup
+(require 'package)
 
-;; Set high GC thresholds during startup
-(setq gc-cons-threshold 100000000)
-(setq gc-cons-percentage 0.6)
-
-;; Hook to restore GC settings after startup
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            ;; ----------------------------------------------------------
-            (setq gc-cons-threshold gc-cons-threshold-original)
-            (setq gc-cons-percentage gc-cons-percentage-original)
-            (message "GC settings restored to normal values")))
-
-(ensure-font-installed emacs-config-fixed-font)
-
-(ensure-font-installed emacs-config-fixed-serif-font)
-
-(ensure-font-installed emacs-config-variable-font)
-
-;; ==================================================================================
-;; Try to enable HTTP proxy
-(enable-http-proxy)
-
-;; Initialize package manager
 ;; Add package archives
 (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -208,181 +112,76 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; Initialize packages
 (package-initialize)
 
-;; Refresh package list if any
+;; Refresh package list if needed
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-;; Install packages
-(ensure-package-installed
- ;; ==============================
- ;; init-base.el
- 'beacon
- 'smooth-scrolling
- ;; ******************************
- 'exec-path-from-shell
- ;; ******************************
- 'move-text
- 'expand-region
- 'multiple-cursors
- 'visual-regexp-steroids
- ;; ******************************
- 'which-key
- 'undo-tree
- 'browse-kill-ring
- 'goto-chg
- 'goto-line-preview
- ;; ******************************
- 'all-the-icons
- ;; ******************************
- 'ivy
- 'ivy-rich
- 'ivy-prescient
- 'all-the-icons-ivy-rich
- ;; ******************************
- 'swiper
- ;; ******************************
- 'counsel
- 'counsel-projectile
- ;; ******************************
- 'color-moccur
- ;; ******************************
- 'ag
- 'wgrep-ag
- ;; ******************************
- 'avy
- ;; ******************************
- 'popup
- ;; ******************************
- 'yasnippet
- 'yasnippet-snippets
- ;; ******************************
- 'company
- 'company-prescient
- 'company-box
- 'company-quickhelp
- 'company-quickhelp-terminal
- ;; ******************************
- 'flyspell-correct
- 'flyspell-correct-avy-menu
- ;; ******************************
- 'winum
- 'zoom
- 'dimmer
- 'switch-window
- 'centaur-tabs
- 'emojify
- 'doom-modeline
- 'doom-themes
- 'textsize
- ;; ******************************
- 'dashboard
- ;; ******************************
- 'restart-emacs
- ;; ******************************
- 'pinentry
- ;; ******************************
- 'async
- 'ztree
- 'dired-filter
- 'dired-subtree
- 'dired-hacks-utils
- 'dired-filetype-face
- 'all-the-icons-dired
- ;; ******************************
- 'vterm
- 'multi-vterm
- ;; ******************************
- 'magit
- ;; ******************************
- 'go-translate
- ;; ******************************
- 'mixed-pitch
- ;; ******************************
- 'password-store
- 'pass
- ;; ******************************
- 'auto-package-update
- ;; ==============================
- ;; init-prog-mode.el
- 'smartparens
- 'hungry-delete
- 'rainbow-delimiters
- 'hl-todo
- 'flycheck
- 'whitespace-cleanup-mode
- 'quickrun
- 'dumb-jump
- 'format-all
- 'devdocs
- ;; ******************************
- 'lsp-mode
- ;; ==============================
- ;; init-c&c++-mode.el
- 'google-c-style
- ;; ==============================
- ;; init-python-mode.el
- 'sphinx-doc
- 'poetry
- 'python-docstring
- 'pyvenv
- 'python-black
- 'py-isort
- 'with-venv
- ;; ==============================
- ;; init-go-mode.el
- 'go-mode
- 'go-eldoc
- ;; ==============================
- ;; init-elisp-mode.el
- 'elisp-slime-nav
- 'lisp-extra-font-lock
- 'rainbow-mode
- ;; ==============================
- ;; init-haskell-mode.el
- 'haskell-mode
- ;; ==============================
- ;; init-cmake-mode.el
- 'cmake-mode
- ;; ==============================
- ;; init-dockerfile-mode.el
- 'dockerfile-mode
- ;; ==============================
- ;; init-yaml-mode.el
- 'yaml-mode
- ;; ==============================
- ;; init-markdown-mode.el
- 'markdown-mode
- 'markdownfmt
- 'impatient-mode)
+;; ==================================================================================
+;; Install and configure use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t
+      use-package-compute-statistics t
+      use-package-verbose t)
 
 ;; ==================================================================================
-;; Create the temporary packages directory if any
-(unless (file-directory-p emacs-config-temp-packages-path)
-  (make-directory emacs-config-temp-packages-path))
+;; Load utility functions
+(require 'init-functions)
 
-;; Add custom directory to load-path
-(add-subdirs-to-load-path emacs-config-temp-packages-path)
-(add-subdirs-to-load-path emacs-config-custom-settings-path)
-(add-subdirs-to-load-path emacs-config-custom-site-packages-path)
+;; ==================================================================================
+;; Font verification
+(ensure-font-installed emacs-config-fixed-font)
+(ensure-font-installed emacs-config-fixed-serif-font)
+(ensure-font-installed emacs-config-variable-font)
 
-;; Load user defined libraries
-(load-library "init-base")
-(load-library "init-text-mode")
-(load-library "init-programming-base")
-(load-library "init-elisp-mode")
-(load-library "init-c&c++-mode")
-(load-library "init-python-mode")
-(load-library "init-go-mode")
-(load-library "init-haskell-mode")
-(load-library "init-sh-script-mode")
-(load-library "init-dockerfile-mode")
-(load-library "init-cmake-mode")
-(load-library "init-yaml-mode")
-(load-library "init-markdown-mode")
+;; ==================================================================================
+;; Try to enable HTTP proxy
+(enable-http-proxy)
 
+;; ==================================================================================
+;; Load configuration modules
+;; Core modules
+(require 'init-ui)
+(require 'init-editing)
+(require 'init-completion)
+(require 'init-dired)
+(require 'init-vc)
+(require 'init-terminal)
+(require 'init-utilities)
+
+;; Language modules
+(require 'init-prog-base)
+(require 'init-text)
+(require 'init-elisp)
+(require 'init-cc)
+(require 'init-python)
+(require 'init-go)
+(require 'init-haskell)
+(require 'init-shell)
+(require 'init-dockerfile)
+(require 'init-cmake)
+(require 'init-yaml)
+(require 'init-markdown)
+
+;; ==================================================================================
+;; Restore GC settings after startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold gc-cons-threshold-original)
+            (setq gc-cons-percentage gc-cons-percentage-original)
+            (message "Emacs ready in %.2f seconds with %d garbage collections."
+                     (float-time
+                      (time-subtract after-init-time before-init-time))
+                     gcs-done)))
+
+;; ==================================================================================
 ;; Load user custom settings
-(if (not (file-exists-p "~/.emacs.d/custom_settings.el"))
-    (shell-command "touch ~/.emacs.d/custom_settings.el"))
-(load-file "~/.emacs.d/custom_settings.el")
+(let ((custom-settings-file (expand-file-name "~/.emacs.d/custom_settings.el")))
+  (unless (file-exists-p custom-settings-file)
+    (shell-command (concat "touch " custom-settings-file)))
+  (load-file custom-settings-file))
 
 ;;; init.el ends here

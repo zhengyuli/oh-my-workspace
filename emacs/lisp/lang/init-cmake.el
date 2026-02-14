@@ -1,9 +1,9 @@
-;;; package --- init-dockerfile-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 19:19:45 Thursday by zhengyuli>
+;;; init-cmake.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
-;; Author: zhengyu li <lizhengyu419@outlook.com>
+;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
 
 ;; This file is not part of GNU Emacs.
@@ -22,35 +22,19 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-dockerfile-mode)
-
-;;; Require:
+;; CMake mode configuration.
 
 ;;; Code:
+
 ;; ==================================================================================
-;; Customized settings for `dockerfile-mode'
-(defun dockerfile-mode-settings ()
-  "Settings for `dockerfile-mode'."
-
-  ;; Require
-  (require 'lsp-mode)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'dockerfile-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Enable lsp mode
-              (lsp-deferred))))
-
-(eval-after-load "dockerfile-mode" '(dockerfile-mode-settings))
+;; CMake mode
+(use-package cmake-mode
+  :defer t
+  :hook (cmake-mode . lsp-deferred))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-dockerfile-mode)
+(provide 'init-cmake)
 
-;;; init-dockerfile-mode.el ends here
+;;; init-cmake.el ends here

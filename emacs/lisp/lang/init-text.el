@@ -1,9 +1,9 @@
-;;; package --- init-haskell-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-03-31 19:20:22 Thursday by zhengyuli>
+;;; init-text.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
-;; Author: zhengyu li <lizhengyu419@outlook.com>
+;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
 
 ;; This file is not part of GNU Emacs.
@@ -22,35 +22,22 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-haskell-mode)
-
-;;; Require:
+;; Text mode configuration.
 
 ;;; Code:
+
 ;; ==================================================================================
-;; Customized settings for `haskell-mode'
-(defun haskell-mode-settings ()
-  "Settings for `haskell-mode'."
-
-  ;; Require
-  (require 'lsp-mode)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'haskell-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Enable lsp mode
-              (lsp-deferred))))
-
-(eval-after-load "haskell-mode" '(haskell-mode-settings))
+;; Text mode hook
+(add-hook 'text-mode-hook
+          (lambda ()
+            ;; Enable visual line mode
+            (visual-line-mode 1)
+            ;; Enable flyspell mode
+            (flyspell-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-haskell-mode)
+(provide 'init-text)
 
-;;; init-haskell-mode.el ends here
+;;; init-text.el ends here

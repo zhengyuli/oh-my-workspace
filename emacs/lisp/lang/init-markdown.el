@@ -1,9 +1,9 @@
-;;; package --- init-markdown-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2023-04-27 10:42:21 Thursday by zhengyuli>
+;;; init-markdown.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
-;; Author: zhengyu li <lizhengyu419@outlook.com>
+;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
 
 ;; This file is not part of GNU Emacs.
@@ -22,26 +22,32 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-markdown-mode)
-
-;;; Require:
+;; Markdown mode configuration.
 
 ;;; Code:
+
 ;; ==================================================================================
-;; Customized settings for `markdown-mode'
-(defun markdown-mode-settings ()
-  "Settings for `markdown-mode'."
+;; Valign
+(use-package valign
+  :defer t)
 
-  ;; Require
-  (require 'valign)
-  (require 'markdownfmt)
-  (require 'impatient-mode)
+;; ==================================================================================
+;; Markdownfmt
+(use-package markdownfmt
+  :defer t)
 
-  ;; ----------------------------------------------------------
+;; ==================================================================================
+;; Impatient mode
+(use-package impatient-mode
+  :defer t)
+
+;; ==================================================================================
+;; Markdown mode
+(use-package markdown-mode
+  :defer t
+  :hook (markdown-mode . markdown-mode-setup)
+  :config
   (defun markdown-impatient-mode-filter (buffer)
     "Markdown filter for impatient-mode"
     (princ
@@ -59,10 +65,8 @@
                      href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
                      integrity='sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg=='
                      crossorigin='anonymous'>
-               <!-- https://github.com/sindresorhus/github-markdown-css -->
                <link rel='stylesheet' href=
                      'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/github.min.css'>
-               <!-- https://highlightjs.org -->
 
                <style>
                  .markdown-body {
@@ -98,37 +102,27 @@
     (interactive)
     (imp-visit-buffer))
 
-  ;; ----------------------------------------------------------
-  ;; Customize `markdown-mode' related variables
-  (customize-set-variable 'markdown-live-preview-window-function 'pop-to-buffer)
-  (customize-set-variable 'markdown-command "pandoc -s --mathjax")
-  (customize-set-variable 'markdown-enable-math t)
-  (customize-set-variable 'markdown-display-remote-images t)
+  (defun markdown-mode-setup ()
+    "Setup markdown mode."
+    ;; Enable impatient mode
+    (impatient-mode 1)
+    ;; Setup user defined impatient mode filter
+    (imp-set-user-filter 'markdown-impatient-mode-filter)
+    ;; Set buffer column width to 120
+    (setq-local fill-column 120)
+    ;; Enable auto fill mode
+    (auto-fill-mode 1)
+    ;; Enable valign mode
+    (valign-mode 1))
 
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'markdown-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Enable impatient mode
-              (impatient-mode 1)
-
-              ;; Setup user defined impatient mode filter
-              (imp-set-user-filter 'markdown-impatient-mode-filter)
-
-              ;; Set buffer column width to 120
-              (setq-local fill-column 120)
-
-              ;; Enable auto fill mode
-              (auto-fill-mode 1)
-
-              ;; enable valign mode
-              (valign-mode 1))))
-
-(eval-after-load "markdown-mode" '(markdown-mode-settings))
+  ;; Customize variables
+  (setq markdown-live-preview-window-function 'pop-to-buffer
+        markdown-command "pandoc -s --mathjax"
+        markdown-enable-math t
+        markdown-display-remote-images t))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-markdown-mode)
+(provide 'init-markdown)
 
-;;; init-markdown-mode.el ends here
+;;; init-markdown.el ends here

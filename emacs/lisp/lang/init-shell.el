@@ -1,9 +1,9 @@
-;;; package --- init-sh-script-mode.el -*- lexical-binding:t -*-
-;; Time-stamp: <2022-11-22 08:47:21 Tuesday by zhengyuli>
+;;; init-shell.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
 ;;
-;; Author: zhengyu li <lizhengyu419@outlook.com>
+;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
 
 ;; This file is not part of GNU Emacs.
@@ -22,40 +22,27 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'ininit-sh-script-mode
-;;; Require:
+;; Shell script mode configuration.
 
 ;;; Code:
+
 ;; ==================================================================================
-;; Customized settings for `sh-script' mode
-(defun sh-script-settings ()
-  "Settings for `sh-script'."
+;; Shell mode hook
+(add-hook 'sh-mode-hook
+          (lambda ()
+            ;; Enable lsp mode
+            (lsp-deferred)))
 
-  ;; Require
-  (require 'lsp-mode)
-
-  ;; ----------------------------------------------------------
-  ;; Key bindings for `sh-mode'
+;; ==================================================================================
+;; Shell mode keybindings
+(with-eval-after-load 'sh-script
   (lazy-set-key
    '(("C-c C-c" . comment-line))
-   sh-mode-map)
-
-  ;; ----------------------------------------------------------
-  ;; Hooks
-  (add-hook 'sh-mode-hook
-            (lambda ()
-              ;; ----------------------------------------------------------
-              ;; Enable lsp mode
-              (lsp-deferred))))
-
-(eval-after-load "sh-script" '(sh-script-settings))
+   sh-mode-map))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-sh-script-mode)
+(provide 'init-shell)
 
-;;; init-sh-script-mode.el ends here
+;;; init-shell.el ends here
