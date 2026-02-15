@@ -36,11 +36,13 @@
   :defer t)
 
 ;; dired-narrow - 实时过滤文件
-;; 按 / 开始输入，实时缩小文件范围
+;; 按 // 开始输入，实时缩小文件范围
 (use-package dired-narrow
   :ensure t
-  :defer t
-  :bind (:map dired-mode-map ("/" . dired-narrow)))
+  :commands (dired-narrow)
+  :init
+  (with-eval-after-load 'dired
+    (bind-key "//" #'dired-narrow dired-mode-map)))
 
 ;; dired-collapse - 折叠嵌套空目录
 ;; 将 a/b/c/file.txt 折叠显示为单行
@@ -93,9 +95,16 @@
         dired-omit-extensions (append dired-omit-extensions '(".cache"))
         dired-omit-files (concat dired-omit-files
                                  "\\|^\\.\\|^semantic.cache$\\|^CVS$")
-        dired-filter-stack '()
-        ;; Emacs 29+ 内置目录优先排序
-        dired-listing-switches "-alh --group-directories-first")
+        dired-filter-stack '())
+
+  ;; macOS 兼容性: BSD ls 不支持 --dired 和 --group-directories-first
+  ;; 如果安装了 coreutils (gls)，使用 GNU ls；否则禁用 ls-dired
+  (if (executable-find "gls")
+      (progn
+        (setq insert-directory-program "gls"
+              dired-listing-switches "-alh --group-directories-first"))
+    (setq dired-use-ls-dired nil
+          dired-listing-switches "-alh"))
 
   ;; Key bindings
   (lazy-set-key

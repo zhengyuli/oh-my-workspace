@@ -80,14 +80,44 @@
   :defer t)
 
 ;; ==================================================================================
-;; Flyspell
+;; Flyspell - 拼写检查
+;; 默认使用 aspell（开箱即用），hunspell 需要额外配置字典
 (use-package flyspell
   :defer t
   :config
-  (setq ispell-program-name "aspell"
-        ispell-dictionary "american"
-        flyspell-issue-message-flag nil)
-  ;; Key unbindings
+  ;; 选择拼写检查程序：aspell（默认）> hunspell > ispell
+  ;; hunspell 需要安装字典文件，aspell 开箱即用
+  (cond
+   ;; 优先使用 aspell（更常见，无需额外配置）
+   ((executable-find "aspell")
+    (setq ispell-program-name "aspell"
+          ispell-dictionary "american"
+          ispell-extra-args '("--sug-mode=ultra" "--run-together")))
+   ;; hunspell 需要配置字典路径
+   ((executable-find "hunspell")
+    (setq ispell-program-name "hunspell"
+          ispell-dictionary "en_US"
+          ;; macOS Homebrew hunspell 字典路径
+          ispell-hunspell-dictionary-alist
+          '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+    ;; 设置字典路径（如果存在）
+    (let ((dict-path (expand-file-name "~/Library/Spelling")))
+      (when (file-directory-p dict-path)
+        (setenv "DICPATH" dict-path))))
+   (t
+    (setq ispell-program-name "ispell")))
+
+  (setq ispell-personal-dictionary "~/.emacs.d/ispell-personal-dict"
+        flyspell-issue-message-flag nil     ; 禁用消息输出
+        flyspell-mark-duplications-flag t   ; 标记重复单词
+        flyspell-delay 0.5)                 ; 检查延迟
+
+  ;; 创建个人词典文件（如果不存在）
+  (unless (file-exists-p ispell-personal-dictionary)
+    (make-directory (file-name-directory ispell-personal-dictionary) t)
+    (write-region "" nil ispell-personal-dictionary))
+
+  ;; Key unbindings (避免与其他快捷键冲突)
   (lazy-unset-key '("C-," "C-." "C-;") flyspell-mode-map))
 
 ;; ==================================================================================
@@ -150,6 +180,18 @@
     ["template.org" autoinsert-yas-expand]))
 
 ;; ==================================================================================
+;; Smart kill buffer - 已保存的直接关闭，有修改的才询问
+(defun my/smart-kill-buffer ()
+  "智能关闭缓冲区：已保存的文件缓冲区直接关闭，其他情况调用 kill-buffer。"
+  (interactive)
+  (if (and buffer-file-name (buffer-modified-p))
+      (kill-buffer (current-buffer))
+    (kill-current-buffer)))
+
+;; 直接设置键绑定（不放在 after-init-hook 中）
+(global-set-key (kbd "C-x k") #'my/smart-kill-buffer)
+
+;; ==================================================================================
 ;; Global editing keybindings
 (add-hook 'after-init-hook
           (lambda ()
@@ -171,8 +213,6 @@
                ("M-Y" . browse-kill-ring)
                ;; Goto last change
                ("M-o" . goto-last-change)
-               ("M-g g" . goto-line-preview)
-               ("M-g M-g" . goto-line-preview)
                ;; Flyspell correct
                ("C-: c" . flyspell-correct-wrapper)
                ("C-: p" . flyspell-correct-previous)

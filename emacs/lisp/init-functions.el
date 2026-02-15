@@ -54,15 +54,6 @@ Return a list of installed packages or nil for every skipped package."
    packages))
 
 ;; ==================================================================================
-;; Load path utilities
-(defun add-subdirs-to-load-path (base-dir)
-  "Add subdirs to load path.
-Look up all subdirs under `BASE-DIR' recursively and add them into load path."
-  (let ((default-directory base-dir))
-    (add-to-list 'load-path base-dir)
-    (normal-top-level-add-subdirs-to-load-path)))
-
-;; ==================================================================================
 ;; Key binding utilities
 (defun lazy-set-key (key-alist &optional keymap key-prefix)
   "This function is to little type when define key binding.
@@ -239,6 +230,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (defun auto-package-upgrade-all ()
   "Upgrade all packages installed."
   (interactive)
+  (require 'auto-package-update)
   (package-refresh-contents)
   (auto-package-update-now))
 

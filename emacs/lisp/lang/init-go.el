@@ -24,6 +24,7 @@
 ;;; Commentary:
 ;;
 ;; Go mode configuration.
+;; 使用 eglot + gopls 进行 LSP 支持，跳转等功能通过 xrf 体系实现。
 
 ;;; Code:
 
@@ -33,25 +34,31 @@
   :defer t
   :hook (go-mode . go-mode-setup)
   :config
+  ;; 全局设置 gofmt 命令
+  (setq gofmt-command "gofumpt")
+
   (defun go-mode-setup ()
-    ;; Load golang related envs
+    "Setup Go mode environment."
+    ;; Load golang related envs (macOS)
     (when (memq window-system '(mac ns))
       (require 'exec-path-from-shell)
       (exec-path-from-shell-copy-env "GOROOT")
       (exec-path-from-shell-copy-env "GOPATH"))
-    ;; Setup go eldoc
-    (go-eldoc-setup)))
-
-;; ==================================================================================
-;; Go eldoc
-(use-package go-eldoc
-  :defer t)
+    ;; 保存时自动格式化
+    (add-hook 'before-save-hook #'gofmt-before-save nil t)))
 
 ;; ==================================================================================
 ;; Go mode keybindings
+;; 注意: M-. 和 M-, 已在 prog-mode-map 中绑定到 xref-find-definitions/xref-pop-marker-stack
+;; 通过 eglot + gopls 提供跳转功能，无需 godef
 (with-eval-after-load 'go-mode
   (lazy-set-key
-   '(("M-." . godef-jump))
+   '(;; Go specific navigation
+     ("C-c C-j" . go-goto-imports)
+     ("C-c C-k" . godoc)
+     ;; Import management
+     ("C-c C-a" . go-import-add)
+     ("C-c C-r" . go-remove-unused-imports))
    go-mode-map))
 
 ;; ==================================================================================

@@ -40,6 +40,16 @@
   :defer t)
 
 ;; ==================================================================================
+;; Switch window - 用字母标识窗口，快速切换
+(use-package switch-window
+  :ensure t
+  :defer t
+  :custom
+  (switch-window-shortcut-style 'qwerty)  ; 使用 QWERTY 键位
+  (switch-window-timeout 5)               ; 5 秒后自动取消
+  (switch-window-threshold 3))            ; 3 个窗口以上才启用标识
+
+;; ==================================================================================
 ;; Pinentry
 (use-package pinentry
   :hook (after-init . pinentry-start))
@@ -138,9 +148,6 @@
             (setq user-full-name emacs-config-user
                   user-mail-address emacs-config-email)
 
-            ;; Replace yes-or-no-p with y-or-n-p (Emacs 28+ 推荐)
-            (setq use-short-answers t)
-
             ;; Browser settings
             (when (featurep 'xwidget-internal)
               (setq browse-url-browser-function 'xwidget-webkit-browse-url))
@@ -155,9 +162,7 @@
 
             ;; Basic keybindings
             (lazy-set-key
-             '(;; Kill current buffer
-               ("C-x k" . kill-this-buffer)
-               ;; Activate mark
+             '(;; Activate mark
                ("M-m" . set-mark-command)
                ;; Ibuffer
                ("C-x C-b" . ibuffer)))

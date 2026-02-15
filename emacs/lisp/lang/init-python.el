@@ -37,24 +37,56 @@
     "debugpy")
   "A list of packages to setup python development environment.")
 
-(defun pip-check-and-install (package)
-  "Check if a Python package is installed. If not, install it."
-  (let ((pkg (if (string-match ".*\\[.*\\]" package)
-                 (car (split-string package "\\["))
-               package)))
-    (if (string-match-p (concat "not found: " pkg)
-                        (shell-command-to-string (concat "pip show " pkg)))
-        (shell-command (regexp-quote (concat "pip install " package))))))
+;; 缓存已安装的包列表，避免重复 shell 调用
+(defvar python--installed-packages-cache nil
+  "Cache of installed packages for current venv.")
+(defvar python--cached-venv-path nil
+  "Path of venv for which cache is valid.")
+
+(defun python--get-package-base-name (package)
+  "Extract base package name from PACKAGE (remove extras like [all])."
+  (if (string-match "\\`\\([^\\[]+\\)" package)
+      (match-string 1 package)
+    package))
+
+(defun python--get-installed-packages ()
+  "Get list of installed packages, using cache if valid."
+  (let ((current-venv (or (getenv "VIRTUAL_ENV") "system")))
+    ;; 如果 venv 变化，清除缓存
+    (unless (equal current-venv python--cached-venv-path)
+      (setq python--installed-packages-cache nil
+            python--cached-venv-path current-venv))
+    ;; 获取或刷新缓存
+    (or python--installed-packages-cache
+        (setq python--installed-packages-cache
+              (let ((output (shell-command-to-string "pip list --format=freeze 2>/dev/null")))
+                (mapcar (lambda (line)
+                          (car (split-string line "==")))
+                        (split-string output "\n" t)))))))
+
+(defun python--ensure-dev-packages ()
+  "Ensure all dev packages are installed, with caching for performance."
+  (let ((installed (python--get-installed-packages))
+        (missing nil))
+    ;; 收集缺失的包
+    (dolist (package python-dev-packages)
+      (let ((base-name (python--get-package-base-name package)))
+        (unless (member base-name installed)
+          (push package missing))))
+    ;; 批量安装缺失的包
+    (when missing
+      (message "Installing missing Python packages: %s" (string-join missing " "))
+      (shell-command (concat "pip install " (string-join missing " ")))
+      ;; 清除缓存以刷新列表
+      (setq python--installed-packages-cache nil))))
 
 (defun after-poetry-venv-workon (&rest _)
   "Function to be run after `poetry-venv-workon'."
-  (dolist (package python-dev-packages)
-    (pip-check-and-install package)))
+  (python--ensure-dev-packages))
 
 (defun after-pyvenv-workon (&rest _)
   "Function to be run after `pyvenv-workon'."
-  (dolist (package python-dev-packages)
-    (pip-check-and-install package)))
+  (python--ensure-dev-packages))
 
 (advice-add 'poetry-venv-workon :after #'after-poetry-venv-workon)
 (advice-add 'pyvenv-workon :after #'after-pyvenv-workon)
@@ -70,7 +102,7 @@
               ;; Restart python
               (pyvenv-restart-python)
               ;; Restart eglot if active
-              (when (eglot-managed-p)
+              (when (and (fboundp 'eglot-managed-p) (eglot-managed-p))
                 (eglot-reconnect)))))
 
 ;; ==================================================================================

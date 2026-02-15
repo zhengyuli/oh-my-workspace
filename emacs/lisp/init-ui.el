@@ -47,13 +47,14 @@
               (my/set-fonts))))
 
 ;; ==================================================================================
-;; Theme - doom-themes (load immediately for theme availability)
+;; Theme - doom-themes
+;; 主题尽早加载避免闪烁，配置放在 :init
 (use-package doom-themes
   :ensure t
-  :config
+  :init
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  ;; Load theme immediately
+  ;; 尽早加载主题
   (load-theme 'doom-xcode t))
 
 ;; ==================================================================================
@@ -158,11 +159,22 @@
                     (intern (format "winum-select-window-%d" (1+ i))))))
 
 ;; ==================================================================================
-;; Dimmer - dim inactive buffers
+;; Dimmer - dim inactive buffers (仅 GUI)
 (use-package dimmer
   :ensure t
+  :when (display-graphic-p)              ; 仅 GUI 模式
   :config
-  (setq dimmer-fraction 0.30)
+  (setq dimmer-fraction 0.30
+        dimmer-minimum-opacity 0.5
+        dimmer-adjustment-mode :both)    ; 调整前景和背景
+  ;; 排除特定 buffer
+  (setq dimmer-buffer-exclusion-regexps
+        '(".*Minibuf.*"
+          ".*which-key.*"
+          ".*Help.*"
+          ".*Messages.*"
+          ".*Completions.*"
+          ".*Echo Area.*"))
   (dimmer-mode 1))
 
 ;; ==================================================================================
@@ -244,21 +256,16 @@
          (text-mode . emojify-mode)))
 
 ;; ==================================================================================
-;; Textsize - automatic font sizing based on screen resolution
+;; Textsize - automatic font sizing based on screen resolution (GUI only)
 (use-package textsize
   :ensure t
+  :when (display-graphic-p)              ; 仅 GUI 模式启用
   :config
   (setq textsize-monitor-size-thresholds
         '((0 . -3) (350 . -1) (500 . 0))
         textsize-pixel-pitch-thresholds
         '((0 . 5) (0.12 . 3) (0.18 . 1) (0.20 . 0) (0.25 . -2)))
   (textsize-mode 1))
-
-;; ==================================================================================
-;; Mixed pitch for variable pitch fonts
-(use-package mixed-pitch
-  :ensure t
-  :defer t)
 
 ;; ==================================================================================
 ;; Winner mode - undo/redo window layout

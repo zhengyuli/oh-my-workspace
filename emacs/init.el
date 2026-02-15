@@ -1,7 +1,7 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -34,13 +34,17 @@
   (error "The Emacs version must be >= 30.2."))
 
 ;; ==================================================================================
-;; Early initialization 
+;; Early initialization
 ;; GC 调优 - 启动时增大阈值，加快启动速度
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6)
 
 ;; 阻止 package.el 过早加载
 (setq package-enable-at-startup nil)
+
+;; 启用 package-quickstart 加速（Emacs 27+）
+(when (fboundp 'package-quickstart-refresh)
+  (setq package-quickstart t))
 
 ;; 阻止 UI 元素短暂显示 (避免启动时闪烁)
 (tool-bar-mode -1)
@@ -49,12 +53,18 @@
 
 ;; 原生编译设置 (Emacs 29+)
 (when (boundp 'native-comp-deferred-compilation)
-  (setq native-comp-deferred-compilation t))
+  (setq native-comp-deferred-compilation t
+        native-comp-async-report-warnings-errors 'silent))
+
+;; 用 y/n 替代 yes/no (Emacs 28+)
+(when (boundp 'use-short-answers)
+  (setq use-short-answers t))
 
 ;; ==================================================================================
 ;; Global variables
-;; Emacs configuration root path
-(defvar emacs-config-root-path "/Users/zhengyu.li/oh-my-workspace/emacs"
+;; Emacs configuration root path (动态获取，提高可移植性)
+(defvar emacs-config-root-path
+  (file-name-directory (or load-file-name buffer-file-name default-directory))
   "Emacs configuration root path.")
 
 (defvar emacs-config-custom-settings-path (concat emacs-config-root-path "/lisp/")
@@ -102,21 +112,31 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (add-subdirs-to-load-path emacs-config-custom-site-packages-path)
 
 ;; ==================================================================================
-;; Package manager setup
+;; Package manager setup (优化版)
 (require 'package)
 
-;; Add package archives
-(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/") t)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; Add package archives (添加 NonGNU ELPA)
+(setq package-archives
+      '(("gnu"   . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa" . "https://melpa.org/packages/")))
+
+;; 设置优先级：melpa > nongnu > gnu
+(setq package-archive-priorities
+      '(("melpa" . 10)
+        ("nongnu" . 5)
+        ("gnu" . 0)))
 
 ;; Initialize packages
 (package-initialize)
 
-;; Refresh package list if needed
-(when (not package-archive-contents)
-  (package-refresh-contents))
+;; 异步刷新包列表（仅当需要时）
+(defun my/package-refresh-contents-async ()
+  "Asynchronously refresh package contents if needed."
+  (unless package-archive-contents
+    (message "Refreshing package archives...")
+    (package-refresh-contents)))
 
-;; ==================================================================================
 ;; Install and configure use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -125,13 +145,17 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (require 'use-package)
 (setq use-package-always-ensure t
       use-package-compute-statistics t
-      use-package-verbose t)
+      use-package-verbose t
+      use-package-minimum-reported-time 0.1)
 
 ;; ==================================================================================
 ;; GC optimization with gcmh
 (use-package gcmh
   :ensure t
   :demand t
+  :custom
+  (gcmh-idle-delay 10)                   ; 空闲 10 秒后 GC
+  (gcmh-high-cons-threshold #x10000000)  ; 256MB
   :config
   (gcmh-mode 1))
 
@@ -140,10 +164,11 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (require 'init-functions)
 
 ;; ==================================================================================
-;; Font verification
-(ensure-font-installed emacs-config-fixed-font)
-(ensure-font-installed emacs-config-fixed-serif-font)
-(ensure-font-installed emacs-config-variable-font)
+;; Font verification (仅 GUI 模式)
+(when (display-graphic-p)
+  (ensure-font-installed emacs-config-fixed-font)
+  (ensure-font-installed emacs-config-fixed-serif-font)
+  (ensure-font-installed emacs-config-variable-font))
 
 ;; ==================================================================================
 ;; Try to enable HTTP proxy
@@ -178,8 +203,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; Restore GC settings after startup
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold gc-cons-threshold-original)
-            (setq gc-cons-percentage gc-cons-percentage-original)
+            (setq gc-cons-threshold gc-cons-threshold-original
+                  gc-cons-percentage gc-cons-percentage-original)
+            ;; 后台刷新包列表（下次启动更快）
+            (run-with-idle-timer 60 nil #'my/package-refresh-contents-async)
             (message "Emacs ready in %.2f seconds with %d garbage collections."
                      (float-time
                       (time-subtract after-init-time before-init-time))
@@ -189,7 +216,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; Load user custom settings
 (let ((custom-settings-file (expand-file-name "~/.emacs.d/custom_settings.el")))
   (unless (file-exists-p custom-settings-file)
-    (shell-command (concat "touch " custom-settings-file)))
+    (make-directory (file-name-directory custom-settings-file) t)
+    (write-region "" nil custom-settings-file))
   (load-file custom-settings-file))
 
 ;;; init.el ends here

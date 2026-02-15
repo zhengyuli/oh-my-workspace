@@ -28,9 +28,15 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Which-key
+;; Which-key - 按键提示，延迟加载优化启动时间
 (use-package which-key
   :ensure t
+  :defer 1                                   ; 延迟 1 秒加载
+  :custom
+  (which-key-idle-delay 0.5)                 ; 按键后 0.5 秒显示提示
+  (which-key-idle-secondary-delay 0.05)      ; 后续提示延迟
+  (which-key-sort-order 'which-key-key-order-alpha)  ; 按字母排序
+  (which-key-show-remaining-keys t)          ; 显示剩余按键
   :config
   (which-key-setup-side-window-right)
   (which-key-mode 1))
@@ -40,9 +46,14 @@
 (use-package vertico
   :ensure t
   :custom
-  (vertico-cycle t)
+  (vertico-cycle t)                       ; 循环选择
+  (vertico-count 15)                      ; 显示 15 个候选
+  (vertico-resize t)                      ; 自适应高度
+  (vertico-scroll-margin 4)               ; 滚动边距
   :config
-  (vertico-mode))
+  (vertico-mode)
+  ;; 按目录分组显示文件
+  (vertico-mouse-mode))
 
 ;; ==================================================================================
 ;; Orderless - 模糊匹配
@@ -58,6 +69,10 @@
 (use-package marginalia
   :ensure t
   :after vertico
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy  ; 详细注解
+                           marginalia-annotators-light)) ; 轻量注解
+  (marginalia-align-offset 15)            ; 对齐偏移
   :config
   (marginalia-mode))
 
@@ -65,6 +80,12 @@
 ;; Consult - 增强命令
 (use-package consult
   :ensure t
+  :custom
+  (consult-line-numbers-widen t)          ; 自动扩展行号
+  (consult-async-min-input 2)             ; 异步搜索最少输入
+  (consult-async-refresh-delay 0.15)      ; 刷新延迟
+  (consult-async-input-throttle 0.2)      ; 输入节流
+  (consult-preview-key 'any)              ; 任意键触发预览
   :bind
   (;; Search
    ("C-s" . consult-line)
@@ -89,16 +110,12 @@
 ;; Consult-projectile - 项目集成
 (use-package consult-projectile
   :ensure t
-  :after consult
-  :bind
-  (:map projectile-command-map
-        ("p" . consult-projectile-find-file)
-        ("b" . consult-projectile-switch-project-buffer))
+  :after (consult projectile)
   :config
   (with-eval-after-load 'projectile
-    (lazy-set-key
-     '(("C-x p" . projectile-command-map))
-     projectile-mode-map)))
+    (bind-key "p" #'consult-projectile-find-file projectile-command-map)
+    (bind-key "b" #'consult-projectile-switch-project-buffer projectile-command-map)
+    (bind-key "C-x p" projectile-command-map projectile-mode-map)))
 
 ;; ==================================================================================
 ;; Prescient - 智能排序
@@ -118,12 +135,15 @@
 (use-package corfu
   :ensure t
   :custom
-  (corfu-cycle t)
-  (corfu-auto t)
-  (corfu-auto-delay 0)
-  (corfu-auto-prefix 1)
-  (corfu-min-width 40)
-  (corfu-max-width 80)
+  (corfu-cycle t)                      ; 循环选择候选
+  (corfu-auto t)                       ; 自动补全
+  (corfu-auto-delay 0.2)               ; 输入后延迟 0.2 秒触发，避免输入卡顿
+  (corfu-auto-prefix 2)                ; 至少输入 2 个字符才触发补全
+  (corfu-min-width 40)                 ; 弹窗最小宽度
+  (corfu-max-width 80)                 ; 弹窗最大宽度
+  (corfu-count 12)                     ; 显示 12 个候选
+  (corfu-scroll-margin 4)              ; 滚动边距
+  (corfu-echo-documentation 0.25)      ; 0.25 秒后显示文档
   :config
   (global-corfu-mode))
 
@@ -144,14 +164,17 @@
 
 ;; ==================================================================================
 ;; Cape - 补全后端
+;; 顺序很重要: file > keyword > dabbrev (dabbrev 最慢，放最后)
 (use-package cape
   :ensure t
   :after corfu
   :config
-  ;; 添加补全后端
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-keyword))
+  ;; 设置补全后端顺序（从高到低优先级）
+  (setq completion-at-point-functions
+        (list #'cape-file           ; 文件路径补全（最快）
+              #'cape-keyword        ; 关键字补全
+              #'cape-dabbrev        ; 动态缩写补全（最慢）
+              #'cape-line)))        ; 行补全
 
 ;; ==================================================================================
 ;; Yasnippet - 延迟加载
@@ -162,11 +185,12 @@
          (org-mode . yas-minor-mode)
          (markdown-mode . yas-minor-mode))
   :config
-  (require 'yasnippet-snippets)
   ;; Key unbindings
-  (lazy-unset-key '("<tab>" "TAB") yas-minor-mode-map)
-  ;; Initialize yasnippet snippets
-  (yasnippet-snippets-initialize))
+  (lazy-unset-key '("<tab>" "TAB") yas-minor-mode-map))
+
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
 
 ;; ==================================================================================
 ;; Ag - The Silver Searcher (保留用于 wgrep 集成)
@@ -194,10 +218,16 @@
                (get-buffer-window (ag/buffer-name "" "" ""))))))
 
 ;; ==================================================================================
-;; Avy
+;; Avy - 快速跳转
 (use-package avy
   :ensure t
-  :defer t)
+  :defer t
+  :custom
+  (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p))
+  (avy-background t)                      ; 背景模式，非目标变暗
+  (avy-all-windows nil)                   ; 仅当前窗口
+  (avy-timeout-seconds 0.3)               ; 超时时间
+  (avy-style 'pre))                       ; 标签风格
 
 ;; ==================================================================================
 ;; Nerd-icons for completion

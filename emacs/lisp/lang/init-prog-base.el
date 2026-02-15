@@ -44,10 +44,15 @@
         (t (message "couldn't find matched paren"))))
 
 ;; ==================================================================================
-;; Smartparens
+;; Smartparens - 括号自动配对
 (use-package smartparens
   :defer t
   :hook (prog-mode . smartparens-mode)
+  :custom
+  (sp-highlight-pair-overlay nil)        ; 禁用高亮配对，减少视觉干扰
+  (sp-highlight-wrap-overlay nil)        ; 禁用 wrap 高亮
+  (sp-highlight-wrap-tag-overlay nil)    ; 禁用 tag wrap 高亮
+  (sp-cancel-autoskip-on-backward-movement nil)  ; 允许向后跳过
   :config
   (require 'smartparens-config))
 
@@ -67,15 +72,35 @@
 ;; Highlight TODO
 (use-package hl-todo
   :defer t
-  :hook (prog-mode . hl-todo-mode))
+  :hook (prog-mode . hl-todo-mode)
+  :custom
+  (hl-todo-highlight-punctuation ":")    ; 高亮冒号
+  :config
+  ;; 自定义 TODO 关键词颜色
+  (setq hl-todo-keyword-faces
+        '(("TODO" . "#FF0000")
+          ("FIXME" . "#FF0000")
+          ("DEBUG" . "#A020F0")
+          ("GOTCHA" . "#FF4500")
+          ("STUB" . "#1E90FF")
+          ("NOTE" . "#90EE90")
+          ("HACK" . "#FFD700"))))
 
 ;; ==================================================================================
-;; Flycheck
+;; Flycheck - 语法检查
 (use-package flycheck
   :defer t
   :hook (prog-mode . flycheck-mode)
+  :custom
+  (flycheck-indication-mode 'left-margin)  ; 错误显示在左边距
+  (flycheck-check-syntax-automatically '(save idle-change))  ; 保存和空闲时检查
+  (flycheck-idle-change-delay 0.5)         ; 空闲 0.5 秒后检查
+  (flycheck-display-errors-delay 0.3)      ; 0.3 秒后显示错误
+  (flycheck-highlighting-mode 'symbols)    ; 高亮符号级别
   :config
-  (setq flycheck-indication-mode 'left-margin))
+  ;; 定义错误级别 fringe 位图
+  (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
+    [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
 
 ;; ==================================================================================
 ;; Whitespace cleanup
@@ -96,10 +121,24 @@
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
 
 ;; ==================================================================================
-;; Format all
+;; Format all - 代码格式化
+;; 注意: 大文件不自动格式化，避免卡顿
+(defvar format-all--max-file-size (* 500 1024)  ; 500KB
+  "Maximum file size for auto-formatting on save.")
+
+(defun my/format-all-mode-maybe ()
+  "Enable format-all-mode only for reasonably sized files."
+  (when (< (buffer-size) format-all--max-file-size)
+    (format-all-mode 1)))
+
 (use-package format-all
   :defer t
-  :hook (prog-mode . format-all-mode))
+  :hook (prog-mode . my/format-all-mode-maybe)
+  :config
+  ;; 手动格式化快捷键
+  (lazy-set-key
+   '(("C-c f" . format-all-buffer))
+   prog-mode-map))
 
 ;; ==================================================================================
 ;; Devdocs

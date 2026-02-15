@@ -28,9 +28,13 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Magit
+;; Magit - Git 版本控制界面
 (use-package magit
   :commands (magit-status magit-log-all)
+  :custom
+  (magit-diff-refine-hunk t)             ; 显示字符级差异
+  (magit-revert-buffers 'silent)         ; 静默刷新文件
+  (magit-no-message '("Turning on magit-auto-revert-mode"))
   :config
   (require 'magit-diff)
 

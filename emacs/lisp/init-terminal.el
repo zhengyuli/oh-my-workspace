@@ -28,13 +28,19 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Vterm
+;; Vterm - 现代终端模拟器
 (use-package vterm
   :commands (vterm)
+  :custom
+  (vterm-max-scrollback 10000)           ; 最大滚动历史
+  (vterm-scroll-enable-emacs-bar t)      ; Emacs 风格滚动条
+  (vterm-kill-buffer-on-exit t)          ; 退出时关闭 buffer
+  (vterm-enable-manipulate-selection-data t) ; 允许操作选中内容
   :config
   ;; Key bindings
   (lazy-set-key
-   '(("C-g" . vterm--self-insert))
+   '(("C-g" . vterm--self-insert)
+     ("M-<backspace>" . vterm-send-meta-backspace))
    vterm-mode-map)
 
   ;; Hooks
@@ -44,8 +50,15 @@
               (auto-fill-mode -1)
               ;; Disable yasnippet mode
               (yas-minor-mode -1)
-              ;; Disable company mode
-              (company-mode -1))))
+              ;; Disable corfu mode
+              (corfu-mode -1)
+              ;; Unbind M-0~9 to allow winnum to work
+              (lazy-unset-key '("M-0" "M-1" "M-2" "M-3" "M-4"
+                                "M-5" "M-6" "M-7" "M-8" "M-9")
+                              vterm-mode-map)
+              ;; Set buffer-local variables
+              (setq-local global-hl-line-mode nil
+                          truncate-lines t))))
 
 ;; ==================================================================================
 ;; Multi-vterm
