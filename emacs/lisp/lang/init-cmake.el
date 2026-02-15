@@ -29,9 +29,9 @@
 
 ;; ==================================================================================
 ;; CMake mode
+;; eglot 已在 init-prog-base.el 中配置 cmake-mode 的 eglot-ensure
 (use-package cmake-mode
-  :defer t
-  :hook (cmake-mode . lsp-deferred))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features

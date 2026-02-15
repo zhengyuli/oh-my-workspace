@@ -32,33 +32,39 @@
 (use-package dired-filter
   :defer t)
 
-(use-package dired-subtree
-  :defer t)
-
 (use-package dired-hacks-utils
   :defer t)
 
-(use-package dired-filetype-face
+;; dired-narrow - 实时过滤文件
+;; 按 / 开始输入，实时缩小文件范围
+(use-package dired-narrow
+  :ensure t
+  :defer t
+  :bind (:map dired-mode-map ("/" . dired-narrow)))
+
+;; dired-collapse - 折叠嵌套空目录
+;; 将 a/b/c/file.txt 折叠显示为单行
+(use-package dired-collapse
+  :ensure t
+  :hook (dired-mode . dired-collapse-mode))
+
+;; diredfl - 替换过时的 dired-filetype-face
+;; 从 Dired+ 提取的 fontification 规则，更活跃维护
+(use-package diredfl
+  :ensure t
+  :hook (dired-mode . diredfl-mode))
+
+(use-package nerd-icons-dired
+  :ensure t
   :defer t)
 
-(use-package all-the-icons-dired
+;; dired-preview - 自动预览文件 (默认禁用，手动 M-x dired-preview-mode 启用)
+(use-package dired-preview
+  :ensure t
   :defer t)
 
 (use-package async
   :defer t)
-
-(use-package ztree
-  :defer t
-  :config
-  (require 'ztree-view)
-  ;; Key bindings for ztree-view
-  (lazy-set-key
-   '(("<return>" . ztree-perform-soft-action)
-     ("RET" . ztree-perform-soft-action)
-     ("o" . other-window)
-     ("n" . next-line)
-     ("p" . previous-line))
-   ztree-mode-map))
 
 ;; ==================================================================================
 ;; Dired configuration
@@ -69,7 +75,6 @@
   (require 'epa-dired)
   (require 'dired-x)
   (require 'dired-async)
-  (require 'dired-copy-paste)
   (require 'dired-custom-extension)
 
   ;; Customized faces
@@ -83,11 +88,14 @@
   (setq dired-dwim-target t
         dired-recursive-copies 'always
         dired-recursive-deletes 'always
+        dired-deletion-confirmer 'y-or-n-p  ; 使用 y/n 确认删除
         dired-bind-info nil
         dired-omit-extensions (append dired-omit-extensions '(".cache"))
         dired-omit-files (concat dired-omit-files
                                  "\\|^\\.\\|^semantic.cache$\\|^CVS$")
-        dired-filter-stack '())
+        dired-filter-stack '()
+        ;; Emacs 29+ 内置目录优先排序
+        dired-listing-switches "-alh --group-directories-first")
 
   ;; Key bindings
   (lazy-set-key
@@ -108,16 +116,16 @@
      ("B" . dired-backup-file)
      ("?" . dired-get-size)
      ("d" . dired-diff)
-     ("D" . ztree-diff)
+     ("D" . ediff-directories)
      ("z" . dired-do-compress)
      ("Z" . dired-do-compress)
      (": e" . epa-dired-do-encrypt)
      (": d" . epa-dired-do-decrypt)
      (": s" . epa-dired-do-sign)
      (": v" . epa-dired-do-verify)
-     ("M-w" . dired-copy-paste-do-copy)
-     ("M-k" . dired-copy-paste-do-cut)
-     ("C-y" . dired-copy-paste-do-paste)
+     ("M-w" . dired-copy-files)
+     ("M-k" . dired-cut-files)
+     ("C-y" . dired-paste-files)
      ("/m" . dired-mark-files-regexp)
      ("/*" . dired-filter-by-regexp)
      ("/." . dired-filter-by-extension)
@@ -136,17 +144,17 @@
     "Setup dired mode."
     ;; Enable dired omit mode
     (dired-omit-mode 1)
-    ;; Enable all the icons dired mode
+    ;; Enable nerd icons dired mode
     (when (display-graphic-p)
-      (all-the-icons-dired-mode 1))))
+      (nerd-icons-dired-mode 1))))
 
 ;; ==================================================================================
 ;; Dired keybindings
 (add-hook 'after-init-hook
           (lambda ()
             (lazy-set-key
-             '(("C-x C-d" . counsel-dired)
-               ("C-x d" . counsel-dired-jump)))))
+             '(("C-x C-d" . dired)
+               ("C-x d" . dired-jump)))))
 
 ;; ==================================================================================
 ;;; Provide features

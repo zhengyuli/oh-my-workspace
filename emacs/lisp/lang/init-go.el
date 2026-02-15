@@ -40,9 +40,7 @@
       (exec-path-from-shell-copy-env "GOROOT")
       (exec-path-from-shell-copy-env "GOPATH"))
     ;; Setup go eldoc
-    (go-eldoc-setup)
-    ;; Enable lsp mode
-    (lsp-deferred)))
+    (go-eldoc-setup)))
 
 ;; ==================================================================================
 ;; Go eldoc

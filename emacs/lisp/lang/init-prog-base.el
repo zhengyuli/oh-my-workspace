@@ -107,14 +107,56 @@
   :defer t)
 
 ;; ==================================================================================
-;; LSP mode
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook (lsp-mode . lsp-enable-which-key-integration)
-  :init
-  (setq read-process-output-max (* 3 1024 1024)
-        lsp-headerline-breadcrumb-enable nil
-        lsp-enable-indentation nil))
+;; Eglot - 轻量级 LSP 客户端 (Emacs 29+ 内置)
+(use-package eglot
+  :ensure nil  ; 内置包
+  :defer t
+  :hook ((python-mode . eglot-ensure)
+         (go-mode . eglot-ensure)
+         (c-mode . eglot-ensure)
+         (c++-mode . eglot-ensure)
+         (haskell-mode . eglot-ensure)
+         (yaml-mode . eglot-ensure)
+         (sh-mode . eglot-ensure)
+         (dockerfile-mode . eglot-ensure)
+         (cmake-mode . eglot-ensure))
+  :config
+  (setq eglot-sync-connect 1
+        eglot-autoshutdown t
+        eglot-ignored-server-capabilities '(:documentHighlightProvider))
+
+  ;; 配置各语言的 LSP 服务器
+  ;; Python: pip install python-lsp-server[all]
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode) . ("pylsp")))
+
+  ;; Go: go install golang.org/x/tools/gopls@latest
+  (add-to-list 'eglot-server-programs
+               '((go-mode go-ts-mode) . ("gopls")))
+
+  ;; C/C++: Xcode Command Line Tools 或 LLVM 提供 clangd
+  (add-to-list 'eglot-server-programs
+               '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
+
+  ;; Haskell: ghcup install hls
+  (add-to-list 'eglot-server-programs
+               '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
+
+  ;; YAML: npm install -g yaml-language-server
+  (add-to-list 'eglot-server-programs
+               '((yaml-mode yaml-ts-mode) . ("yaml-language-server" "--stdio")))
+
+  ;; Bash: npm install -g bash-language-server
+  (add-to-list 'eglot-server-programs
+               '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+
+  ;; Dockerfile: npm install -g dockerfile-language-server-nodejs
+  (add-to-list 'eglot-server-programs
+               '(dockerfile-mode . ("docker-lang-server" "--stdio")))
+
+  ;; CMake: pip install cmake-language-server
+  (add-to-list 'eglot-server-programs
+               '((cmake-mode cmake-ts-mode) . ("cmake-language-server"))))
 
 ;; ==================================================================================
 ;; Programming mode keybindings

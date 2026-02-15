@@ -29,17 +29,8 @@
 
 ;; ==================================================================================
 ;; Shell mode hook
-(add-hook 'sh-mode-hook
-          (lambda ()
-            ;; Enable lsp mode
-            (lsp-deferred)))
-
-;; ==================================================================================
-;; Shell mode keybindings
-(with-eval-after-load 'sh-script
-  (lazy-set-key
-   '(("C-c C-c" . comment-line))
-   sh-mode-map))
+;; eglot 已在 init-prog-base.el 中配置 sh-mode 的 eglot-ensure
+;; C-c C-c 已在 prog-mode-map 中绑定，sh-mode 继承该绑定
 
 ;; ==================================================================================
 ;;; Provide features

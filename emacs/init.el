@@ -128,6 +128,14 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
       use-package-verbose t)
 
 ;; ==================================================================================
+;; GC optimization with gcmh
+(use-package gcmh
+  :ensure t
+  :demand t
+  :config
+  (gcmh-mode 1))
+
+;; ==================================================================================
 ;; Load utility functions
 (require 'init-functions)
 

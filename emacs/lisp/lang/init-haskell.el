@@ -29,9 +29,9 @@
 
 ;; ==================================================================================
 ;; Haskell mode
+;; eglot 已在 init-prog-base.el 中配置 haskell-mode 的 eglot-ensure
 (use-package haskell-mode
-  :defer t
-  :hook (haskell-mode . lsp-deferred))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features

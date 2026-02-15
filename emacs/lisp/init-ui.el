@@ -67,6 +67,11 @@
   (doom-modeline-mode 1))
 
 ;; ==================================================================================
+;; Nerd-icons - 统一图标系统
+(use-package nerd-icons
+  :ensure t)
+
+;; ==================================================================================
 ;; Tabs - centaur-tabs
 (use-package centaur-tabs
   :ensure t
@@ -74,8 +79,8 @@
   (:map centaur-tabs-mode-map
         ("M-p" . centaur-tabs-backward)
         ("M-n" . centaur-tabs-forward)
-        ("M-P" . centaur-tabs-counsel-switch-group)
-        ("M-N" . centaur-tabs-counsel-switch-group))
+        ("M-P" . centaur-tabs-switch-group)
+        ("M-N" . centaur-tabs-switch-group))
   :config
   (require 'centaur-tabs-elements)
   (require 'centaur-tabs-functions)
@@ -140,34 +145,17 @@
   (centaur-tabs-mode 1))
 
 ;; ==================================================================================
-;; Window management - winum
+;; Winum - 在 mode-line 显示窗口编号，M-1/2/3... 切换窗口
 (use-package winum
   :ensure t
-  :bind
-  (:map winum-keymap
-        ("M-0" . winum-select-window-0-or-10)
-        ("M-1" . winum-select-window-1)
-        ("M-2" . winum-select-window-2)
-        ("M-3" . winum-select-window-3)
-        ("M-4" . winum-select-window-4)
-        ("M-5" . winum-select-window-5)
-        ("M-6" . winum-select-window-6)
-        ("M-7" . winum-select-window-7)
-        ("M-8" . winum-select-window-8)
-        ("M-9" . winum-select-window-9))
   :config
-  (winum-mode 1))
-
-;; ==================================================================================
-;; Window zoom
-(use-package zoom
-  :ensure t
-  :defer t
-  :config
-  (defun size-callback ()
-    (cond ((> (frame-pixel-width) 1280) '(90 . 0.75))
-          (t '(0.5 . 0.5))))
-  (setq zoom-size 'size-callback))
+  (setq winum-auto-setup-mode-line t
+        winum-format " %s ")
+  (winum-mode 1)
+  ;; M-1/2/3... 切换到对应窗口
+  (dotimes (i 9)
+    (global-set-key (kbd (format "M-%d" (1+ i)))
+                    (intern (format "winum-select-window-%d" (1+ i))))))
 
 ;; ==================================================================================
 ;; Dimmer - dim inactive buffers
@@ -178,29 +166,27 @@
   (dimmer-mode 1))
 
 ;; ==================================================================================
-;; Switch window
-(use-package switch-window
-  :ensure t
-  :defer t)
-
-;; ==================================================================================
 ;; Dashboard
 (use-package dashboard
   :ensure t
   :config
   (require 'dashboard-widgets)
   (setq dashboard-center-content t
-        dashboard-startup-banner (concat emacs-config-root-path "/banners/totoro.png")
+        ;; 仅在 GUI 模式使用图片 banner
+        dashboard-startup-banner (if (display-graphic-p)
+                                     (concat emacs-config-root-path "/banners/totoro.png")
+                                   'official)
         dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-config-user)
-        dashboard-set-heading-icons t
-        dashboard-set-file-icons t
+        ;; 仅在 GUI 模式启用图标
+        dashboard-set-heading-icons (display-graphic-p)
+        dashboard-set-file-icons (display-graphic-p)
         dashboard-set-navigator t
         dashboard-items '((recents  . 5)
                           (bookmarks . 5)
                           (projects . 5)
                           (agenda . 5)
                           (registers . 5))
-        dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+        dashboard-projects-switch-function 'projectile-switch-project)
 
   ;; Hooks
   (add-hook 'dashboard-mode-hook
@@ -215,15 +201,33 @@
   (dashboard-open))
 
 ;; ==================================================================================
-;; Beacon - highlight cursor position
-(use-package beacon
+;; Pulsar - cursor highlighting (替代 beacon)
+(use-package pulsar
   :ensure t
   :config
-  (beacon-mode 1))
+  (setq pulsar-pulse-functions '(recenter-top-bottom
+                                  move-to-window-line-top-bottom
+                                  reposition-window
+                                  bookmark-jump
+                                  other-window
+                                  delete-other-windows
+                                  forward-page
+                                  backward-page
+                                  scroll-up-command
+                                  scroll-down-command
+                                  windmove-right
+                                  windmove-left
+                                  windmove-up
+                                  windmove-down
+                                  tab-new
+                                  tab-close
+                                  tab-next
+                                  tab-previous)
+        pulsar-delay 0.055)
+  (pulsar-global-mode 1))
 
 ;; ==================================================================================
 ;; Smooth scrolling - use built-in pixel-scroll-precision-mode (Emacs 29+)
-;; Replaces smooth-scrolling package
 (when (>= emacs-major-version 29)
   (add-hook 'emacs-startup-hook
             (lambda ()
@@ -231,22 +235,23 @@
                 (pixel-scroll-precision-mode 1)))))
 
 ;; ==================================================================================
-;; Emojify
+;; Emojify - 仅在特定模式启用
 (use-package emojify
   :ensure t
-  :config
-  (global-emojify-mode 1)
-  (global-emojify-mode-line-mode 1))
+  :defer t
+  :hook ((org-mode . emojify-mode)
+         (markdown-mode . emojify-mode)
+         (text-mode . emojify-mode)))
 
 ;; ==================================================================================
-;; Textsize
+;; Textsize - automatic font sizing based on screen resolution
 (use-package textsize
   :ensure t
   :config
   (setq textsize-monitor-size-thresholds
-        '((0 . -2) (350 . 0) (500 . 1))
+        '((0 . -3) (350 . -1) (500 . 0))
         textsize-pixel-pitch-thresholds
-        '((0 . 6) (0.12 . 4) (0.18 . 2) (0.20 . 1) (0.25 . -1)))
+        '((0 . 5) (0.12 . 3) (0.18 . 1) (0.20 . 0) (0.25 . -2)))
   (textsize-mode 1))
 
 ;; ==================================================================================

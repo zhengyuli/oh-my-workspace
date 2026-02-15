@@ -76,11 +76,6 @@
   (setq auto-package-update-delete-old-versions t))
 
 ;; ==================================================================================
-;; All-the-icons
-(use-package all-the-icons
-  :defer t)
-
-;; ==================================================================================
 ;; Aliases
 (defalias 'refresh-auth-cache 'auth-source-forget-all-cached)
 (defalias 'upgrade-packages 'auto-package-upgrade-all)
@@ -143,8 +138,8 @@
             (setq user-full-name emacs-config-user
                   user-mail-address emacs-config-email)
 
-            ;; Replace yes-or-no-p with y-or-n-p
-            (fset 'yes-or-no-p 'y-or-n-p)
+            ;; Replace yes-or-no-p with y-or-n-p (Emacs 28+ 推荐)
+            (setq use-short-answers t)
 
             ;; Browser settings
             (when (featurep 'xwidget-internal)
@@ -169,14 +164,15 @@
 
             ;; Enable global auto revert mode
             (global-auto-revert-mode 1)
-            ;; Enable global recentf mode
-            (recentf-mode 1)
             ;; Enable save place mode
             (save-place-mode 1)
             ;; Enable global column number mode
             (column-number-mode 1)
             ;; Enable global just-in-time lock mode
-            (jit-lock-mode 1)))
+            (jit-lock-mode 1)
+
+            ;; Defer recentf mode to after idle
+            (run-with-idle-timer 2 nil (lambda () (recentf-mode 1)))))
 
 ;; ==================================================================================
 ;; Before save hook

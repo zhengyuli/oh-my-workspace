@@ -29,9 +29,9 @@
 
 ;; ==================================================================================
 ;; Dockerfile mode
+;; eglot 已在 init-prog-base.el 中配置 dockerfile-mode 的 eglot-ensure
 (use-package dockerfile-mode
-  :defer t
-  :hook (dockerfile-mode . lsp-deferred))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features

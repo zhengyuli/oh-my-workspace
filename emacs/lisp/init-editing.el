@@ -28,17 +28,12 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Undo tree
-(use-package undo-tree
-  :hook (after-init . global-undo-tree-mode)
+;; Vundo - visual undo tree (替代 undo-tree)
+(use-package vundo
+  :ensure t
+  :bind ("M-_" . vundo)
   :config
-  (setq undo-tree-auto-save-history nil)
-  ;; Key unbindings
-  (lazy-unset-key '("C-x u" "M-_") undo-tree-map)
-  ;; Key bindings
-  (lazy-set-key
-   '(("M-_" . undo-tree-visualize))
-   undo-tree-map))
+  (setq vundo-compact-display t))
 
 ;; ==================================================================================
 ;; Move text
@@ -56,9 +51,12 @@
   :defer t)
 
 ;; ==================================================================================
-;; Visual regexp steroids
+;; Visual regexp steroids - 增强的可视化正则替换
 (use-package visual-regexp-steroids
   :defer t
+  :bind (("C-c r" . vr/replace)
+         ("C-c q" . vr/query-replace)
+         ("C-c m" . vr/mc-mark))
   :config
   ;; Key bindings for `vr/minibuffer-keymap'
   (lazy-set-key

@@ -69,8 +69,9 @@
             (lambda ()
               ;; Restart python
               (pyvenv-restart-python)
-              ;; Restart lsp workspace
-              (call-interactively 'lsp-workspace-restart))))
+              ;; Restart eglot if active
+              (when (eglot-managed-p)
+                (eglot-reconnect)))))
 
 ;; ==================================================================================
 ;; Poetry
@@ -114,8 +115,6 @@
 
 (add-hook 'python-mode-hook
           (lambda ()
-            ;; Enable lsp mode
-            (lsp-deferred)
             ;; Copy the global before-save-hook to a local hook
             (setq-local before-save-hook
                         (default-value 'before-save-hook))
@@ -129,9 +128,9 @@
 (with-eval-after-load 'python
   (setq python-indent-guess-indent-offset-verbose nil
         python-indent-offset 4)
+  ;; C-c C-c 已在 prog-mode-map 中绑定，无需重复
   (lazy-set-key
-   '(("C-c C-c" . comment-line)
-     ("C-c d f" . sphinx-doc-format))
+   '(("C-c d f" . sphinx-doc-format))
    python-mode-map))
 
 ;; ==================================================================================

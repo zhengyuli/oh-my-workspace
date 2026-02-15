@@ -23,7 +23,7 @@
 
 ;;; Commentary:
 ;;
-;; Completion system: ivy, swiper, counsel, company, yasnippet, which-key, avy, ag.
+;; Completion system: vertico, marginalia, consult, corfu, yasnippet, which-key, avy, ag.
 
 ;;; Code:
 
@@ -36,135 +36,140 @@
   (which-key-mode 1))
 
 ;; ==================================================================================
-;; Ivy
-(use-package ivy
+;; Vertico - 垂直补全 UI
+(use-package vertico
   :ensure t
+  :custom
+  (vertico-cycle t)
   :config
-  (setq ivy-use-virtual-buffers t
-        ivy-count-format "(%d/%d) "
-        ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
-  (ivy-mode 1))
-
-(use-package ivy-rich
-  :ensure t
-  :after ivy
-  :config
-  (ivy-rich-mode 1))
-
-(use-package ivy-prescient
-  :ensure t
-  :after ivy-rich
-  :config
-  (ivy-prescient-mode 1))
-
-(use-package all-the-icons-ivy-rich
-  :ensure t
-  :after ivy-rich
-  :config
-  (all-the-icons-ivy-rich-mode 1))
+  (vertico-mode))
 
 ;; ==================================================================================
-;; Swiper
-(use-package swiper
+;; Orderless - 模糊匹配
+(use-package orderless
   :ensure t
-  :after ivy)
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
 
 ;; ==================================================================================
-;; Counsel
-(use-package counsel
+;; Marginalia - 补全注解
+(use-package marginalia
   :ensure t
-  :after ivy
+  :after vertico
   :config
-  (counsel-mode 1))
+  (marginalia-mode))
 
-(use-package counsel-projectile
+;; ==================================================================================
+;; Consult - 增强命令
+(use-package consult
   :ensure t
-  :after counsel
+  :bind
+  (;; Search
+   ("C-s" . consult-line)
+   ("C-r" . consult-line-backward)
+   ;; Buffer and file navigation
+   ("C-x b" . consult-buffer)
+   ("C-x B" . consult-recent-file)
+   ;; Help commands
+   ("C-h f" . consult-apropos)
+   ;; Yank
+   ("M-y" . consult-yank-pop)
+   ;; Goto line
+   ("M-g g" . consult-goto-line)
+   ("M-g M-g" . consult-goto-line)
+   ;; Search in project
+   ("C-x g" . consult-grep)
+   ("C-x G" . consult-git-grep)
+   ("C-x f" . consult-find)
+   ("C-x F" . consult-locate)))
+
+;; ==================================================================================
+;; Consult-projectile - 项目集成
+(use-package consult-projectile
+  :ensure t
+  :after consult
+  :bind
+  (:map projectile-command-map
+        ("p" . consult-projectile-find-file)
+        ("b" . consult-projectile-switch-project-buffer))
   :config
-  (counsel-projectile-mode 1)
   (with-eval-after-load 'projectile
     (lazy-set-key
      '(("C-x p" . projectile-command-map))
      projectile-mode-map)))
 
 ;; ==================================================================================
-;; Company
-(use-package company
+;; Prescient - 智能排序
+(use-package prescient
   :ensure t
   :config
-  (require 'company-yasnippet)
+  (prescient-persist-mode))
 
-  (defun company-mode/backend-with-yas (backend)
-    "Append `BACKEND' with company-yas."
-    (if (and (listp backend)
-             (member 'company-yasnippet backend))
-        backend
-      (append (if (consp backend)
-                  backend
-                (list backend))
-              '(:with company-yasnippet))))
-
-  (setq company-idle-delay 0
-        company-minimum-prefix-length 1
-        company-require-match 'never
-        company-tooltip-idle-delay 0
-        company-tooltip-limit 15
-        company-selection-wrap-around t
-        company-format-margin-function 'company-text-icons-margin
-        company-transformers '(delete-dups company-sort-by-occurrence)
-        company-dabbrev-downcase nil)
-
-  (global-company-mode 1))
-
-(use-package company-prescient
+(use-package vertico-prescient
   :ensure t
-  :after company
+  :after (vertico prescient)
   :config
-  (company-prescient-mode 1))
-
-(use-package company-box
-  :ensure t
-  :after company
-  :hook (company-mode . company-box-mode)
-  :config
-  (setq company-box-backends-colors nil
-        company-box-scrollbar nil
-        company-box-doc-enable t
-        company-box-doc-delay 0.1))
-
-(use-package company-quickhelp
-  :ensure t
-  :after company
-  :config
-  (company-quickhelp-mode 1))
-
-(use-package company-quickhelp-terminal
-  :ensure t
-  :after company-quickhelp
-  :config
-  (unless (display-graphic-p)
-    (company-quickhelp-terminal-mode 1)))
+  (vertico-prescient-mode))
 
 ;; ==================================================================================
-;; Yasnippet
+;; Corfu - 补全框架
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-delay 0)
+  (corfu-auto-prefix 1)
+  (corfu-min-width 40)
+  (corfu-max-width 80)
+  :config
+  (global-corfu-mode))
+
+;; Corfu 终端支持
+(use-package corfu-terminal
+  :ensure t
+  :after corfu
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode)))
+
+;; Corfu prescient 集成
+(use-package corfu-prescient
+  :ensure t
+  :after (corfu prescient)
+  :config
+  (corfu-prescient-mode))
+
+;; ==================================================================================
+;; Cape - 补全后端
+(use-package cape
+  :ensure t
+  :after corfu
+  :config
+  ;; 添加补全后端
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-keyword))
+
+;; ==================================================================================
+;; Yasnippet - 延迟加载
 (use-package yasnippet
   :ensure t
+  :defer t
+  :hook ((prog-mode . yas-minor-mode)
+         (org-mode . yas-minor-mode)
+         (markdown-mode . yas-minor-mode))
   :config
   (require 'yasnippet-snippets)
   ;; Key unbindings
   (lazy-unset-key '("<tab>" "TAB") yas-minor-mode-map)
   ;; Initialize yasnippet snippets
-  (yasnippet-snippets-initialize)
-  (yas-global-mode 1))
+  (yasnippet-snippets-initialize))
 
 ;; ==================================================================================
-;; Color moccur
-(use-package color-moccur
-  :ensure t
-  :defer t)
-
-;; ==================================================================================
-;; Ag - The Silver Searcher
+;; Ag - The Silver Searcher (保留用于 wgrep 集成)
 (use-package ag
   :ensure t
   :commands (ag ag-project ag-dired-regexp)
@@ -195,34 +200,17 @@
   :defer t)
 
 ;; ==================================================================================
-;; Popup
-(use-package popup
+;; Nerd-icons for completion
+(use-package nerd-icons-corfu
   :ensure t
-  :defer t)
+  :after (corfu nerd-icons)
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 ;; ==================================================================================
 ;; Completion keybindings
 (lazy-set-key
- '(;; Swiper
-   ("C-s" . swiper-isearch)
-   ("C-r" . swiper-isearch-backward)
-   ;; Counsel
-   ("M-x" . counsel-M-x)
-   ("C-x b" . counsel-switch-buffer)
-   ("C-x B" . counsel-recentf)
-   ("C-x C-f" . counsel-find-file)
-   ("C-h f" . counsel-describe-function)
-   ("C-h v" . counsel-describe-variable)
-   ("C-h o" . counsel-describe-symbol)
-   ("C-h b" . counsel-descbinds)
-   ;; Color moccur
-   ("C-x C-u" . occur-by-moccur)
-   ;; Ag
-   ("C-x g" . ag)
-   ("C-x G" . ag-project)
-   ("C-x f" . ag-dired-regexp)
-   ("C-x F" . ag-project-dired-regexp)
-   ;; Avy
+ '(;; Avy
    ("C-; c" . avy-goto-char)
    ("C-; w" . avy-goto-word-0)
    ("C-; l" . avy-goto-line)))

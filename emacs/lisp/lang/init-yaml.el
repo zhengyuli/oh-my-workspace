@@ -29,9 +29,9 @@
 
 ;; ==================================================================================
 ;; YAML mode
+;; eglot 已在 init-prog-base.el 中配置 yaml-mode 的 eglot-ensure
 (use-package yaml-mode
-  :defer t
-  :hook (yaml-mode . lsp-deferred))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features

@@ -59,13 +59,12 @@
 
 ;; ==================================================================================
 ;; C/C++ mode hooks
+;; eglot 已在 init-prog-base.el 中配置 c-mode/c++-mode 的 eglot-ensure
 (dolist (hook '(c-mode-hook c++-mode-hook))
   (add-hook hook
             (lambda ()
               ;; Enable google cc style
-              (google-set-c-style)
-              ;; Enable lsp mode
-              (lsp-deferred))))
+              (google-set-c-style))))
 
 ;; ==================================================================================
 ;;; Provide features
