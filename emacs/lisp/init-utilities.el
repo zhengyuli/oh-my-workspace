@@ -86,13 +86,6 @@
   (auto-package-update-delete-old-versions t)
   (auto-package-update-hide-output t)
   :config
-  ;; 便捷函数：升级所有包
-  (defun my/package-upgrade-all ()
-    "Upgrade all packages interactively."
-    (interactive)
-    (package-refresh-contents)
-    (auto-package-upgrade-all))
-
   ;; 后台检查包更新
   (defun my/package-check-updates ()
     "Check for package updates in background and notify if updates available."
@@ -105,11 +98,16 @@
             (message "")
             (if (yes-or-no-p (format "Found %d package(s) with updates. Upgrade now? " count))
                 (auto-package-upgrade-all)
-              (message "Run `M-x my/package-upgrade-all' to upgrade later.")))
+              (message "Run `M-x auto-package-upgrade-all' to upgrade later.")))
         (message "All packages are up to date."))))
 
   ;; 启动后延迟检查更新（空闲 60秒后）
   (run-with-idle-timer 60 nil #'my/package-check-updates))
+
+;; 便捷函数别名：升级所有包
+;; 注意: auto-package-upgrade-all (init-functions.el) 已包含 package-refresh-contents
+(defalias 'my/package-upgrade-all 'auto-package-upgrade-all
+  "Upgrade all packages interactively.")
 
 ;; ==================================================================================
 ;; Aliases

@@ -77,13 +77,12 @@ Return a list of installed packages or nil for every skipped package."
   "This function is to little type when unset key binding.
 `KEYMAP' is add keymap for some binding, default is `current-global-map'
 `KEY-LIST' is list contain key."
-  (let (key)
-    (or keymap (setq keymap (current-global-map)))
-    (dolist (key key-list)
-      (cond ((stringp key) (setq key (read-kbd-macro (concat key))))
-            ((vectorp key) nil)
-            (t (signal 'wrong-type-argument (list 'array key))))
-      (define-key keymap key nil))))
+  (or keymap (setq keymap (current-global-map)))
+  (dolist (key key-list)
+    (cond ((stringp key) (setq key (read-kbd-macro (concat key))))
+          ((vectorp key) nil)
+          (t (signal 'wrong-type-argument (list 'array key))))
+    (define-key keymap key nil)))
 
 ;; ==================================================================================
 ;; Proxy utilities
@@ -180,6 +179,10 @@ Return a list of installed packages or nil for every skipped package."
   (if mark-active
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
+
+;; Toggle fullscreen state variable
+(defvar old-fullscreen nil
+  "Store the previous fullscreen state for toggle-fullscreen.")
 
 (defun toggle-buffer-writable ()
   "Toggle buffer writable."
