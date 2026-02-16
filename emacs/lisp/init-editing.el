@@ -196,7 +196,9 @@
 (add-hook 'after-init-hook
           (lambda ()
             (lazy-set-key
-             '(;; Smart edit
+             '(;; Undo (explicit binding to prevent override)
+               ("C-/" . undo)
+               ;; Smart edit
                ("C-x <tab>" . smart-indent)
                ("C-x TAB" . smart-indent)
                ("M-w" . smart-copy)

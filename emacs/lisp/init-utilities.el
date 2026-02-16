@@ -104,8 +104,9 @@
                ("C-x _" . text-scale-decrease)
                ("C-x +" . text-scale-increase)
                ("C-x -" . text-scale-decrease)
-               ;; Undo window layout
-               ("C-_" . winner-undo)))))
+               ;; Undo window layout (use C-c w u to avoid overriding C-/ undo)
+               ("C-c w u" . winner-undo)
+               ("C-c w r" . winner-redo)))))
 
 ;; ==================================================================================
 ;; Base configuration hooks

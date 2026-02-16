@@ -1,38 +1,299 @@
-" encoding dectection
+" ================================================================================
+" Vim Configuration
+" Time-stamp: <2026-02-16 14:30:00 Sunday by zhengyuli>
+"
+" Author: zhengyu li <lizhengyu419@outlook.com>
+" ================================================================================
+
+" --------------------------------------------------------------------------------
+" Encoding
+" --------------------------------------------------------------------------------
 set fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
+set encoding=utf-8
+set termencoding=utf-8
 
-" enable syntax hightlight and completion
-syntax on
+" --------------------------------------------------------------------------------
+" Basic Settings
+" --------------------------------------------------------------------------------
+set nocompatible                    " 不兼容 vi 模式
+set history=1000                    " 命令历史
+set confirm                         " 退出未保存文件时提示
+set hidden                          " 允许隐藏未保存的 buffer
+set backspace=indent,eol,start      " 退格键行为
+set clipboard=unnamedplus           " 使用系统剪贴板
+set mouse=a                         " 所有模式启用鼠标
+set timeoutlen=500                  " 快捷键超时时间
+set ttimeoutlen=10                  " 键码超时时间
+set updatetime=300                  " 更快的更新时间
+set lazyredraw                      " 宏执行时不重绘
+set virtualedit=block               " 块选择可跨越空白
+set signcolumn=yes                  " 始终显示符号列
+set cmdheight=2                     " 命令行高度
+set shortmess+=c                    " 避免补全消息干扰
+set noerrorbells                    " 关闭错误响铃
+set novisualbell                    " 关闭视觉响铃
+set tm=500                          " 超时时间
 
-" search
-set incsearch
-"set highlight 	" conflict with highlight current line
-set ignorecase
-set smartcase
+" --------------------------------------------------------------------------------
+" UI Settings
+" --------------------------------------------------------------------------------
+syntax on                           " 语法高亮
+set t_Co=256                        " 256 色
+set termguicolors                   " 真彩色支持 (Vim 8+)
+set number                          " 行号
+set relativenumber                  " 相对行号
+set cursorline                      " 高亮当前行
+set showmatch                       " 显示匹配括号
+set matchtime=2                     " 匹配括号显示时间
+set matchpairs+=<:>                 " HTML 括号匹配
+set showcmd                         " 显示命令
+set title                           " 标题栏显示文件名
+set laststatus=2                    " 状态栏
+set ruler                           " 光标位置
+set scrolloff=5                     " 滚动边距
+set sidescrolloff=5                 " 横向滚动边距
+set nowrap                          " 不自动换行
+set linebreak                       " 换行时不断单词
+set breakindent                     " 换行缩进
+set list                            " 显示不可见字符
+set listchars=tab:→\ ,trail:·,nbsp:␣,extends:⟩,precedes:⟨
+set fillchars=vert:│,fold:─
+set splitbelow                      " 水平分割在下方
+set splitright                      " 垂直分割在右侧
+set colorcolumn=120                 " 120 列标尺
 
-" editor settings
-set history=1000
-set nocompatible
-set nofoldenable                                                  " disable folding"
-set confirm                                                       " prompt when existing from an unsaved file
-set backspace=indent,eol,start                                    " More powerful backspacing
-set t_Co=256                                                      " Explicitly tell vim that the terminal has 256 colors "
-set mouse=a                                                       " use mouse in all modes
-set report=0                                                      " always report number of lines changed                "
-set nowrap                                                        " dont wrap lines
-set scrolloff=5                                                   " 5 lines above/below cursor when scrolling
-set number                                                        " show line numbers
-set showmatch                                                     " show matching bracket (briefly jump)
-set showcmd                                                       " show typed command in status bar
-set title                                                         " show file in titlebar
-set laststatus=2                                                  " use 2 lines for the status bar
-set matchtime=2                                                   " show matching bracket for 0.2 seconds
-set matchpairs+=<:>                                               " specially for html
+" --------------------------------------------------------------------------------
+" Search Settings
+" --------------------------------------------------------------------------------
+set incsearch                       " 增量搜索
+set hlsearch                        " 高亮搜索结果
+set ignorecase                      " 搜索忽略大小写
+set smartcase                       " 智能大小写
+set wrapscan                        " 循环搜索
 
-" Default Indentation
-set autoindent
-set smartindent     " indent when
-set tabstop=4       " tab width
-set softtabstop=4   " backspace
-set shiftwidth=4    " indent width
-set expandtab       " expand tab to space
+" --------------------------------------------------------------------------------
+" Indentation
+" --------------------------------------------------------------------------------
+set autoindent                      " 自动缩进
+set smartindent                     " 智能缩进
+set tabstop=4                       " Tab 宽度
+set softtabstop=4                   " 软 Tab 宽度
+set shiftwidth=4                    " 缩进宽度
+set expandtab                       " Tab 转空格
+set shiftround                      " 缩进取整
+
+" --------------------------------------------------------------------------------
+" Folding
+" --------------------------------------------------------------------------------
+set nofoldenable                    " 默认不折叠
+set foldmethod=indent               " 折叠方式
+set foldlevelstart=99               " 启动时展开所有折叠
+
+" --------------------------------------------------------------------------------
+" Backup & Swap
+" --------------------------------------------------------------------------------
+set nobackup                        " 不创建备份
+set nowritebackup                   " 写入时不备份
+set noswapfile                      " 不创建交换文件
+set undofile                        " 持久化撤销
+set undodir=~/.vim/undo             " 撤销文件目录
+
+" --------------------------------------------------------------------------------
+" File Settings
+" --------------------------------------------------------------------------------
+set autoread                        " 文件变化自动重读
+set autowrite                       " 切换 buffer 自动保存
+set fileformats=unix,dos,mac        " 文件格式
+
+" --------------------------------------------------------------------------------
+" Wildmenu
+" --------------------------------------------------------------------------------
+set wildmenu                        " 命令补全菜单
+set wildmode=longest:full,full      " 补全模式
+set wildignore+=*.o,*.obj,*.pyc,*.class
+set wildignore+=*.swp,*.swo
+set wildignore+=*.png,*.jpg,*.gif,*.ico
+set wildignore+=*.zip,*.tar,*.gz,*.rar
+set wildignore+=*/.git/*,*/.svn/*,*/__pycache__/*
+set wildignore+=*/node_modules/*,*/vendor/*
+
+" --------------------------------------------------------------------------------
+" Key Mappings
+" --------------------------------------------------------------------------------
+" Leader 键
+let mapleader = " "
+let maplocalleader = " "
+
+" 快速保存
+nnoremap <leader>w :write<CR>
+nnoremap <leader>q :quit<CR>
+nnoremap <leader>x :x<CR>
+
+" 清除搜索高亮
+nnoremap <leader>h :nohlsearch<CR>
+
+" 窗口导航
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Buffer 导航
+nnoremap <leader>bn :bnext<CR>
+nnoremap <leader>bp :bprevious<CR>
+nnoremap <leader>bd :bdelete<CR>
+nnoremap <leader>bl :buffers<CR>
+
+" Tab 导航
+nnoremap <leader>tn :tabnew<CR>
+nnoremap <leader>tc :tabclose<CR>
+nnoremap <Tab> :tabnext<CR>
+nnoremap <S-Tab> :tabprevious<CR>
+
+" 快速移动
+nnoremap <C-d> 10j
+nnoremap <C-u> 10k
+vnoremap <C-d> 10j
+vnoremap <C-u> 10k
+
+" 调整缩进保持选中
+vnoremap < <gv
+vnoremap > >gv
+
+" 复制到行尾
+nnoremap Y y$
+
+" 保持搜索在屏幕中央
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" 快速编辑 vimrc
+nnoremap <leader>ev :edit $MYVIMRC<CR>
+nnoremap <leader>sv :source $MYVIMRC<CR>
+
+" --------------------------------------------------------------------------------
+" Auto Commands
+" --------------------------------------------------------------------------------
+augroup vimrc
+    autocmd!
+    " 进入插入文件自动切换目录
+    autocmd BufEnter * if bufname('') !~# '[?*]' | silent! lcd %:p:h | endif
+
+    " 保存时自动删除行尾空白
+    autocmd BufWritePre * :%s/\s\+$//e
+
+    " 保存时自动恢复光标位置
+    autocmd BufReadPost *
+        \ if line("'\"") >= 1 && line("'\"") <= line("$") |
+        \   execute "normal! g`\"" |
+        \ endif
+
+    " 高亮 yank 区域
+    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+
+    " 特定文件类型设置
+    autocmd FileType make setlocal noexpandtab
+    autocmd FileType yaml setlocal ts=2 sts=2 sw=2
+    autocmd FileType json setlocal ts=2 sts=2 sw=2
+    autocmd FileType html,css,javascript,typescript setlocal ts=2 sts=2 sw=2
+    autocmd FileType python setlocal ts=4 sts=4 sw=4
+
+    " 自动创建不存在的目录
+    autocmd BufWritePre *
+        \ if !isdirectory(expand('<afile>:p:h')) |
+        \   call mkdir(expand('<afile>:p:h'), 'p') |
+        \ endif
+augroup END
+
+" --------------------------------------------------------------------------------
+" Plugin Settings (Optional - for Vim 8+ native packages)
+" --------------------------------------------------------------------------------
+" 如果使用原生包管理，包目录: ~/.vim/pack/plugins/start/
+" 如果使用 vim-plug，取消下面的注释:
+
+" " vim-plug 自动安装
+" let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+" if empty(glob(data_dir . '/autoload/plug.vim'))
+"   silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+"   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+" endif
+"
+" call plug#begin()
+" " 通用
+" Plug 'tpope/vim-sensible'
+" Plug 'tpope/vim-surround'
+" Plug 'tpope/vim-commentary'
+" Plug 'tpope/vim-repeat'
+" Plug 'tpope/vim-unimpaired'
+"
+" " Git
+" Plug 'tpope/vim-fugitive'
+" Plug 'airblade/vim-gitgutter'
+"
+" " 文件浏览
+" Plug 'preservim/nerdtree'
+" Plug 'ctrlpvim/ctrlp.vim'
+"
+" " 语法 & LSP
+" Plug 'dense-analysis/ale'
+" Plug 'prabirshrestha/vim-lsp'
+"
+" " 主题
+" Plug 'morhetz/gruvbox'
+" Plug 'dracula/vim'
+"
+" call plug#end()
+
+" --------------------------------------------------------------------------------
+" Color Scheme (fallback for no plugins)
+" --------------------------------------------------------------------------------
+" 使用内置主题作为后备
+if !exists('g:colors_name')
+    colorscheme desert
+endif
+
+" --------------------------------------------------------------------------------
+" Status Line (simple custom)
+" --------------------------------------------------------------------------------
+set statusline=
+set statusline+=%#PmenuSel#
+set statusline+=%{StatuslineMode()}
+set statusline+=%#StatusLine#
+set statusline+=\ %f
+set statusline+=%m
+set statusline+=%r
+set statusline+=%=
+set statusline+=%#CursorLineNr#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
+set statusline+=\
+
+function! StatuslineMode()
+    let l:mode=mode()
+    if l:mode==#"n"
+        return " NORMAL "
+    elseif l:mode==#"i"
+        return " INSERT "
+    elseif l:mode==#"v"
+        return " VISUAL "
+    elseif l:mode==#"V"
+        return " V-LINE "
+    elseif l:mode==#"\<C-v>"
+        return " V-BLOCK "
+    elseif l:mode==#"R"
+        return " REPLACE "
+    elseif l:mode==#"s"
+        return " SELECT "
+    elseif l:mode==#"t"
+        return " TERMINAL "
+    elseif l:mode==#"c"
+        return " COMMAND "
+    endif
+    return " " . l:mode . " "
+endfunction
+
+" ================================================================================
+" End of Configuration
+" ================================================================================

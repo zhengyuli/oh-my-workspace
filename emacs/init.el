@@ -62,15 +62,20 @@
 
 ;; ==================================================================================
 ;; Global variables
-;; Emacs configuration root path (动态获取，提高可移植性)
+;; Emacs configuration root path (动态获取，支持符号链接)
+;; 使用 file-chase-links 解析符号链接，获取真实文件路径
 (defvar emacs-config-root-path
-  (file-name-directory (or load-file-name buffer-file-name default-directory))
-  "Emacs configuration root path.")
+  (let ((config-file (or load-file-name buffer-file-name)))
+    (if config-file
+        (file-name-directory (file-chase-links config-file))
+      default-directory))
+  "Emacs configuration root path.
+Automatically resolves symlinks to find the actual configuration directory.")
 
-(defvar emacs-config-custom-settings-path (concat emacs-config-root-path "/lisp/")
+(defvar emacs-config-custom-settings-path (expand-file-name "lisp/" emacs-config-root-path)
   "Emacs configuration custom settings path.")
 
-(defvar emacs-config-custom-site-packages-path (concat emacs-config-root-path "/site-packages/")
+(defvar emacs-config-custom-site-packages-path (expand-file-name "site-packages/" emacs-config-root-path)
   "Emacs configuration custom site packages path.")
 
 ;; Fonts

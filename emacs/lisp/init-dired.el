@@ -46,9 +46,10 @@
 
 ;; dired-collapse - 折叠嵌套空目录
 ;; 将 a/b/c/file.txt 折叠显示为单行
+;; 已禁用：如需启用，手动 M-x dired-collapse-mode
 (use-package dired-collapse
   :ensure t
-  :hook (dired-mode . dired-collapse-mode))
+  :defer t)
 
 ;; diredfl - 替换过时的 dired-filetype-face
 ;; 从 Dired+ 提取的 fontification 规则，更活跃维护
@@ -138,6 +139,9 @@
      ("/m" . dired-mark-files-regexp)
      ("/*" . dired-filter-by-regexp)
      ("/." . dired-filter-by-extension)
+     ("/ /" . dired-filter-remove)      ; 移除最后一个过滤器
+     ("/c" . dired-filter-clear)        ; 清除所有过滤器
+     ("/p" . dired-filter-pop)          ; 弹出最后一个过滤器
      ("; n" . dired-get-file-name-without-path)
      ("; N" . dired-get-file-name-with-path)
      ("; p" . dired-get-file-name-only-path))
@@ -156,6 +160,50 @@
     ;; Enable nerd icons dired mode
     (when (display-graphic-p)
       (nerd-icons-dired-mode 1))))
+
+;; ==================================================================================
+;; View-mode vim-style navigation (for viewing files from dired)
+(with-eval-after-load 'view
+  (lazy-set-key
+   '(;; Basic movement
+     ("j" . next-line)
+     ("k" . previous-line)
+     ("h" . backward-char)
+     ("l" . forward-char)
+     ;; Word movement
+     ("w" . forward-word)
+     ("b" . backward-word)
+     ("e" . forward-word)
+     ;; Line movement
+     ("0" . beginning-of-line)
+     ("^" . beginning-of-line)
+     ("$" . end-of-line)
+     ;; Page movement (vim-style: C-f/C-b for full page, C-d/C-u for half page)
+     ("C-f" . View-scroll-page-forward)
+     ("C-b" . View-scroll-page-backward)
+     ("C-d" . View-scroll-half-page-forward)
+     ("C-u" . View-scroll-half-page-backward)
+     ;; Alternative: f/d for page down, b/u for page up
+     ("f" . View-scroll-page-forward)
+     ("d" . View-scroll-half-page-forward)
+     ("u" . View-scroll-half-page-backward)
+     ;; Buffer navigation
+     ("g" . beginning-of-buffer)
+     ("G" . end-of-buffer)
+     ("%" . goto-percent)
+     ;; Search
+     ("/" . isearch-forward)
+     ("?" . isearch-backward)
+     ("n" . isearch-repeat-forward)
+     ("N" . isearch-repeat-backward))
+   view-mode-map)
+
+  ;; Helper function for percentage jump
+  (defun goto-percent (percent)
+    "Go to PERCENT of the buffer."
+    (interactive "nGo to percent: ")
+    (goto-char (point-min))
+    (forward-percent percent)))
 
 ;; ==================================================================================
 ;; Dired keybindings
