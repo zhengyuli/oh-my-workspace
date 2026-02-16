@@ -202,8 +202,8 @@
   (defun goto-percent (percent)
     "Go to PERCENT of the buffer."
     (interactive "nGo to percent: ")
-    (goto-char (point-min))
-    (forward-percent percent)))
+    (goto-char (+ (point-min)
+                  (/ (* percent (- (point-max) (point-min))) 100)))))
 
 ;; ==================================================================================
 ;; Dired keybindings
