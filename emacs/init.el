@@ -1,5 +1,5 @@
 ;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-16 21:05:38 zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -204,6 +204,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (require 'init-yaml)
 (require 'init-markdown)
 
+;; Tool modules
+(require 'init-ai)
+
 ;; ==================================================================================
 ;; Restore GC settings after startup
 (add-hook 'emacs-startup-hook
@@ -226,3 +229,25 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (load-file custom-settings-file))
 
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((claude-code-ide :url
+		      "https://github.com/manzaltu/claude-code-ide.el"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(centaur-tabs-selected ((t (:bold t :foreground "#28cd41"))))
+ '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300"))))
+ '(centaur-tabs-unselected ((t (:bold t :foreground "grey"))))
+ '(centaur-tabs-unselected-modified ((t (:bold t :foreground "#ff9300"))))
+ '(dired-directory ((t (:foreground "#51AFEF" :height 1.1))))
+ '(dired-header ((t (:foreground "#EE82EE" :height 1.1))))
+ '(dired-mark ((t (:foreground "#FF1493" :inverse-video nil))))
+ '(dired-marked ((t (:foreground "#FFFF00" :inverse-video nil)))))

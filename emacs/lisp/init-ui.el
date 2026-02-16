@@ -28,25 +28,6 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Font settings
-(defun my/set-fonts ()
-  "Set font faces."
-  (when (display-graphic-p)
-    (set-face-attribute 'default nil :font emacs-config-fixed-font :height 120)
-    (set-face-attribute 'fixed-pitch nil :font emacs-config-fixed-font)
-    (set-face-attribute 'fixed-pitch-serif nil :font emacs-config-fixed-serif-font)
-    (set-face-attribute 'variable-pitch nil :font emacs-config-variable-font)))
-
-;; Set fonts when GUI is ready
-(add-hook 'emacs-startup-hook #'my/set-fonts)
-
-;; Also set fonts when creating a new frame (for daemon mode)
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (with-selected-frame frame
-              (my/set-fonts))))
-
-;; ==================================================================================
 ;; Theme - doom-themes
 ;; 主题尽早加载避免闪烁，配置放在 :init
 (use-package doom-themes

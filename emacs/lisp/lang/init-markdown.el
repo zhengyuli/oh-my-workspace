@@ -263,15 +263,15 @@
 
     ;; 标题样式 - Mou Sublime 风格，统一青绿色
     (face-remap-add-relative 'markdown-header-face-1
-                             `(:foreground ,h1 :weight bold :height 2.0))
+                             `(:foreground ,h1 :weight bold :height 1.5))
     (face-remap-add-relative 'markdown-header-face-2
-                             `(:foreground ,h2 :weight bold :height 1.6))
+                             `(:foreground ,h2 :weight bold :height 1.35))
     (face-remap-add-relative 'markdown-header-face-3
-                             `(:foreground ,h3 :weight bold :height 1.4))
+                             `(:foreground ,h3 :weight bold :height 1.2))
     (face-remap-add-relative 'markdown-header-face-4
-                             `(:foreground ,h4 :weight bold :height 1.2))
+                             `(:foreground ,h4 :weight bold :height 1.1))
     (face-remap-add-relative 'markdown-header-face-5
-                             `(:foreground ,h5 :weight bold :height 1.1))
+                             `(:foreground ,h5 :weight bold :height 1.05))
     (face-remap-add-relative 'markdown-header-face-6
                              `(:foreground ,h6 :weight bold :height 1.0))
 
@@ -341,15 +341,6 @@
   :custom
   (visual-fill-column-width 100)          ; 内容宽度
   (visual-fill-column-center-text t))     ; 居中显示
-
-;; 混合字体 - 标题用变宽字体，代码用等宽字体
-(use-package mixed-pitch
-  :defer t
-  :hook (markdown-mode . mixed-pitch-mode)
-  :custom
-  (mixed-pitch-set-height t)
-  (mixed-pitch-fixed-font "Source Code Pro")
-  (mixed-pitch-variable-font "Times New Roman"))
 
 ;; ==================================================================================
 ;; 自动关联文件扩展名
