@@ -32,13 +32,15 @@
 ;; ==================================================================================
 ;; Claude Code IDE - AI 编程助手
 ;; Repository: https://github.com/manzaltu/claude-code-ide.el
+
 (use-package claude-code-ide
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el"
       :rev :newest)
   :commands (claude-code-ide
-             claude-code-ide-send-region
-             claude-code-ide-send-file
-             claude-code-ide-resume)
+             claude-code-ide-resume
+             claude-code-ide-continue
+             claude-code-ide-toggle
+             claude-code-ide-send-prompt)
   :custom
   ;; CLI 配置
   (claude-code-ide-cli-path "claude")        ; Claude Code CLI 路径
@@ -48,34 +50,21 @@
   (claude-code-ide-vterm-anti-flicker t)     ; 减少闪烁
   ;; 调试
   (claude-code-ide-debug nil)                ; 关闭调试模式
-  (claude-code-ide-cli-debug nil)            ; 关闭 CLI 调试
-  :config
-  ;; 自动启用 claude-code-ide-mode
-  (add-hook 'prog-mode-hook #'claude-code-ide-mode)
-  (add-hook 'text-mode-hook #'claude-code-ide-mode)
-
-  ;; MCP 工具支持（可选）
-  ;; (claude-code-ide-enable-mcp-tools)
-
-  ;; 自定义函数：发送当前函数/类定义
-  (defun my/claude-code-ide-send-defun ()
-    "Send current function or class definition to Claude."
-    (interactive)
-    (save-excursion
-      (mark-defun)
-      (claude-code-ide-send-region (region-beginning) (region-end))))
-
-  ;; 自定义函数：发送当前行
-  (defun my/claude-code-ide-send-line ()
-    "Send current line to Claude."
-    (interactive)
-    (let ((line-content (thing-at-point 'line t)))
-      (claude-code-ide-send-string line-content))))
+  (claude-code-ide-cli-debug nil))           ; 关闭 CLI 调试
 
 ;; ==================================================================================
 ;; Claude Code 终端快捷键增强
 ;; 在 Claude Code buffer 中使用 C-p/C-n 上下选择选项
+(declare-function vterm-send-up "vterm" ())
+(declare-function vterm-send-down "vterm" ())
+(defvar vterm-mode-map)
+
+;; 为 byte-compiler 声明本地函数（在 with-eval-after-load 中定义）
+(declare-function my/claude-code-vterm-send-up "init-ai.el" ())
+(declare-function my/claude-code-vterm-send-down "init-ai.el" ())
+
 (with-eval-after-load 'vterm
+  ;; 定义 vterm 导航函数
   (defun my/claude-code-vterm-send-up ()
     "Send Up arrow to vterm for navigating options."
     (interactive)
@@ -86,12 +75,9 @@
     (interactive)
     (vterm-send-down))
 
-  ;; 在 claude-code-ide buffer 中绑定 C-p/C-n
-  (add-hook 'claude-code-ide-mode-hook
-            (lambda ()
-              (when (derived-mode-p 'vterm-mode)
-                (keymap-local-set "C-p" #'my/claude-code-vterm-send-up)
-                (keymap-local-set "C-n" #'my/claude-code-vterm-send-down)))))
+  ;; 直接在 vterm-mode-map 中绑定按键
+  (define-key vterm-mode-map (kbd "C-p") #'my/claude-code-vterm-send-up)
+  (define-key vterm-mode-map (kbd "C-n") #'my/claude-code-vterm-send-down))
 
 ;; ==================================================================================
 ;; 未来可添加的 AI 工具：

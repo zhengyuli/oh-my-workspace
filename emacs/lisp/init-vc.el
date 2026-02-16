@@ -39,11 +39,12 @@
   (require 'magit-diff)
 
   ;; Customized faces
+  ;; 语义: added = 绿色, removed = 红色
   (custom-set-faces
-   '(magit-diff-added ((t (:background "#919191" :foreground "white"))))
-   '(magit-diff-removed ((t (:background "#474747" :foreground "white"))))
-   '(magit-diff-added-highlight ((t (:background "#B22222" :foreground "white"))))
-   '(magit-diff-removed-highlight ((t (:background "#98FB98" :foreground "black"))))
+   '(magit-diff-added ((t (:background "#98FB98" :foreground "black"))))              ; 浅绿色
+   '(magit-diff-removed ((t (:background "#FFB6C1" :foreground "black"))))            ; 浅红色
+   '(magit-diff-added-highlight ((t (:background "#90EE90" :foreground "black"))))    ; 高亮绿色
+   '(magit-diff-removed-highlight ((t (:background "#F08080" :foreground "black"))))  ; 高亮红色
    '(magit-diff-hunk-heading-highlight ((t (:background "#383838" :foreground "white"))))))
 
 ;; ==================================================================================

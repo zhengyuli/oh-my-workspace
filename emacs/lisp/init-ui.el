@@ -28,6 +28,12 @@
 ;;; Code:
 
 ;; ==================================================================================
+;; GUI Frame Settings - 全屏、尺寸等
+(when (display-graphic-p)
+  ;; 启动时自动全屏 (使用自定义 toggle-fullscreen)
+  (add-hook 'emacs-startup-hook #'toggle-fullscreen))
+
+;; ==================================================================================
 ;; Theme - doom-themes
 ;; 主题尽早加载避免闪烁，配置放在 :init
 (use-package doom-themes
@@ -69,39 +75,42 @@
 
   ;; Redefinition of `centaur-tabs-buffer-groups'
   (defun centaur-tabs-buffer-groups ()
-    "`centaur-tabs-buffer-groups' control buffers' group rules."
+    "Control buffers' group rules.
+
+Combine official and custom rules:
+- Project-based grouping (official)
+- Shell/EShell/Vterm grouping
+- Dashboard, Claude Code, Magit, Org, ProgMode grouping"
     (list
      (cond
-      ((derived-mode-p 'dashboard-mode)
-       "Dashboard")
-      ((derived-mode-p 'dired-mode)
-       "Dired")
-      ((derived-mode-p 'vterm-mode)
-       "Vterm")
-      ((or (string-prefix-p "*" (buffer-name))
-           (memq major-mode '(magit-process-mode
-                              magit-status-mode
-                              magit-diff-mode
-                              magit-log-mode
-                              magit-file-mode
-                              magit-blob-mode
-                              magit-blame-mode)))
-       "Emacs")
-      ((derived-mode-p 'prog-mode)
-       "ProgMode")
-      ((memq major-mode '(org-mode
-                          org-agenda-clockreport-mode
-                          org-src-mode
-                          org-agenda-mode
-                          org-beamer-mode
-                          org-indent-mode
-                          org-bullets-mode
-                          org-cdlatex-mode
-                          org-agenda-log-mode
-                          diary-mode))
+      ;; 项目分组 (官方推荐优先)
+      ((when-let* ((project-name (centaur-tabs-project-name)))
+         project-name))
+      ;; 特殊 buffer
+      ((derived-mode-p 'dashboard-mode) "Dashboard")
+      ((derived-mode-p 'claude-code-ide-mode) "Claude Code")
+      ;; 终端
+      ((derived-mode-p 'vterm-mode) "Vterm")
+      ((derived-mode-p 'shell-mode) "Shell")
+      ((derived-mode-p 'eshell-mode) "EShell")
+      ;; Dired
+      ((derived-mode-p 'dired-mode) "Dired")
+      ;; Magit (所有 magit mode 都继承自 magit-mode)
+      ((derived-mode-p 'magit-mode) "Magit")
+      ;; Org 模式 (org-agenda 等不继承 org-mode，需要单独列出)
+      ((or (derived-mode-p 'org-mode)
+           (memq major-mode '(org-agenda-mode
+                              org-agenda-clockreport-mode
+                              diary-mode)))
        "OrgMode")
-      (t
-       (centaur-tabs-get-group-name (current-buffer))))))
+      ;; Elisp 单独分组
+      ((derived-mode-p 'emacs-lisp-mode) "Elisp")
+      ;; 其他特殊 buffer (以 * 开头)
+      ((string-prefix-p "*" (buffer-name)) "Emacs")
+      ;; 编程模式
+      ((derived-mode-p 'prog-mode) "ProgMode")
+      ;; 默认
+      (t (centaur-tabs-get-group-name (current-buffer))))))
 
   ;; Customized faces
   (custom-set-faces
@@ -118,7 +127,7 @@
   (setq centaur-tabs-height 25
         centaur-tabs-style "bar"
         centaur-tabs-set-close-button nil
-        centaur-tabs-set-icons t
+        centaur-tabs-set-icons nil
         centaur-tabs-gray-out-icons 'buffer
         centaur-tabs-show-count t
         centaur-tabs-cycle-scope 'tabs)
@@ -145,8 +154,8 @@
   :ensure t
   :when (display-graphic-p)              ; 仅 GUI 模式
   :config
-  (setq dimmer-fraction 0.30
-        dimmer-minimum-opacity 0.5
+  (setq dimmer-fraction 0.12             ; 轻微调暗，差异较小
+        dimmer-minimum-opacity 0.88      ; 保持较高不透明度
         dimmer-adjustment-mode :both)    ; 调整前景和背景
   ;; 排除特定 buffer
   (setq dimmer-buffer-exclusion-regexps

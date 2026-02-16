@@ -238,16 +238,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
  '(package-vc-selected-packages
    '((claude-code-ide :url
 		      "https://github.com/manzaltu/claude-code-ide.el"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(centaur-tabs-selected ((t (:bold t :foreground "#28cd41"))))
- '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300"))))
- '(centaur-tabs-unselected ((t (:bold t :foreground "grey"))))
- '(centaur-tabs-unselected-modified ((t (:bold t :foreground "#ff9300"))))
- '(dired-directory ((t (:foreground "#51AFEF" :height 1.1))))
- '(dired-header ((t (:foreground "#EE82EE" :height 1.1))))
- '(dired-mark ((t (:foreground "#FF1493" :inverse-video nil))))
- '(dired-marked ((t (:foreground "#FFFF00" :inverse-video nil)))))
+;; 注: custom-set-faces 已移至各模块文件中
+;; - centaur-tabs 面部在 init-ui.el 中定义
+;; - dired 面部在 init-dired.el 中定义
