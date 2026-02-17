@@ -28,49 +28,89 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Dired packages
+;; Dired packages - 保留的工具包
 (use-package dired-filter
   :defer t)
 
 (use-package dired-hacks-utils
   :defer t)
 
-;; dired-narrow - 实时过滤文件
-;; 按 // 开始输入，实时缩小文件范围
-(use-package dired-narrow
-  :ensure t
-  :commands (dired-narrow)
-  :init
-  (with-eval-after-load 'dired
-    (bind-key "//" #'dired-narrow dired-mode-map)))
-
-;; dired-collapse - 折叠嵌套空目录
-;; 将 a/b/c/file.txt 折叠显示为单行
-;; 已禁用：如需启用，手动 M-x dired-collapse-mode
-(use-package dired-collapse
-  :ensure t
-  :defer t)
-
-;; diredfl - 替换过时的 dired-filetype-face
-;; 从 Dired+ 提取的 fontification 规则，更活跃维护
-(use-package diredfl
-  :ensure t
-  :hook (dired-mode . diredfl-mode))
-
-(use-package nerd-icons-dired
-  :ensure t
-  :defer t)
-
-;; dired-preview - 自动预览文件 (默认禁用，手动 M-x dired-preview-mode 启用)
-(use-package dired-preview
-  :ensure t
-  :defer t)
-
 (use-package async
   :defer t)
 
 ;; ==================================================================================
-;; Dired configuration
+;; Dirvish - 现代化文件管理器
+;; 替代: diredfl, nerd-icons-dired, dired-preview, dired-collapse
+(use-package dirvish
+  :ensure t
+  :init
+  ;; 启用 Dirvish 覆盖 dired 模式 (C-x d 自动使用 dirvish)
+  (dirvish-override-dired-mode)
+  :config
+  ;; 快速访问目录
+  (setq dirvish-quick-access-entries
+        '(("h" "~/"                           "Home")
+          ("d" "~/Downloads/"                 "Downloads")
+          ("w" "~/oh-my-workspace/"           "Workspace")
+          ("e" "~/.emacs.d/"                  "Emacs Config")))
+
+  ;; 外观属性: 图标（仅GUI）、文件时间、大小、子目录状态、git 状态
+  (setq dirvish-attributes
+        (append (when (display-graphic-p) '(nerd-icons))
+                '(file-time file-size subtree-state vc-state)))
+
+  ;; Mode line 格式
+  (setq dirvish-mode-line-format
+        '(:left (sort symlink) :right (omit yank index)))
+
+  ;; 预览延迟
+  (setq dirvish-preview-delay 0.1)
+
+  ;; 快捷键
+  (with-eval-after-load 'dirvish
+    (bind-keys :map dirvish-mode-map
+               ("?"   . dirvish-dispatch)          ; 帮助菜单
+               ("a"   . dirvish-quick-access)      ; 快速访问
+               ("f"   . dirvish-fd)                ; fd 搜索
+               ("s"   . dirvish-quicksort)         ; 快速排序
+               ("TAB" . dirvish-subtree-toggle)    ; 折叠/展开子目录
+               ("M-n" . dirvish-narrow)            ; 窄化搜索
+               ("M-t" . dirvish-layout-toggle))    ; 切换布局
+    ))
+
+;; ==================================================================================
+;; 以下包已被 Dirvish 内置功能替代，已禁用
+
+;; diredfl - 被 Dirvish 内置着色替代
+;; (use-package diredfl
+;;   :ensure t
+;;   :hook (dired-mode . diredfl-mode))
+
+;; nerd-icons-dired - 被 Dirvish 的 nerd-icons 属性替代
+;; (use-package nerd-icons-dired
+;;   :ensure t
+;;   :defer t)
+
+;; dired-preview - 被 Dirvish 内置预览替代
+;; (use-package dired-preview
+;;   :ensure t
+;;   :defer t)
+
+;; dired-collapse - 被 Dirvish 的 collapse 属性替代
+;; (use-package dired-collapse
+;;   :ensure t
+;;   :defer t)
+
+;; dired-narrow - 被 Dirvish 的 dirvish-narrow 替代
+;; (use-package dired-narrow
+;;   :ensure t
+;;   :commands (dired-narrow)
+;;   :init
+;;   (with-eval-after-load 'dired
+;;     (bind-key "//" #'dired-narrow dired-mode-map)))
+
+;; ==================================================================================
+;; Dired configuration - 基础设置 (与 Dirvish 兼容)
 (use-package dired
   :ensure nil
   :hook (dired-mode . my/dired-setup)
@@ -79,13 +119,6 @@
   (require 'dired-x)
   (require 'dired-async)
   (require 'dired-custom-extension)
-
-  ;; Customized faces
-  (custom-set-faces
-   '(dired-header ((t (:foreground "#EE82EE" :height 1.1))))
-   '(dired-directory ((t (:foreground "#51AFEF" :height 1.1))))
-   '(dired-mark ((t (:foreground "#FF1493" :inverse-video nil))))
-   '(dired-marked ((t (:foreground "#FFFF00" :inverse-video nil)))))
 
   ;; Customize variables
   (setq dired-dwim-target t
@@ -107,24 +140,22 @@
     (setq dired-use-ls-dired nil
           dired-listing-switches "-alh"))
 
-  ;; Key bindings
+  ;; Key bindings (这些会被 Dirvish 继承)
   (lazy-set-key
    '(("<return>" . dired-single-buffer)
      ("RET" . dired-single-buffer)
+     ("h" . dired-up-directory-single)      ; 上级目录
      ("p" . dired-hacks-previous-file)
      ("n" . dired-hacks-next-file)
      ("M-," . dired-goto-first-line)
      ("M-." . dired-goto-last-line)
-     ("h" . dired-up-directory-single)
      ("C-s" . isearch-forward)
      ("C-r" . isearch-backward)
      ("C-k" . dired-do-delete)
-     ("k" . kill-this-buffer)
      ("r" . wdired-change-to-wdired-mode)
      ("M-o" . dired-omit-mode)
      ("E" . dired-do-touch)
      ("B" . dired-backup-file)
-     ("?" . dired-get-size)
      ("d" . dired-diff)
      ("D" . ediff-directories)
      ("z" . dired-do-compress)
@@ -139,9 +170,9 @@
      ("/m" . dired-mark-files-regexp)
      ("/*" . dired-filter-by-regexp)
      ("/." . dired-filter-by-extension)
-     ("/ /" . dired-filter-remove)      ; 移除最后一个过滤器
-     ("/c" . dired-filter-clear)        ; 清除所有过滤器
-     ("/p" . dired-filter-pop)          ; 弹出最后一个过滤器
+     ("/ /" . dired-filter-pop)        ; 移除最后一个过滤器
+     ("/c" . dired-filter-pop-all)     ; 清除所有过滤器
+     ("/p" . dired-filter-pop)
      ("; n" . dired-get-file-name-without-path)
      ("; N" . dired-get-file-name-with-path)
      ("; p" . dired-get-file-name-only-path))
@@ -156,10 +187,7 @@
   (defun my/dired-setup ()
     "Setup dired mode."
     ;; Enable dired omit mode
-    (dired-omit-mode 1)
-    ;; Enable nerd icons dired mode
-    (when (display-graphic-p)
-      (nerd-icons-dired-mode 1))))
+    (dired-omit-mode 1)))
 
 ;; ==================================================================================
 ;; View-mode vim-style navigation (for viewing files from dired)

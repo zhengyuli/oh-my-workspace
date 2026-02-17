@@ -218,7 +218,7 @@ print_dependency_guide() {
 
     echo -e "${BLUE}【Fonts - GUI Mode】${NC}"
     echo "  brew install --cask font-source-code-pro font-source-serif-pro"
-    echo "  # After installation, run in Emacs: M-x all-the-icons-install-fonts"
+    echo "  # nerd-icons requires: M-x nerd-icons-install-fonts"
     echo ""
 
     echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════════${NC}"
