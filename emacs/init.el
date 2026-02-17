@@ -185,6 +185,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (require 'init-ui)
 (require 'init-editing)
 (require 'init-completion)
+(require 'init-projects)
 (require 'init-dired)
 (require 'init-vc)
 (require 'init-terminal)

@@ -107,15 +107,39 @@
    ("C-x F" . consult-locate)))
 
 ;; ==================================================================================
+;; Embark - 上下文操作
+(use-package embark
+  :ensure t
+  :defer t
+  :custom
+  (embark-prompter 'embark-keymap-prompter)    ; 使用 keymap 提示器
+  (embark-cycle-key nil)                       ; 禁用循环键
+  (embark-help-key "C-h")                      ; 帮助键
+  :bind
+  (;; 上下文操作
+   ("C-." . embark-act)                        ; 对当前目标执行操作
+   ("C-," . embark-dwim)                       ; 智能默认操作
+   ("C-h B" . embark-bindings)                 ; 查看所有按键绑定
+   :map embark-command-map
+   ("C-." . embark-act)))
+
+;; ==================================================================================
+;; Embark-consult - Embark 与 Consult 集成
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :hook
+  (embark-collect-mode . embark-consult-preview-minor-mode))
+
+;; ==================================================================================
 ;; Consult-projectile - 项目集成
 (use-package consult-projectile
   :ensure t
   :after (consult projectile)
   :config
   (with-eval-after-load 'projectile
-    (bind-key "p" #'consult-projectile-find-file projectile-command-map)
-    (bind-key "b" #'consult-projectile-switch-project-buffer projectile-command-map)
-    (bind-key "C-x p" projectile-command-map projectile-mode-map)))
+    (bind-key "f" #'consult-projectile-find-file projectile-command-map)
+    (bind-key "b" #'consult-projectile-switch-project-buffer projectile-command-map)))
 
 ;; ==================================================================================
 ;; Prescient - 智能排序
