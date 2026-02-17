@@ -172,7 +172,7 @@ print_dependency_guide() {
     echo ""
 
     echo -e "${BLUE}【Required - Core Functionality】${NC}"
-    echo "  brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm"
+    echo "  brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm marksman fd"
     echo ""
 
     echo -e "${BLUE}【LSP Servers - Code Completion & Navigation】${NC}"

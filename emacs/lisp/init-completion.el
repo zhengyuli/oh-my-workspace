@@ -89,12 +89,12 @@
   :bind
   (;; Search
    ("C-s" . consult-line)
-   ("C-r" . consult-line-backward)
+   ("C-r" . isearch-backward)             ; 向后搜索
    ;; Buffer and file navigation
    ("C-x b" . consult-buffer)
    ("C-x B" . consult-recent-file)
-   ;; Help commands
-   ("C-h f" . consult-apropos)
+   ;; Help commands - 使用内置 apropos
+   ("C-h f" . apropos-command)
    ;; Yank
    ("M-y" . consult-yank-pop)
    ;; Goto line

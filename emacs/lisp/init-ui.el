@@ -149,25 +149,6 @@ Combine official and custom rules:
                     (intern (format "winum-select-window-%d" (1+ i))))))
 
 ;; ==================================================================================
-;; Dimmer - dim inactive buffers (仅 GUI)
-(use-package dimmer
-  :ensure t
-  :when (display-graphic-p)              ; 仅 GUI 模式
-  :config
-  (setq dimmer-fraction 0.12             ; 轻微调暗，差异较小
-        dimmer-minimum-opacity 0.88      ; 保持较高不透明度
-        dimmer-adjustment-mode :both)    ; 调整前景和背景
-  ;; 排除特定 buffer
-  (setq dimmer-buffer-exclusion-regexps
-        '(".*Minibuf.*"
-          ".*which-key.*"
-          ".*Help.*"
-          ".*Messages.*"
-          ".*Completions.*"
-          ".*Echo Area.*"))
-  (dimmer-mode 1))
-
-;; ==================================================================================
 ;; Dashboard
 (use-package dashboard
   :ensure t
