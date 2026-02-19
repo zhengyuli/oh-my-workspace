@@ -1,10 +1,11 @@
 ;;; init-shell.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions, init-prog-base
 
 ;; This file is not part of GNU Emacs.
 
@@ -29,8 +30,20 @@
 
 ;; ==================================================================================
 ;; Shell mode hook
-;; eglot 已在 init-prog-base.el 中配置 sh-mode 的 eglot-ensure
-;; C-c C-c 已在 prog-mode-map 中绑定，sh-mode 继承该绑定
+;; eglot already configured for sh-mode eglot-ensure in init-prog-base.el
+;; C-c C-c already bound in prog-mode-map, sh-mode inherits this binding
+
+;; ==================================================================================
+;; Shell Tools Validation
+;; Shell LSP server validation
+(defvar required-shell-tools
+  '((bash-language-server . "npm install -g bash-language-server"))
+  "Shell/Bash LSP server.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'shell-tools
+ (lambda () (config-dependency-validate-executables required-shell-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

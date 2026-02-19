@@ -1,10 +1,11 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -23,12 +24,12 @@
 
 ;;; Commentary:
 ;;
-;; Editing enhancements: undo-tree, move-text, expand-region, multiple-cursors, etc.
+;; Editing enhancements: vundo, move-text, expand-region, multiple-cursors, etc.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Vundo - visual undo tree (替代 undo-tree)
+;; Vundo - visual undo tree (replaces undo-tree)
 (use-package vundo
   :ensure t
   :bind ("M-_" . vundo)
@@ -51,7 +52,7 @@
   :defer t)
 
 ;; ==================================================================================
-;; Visual regexp steroids - 增强的可视化正则替换
+;; Visual regexp steroids - enhanced visual regexp replacement
 (use-package visual-regexp-steroids
   :defer t
   :bind (("C-c r" . vr/replace)
@@ -80,27 +81,27 @@
   :defer t)
 
 ;; ==================================================================================
-;; Flyspell - 拼写检查
-;; 默认使用 aspell（开箱即用），hunspell 需要额外配置字典
+;; Flyspell - spell checking
+;; Default to aspell (works out of the box), hunspell requires extra dictionary config
 (use-package flyspell
   :defer t
   :config
-  ;; 选择拼写检查程序：aspell（默认）> hunspell > ispell
-  ;; hunspell 需要安装字典文件，aspell 开箱即用
+  ;; Choose spell checker: aspell (default) > hunspell > ispell
+  ;; hunspell requires dictionary files, aspell works out of the box
   (cond
-   ;; 优先使用 aspell（更常见，无需额外配置）
+   ;; Prefer aspell (more common, no extra config needed)
    ((executable-find "aspell")
     (setq ispell-program-name "aspell"
           ispell-dictionary "american"
           ispell-extra-args '("--sug-mode=ultra" "--run-together")))
-   ;; hunspell 需要配置字典路径
+   ;; hunspell requires dictionary path configuration
    ((executable-find "hunspell")
     (setq ispell-program-name "hunspell"
           ispell-dictionary "en_US"
-          ;; macOS Homebrew hunspell 字典路径
+          ;; macOS Homebrew hunspell dictionary path
           ispell-hunspell-dictionary-alist
           '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
-    ;; 设置字典路径（如果存在）
+    ;; Set dictionary path if it exists
     (let ((dict-path (expand-file-name "~/Library/Spelling")))
       (when (file-directory-p dict-path)
         (setenv "DICPATH" dict-path))))
@@ -108,16 +109,16 @@
     (setq ispell-program-name "ispell")))
 
   (setq ispell-personal-dictionary "~/.emacs.d/ispell-personal-dict"
-        flyspell-issue-message-flag nil     ; 禁用消息输出
-        flyspell-mark-duplications-flag t   ; 标记重复单词
-        flyspell-delay 0.5)                 ; 检查延迟
+        flyspell-issue-message-flag nil     ; Disable message output
+        flyspell-mark-duplications-flag t   ; Mark duplicate words
+        flyspell-delay 0.5)                 ; Check delay
 
-  ;; 创建个人词典文件（如果不存在）
+  ;; Create personal dictionary file if not exists
   (unless (file-exists-p ispell-personal-dictionary)
     (make-directory (file-name-directory ispell-personal-dictionary) t)
     (write-region "" nil ispell-personal-dictionary))
 
-  ;; Key unbindings (避免与其他快捷键冲突)
+  ;; Key unbindings (avoid conflict with other key bindings)
   (lazy-unset-key '("C-," "C-." "C-;") flyspell-mode-map))
 
 ;; ==================================================================================
@@ -144,7 +145,7 @@
     (yas-expand-snippet (buffer-string) (point-min) (point-max)))
 
   (setq auto-insert 'other
-        auto-insert-directory (concat emacs-config-root-path "/templates/"))
+        auto-insert-directory (concat emacs-config-root "/templates/"))
 
   ;; Templates
   (define-auto-insert-custom
@@ -180,16 +181,16 @@
     ["template.org" autoinsert-yas-expand]))
 
 ;; ==================================================================================
-;; Smart kill buffer - 已保存的直接关闭，有修改的才询问
-(defun my/smart-kill-buffer ()
-  "智能关闭缓冲区：已保存的文件缓冲区直接关闭，其他情况调用 kill-buffer。"
+;; Smart kill buffer - close saved buffers directly, ask for modified ones
+(defun smart-kill-buffer ()
+  "Smart buffer close: kill modified file buffers with prompt, kill others directly."
   (interactive)
   (if (and buffer-file-name (buffer-modified-p))
       (kill-buffer (current-buffer))
     (kill-current-buffer)))
 
-;; 直接设置键绑定（不放在 after-init-hook 中）
-(global-set-key (kbd "C-x k") #'my/smart-kill-buffer)
+;; Set key binding directly (not in after-init-hook)
+(global-set-key (kbd "C-x k") #'smart-kill-buffer)
 
 ;; ==================================================================================
 ;; Global editing keybindings
@@ -199,7 +200,6 @@
              '(;; Undo (explicit binding to prevent override)
                ("C-/" . undo)
                ;; Smart edit
-               ("C-x <tab>" . smart-indent)
                ("C-x TAB" . smart-indent)
                ("M-w" . smart-copy)
                ("M-k" . smart-kill)
@@ -219,6 +219,19 @@
                ("C-: c" . flyspell-correct-wrapper)
                ("C-: p" . flyspell-correct-previous)
                ("C-: n" . flyspell-correct-next)))))
+
+;; ==================================================================================
+;; Spell Tools Validation
+;; Spell checking tools validation
+(defvar required-spell-tools
+  '((aspell . "brew install aspell")
+    (hunspell . "brew install hunspell"))
+  "List of spell checking tools.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'spell-tools
+ (lambda () (config-dependency-validate-executables required-spell-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

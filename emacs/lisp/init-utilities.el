@@ -1,10 +1,11 @@
 ;;; init-utilities.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -30,8 +31,11 @@
 
 ;; ==================================================================================
 ;; Exec path from shell (macOS)
+;; Optimization: use -l instead of -i to avoid slow shell startup
 (use-package exec-path-from-shell
   :when (memq window-system '(mac ns))
+  :custom
+  (exec-path-from-shell-arguments '("-l"))  ; -l is much faster than -li
   :hook (after-init . exec-path-from-shell-initialize))
 
 ;; ==================================================================================
@@ -40,14 +44,14 @@
   :defer t)
 
 ;; ==================================================================================
-;; Switch window - 用字母标识窗口，快速切换
+;; Switch window - label windows with letters for quick switching
 (use-package switch-window
   :ensure t
   :defer t
   :custom
-  (switch-window-shortcut-style 'qwerty)  ; 使用 QWERTY 键位
-  (switch-window-timeout 5)               ; 5 秒后自动取消
-  (switch-window-threshold 3))            ; 3 个窗口以上才启用标识
+  (switch-window-shortcut-style 'qwerty)  ; Use QWERTY key layout
+  (switch-window-timeout 5)               ; Auto-cancel after 5 seconds
+  (switch-window-threshold 3))            ; Enable labels only with 3+ windows
 
 ;; ==================================================================================
 ;; Pinentry
@@ -86,8 +90,8 @@
   (auto-package-update-delete-old-versions t)
   (auto-package-update-hide-output t)
   :config
-  ;; 后台检查包更新
-  (defun my/package-check-updates ()
+  ;; Check for package updates in background
+  (defun package-check-updates ()
     "Check for package updates in background and notify if updates available."
     (interactive)
     (message "Checking for package updates...")
@@ -101,12 +105,12 @@
               (message "Run `M-x auto-package-upgrade-all' to upgrade later.")))
         (message "All packages are up to date."))))
 
-  ;; 启动后延迟检查更新（空闲 60秒后）
-  (run-with-idle-timer 60 nil #'my/package-check-updates))
+  ;; Check for updates after startup (after 60 seconds idle)
+  (run-with-idle-timer 60 nil #'package-check-updates))
 
-;; 便捷函数别名：升级所有包
-;; 注意: auto-package-upgrade-all (init-functions.el) 已包含 package-refresh-contents
-(defalias 'my/package-upgrade-all 'auto-package-upgrade-all
+;; Convenience alias: upgrade all packages
+;; Note: auto-package-upgrade-all (init-functions.el) already includes package-refresh-contents
+(defalias 'package-upgrade-all 'auto-package-upgrade-all
   "Upgrade all packages interactively.")
 
 ;; ==================================================================================
@@ -170,8 +174,8 @@
             (setq ring-bell-function 'ignore)
 
             ;; Customize user and email
-            (setq user-full-name emacs-config-user
-                  user-mail-address emacs-config-email)
+            (setq user-full-name emacs-user-name
+                  user-mail-address emacs-user-email)
 
             ;; Browser settings
             (when (featurep 'xwidget-internal)
@@ -182,7 +186,7 @@
               (setq mac-command-modifier 'super
                     mac-option-modifier 'meta))
 
-            ;; Remap '<return>' to 'RET'
+            ;; Translate '<return>' to 'RET'
             (define-key key-translation-map (kbd "<return>") (kbd "RET"))
 
             ;; Basic keybindings
@@ -205,15 +209,35 @@
             (run-with-idle-timer 2 nil (lambda () (recentf-mode 1)))))
 
 ;; ==================================================================================
-;; Before save hook
-(add-hook 'before-save-hook
+;; Before save hooks (mode-specific)
+;; Time-stamp: globally enabled (only affects files with Time-stamp marker)
+(add-hook 'before-save-hook #'time-stamp)
+
+;; Programming mode specific before-save hook
+(defun prog-before-save-hook ()
+  "Actions to run before saving programming files."
+  ;; Update copyright (only in project files)
+  (when (vc-root-dir)
+    (copyright-update))
+  ;; Delete trailing whitespace
+  (delete-trailing-whitespace))
+
+;; Enable only for programming modes
+(add-hook 'prog-mode-hook
           (lambda ()
-            ;; Update timestamp
-            (time-stamp)
-            ;; Update copyright
-            (copyright-update)
-            ;; Delete trailing white space
-            (delete-trailing-whitespace)))
+            (add-hook 'before-save-hook #'prog-before-save-hook nil t)))
+
+;; ==================================================================================
+;; Utility Tools Validation
+;; Password management tools validation
+(defvar required-utility-tools
+  '((pass . "brew install pass"))
+  "List of utility tools.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'utility-tools
+ (lambda () (config-dependency-validate-executables required-utility-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

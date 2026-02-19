@@ -28,20 +28,20 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; GUI Frame Settings - 全屏、尺寸等
+;; GUI Frame Settings - fullscreen, size, etc.
 (when (display-graphic-p)
-  ;; 启动时自动全屏 (使用自定义 toggle-fullscreen)
+  ;; Auto fullscreen on startup (using custom toggle-fullscreen)
   (add-hook 'emacs-startup-hook #'toggle-fullscreen))
 
 ;; ==================================================================================
 ;; Theme - doom-themes
-;; 主题尽早加载避免闪烁，配置放在 :init
+;; Load theme early to avoid flicker, config in :init
 (use-package doom-themes
   :ensure t
   :init
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  ;; 尽早加载主题
+  ;; Load theme early
   (load-theme 'doom-xcode t))
 
 ;; ==================================================================================
@@ -55,7 +55,7 @@
   (doom-modeline-mode 1))
 
 ;; ==================================================================================
-;; Nerd-icons - 统一图标系统
+;; Nerd-icons - unified icon system
 (use-package nerd-icons
   :ensure t)
 
@@ -63,6 +63,7 @@
 ;; Tabs - centaur-tabs
 (use-package centaur-tabs
   :ensure t
+  :demand t
   :bind
   (:map centaur-tabs-mode-map
         ("M-p" . centaur-tabs-backward)
@@ -83,33 +84,35 @@ Combine official and custom rules:
 - Dashboard, Claude Code, Magit, Org, ProgMode grouping"
     (list
      (cond
-      ;; 项目分组 (官方推荐优先)
+      ;; Project grouping (official recommendation, highest priority)
       ((when-let* ((project-name (centaur-tabs-project-name)))
-         project-name))
-      ;; 特殊 buffer
+         (and (stringp project-name)
+              (not (string-empty-p project-name))
+              project-name)))
+      ;; Special buffers
       ((derived-mode-p 'dashboard-mode) "Dashboard")
       ((derived-mode-p 'claude-code-ide-mode) "Claude Code")
-      ;; 终端
+      ;; Terminals
       ((derived-mode-p 'vterm-mode) "Vterm")
       ((derived-mode-p 'shell-mode) "Shell")
       ((derived-mode-p 'eshell-mode) "EShell")
       ;; Dired
       ((derived-mode-p 'dired-mode) "Dired")
-      ;; Magit (所有 magit mode 都继承自 magit-mode)
+      ;; Magit (all magit modes inherit from magit-mode)
       ((derived-mode-p 'magit-mode) "Magit")
-      ;; Org 模式 (org-agenda 等不继承 org-mode，需要单独列出)
+      ;; Org mode (org-agenda etc. don't inherit org-mode, need separate listing)
       ((or (derived-mode-p 'org-mode)
            (memq major-mode '(org-agenda-mode
                               org-agenda-clockreport-mode
                               diary-mode)))
        "OrgMode")
-      ;; Elisp 单独分组
+      ;; Elisp separate group
       ((derived-mode-p 'emacs-lisp-mode) "Elisp")
-      ;; 其他特殊 buffer (以 * 开头)
+      ;; Other special buffers (starting with *)
       ((string-prefix-p "*" (buffer-name)) "Emacs")
-      ;; 编程模式
+      ;; Programming modes
       ((derived-mode-p 'prog-mode) "ProgMode")
-      ;; 默认
+      ;; Default
       (t (centaur-tabs-get-group-name (current-buffer))))))
 
   ;; Customized faces
@@ -136,14 +139,14 @@ Combine official and custom rules:
   (centaur-tabs-mode 1))
 
 ;; ==================================================================================
-;; Winum - 在 mode-line 显示窗口编号，M-1/2/3... 切换窗口
+;; Winum - show window numbers in mode-line, M-1/2/3... to switch windows
 (use-package winum
   :ensure t
   :config
   (setq winum-auto-setup-mode-line t
         winum-format " %s ")
   (winum-mode 1)
-  ;; M-1/2/3... 切换到对应窗口
+  ;; M-1/2/3... to switch to corresponding window
   (dotimes (i 9)
     (global-set-key (kbd (format "M-%d" (1+ i)))
                     (intern (format "winum-select-window-%d" (1+ i))))))
@@ -155,12 +158,12 @@ Combine official and custom rules:
   :config
   (require 'dashboard-widgets)
   (setq dashboard-center-content t
-        ;; 仅在 GUI 模式使用图片 banner
+        ;; Use image banner in GUI mode, official banner in terminal
         dashboard-startup-banner (if (display-graphic-p)
-                                     (concat emacs-config-root-path "/banners/totoro.png")
+                                     (concat emacs-config-root "/banners/totoro.png")
                                    'official)
-        dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-config-user)
-        ;; 仅在 GUI 模式启用图标
+        dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name)
+        ;; Enable icons only in GUI mode
         dashboard-set-heading-icons (display-graphic-p)
         dashboard-set-file-icons (display-graphic-p)
         dashboard-set-navigator t
@@ -184,7 +187,7 @@ Combine official and custom rules:
   (dashboard-open))
 
 ;; ==================================================================================
-;; Pulsar - cursor highlighting (替代 beacon)
+;; Pulsar - cursor highlighting (replaces beacon)
 (use-package pulsar
   :ensure t
   :config
@@ -218,7 +221,7 @@ Combine official and custom rules:
                 (pixel-scroll-precision-mode 1)))))
 
 ;; ==================================================================================
-;; Emojify - 仅在特定模式启用
+;; Emojify - enable only in specific modes
 (use-package emojify
   :ensure t
   :defer t
@@ -230,7 +233,7 @@ Combine official and custom rules:
 ;; Textsize - automatic font sizing based on screen resolution (GUI only)
 (use-package textsize
   :ensure t
-  :when (display-graphic-p)              ; 仅 GUI 模式启用
+  :when (display-graphic-p)              ; GUI mode only
   :config
   (setq textsize-monitor-size-thresholds
         '((0 . -3) (350 . -1) (500 . 0))

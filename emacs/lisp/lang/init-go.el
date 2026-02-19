@@ -1,10 +1,11 @@
 ;;; init-go.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions, init-prog-base
 
 ;; This file is not part of GNU Emacs.
 
@@ -24,7 +25,7 @@
 ;;; Commentary:
 ;;
 ;; Go mode configuration.
-;; 使用 eglot + gopls 进行 LSP 支持，跳转等功能通过 xrf 体系实现。
+;; Use eglot + gopls for LSP support, navigation via xref system.
 
 ;;; Code:
 
@@ -34,7 +35,7 @@
   :defer t
   :hook (go-mode . go-mode-setup)
   :config
-  ;; 全局设置 gofmt 命令
+  ;; Globally set gofmt command
   (setq gofmt-command "gofumpt")
 
   (defun go-mode-setup ()
@@ -44,13 +45,13 @@
       (require 'exec-path-from-shell)
       (exec-path-from-shell-copy-env "GOROOT")
       (exec-path-from-shell-copy-env "GOPATH"))
-    ;; 保存时自动格式化
+    ;; Auto format on save
     (add-hook 'before-save-hook #'gofmt-before-save nil t)))
 
 ;; ==================================================================================
 ;; Go mode keybindings
-;; 注意: M-. 和 M-, 已在 prog-mode-map 中绑定到 xref-find-definitions/xref-pop-marker-stack
-;; 通过 eglot + gopls 提供跳转功能，无需 godef
+;; Note: M-. and M-, already bound in prog-mode-map to xref-find-definitions/xref-pop-marker-stack
+;; Navigation via eglot + gopls, no need for godef
 (with-eval-after-load 'go-mode
   (lazy-set-key
    '(;; Go specific navigation
@@ -60,6 +61,19 @@
      ("C-c C-a" . go-import-add)
      ("C-c C-r" . go-remove-unused-imports))
    go-mode-map))
+
+;; ==================================================================================
+;; Go Tools Validation
+;; Go development tools validation
+(defvar required-go-tools
+  '((gopls . "go install golang.org/x/tools/gopls@latest")
+    (gofumpt . "go install mvdan.cc/gofumpt@latest"))
+  "List of Go development tools.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'go-tools
+ (lambda () (config-dependency-validate-executables required-go-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

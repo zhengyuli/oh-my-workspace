@@ -1,5 +1,5 @@
-;;; package --- init.el -*- lexical-binding:t -*-
-;; Time-stamp: <2026-02-16 21:05:38 zhengyuli>
+;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
+;; Time-stamp: <2026-02-19 18:13:36 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,41 +30,41 @@
 
 ;; ==================================================================================
 ;; Basic check
-(unless (>= (string-to-number emacs-version) 30.2)
-  (error "The Emacs version must be >= 30.2."))
+(unless (version<= "30.2" emacs-version)
+  (error "The Emacs version must be >= 30.2 (current: %s)" emacs-version))
 
 ;; ==================================================================================
 ;; Early initialization
-;; GC 调优 - 启动时增大阈值，加快启动速度
+;; GC tuning - increase threshold at startup for faster initialization
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6)
 
-;; 阻止 package.el 过早加载
+;; Prevent package.el from loading too early
 (setq package-enable-at-startup nil)
 
-;; 启用 package-quickstart 加速（Emacs 27+）
+;; Enable package-quickstart for faster loading (Emacs 27+)
 (when (fboundp 'package-quickstart-refresh)
   (setq package-quickstart t))
 
-;; 阻止 UI 元素短暂显示 (避免启动时闪烁)
+;; Prevent UI elements from briefly showing (avoid startup flicker)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 
-;; 原生编译设置 (Emacs 29+)
+;; Native compilation settings (Emacs 29+)
 (when (boundp 'native-comp-deferred-compilation)
   (setq native-comp-deferred-compilation t
         native-comp-async-report-warnings-errors 'silent))
 
-;; 用 y/n 替代 yes/no (Emacs 28+)
+;; Use y/n instead of yes/no (Emacs 28+)
 (when (boundp 'use-short-answers)
   (setq use-short-answers t))
 
 ;; ==================================================================================
 ;; Global variables
-;; Emacs configuration root path (动态获取，支持符号链接)
-;; 使用 file-chase-links 解析符号链接，获取真实文件路径
-(defvar emacs-config-root-path
+;; Emacs configuration root path (dynamically resolved, supports symlinks)
+;; Use file-chase-links to resolve symlinks and get the real file path
+(defvar emacs-config-root
   (let ((config-file (or load-file-name buffer-file-name)))
     (if config-file
         (file-name-directory (file-chase-links config-file))
@@ -72,39 +72,15 @@
   "Emacs configuration root path.
 Automatically resolves symlinks to find the actual configuration directory.")
 
-(defvar emacs-config-custom-settings-path (expand-file-name "lisp/" emacs-config-root-path)
+(defvar emacs-config-lisp-path (expand-file-name "lisp/" emacs-config-root)
   "Emacs configuration custom settings path.")
 
-(defvar emacs-config-custom-site-packages-path (expand-file-name "site-packages/" emacs-config-root-path)
+(defvar emacs-config-packages-path (expand-file-name "site-packages/" emacs-config-root)
   "Emacs configuration custom site packages path.")
-
-;; Fonts
-(defvar emacs-config-fixed-font "Source Code Pro"
-  "Emacs configuration fixed font.")
-(defvar emacs-config-fixed-serif-font "Source Serif Pro"
-  "Emacs configuration fixed serif font.")
-(defvar emacs-config-variable-font "Times New Roman"
-  "Emacs configuration variable font.")
-
-;; User info
-(defvar emacs-config-user "Zhengyu Li"
-  "Emacs configuration user.")
-(defvar emacs-config-email "lizhengyu419@outlook.com"
-  "Emacs configuration email.")
-
-;; Proxy
-(defvar emacs-http-proxy nil
-  "Emacs configuration http proxy, default is nil.")
-
-;; GC optimization - save original values
-(defvar gc-cons-threshold-original gc-cons-threshold
-  "Original value of gc-cons-threshold.")
-(defvar gc-cons-percentage-original gc-cons-percentage
-  "Original value of gc-cons-percentage.")
 
 ;; ==================================================================================
 ;; Helper function for load-path
-(defun add-subdirs-to-load-path (base-dir)
+(defun emacs-add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.
 Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (let ((default-directory base-dir))
@@ -113,20 +89,20 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 ;; Add custom directories to load-path first
-(add-subdirs-to-load-path emacs-config-custom-settings-path)
-(add-subdirs-to-load-path emacs-config-custom-site-packages-path)
+(emacs-add-subdirs-to-load-path emacs-config-lisp-path)
+(emacs-add-subdirs-to-load-path emacs-config-packages-path)
 
 ;; ==================================================================================
-;; Package manager setup (优化版)
+;; Package manager setup (optimized version)
 (require 'package)
 
-;; Add package archives (添加 NonGNU ELPA)
+;; Add package archives (including NonGNU ELPA)
 (setq package-archives
       '(("gnu"   . "https://elpa.gnu.org/packages/")
         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
         ("melpa" . "https://melpa.org/packages/")))
 
-;; 设置优先级：melpa > nongnu > gnu
+;; Set priorities: melpa > nongnu > gnu
 (setq package-archive-priorities
       '(("melpa" . 10)
         ("nongnu" . 5)
@@ -135,13 +111,17 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; Initialize packages
 (package-initialize)
 
-;; 异步刷新包列表（仅当需要时）
-(defun my/package-refresh-contents-async ()
-  "Asynchronously refresh package contents if needed."
-  (unless package-archive-contents
-    (message "Refreshing package archives...")
-    (package-refresh-contents)))
+;; ==================================================================================
+;; Package version locking (Emacs 30+)
+;; Lock package versions to prevent incompatibility from MELPA rolling updates
+;; Lock file located at ~/.emacs.d/package-lock.eld
+(when (boundp 'package-lock-file)
+  (setq package-lock-file
+        (expand-file-name "package-lock.eld" user-emacs-directory))
+  ;; Enable package locking for reproducible package versions
+  (setq package-lock-locked-package-versions t))
 
+;; Refresh package list asynchronously (only when needed)
 ;; Install and configure use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -159,63 +139,45 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :ensure t
   :demand t
   :custom
-  (gcmh-idle-delay 10)                   ; 空闲 10 秒后 GC
+  (gcmh-idle-delay 10)                   ; GC after 10 seconds idle
   (gcmh-high-cons-threshold #x10000000)  ; 256MB
   :config
   (gcmh-mode 1))
 
 ;; ==================================================================================
-;; Load utility functions
-(require 'init-functions)
-
-;; ==================================================================================
-;; Font verification (仅 GUI 模式)
-(when (display-graphic-p)
-  (ensure-font-installed emacs-config-fixed-font)
-  (ensure-font-installed emacs-config-fixed-serif-font)
-  (ensure-font-installed emacs-config-variable-font))
-
-;; ==================================================================================
-;; Try to enable HTTP proxy
-(enable-http-proxy)
-
-;; ==================================================================================
 ;; Load configuration modules
+;; Helper function for safe module loading
+(defun require-safe (module)
+  "Require MODULE with error protection.
+Logs error but continues if module fails to load."
+  (condition-case err
+      (require module)
+    (error
+     (message "[Config] Warning: Failed to load %s: %s" module (error-message-string err)))))
+
+;; Load utility functions
+(require-safe 'init-functions)
+
 ;; Core modules
-(require 'init-ui)
-(require 'init-editing)
-(require 'init-completion)
-(require 'init-projects)
-(require 'init-dired)
-(require 'init-vc)
-(require 'init-terminal)
-(require 'init-utilities)
+(dolist (module '(init-ui init-editing init-completion init-projects
+                   init-dired init-vc init-terminal init-utilities))
+  (require-safe module))
 
 ;; Language modules
-(require 'init-prog-base)
-(require 'init-text)
-(require 'init-elisp)
-(require 'init-cc)
-(require 'init-python)
-(require 'init-go)
-(require 'init-haskell)
-(require 'init-shell)
-(require 'init-dockerfile)
-(require 'init-cmake)
-(require 'init-yaml)
-(require 'init-markdown)
+(dolist (module '(init-prog-base init-text init-elisp init-cc
+                   init-python init-go init-shell init-dockerfile
+                   init-cmake init-yaml init-markdown))
+  (require-safe module))
 
-;; Tool modules
-(require 'init-ai)
+;; Utility modules
+(require-safe 'init-ai)
 
 ;; ==================================================================================
-;; Restore GC settings after startup
+;; Startup completion hook
+;; GC settings managed automatically by gcmh-mode, no manual restore needed
+;; Package update checks handled by package-check-updates in init-utilities.el
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold gc-cons-threshold-original
-                  gc-cons-percentage gc-cons-percentage-original)
-            ;; 后台刷新包列表（下次启动更快）
-            (run-with-idle-timer 60 nil #'my/package-refresh-contents-async)
             (message "Emacs ready in %.2f seconds with %d garbage collections."
                      (float-time
                       (time-subtract after-init-time before-init-time))
@@ -223,22 +185,12 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 ;; Load user custom settings
-(let ((custom-settings-file (expand-file-name "~/.emacs.d/custom_settings.el")))
-  (unless (file-exists-p custom-settings-file)
-    (make-directory (file-name-directory custom-settings-file) t)
-    (write-region "" nil custom-settings-file))
-  (load-file custom-settings-file))
+(let ((custom-file (locate-user-emacs-file "custom_settings.el")))
+  (unless (file-exists-p custom-file)
+    (with-temp-buffer (write-file custom-file)))
+  (load custom-file :noerror :nomessage))
+
+;; Enable HTTP proxy after custom settings are loaded
+(enable-http-proxy)
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
- '(package-vc-selected-packages
-   '((claude-code-ide :url
-		      "https://github.com/manzaltu/claude-code-ide.el"))))
-;; 注: custom-set-faces 已移至各模块文件中
-;; - centaur-tabs 面部在 init-ui.el 中定义
-;; - dired 面部在 init-dired.el 中定义

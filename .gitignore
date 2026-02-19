@@ -1,1 +1,23 @@
+# Emacs compiled files
+*.elc
+emacs/lisp/*.elc
 
+# Emacs lock files
+.#*
+
+# Emacs auto-save files
+*~
+\#*\#
+
+# Test artifacts
+emacs/test/*.elc
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

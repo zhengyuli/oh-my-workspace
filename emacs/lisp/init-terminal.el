@@ -1,10 +1,11 @@
 ;;; init-terminal.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,14 +29,14 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Vterm - 现代终端模拟器
+;; Vterm - modern terminal emulator
 (use-package vterm
   :commands (vterm)
   :custom
-  (vterm-max-scrollback 10000)           ; 最大滚动历史
-  (vterm-scroll-enable-emacs-bar t)      ; Emacs 风格滚动条
-  (vterm-kill-buffer-on-exit t)          ; 退出时关闭 buffer
-  (vterm-enable-manipulate-selection-data t) ; 允许操作选中内容
+  (vterm-max-scrollback 10000)           ; Maximum scrollback history
+  (vterm-scroll-enable-emacs-bar t)      ; Emacs-style scrollbar
+  (vterm-kill-buffer-on-exit t)          ; Kill buffer on exit
+  (vterm-enable-manipulate-selection-data t) ; Allow selection manipulation
   :config
   ;; Key bindings
   (lazy-set-key
@@ -71,6 +72,18 @@
           (lambda ()
             (lazy-set-key
              '(("C-x C-t" . multi-vterm)))))
+
+;; ==================================================================================
+;; Terminal Tools Validation
+;; Terminal tools validation (vterm module requires libvterm library compilation)
+(defvar required-terminal-tools
+  '((vterm-dump . "brew install libvterm (vterm compilation dependency)"))
+  "List of terminal tools.
+vterm-dump is provided by libvterm homebrew package.")
+
+(config-dependency-register
+ 'terminal-tools
+ (lambda () (config-dependency-validate-executables required-terminal-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,10 +1,11 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -35,9 +36,9 @@
     "black"
     "black-macchiato"
     "debugpy")
-  "A list of packages to setup python development environment.")
+  "A list of packages to set up the Python development environment.")
 
-;; 缓存已安装的包列表，避免重复 shell 调用
+;; Cache installed packages list to avoid repeated shell calls
 (defvar python--installed-packages-cache nil
   "Cache of installed packages for current venv.")
 (defvar python--cached-venv-path nil
@@ -52,11 +53,11 @@
 (defun python--get-installed-packages ()
   "Get list of installed packages, using cache if valid."
   (let ((current-venv (or (getenv "VIRTUAL_ENV") "system")))
-    ;; 如果 venv 变化，清除缓存
+    ;; Clear cache if venv changes
     (unless (equal current-venv python--cached-venv-path)
       (setq python--installed-packages-cache nil
             python--cached-venv-path current-venv))
-    ;; 获取或刷新缓存
+    ;; Get or refresh cache
     (or python--installed-packages-cache
         (setq python--installed-packages-cache
               (let ((output (shell-command-to-string "pip list --format=freeze 2>/dev/null")))
@@ -65,31 +66,35 @@
                         (split-string output "\n" t)))))))
 
 (defun python--ensure-dev-packages ()
-  "Ensure all dev packages are installed, with caching for performance."
+  "Ensure all dev packages are installed, with caching for performance.
+Uses async installation to avoid blocking Emacs."
   (let ((installed (python--get-installed-packages))
         (missing nil))
-    ;; 收集缺失的包
+    ;; Collect missing packages
     (dolist (package python-dev-packages)
       (let ((base-name (python--get-package-base-name package)))
         (unless (member base-name installed)
           (push package missing))))
-    ;; 批量安装缺失的包
+    ;; Install missing packages asynchronously
     (when missing
-      (message "Installing missing Python packages: %s" (string-join missing " "))
-      (shell-command (concat "pip install " (string-join missing " ")))
-      ;; 清除缓存以刷新列表
-      (setq python--installed-packages-cache nil))))
+      (let ((packages-str (string-join missing " ")))
+        (message "Installing missing Python packages (async): %s" packages-str)
+        (async-shell-command
+         (concat "pip install " packages-str)
+         "*Python Package Install*")
+        ;; Clear cache to refresh list (will be re-fetched on next check)
+        (setq python--installed-packages-cache nil)))))
 
-(defun after-poetry-venv-workon (&rest _)
+(defun poetry-venv-activate-hook (&rest _)
   "Function to be run after `poetry-venv-workon'."
   (python--ensure-dev-packages))
 
-(defun after-pyvenv-workon (&rest _)
+(defun pyvenv-activate-hook (&rest _)
   "Function to be run after `pyvenv-workon'."
   (python--ensure-dev-packages))
 
-(advice-add 'poetry-venv-workon :after #'after-poetry-venv-workon)
-(advice-add 'pyvenv-workon :after #'after-pyvenv-workon)
+(advice-add 'poetry-venv-workon :after #'poetry-venv-activate-hook)
+(advice-add 'pyvenv-workon :after #'pyvenv-activate-hook)
 
 ;; ==================================================================================
 ;; Pyvenv
@@ -103,7 +108,7 @@
               (pyvenv-restart-python)
               ;; Restart eglot if active
               (when (and (fboundp 'eglot-managed-p) (eglot-managed-p))
-                (eglot-reconnect)))))
+                (eglot-reconnect (eglot-current-server))))))
 
 ;; ==================================================================================
 ;; Poetry
@@ -160,10 +165,22 @@
 (with-eval-after-load 'python
   (setq python-indent-guess-indent-offset-verbose nil
         python-indent-offset 4)
-  ;; C-c C-c 已在 prog-mode-map 中绑定，无需重复
+  ;; C-c C-c already bound in prog-mode-map, no need to repeat
   (lazy-set-key
    '(("C-c d f" . sphinx-doc-format))
    python-mode-map))
+
+;; ==================================================================================
+;; Python Tools Validation
+;; Python LSP server validation
+(defvar required-python-tools
+  '((pylsp . "pip install python-lsp-server[all]"))
+  "Python LSP server and tools.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'python-tools
+ (lambda () (config-dependency-validate-executables required-python-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

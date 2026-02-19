@@ -1,10 +1,11 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-19 10:45:00 Thursday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,35 +29,35 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Which-key - 按键提示，延迟加载优化启动时间
+;; Which-key - key hints, deferred loading for faster startup
 (use-package which-key
   :ensure t
-  :defer 1                                   ; 延迟 1 秒加载
+  :defer 1                                   ; Load after 1 second
   :custom
-  (which-key-idle-delay 0.5)                 ; 按键后 0.5 秒显示提示
-  (which-key-idle-secondary-delay 0.05)      ; 后续提示延迟
-  (which-key-sort-order 'which-key-key-order-alpha)  ; 按字母排序
-  (which-key-show-remaining-keys t)          ; 显示剩余按键
+  (which-key-idle-delay 0.5)                 ; Show hints 0.5s after keystroke
+  (which-key-idle-secondary-delay 0.05)      ; Subsequent hint delay
+  (which-key-sort-order 'which-key-key-order-alpha)  ; Sort alphabetically
+  (which-key-show-remaining-keys t)          ; Show remaining keys
   :config
   (which-key-setup-side-window-right)
   (which-key-mode 1))
 
 ;; ==================================================================================
-;; Vertico - 垂直补全 UI
+;; Vertico - vertical completion UI
 (use-package vertico
   :ensure t
   :custom
-  (vertico-cycle t)                       ; 循环选择
-  (vertico-count 15)                      ; 显示 15 个候选
-  (vertico-resize t)                      ; 自适应高度
-  (vertico-scroll-margin 4)               ; 滚动边距
+  (vertico-cycle t)                       ; Cycle through candidates
+  (vertico-count 15)                      ; Show 15 candidates
+  (vertico-resize t)                      ; Adaptive height
+  (vertico-scroll-margin 4)               ; Scroll margin
   :config
   (vertico-mode)
-  ;; 按目录分组显示文件
+  ;; Enable mouse support
   (vertico-mouse-mode))
 
 ;; ==================================================================================
-;; Orderless - 模糊匹配
+;; Orderless - fuzzy matching
 (use-package orderless
   :ensure t
   :custom
@@ -65,35 +66,39 @@
   (completion-category-overrides '((file (styles partial-completion)))))
 
 ;; ==================================================================================
-;; Marginalia - 补全注解
+;; Marginalia - completion annotations
 (use-package marginalia
   :ensure t
   :after vertico
   :custom
-  (marginalia-annotators '(marginalia-annotators-heavy  ; 详细注解
-                           marginalia-annotators-light)) ; 轻量注解
-  (marginalia-align-offset 15)            ; 对齐偏移
+  (marginalia-annotators '(marginalia-annotators-heavy  ; Detailed annotations
+                           marginalia-annotators-light)) ; Lightweight annotations
+  (marginalia-align-offset 15)            ; Alignment offset
   :config
   (marginalia-mode))
 
 ;; ==================================================================================
-;; Consult - 增强命令
+;; Consult - enhanced commands
 (use-package consult
   :ensure t
   :custom
-  (consult-line-numbers-widen t)          ; 自动扩展行号
-  (consult-async-min-input 2)             ; 异步搜索最少输入
-  (consult-async-refresh-delay 0.15)      ; 刷新延迟
-  (consult-async-input-throttle 0.2)      ; 输入节流
-  (consult-preview-key 'any)              ; 任意键触发预览
+  (consult-line-numbers-widen t)          ; Auto-widen line numbers
+  (consult-async-min-input 2)             ; Minimum input for async search
+  (consult-async-refresh-delay 0.15)      ; Refresh delay
+  (consult-async-input-throttle 0.2)      ; Input throttle
+  ;; Preview optimization: use delayed preview to avoid frequent triggers
+  ;; 'any = trigger on any key (may be too frequent)
+  ;; "M-." = preview only on M-. (on-demand)
+  ;; (:keys "any" :delay 0.3) = any key + 0.3s delay
+  (consult-preview-key 'any)              ; Trigger preview on any key
   :bind
   (;; Search
    ("C-s" . consult-line)
-   ("C-r" . isearch-backward)             ; 向后搜索
+   ("C-r" . isearch-backward)             ; Backward search
    ;; Buffer and file navigation
    ("C-x b" . consult-buffer)
    ("C-x B" . consult-recent-file)
-   ;; Help commands - 使用内置 apropos
+   ;; Help commands - use built-in apropos
    ("C-h f" . apropos-command)
    ;; Yank
    ("M-y" . consult-yank-pop)
@@ -107,24 +112,24 @@
    ("C-x F" . consult-locate)))
 
 ;; ==================================================================================
-;; Embark - 上下文操作
+;; Embark - context actions
 (use-package embark
   :ensure t
   :defer t
   :custom
-  (embark-prompter 'embark-keymap-prompter)    ; 使用 keymap 提示器
-  (embark-cycle-key nil)                       ; 禁用循环键
-  (embark-help-key "C-h")                      ; 帮助键
+  (embark-prompter 'embark-keymap-prompter)    ; Use keymap prompter
+  (embark-cycle-key nil)                       ; Disable cycle key
+  (embark-help-key "C-h")                      ; Help key
   :bind
-  (;; 上下文操作
-   ("C-." . embark-act)                        ; 对当前目标执行操作
-   ("C-," . embark-dwim)                       ; 智能默认操作
-   ("C-h B" . embark-bindings)                 ; 查看所有按键绑定
+  (;; Context actions
+   ("C-." . embark-act)                        ; Act on current target
+   ("C-," . embark-dwim)                       ; Smart default action
+   ("C-h B" . embark-bindings)                 ; View all key bindings
    :map embark-command-map
    ("C-." . embark-act)))
 
 ;; ==================================================================================
-;; Embark-consult - Embark 与 Consult 集成
+;; Embark-consult - Embark and Consult integration
 (use-package embark-consult
   :ensure t
   :after (embark consult)
@@ -132,7 +137,7 @@
   (embark-collect-mode . embark-consult-preview-minor-mode))
 
 ;; ==================================================================================
-;; Consult-projectile - 项目集成
+;; Consult-projectile - project integration
 (use-package consult-projectile
   :ensure t
   :after (consult projectile)
@@ -142,7 +147,7 @@
     (bind-key "b" #'consult-projectile-switch-project-buffer projectile-command-map)))
 
 ;; ==================================================================================
-;; Prescient - 智能排序
+;; Prescient - smart sorting
 (use-package prescient
   :ensure t
   :config
@@ -155,23 +160,23 @@
   (vertico-prescient-mode))
 
 ;; ==================================================================================
-;; Corfu - 补全框架
+;; Corfu - completion framework
 (use-package corfu
   :ensure t
   :custom
-  (corfu-cycle t)                      ; 循环选择候选
-  (corfu-auto t)                       ; 自动补全
-  (corfu-auto-delay 0.2)               ; 输入后延迟 0.2 秒触发，避免输入卡顿
-  (corfu-auto-prefix 2)                ; 至少输入 2 个字符才触发补全
-  (corfu-min-width 40)                 ; 弹窗最小宽度
-  (corfu-max-width 80)                 ; 弹窗最大宽度
-  (corfu-count 12)                     ; 显示 12 个候选
-  (corfu-scroll-margin 4)              ; 滚动边距
-  (corfu-echo-documentation 0.25)      ; 0.25 秒后显示文档
+  (corfu-cycle t)                      ; Cycle through candidates
+  (corfu-auto t)                       ; Auto completion
+  (corfu-auto-delay 0.2)               ; Trigger 0.2s after input to avoid lag
+  (corfu-auto-prefix 2)                ; At least 2 characters to trigger completion
+  (corfu-min-width 40)                 ; Popup minimum width
+  (corfu-max-width 80)                 ; Popup maximum width
+  (corfu-count 12)                     ; Show 12 candidates
+  (corfu-scroll-margin 4)              ; Scroll margin
+  (corfu-echo-documentation 0.25)      ; Show documentation after 0.25s
   :config
   (global-corfu-mode))
 
-;; Corfu 终端支持
+;; Corfu terminal support
 (use-package corfu-terminal
   :ensure t
   :after corfu
@@ -179,7 +184,7 @@
   (unless (display-graphic-p)
     (corfu-terminal-mode)))
 
-;; Corfu prescient 集成
+;; Corfu prescient integration
 (use-package corfu-prescient
   :ensure t
   :after (corfu prescient)
@@ -187,21 +192,21 @@
   (corfu-prescient-mode))
 
 ;; ==================================================================================
-;; Cape - 补全后端
-;; 顺序很重要: file > keyword > dabbrev (dabbrev 最慢，放最后)
+;; Cape - completion backends
+;; Order matters: file > keyword > dabbrev > line
 (use-package cape
   :ensure t
   :after corfu
   :config
-  ;; 设置补全后端顺序（从高到低优先级）
+  ;; Set completion backend order (highest to lowest priority)
   (setq completion-at-point-functions
-        (list #'cape-file           ; 文件路径补全（最快）
-              #'cape-keyword        ; 关键字补全
-              #'cape-dabbrev        ; 动态缩写补全（最慢）
-              #'cape-line)))        ; 行补全
+        (list #'cape-file           ; File path completion (fastest)
+              #'cape-keyword        ; Keyword completion
+              #'cape-dabbrev        ; Dynamic abbreviation completion
+              #'cape-line)))        ; Line completion
 
 ;; ==================================================================================
-;; Yasnippet - 延迟加载
+;; Yasnippet - deferred loading
 (use-package yasnippet
   :ensure t
   :defer t
@@ -217,17 +222,17 @@
   :after yasnippet)
 
 ;; ==================================================================================
-;; Ag - The Silver Searcher (保留用于 wgrep 集成)
+;; Ag - The Silver Searcher (retained for wgrep integration)
 (use-package ag
   :ensure t
   :commands (ag ag-project ag-dired-regexp)
   :config
   (require 'wgrep-ag)
 
-  (defun my/ag-next-error-function-after (&rest _)
+  (defun ag-next-error-function-after (&rest _)
     (select-window
      (get-buffer-window (ag/buffer-name "" "" ""))))
-  (advice-add 'ag/next-error-function :after #'my/ag-next-error-function-after)
+  (advice-add 'ag/next-error-function :after #'ag-next-error-function-after)
 
   (setq ag-reuse-buffers t
         wgrep-enable-key "r"
@@ -242,16 +247,16 @@
                (get-buffer-window (ag/buffer-name "" "" ""))))))
 
 ;; ==================================================================================
-;; Avy - 快速跳转
+;; Avy - fast jumping
 (use-package avy
   :ensure t
   :defer t
   :custom
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p))
-  (avy-background t)                      ; 背景模式，非目标变暗
-  (avy-all-windows nil)                   ; 仅当前窗口
-  (avy-timeout-seconds 0.3)               ; 超时时间
-  (avy-style 'pre))                       ; 标签风格
+  (avy-background t)                      ; Background mode, dim non-targets
+  (avy-all-windows nil)                   ; Current window only
+  (avy-timeout-seconds 0.3)               ; Timeout
+  (avy-style 'pre))                       ; Label style
 
 ;; ==================================================================================
 ;; Nerd-icons for completion
@@ -262,12 +267,16 @@
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 ;; ==================================================================================
-;; Completion keybindings
-(lazy-set-key
- '(;; Avy
-   ("C-; c" . avy-goto-char)
-   ("C-; w" . avy-goto-word-0)
-   ("C-; l" . avy-goto-line)))
+;; Search tools validation
+(defvar required-search-tools
+  '((rg . "brew install ripgrep")
+    (ag . "brew install the_silver_searcher"))
+  "List of required search tools.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'search-tools
+ (lambda () (config-dependency-validate-executables required-search-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

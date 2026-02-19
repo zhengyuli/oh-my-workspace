@@ -5,6 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -29,15 +30,15 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Valign - 表格对齐显示
-;; 提供 Org 和 Markdown 表格的可视化对齐
+;; Valign - table alignment display
+;; Provides visual alignment for Org and Markdown tables
 (use-package valign
   :hook (markdown-mode . valign-mode)
   :custom
-  (valign-fancy-bar t))                  ; 使用 fancy 分隔符
+  (valign-fancy-bar t))                  ; Use fancy separator
 
 ;; ==================================================================================
-;; Markdownfmt - 代码格式化
+;; Markdownfmt - code formatting
 (use-package markdownfmt
   :defer t
   :config
@@ -47,8 +48,8 @@
     (add-hook 'before-save-hook #'markdownfmt-format-buffer nil t)))
 
 ;; ==================================================================================
-;; Edit indirect - 在独立 buffer 中编辑代码块
-;; 支持 ```lang 代码块的原生模式编辑
+;; Edit indirect - edit code blocks in separate buffer
+;; Supports native mode editing for ```lang code blocks
 (use-package edit-indirect
   :defer t
   :custom
@@ -103,14 +104,14 @@
            (_ (intern (concat lang "-mode")))))))))
 
 ;; ==================================================================================
-;; Markdown mode - 主模式
+;; Markdown mode - main mode
 (use-package markdown-mode
   :defer t
   :hook (markdown-mode . markdown-mode-setup)
   :bind (:map markdown-mode-map
-              ("C-c C-e" . edit-indirect-region-or-buffer)  ; 编辑代码块
-              ("C-c C-t" . markdown-toc-generate-or-refresh-toc)  ; 生成 TOC
-              ("C-c C-f" . markdownfmt-format-buffer))      ; 格式化
+              ("C-c C-e" . edit-indirect-region-or-buffer)  ; Edit code block
+              ("C-c C-t" . markdown-toc-generate-or-refresh-toc)  ; Generate TOC
+              ("C-c C-f" . markdownfmt-format-buffer))      ; Format
   :config
   (defun markdown-mode-setup ()
     "Setup markdown mode."
@@ -119,20 +120,20 @@
     ;; Enable auto fill mode
     (auto-fill-mode 1))
 
-  ;; Customize variables - Claude Code 兼容性优化
-  (setq markdown-command "pandoc -s --mathjax --from=gfm"  ; GFM 支持
+  ;; Customize variables - Claude Code compatibility optimization
+  (setq markdown-command "pandoc -s --mathjax --from=gfm"  ; GFM support
         markdown-enable-math t
         markdown-display-remote-images t
-        markdown-enable-wiki-links t               ; Wiki 链接支持
-        markdown-underline-distinctive-headers t   ; 下划线区分标题
-        markdown-asymmetric-header t               ; 非对称标题 (# 不闭合)
-        markdown-indent-on-enter 'indent-and-new-item  ; 回车自动缩进
-        markdown-hide-urls t                       ; 隐藏 URL (类似 org-mode)
-        markdown-fontify-code-blocks-natively t    ; 原生高亮代码块
-        markdown-gfm-uppercase-radio t             ; GFM 无线电列表
-        markdown-list-item-bullets '("-" "*" "+")) ; 列表符号
+        markdown-enable-wiki-links t               ; Wiki link support
+        markdown-underline-distinctive-headers t   ; Underline distinctive headers
+        markdown-asymmetric-header t               ; Asymmetric header (# not closed)
+        markdown-indent-on-enter 'indent-and-new-item  ; Auto indent on enter
+        markdown-hide-urls t                       ; Hide URL (like org-mode)
+        markdown-fontify-code-blocks-natively t    ; Native code block highlighting
+        markdown-gfm-uppercase-radio t             ; GFM radio list
+        markdown-list-item-bullets '("-" "*" "+")) ; List bullets
 
-  ;; 代码块字体锁定优化
+  ;; Code block font-lock optimization
   (setq markdown-code-lang-modes
         '(("elisp" . emacs-lisp-mode)
           ("emacs-lisp" . emacs-lisp-mode)
@@ -175,11 +176,11 @@
           ("lua" . lua-mode)
           ("vim" . vimrc-mode)))
 
-  ;; 高亮当前行
+  ;; Highlight current line
   (add-hook 'markdown-mode-hook #'hl-line-mode))
 
 ;; ==================================================================================
-;; Markdown TOC - 目录生成
+;; Markdown TOC - table of contents generation
 (use-package markdown-toc
   :defer t
   :after markdown-mode
@@ -188,52 +189,52 @@
   (markdown-toc-header-toc-end "<!-- TOC end -->"))
 
 ;; ==================================================================================
-;; GFM (GitHub Flavored Markdown) 模式 - Claude Code 兼容
+;; GFM (GitHub Flavored Markdown) mode - Claude Code compatible
 (use-package gfm-mode
-  :ensure nil  ; 包含在 markdown-mode 中
+  :ensure nil  ; Included in markdown-mode
   :defer t
   :after markdown-mode
   :config
-  ;; GFM 特定设置
+  ;; GFM specific settings
   (setq gfm-enable-wiki-links t
         gfm-enable-math t))
 
 ;; ==================================================================================
-;; Poly-markdown - 多模式支持（可选，用于复杂场景）
-;; 允许在 markdown 中嵌入其他语言的完整支持
+;; Poly-markdown - multi-mode support (optional, for complex scenarios)
+;; Allows embedding full language support in markdown
 (use-package poly-markdown
   :defer t
   :after markdown-mode
   :hook (poly-markdown-mode . polymode-update-mode-line))
 
 ;; ==================================================================================
-;; Markdown 主题美化
-;; 基于 Mou Sublime 主题配色
+;; Markdown theme beautification
+;; Based on Mou Sublime theme colors
 (defgroup markdown-mou-theme nil
   "Mou Sublime style markdown rendering."
   :group 'markdown)
 
-;; Mou Sublime 主题配色 (深色编辑器风格)
+;; Mou Sublime theme colors (dark editor style)
 (defcustom markdown-mou-colors
-  '((header-1 . "#46dcb0")      ; 一级标题 - 青绿色
-    (header-2 . "#46dcb0")      ; 二级标题
-    (header-3 . "#46dcb0")      ; 三级标题
-    (header-4 . "#46dcb0")      ; 四级标题
-    (header-5 . "#46dcb0")      ; 五级标题
-    (header-6 . "#46dcb0")      ; 六级标题
-    (code-bg . "#293134")       ; 代码块背景 - 深灰蓝
-    (code-fg . "#e0e2e4")       ; 代码块前景 - 灰白色
-    (inline-code-fg . "#e0e2e4") ; 行内代码前景 - 灰白色
-    (link . "#79b6e8")          ; 链接 - 蓝色
-    (url . "#888888")           ; URL - 灰色
-    (bold . "#ff7a52")          ; 粗体 - 橙红色
-    (italic . "#ffab52")        ; 斜体 - 橙色
-    (blockquote . "#777777")    ; 引用 - 灰色
-    (list-marker . "#75e349")   ; 列表标记 - 绿色
-    (hr . "#586e75")            ; 分隔线
-    (metadata . "#93a1a1")      ; 元数据 - 灰色
-    (table-bg . "#293134")      ; 表格背景 - 深灰蓝
-    (table-fg . "#e0e2e4"))     ; 表格前景 - 灰白色
+  '((header-1 . "#46dcb0")      ; Level 1 header - cyan-green
+    (header-2 . "#46dcb0")      ; Level 2 header
+    (header-3 . "#46dcb0")      ; Level 3 header
+    (header-4 . "#46dcb0")      ; Level 4 header
+    (header-5 . "#46dcb0")      ; Level 5 header
+    (header-6 . "#46dcb0")      ; Level 6 header
+    (code-bg . "#293134")       ; Code block background - dark gray-blue
+    (code-fg . "#e0e2e4")       ; Code block foreground - gray-white
+    (inline-code-fg . "#e0e2e4") ; Inline code foreground - gray-white
+    (link . "#79b6e8")          ; Link - blue
+    (url . "#888888")           ; URL - gray
+    (bold . "#ff7a52")          ; Bold - orange-red
+    (italic . "#ffab52")        ; Italic - orange
+    (blockquote . "#777777")    ; Blockquote - gray
+    (list-marker . "#75e349")   ; List marker - green
+    (hr . "#586e75")            ; Horizontal rule
+    (metadata . "#93a1a1")      ; Metadata - gray
+    (table-bg . "#293134")      ; Table background - dark gray-blue
+    (table-fg . "#e0e2e4"))     ; Table foreground - gray-white
   "Colors for Mou Sublime theme markdown rendering."
   :type 'alist
   :group 'markdown-mou-theme)
@@ -261,7 +262,7 @@
          (table-bg (cdr (assq 'table-bg colors)))
          (table-fg (cdr (assq 'table-fg colors))))
 
-    ;; 标题样式 - Mou Sublime 风格，统一青绿色
+    ;; Header styles - Mou Sublime style, unified cyan-green
     (face-remap-add-relative 'markdown-header-face-1
                              `(:foreground ,h1 :weight bold :height 1.5))
     (face-remap-add-relative 'markdown-header-face-2
@@ -275,7 +276,7 @@
     (face-remap-add-relative 'markdown-header-face-6
                              `(:foreground ,h6 :weight bold :height 1.0))
 
-    ;; 代码块样式
+    ;; Code block styles
     (face-remap-add-relative 'markdown-code-face
                              `(:foreground ,code-fg :background ,code-bg
                                :extend t :family "Source Code Pro"))
@@ -285,7 +286,7 @@
                              `(:foreground ,inline-code-fg
                                :family "Source Code Pro"))
 
-    ;; 链接样式
+    ;; Link styles
     (face-remap-add-relative 'markdown-link-face
                              `(:foreground ,link :weight semi-bold :underline t))
     (face-remap-add-relative 'markdown-url-face
@@ -293,7 +294,7 @@
     (face-remap-add-relative 'markdown-reference-face
                              `(:foreground ,link :weight semi-bold))
 
-    ;; 强调样式
+    ;; Emphasis styles
     (face-remap-add-relative 'markdown-bold-face
                              `(:foreground ,bold :weight ultra-bold))
     (face-remap-add-relative 'markdown-italic-face
@@ -301,49 +302,49 @@
     (face-remap-add-relative 'markdown-bolditalic-face
                              `(:foreground ,bold :weight ultra-bold :slant italic))
 
-    ;; 引用块样式
+    ;; Blockquote styles
     (face-remap-add-relative 'markdown-blockquote-face
                              `(:foreground ,blockquote :slant italic :extend t))
     (face-remap-add-relative 'markdown-markup-face
                              `(:foreground ,blockquote))
 
-    ;; 列表样式
+    ;; List styles
     (face-remap-add-relative 'markdown-list-face
                              `(:foreground ,list-marker :weight bold))
     (face-remap-add-relative 'markdown-footnote-marker-face
                              `(:foreground ,list-marker :weight bold))
 
-    ;; 分隔线
+    ;; Horizontal rule
     (face-remap-add-relative 'markdown-hr-face
                              `(:foreground ,hr :strike-through t :height 1.5))
 
-    ;; 元数据 (YAML front matter)
+    ;; Metadata (YAML front matter)
     (face-remap-add-relative 'markdown-metadata-key-face
                              `(:foreground ,metadata :weight bold))
     (face-remap-add-relative 'markdown-metadata-value-face
                              `(:foreground ,metadata :slant italic))
 
-    ;; 表格样式 - 深色背景 + 灰白前景 + 等宽字体
+    ;; Table styles - dark background + gray-white foreground + monospace font
     (let ((mono-font "Source Code Pro"))
       (face-remap-add-relative 'markdown-table-face
                                `(:foreground ,table-fg :background ,table-bg :family ,mono-font :extend t))
       (face-remap-add-relative 'markdown-table-delimiter-face
                                `(:foreground ,table-fg :background ,table-bg :family ,mono-font)))))
 
-;; 添加到 markdown-mode-hook
+;; Add to markdown-mode-hook
 (add-hook 'markdown-mode-hook #'markdown-mou-apply-faces)
 
 ;; ==================================================================================
-;; 可视化增强
+;; Visual enhancements
 (use-package visual-fill-column
   :defer t
   :hook (markdown-mode . visual-fill-column-mode)
   :custom
-  (visual-fill-column-width 100)          ; 内容宽度
-  (visual-fill-column-center-text t))     ; 居中显示
+  (visual-fill-column-width 100)          ; Content width
+  (visual-fill-column-center-text t))     ; Center display
 
 ;; ==================================================================================
-;; 自动关联文件扩展名
+;; Auto-associate file extensions
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
@@ -351,15 +352,28 @@
 (add-to-list 'auto-mode-alist '("CONTRIBUTING\\.md\\'" . gfm-mode))
 
 ;; ==================================================================================
-;; LSP 支持 (via marksman) - 可选
-;; 安装: brew install marksman (macOS)
-(defun my/markdown-setup-lsp ()
+;; LSP support (via marksman) - optional
+;; Install: brew install marksman (macOS)
+(defun markdown-setup-lsp ()
   "Setup LSP for markdown mode if marksman is available."
   (when (and (executable-find "marksman")
              (featurep 'eglot))
     (eglot-ensure)))
 
-(add-hook 'markdown-mode-hook #'my/markdown-setup-lsp)
+(add-hook 'markdown-mode-hook #'markdown-setup-lsp)
+
+;; ==================================================================================
+;; Markdown Tools Validation
+;; Markdown tools validation (optional)
+(defvar optional-markdown-tools
+  '((marksman . "brew install marksman")
+    (pandoc . "brew install pandoc"))
+  "List of optional Markdown tools.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'markdown-tools
+ (lambda () (config-dependency-validate-executables optional-markdown-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

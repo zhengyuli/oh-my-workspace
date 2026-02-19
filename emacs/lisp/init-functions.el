@@ -1,10 +1,11 @@
 ;;; init-functions.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-19 17:08:09 Thursday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: (none - base module)
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,38 +29,33 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Font utilities
-(defun ensure-font-installed (font)
-  "Assure font is installed."
-  (when (and
-         (display-graphic-p)
-         (null (x-list-fonts font)))
-    (error (format "Missing \"%s\" font, please install." font))))
+;; Customization group
+(defgroup omw-emacs-config nil
+  "Oh My Workspace Emacs configuration customization group."
+  :group 'emacs
+  :prefix "emacs-")
 
 ;; ==================================================================================
-;; Package utilities
-(defun ensure-package-installed (&rest packages)
-  "Assure every package is installed, ask for installation if it's not.
+;; Customization variables - User info
+(defcustom emacs-user-name "Zhengyu Li"
+  "Emacs configuration user name.
+Used for dashboard banner and setting `user-full-name'."
+  :type 'string
+  :group 'omw-emacs-config)
 
-Return a list of installed packages or nil for every skipped package."
-  (mapcar
-   (lambda (package)
-     (if (package-installed-p package)
-         nil
-       (condition-case nil
-           (package-install package)
-         (error
-          (package-refresh-contents)
-          (package-install package)))))
-   packages))
+(defcustom emacs-user-email "lizhengyu419@outlook.com"
+  "Emacs configuration email address.
+Used for setting `user-mail-address'."
+  :type 'string
+  :group 'omw-emacs-config)
 
 ;; ==================================================================================
 ;; Key binding utilities
 (defun lazy-set-key (key-alist &optional keymap key-prefix)
-  "This function is to little type when define key binding.
-`KEYMAP' is a add keymap for some binding, default is `current-global-map'.
-`KEY-ALIST' is a alist contain main-key and command.
-`KEY-PREFIX' is a add prefix for some binding, default is nil."
+  "Define multiple key bindings with less typing.
+KEYMAP is the keymap to add bindings to, default is `current-global-map'.
+KEY-ALIST is an alist containing (KEY . COMMAND) pairs.
+KEY-PREFIX is an optional prefix string for all keys, default is nil."
   (let (key def)
     (or keymap (setq keymap (current-global-map)))
     (if key-prefix
@@ -74,9 +70,9 @@ Return a list of installed packages or nil for every skipped package."
       (define-key keymap key def))))
 
 (defun lazy-unset-key (key-list &optional keymap)
-  "This function is to little type when unset key binding.
-`KEYMAP' is add keymap for some binding, default is `current-global-map'
-`KEY-LIST' is list contain key."
+  "Unset multiple key bindings with less typing.
+KEYMAP is the keymap to remove bindings from, default is `current-global-map'.
+KEY-LIST is a list of keys to unset."
   (or keymap (setq keymap (current-global-map)))
   (dolist (key key-list)
     (cond ((stringp key) (setq key (read-kbd-macro (concat key))))
@@ -86,6 +82,14 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; ==================================================================================
 ;; Proxy utilities
+;; HTTP Proxy configuration
+(defcustom emacs-http-proxy nil
+  "Emacs configuration http proxy.
+Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy."
+  :type '(choice (const :tag "No proxy" nil)
+                 (string :tag "Proxy address"))
+  :group 'omw-emacs-config)
+
 (defun show-http-proxy ()
   "Show http/https proxy."
   (interactive)
@@ -116,9 +120,14 @@ Return a list of installed packages or nil for every skipped package."
     (warn "Proxy url could not be empty.")))
 
 (defun enable-http-proxy ()
+  "Enable HTTP proxy if `emacs-http-proxy' is configured.
+Customize in `user-emacs-directory'/custom_settings.el:
+
+  (setq emacs-http-proxy \"127.0.0.1:7890\")"
   (interactive)
   (if emacs-http-proxy
-      (set-http-proxy emacs-http-proxy)))
+      (set-http-proxy emacs-http-proxy)
+    (message "HTTP proxy not configured. Add to custom_settings.el: (setq emacs-http-proxy \"127.0.0.1:7890\")")))
 
 (defun unset-http-proxy ()
   "Unset http/https proxy."
@@ -133,12 +142,12 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; ==================================================================================
 ;; Buffer utilities (from init-base.el)
-(defun get-mode-name ()
+(defun current-major-mode-name ()
   "Display major mode and mode name."
   (interactive)
-  (message "major-mode: %s, mode-name: %s" major-mode (car mode-name)))
+  (message "major-mode: %s, mode-name: %s" major-mode mode-name))
 
-(defun indent-buffer ()
+(defun indent-entire-buffer ()
   "Automatic format current buffer."
   (interactive)
   (save-excursion
@@ -152,14 +161,14 @@ Return a list of installed packages or nil for every skipped package."
   (save-excursion
     (if mark-active
         (call-interactively 'indent-region)
-      (call-interactively 'indent-buffer))))
+      (call-interactively 'indent-entire-buffer))))
 
 (defun copy-region ()
   "Copy region."
   (interactive)
   (copy-region-as-kill (region-beginning) (region-end)))
 
-(defun copy-curr-line ()
+(defun copy-current-line ()
   "Copy current line."
   (interactive)
   (let ((end (min (point-max) (line-end-position))))
@@ -171,7 +180,7 @@ Return a list of installed packages or nil for every skipped package."
   (save-excursion
     (if mark-active
         (call-interactively 'copy-region)
-      (call-interactively 'copy-curr-line))))
+      (call-interactively 'copy-current-line))))
 
 (defun smart-kill ()
   "If mark is active, kill region, else kill whole line."
@@ -180,16 +189,16 @@ Return a list of installed packages or nil for every skipped package."
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
 
-;; Toggle fullscreen state variable
-(defvar old-fullscreen nil
-  "Store the previous fullscreen state for toggle-fullscreen.")
-
 (defun toggle-buffer-writable ()
   "Toggle buffer writable."
   (interactive)
   (if buffer-read-only
       (read-only-mode -1)
     (read-only-mode 1)))
+
+;; Toggle fullscreen state variable
+(defvar emacs-old-fullscreen nil
+  "Store the previous fullscreen state for toggle-fullscreen.")
 
 (defun toggle-fullscreen ()
   "Toggle full screen."
@@ -199,10 +208,10 @@ Return a list of installed packages or nil for every skipped package."
      nil
      'fullscreen
      (if (equal 'fullboth current-value)
-         (if (boundp 'old-fullscreen)
-             old-fullscreen
+         (if (boundp 'emacs-old-fullscreen)
+             emacs-old-fullscreen
            nil)
-       (setq old-fullscreen current-value)
+       (setq emacs-old-fullscreen current-value)
        'fullboth))))
 
 (defun adjust-window-split-thresholds ()
@@ -218,15 +227,65 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; ==================================================================================
 ;; Git utilities
-(defun git-user-name ()
-  "Get git user name."
-  (interactive)
-  (message (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.name"))))
+(defvar git-user-name-cache nil
+  "Cached git user name.")
+(defvar git-user-email-cache nil
+  "Cached git user email.")
 
-(defun git-user-email ()
-  "Get git user email."
+(defun git-user-name-async (&optional callback)
+  "Get git user name asynchronously.
+If CALLBACK is provided, call it with the result; otherwise display in minibuffer.
+Result is cached in `git-user-name-cache'."
   (interactive)
-  (message (replace-regexp-in-string "\n$" "" (shell-command-to-string "git config --get user.email"))))
+  (if (and git-user-name-cache
+           (not (called-interactively-p 'interactive)))
+      (when callback (funcall callback git-user-name-cache))
+    (let ((default-directory (or (vc-root-dir) default-directory)))
+      (make-process
+       :name "git-user-name"
+       :command '("git" "config" "--get" "user.name")
+       :sentinel
+       (lambda (proc _event)
+         (when (eq (process-status proc) 'exit)
+           (with-current-buffer (process-buffer proc)
+             (let ((result (string-trim (buffer-string))))
+               (setq git-user-name-cache
+                     (unless (string-empty-p result) result))
+               (if callback
+                   (funcall callback git-user-name-cache)
+                 (message "Git user name: %s"
+                          (or git-user-name-cache "not set")))))))))))
+
+(defun git-user-email-async (&optional callback)
+  "Get git user email asynchronously.
+If CALLBACK is provided, call it with the result; otherwise display in minibuffer.
+Result is cached in `git-user-email-cache'."
+  (interactive)
+  (if (and git-user-email-cache
+           (not (called-interactively-p 'interactive)))
+      (when callback (funcall callback git-user-email-cache))
+    (let ((default-directory (or (vc-root-dir) default-directory)))
+      (make-process
+       :name "git-user-email"
+       :command '("git" "config" "--get" "user.email")
+       :sentinel
+       (lambda (proc _event)
+         (when (eq (process-status proc) 'exit)
+           (with-current-buffer (process-buffer proc)
+             (let ((result (string-trim (buffer-string))))
+               (setq git-user-email-cache
+                     (unless (string-empty-p result) result))
+               (if callback
+                   (funcall callback git-user-email-cache)
+                 (message "Git user email: %s"
+                          (or git-user-email-cache "not set")))))))))))
+
+;; Keep synchronous versions for backward compatibility (not recommended for frequent use)
+(defalias 'git-user-name #'git-user-name-async
+  "Get git user name. (Async version, use `git-user-name-async' directly for callbacks)")
+
+(defalias 'git-user-email #'git-user-email-async
+  "Get git user email. (Async version, use `git-user-email-async' directly for callbacks)")
 
 ;; ==================================================================================
 ;; Package update utility
@@ -236,6 +295,233 @@ Return a list of installed packages or nil for every skipped package."
   (require 'auto-package-update)
   (package-refresh-contents)
   (auto-package-update-now))
+
+;; ==================================================================================
+;; Configuration validation utilities
+;; Validation system architecture:
+;;   - This file: provides registration mechanism and generic validation functions
+;;   - Feature modules: define required lists and register validators
+;; Registered validators:
+;;   - init-vc.el: vc-tools (git)
+;;   - init-completion.el: search-tools (rg, ag)
+;;   - init-ui.el: fonts
+;;   - init-editing.el: spell-tools (aspell, hunspell)
+;;   - init-dired.el: dired-tools (gls, fd)
+;;   - init-utilities.el: utility-tools (pass)
+;;   - init-markdown.el: markdown-tools (marksman)
+;;   - init-terminal.el: terminal-tools (vterm)
+;;   - init-python.el: python-tools (pylsp)
+;;   - init-go.el: go-tools (gopls, gofumpt)
+;;   - init-cc.el: cc-tools (clangd)
+;;   - init-shell.el: shell-tools (bash-language-server)
+;;   - init-yaml.el: yaml-tools (yaml-language-server)
+;;   - init-cmake.el: cmake-tools (cmake-language-server)
+;;   - init-dockerfile.el: docker-tools (docker-langserver)
+;;   ... .. .
+;; Usage:
+;;   - Manual call: M-x validate-config
+;;   - Automatic on startup: set environment variable EMACS_CONFIG_VALIDATE=1
+
+;; ----------------------------------------------------------------------------------
+;; Report theme faces
+(defface config-dependency-report-title-face
+  '((t :foreground "#46dcb0" :weight bold :height 1.3))
+  "Face for validation report title.")
+
+(defface config-dependency-report-category-face
+  '((t :foreground "#79b6e8" :weight bold))
+  "Face for validation report category headers.")
+
+(defface config-dependency-report-success-face
+  '((t :foreground "#90ee90" :weight bold))
+  "Face for validation success messages.")
+
+(defface config-dependency-report-error-face
+  '((t :foreground "#ff6b6b"))
+  "Face for validation error items.")
+
+(defface config-dependency-report-hint-face
+  '((t :foreground "#888888" :slant italic))
+  "Face for validation installation hints.")
+
+(defface config-dependency-report-separator-face
+  '((t :foreground "#586e75"))
+  "Face for validation report separators.")
+
+;; ----------------------------------------------------------------------------------
+;; Validator registry
+(defvar config-dependency-validators nil
+  "List of registered validators.
+Each element is (CATEGORY . VALIDATOR-FN).
+VALIDATOR-FN returns (INSTALLED . MISSING) where each is a list.")
+
+;; ----------------------------------------------------------------------------------
+;; Validator registration
+(defun config-dependency-register (category validator-fn)
+  "Register VALIDATOR-FN for CATEGORY.
+VALIDATOR-FN is a function that returns (INSTALLED . MISSING).
+CATEGORY is a symbol identifying the validation category."
+  (push (cons category validator-fn) config-dependency-validators))
+
+;; ----------------------------------------------------------------------------------
+;; Generic validation functions
+(defun config-dependency-validate-executables (items)
+  "Validate executables in ITEMS.
+ITEMS is a list of (EXECUTABLE-SYMBOL . INSTALL-INSTRUCTIONS).
+Return (INSTALLED . MISSING) where each is a list of items."
+  (let (installed missing)
+    (dolist (item items)
+      (if (executable-find (symbol-name (car item)))
+          (push item installed)
+        (push item missing)))
+    (cons (nreverse installed) (nreverse missing))))
+
+(defun config-dependency-validate-fonts (fonts)
+  "Validate FONTS list (GUI only).
+FONTS is a list of font name strings.
+Return (INSTALLED . MISSING) where each is a list of font names."
+  (if (display-graphic-p)
+      (let (installed missing)
+        (dolist (font fonts)
+          (when font
+            (if (x-list-fonts font)
+                (push font installed)
+              (push font missing))))
+        (cons (nreverse installed) (nreverse missing)))
+    (cons nil nil)))
+
+;; ----------------------------------------------------------------------------------
+;; Report buffer helper
+(defun config-dependency-insert-with-face (text face)
+  "Insert TEXT with FACE."
+  (insert (propertize text 'face face)))
+
+(defun config-dependency-insert-line-with-face (text face)
+  "Insert TEXT with FACE followed by newline."
+  (config-dependency-insert-with-face text face)
+  (insert "\n"))
+
+;; ----------------------------------------------------------------------------------
+;; Main validation orchestration
+(defvar config-dependency-results nil
+  "Alist of (CATEGORY . (INSTALLED . MISSING)) from last validation.")
+
+(defun config-dependency-validate ()
+  "Run all registered validators and display report.
+Return t if all checks pass, nil otherwise."
+  (interactive)
+  (setq config-dependency-results nil)
+  (dolist (validator config-dependency-validators)
+    (let* ((category (car validator))
+           (fn (cdr validator))
+           (result (funcall fn)))
+      ;; result is (installed . missing)
+      (push (cons category result) config-dependency-results)))
+  ;; Display report
+  (config-dependency-show-report)
+  ;; Return t if no missing items
+  (cl-every (lambda (r) (null (cdadr r))) config-dependency-results))
+
+(defun config-dependency-show-report ()
+  "Display validation report with colored output."
+  (interactive)
+  (let ((report-buffer (get-buffer-create "*Emacs Config Validation*"))
+        (total-installed 0)
+        (total-missing 0))
+    ;; Count totals
+    (dolist (result config-dependency-results)
+      (let ((installed (cadr result))
+            (missing (cddr result)))
+        (setq total-installed (+ total-installed (length installed))
+              total-missing (+ total-missing (length missing)))))
+    (with-current-buffer report-buffer
+      (setq buffer-read-only nil)
+      (erase-buffer)
+      ;; Title
+      (config-dependency-insert-line-with-face
+       "═══════════════════════════════════════════════════════════"
+       'config-dependency-report-separator-face)
+      (config-dependency-insert-line-with-face
+       "          Emacs Configuration Validation Report"
+       'config-dependency-report-title-face)
+      (config-dependency-insert-line-with-face
+       "═══════════════════════════════════════════════════════════"
+       'config-dependency-report-separator-face)
+      (insert "\n")
+      ;; Details by category - show ALL registered categories
+      (dolist (result config-dependency-results)
+        (let* ((category (car result))
+               (installed (cadr result))
+               (missing (cddr result))
+               (all-items (append installed missing)))
+          ;; Show category header for ALL registered categories
+          (config-dependency-insert-line-with-face
+           (format "【%s】" (capitalize (symbol-name category)))
+           'config-dependency-report-category-face)
+          (if all-items
+              (progn
+                ;; Show installed items
+                (dolist (item installed)
+                  (if (consp item)
+                      (progn
+                        (config-dependency-insert-with-face "  ✓ " 'config-dependency-report-success-face)
+                        (config-dependency-insert-with-face (symbol-name (car item)) 'config-dependency-report-success-face)
+                        (insert "\n"))
+                    (config-dependency-insert-with-face "  ✓ " 'config-dependency-report-success-face)
+                    (config-dependency-insert-line-with-face item 'config-dependency-report-success-face)))
+                ;; Show missing items
+                (dolist (item missing)
+                  (if (consp item)
+                      (progn
+                        (config-dependency-insert-with-face "  ✗ " 'config-dependency-report-error-face)
+                        (config-dependency-insert-with-face (symbol-name (car item)) 'config-dependency-report-error-face)
+                        (insert " - ")
+                        (config-dependency-insert-line-with-face (cdr item) 'config-dependency-report-hint-face))
+                    (config-dependency-insert-with-face "  ✗ " 'config-dependency-report-error-face)
+                    (config-dependency-insert-line-with-face item 'config-dependency-report-error-face))))
+            ;; No items for this category (e.g., fonts in terminal mode)
+            (config-dependency-insert-line-with-face "  (no items)" 'config-dependency-report-hint-face))
+          (insert "\n")))
+      ;; Installation hints (only if there are missing items)
+      (when (> total-missing 0)
+        (config-dependency-insert-line-with-face
+         "───────────────────────────────────────────────────────────"
+         'config-dependency-report-separator-face)
+        (config-dependency-insert-line-with-face "Installation hints:" 'config-dependency-report-category-face)
+        (config-dependency-insert-line-with-face "  • macOS: brew install <tool>" 'config-dependency-report-hint-face)
+        (config-dependency-insert-line-with-face "  • LSP servers: pip/npm/go install <server>" 'config-dependency-report-hint-face)
+        (config-dependency-insert-line-with-face "  • Fonts: brew install --cask font-<name>" 'config-dependency-report-hint-face)
+        (insert "\n"))
+      ;; Summary (at the end for better visibility)
+      (config-dependency-insert-line-with-face
+       "═══════════════════════════════════════════════════════════"
+       'config-dependency-report-separator-face)
+      (config-dependency-insert-with-face "  Summary: " 'config-dependency-report-category-face)
+      (config-dependency-insert-with-face (format "%d installed" total-installed) 'config-dependency-report-success-face)
+      (insert " / ")
+      (config-dependency-insert-with-face (format "%d missing" total-missing)
+               (if (> total-missing 0) 'config-dependency-report-error-face 'config-dependency-report-success-face))
+      (insert "\n")
+      ;; Footer
+      (config-dependency-insert-line-with-face
+       "───────────────────────────────────────────────────────────"
+       'config-dependency-report-separator-face)
+      (config-dependency-insert-line-with-face "  Press 'q' to close this buffer" 'config-dependency-report-hint-face)
+      ;; Enable special-mode AFTER inserting content (makes buffer read-only)
+      (special-mode))
+    ;; Switch to report buffer
+    (switch-to-buffer report-buffer)))
+
+;; Keep old function for backward compatibility
+(defalias 'config-dependency-report 'config-dependency-show-report
+  "Display validation report. (Alias for config-dependency-show-report)")
+
+(defun config-dependency-validate-on-startup ()
+  "Run configuration validation during startup.
+Set environment variable EMACS_CONFIG_VALIDATE=1 to enable automatic validation.
+Only displays warnings, does not block startup."
+  (when (getenv "EMACS_CONFIG_VALIDATE")
+    (run-with-idle-timer 2 nil #'config-dependency-validate)))
 
 ;; ==================================================================================
 ;;; Provide features

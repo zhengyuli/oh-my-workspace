@@ -1,10 +1,11 @@
 ;;; init-yaml.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions, init-prog-base
 
 ;; This file is not part of GNU Emacs.
 
@@ -29,9 +30,21 @@
 
 ;; ==================================================================================
 ;; YAML mode
-;; eglot 已在 init-prog-base.el 中配置 yaml-mode 的 eglot-ensure
+;; eglot already configured for yaml-mode eglot-ensure in init-prog-base.el
 (use-package yaml-mode
   :defer t)
+
+;; ==================================================================================
+;; YAML Tools Validation
+;; YAML LSP server validation
+(defvar required-yaml-tools
+  '((yaml-language-server . "npm install -g yaml-language-server"))
+  "YAML LSP server.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'yaml-tools
+ (lambda () (config-dependency-validate-executables required-yaml-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

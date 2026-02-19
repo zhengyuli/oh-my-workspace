@@ -5,6 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: project management
+;; Dependencies: (none)
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,18 +29,18 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Projectile - 项目管理核心
+;; Projectile - Project management core
 (use-package projectile
   :ensure t
   :defer t
   :bind-keymap
-  ("C-c p" . projectile-command-map)            ; 快捷键立即绑定，包延迟加载
+  ("C-c p" . projectile-command-map)            ; Key binding immediate, package deferred
   :custom
-  (projectile-completion-system 'default)       ; 使用默认补全系统（vertico）
-  (projectile-enable-caching t)                 ; 启用缓存加速
-  (projectile-indexing-method 'hybrid)          ; 混合索引方式
-  (projectile-sort-order 'recentf)              ; 按最近访问排序
-  (projectile-auto-discover nil)                ; 禁止自动发现项目
+  (projectile-completion-system 'default)       ; Use default completion system (vertico)
+  (projectile-enable-caching t)                 ; Enable caching for speed
+  (projectile-indexing-method 'hybrid)          ; Hybrid indexing method
+  (projectile-sort-order 'recentf)              ; Sort by recently visited
+  (projectile-auto-discover nil)                ; Disable auto project discovery
   (projectile-globally-ignored-directories
    '(".git" ".svn" ".hg" "node_modules" ".venv" "venv" "__pycache__"
      ".pytest_cache" "dist" "build" "target" ".gradle" ".idea" ".vscode"))
@@ -49,7 +50,7 @@
    '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock"))
   :config
   (projectile-mode 1)
-  ;; 自定义 projectile-command-map 快捷键
+  ;; Custom projectile-command-map key bindings
   (define-key projectile-command-map (kbd "f") #'projectile-find-file)
   (define-key projectile-command-map (kbd "b") #'projectile-switch-to-buffer)
   (define-key projectile-command-map (kbd "p") #'projectile-switch-project)

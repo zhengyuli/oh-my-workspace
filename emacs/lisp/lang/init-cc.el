@@ -1,10 +1,11 @@
 ;;; init-cc.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions, init-prog-base
 
 ;; This file is not part of GNU Emacs.
 
@@ -59,12 +60,24 @@
 
 ;; ==================================================================================
 ;; C/C++ mode hooks
-;; eglot 已在 init-prog-base.el 中配置 c-mode/c++-mode 的 eglot-ensure
+;; eglot already configured for c-mode/c++-mode eglot-ensure in init-prog-base.el
 (dolist (hook '(c-mode-hook c++-mode-hook))
   (add-hook hook
             (lambda ()
               ;; Enable google cc style
               (google-set-c-style))))
+
+;; ==================================================================================
+;; C/C++ Tools Validation
+;; C/C++ LSP server validation
+(defvar required-cc-tools
+  '((clangd . "Xcode CLI or LLVM (brew install llvm)"))
+  "C/C++ LSP server.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'cc-tools
+ (lambda () (config-dependency-validate-executables required-cc-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

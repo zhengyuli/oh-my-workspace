@@ -1,10 +1,11 @@
 ;;; init-prog-base.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-19 12:00:00 Thursday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -24,14 +25,14 @@
 ;;; Commentary:
 ;;
 ;; Base programming configuration: smartparens, rainbow-delimiters,
-;; flycheck, format-all, lsp-mode, etc.
+;; flycheck, format-all, eglot, etc.
 
 ;;; Code:
 
 ;; ==================================================================================
 ;; Utility function
 (defun jump-to-matched-paren ()
-  "Jump to the matched parenthese."
+  "Jump to the matched parenthesis."
   (interactive)
   (cond ((looking-at "[ \t]*[[\"({]")
          (forward-sexp)
@@ -44,15 +45,15 @@
         (t (message "couldn't find matched paren"))))
 
 ;; ==================================================================================
-;; Smartparens - 括号自动配对
+;; Smartparens - automatic parenthesis pairing
 (use-package smartparens
   :defer t
   :hook (prog-mode . smartparens-mode)
   :custom
-  (sp-highlight-pair-overlay nil)        ; 禁用高亮配对，减少视觉干扰
-  (sp-highlight-wrap-overlay nil)        ; 禁用 wrap 高亮
-  (sp-highlight-wrap-tag-overlay nil)    ; 禁用 tag wrap 高亮
-  (sp-cancel-autoskip-on-backward-movement nil)  ; 允许向后跳过
+  (sp-highlight-pair-overlay nil)        ; Disable pair highlighting, reduce visual noise
+  (sp-highlight-wrap-overlay nil)        ; Disable wrap highlighting
+  (sp-highlight-wrap-tag-overlay nil)    ; Disable tag wrap highlighting
+  (sp-cancel-autoskip-on-backward-movement nil)  ; Allow backward skip
   :config
   (require 'smartparens-config))
 
@@ -74,9 +75,9 @@
   :defer t
   :hook (prog-mode . hl-todo-mode)
   :custom
-  (hl-todo-highlight-punctuation ":")    ; 高亮冒号
+  (hl-todo-highlight-punctuation ":")    ; Highlight colon
   :config
-  ;; 自定义 TODO 关键词颜色
+  ;; Custom TODO keyword colors
   (setq hl-todo-keyword-faces
         '(("TODO" . "#FF0000")
           ("FIXME" . "#FF0000")
@@ -87,18 +88,18 @@
           ("HACK" . "#FFD700"))))
 
 ;; ==================================================================================
-;; Flycheck - 语法检查
+;; Flycheck - syntax checking
 (use-package flycheck
   :defer t
   :hook (prog-mode . flycheck-mode)
   :custom
-  (flycheck-indication-mode 'left-margin)  ; 错误显示在左边距
-  (flycheck-check-syntax-automatically '(save idle-change))  ; 保存和空闲时检查
-  (flycheck-idle-change-delay 0.5)         ; 空闲 0.5 秒后检查
-  (flycheck-display-errors-delay 0.3)      ; 0.3 秒后显示错误
-  (flycheck-highlighting-mode 'symbols)    ; 高亮符号级别
+  (flycheck-indication-mode 'left-margin)  ; Show errors in left margin
+  (flycheck-check-syntax-automatically '(save idle-change))  ; Check on save and idle
+  (flycheck-idle-change-delay 0.5)         ; Check after 0.5s idle
+  (flycheck-display-errors-delay 0.3)      ; Show errors after 0.3s
+  (flycheck-highlighting-mode 'symbols)    ; Highlight at symbol level
   :config
-  ;; 定义错误级别 fringe 位图
+  ;; Define error level fringe bitmap
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
     [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
 
@@ -121,21 +122,21 @@
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
 
 ;; ==================================================================================
-;; Format all - 代码格式化
-;; 注意: 大文件不自动格式化，避免卡顿
-(defvar format-all--max-file-size (* 500 1024)  ; 500KB
+;; Format all - code formatting
+;; Note: files larger than 500KB not auto-formatted to avoid lag
+(defconst format-all-max-file-size (* 500 1024)  ; 500KB
   "Maximum file size for auto-formatting on save.")
 
-(defun my/format-all-mode-maybe ()
+(defun format-all-mode-maybe ()
   "Enable format-all-mode only for reasonably sized files."
-  (when (< (buffer-size) format-all--max-file-size)
+  (when (< (buffer-size) format-all-max-file-size)
     (format-all-mode 1)))
 
 (use-package format-all
   :defer t
-  :hook (prog-mode . my/format-all-mode-maybe)
+  :hook (prog-mode . format-all-mode-maybe)
   :config
-  ;; 手动格式化快捷键
+  ;; Manual format keybinding
   (lazy-set-key
    '(("C-c f" . format-all-buffer))
    prog-mode-map))
@@ -146,15 +147,14 @@
   :defer t)
 
 ;; ==================================================================================
-;; Eglot - 轻量级 LSP 客户端 (Emacs 29+ 内置)
+;; Eglot - lightweight LSP client (Emacs 29+ built-in)
 (use-package eglot
-  :ensure nil  ; 内置包
+  :ensure nil  ; Built-in package
   :defer t
   :hook ((python-mode . eglot-ensure)
          (go-mode . eglot-ensure)
          (c-mode . eglot-ensure)
          (c++-mode . eglot-ensure)
-         (haskell-mode . eglot-ensure)
          (yaml-mode . eglot-ensure)
          (sh-mode . eglot-ensure)
          (dockerfile-mode . eglot-ensure)
@@ -164,7 +164,7 @@
         eglot-autoshutdown t
         eglot-ignored-server-capabilities '(:documentHighlightProvider))
 
-  ;; 配置各语言的 LSP 服务器
+  ;; Configure LSP servers for each language
   ;; Python: pip install python-lsp-server[all]
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode) . ("pylsp")))
@@ -173,15 +173,11 @@
   (add-to-list 'eglot-server-programs
                '((go-mode go-ts-mode) . ("gopls")))
 
-  ;; C/C++: Xcode Command Line Tools 或 LLVM 提供 clangd
+  ;; C/C++: Xcode Command Line Tools or LLVM provides clangd
   (add-to-list 'eglot-server-programs
                '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
 
-  ;; Haskell: ghcup install hls
-  (add-to-list 'eglot-server-programs
-               '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
-
-  ;; YAML: npm install -g yaml-language-server
+   ;; YAML: npm install -g yaml-language-server
   (add-to-list 'eglot-server-programs
                '((yaml-mode yaml-ts-mode) . ("yaml-language-server" "--stdio")))
 
@@ -191,7 +187,7 @@
 
   ;; Dockerfile: npm install -g dockerfile-language-server-nodejs
   (add-to-list 'eglot-server-programs
-               '(dockerfile-mode . ("docker-lang-server" "--stdio")))
+               '(dockerfile-mode . ("docker-langserver" "--stdio")))
 
   ;; CMake: pip install cmake-language-server
   (add-to-list 'eglot-server-programs
@@ -205,16 +201,14 @@
             (setq-local tab-width 4)
             ;; Disable tab characters for indentation
             (setq-local indent-tabs-mode nil)
-            ;; Enable linum mode
+            ;; Enable line numbers mode
             (display-line-numbers-mode 1)
             ;; Enable show paren mode
             (show-paren-local-mode 1)
             ;; Enable prettify symbol mode
             (prettify-symbols-mode 1)
             ;; Enable hide show mode
-            (hs-minor-mode 1)
-            ;; Disable emojify mode
-            (emojify-mode -1)))
+            (hs-minor-mode 1)))
 
 ;; Keybindings for prog-mode
 (with-eval-after-load 'prog-mode

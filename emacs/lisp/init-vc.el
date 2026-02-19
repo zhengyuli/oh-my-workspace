@@ -1,10 +1,11 @@
 ;;; init-vc.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-functions
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,29 +29,41 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Magit - Git 版本控制界面
+;; Magit - Git version control interface
 (use-package magit
   :commands (magit-status magit-log-all)
   :custom
-  (magit-diff-refine-hunk t)             ; 显示字符级差异
-  (magit-revert-buffers 'silent)         ; 静默刷新文件
+  (magit-diff-refine-hunk t)             ; Show character-level differences
+  (magit-revert-buffers 'silent)         ; Silently revert files
   (magit-no-message '("Turning on magit-auto-revert-mode"))
   :config
   (require 'magit-diff)
 
   ;; Customized faces
-  ;; 语义: added = 绿色, removed = 红色
+  ;; Semantic: added = green, removed = red
   (custom-set-faces
-   '(magit-diff-added ((t (:background "#98FB98" :foreground "black"))))              ; 浅绿色
-   '(magit-diff-removed ((t (:background "#FFB6C1" :foreground "black"))))            ; 浅红色
-   '(magit-diff-added-highlight ((t (:background "#90EE90" :foreground "black"))))    ; 高亮绿色
-   '(magit-diff-removed-highlight ((t (:background "#F08080" :foreground "black"))))  ; 高亮红色
+   '(magit-diff-added ((t (:background "#98FB98" :foreground "black"))))              ; light green
+   '(magit-diff-removed ((t (:background "#FFB6C1" :foreground "black"))))            ; light red
+   '(magit-diff-added-highlight ((t (:background "#90EE90" :foreground "black"))))    ; highlighted green
+   '(magit-diff-removed-highlight ((t (:background "#F08080" :foreground "black"))))  ; highlighted red
    '(magit-diff-hunk-heading-highlight ((t (:background "#383838" :foreground "white"))))))
 
 ;; ==================================================================================
-;; Aliases
+;; Function aliases
 (defalias 'git-status 'magit-status)
 (defalias 'git-log 'magit-log-all)
+
+;; ==================================================================================
+;; VC Tools Validation
+;; Version control tools validation
+(defvar required-vc-tools
+  '((git . "brew install git"))
+  "List of required version control tools.
+Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
+
+(config-dependency-register
+ 'vc-tools
+ (lambda () (config-dependency-validate-executables required-vc-tools)))
 
 ;; ==================================================================================
 ;;; Provide features
