@@ -32,6 +32,7 @@
 ;; Dockerfile mode
 ;; eglot already configured for dockerfile-mode eglot-ensure in init-prog-base.el
 (use-package dockerfile-mode
+  :ensure t
   :defer t)
 
 ;; ==================================================================================

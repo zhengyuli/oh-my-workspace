@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-20 21:51:47 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -39,43 +39,43 @@
   "A list of packages to set up the Python development environment.")
 
 ;; Cache installed packages list to avoid repeated shell calls
-(defvar python--installed-packages-cache nil
+(defvar python-installed-packages-cache nil
   "Cache of installed packages for current venv.")
-(defvar python--cached-venv-path nil
+(defvar python-cached-venv-path nil
   "Path of venv for which cache is valid.")
 
-(defun python--get-package-base-name (package)
+(defun python-get-package-base-name (package)
   "Extract base package name from PACKAGE (remove extras like [all])."
   (if (string-match "\\`\\([^\\[]+\\)" package)
       (match-string 1 package)
     package))
 
-(defun python--get-installed-packages ()
+(defun python-get-installed-packages ()
   "Get list of installed packages, using cache if valid.
 Returns an empty list if pip is not available or fails."
   (let ((current-venv (or (getenv "VIRTUAL_ENV") "system")))
     ;; Clear cache if venv changes
-    (unless (equal current-venv python--cached-venv-path)
-      (setq python--installed-packages-cache nil
-            python--cached-venv-path current-venv))
+    (unless (equal current-venv python-cached-venv-path)
+      (setq python-installed-packages-cache nil
+            python-cached-venv-path current-venv))
     ;; Get or refresh cache
-    (or python--installed-packages-cache
-        (setq python--installed-packages-cache
+    (or python-installed-packages-cache
+        (setq python-installed-packages-cache
               (condition-case nil
-                  (let ((output (shell-command-to-string "pip list --format=freeze 2>/dev/null")))
+                  (let ((output (shell-command-to-string "pip list -format=freeze 2>/dev/null")))
                     (mapcar (lambda (line)
                               (car (split-string line "==")))
                             (split-string output "\n" t)))
                 (error nil))))))
 
-(defun python--ensure-dev-packages ()
+(defun python-ensure-dev-packages ()
   "Ensure all dev packages are installed, with caching for performance.
 Uses async installation to avoid blocking Emacs."
-  (let ((installed (python--get-installed-packages))
+  (let ((installed (python-get-installed-packages))
         (missing nil))
     ;; Collect missing packages
     (dolist (package python-dev-packages)
-      (let ((base-name (python--get-package-base-name package)))
+      (let ((base-name (python-get-package-base-name package)))
         (unless (member base-name installed)
           (push package missing))))
     ;; Install missing packages asynchronously
@@ -86,15 +86,15 @@ Uses async installation to avoid blocking Emacs."
          (concat "pip install " packages-str)
          "*Python Package Install*")
         ;; Clear cache to refresh list (will be re-fetched on next check)
-        (setq python--installed-packages-cache nil)))))
+        (setq python-installed-packages-cache nil)))))
 
 (defun poetry-venv-activate-hook (&rest _)
   "Function to be run after `poetry-venv-workon'."
-  (python--ensure-dev-packages))
+  (python-ensure-dev-packages))
 
 (defun pyvenv-activate-hook (&rest _)
   "Function to be run after `pyvenv-workon'."
-  (python--ensure-dev-packages))
+  (python-ensure-dev-packages))
 
 (advice-add 'poetry-venv-workon :after #'poetry-venv-activate-hook)
 (advice-add 'pyvenv-workon :after #'pyvenv-activate-hook)
@@ -102,6 +102,7 @@ Uses async installation to avoid blocking Emacs."
 ;; ==================================================================================
 ;; Pyvenv
 (use-package pyvenv
+  :ensure t
   :defer t
   :hook (python-mode . pyvenv-mode)
   :config
@@ -116,33 +117,39 @@ Uses async installation to avoid blocking Emacs."
 ;; ==================================================================================
 ;; Poetry
 (use-package poetry
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Sphinx doc
 (use-package sphinx-doc
+  :ensure t
   :defer t
   :hook (python-mode . sphinx-doc-mode))
 
 ;; ==================================================================================
 ;; Python docstring
 (use-package python-docstring
+  :ensure t
   :defer t
   :hook (python-mode . python-docstring-mode))
 
 ;; ==================================================================================
 ;; Python black
 (use-package python-black
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Py-isort
 (use-package py-isort
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; With-venv
 (use-package with-venv
+  :ensure t
   :defer t)
 
 ;; ==================================================================================

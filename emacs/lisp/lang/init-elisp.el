@@ -31,18 +31,21 @@
 ;; ==================================================================================
 ;; Elisp slime nav
 (use-package elisp-slime-nav
+  :ensure t
   :defer t
   :hook (emacs-lisp-mode . elisp-slime-nav-mode))
 
 ;; ==================================================================================
 ;; Lisp extra font lock
 (use-package lisp-extra-font-lock
+  :ensure t
   :defer t
   :hook (emacs-lisp-mode . lisp-extra-font-lock-mode))
 
 ;; ==================================================================================
 ;; Rainbow mode
 (use-package rainbow-mode
+  :ensure t
   :defer t
   :hook (emacs-lisp-mode . rainbow-mode))
 

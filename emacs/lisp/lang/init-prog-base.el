@@ -47,6 +47,7 @@
 ;; ==================================================================================
 ;; Smartparens - automatic parenthesis pairing
 (use-package smartparens
+  :ensure t
   :defer t
   :hook (prog-mode . smartparens-mode)
   :custom
@@ -60,18 +61,21 @@
 ;; ==================================================================================
 ;; Hungry delete
 (use-package hungry-delete
+  :ensure t
   :defer t
   :hook (prog-mode . hungry-delete-mode))
 
 ;; ==================================================================================
 ;; Rainbow delimiters
 (use-package rainbow-delimiters
+  :ensure t
   :defer t
   :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; ==================================================================================
 ;; Highlight TODO
 (use-package hl-todo
+  :ensure t
   :defer t
   :hook (prog-mode . hl-todo-mode)
   :custom
@@ -90,6 +94,7 @@
 ;; ==================================================================================
 ;; Flycheck - syntax checking
 (use-package flycheck
+  :ensure t
   :defer t
   :hook (prog-mode . flycheck-mode)
   :custom
@@ -106,17 +111,20 @@
 ;; ==================================================================================
 ;; Whitespace cleanup
 (use-package whitespace-cleanup-mode
+  :ensure t
   :defer t
   :hook (prog-mode . whitespace-cleanup-mode))
 
 ;; ==================================================================================
 ;; Quickrun
 (use-package quickrun
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Dumb jump
 (use-package dumb-jump
+  :ensure t
   :defer t
   :config
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
@@ -133,6 +141,7 @@
     (format-all-mode 1)))
 
 (use-package format-all
+  :ensure t
   :defer t
   :hook (prog-mode . format-all-mode-maybe)
   :config
@@ -144,6 +153,7 @@
 ;; ==================================================================================
 ;; Devdocs
 (use-package devdocs
+  :ensure t
   :defer t)
 
 ;; ==================================================================================

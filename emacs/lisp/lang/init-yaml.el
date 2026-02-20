@@ -32,6 +32,7 @@
 ;; YAML mode
 ;; eglot already configured for yaml-mode eglot-ensure in init-prog-base.el
 (use-package yaml-mode
+  :ensure t
   :defer t)
 
 ;; ==================================================================================

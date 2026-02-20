@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-20 21:31:58 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -39,21 +39,25 @@
 ;; ==================================================================================
 ;; Move text
 (use-package move-text
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Expand region
 (use-package expand-region
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Multiple cursors
 (use-package multiple-cursors
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Visual regexp steroids - enhanced visual regexp replacement
 (use-package visual-regexp-steroids
+  :ensure t
   :defer t
   :bind (("C-c r" . vr/replace)
          ("C-c q" . vr/query-replace)
@@ -68,16 +72,19 @@
 ;; ==================================================================================
 ;; Browse kill ring
 (use-package browse-kill-ring
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Goto last change
 (use-package goto-chg
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Goto line preview
 (use-package goto-line-preview
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
@@ -125,6 +132,7 @@
 ;; ==================================================================================
 ;; Flyspell correct
 (use-package flyspell-correct
+  :ensure t
   :defer t
   :config
   (require 'flyspell-correct-avy-menu))
@@ -202,9 +210,9 @@
              '(;; Undo (explicit binding to prevent override)
                ("C-/" . undo)
                ;; Smart edit
-               ("C-x TAB" . smart-indent)
-               ("M-w" . smart-copy)
-               ("M-k" . smart-kill)
+               ("C-x TAB" . smart-indent-region)
+               ("M-w" . smart-copy-region)
+               ("M-k" . smart-kill-region)
                ;; Expand region
                ("M-M" . er/expand-region)
                ;; Move text

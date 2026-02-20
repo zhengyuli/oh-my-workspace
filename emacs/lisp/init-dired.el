@@ -54,12 +54,15 @@ To add custom entries, use:
 ;; ==================================================================================
 ;; Dired extension packages
 (use-package dired-filter
+  :ensure t
   :defer t)
 
 (use-package dired-hacks-utils
+  :ensure t
   :defer t)
 
 (use-package async
+  :ensure t
   :defer t)
 
 ;; ==================================================================================

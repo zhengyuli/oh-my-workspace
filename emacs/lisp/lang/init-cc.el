@@ -1,5 +1,5 @@
 ;;; init-cc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-20 21:48:57 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,6 +31,7 @@
 ;; ==================================================================================
 ;; Google C style
 (use-package google-c-style
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
@@ -44,8 +45,13 @@
      (format "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S %s -B %s" source-dir build-dir)
      nil "*_CMAKE_Export_Errors_*")))
 
-(defun cc-debug-target-program-path ()
-  "The function to get the path of the c&c++ program to be debugged."
+(defun cc-get-debug-target-program-path ()
+  "Get absolute path of target C/C++ program to debug.
+Interactively prompt for a file, with smart defaults:
+- Use project root's build/ dir (if in a VC project) as default dir
+- Use project name as default filename (if available)
+- Fallback to current buffer's directory if no project root
+Return absolute path of selected file."
   (interactive)
   (let* ((project-path (vc-root-dir))
          (project-name (if project-path
