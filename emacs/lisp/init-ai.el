@@ -1,5 +1,5 @@
 ;;; init-ai.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-16 21:00:00 Monday by zhengyuli>
+;; Time-stamp: <2026-02-20 21:50:18 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -35,6 +35,8 @@
 ;; Repository: https://github.com/manzaltu/claude-code-ide.el
 
 (use-package claude-code-ide
+  ;; Use :vc because claude-code-ide is not yet available in ELPA/MELPA
+  ;; TODO: Switch to :ensure t when package is published
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el"
       :rev :newest)
   :commands (claude-code-ide

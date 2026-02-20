@@ -1,5 +1,5 @@
 ;;; init-functions.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-19 17:08:09 Thursday by zhengyuli>
+;; Time-stamp: <2026-02-20 21:31:48 Friday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -166,7 +166,7 @@ Customize in `user-emacs-directory'/custom_settings.el:
     (delete-trailing-whitespace)
     (untabify (point-min) (point-max))))
 
-(defun smart-indent ()
+(defun smart-indent-region ()
   "If mark is active, indent region, else indent all buffer."
   (interactive)
   (save-excursion
@@ -185,7 +185,7 @@ Customize in `user-emacs-directory'/custom_settings.el:
   (let ((end (min (point-max) (line-end-position))))
     (copy-region-as-kill (line-beginning-position) end)))
 
-(defun smart-copy ()
+(defun smart-copy-region ()
   "If mark is active, copy region, else copy current line."
   (interactive)
   (save-excursion
@@ -193,7 +193,7 @@ Customize in `user-emacs-directory'/custom_settings.el:
         (call-interactively 'copy-region)
       (call-interactively 'copy-current-line))))
 
-(defun smart-kill ()
+(defun smart-kill-region ()
   "If mark is active, kill region, else kill whole line."
   (interactive)
   (if mark-active
@@ -428,7 +428,6 @@ Return t if all checks pass, nil otherwise."
 
 (defun config-dependency-show-report ()
   "Display validation report with colored output."
-  (interactive)
   (let ((report-buffer (get-buffer-create "*Emacs Config Validation*"))
         (total-installed 0)
         (total-missing 0))
@@ -515,10 +514,6 @@ Return t if all checks pass, nil otherwise."
       (special-mode))
     ;; Switch to report buffer
     (switch-to-buffer report-buffer)))
-
-;; Keep old function for backward compatibility
-(defalias 'config-dependency-report 'config-dependency-show-report
-  "Display validation report. (Alias for config-dependency-show-report)")
 
 (defun config-dependency-validate-on-startup ()
   "Run configuration validation during startup.
