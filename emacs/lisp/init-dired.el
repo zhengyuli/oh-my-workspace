@@ -54,15 +54,12 @@ To add custom entries, use:
 ;; ==================================================================================
 ;; Dired extension packages
 (use-package dired-filter
-  :ensure t
   :defer t)
 
 (use-package dired-hacks-utils
-  :ensure t
   :defer t)
 
 (use-package async
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
@@ -70,7 +67,6 @@ To add custom entries, use:
 ;; Replaces: diredfl, nerd-icons-dired, dired-preview, dired-collapse
 ;; Docs: https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org
 (use-package dirvish
-  :ensure t
   :init
   ;; Enable Dirvish to override dired mode (C-x d uses dirvish)
   (dirvish-override-dired-mode)

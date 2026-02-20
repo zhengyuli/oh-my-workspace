@@ -102,7 +102,6 @@ Uses async installation to avoid blocking Emacs."
 ;; ==================================================================================
 ;; Pyvenv
 (use-package pyvenv
-  :ensure t
   :defer t
   :hook (python-mode . pyvenv-mode)
   :config
@@ -117,39 +116,33 @@ Uses async installation to avoid blocking Emacs."
 ;; ==================================================================================
 ;; Poetry
 (use-package poetry
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Sphinx doc
 (use-package sphinx-doc
-  :ensure t
   :defer t
   :hook (python-mode . sphinx-doc-mode))
 
 ;; ==================================================================================
 ;; Python docstring
 (use-package python-docstring
-  :ensure t
   :defer t
   :hook (python-mode . python-docstring-mode))
 
 ;; ==================================================================================
 ;; Python black
 (use-package python-black
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Py-isort
 (use-package py-isort
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; With-venv
 (use-package with-venv
-  :ensure t
   :defer t)
 
 ;; ==================================================================================

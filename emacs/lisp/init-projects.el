@@ -31,7 +31,6 @@
 ;; ==================================================================================
 ;; Projectile - Project management core
 (use-package projectile
-  :ensure t
   :defer t
   :bind-keymap
   ("C-c p" . projectile-command-map)            ; Key binding immediate, package deferred

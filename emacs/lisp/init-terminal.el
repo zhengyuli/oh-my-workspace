@@ -31,7 +31,6 @@
 ;; ==================================================================================
 ;; Vterm - modern terminal emulator
 (use-package vterm
-  :ensure t
   :commands (vterm)
   :custom
   (vterm-max-scrollback 10000)           ; Maximum scrollback history
@@ -65,7 +64,6 @@
 ;; ==================================================================================
 ;; Multi-vterm
 (use-package multi-vterm
-  :ensure t
   :commands (multi-vterm))
 
 ;; ==================================================================================

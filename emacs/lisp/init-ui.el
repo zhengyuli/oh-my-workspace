@@ -37,7 +37,6 @@
 ;; Theme - doom-themes
 ;; Load theme early to avoid flicker, config in :init
 (use-package doom-themes
-  :ensure t
   :init
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
@@ -47,7 +46,6 @@
 ;; ==================================================================================
 ;; Modeline - doom-modeline
 (use-package doom-modeline
-  :ensure t
   :init
   (setq doom-modeline-mu4e t
         doom-modeline-icon (display-graphic-p))  ; Disable icons in terminal
@@ -58,13 +56,11 @@
 ;; Nerd-icons - unified icon system (deferred)
 ;; Only used by centaur-tabs (icons disabled) and dashboard (conditional on GUI)
 (use-package nerd-icons
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
 (use-package centaur-tabs
-  :ensure t
   :demand t
   :bind
   (:map centaur-tabs-mode-map
@@ -199,7 +195,6 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Winum - show window numbers in mode-line, M-1/2/3... to switch windows
 (use-package winum
-  :ensure t
   :config
   (setq winum-auto-setup-mode-line t
         winum-format " %s ")
@@ -212,7 +207,6 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Dashboard
 (use-package dashboard
-  :ensure t
   :config
   (require 'dashboard-widgets)
   (setq dashboard-center-content t
@@ -247,7 +241,6 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Pulsar - cursor highlighting (replaces beacon)
 (use-package pulsar
-  :ensure t
   :defer t
   :hook (after-init . pulsar-global-mode)
   :config
@@ -282,7 +275,6 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Emojify - enable only in specific modes
 (use-package emojify
-  :ensure t
   :defer t
   :hook ((org-mode . emojify-mode)
          (markdown-mode . emojify-mode)
@@ -291,7 +283,6 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Textsize - automatic font sizing based on screen resolution (GUI only)
 (use-package textsize
-  :ensure t
   :when (display-graphic-p)              ; GUI mode only
   :config
   (setq textsize-monitor-size-thresholds

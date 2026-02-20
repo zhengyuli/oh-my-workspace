@@ -32,7 +32,6 @@
 ;; ==================================================================================
 ;; Go mode
 (use-package go-mode
-  :ensure t
   :defer t
   :hook (go-mode . go-mode-setup)
   :config

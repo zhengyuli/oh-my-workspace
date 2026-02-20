@@ -33,7 +33,6 @@
 ;; Valign - table alignment display
 ;; Provides visual alignment for Org and Markdown tables
 (use-package valign
-  :ensure t
   :hook (markdown-mode . valign-mode)
   :custom
   (valign-fancy-bar t))                  ; Use fancy separator
@@ -41,7 +40,6 @@
 ;; ==================================================================================
 ;; Markdownfmt - code formatting
 (use-package markdownfmt
-  :ensure t
   :defer t
   :config
   ;; Format on save (optional, can be toggled)
@@ -53,7 +51,6 @@
 ;; Edit indirect - edit code blocks in separate buffer
 ;; Supports native mode editing for ```lang code blocks
 (use-package edit-indirect
-  :ensure t
   :defer t
   :custom
   (edit-indirect-guess-mode-function
@@ -109,7 +106,6 @@
 ;; ==================================================================================
 ;; Markdown mode - main mode
 (use-package markdown-mode
-  :ensure t
   :defer t
   :hook (markdown-mode . markdown-mode-setup)
   :bind (:map markdown-mode-map
@@ -186,7 +182,6 @@
 ;; ==================================================================================
 ;; Markdown TOC - table of contents generation
 (use-package markdown-toc
-  :ensure t
   :defer t
   :after markdown-mode
   :custom
@@ -208,7 +203,6 @@
 ;; Poly-markdown - multi-mode support (optional, for complex scenarios)
 ;; Allows embedding full language support in markdown
 (use-package poly-markdown
-  :ensure t
   :defer t
   :after markdown-mode
   :hook (poly-markdown-mode . polymode-update-mode-line))
@@ -343,7 +337,6 @@
 ;; ==================================================================================
 ;; Visual enhancements
 (use-package visual-fill-column
-  :ensure t
   :defer t
   :hook (markdown-mode . visual-fill-column-mode)
   :custom

@@ -136,7 +136,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; ==================================================================================
 ;; GC optimization with gcmh
 (use-package gcmh
-  :ensure t
   :demand t
   :custom
   (gcmh-idle-delay 10)                   ; GC after 10 seconds idle

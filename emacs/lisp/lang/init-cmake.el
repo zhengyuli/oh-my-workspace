@@ -32,7 +32,6 @@
 ;; CMake mode
 ;; eglot already configured for cmake-mode eglot-ensure in init-prog-base.el
 (use-package cmake-mode
-  :ensure t
   :defer t)
 
 ;; ==================================================================================

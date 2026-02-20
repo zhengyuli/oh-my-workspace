@@ -31,7 +31,6 @@
 ;; ==================================================================================
 ;; Vundo - visual undo tree (replaces undo-tree)
 (use-package vundo
-  :ensure t
   :bind ("M-_" . vundo)
   :config
   (setq vundo-compact-display t))
@@ -39,25 +38,21 @@
 ;; ==================================================================================
 ;; Move text
 (use-package move-text
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Expand region
 (use-package expand-region
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Multiple cursors
 (use-package multiple-cursors
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Visual regexp steroids - enhanced visual regexp replacement
 (use-package visual-regexp-steroids
-  :ensure t
   :defer t
   :bind (("C-c r" . vr/replace)
          ("C-c q" . vr/query-replace)
@@ -72,19 +67,16 @@
 ;; ==================================================================================
 ;; Browse kill ring
 (use-package browse-kill-ring
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Goto last change
 (use-package goto-chg
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Goto line preview
 (use-package goto-line-preview
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
@@ -132,7 +124,6 @@
 ;; ==================================================================================
 ;; Flyspell correct
 (use-package flyspell-correct
-  :ensure t
   :defer t
   :config
   (require 'flyspell-correct-avy-menu))

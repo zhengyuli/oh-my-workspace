@@ -31,7 +31,6 @@
 ;; ==================================================================================
 ;; Which-key - key hints, deferred loading for faster startup
 (use-package which-key
-  :ensure t
   :defer 1                                   ; Load after 1 second
   :custom
   (which-key-idle-delay 0.5)                 ; Show hints 0.5s after keystroke
@@ -45,7 +44,6 @@
 ;; ==================================================================================
 ;; Vertico - vertical completion UI
 (use-package vertico
-  :ensure t
   :custom
   (vertico-cycle t)                       ; Cycle through candidates
   (vertico-count 15)                      ; Show 15 candidates
@@ -59,7 +57,6 @@
 ;; ==================================================================================
 ;; Orderless - fuzzy matching
 (use-package orderless
-  :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -68,7 +65,6 @@
 ;; ==================================================================================
 ;; Marginalia - completion annotations
 (use-package marginalia
-  :ensure t
   :after vertico
   :custom
   (marginalia-annotators '(marginalia-annotators-heavy  ; Detailed annotations
@@ -80,7 +76,6 @@
 ;; ==================================================================================
 ;; Consult - enhanced commands
 (use-package consult
-  :ensure t
   :custom
   (consult-line-numbers-widen t)          ; Auto-widen line numbers
   (consult-async-min-input 2)             ; Minimum input for async search
@@ -114,7 +109,6 @@
 ;; ==================================================================================
 ;; Embark - context actions
 (use-package embark
-  :ensure t
   :defer t
   :custom
   (embark-prompter 'embark-keymap-prompter)    ; Use keymap prompter
@@ -131,7 +125,6 @@
 ;; ==================================================================================
 ;; Embark-consult - Embark and Consult integration
 (use-package embark-consult
-  :ensure t
   :after (embark consult)
   :hook
   (embark-collect-mode . embark-consult-preview-minor-mode))
@@ -139,7 +132,6 @@
 ;; ==================================================================================
 ;; Consult-projectile - project integration
 (use-package consult-projectile
-  :ensure t
   :after (consult projectile)
   :config
   (with-eval-after-load 'projectile
@@ -149,12 +141,10 @@
 ;; ==================================================================================
 ;; Prescient - smart sorting
 (use-package prescient
-  :ensure t
   :config
   (prescient-persist-mode))
 
 (use-package vertico-prescient
-  :ensure t
   :after (vertico prescient)
   :config
   (vertico-prescient-mode))
@@ -162,7 +152,6 @@
 ;; ==================================================================================
 ;; Corfu - completion framework
 (use-package corfu
-  :ensure t
   :custom
   (corfu-cycle t)                      ; Cycle through candidates
   (corfu-auto t)                       ; Auto completion
@@ -178,7 +167,6 @@
 
 ;; Corfu terminal support
 (use-package corfu-terminal
-  :ensure t
   :after corfu
   :config
   (unless (display-graphic-p)
@@ -186,7 +174,6 @@
 
 ;; Corfu prescient integration
 (use-package corfu-prescient
-  :ensure t
   :after (corfu prescient)
   :config
   (corfu-prescient-mode))
@@ -195,7 +182,6 @@
 ;; Cape - completion backends
 ;; Order matters: file > keyword > dabbrev > line
 (use-package cape
-  :ensure t
   :after corfu
   :config
   ;; Set completion backend order (highest to lowest priority)
@@ -208,7 +194,6 @@
 ;; ==================================================================================
 ;; Yasnippet - deferred loading
 (use-package yasnippet
-  :ensure t
   :defer t
   :hook ((prog-mode . yas-minor-mode)
          (org-mode . yas-minor-mode)
@@ -218,13 +203,11 @@
   (lazy-unset-key '("<tab>" "TAB") yas-minor-mode-map))
 
 (use-package yasnippet-snippets
-  :ensure t
   :after yasnippet)
 
 ;; ==================================================================================
 ;; Ag - The Silver Searcher (retained for wgrep integration)
 (use-package ag
-  :ensure t
   :commands (ag ag-project ag-dired-regexp)
   :config
   (require 'wgrep-ag)
@@ -249,7 +232,6 @@
 ;; ==================================================================================
 ;; Avy - fast jumping
 (use-package avy
-  :ensure t
   :defer t
   :custom
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p))
@@ -261,7 +243,6 @@
 ;; ==================================================================================
 ;; Nerd-icons for completion
 (use-package nerd-icons-corfu
-  :ensure t
   :after (corfu nerd-icons)
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))

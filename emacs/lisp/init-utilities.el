@@ -33,7 +33,6 @@
 ;; Exec path from shell (macOS)
 ;; Optimization: use -l instead of -i to avoid slow shell startup
 (use-package exec-path-from-shell
-  :ensure t
   :when (memq window-system '(mac ns))
   :custom
   (exec-path-from-shell-arguments '("-l"))  ; -l is much faster than -li
@@ -42,13 +41,11 @@
 ;; ==================================================================================
 ;; Restart Emacs
 (use-package restart-emacs
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Switch window - label windows with letters for quick switching
 (use-package switch-window
-  :ensure t
   :defer t
   :custom
   (switch-window-shortcut-style 'qwerty)  ; Use QWERTY key layout
@@ -58,7 +55,6 @@
 ;; ==================================================================================
 ;; Pinentry
 (use-package pinentry
-  :ensure t
   :hook (after-init . pinentry-start))
 
 ;; ==================================================================================
@@ -80,17 +76,14 @@
 ;; ==================================================================================
 ;; Password store
 (use-package password-store
-  :ensure t
   :defer t)
 
 (use-package pass
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Auto package update
 (use-package auto-package-update
-  :ensure t
   :defer t
   :custom
   (auto-package-update-delete-old-versions t)

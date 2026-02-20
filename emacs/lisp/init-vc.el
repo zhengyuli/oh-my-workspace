@@ -31,7 +31,6 @@
 ;; ==================================================================================
 ;; Magit - Git version control interface
 (use-package magit
-  :ensure t
   :commands (magit-status magit-log-all)
   :custom
   (magit-diff-refine-hunk t)             ; Show character-level differences
