@@ -84,6 +84,7 @@
 ;; Flyspell - spell checking
 ;; Default to aspell (works out of the box), hunspell requires extra dictionary config
 (use-package flyspell
+  :ensure nil  ; Built-in package
   :defer t
   :config
   ;; Choose spell checker: aspell (default) > hunspell > ispell
@@ -131,6 +132,7 @@
 ;; ==================================================================================
 ;; Auto insert
 (use-package autoinsert
+  :ensure nil  ; Built-in package
   :hook (after-init . auto-insert-mode)
   :config
   (defun define-auto-insert-custom (condition action)

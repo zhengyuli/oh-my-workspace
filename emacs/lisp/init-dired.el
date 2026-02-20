@@ -30,7 +30,7 @@
 
 ;; ==================================================================================
 ;; Customization variables - Dirvish Quick Access
-(defvar dirvish-quick-access-dirs
+(defcustom dirvish-quick-access-dirs
   '(("h" "~/" "Home")
     ("d" "~/Downloads/" "Downloads")
     ("w" "~/oh-my-workspace/" "Workspace")
@@ -42,11 +42,14 @@
 Each element is (KEY PATH DISPLAY-NAME).
 Only existing directories will be shown in quick access menu.
 
-Customize in `user-emacs-directory'/custom_settings.el:
-
-  (with-eval-after-load 'init-dired
-    (add-to-list 'dirvish-quick-access-dirs
-                 '(\"m\" \"~/my-projects/\" \"My Projects\")))")
+To add custom entries, use:
+  (with-eval-after-load \\='init-dired
+    (add-to-list \\='dirvish-quick-access-dirs
+                 \\='(\"m\" \"~/my-projects/\" \"My Projects\")))"
+  :type '(repeat (list (string :tag "Key")
+                       (directory :tag "Path")
+                       (string :tag "Display Name")))
+  :group 'omw-emacs-config)
 
 ;; ==================================================================================
 ;; Dired extension packages
@@ -254,7 +257,7 @@ Only includes directories that actually exist on the filesystem."
      ("?" . isearch-backward)
      ("n" . isearch-repeat-forward)
      ("N" . isearch-repeat-backward))
-   view-mode-map)
+   view-mode-map))
 
 ;; ==================================================================================
 ;; Dired keybindings

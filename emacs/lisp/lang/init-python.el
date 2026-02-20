@@ -51,7 +51,8 @@
     package))
 
 (defun python--get-installed-packages ()
-  "Get list of installed packages, using cache if valid."
+  "Get list of installed packages, using cache if valid.
+Returns an empty list if pip is not available or fails."
   (let ((current-venv (or (getenv "VIRTUAL_ENV") "system")))
     ;; Clear cache if venv changes
     (unless (equal current-venv python--cached-venv-path)
@@ -60,10 +61,12 @@
     ;; Get or refresh cache
     (or python--installed-packages-cache
         (setq python--installed-packages-cache
-              (let ((output (shell-command-to-string "pip list --format=freeze 2>/dev/null")))
-                (mapcar (lambda (line)
-                          (car (split-string line "==")))
-                        (split-string output "\n" t)))))))
+              (condition-case nil
+                  (let ((output (shell-command-to-string "pip list --format=freeze 2>/dev/null")))
+                    (mapcar (lambda (line)
+                              (car (split-string line "==")))
+                            (split-string output "\n" t)))
+                (error nil))))))
 
 (defun python--ensure-dev-packages ()
   "Ensure all dev packages are installed, with caching for performance.

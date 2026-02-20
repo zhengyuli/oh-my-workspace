@@ -55,9 +55,11 @@
   (doom-modeline-mode 1))
 
 ;; ==================================================================================
-;; Nerd-icons - unified icon system
+;; Nerd-icons - unified icon system (deferred)
+;; Only used by centaur-tabs (icons disabled) and dashboard (conditional on GUI)
 (use-package nerd-icons
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
@@ -75,44 +77,100 @@
   (require 'centaur-tabs-functions)
 
   ;; Redefinition of `centaur-tabs-buffer-groups'
+  ;; Grouping strategy (priority from high to low):
+  ;; 1. Special UI buffers (Dashboard, AI assistants)
+  ;; 2. Project-based grouping (all buffers in a project)
+  ;; 3. Version control (Magit, non-project)
+  ;; 4. Terminals (non-project)
+  ;; 5. Language-specific groups (non-project files)
+  ;; 6. Org mode (including agenda, diary)
+  ;; 7. Dired file browser
+  ;; 8. Text/Markup files (Markdown, YAML, etc.)
+  ;; 9. Help/Documentation buffers
+  ;; 10. Emacs internal buffers (starting with *)
+  ;; 11. Default fallback
   (defun centaur-tabs-buffer-groups ()
     "Control buffers' group rules.
 
-Combine official and custom rules:
-- Project-based grouping (official)
-- Shell/EShell/Vterm grouping
-- Dashboard, Claude Code, Magit, Org, ProgMode grouping"
+Grouping strategy:
+1. Special UI buffers (Dashboard, Claude Code)
+2. Project-based grouping (all buffers in a project)
+3. Mode-specific groups for non-project buffers"
     (list
      (cond
-      ;; Project grouping (official recommendation, highest priority)
+      ;; ============================================
+      ;; Special UI buffers (highest priority)
+      ;; ============================================
+      ((derived-mode-p 'dashboard-mode) "Dashboard")
+      ((derived-mode-p 'claude-code-ide-mode) "Claude Code")
+
+      ;; ============================================
+      ;; Project-based grouping (all buffers in project)
+      ;; ============================================
       ((when-let* ((project-name (centaur-tabs-project-name)))
          (and (stringp project-name)
               (not (string-empty-p project-name))
               project-name)))
-      ;; Special buffers
-      ((derived-mode-p 'dashboard-mode) "Dashboard")
-      ((derived-mode-p 'claude-code-ide-mode) "Claude Code")
-      ;; Terminals
-      ((derived-mode-p 'vterm-mode) "Vterm")
-      ((derived-mode-p 'shell-mode) "Shell")
-      ((derived-mode-p 'eshell-mode) "EShell")
-      ;; Dired
-      ((derived-mode-p 'dired-mode) "Dired")
-      ;; Magit (all magit modes inherit from magit-mode)
+
+      ;; ============================================
+      ;; Version control (non-project only)
+      ;; ============================================
       ((derived-mode-p 'magit-mode) "Magit")
-      ;; Org mode (org-agenda etc. don't inherit org-mode, need separate listing)
+
+      ;; ============================================
+      ;; Terminals (non-project only)
+      ;; ============================================
+      ((memq major-mode '(vterm-mode shell-mode eshell-mode term-mode)) "Terminal")
+
+      ;; ============================================
+      ;; Language-specific groups (non-project files)
+      ;; ============================================
+      ((derived-mode-p 'python-mode) "Python")
+      ((derived-mode-p 'go-mode) "Go")
+      ((memq major-mode '(c-mode c++-mode c-or-c++-mode)) "C/C++")
+      ((derived-mode-p 'emacs-lisp-mode) "Elisp")
+      ((derived-mode-p 'sh-mode) "Shell Script")
+
+      ;; ============================================
+      ;; Org mode (including related modes)
+      ;; ============================================
       ((or (derived-mode-p 'org-mode)
            (memq major-mode '(org-agenda-mode
                               org-agenda-clockreport-mode
                               diary-mode)))
-       "OrgMode")
-      ;; Elisp separate group
-      ((derived-mode-p 'emacs-lisp-mode) "Elisp")
-      ;; Other special buffers (starting with *)
+       "Org")
+
+      ;; ============================================
+      ;; Dired file browser
+      ;; ============================================
+      ((derived-mode-p 'dired-mode) "Dired")
+
+      ;; ============================================
+      ;; Text/Markup files
+      ;; ============================================
+      ((or (derived-mode-p 'markdown-mode)
+           (derived-mode-p 'yaml-mode)
+           (derived-mode-p 'dockerfile-mode)
+           (derived-mode-p 'text-mode)
+           (memq major-mode '(cmake-mode cmake-ts-mode conf-mode conf-unix-mode conf-space-mode)))
+       "Text")
+
+      ;; ============================================
+      ;; Help/Documentation buffers
+      ;; ============================================
+      ((or (memq major-mode '(help-mode helpful-mode info-mode Man-mode woman-mode
+                              help-fns-mode help-mode-view))
+           (string-match-p "\\`\\*Help\\*\\|\\*info\\*\\|\\*Man\\*" (buffer-name)))
+       "Help")
+
+      ;; ============================================
+      ;; Emacs internal buffers (starting with *)
+      ;; ============================================
       ((string-prefix-p "*" (buffer-name)) "Emacs")
-      ;; Programming modes
-      ((derived-mode-p 'prog-mode) "ProgMode")
-      ;; Default
+
+      ;; ============================================
+      ;; Default fallback
+      ;; ============================================
       (t (centaur-tabs-get-group-name (current-buffer))))))
 
   ;; Customized faces
@@ -190,6 +248,8 @@ Combine official and custom rules:
 ;; Pulsar - cursor highlighting (replaces beacon)
 (use-package pulsar
   :ensure t
+  :defer t
+  :hook (after-init . pulsar-global-mode)
   :config
   (setq pulsar-pulse-functions '(recenter-top-bottom
                                   move-to-window-line-top-bottom
@@ -209,8 +269,7 @@ Combine official and custom rules:
                                   tab-close
                                   tab-next
                                   tab-previous)
-        pulsar-delay 0.055)
-  (pulsar-global-mode 1))
+        pulsar-delay 0.055))
 
 ;; ==================================================================================
 ;; Smooth scrolling - use built-in pixel-scroll-precision-mode (Emacs 29+)
@@ -244,13 +303,6 @@ Combine official and custom rules:
 ;; ==================================================================================
 ;; Winner mode - undo/redo window layout
 (winner-mode 1)
-
-;; ==================================================================================
-;; Window configuration change hook
-(add-hook 'window-configuration-change-hook
-          (lambda ()
-            ;; Adjust window split thresholds
-            (adjust-window-split-thresholds)))
 
 ;; ==================================================================================
 ;;; Provide features

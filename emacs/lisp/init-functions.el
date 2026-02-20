@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 ;; ==================================================================================
 ;; Customization group
 (defgroup omw-emacs-config nil
@@ -98,26 +100,35 @@ Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy."
     (message "No http proxy")))
 
 (defun set-http-proxy (proxy)
-  "Set HTTP/HTTPS proxy."
+  "Set HTTP/HTTPS proxy to PROXY URL.
+
+PROXY should be a URL like \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\".
+Signals an error if PROXY is empty or cannot be parsed."
   (interactive (list (read-string
                       (format "HTTP Proxy Server [%s]: " emacs-http-proxy)
                       nil nil emacs-http-proxy)))
   (if (not (string-empty-p proxy))
-      (let* ((proxy (if (string-match-p "https?://" proxy)
-                        proxy
-                      (concat "http://" proxy)))
-             (parsed-url (url-generic-parse-url proxy))
-             (proxy-no-scheme
-              (format "%s:%d" (url-host parsed-url) (url-port parsed-url))))
-        (setenv "http_proxy" proxy)
-        (setenv "https_proxy" proxy)
-        (setenv "all_proxy" proxy)
-        (setq url-proxy-services
-              `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
-                ("http" . ,proxy-no-scheme)
-                ("https" . ,proxy-no-scheme)))
-        (show-http-proxy))
-    (warn "Proxy url could not be empty.")))
+      (condition-case err
+          (let* ((proxy-url (if (string-match-p "https?://" proxy)
+                                proxy
+                              (concat "http://" proxy)))
+                 (parsed-url (url-generic-parse-url proxy-url))
+                 (host (url-host parsed-url))
+                 (port (url-port parsed-url)))
+            (unless (and host port)
+              (error "Invalid proxy URL: missing host or port"))
+            (let ((proxy-no-scheme (format "%s:%d" host port)))
+              (setenv "http_proxy" proxy-url)
+              (setenv "https_proxy" proxy-url)
+              (setenv "all_proxy" proxy-url)
+              (setq url-proxy-services
+                    `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
+                      ("http" . ,proxy-no-scheme)
+                      ("https" . ,proxy-no-scheme)))
+              (show-http-proxy)))
+        (error
+         (message "Error setting proxy: %s" (error-message-string err))))
+    (user-error "Proxy URL cannot be empty")))
 
 (defun enable-http-proxy ()
   "Enable HTTP proxy if `emacs-http-proxy' is configured.
@@ -214,17 +225,6 @@ Customize in `user-emacs-directory'/custom_settings.el:
        (setq emacs-old-fullscreen current-value)
        'fullboth))))
 
-(defun adjust-window-split-thresholds ()
-  "Adjust window split thresholds."
-  (interactive)
-  (if (>= (frame-pixel-width) (frame-pixel-height))
-      (progn
-        (setq split-height-threshold (frame-height))
-        (setq split-width-threshold  (/ (frame-width) 2)))
-    (progn
-      (setq split-height-threshold (frame-height))
-      (setq split-width-threshold  (frame-width)))))
-
 ;; ==================================================================================
 ;; Git utilities
 (defvar git-user-name-cache nil
@@ -234,7 +234,8 @@ Customize in `user-emacs-directory'/custom_settings.el:
 
 (defun git-user-name-async (&optional callback)
   "Get git user name asynchronously.
-If CALLBACK is provided, call it with the result; otherwise display in minibuffer.
+If CALLBACK is provided, call it with the result;
+otherwise display in minibuffer.
 Result is cached in `git-user-name-cache'."
   (interactive)
   (if (and git-user-name-cache
@@ -258,7 +259,8 @@ Result is cached in `git-user-name-cache'."
 
 (defun git-user-email-async (&optional callback)
   "Get git user email asynchronously.
-If CALLBACK is provided, call it with the result; otherwise display in minibuffer.
+If CALLBACK is provided, call it with the result;
+otherwise display in minibuffer.
 Result is cached in `git-user-email-cache'."
   (interactive)
   (if (and git-user-email-cache
@@ -282,10 +284,12 @@ Result is cached in `git-user-email-cache'."
 
 ;; Keep synchronous versions for backward compatibility (not recommended for frequent use)
 (defalias 'git-user-name #'git-user-name-async
-  "Get git user name. (Async version, use `git-user-name-async' directly for callbacks)")
+  "Get git user name.
+\(Async version, use `git-user-name-async' directly for callbacks)")
 
 (defalias 'git-user-email #'git-user-email-async
-  "Get git user email. (Async version, use `git-user-email-async' directly for callbacks)")
+  "Get git user email.
+\(Async version, use `git-user-email-async' directly for callbacks)")
 
 ;; ==================================================================================
 ;; Package update utility
@@ -420,7 +424,7 @@ Return t if all checks pass, nil otherwise."
   ;; Display report
   (config-dependency-show-report)
   ;; Return t if no missing items
-  (cl-every (lambda (r) (null (cdadr r))) config-dependency-results))
+  (cl-every (lambda (r) (null (cddr r))) config-dependency-results))
 
 (defun config-dependency-show-report ()
   "Display validation report with colored output."
