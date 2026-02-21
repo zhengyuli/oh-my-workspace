@@ -34,9 +34,11 @@
 ;; Optimization: use -l instead of -i to avoid slow shell startup
 (use-package exec-path-from-shell
   :when (memq window-system '(mac ns))
+  :defer t
   :custom
   (exec-path-from-shell-arguments '("-l"))  ; -l is much faster than -li
-  :hook (after-init . exec-path-from-shell-initialize))
+  :config
+  (run-with-idle-timer 1 nil #'exec-path-from-shell-initialize))
 
 ;; ==================================================================================
 ;; Restart Emacs
@@ -55,7 +57,9 @@
 ;; ==================================================================================
 ;; Pinentry
 (use-package pinentry
-  :hook (after-init . pinentry-start))
+  :defer t
+  :config
+  (run-with-idle-timer 2 nil #'pinentry-start))
 
 ;; ==================================================================================
 ;; EPG config

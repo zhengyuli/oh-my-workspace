@@ -1,7 +1,7 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-21 10:15:41 Saturday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
@@ -46,11 +46,11 @@
 ;; ==================================================================================
 ;; Modeline - doom-modeline
 (use-package doom-modeline
+  :defer t
   :init
   (setq doom-modeline-mu4e t
         doom-modeline-icon (display-graphic-p))  ; Disable icons in terminal
-  :config
-  (doom-modeline-mode 1))
+  :hook (after-init . doom-modeline-mode))
 
 ;; ==================================================================================
 ;; Nerd-icons - unified icon system (deferred)
@@ -61,7 +61,7 @@
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
 (use-package centaur-tabs
-  :demand t
+  :hook (emacs-startup . centaur-tabs-mode)
   :bind
   (:map centaur-tabs-mode-map
         ("M-p" . centaur-tabs-backward)
@@ -195,10 +195,11 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Winum - show window numbers in mode-line, M-1/2/3... to switch windows
 (use-package winum
+  :defer t
+  :hook (after-init . winum-mode)
   :config
   (setq winum-auto-setup-mode-line t
         winum-format " %s ")
-  (winum-mode 1)
   ;; M-1/2/3... to switch to corresponding window
   (dotimes (i 9)
     (global-set-key (kbd (format "M-%d" (1+ i)))
@@ -207,6 +208,7 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Dashboard
 (use-package dashboard
+  :demand t
   :config
   (require 'dashboard-widgets)
   (setq dashboard-center-content t
@@ -284,12 +286,13 @@ Grouping strategy:
 ;; Textsize - automatic font sizing based on screen resolution (GUI only)
 (use-package textsize
   :when (display-graphic-p)              ; GUI mode only
+  :defer t
+  :hook (after-init . textsize-mode)
   :config
   (setq textsize-monitor-size-thresholds
         '((0 . -3) (350 . -1) (500 . 0))
         textsize-pixel-pitch-thresholds
-        '((0 . 5) (0.12 . 3) (0.18 . 1) (0.20 . 0) (0.25 . -2)))
-  (textsize-mode 1))
+        '((0 . 5) (0.12 . 3) (0.18 . 1) (0.20 . 0) (0.25 . -2))))
 
 ;; ==================================================================================
 ;; Winner mode - undo/redo window layout
