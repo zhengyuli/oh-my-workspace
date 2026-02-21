@@ -34,11 +34,17 @@
 ;; Optimization: use -l instead of -i to avoid slow shell startup
 (use-package exec-path-from-shell
   :when (memq window-system '(mac ns))
-  :defer t
-  :custom
-  (exec-path-from-shell-arguments '("-l"))  ; -l is much faster than -li
-  :config
-  (run-with-idle-timer 1 nil #'exec-path-from-shell-initialize))
+  :defer t)
+
+;; Initialize exec-path from shell (deferred)
+;; Note: Must be outside use-package :config because :defer t means :config
+;; only runs when the package is loaded. Without any autoload trigger,
+;; the package never loads and initialize is never called.
+(when (memq window-system '(mac ns))
+  (run-with-idle-timer 1 nil
+    (lambda ()
+      (require 'exec-path-from-shell)
+      (exec-path-from-shell-initialize))))
 
 ;; ==================================================================================
 ;; Restart Emacs
@@ -57,9 +63,14 @@
 ;; ==================================================================================
 ;; Pinentry
 (use-package pinentry
-  :defer t
-  :config
-  (run-with-idle-timer 2 nil #'pinentry-start))
+  :defer t)
+
+;; Start pinentry after idle (deferred)
+;; Note: Must be outside use-package :config to ensure timer is registered
+(run-with-idle-timer 2 nil
+  (lambda ()
+    (require 'pinentry)
+    (pinentry-start)))
 
 ;; ==================================================================================
 ;; EPG config
@@ -91,25 +102,26 @@
   :defer t
   :custom
   (auto-package-update-delete-old-versions t)
-  (auto-package-update-hide-output t)
-  :config
-  ;; Check for package updates in background
-  (defun package-check-updates ()
-    "Check for package updates in background and notify if updates available."
-    (interactive)
-    (message "Checking for package updates...")
-    (package-refresh-contents)
-    (let ((upgrades (package-menu--find-upgrades)))
-      (if upgrades
-          (let ((count (length upgrades)))
-            (message "")
-            (if (yes-or-no-p (format "Found %d package(s) with updates. Upgrade now? " count))
-                (auto-package-upgrade-all)
-              (message "Run `M-x auto-package-upgrade-all' to upgrade later.")))
-        (message "All packages are up to date."))))
+  (auto-package-update-hide-output t))
 
-  ;; Check for updates after startup (after 60 seconds idle)
-  (run-with-idle-timer 60 nil #'package-check-updates))
+;; Check for package updates in background
+(defun package-check-updates ()
+  "Check for package updates in background and notify if updates available."
+  (interactive)
+  (message "Checking for package updates...")
+  (package-refresh-contents)
+  (let ((upgrades (package-menu--find-upgrades)))
+    (if upgrades
+        (let ((count (length upgrades)))
+          (message "")
+          (if (yes-or-no-p (format "Found %d package(s) with updates. Upgrade now? " count))
+              (auto-package-upgrade-all)
+            (message "Run `M-x auto-package-upgrade-all' to upgrade later.")))
+      (message "All packages are up to date."))))
+
+;; Check for updates after startup (after 60 seconds idle)
+;; Note: Must be outside use-package :config to ensure timer is registered
+(run-with-idle-timer 60 nil #'package-check-updates)
 
 ;; Convenience alias: upgrade all packages
 ;; Note: auto-package-upgrade-all (init-functions.el) already includes package-refresh-contents
@@ -207,9 +219,8 @@
             (column-number-mode 1)
             ;; Enable global just-in-time lock mode
             (jit-lock-mode 1)
-
-            ;; Defer recentf mode to after idle
-            (run-with-idle-timer 2 nil (lambda () (recentf-mode 1)))))
+            ;; Enable recent file mode
+            (recentf-mode 1)))
 
 ;; ==================================================================================
 ;; Before save hooks (mode-specific)

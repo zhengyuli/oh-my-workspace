@@ -283,18 +283,6 @@ Grouping strategy:
          (text-mode . emojify-mode)))
 
 ;; ==================================================================================
-;; Textsize - automatic font sizing based on screen resolution (GUI only)
-(use-package textsize
-  :when (display-graphic-p)              ; GUI mode only
-  :defer t
-  :hook (after-init . textsize-mode)
-  :config
-  (setq textsize-monitor-size-thresholds
-        '((0 . -3) (350 . -1) (500 . 0))
-        textsize-pixel-pitch-thresholds
-        '((0 . 5) (0.12 . 3) (0.18 . 1) (0.20 . 0) (0.25 . -2))))
-
-;; ==================================================================================
 ;; Winner mode - undo/redo window layout
 (winner-mode 1)
 

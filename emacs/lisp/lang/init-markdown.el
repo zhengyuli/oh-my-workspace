@@ -278,13 +278,11 @@
 
     ;; Code block styles
     (face-remap-add-relative 'markdown-code-face
-                             `(:foreground ,code-fg :background ,code-bg
-                               :extend t :family "Source Code Pro"))
+                             `(:foreground ,code-fg :background ,code-bg :extend t))
     (face-remap-add-relative 'markdown-pre-face
                              `(:foreground ,code-fg :background ,code-bg :extend t))
     (face-remap-add-relative 'markdown-inline-code-face
-                             `(:foreground ,inline-code-fg
-                               :family "Source Code Pro"))
+                             `(:foreground ,inline-code-fg))
 
     ;; Link styles
     (face-remap-add-relative 'markdown-link-face
@@ -324,12 +322,11 @@
     (face-remap-add-relative 'markdown-metadata-value-face
                              `(:foreground ,metadata :slant italic))
 
-    ;; Table styles - dark background + gray-white foreground + monospace font
-    (let ((mono-font "Source Code Pro"))
-      (face-remap-add-relative 'markdown-table-face
-                               `(:foreground ,table-fg :background ,table-bg :family ,mono-font :extend t))
-      (face-remap-add-relative 'markdown-table-delimiter-face
-                               `(:foreground ,table-fg :background ,table-bg :family ,mono-font)))))
+    ;; Table styles - dark background + gray-white foreground
+    (face-remap-add-relative 'markdown-table-face
+                             `(:foreground ,table-fg :background ,table-bg :extend t))
+    (face-remap-add-relative 'markdown-table-delimiter-face
+                             `(:foreground ,table-fg :background ,table-bg))))
 
 ;; Add to markdown-mode-hook
 (add-hook 'markdown-mode-hook #'markdown-mou-apply-faces)

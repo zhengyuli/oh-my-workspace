@@ -308,7 +308,6 @@ Result is cached in `git-user-email-cache'."
 ;; Registered validators:
 ;;   - init-vc.el: vc-tools (git)
 ;;   - init-completion.el: search-tools (rg, ag)
-;;   - init-ui.el: fonts
 ;;   - init-editing.el: spell-tools (aspell, hunspell)
 ;;   - init-dired.el: dired-tools (gls, fd)
 ;;   - init-utilities.el: utility-tools (pass)
@@ -379,20 +378,6 @@ Return (INSTALLED . MISSING) where each is a list of items."
           (push item installed)
         (push item missing)))
     (cons (nreverse installed) (nreverse missing))))
-
-(defun config-dependency-validate-fonts (fonts)
-  "Validate FONTS list (GUI only).
-FONTS is a list of font name strings.
-Return (INSTALLED . MISSING) where each is a list of font names."
-  (if (display-graphic-p)
-      (let (installed missing)
-        (dolist (font fonts)
-          (when font
-            (if (x-list-fonts font)
-                (push font installed)
-              (push font missing))))
-        (cons (nreverse installed) (nreverse missing)))
-    (cons nil nil)))
 
 ;; ----------------------------------------------------------------------------------
 ;; Report buffer helper
@@ -482,7 +467,7 @@ Return t if all checks pass, nil otherwise."
                         (config-dependency-insert-line-with-face (cdr item) 'config-dependency-report-hint-face))
                     (config-dependency-insert-with-face "  ✗ " 'config-dependency-report-error-face)
                     (config-dependency-insert-line-with-face item 'config-dependency-report-error-face))))
-            ;; No items for this category (e.g., fonts in terminal mode)
+            ;; No items for this category
             (config-dependency-insert-line-with-face "  (no items)" 'config-dependency-report-hint-face))
           (insert "\n")))
       ;; Installation hints (only if there are missing items)
@@ -493,7 +478,6 @@ Return t if all checks pass, nil otherwise."
         (config-dependency-insert-line-with-face "Installation hints:" 'config-dependency-report-category-face)
         (config-dependency-insert-line-with-face "  • macOS: brew install <tool>" 'config-dependency-report-hint-face)
         (config-dependency-insert-line-with-face "  • LSP servers: pip/npm/go install <server>" 'config-dependency-report-hint-face)
-        (config-dependency-insert-line-with-face "  • Fonts: brew install --cask font-<name>" 'config-dependency-report-hint-face)
         (insert "\n"))
       ;; Summary (at the end for better visibility)
       (config-dependency-insert-line-with-face
@@ -514,13 +498,6 @@ Return t if all checks pass, nil otherwise."
       (special-mode))
     ;; Switch to report buffer
     (switch-to-buffer report-buffer)))
-
-(defun config-dependency-validate-on-startup ()
-  "Run configuration validation during startup.
-Set environment variable EMACS_CONFIG_VALIDATE=1 to enable automatic validation.
-Only displays warnings, does not block startup."
-  (when (getenv "EMACS_CONFIG_VALIDATE")
-    (run-with-idle-timer 2 nil #'config-dependency-validate)))
 
 ;; ==================================================================================
 ;;; Provide features

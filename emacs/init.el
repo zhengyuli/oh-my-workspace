@@ -157,6 +157,9 @@ Logs error but continues if module fails to load."
 ;; Load utility functions
 (require-safe 'init-functions)
 
+;; Load font configuration (before UI themes)
+(require-safe 'init-fonts)
+
 ;; Core modules
 (dolist (module '(init-ui init-editing init-completion init-projects
                    init-dired init-vc init-terminal init-utilities))
