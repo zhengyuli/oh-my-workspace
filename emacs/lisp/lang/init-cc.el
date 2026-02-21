@@ -36,12 +36,16 @@
 ;; ==================================================================================
 ;; Utility function
 (defun generate-compile-commands (root-dir)
-  "Call `cmake' to generate `compile_commands.json' for clangd to index."
+  "Call `cmake' to generate `compile_commands.json' for clangd to index.
+ROOT-DIR is the project root directory.
+Directory paths are properly shell-quoted to prevent injection."
   (interactive (list (read-directory-name "Project root directory: " "./")))
-  (let ((source-dir root-dir)
-        (build-dir (expand-file-name "build" root-dir)))
+  (let* ((source-dir root-dir)
+         (build-dir (expand-file-name "build" root-dir))
+         (quoted-source (shell-quote-argument source-dir))
+         (quoted-build (shell-quote-argument build-dir)))
     (shell-command
-     (format "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S %s -B %s" source-dir build-dir)
+     (format "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S %s -B %s" quoted-source quoted-build)
      nil "*_CMAKE_Export_Errors_*")))
 
 (defun cc-get-debug-target-program-path ()

@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-20 21:51:47 Friday by zhengyuli>
+;; Time-stamp: <2026-02-21 21:48:36 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -52,7 +52,8 @@
 
 (defun python-get-installed-packages ()
   "Get list of installed packages, using cache if valid.
-Returns an empty list if pip is not available or fails."
+Returns an empty list if pip is not available or fails.
+Logs errors instead of silently suppressing them."
   (let ((current-venv (or (getenv "VIRTUAL_ENV") "system")))
     ;; Clear cache if venv changes
     (unless (equal current-venv python-cached-venv-path)
@@ -61,16 +62,19 @@ Returns an empty list if pip is not available or fails."
     ;; Get or refresh cache
     (or python-installed-packages-cache
         (setq python-installed-packages-cache
-              (condition-case nil
+              (condition-case err
                   (let ((output (shell-command-to-string "pip list -format=freeze 2>/dev/null")))
                     (mapcar (lambda (line)
                               (car (split-string line "==")))
                             (split-string output "\n" t)))
-                (error nil))))))
+                (error
+                 (message "Warning: Failed to get pip packages: %s" (error-message-string err))
+                 nil))))))
 
 (defun python-ensure-dev-packages ()
   "Ensure all dev packages are installed, with caching for performance.
-Uses async installation to avoid blocking Emacs."
+Uses async installation to avoid blocking Emacs.
+Package names are properly shell-quoted to prevent injection."
   (let ((installed (python-get-installed-packages))
         (missing nil))
     ;; Collect missing packages
@@ -78,10 +82,11 @@ Uses async installation to avoid blocking Emacs."
       (let ((base-name (python-get-package-base-name package)))
         (unless (member base-name installed)
           (push package missing))))
-    ;; Install missing packages asynchronously
+    ;; Install missing packages asynchronously with proper escaping
     (when missing
-      (let ((packages-str (string-join missing " ")))
-        (message "Installing missing Python packages (async): %s" packages-str)
+      (let* ((quoted-packages (mapcar #'shell-quote-argument missing))
+             (packages-str (string-join quoted-packages " ")))
+        (message "Installing missing Python packages (async): %s" (string-join missing " "))
         (async-shell-command
          (concat "pip install " packages-str)
          "*Python Package Install*")

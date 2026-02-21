@@ -1,5 +1,6 @@
 # Emacs compiled files
 *.elc
+emacs/*.elc
 emacs/lisp/*.elc
 
 # Emacs lock files
@@ -9,8 +10,15 @@ emacs/lisp/*.elc
 *~
 \#*\#
 
+# Test directory (not tracked by git)
+test/
+tests/
+emacs/test/
+emacs/tests/
+
 # Test artifacts
-emacs/test/*.elc
+*.test.elc
+*-test-report-*.txt
 
 # IDE files
 .idea/

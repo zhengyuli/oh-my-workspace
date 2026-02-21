@@ -123,9 +123,17 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; Refresh package list asynchronously (only when needed)
 ;; Install and configure use-package
+;; Note: use-package is critical infrastructure - ensure it's installed via setup.sh
+;; or manually run M-x package-refresh-contents then M-x package-install RET use-package
 (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+  ;; Try to install from cache first (avoids blocking refresh if package is cached)
+  (condition-case err
+      (progn
+        (package-install 'use-package)
+        (message "[Config] use-package installed from cache."))
+    (error
+     ;; Cache miss - provide guidance instead of blocking
+     (error "[Config] use-package not in cache. Please execute: M-x package-refresh-contents RET, then restart Emacs"))))
 
 (require 'use-package)
 (setq use-package-always-ensure t
