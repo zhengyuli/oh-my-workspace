@@ -170,12 +170,15 @@ Logs error but continues if module fails to load."
 ;; Load utility functions
 (require-safe 'init-functions)
 
+;; Load utilities early (provides run-config-timer used by other modules)
+(require-safe 'init-utilities)
+
 ;; Load font configuration (before UI themes)
 (require-safe 'init-fonts)
 
 ;; Core modules
 (dolist (module '(init-ui init-editing init-completion init-projects
-                   init-dired init-vc init-terminal init-utilities))
+                   init-dired init-vc init-terminal))
   (require-safe module))
 
 ;; Language modules
