@@ -37,16 +37,11 @@
   (which-key-idle-secondary-delay 0.05)      ; Subsequent hint delay
   (which-key-sort-order 'which-key-key-order-alpha)  ; Sort alphabetically
   (which-key-show-remaining-keys t)          ; Show remaining keys
+  :init
+  ;; which-key-mode is autoloaded, so calling it triggers package loading
+  (run-config-timer 2 nil #'which-key-mode)
   :config
   (which-key-setup-side-window-right))
-
-;; Start which-key after 2 seconds idle
-;; Note: Must be outside use-package :config because :defer t means :config
-;; only runs when the package is loaded. We explicitly require and enable.
-(run-config-timer 2 nil
-  (lambda ()
-    (require 'which-key)
-    (which-key-mode 1)))
 
 ;; ==================================================================================
 ;; Vertico - vertical completion UI

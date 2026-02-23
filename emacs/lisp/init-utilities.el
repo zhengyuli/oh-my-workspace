@@ -90,7 +90,9 @@ Useful for cleaning up before config reload."
   :defer t)
 
 ;; Start pinentry after idle (deferred)
-;; Note: Must be outside use-package :config to ensure timer is registered
+;; Note: Must be outside use-package :config because :defer t means :config
+;; only runs when the package is loaded. pinentry-start is NOT autoloaded,
+;; so we must explicitly require the package before calling it.
 (run-config-timer 2 nil
   (lambda ()
     (require 'pinentry)
