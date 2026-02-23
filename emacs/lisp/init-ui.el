@@ -28,6 +28,17 @@
 ;;; Code:
 
 ;; ==================================================================================
+;; Random Banner Selection
+(defun omw--get-random-banner ()
+  "Return a random banner path from banners directory.
+Returns nil in terminal mode (uses official banner instead)."
+  (when (display-graphic-p)
+    (let* ((banners-dir (concat emacs-config-root "/banners"))
+           (banners (directory-files banners-dir t "\\.png\\'")))
+      (when banners
+        (nth (random (length banners)) banners)))))
+
+;; ==================================================================================
 ;; GUI Frame Settings - fullscreen, size, etc.
 (when (display-graphic-p)
   ;; Auto fullscreen on startup (using custom toggle-fullscreen)
@@ -228,36 +239,41 @@ Uses `centaur-tabs-buffer-group-cache' to avoid recomputing on every call."
 ;; Dashboard
 (use-package dashboard
   :defer t
-  :hook (after-init . dashboard-open)
+  :custom
+  (dashboard-center-content t)
+  (dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name))
+  (dashboard-set-heading-icons (display-graphic-p))
+  (dashboard-set-file-icons (display-graphic-p))
+  (dashboard-set-navigator t)
+  (dashboard-items '((recents  . 5)
+                     (bookmarks . 5)
+                     (projects . 5)
+                     (agenda . 5)
+                     (registers . 5)))
+  (dashboard-projects-switch-function 'projectile-switch-project)
   :config
   (require 'dashboard-widgets)
-  (setq dashboard-center-content t
-        ;; Use image banner in GUI mode, official banner in terminal
-        dashboard-startup-banner (if (display-graphic-p)
-                                     (concat emacs-config-root "/banners/totoro.png")
-                                   'official)
-        dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name)
-        ;; Enable icons only in GUI mode
-        dashboard-set-heading-icons (display-graphic-p)
-        dashboard-set-file-icons (display-graphic-p)
-        dashboard-set-navigator t
-        dashboard-items '((recents  . 5)
-                          (bookmarks . 5)
-                          (projects . 5)
-                          (agenda . 5)
-                          (registers . 5))
-        dashboard-projects-switch-function 'projectile-switch-project)
-
-  ;; Hooks
+  ;; Set random banner before dashboard initializes
+  (add-hook 'dashboard-before-initialize-hook
+            (lambda ()
+              (setq dashboard-startup-banner
+                    (or (omw--get-random-banner) 'official))))
+  ;; Dashboard mode hook
   (add-hook 'dashboard-mode-hook
             (lambda ()
               (centaur-tabs-local-mode 1)))
-
   ;; Set dashboard as initial buffer
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
-
   ;; Setup dashboard hook
   (dashboard-setup-startup-hook))
+
+;; Activation via after-init hook (outside use-package block)
+;; NOTE: Hook code must be outside :config because deferred packages
+;; only execute :config when actually loaded.
+(add-hook 'after-init-hook
+          (lambda ()
+            (require 'dashboard)
+            (dashboard-open)))
 
 ;; ==================================================================================
 ;; Pulsar - cursor highlighting (replaces beacon)
