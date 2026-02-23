@@ -37,9 +37,11 @@
   (which-key-idle-secondary-delay 0.05)      ; Subsequent hint delay
   (which-key-sort-order 'which-key-key-order-alpha)  ; Sort alphabetically
   (which-key-show-remaining-keys t)          ; Show remaining keys
+  :init
+  ;; Start which-key after 2 seconds idle (triggers lazy loading)
+  (run-with-idle-timer 2 nil #'which-key-mode)
   :config
-  (which-key-setup-side-window-right)
-  (which-key-mode 1))
+  (which-key-setup-side-window-right))
 
 ;; ==================================================================================
 ;; Vertico - vertical completion UI
