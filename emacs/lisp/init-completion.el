@@ -31,7 +31,7 @@
 ;; ==================================================================================
 ;; Which-key - key hints, deferred loading for faster startup
 (use-package which-key
-  :defer 1                                   ; Load after 1 second
+  :defer t
   :custom
   (which-key-idle-delay 0.5)                 ; Show hints 0.5s after keystroke
   (which-key-idle-secondary-delay 0.05)      ; Subsequent hint delay

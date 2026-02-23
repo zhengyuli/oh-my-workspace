@@ -46,9 +46,8 @@
 ;; Modeline - doom-modeline
 (use-package doom-modeline
   :defer t
-  :init
-  (setq doom-modeline-mu4e t
-        doom-modeline-icon (display-graphic-p))  ; Disable icons in terminal
+  :custom
+  (doom-modeline-icon (display-graphic-p))  ; Disable icons in terminal
   :hook (after-init . doom-modeline-mode))
 
 ;; ==================================================================================
@@ -60,7 +59,7 @@
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
 (use-package centaur-tabs
-  :hook (emacs-startup . centaur-tabs-mode)
+  :hook (after-init . centaur-tabs-mode)
   :bind
   (:map centaur-tabs-mode-map
         ("M-p" . centaur-tabs-backward)
