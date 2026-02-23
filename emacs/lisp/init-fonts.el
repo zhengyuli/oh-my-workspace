@@ -127,7 +127,7 @@ First available font will be used."
 
 (add-hook 'window-setup-hook
           (lambda ()
-            (run-with-idle-timer 0.5 nil #'emacs-setup-fonts-deferred)))
+            (run-config-timer 0.5 nil #'emacs-setup-fonts-deferred)))
 
 ;; ==================================================================================
 ;; Textsize - automatic font sizing based on screen resolution (GUI only)

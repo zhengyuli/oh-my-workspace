@@ -39,7 +39,7 @@
   (which-key-show-remaining-keys t)          ; Show remaining keys
   :init
   ;; Start which-key after 2 seconds idle (triggers lazy loading)
-  (run-with-idle-timer 2 nil #'which-key-mode)
+  (run-config-timer 2 nil #'which-key-mode)
   :config
   (which-key-setup-side-window-right))
 
