@@ -35,8 +35,9 @@
 
 ;; ==================================================================================
 ;; Early initialization
-;; GC tuning - increase threshold at startup for faster initialization
-(setq gc-cons-threshold most-positive-fixnum
+;; GC tuning - use large threshold during startup for faster initialization
+;; gcmh will manage GC after startup with reasonable thresholds
+(setq gc-cons-threshold (* 100 1024 1024)  ; 100MB during startup
       gc-cons-percentage 0.6)
 
 ;; Prevent package.el from loading too early
@@ -132,8 +133,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
         (package-install 'use-package)
         (message "[Config] use-package installed from cache."))
     (error
-     ;; Cache miss - provide guidance instead of blocking
-     (error "[Config] use-package not in cache. Please execute: M-x package-refresh-contents RET, then restart Emacs"))))
+     ;; Cache miss - provide guidance instead of blocking startup
+     (message "[Config] Warning: use-package not in cache.")
+     (message "[Config] Please run: M-x package-refresh-contents RET, then restart Emacs")
+     (message "[Config] Continuing with reduced functionality..."))))
 
 (require 'use-package)
 (setq use-package-always-ensure t
@@ -143,11 +146,13 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 ;; GC optimization with gcmh
+;; gcmh manages GC automatically: high threshold when idle, low when active
 (use-package gcmh
   :demand t
   :custom
   (gcmh-idle-delay 10)                   ; GC after 10 seconds idle
-  (gcmh-high-cons-threshold #x10000000)  ; 256MB
+  (gcmh-high-cons-threshold #x10000000)  ; 256MB when idle
+  (gcmh-low-cons-threshold (* 8 1024 1024))  ; 8MB when active
   :config
   (gcmh-mode 1))
 

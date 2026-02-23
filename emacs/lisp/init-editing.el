@@ -184,10 +184,15 @@
 ;; ==================================================================================
 ;; Smart kill buffer - close saved buffers directly, ask for modified ones
 (defun smart-kill-buffer ()
-  "Smart buffer close: kill modified file buffers with prompt, kill others directly."
+  "Smart buffer close: kill modified file buffers with prompt, kill others directly.
+If buffer has unsaved changes and is associated with a file, prompt to save.
+Otherwise kill the buffer directly."
   (interactive)
   (if (and buffer-file-name (buffer-modified-p))
-      (kill-buffer (current-buffer))
+      (if (yes-or-no-p (format "Buffer %s has unsaved changes. Save before killing? "
+                               (buffer-name)))
+          (progn (save-buffer) (kill-current-buffer))
+        (kill-current-buffer))
     (kill-current-buffer)))
 
 ;; Set key binding directly (not in after-init-hook)

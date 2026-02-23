@@ -74,11 +74,15 @@ KEY-PREFIX is an optional prefix string for all keys, default is nil."
 (defun lazy-unset-key (key-list &optional keymap)
   "Unset multiple key bindings with less typing.
 KEYMAP is the keymap to remove bindings from, default is `current-global-map'.
-KEY-LIST is a list of keys to unset."
+KEY-LIST is a list of keys to unset.
+
+Each key in KEY-LIST can be:
+- A string (e.g., \"C-c f\") which is converted via `read-kbd-macro'
+- A vector (e.g., [?\\C-c ?f]) which is used directly"
   (or keymap (setq keymap (current-global-map)))
   (dolist (key key-list)
     (cond ((stringp key) (setq key (read-kbd-macro (concat key))))
-          ((vectorp key) nil)
+          ((vectorp key) nil)  ; Vectors are already in correct format, use as-is
           (t (signal 'wrong-type-argument (list 'array key))))
     (define-key keymap key nil)))
 
@@ -249,9 +253,12 @@ Result is cached in `git-user-name-cache'."
        (lambda (proc _event)
          (when (eq (process-status proc) 'exit)
            (with-current-buffer (process-buffer proc)
-             (let ((result (string-trim (buffer-string))))
+             (let ((result (string-trim (buffer-string)))
+                   (buf (process-buffer proc)))
                (setq git-user-name-cache
                      (unless (string-empty-p result) result))
+               ;; Clean up process buffer after extracting result
+               (kill-buffer buf)
                (if callback
                    (funcall callback git-user-name-cache)
                  (message "Git user name: %s"
@@ -274,9 +281,12 @@ Result is cached in `git-user-email-cache'."
        (lambda (proc _event)
          (when (eq (process-status proc) 'exit)
            (with-current-buffer (process-buffer proc)
-             (let ((result (string-trim (buffer-string))))
+             (let ((result (string-trim (buffer-string)))
+                   (buf (process-buffer proc)))
                (setq git-user-email-cache
                      (unless (string-empty-p result) result))
+               ;; Clean up process buffer after extracting result
+               (kill-buffer buf)
                (if callback
                    (funcall callback git-user-email-cache)
                  (message "Git user email: %s"

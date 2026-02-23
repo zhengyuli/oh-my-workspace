@@ -212,10 +212,15 @@
   :config
   (require 'wgrep-ag)
 
+  ;; Advice for selecting window after next-error - check before adding to prevent accumulation
   (defun ag-next-error-function-after (&rest _)
+    "Select ag buffer window after next-error."
     (select-window
      (get-buffer-window (ag/buffer-name "" "" ""))))
-  (advice-add 'ag/next-error-function :after #'ag-next-error-function-after)
+
+  ;; Only add advice if not already present (prevents accumulation on config reload)
+  (unless (advice-member-p #'ag-next-error-function-after 'ag/next-error-function)
+    (advice-add 'ag/next-error-function :after #'ag-next-error-function-after))
 
   (setq ag-reuse-buffers t
         wgrep-enable-key "r"

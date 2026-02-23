@@ -71,27 +71,75 @@ Logs errors instead of silently suppressing them."
                  (message "Warning: Failed to get pip packages: %s" (error-message-string err))
                  nil))))))
 
+(defun python-get-installed-packages-async (callback)
+  "Get installed packages asynchronously, call CALLBACK with result.
+Uses cache if valid, otherwise spawns async process.
+CALLBACK is called with a list of package names (strings)."
+  (let ((current-venv (or (getenv "VIRTUAL_ENV") "system")))
+    ;; Clear cache if venv changes
+    (unless (equal current-venv python-cached-venv-path)
+      (setq python-installed-packages-cache nil
+            python-cached-venv-path current-venv))
+    ;; Return cached result or fetch asynchronously
+    (if python-installed-packages-cache
+        (funcall callback python-installed-packages-cache)
+      ;; Async fetch
+      (let ((proc (make-process
+                   :name "pip-list"
+                   :buffer " *pip-list*"
+                   :command '("pip" "list" "-format=freeze")
+                   :sentinel
+                   (lambda (proc _event)
+                     (when (eq (process-status proc) 'exit)
+                       (let ((buf (process-buffer proc)))
+                         (with-current-buffer buf
+                           (let ((packages
+                                  (condition-case err
+                                      (mapcar (lambda (line)
+                                                (car (split-string line "==")))
+                                              (split-string (buffer-string) "\n" t))
+                                    (error
+                                     (message "Warning: Failed to parse pip output: %s"
+                                              (error-message-string err))
+                                     nil))))
+                             (kill-buffer buf)
+                             (setq python-installed-packages-cache packages)
+                             (funcall callback packages)))))))))
+        proc))))
+
+(defun python-validate-package-name (package)
+  "Validate PACKAGE name contains only safe characters.
+Returns non-nil if PACKAGE is a valid Python package name.
+Valid format: letters, numbers, underscores, hyphens,
+with optional extras like [all]."
+  (string-match-p "\\`[a-zA-Z0-9_.-]+\\(\\[[a-zA-Z0-9_,]+\\]\\)?\\'" package))
+
 (defun python-ensure-dev-packages ()
   "Ensure all dev packages are installed, with caching for performance.
-Uses async installation to avoid blocking Emacs.
-Package names are properly shell-quoted to prevent injection."
-  (let ((installed (python-get-installed-packages))
-        (missing nil))
-    ;; Collect missing packages
-    (dolist (package python-dev-packages)
-      (let ((base-name (python-get-package-base-name package)))
-        (unless (member base-name installed)
-          (push package missing))))
-    ;; Install missing packages asynchronously with proper escaping
-    (when missing
-      (let* ((quoted-packages (mapcar #'shell-quote-argument missing))
-             (packages-str (string-join quoted-packages " ")))
-        (message "Installing missing Python packages (async): %s" (string-join missing " "))
-        (async-shell-command
-         (concat "pip install " packages-str)
-         "*Python Package Install*")
-        ;; Clear cache to refresh list (will be re-fetched on next check)
-        (setq python-installed-packages-cache nil)))))
+Uses async package listing and installation to avoid blocking Emacs.
+Package names are validated and properly shell-quoted to prevent injection."
+  (python-get-installed-packages-async
+   (lambda (installed)
+     (let ((missing nil)
+           (safe-packages nil))
+       ;; Collect missing packages
+       (dolist (package python-dev-packages)
+         (let ((base-name (python-get-package-base-name package)))
+           (unless (member base-name installed)
+             (push package missing))))
+       ;; Validate package names for security
+       (dolist (package missing)
+         (if (python-validate-package-name package)
+             (push package safe-packages)
+           (message "Warning: Skipping suspicious package name: %s" package)))
+       ;; Install missing packages asynchronously with proper escaping
+       (when safe-packages
+         (let* ((quoted-packages (mapcar #'shell-quote-argument safe-packages))
+                (packages-str (string-join quoted-packages " ")))
+           (message "Installing missing Python packages (async): %s" (string-join safe-packages " "))
+           (async-shell-command
+            (concat "pip install " packages-str)
+            "*Python Package Install*")))))))
 
 (defun poetry-venv-activate-hook (&rest _)
   "Function to be run after `poetry-venv-workon'."

@@ -148,6 +148,7 @@
 
 ;; ==================================================================================
 ;; Eglot - lightweight LSP client (Emacs 29+ built-in)
+;; Performance optimization: async connection, deferred startup
 (use-package eglot
   :ensure nil  ; Built-in package
   :defer t
@@ -160,8 +161,10 @@
          (dockerfile-mode . eglot-ensure)
          (cmake-mode . eglot-ensure))
   :config
-  (setq eglot-sync-connect 1
-        eglot-autoshutdown t
+  ;; Performance settings: async connection to avoid blocking
+  (setq eglot-sync-connect nil         ; Async connection (don't block)
+        eglot-connect-timeout 30       ; Connection timeout in seconds
+        eglot-autoshutdown t           ; Auto-shutdown LSP when no buffers
         eglot-ignored-server-capabilities '(:documentHighlightProvider))
 
   ;; Configure LSP servers for each language

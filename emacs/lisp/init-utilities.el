@@ -30,6 +30,30 @@
 ;;; Code:
 
 ;; ==================================================================================
+;; Timer management system
+;; Track and cleanup idle timers to prevent accumulation on config reload
+(defvar config-timers nil
+  "List of active config timers for cleanup.")
+
+(defun run-config-timer (secs repeat function)
+  "Run idle timer with tracking for cleanup.
+SECS is delay in seconds, REPEAT is non-nil for repeating timers,
+FUNCTION is the callback to execute."
+  (let ((timer (run-with-idle-timer secs repeat function)))
+    (push timer config-timers)
+    timer))
+
+(defun cleanup-config-timers ()
+  "Cancel all tracked config timers.
+Useful for cleaning up before config reload."
+  (interactive)
+  (let ((count (length config-timers)))
+    (dolist (timer config-timers)
+      (cancel-timer timer))
+    (setq config-timers nil)
+    (message "[Config] Cancelled %d timers" count)))
+
+;; ==================================================================================
 ;; Exec path from shell (macOS)
 ;; Optimization: use -l instead of -i to avoid slow shell startup
 (use-package exec-path-from-shell
@@ -41,7 +65,7 @@
 ;; only runs when the package is loaded. Without any autoload trigger,
 ;; the package never loads and initialize is never called.
 (when (memq window-system '(mac ns))
-  (run-with-idle-timer 1 nil
+  (run-config-timer 1 nil
     (lambda ()
       (require 'exec-path-from-shell)
       (exec-path-from-shell-initialize))))
@@ -67,7 +91,7 @@
 
 ;; Start pinentry after idle (deferred)
 ;; Note: Must be outside use-package :config to ensure timer is registered
-(run-with-idle-timer 2 nil
+(run-config-timer 2 nil
   (lambda ()
     (require 'pinentry)
     (pinentry-start)))
@@ -121,7 +145,7 @@
 
 ;; Check for updates after startup (after 60 seconds idle)
 ;; Note: Must be outside use-package :config to ensure timer is registered
-(run-with-idle-timer 60 nil #'package-check-updates)
+(run-config-timer 60 nil #'package-check-updates)
 
 ;; Convenience alias: upgrade all packages
 ;; Note: auto-package-upgrade-all (init-functions.el) already includes package-refresh-contents

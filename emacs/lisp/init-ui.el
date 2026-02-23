@@ -35,12 +35,11 @@
 
 ;; ==================================================================================
 ;; Theme - doom-themes
-;; Load theme early to avoid flicker, config in :init
 (use-package doom-themes
-  :init
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
-  ;; Load theme early
+  :custom
+  (doom-themes-enable-bold t)
+  (doom-themes-enable-italic t)
+  :config
   (load-theme 'doom-xcode t))
 
 ;; ==================================================================================
@@ -85,89 +84,110 @@
   ;; 9. Help/Documentation buffers
   ;; 10. Emacs internal buffers (starting with *)
   ;; 11. Default fallback
+
+  ;; Cache for buffer group computations (performance optimization)
+  (defvar centaur-tabs-buffer-group-cache (make-hash-table :weakness 'key)
+    "Cache for buffer group computations. Weak-keyed to allow GC of killed buffers.")
+
+  (defun centaur-tabs--compute-buffer-group ()
+    "Compute buffer group (internal, uncached).
+See `centaur-tabs-buffer-groups' for grouping strategy."
+    (cond
+     ;; ============================================
+     ;; Special UI buffers (highest priority)
+     ;; ============================================
+     ((derived-mode-p 'dashboard-mode) "Dashboard")
+     ((derived-mode-p 'claude-code-ide-mode) "Claude Code")
+
+     ;; ============================================
+     ;; Project-based grouping (all buffers in project)
+     ;; ============================================
+     ((when-let* ((project-name (centaur-tabs-project-name)))
+        (and (stringp project-name)
+             (not (string-empty-p project-name))
+             project-name)))
+
+     ;; ============================================
+     ;; Version control (non-project only)
+     ;; ============================================
+     ((derived-mode-p 'magit-mode) "Magit")
+
+     ;; ============================================
+     ;; Terminals (non-project only)
+     ;; ============================================
+     ((memq major-mode '(vterm-mode shell-mode eshell-mode term-mode)) "Terminal")
+
+     ;; ============================================
+     ;; Language-specific groups (non-project files)
+     ;; ============================================
+     ((derived-mode-p 'python-mode) "Python")
+     ((derived-mode-p 'go-mode) "Go")
+     ((memq major-mode '(c-mode c++-mode c-or-c++-mode)) "C/C++")
+     ((derived-mode-p 'emacs-lisp-mode) "Elisp")
+     ((derived-mode-p 'sh-mode) "Shell Script")
+
+     ;; ============================================
+     ;; Org mode (including related modes)
+     ;; ============================================
+     ((or (derived-mode-p 'org-mode)
+          (memq major-mode '(org-agenda-mode
+                             org-agenda-clockreport-mode
+                             diary-mode)))
+      "Org")
+
+     ;; ============================================
+     ;; Dired file browser
+     ;; ============================================
+     ((derived-mode-p 'dired-mode) "Dired")
+
+     ;; ============================================
+     ;; Text/Markup files
+     ;; ============================================
+     ((or (derived-mode-p 'markdown-mode)
+          (derived-mode-p 'yaml-mode)
+          (derived-mode-p 'dockerfile-mode)
+          (derived-mode-p 'text-mode)
+          (memq major-mode '(cmake-mode cmake-ts-mode conf-mode conf-unix-mode conf-space-mode)))
+      "Text")
+
+     ;; ============================================
+     ;; Help/Documentation buffers
+     ;; ============================================
+     ((or (memq major-mode '(help-mode helpful-mode info-mode Man-mode woman-mode
+                             help-fns-mode help-mode-view))
+          (string-match-p "\\`\\*Help\\*\\|\\*info\\*\\|\\*Man\\*" (buffer-name)))
+      "Help")
+
+     ;; ============================================
+     ;; Emacs internal buffers (starting with *)
+     ;; ============================================
+     ((string-prefix-p "*" (buffer-name)) "Emacs")
+
+     ;; ============================================
+     ;; Default fallback
+     ;; ============================================
+     (t (centaur-tabs-get-group-name (current-buffer)))))
+
   (defun centaur-tabs-buffer-groups ()
-    "Control buffers' group rules.
+    "Control buffers' group rules with caching.
 
 Grouping strategy:
 1. Special UI buffers (Dashboard, Claude Code)
 2. Project-based grouping (all buffers in a project)
-3. Mode-specific groups for non-project buffers"
-    (list
-     (cond
-      ;; ============================================
-      ;; Special UI buffers (highest priority)
-      ;; ============================================
-      ((derived-mode-p 'dashboard-mode) "Dashboard")
-      ((derived-mode-p 'claude-code-ide-mode) "Claude Code")
+3. Mode-specific groups for non-project buffers
 
-      ;; ============================================
-      ;; Project-based grouping (all buffers in project)
-      ;; ============================================
-      ((when-let* ((project-name (centaur-tabs-project-name)))
-         (and (stringp project-name)
-              (not (string-empty-p project-name))
-              project-name)))
+Uses `centaur-tabs-buffer-group-cache' to avoid recomputing on every call."
+    (let ((cached (gethash (current-buffer) centaur-tabs-buffer-group-cache)))
+      (if cached
+          cached
+        (let ((group (list (centaur-tabs--compute-buffer-group))))
+          (puthash (current-buffer) group centaur-tabs-buffer-group-cache)
+          group))))
 
-      ;; ============================================
-      ;; Version control (non-project only)
-      ;; ============================================
-      ((derived-mode-p 'magit-mode) "Magit")
-
-      ;; ============================================
-      ;; Terminals (non-project only)
-      ;; ============================================
-      ((memq major-mode '(vterm-mode shell-mode eshell-mode term-mode)) "Terminal")
-
-      ;; ============================================
-      ;; Language-specific groups (non-project files)
-      ;; ============================================
-      ((derived-mode-p 'python-mode) "Python")
-      ((derived-mode-p 'go-mode) "Go")
-      ((memq major-mode '(c-mode c++-mode c-or-c++-mode)) "C/C++")
-      ((derived-mode-p 'emacs-lisp-mode) "Elisp")
-      ((derived-mode-p 'sh-mode) "Shell Script")
-
-      ;; ============================================
-      ;; Org mode (including related modes)
-      ;; ============================================
-      ((or (derived-mode-p 'org-mode)
-           (memq major-mode '(org-agenda-mode
-                              org-agenda-clockreport-mode
-                              diary-mode)))
-       "Org")
-
-      ;; ============================================
-      ;; Dired file browser
-      ;; ============================================
-      ((derived-mode-p 'dired-mode) "Dired")
-
-      ;; ============================================
-      ;; Text/Markup files
-      ;; ============================================
-      ((or (derived-mode-p 'markdown-mode)
-           (derived-mode-p 'yaml-mode)
-           (derived-mode-p 'dockerfile-mode)
-           (derived-mode-p 'text-mode)
-           (memq major-mode '(cmake-mode cmake-ts-mode conf-mode conf-unix-mode conf-space-mode)))
-       "Text")
-
-      ;; ============================================
-      ;; Help/Documentation buffers
-      ;; ============================================
-      ((or (memq major-mode '(help-mode helpful-mode info-mode Man-mode woman-mode
-                              help-fns-mode help-mode-view))
-           (string-match-p "\\`\\*Help\\*\\|\\*info\\*\\|\\*Man\\*" (buffer-name)))
-       "Help")
-
-      ;; ============================================
-      ;; Emacs internal buffers (starting with *)
-      ;; ============================================
-      ((string-prefix-p "*" (buffer-name)) "Emacs")
-
-      ;; ============================================
-      ;; Default fallback
-      ;; ============================================
-      (t (centaur-tabs-get-group-name (current-buffer))))))
+  ;; Clear cache when buffer changes mode (for cache invalidation)
+  (add-hook 'after-change-major-mode-hook
+            (lambda ()
+              (remhash (current-buffer) centaur-tabs-buffer-group-cache)))
 
   ;; Customized faces
   (custom-set-faces
@@ -208,7 +228,8 @@ Grouping strategy:
 ;; ==================================================================================
 ;; Dashboard
 (use-package dashboard
-  :demand t
+  :defer t
+  :hook (after-init . dashboard-open)
   :config
   (require 'dashboard-widgets)
   (setq dashboard-center-content t
@@ -236,9 +257,8 @@ Grouping strategy:
   ;; Set dashboard as initial buffer
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
-  ;; Setup dashboard and open it
-  (dashboard-setup-startup-hook)
-  (dashboard-open))
+  ;; Setup dashboard hook
+  (dashboard-setup-startup-hook))
 
 ;; ==================================================================================
 ;; Pulsar - cursor highlighting (replaces beacon)
