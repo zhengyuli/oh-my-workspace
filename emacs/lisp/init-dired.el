@@ -67,6 +67,12 @@ To add custom entries, use:
 ;; Replaces: diredfl, nerd-icons-dired, dired-preview, dired-collapse
 ;; Docs: https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org
 (use-package dirvish
+  :custom
+  (dirvish-use-header-line 'global)       ; Header line across all panes
+  (dirvish-header-line-height 25)         ; Header line height
+  (dirvish-mode-line-height 25)           ; Mode line height
+  (dirvish-preview-delay 0.1)             ; Preview delay in seconds
+  (dirvish-large-directory-threshold 20000) ; Use async for large dirs
   :init
   ;; Enable Dirvish to override dired mode (C-x d uses dirvish)
   (dirvish-override-dired-mode)
@@ -97,23 +103,14 @@ Only includes directories that actually exist on the filesystem."
         (append (when (display-graphic-p) '(nerd-icons))
                 '(vc-state collapse file-size)))
 
-  ;; Header line config - show path and free space
-  (setq dirvish-use-header-line 'global   ; header line across all panes
-        dirvish-header-line-height 25      ; height
-        dirvish-header-line-format
+  ;; Header line format (complex, keep in config)
+  (setq dirvish-header-line-format
         '(:left (path) :right (free-space))
         dirvish-mode-line-bar-image-width 0) ; hide leading bar
 
-  ;; Mode line format
+  ;; Mode line format (complex, keep in config)
   (setq dirvish-mode-line-format
-        '(:left (sort symlink) :right (omit yank index))
-        dirvish-mode-line-height 25)
-
-  ;; Preview delay
-  (setq dirvish-preview-delay 0.1)
-
-  ;; Large directory async: use fd for async loading when over 20000 files
-  (setq dirvish-large-directory-threshold 20000)
+        '(:left (sort symlink) :right (omit yank index)))
 
   ;; Key bindings
   (with-eval-after-load 'dirvish
