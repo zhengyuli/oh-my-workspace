@@ -123,7 +123,7 @@ Only includes directories that actually exist on the filesystem."
                ("f"   . dirvish-fd)                ; fd search
                ("s"   . dirvish-quicksort)         ; Quick sort
                ("l"   . dirvish-ls-switches-menu)  ; ls switches menu
-               ("v"   . dirvish-vc-menu)           ; Version control menu
+               ("v"   . dired-view-file)           ; View file (read-only)
                ("*"   . dirvish-mark-menu)         ; Mark menu
                ("y"   . dirvish-yank-menu)         ; Copy/paste menu
                ;; Navigation
@@ -177,6 +177,7 @@ Only includes directories that actually exist on the filesystem."
   (lazy-set-key
    '(("<return>" . dired-single-buffer)
      ("RET" . dired-single-buffer)
+     ("v" . dired-view-file)                ; View file (read-only)
      ("h" . dired-up-directory-single)      ; Parent directory
      ("p" . dired-hacks-previous-file)
      ("n" . dired-hacks-next-file)
