@@ -1,10 +1,11 @@
-;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-21 10:15:41 Saturday by zhengyuli>
+;;; init-tabs.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-02-27 14:00:00 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-funcs
 
 ;; This file is not part of GNU Emacs.
 
@@ -23,43 +24,9 @@
 
 ;;; Commentary:
 ;;
-;; UI configuration: theme, modeline, tabs, dashboard, window management.
+;; Tab and window management: nerd-icons, centaur-tabs, winum.
 
 ;;; Code:
-
-;; ==================================================================================
-;; Random Banner Selection
-(defun omw--get-random-banner ()
-  "Return a random banner path from banners directory.
-Returns nil in terminal mode (uses official banner instead)."
-  (when (display-graphic-p)
-    (let* ((banners-dir (concat emacs-config-root "/banners"))
-           (banners (directory-files banners-dir t "\\.png\\'")))
-      (when banners
-        (nth (random (length banners)) banners)))))
-
-;; ==================================================================================
-;; GUI Frame Settings - fullscreen, size, etc.
-(when (display-graphic-p)
-  ;; Auto fullscreen on startup (using custom toggle-fullscreen)
-  (add-hook 'emacs-startup-hook #'toggle-fullscreen))
-
-;; ==================================================================================
-;; Theme - doom-themes
-(use-package doom-themes
-  :custom
-  (doom-themes-enable-bold t)
-  (doom-themes-enable-italic t)
-  :config
-  (load-theme 'doom-xcode t))
-
-;; ==================================================================================
-;; Modeline - doom-modeline
-(use-package doom-modeline
-  :defer t
-  :custom
-  (doom-modeline-icon (display-graphic-p))  ; Disable icons in terminal
-  :hook (after-init . doom-modeline-mode))
 
 ;; ==================================================================================
 ;; Nerd-icons - unified icon system (deferred)
@@ -236,93 +203,7 @@ Uses `centaur-tabs-buffer-group-cache' to avoid recomputing on every call."
                     (intern (format "winum-select-window-%d" (1+ i))))))
 
 ;; ==================================================================================
-;; Dashboard
-(use-package dashboard
-  :defer t
-  :custom
-  (dashboard-center-content t)
-  (dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name))
-  (dashboard-set-heading-icons (display-graphic-p))
-  (dashboard-set-file-icons (display-graphic-p))
-  (dashboard-set-navigator t)
-  (dashboard-items '((recents  . 5)
-                     (bookmarks . 5)
-                     (projects . 5)
-                     (agenda . 5)
-                     (registers . 5)))
-  (dashboard-projects-switch-function 'projectile-switch-project)
-  :config
-  (require 'dashboard-widgets)
-  ;; Set random banner before dashboard initializes
-  (add-hook 'dashboard-before-initialize-hook
-            (lambda ()
-              (setq dashboard-startup-banner
-                    (or (omw--get-random-banner) 'official))))
-  ;; Dashboard mode hook
-  (add-hook 'dashboard-mode-hook
-            (lambda ()
-              (centaur-tabs-local-mode 1)))
-  ;; Set dashboard as initial buffer
-  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
-  ;; Setup dashboard hook
-  (dashboard-setup-startup-hook))
-
-;; Activation via after-init hook (outside use-package block)
-;; NOTE: Hook code must be outside :config because deferred packages
-;; only execute :config when actually loaded.
-(add-hook 'after-init-hook
-          (lambda ()
-            (require 'dashboard)
-            (dashboard-open)))
-
-;; ==================================================================================
-;; Pulsar - cursor highlighting (replaces beacon)
-(use-package pulsar
-  :defer t
-  :hook (after-init . pulsar-global-mode)
-  :config
-  (setq pulsar-pulse-functions '(recenter-top-bottom
-                                  move-to-window-line-top-bottom
-                                  reposition-window
-                                  bookmark-jump
-                                  other-window
-                                  delete-other-windows
-                                  forward-page
-                                  backward-page
-                                  scroll-up-command
-                                  scroll-down-command
-                                  windmove-right
-                                  windmove-left
-                                  windmove-up
-                                  windmove-down
-                                  tab-new
-                                  tab-close
-                                  tab-next
-                                  tab-previous)
-        pulsar-delay 0.055))
-
-;; ==================================================================================
-;; Smooth scrolling - use built-in pixel-scroll-precision-mode (Emacs 29+)
-(when (>= emacs-major-version 29)
-  (add-hook 'emacs-startup-hook
-            (lambda ()
-              (when (display-graphic-p)
-                (pixel-scroll-precision-mode 1)))))
-
-;; ==================================================================================
-;; Emojify - enable only in specific modes
-(use-package emojify
-  :defer t
-  :hook ((org-mode . emojify-mode)
-         (markdown-mode . emojify-mode)
-         (text-mode . emojify-mode)))
-
-;; ==================================================================================
-;; Winner mode - undo/redo window layout
-(winner-mode 1)
-
-;; ==================================================================================
 ;;; Provide features
-(provide 'init-ui)
+(provide 'init-tabs)
 
-;;; init-ui.el ends here
+;;; init-tabs.el ends here

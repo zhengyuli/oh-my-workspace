@@ -1,11 +1,11 @@
-;;; init-prog-base.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-19 12:00:00 Thursday by zhengyuli>
+;;; init-prog.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-02-27 14:00:00 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions
+;; Dependencies: init-funcs
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,6 +28,8 @@
 ;; flycheck, format-all, eglot, etc.
 
 ;;; Code:
+
+(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Utility function
@@ -231,7 +233,26 @@
    prog-mode-map))
 
 ;; ==================================================================================
-;;; Provide features
-(provide 'init-prog-base)
+;; Before save hooks (mode-specific)
+;; Time-stamp: globally enabled (only affects files with Time-stamp marker)
+(add-hook 'before-save-hook #'time-stamp)
 
-;;; init-prog-base.el ends here
+;; Programming mode specific before-save hook
+(defun prog-before-save-hook ()
+  "Actions to run before saving programming files."
+  ;; Update copyright (only in project files)
+  (when (vc-root-dir)
+    (copyright-update))
+  ;; Delete trailing whitespace
+  (delete-trailing-whitespace))
+
+;; Enable only for programming modes
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook #'prog-before-save-hook nil t)))
+
+;; ==================================================================================
+;;; Provide features
+(provide 'init-prog)
+
+;;; init-prog.el ends here

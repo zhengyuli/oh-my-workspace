@@ -199,6 +199,20 @@ Otherwise kill the buffer directly."
 (global-set-key (kbd "C-x k") #'smart-kill-buffer)
 
 ;; ==================================================================================
+;; Text scale aliases
+(defalias 'increase-text 'text-scale-increase)
+(defalias 'decrease-text 'text-scale-decrease)
+
+;; ==================================================================================
+;; Switch window - label windows with letters for quick switching
+(use-package switch-window
+  :defer t
+  :custom
+  (switch-window-shortcut-style 'qwerty)  ; Use QWERTY key layout
+  (switch-window-timeout 5)               ; Auto-cancel after 5 seconds
+  (switch-window-threshold 3))            ; Enable labels only with 3+ windows
+
+;; ==================================================================================
 ;; Global editing keybindings
 (add-hook 'after-init-hook
           (lambda ()
@@ -224,7 +238,14 @@ Otherwise kill the buffer directly."
                ;; Flyspell correct
                ("C-: c" . flyspell-correct-wrapper)
                ("C-: p" . flyspell-correct-previous)
-               ("C-: n" . flyspell-correct-next)))))
+               ("C-: n" . flyspell-correct-next)
+               ;; Switch window
+               ("C-x o" . switch-window)
+               ;; Scale text
+               ("C-x =" . text-scale-increase)
+               ("C-x _" . text-scale-decrease)
+               ("C-x +" . text-scale-increase)
+               ("C-x -" . text-scale-decrease)))))
 
 ;; ==================================================================================
 ;; Spell Tools Validation
@@ -238,6 +259,15 @@ Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
 (config-dependency-register
  'spell-tools
  (lambda () (config-dependency-validate-executables required-spell-tools)))
+
+;; ==================================================================================
+;; Text mode hook (merged from init-text.el)
+(add-hook 'text-mode-hook
+          (lambda ()
+            ;; Enable visual line mode
+            (visual-line-mode 1)
+            ;; Enable flyspell mode
+            (flyspell-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features

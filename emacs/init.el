@@ -167,28 +167,31 @@ Logs error but continues if module fails to load."
     (error
      (message "[Config] Warning: Failed to load %s: %s" module (error-message-string err)))))
 
-;; Load utility functions
-(require-safe 'init-functions)
+;; Core modules (foundation - must load first)
+(require-safe 'init-funcs)
+(require-safe 'init-base)
+(require-safe 'init-env)
 
-;; Load utilities early (provides run-config-timer used by other modules)
-(require-safe 'init-utilities)
-
-;; Load font configuration (before UI themes)
+;; UI modules
 (require-safe 'init-fonts)
+(require-safe 'init-theme)
+(require-safe 'init-tabs)
+(require-safe 'init-highlight)
+(require-safe 'init-dashboard)
 
-;; Core modules
-(dolist (module '(init-ui init-editing init-completion init-projects
-                   init-dired init-vc init-terminal))
+;; Editor modules
+(dolist (module '(init-completion init-editing init-projects init-dired))
+  (require-safe module))
+
+;; Tools modules
+(dolist (module '(init-vc init-terminal init-ai init-auth))
   (require-safe module))
 
 ;; Language modules
-(dolist (module '(init-prog-base init-text init-elisp init-cc
+(dolist (module '(init-prog init-elisp init-cc
                    init-python init-go init-shell init-dockerfile
                    init-cmake init-yaml init-markdown))
   (require-safe module))
-
-;; Utility modules
-(require-safe 'init-ai)
 
 ;; ==================================================================================
 ;; Startup completion hook
