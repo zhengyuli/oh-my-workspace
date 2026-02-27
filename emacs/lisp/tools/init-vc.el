@@ -24,9 +24,83 @@
 
 ;;; Commentary:
 ;;
-;; Version control configuration: magit.
+;; Version control configuration: magit, git utilities.
 
 ;;; Code:
+
+(require 'init-funcs)
+
+;; ==================================================================================
+;; Git utilities
+(defvar git-user-name-cache nil
+  "Cached git user name.")
+(defvar git-user-email-cache nil
+  "Cached git user email.")
+
+(defun git-user-name-async (&optional callback)
+  "Get git user name asynchronously.
+If CALLBACK is provided, call it with the result;
+otherwise display in minibuffer.
+Result is cached in `git-user-name-cache'."
+  (interactive)
+  (if (and git-user-name-cache
+           (not (called-interactively-p 'interactive)))
+      (when callback (funcall callback git-user-name-cache))
+    (let ((default-directory (or (vc-root-dir) default-directory)))
+      (make-process
+       :name "git-user-name"
+       :command '("git" "config" "--get" "user.name")
+       :sentinel
+       (lambda (proc _event)
+         (when (eq (process-status proc) 'exit)
+           (with-current-buffer (process-buffer proc)
+             (let ((result (string-trim (buffer-string)))
+                   (buf (process-buffer proc)))
+               (setq git-user-name-cache
+                     (unless (string-empty-p result) result))
+               ;; Clean up process buffer after extracting result
+               (kill-buffer buf)
+               (if callback
+                   (funcall callback git-user-name-cache)
+                 (message "Git user name: %s"
+                          (or git-user-name-cache "not set")))))))))))
+
+(defun git-user-email-async (&optional callback)
+  "Get git user email asynchronously.
+If CALLBACK is provided, call it with the result;
+otherwise display in minibuffer.
+Result is cached in `git-user-email-cache'."
+  (interactive)
+  (if (and git-user-email-cache
+           (not (called-interactively-p 'interactive)))
+      (when callback (funcall callback git-user-email-cache))
+    (let ((default-directory (or (vc-root-dir) default-directory)))
+      (make-process
+       :name "git-user-email"
+       :command '("git" "config" "--get" "user.email")
+       :sentinel
+       (lambda (proc _event)
+         (when (eq (process-status proc) 'exit)
+           (with-current-buffer (process-buffer proc)
+             (let ((result (string-trim (buffer-string)))
+                   (buf (process-buffer proc)))
+               (setq git-user-email-cache
+                     (unless (string-empty-p result) result))
+               ;; Clean up process buffer after extracting result
+               (kill-buffer buf)
+               (if callback
+                   (funcall callback git-user-email-cache)
+                 (message "Git user email: %s"
+                          (or git-user-email-cache "not set")))))))))))
+
+;; Aliases for convenience
+(defalias 'git-user-name #'git-user-name-async
+  "Get git user name.
+\(Async version, use `git-user-name-async' directly for callbacks)")
+
+(defalias 'git-user-email #'git-user-email-async
+  "Get git user email.
+\(Async version, use `git-user-email-async' directly for callbacks)")
 
 ;; ==================================================================================
 ;; Magit - Git version control interface

@@ -24,9 +24,68 @@
 
 ;;; Commentary:
 ;;
-;; Editing enhancements: vundo, move-text, expand-region, multiple-cursors, etc.
+;; Editing enhancements: buffer utilities, vundo, move-text, expand-region,
+;; multiple-cursors, smart copy/kill, etc.
 
 ;;; Code:
+
+(require 'init-funcs)
+
+;; ==================================================================================
+;; Buffer utilities
+(defun current-major-mode-name ()
+  "Display major mode and mode name."
+  (interactive)
+  (message "major-mode: %s, mode-name: %s" major-mode mode-name))
+
+(defun indent-entire-buffer ()
+  "Automatic format current buffer."
+  (interactive)
+  (save-excursion
+    (indent-region (point-min) (point-max) nil)
+    (delete-trailing-whitespace)
+    (untabify (point-min) (point-max))))
+
+(defun smart-indent-region ()
+  "If mark is active, indent region, else indent all buffer."
+  (interactive)
+  (save-excursion
+    (if mark-active
+        (call-interactively 'indent-region)
+      (call-interactively 'indent-entire-buffer))))
+
+(defun copy-region ()
+  "Copy region."
+  (interactive)
+  (copy-region-as-kill (region-beginning) (region-end)))
+
+(defun copy-current-line ()
+  "Copy current line."
+  (interactive)
+  (let ((end (min (point-max) (line-end-position))))
+    (copy-region-as-kill (line-beginning-position) end)))
+
+(defun smart-copy-region ()
+  "If mark is active, copy region, else copy current line."
+  (interactive)
+  (save-excursion
+    (if mark-active
+        (call-interactively 'copy-region)
+      (call-interactively 'copy-current-line))))
+
+(defun smart-kill-region ()
+  "If mark is active, kill region, else kill whole line."
+  (interactive)
+  (if mark-active
+      (call-interactively 'kill-region)
+    (call-interactively 'kill-whole-line)))
+
+(defun toggle-buffer-writable ()
+  "Toggle buffer writable."
+  (interactive)
+  (if buffer-read-only
+      (read-only-mode -1)
+    (read-only-mode 1)))
 
 ;; ==================================================================================
 ;; Vundo - visual undo tree (replaces undo-tree)

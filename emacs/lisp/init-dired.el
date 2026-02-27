@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'init-funcs)
+
 ;; ==================================================================================
 ;; Customization variables - Dirvish Quick Access
 (defcustom dirvish-quick-access-dirs

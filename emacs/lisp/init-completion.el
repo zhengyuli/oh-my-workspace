@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'init-funcs)
+
 ;; ==================================================================================
 ;; Which-key - key hints, deferred loading for faster startup
 (use-package which-key

@@ -29,6 +29,8 @@
 
 ;;; Code:
 
+(require 'init-funcs)
+
 ;; ==================================================================================
 ;; Valign - table alignment display
 ;; Provides visual alignment for Org and Markdown tables

@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'init-funcs)
+
 ;; ==================================================================================
 ;; Python development packages
 (defvar python-dev-packages

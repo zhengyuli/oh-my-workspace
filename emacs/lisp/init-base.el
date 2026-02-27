@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 ;;
-;; Core configuration: restart-emacs, package management, aliases,
+;; Core configuration: restart-emacs, package auto-update, GC optimization,
 ;; base configuration hooks, global modes, and before-save hooks.
 
 ;;; Code:
@@ -112,6 +112,10 @@
             ;; Disable ring bell
             (setq ring-bell-function 'ignore)
 
+            ;; Use y/n instead of yes/no (Emacs 28+)
+            (when (boundp 'use-short-answers)
+              (setq use-short-answers t))
+
             ;; Customize user and email
             (setq user-full-name emacs-user-name
                   user-mail-address emacs-user-email)
@@ -140,6 +144,28 @@
             (jit-lock-mode 1)
             ;; Enable recent file mode
             (recentf-mode 1)))
+
+;; ==================================================================================
+;; GC optimization with gcmh
+;; gcmh manages GC automatically: high threshold when idle, low when active
+(use-package gcmh
+  :demand t
+  :custom
+  (gcmh-idle-delay 10)                   ; GC after 10 seconds idle
+  (gcmh-high-cons-threshold #x10000000)  ; 256MB when idle
+  (gcmh-low-cons-threshold (* 8 1024 1024))  ; 8MB when active
+  :config
+  (gcmh-mode 1))
+
+;; ==================================================================================
+;; Startup completion hook
+;; GC settings managed automatically by gcmh-mode, no manual restore needed
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %.2f seconds with %d garbage collections."
+                     (float-time
+                      (time-subtract after-init-time before-init-time))
+                     gcs-done)))
 
 ;; ==================================================================================
 ;; Before save hooks (global)

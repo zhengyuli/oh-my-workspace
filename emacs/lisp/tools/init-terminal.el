@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'init-funcs)
+
 ;; ==================================================================================
 ;; Vterm - modern terminal emulator
 (use-package vterm

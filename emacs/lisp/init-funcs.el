@@ -1,5 +1,5 @@
 ;;; init-funcs.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-27 13:26:00 Thursday by zhengyuli>
+;; Time-stamp: <2026-02-27 19:00:00 Thursday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -28,10 +28,8 @@
 ;; This is the foundational module that all other modules depend on.
 ;;
 ;; Provides:
+;; - Customization group and user variables
 ;; - Key binding utilities (lazy-set-key, lazy-unset-key)
-;; - Proxy utilities (set-http-proxy, enable-http-proxy, etc.)
-;; - Buffer utilities (indent-entire-buffer, smart-copy-region, etc.)
-;; - Git utilities (git-user-name-async, git-user-email-async)
 ;; - Timer management system (run-config-timer, cleanup-config-timers)
 ;; - Configuration validation system (config-dependency-validate, etc.)
 
@@ -96,221 +94,6 @@ Each key in KEY-LIST can be:
     (define-key keymap key nil)))
 
 ;; ==================================================================================
-;; Proxy utilities
-;; HTTP Proxy configuration
-(defcustom emacs-http-proxy nil
-  "Emacs configuration http proxy.
-Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy."
-  :type '(choice (const :tag "No proxy" nil)
-                 (string :tag "Proxy address"))
-  :group 'omw-emacs-config)
-
-(defun show-http-proxy ()
-  "Show http/https proxy."
-  (interactive)
-  (if url-proxy-services
-      (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
-    (message "No http proxy")))
-
-(defun set-http-proxy (proxy)
-  "Set HTTP/HTTPS proxy to PROXY URL.
-
-PROXY should be a URL like \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\".
-Signals an error if PROXY is empty or cannot be parsed."
-  (interactive (list (read-string
-                      (format "HTTP Proxy Server [%s]: " emacs-http-proxy)
-                      nil nil emacs-http-proxy)))
-  (if (not (string-empty-p proxy))
-      (condition-case err
-          (let* ((proxy-url (if (string-match-p "https?://" proxy)
-                                proxy
-                              (concat "http://" proxy)))
-                 (parsed-url (url-generic-parse-url proxy-url))
-                 (host (url-host parsed-url))
-                 (port (url-port parsed-url)))
-            (unless (and host port)
-              (error "Invalid proxy URL: missing host or port"))
-            (let ((proxy-no-scheme (format "%s:%d" host port)))
-              (setenv "http_proxy" proxy-url)
-              (setenv "https_proxy" proxy-url)
-              (setenv "all_proxy" proxy-url)
-              (setq url-proxy-services
-                    `(("no_proxy" . "^\\(127.0.0.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
-                      ("http" . ,proxy-no-scheme)
-                      ("https" . ,proxy-no-scheme)))
-              (show-http-proxy)))
-        (error
-         (message "Error setting proxy: %s" (error-message-string err))))
-    (user-error "Proxy URL cannot be empty")))
-
-(defun enable-http-proxy ()
-  "Enable HTTP proxy if `emacs-http-proxy' is configured.
-Customize in `user-emacs-directory'/custom_settings.el:
-
-  (setq emacs-http-proxy \"127.0.0.1:7890\")"
-  (interactive)
-  (if emacs-http-proxy
-      (set-http-proxy emacs-http-proxy)
-    (message "HTTP proxy not configured. Add to custom_settings.el: (setq emacs-http-proxy \"127.0.0.1:7890\")")))
-
-(defun unset-http-proxy ()
-  "Unset http/https proxy."
-  (interactive)
-  (setenv "http_proxy")
-  (setenv "https_proxy")
-  (setenv "all_proxy")
-  (setq url-proxy-services nil)
-  (show-http-proxy))
-
-(defalias 'disable-http-proxy 'unset-http-proxy)
-
-;; ==================================================================================
-;; Buffer utilities (from init-base.el)
-(defun current-major-mode-name ()
-  "Display major mode and mode name."
-  (interactive)
-  (message "major-mode: %s, mode-name: %s" major-mode mode-name))
-
-(defun indent-entire-buffer ()
-  "Automatic format current buffer."
-  (interactive)
-  (save-excursion
-    (indent-region (point-min) (point-max) nil)
-    (delete-trailing-whitespace)
-    (untabify (point-min) (point-max))))
-
-(defun smart-indent-region ()
-  "If mark is active, indent region, else indent all buffer."
-  (interactive)
-  (save-excursion
-    (if mark-active
-        (call-interactively 'indent-region)
-      (call-interactively 'indent-entire-buffer))))
-
-(defun copy-region ()
-  "Copy region."
-  (interactive)
-  (copy-region-as-kill (region-beginning) (region-end)))
-
-(defun copy-current-line ()
-  "Copy current line."
-  (interactive)
-  (let ((end (min (point-max) (line-end-position))))
-    (copy-region-as-kill (line-beginning-position) end)))
-
-(defun smart-copy-region ()
-  "If mark is active, copy region, else copy current line."
-  (interactive)
-  (save-excursion
-    (if mark-active
-        (call-interactively 'copy-region)
-      (call-interactively 'copy-current-line))))
-
-(defun smart-kill-region ()
-  "If mark is active, kill region, else kill whole line."
-  (interactive)
-  (if mark-active
-      (call-interactively 'kill-region)
-    (call-interactively 'kill-whole-line)))
-
-(defun toggle-buffer-writable ()
-  "Toggle buffer writable."
-  (interactive)
-  (if buffer-read-only
-      (read-only-mode -1)
-    (read-only-mode 1)))
-
-;; Toggle fullscreen state variable
-(defvar emacs-old-fullscreen nil
-  "Store the previous fullscreen state for toggle-fullscreen.")
-
-(defun toggle-fullscreen ()
-  "Toggle full screen."
-  (interactive)
-  (let ((current-value (frame-parameter nil 'fullscreen)))
-    (set-frame-parameter
-     nil
-     'fullscreen
-     (if (equal 'fullboth current-value)
-         (if (boundp 'emacs-old-fullscreen)
-             emacs-old-fullscreen
-           nil)
-       (setq emacs-old-fullscreen current-value)
-       'fullboth))))
-
-;; ==================================================================================
-;; Git utilities
-(defvar git-user-name-cache nil
-  "Cached git user name.")
-(defvar git-user-email-cache nil
-  "Cached git user email.")
-
-(defun git-user-name-async (&optional callback)
-  "Get git user name asynchronously.
-If CALLBACK is provided, call it with the result;
-otherwise display in minibuffer.
-Result is cached in `git-user-name-cache'."
-  (interactive)
-  (if (and git-user-name-cache
-           (not (called-interactively-p 'interactive)))
-      (when callback (funcall callback git-user-name-cache))
-    (let ((default-directory (or (vc-root-dir) default-directory)))
-      (make-process
-       :name "git-user-name"
-       :command '("git" "config" "--get" "user.name")
-       :sentinel
-       (lambda (proc _event)
-         (when (eq (process-status proc) 'exit)
-           (with-current-buffer (process-buffer proc)
-             (let ((result (string-trim (buffer-string)))
-                   (buf (process-buffer proc)))
-               (setq git-user-name-cache
-                     (unless (string-empty-p result) result))
-               ;; Clean up process buffer after extracting result
-               (kill-buffer buf)
-               (if callback
-                   (funcall callback git-user-name-cache)
-                 (message "Git user name: %s"
-                          (or git-user-name-cache "not set")))))))))))
-
-(defun git-user-email-async (&optional callback)
-  "Get git user email asynchronously.
-If CALLBACK is provided, call it with the result;
-otherwise display in minibuffer.
-Result is cached in `git-user-email-cache'."
-  (interactive)
-  (if (and git-user-email-cache
-           (not (called-interactively-p 'interactive)))
-      (when callback (funcall callback git-user-email-cache))
-    (let ((default-directory (or (vc-root-dir) default-directory)))
-      (make-process
-       :name "git-user-email"
-       :command '("git" "config" "--get" "user.email")
-       :sentinel
-       (lambda (proc _event)
-         (when (eq (process-status proc) 'exit)
-           (with-current-buffer (process-buffer proc)
-             (let ((result (string-trim (buffer-string)))
-                   (buf (process-buffer proc)))
-               (setq git-user-email-cache
-                     (unless (string-empty-p result) result))
-               ;; Clean up process buffer after extracting result
-               (kill-buffer buf)
-               (if callback
-                   (funcall callback git-user-email-cache)
-                 (message "Git user email: %s"
-                          (or git-user-email-cache "not set")))))))))))
-
-;; Keep synchronous versions for backward compatibility (not recommended for frequent use)
-(defalias 'git-user-name #'git-user-name-async
-  "Get git user name.
-\(Async version, use `git-user-name-async' directly for callbacks)")
-
-(defalias 'git-user-email #'git-user-email-async
-  "Get git user email.
-\(Async version, use `git-user-email-async' directly for callbacks)")
-
-;; ==================================================================================
 ;; Timer management system
 ;; Track and cleanup idle timers to prevent accumulation on config reload
 (defvar config-timers nil
@@ -339,24 +122,9 @@ Useful for cleaning up before config reload."
 ;; Validation system architecture:
 ;;   - This file: provides registration mechanism and generic validation functions
 ;;   - Feature modules: define required lists and register validators
-;; Registered validators:
-;;   - init-vc.el: vc-tools (git)
-;;   - init-completion.el: search-tools (rg, ag)
-;;   - init-editing.el: spell-tools (aspell, hunspell)
-;;   - init-dired.el: dired-tools (gls, fd)
-;;   - init-utilities.el: utility-tools (pass)
-;;   - init-markdown.el: markdown-tools (marksman)
-;;   - init-terminal.el: terminal-tools (vterm)
-;;   - init-python.el: python-tools (pylsp)
-;;   - init-go.el: go-tools (gopls, gofumpt)
-;;   - init-cc.el: cc-tools (clangd)
-;;   - init-shell.el: shell-tools (bash-language-server)
-;;   - init-yaml.el: yaml-tools (yaml-language-server)
-;;   - init-cmake.el: cmake-tools (cmake-language-server)
-;;   - init-dockerfile.el: docker-tools (docker-langserver)
-;; ... .. .
+;;
 ;; Usage:
-;;   - Manual call: M-x validate-config
+;;   - Manual call: M-x config-dependency-validate
 ;;   - Automatic on startup: set environment variable EMACS_CONFIG_VALIDATE=1
 
 ;; ----------------------------------------------------------------------------------
