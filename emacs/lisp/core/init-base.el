@@ -76,10 +76,6 @@
 (defalias 'upgrade-packages 'auto-package-upgrade-all)
 
 ;; ==================================================================================
-;; Aliases
-(defalias 'refresh-auth-cache 'auth-source-forget-all-cached)
-
-;; ==================================================================================
 ;; Base configuration hooks
 (add-hook 'after-init-hook
           (lambda ()

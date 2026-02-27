@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions, init-prog-base
+;; Dependencies: init-funcs, init-prog
 
 ;; This file is not part of GNU Emacs.
 
@@ -30,7 +30,7 @@
 
 ;; ==================================================================================
 ;; Shell mode hook
-;; eglot already configured for sh-mode eglot-ensure in init-prog-base.el
+;; eglot already configured for sh-mode eglot-ensure in init-prog.el
 ;; C-c C-c already bound in prog-mode-map, sh-mode inherits this binding
 
 ;; ==================================================================================
