@@ -29,6 +29,8 @@
 
 ;;; Code:
 
+(require 'init-funcs)
+
 ;; ==================================================================================
 ;; Restart Emacs
 (use-package restart-emacs
