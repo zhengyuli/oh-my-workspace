@@ -40,6 +40,23 @@
     "debugpy")
   "A list of packages to set up the Python development environment.")
 
+;;
+;; Auto package installation flow:
+;;   1. Triggered on venv activation (poetry-venv-workon / pyvenv-workon)
+;;   2. Async fetch installed packages list (cached to avoid duplicate calls)
+;;   3. Compare against required packages list, find missing
+;;   4. Validate package names for security (prevent command injection)
+;;   5. Async install missing packages (progress shown in dedicated buffer)
+;;
+;; Cache mechanism:
+;;   - Auto-invalidates when venv changes
+;;   - Cache key: VIRTUAL_ENV environment variable
+;;
+;; Security measures:
+;;   - Package name format validation (python-validate-package-name)
+;;   - Shell argument escaping (shell-quote-argument)
+;;
+
 ;; Cache installed packages list to avoid repeated shell calls
 (defvar python-installed-packages-cache nil
   "Cache of installed packages for current venv.")
