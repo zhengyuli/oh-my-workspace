@@ -115,6 +115,21 @@ Only includes directories that actually exist on the filesystem."
         '(:left (sort symlink) :right (omit yank index)))
 
   ;; Key bindings
+  ;;
+  ;; Key layout:
+  ;;   ? - Help menu (cheatsheet)
+  ;;   a - Attributes setup menu
+  ;;   o - Quick access directories
+  ;;
+  ;;   f - fd search    |    s - Quick sort      |    l - ls switches menu
+  ;;   v - View file    |    * - Mark menu       |    y - Copy/paste menu
+  ;;
+  ;;   TAB - Expand/collapse subdirectory
+  ;;   N - Narrow search
+  ;;   H - Recent access history
+  ;;
+  ;; Note: Some keybindings override native dired keys.
+  ;;       Dirvish overrides dired-mode-map bindings.
   (with-eval-after-load 'dirvish
     (bind-keys :map dirvish-mode-map
                ;; Help and menus
