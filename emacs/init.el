@@ -94,7 +94,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 ;; Core modules (foundation - must load first)
-(require' init-funcs)
+(require 'init-funcs)
 (require 'init-packages)
 (require 'init-base)
 
