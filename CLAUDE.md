@@ -16,6 +16,36 @@ This is a **workspace configuration repository** (dotfiles) that provides compre
 ./vim/setup.sh      # Creates symlink ~/.vimrc -> vim/vimrc
 ```
 
+## Quick Start
+
+### First-time Installation
+```bash
+cd ~/oh-my-workspace/emacs
+./setup.sh
+```
+
+### Verify Installation
+```bash
+# Start Emacs
+emacs
+
+# Inside Emacs, verify dependencies
+M-x config-dependency-validate
+```
+
+### Common Commands
+
+| Command | Function |
+|---------|----------|
+| `M-x config-dependency-validate` | Verify external dependencies |
+| `M-x cleanup-config-timers` | Clean up configuration timers |
+| `M-x describe-variable` | Show variable documentation |
+| `C-c p p` | Switch project (Projectile) |
+| `C-c p f` | Find file in project |
+| `C-c p b` | Switch project buffer |
+| `C-x b` | Switch buffer (Vertico) |
+| `C-s` | Search in buffer (Consult) |
+
 ## Emacs Configuration Architecture
 
 The Emacs configuration is modular and loads in a specific order defined in `emacs/init.el`:
