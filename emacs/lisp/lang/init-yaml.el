@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions, init-prog-base
+;; Dependencies: init-funcs, init-prog
 
 ;; This file is not part of GNU Emacs.
 
@@ -30,7 +30,7 @@
 
 ;; ==================================================================================
 ;; YAML mode
-;; eglot already configured for yaml-mode eglot-ensure in init-prog-base.el
+;; eglot already configured for yaml-mode eglot-ensure in init-prog.el
 (use-package yaml-mode
   :defer t)
 

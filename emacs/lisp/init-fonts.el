@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: fonts, faces
-;; Dependencies: (none - base module)
+;; Dependencies: init-funcs
 
 ;; This file is not part of GNU Emacs.
 
@@ -27,6 +27,8 @@
 ;; Font configuration: default fonts, Chinese fallback, textsize.
 
 ;;; Code:
+
+(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Font family definitions (customizable)

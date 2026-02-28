@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions
+;; Dependencies: init-funcs
 
 ;; This file is not part of GNU Emacs.
 
@@ -27,6 +27,8 @@
 ;; Terminal configuration: vterm, multi-vterm.
 
 ;;; Code:
+
+(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Vterm - modern terminal emulator

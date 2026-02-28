@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions, init-prog-base
+;; Dependencies: init-funcs, init-prog
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,6 +28,8 @@
 ;; Use eglot + gopls for LSP support, navigation via xref system.
 
 ;;; Code:
+
+(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Go mode

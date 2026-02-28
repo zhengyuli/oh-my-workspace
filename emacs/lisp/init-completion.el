@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions
+;; Dependencies: init-funcs
 
 ;; This file is not part of GNU Emacs.
 
@@ -27,6 +27,8 @@
 ;; Completion system: vertico, marginalia, consult, corfu, yasnippet, which-key, avy, ag.
 
 ;;; Code:
+
+(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Which-key - key hints, deferred loading for faster startup

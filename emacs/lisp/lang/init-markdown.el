@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions
+;; Dependencies: init-funcs
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,6 +28,8 @@
 ;; Features: GFM support, code block editing, TOC generation, LSP via marksman.
 
 ;;; Code:
+
+(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Valign - table alignment display

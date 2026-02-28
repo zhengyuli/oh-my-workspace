@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
-;; Dependencies: init-functions, init-prog-base
+;; Dependencies: init-funcs, init-prog
 
 ;; This file is not part of GNU Emacs.
 
@@ -69,7 +69,7 @@ Return absolute path of selected file."
 
 ;; ==================================================================================
 ;; C/C++ mode hooks
-;; eglot already configured for c-mode/c++-mode eglot-ensure in init-prog-base.el
+;; eglot already configured for c-mode/c++-mode eglot-ensure in init-prog.el
 (dolist (hook '(c-mode-hook c++-mode-hook))
   (add-hook hook
             (lambda ()
