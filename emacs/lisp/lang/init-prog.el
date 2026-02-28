@@ -236,7 +236,6 @@
 ;; ==================================================================================
 ;; Before save hooks (mode-specific)
 ;; Time-stamp: globally enabled (only affects files with Time-stamp marker)
-(add-hook 'before-save-hook #'time-stamp)
 
 ;; Programming mode specific before-save hook
 (defun prog-before-save-hook ()
