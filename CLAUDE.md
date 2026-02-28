@@ -1,122 +1,91 @@
-# Emacs Configuration Structure
+# CLAUDE.md
 
-> This document describes the modular structure of the Emacs configuration after the 2026-02-27 restructuring.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Directory Structure
+## Project Overview
+
+This is a **workspace configuration repository** (dotfiles) that provides comprehensive development environment setup for macOS. It includes configurations for Emacs, Vim, Zsh, and various development tools.
+
+## Setup Commands
+
+```bash
+# Emacs configuration
+./emacs/setup.sh    # Creates symlink ~/.emacs -> emacs/init.el
+
+# Vim configuration
+./vim/setup.sh      # Creates symlink ~/.vimrc -> vim/vimrc
+```
+
+## Emacs Configuration Architecture
+
+The Emacs configuration is modular and loads in a specific order defined in `emacs/init.el`:
+
+### Directory Structure
 
 ```
 emacs/
-├── init.el                         # Entry point
+├── init.el              # Entry point, early init, module loading
+├── custom_settings.el   # User-specific settings (git-ignored)
 ├── lisp/
-│   ├── core/                    # Core infrastructure
-│   │   ├── init-funcs.el         # Utility functions + timer + validation
-│   │   ├── init-base.el         # Base configuration + package management
-│   │   └── init-env.el          # Environment + platform settings
-│   ├── ui/                     # User interface
-│   │   ├── init-theme.el        # Theme + modeline + fullscreen
-│   │   ├── init-tabs.el         # Tabs + winum
-│   │   ├── init-dashboard.el    # Dashboard
-│   │   ├── init-fonts.el         # Font configuration
-│   │   └── init-highlight.el    # Highlights + emojify + winner
-│   ├── editor/                # Editor functionality
-│   │   ├── init-completion.el   # Completion system
-│   │   ├── init-editing.el       # Editing enhancements (merged with switch-window + text-mode)
-│   │   ├── init-projects.el     # Project management
-│   │   └── init-dired.el        # File management (dired)
-│   ├── tools/                # External tool integration
-│   │   ├── init-vc.el            # Version control (magit)
-│   │   ├── init-terminal.el     # Terminal (vterm)
-│   │   ├── init-ai.el            # AI assistant (claude-code-ide)
-│   │   └── init-auth.el         # Security + authentication
-│   └── lang/                   # Programming language support
-│       ├── init-prog.el         # Programming base (renamed from init-prog-base)
-│       ├── init-elisp.el        # Emacs Lisp
-│       ├── init-cc.el            # C/C++
-│       ├── init-python.el        # Python
-│       ├── init-go.el            # Go
-│       ├── init-markdown.el      # Markdown
-│       ├── init-shell.el         # Shell scripts
-│       ├── init-yaml.el          # YAML
-│       ├── init-cmake.el         # CMake
-│       └── init-dockerfile.el    # Dockerfile
+│   ├── init-packages.el # Package management (straight.el)
+│   ├── init-funcs.el    # Utilities, timer system, validation
+│   ├── init-base.el     # Core settings, GC management
+│   ├── init-env.el      # Environment, proxy, macOS settings
+│   ├── init-fonts.el    # Font configuration
+│   ├── init-ui.el       # Theme, modeline, tabs, dashboard
+│   ├── init-completion.el # Vertico, Corfu, Consult, etc.
+│   ├── init-editing.el  # Editing enhancements
+│   ├── init-dired.el    # File manager
+│   ├── init-projects.el # Projectile
+│   ├── tools/           # External tool integration
+│   │   ├── init-vc.el       # Magit
+│   │   ├── init-terminal.el # Vterm
+│   │   ├── init-ai.el       # Claude Code IDE
+│   │   └── init-auth.el     # Auth-source
+│   └── lang/            # Language support
+│       ├── init-prog.el     # Base programming mode
+│       ├── init-python.el   # Python + LSP
+│       ├── init-go.el       # Go + LSP
+│       └── ...              # Other languages
 ```
 
-## Module Loading Order
+### Module Loading Order
 
-Modules are loaded in `init.el` in this order:
+1. **Core**: `init-packages` → `init-funcs` → `init-base` → `init-env`
+2. **UI**: `init-fonts` → `init-ui`
+3. **Editor**: `init-completion` → `init-editing` → `init-dired` → `init-projects`
+4. **Tools**: `init-vc` → `init-terminal` → `init-ai` → `init-auth`
+5. **Languages**: `init-prog` → language-specific modules
 
-1. **init-funcs** - Foundation (no dependencies)
-2. **init-base** - Core configuration (depends on init-funcs)
-3. **init-env** - Environment setup (depends on init-funcs)
-4. **init-fonts** - Font setup (depends on init-funcs)
-5. **init-theme** - Theme setup (depends on init-funcs)
-6. **init-tabs** - Tab management
-7. **init-highlight** - Visual highlights
-8. **init-dashboard** - Dashboard (depends on init-theme, init-tabs)
-9. **init-completion** - Completion system (depends on init-funcs)
-10. **init-editing** - Editing enhancements (depends on init-funcs)
-11. **init-projects** - Project management
-12. **init-dired** - File management (depends on init-funcs)
-13. **init-vc** - Version control (depends on init-funcs)
-14. **init-terminal** - Terminal (depends on init-funcs)
-15. **init-ai** - AI assistant
-16. **init-auth** - Authentication (depends on init-funcs)
-17. **init-prog** - Programming base (depends on init-funcs)
-18. Language modules (various dependencies)
+### Key Patterns
 
-## Key Changes
+- **Dependencies**: All modules `require 'init-funcs` for utilities
+- **Validation**: `M-x config-dependency-validate` checks external dependencies
+- **Timer System**: `run-config-timer` defers initialization for faster startup
+- **Package Management**: Uses `straight.el` with `use-package` macros
+- **Emacs Version**: Requires Emacs 30.2+
 
-### From init-utilities.el
+### Adding New Modules
 
-Content was distributed to:
+1. Create file in appropriate location (`lisp/`, `lisp/tools/`, or `lisp/lang/`)
+2. Add `(require 'init-funcs)` if using utilities
+3. Add `(provide 'init-module-name)` at end
+4. Add `(require 'init-module-name)` in `init.el` at correct position
 
-| Target | Content |
-|--------|---------|
-| `init-funcs.el` | Timer management system |
-| `init-base.el` | Core configuration hooks, package management, restart-emacs, aliases |
-| `init-env.el` | exec-path-from-shell, mac system settings |
-| `init-editing.el` | switch-window, text-scale keybindings |
-| `init-highlight.el` | winner keybindings |
-| `init-prog.el` | prog-before-save-hook |
+## External Dependencies
 
-### From init-ui.el
+The Emacs configuration requires various external tools. Check `emacs/setup.sh` for the full list including:
+- LSP servers: `python-lsp-server`, `gopls`, `clangd`, `yaml-language-server`, etc.
+- Formatters: `black`, `gofumpt`, `clang-format`
+- Search: `ripgrep`, `the_silver_searcher`
+- Fonts: Run `M-x nerd-icons-install-fonts` after setup
 
-Content was distributed to:
+## Validation
 
-| Target | Content |
-|--------|---------|
-| `init-theme.el` | Random banner
- fullscreen hook
- doom-themes
- doom-modeline
- smooth scrolling |
-| `init-tabs.el` | nerd-icons
- centaur-tabs
- winum |
-| `init-dashboard.el` | dashboard configuration |
+```bash
+# Verify Emacs config loads without errors
+emacs --debug-init
 
-### From init-text.el
-
-Content was merged into `init-editing.el` (text-mode hooks)
-
-### Renamed Files
-
-| Old | New |
-|-----|-----|
-| `init-functions.el` | `core/init-funcs.el` |
-| `init-prog-base.el` | `lang/init-prog.el` |
-
-### Deleted Files
-
-- `init-functions.el` (replaced by core/init-funcs.el)
-- `init-utilities.el` (content distributed to multiple modules)
-- `init-ui.el` (content distributed to ui/ modules)
-- `init-text.el` (merged into editor/init-editing.el)
-
-## Verification
-
-To verify the configuration loads correctly:
-
-1. Start Emacs: `emacs --debug-init`
-2. Run validation: `M-x config-dependency-validate`
-3. Check module loading: `M-x describe-feature RET init-funcs`
+# Inside Emacs, validate dependencies
+M-x config-dependency-validate
+```

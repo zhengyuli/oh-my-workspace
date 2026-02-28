@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'init-funcs)
+(require 'copyright)  ; For copyright-update in prog-before-save-hook
 
 ;; ==================================================================================
 ;; Utility function

@@ -159,7 +159,10 @@
     (cond
      ;; Special UI buffers
      ((derived-mode-p 'dashboard-mode) "Dashboard")
-     ((derived-mode-p 'claude-code-ide-mode) "Claude Code")
+     ;; Claude Code IDE (guard: mode may not be loaded yet)
+     ((and (fboundp 'claude-code-ide-mode)
+           (derived-mode-p 'claude-code-ide-mode))
+      "Claude Code")
      ;; Project-based grouping
      ((when-let* ((project-name (centaur-tabs-project-name)))
         (and (stringp project-name)
