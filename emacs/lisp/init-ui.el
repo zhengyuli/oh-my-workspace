@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-28 18:28:58 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-28 21:58:28 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -127,6 +127,7 @@
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
 (use-package centaur-tabs
+  :defer t
   :hook (after-init . centaur-tabs-mode)
   :bind
   (:map centaur-tabs-mode-map
