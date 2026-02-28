@@ -128,3 +128,60 @@ emacs --debug-init
 # Inside Emacs, validate dependencies
 M-x config-dependency-validate
 ```
+
+## Troubleshooting
+
+### Slow Emacs Startup
+1. Check for byte-compile cache issues
+   ```bash
+   # Remove old byte-compiled files
+   rm -rf ~/.emacs.d/eln-cache/
+   ```
+2. Run dependency validation
+   ```bash
+   M-x config-dependency-validate
+   ```
+3. Review startup logs
+   ```bash
+   # View *Messages* buffer
+   C-h e
+   ```
+
+### Package Installation Fails
+1. Check network and proxy settings
+   ```elisp
+   M-x show-http-proxy  ; Check current proxy
+   M-x set-http-proxy   ; Set proxy if needed
+   ```
+2. Refresh package contents
+   ```bash
+   M-x package-refresh-contents
+   ```
+3. Verify use-package is installed
+   ```bash
+   M-x package-install RET use-package
+   ```
+
+### LSP Not Working
+1. Confirm LSP server is installed
+   ```bash
+   M-x config-dependency-validate
+   ```
+2. Check eglot status
+   ```bash
+   M-x eglot  ; Start LSP manually
+   ```
+3. Review LSP events log
+   ```bash
+   C-h b  ; Switch to *eglot-events* buffer
+   ```
+
+### centaur-tabs Not Showing in Some Buffers
+1. Check if buffer is explicitly hidden
+   ```bash
+   C-h v centaur-tabs-hide-predicates RET
+   ```
+2. Force refresh tabs
+   ```bash
+   M-x centaur-tabs-local-mode
+   ```
