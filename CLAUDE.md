@@ -74,11 +74,50 @@ emacs/
 
 ## External Dependencies
 
-The Emacs configuration requires various external tools. Check `emacs/setup.sh` for the full list including:
-- LSP servers: `python-lsp-server`, `gopls`, `clangd`, `yaml-language-server`, etc.
-- Formatters: `black`, `gofumpt`, `clang-format`
-- Search: `ripgrep`, `the_silver_searcher`
-- Fonts: Run `M-x nerd-icons-install-fonts` after setup
+### Verify Dependencies
+```bash
+# Run in Emacs
+M-x config-dependency-validate
+```
+
+### Core Tools (P0 - Required)
+| Tool | Purpose | Install |
+|------|---------|---------|
+| git | Version control | brew install git |
+| ripgrep | Code search | brew install ripgrep |
+| the_silver_searcher | Fallback search | brew install the_silver_searcher |
+| fd | Fast file find | brew install fd |
+| coreutils | macOS GNU ls | brew install coreutils |
+
+### LSP Servers (P1 - Development)
+| Language | Server | Install |
+|----------|--------|---------|
+| Python | pylsp | pip install python-lsp-server[all] |
+| Go | gopls | go install golang.org/x/tools/gopls@latest |
+| C/C++ | clangd | Xcode Command Line Tools |
+| YAML | yaml-language-server | npm install -g yaml-language-server |
+| Bash | bash-language-server | npm install -g bash-language-server |
+| Dockerfile | docker-langserver | npm install -g dockerfile-language-server-nodejs |
+| CMake | cmake-language-server | pip install cmake-language-server |
+
+### Auxiliary Tools (P2 - Optional)
+| Tool | Purpose | Install |
+|------|---------|---------|
+| aspell | Spell checking | brew install aspell |
+| hunspell | Spell checking alternative | brew install hunspell |
+| pandoc | Document conversion | brew install pandoc |
+| marksman | Markdown LSP | brew install marksman |
+| libvterm | Emacs vterm dependency | brew install libvterm |
+
+### Formatters (P1 - Development)
+| Language | Formatter | Install |
+|----------|-----------|---------|
+| Python | black | pip install black |
+| Go | gofumpt | go install mvdan.cc/gofumpt@latest |
+| C/C++ | clang-format | Xcode Command Line Tools |
+
+### Fonts
+Run `M-x nerd-icons-install-fonts` after setup to install icon fonts.
 
 ## Validation
 
