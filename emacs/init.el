@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-02-28 17:59:08 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-28 22:22:09 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -25,13 +25,6 @@
 ;;
 ;; Emacs configuration entry point.
 ;; This file performs early initialization and loads all configuration modules.
-;;
-;; Module loading order:
-;;   1. Core: init-packages, init-funcs, init-base, init-env
-;;   2. UI: init-fonts, init-ui
-;;   3. Editor: init-completion, init-editing, init-dired, init-projects
-;;   4. Tools: init-vc, init-terminal, init-ai, init-auth
-;;   5. Languages: init-prog, init-elisp, init-cc, etc.
 
 ;;; Code:
 
