@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-28 17:32:52 Saturday by zhengyuli>
+;; Time-stamp: <2026-02-28 18:28:58 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -115,6 +115,17 @@
 
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
+;;
+;; Buffer grouping logic (default centaur-tabs behavior):
+;;   - Magit modes (magit-status-mode, magit-log-mode, etc.) -> "Magit"
+;;   - Terminal modes (vterm, shell, eshell) -> "Terminal"
+;;   - Programming modes (python, go, c/c++, elisp) -> project-based groups
+;;   - Special modes (dashboard, org) -> individual groups
+;;
+;; Note: To customize grouping behavior, use advice-add on
+;;       centaur-tabs-buffer-groups rather than redefining it.
+;; ==================================================================================
+;; Tabs - centaur-tabs
 (use-package centaur-tabs
   :hook (after-init . centaur-tabs-mode)
   :bind
@@ -126,68 +137,6 @@
   :config
   (require 'centaur-tabs-elements)
   (require 'centaur-tabs-functions)
-
-  ;; Buffer group cache
-  (defvar centaur-tabs-buffer-group-cache (make-hash-table :weakness 'key)
-    "Cache for buffer group computations.")
-
-  (defun centaur-tabs--compute-buffer-group ()
-    "Compute buffer group (internal, uncached)."
-    (cond
-     ;; Special UI buffers
-     ((derived-mode-p 'dashboard-mode) "Dashboard")
-     ;; Claude Code IDE (guard: mode may not be loaded yet)
-     ((and (fboundp 'claude-code-ide-mode)
-           (derived-mode-p 'claude-code-ide-mode))
-      "Claude Code")
-     ;; Project-based grouping
-     ((when-let* ((project-name (centaur-tabs-project-name)))
-        (and (stringp project-name)
-             (not (string-empty-p project-name))
-             project-name)))
-     ;; Version control
-     ((derived-mode-p 'magit-mode) "Magit")
-     ;; Terminals
-     ((memq major-mode '(vterm-mode shell-mode eshell-mode term-mode)) "Terminal")
-     ;; Language-specific groups
-     ((derived-mode-p 'python-mode) "Python")
-     ((derived-mode-p 'go-mode) "Go")
-     ((memq major-mode '(c-mode c++-mode c-or-c++-mode)) "C/C++")
-     ((derived-mode-p 'emacs-lisp-mode) "Elisp")
-     ((derived-mode-p 'sh-mode) "Shell Script")
-     ;; Org mode
-     ((or (derived-mode-p 'org-mode)
-          (memq major-mode '(org-agenda-mode org-agenda-clockreport-mode diary-mode)))
-      "Org")
-     ;; Dired
-     ((derived-mode-p 'dired-mode) "Dired")
-     ;; Text/Markup
-     ((or (derived-mode-p 'markdown-mode yaml-mode dockerfile-mode text-mode)
-          (memq major-mode '(cmake-mode cmake-ts-mode conf-mode conf-unix-mode conf-space-mode)))
-      "Text")
-     ;; Help/Documentation
-     ((or (memq major-mode '(help-mode helpful-mode info-mode Man-mode woman-mode
-                             help-fns-mode help-mode-view))
-          (string-match-p "\\`\\*Help\\*\\|\\*info\\*\\|\\*Man\\*" (buffer-name)))
-      "Help")
-     ;; Emacs internal
-     ((string-prefix-p "*" (buffer-name)) "Emacs")
-     ;; Default
-     (t (centaur-tabs-get-group-name (current-buffer)))))
-
-  (defun centaur-tabs-buffer-groups ()
-    "Control buffers' group rules with caching."
-    (let ((cached (gethash (current-buffer) centaur-tabs-buffer-group-cache)))
-      (if cached
-          cached
-        (let ((group (list (centaur-tabs--compute-buffer-group))))
-          (puthash (current-buffer) group centaur-tabs-buffer-group-cache)
-          group))))
-
-  ;; Clear cache on mode change
-  (add-hook 'after-change-major-mode-hook
-            (lambda ()
-              (remhash (current-buffer) centaur-tabs-buffer-group-cache)))
 
   ;; Customized faces
   (custom-set-faces
