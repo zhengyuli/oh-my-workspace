@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-02-27 22:21:24 星期五 by zhengyu.li>
+;; Time-stamp: <2026-02-28 17:59:08 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -94,10 +94,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 ;; Core modules (foundation - must load first)
+(require' init-funcs)
 (require 'init-packages)
-(require 'init-funcs)
 (require 'init-base)
-(require 'init-env)
 
 ;; UI modules
 (require 'init-fonts)

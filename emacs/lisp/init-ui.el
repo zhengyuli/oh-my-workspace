@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-27 20:00:00 Thursday by zhengyuli>
+;; Time-stamp: <2026-02-28 17:32:52 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -107,29 +107,6 @@
 ;; ==================================================================================
 ;; Winner mode - undo/redo window layout
 (winner-mode 1)
-
-;; ==================================================================================
-;; Fullscreen toggle
-(defvar emacs-old-fullscreen nil
-  "Store the previous fullscreen state for toggle-fullscreen.")
-
-(defun toggle-fullscreen ()
-  "Toggle full screen."
-  (interactive)
-  (let ((current-value (frame-parameter nil 'fullscreen)))
-    (set-frame-parameter
-     nil
-     'fullscreen
-     (if (equal 'fullboth current-value)
-         (if (boundp 'emacs-old-fullscreen)
-             emacs-old-fullscreen
-           nil)
-       (setq emacs-old-fullscreen current-value)
-       'fullboth))))
-
-;; Auto fullscreen on startup (GUI only)
-(when (display-graphic-p)
-  (add-hook 'emacs-startup-hook #'toggle-fullscreen))
 
 ;; ==================================================================================
 ;; Nerd-icons - unified icon system (deferred)

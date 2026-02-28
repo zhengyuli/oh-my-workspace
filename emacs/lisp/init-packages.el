@@ -1,5 +1,5 @@
 ;;; init-packages.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-27 18:30:00 Thursday by zhengyuli>
+;; Time-stamp: <2026-02-28 17:01:03 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -78,6 +78,45 @@
       use-package-compute-statistics nil   ; Disable for production (re-enable for debugging)
       use-package-verbose nil              ; Disable for production
       use-package-minimum-reported-time 0.5)
+
+;; ==================================================================================
+;; Auto package update
+(use-package auto-package-update
+  :defer t
+  :custom
+  (auto-package-update-delete-old-versions t)
+  (auto-package-update-hide-output t))
+
+;; Check for package updates in background
+(defun package-check-updates ()
+  "Check for package updates in background and notify if updates available."
+  (interactive)
+  (message "Checking for package updates...")
+  (package-refresh-contents)
+  (let ((upgrades (package-menu--find-upgrades)))
+    (if upgrades
+        (let ((count (length upgrades)))
+          (message "")
+          (if (yes-or-no-p (format "Found %d package(s) with updates. Upgrade now? " count))
+              (auto-package-upgrade-all)
+            (message "Run `M-x auto-package-upgrade-all' to upgrade later.")))
+      (message "All packages are up to date."))))
+
+;; Check for updates after startup (after 60 seconds idle)
+(run-config-timer 60 nil #'package-check-updates)
+
+;; Package upgrade function
+(defun auto-package-upgrade-all ()
+  "Upgrade all packages installed."
+  (interactive)
+  (require 'auto-package-update)
+  (package-refresh-contents)
+  (auto-package-update-now))
+
+;; Convenience aliases
+(defalias 'package-upgrade-all 'auto-package-upgrade-all
+  "Upgrade all packages interactively.")
+(defalias 'upgrade-packages 'auto-package-upgrade-all)
 
 ;; ==================================================================================
 ;;; Provide features
