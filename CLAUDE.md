@@ -4,103 +4,142 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **workspace configuration repository** (dotfiles) that provides comprehensive development environment setup for macOS. It includes configurations for Emacs, Vim, Zsh, and various development tools.
+This is a **workspace configuration repository** (dotfiles) that provides comprehensive development environment setup for macOS. It contains configurations for multiple tools:
+
+- **Emacs** - Text editor with LSP, completion, and project management
+- **Vim** - Lightweight modal editor with modern enhancements
+- **Zsh** - Shell with Oh My Zsh framework, plugins, and completions
+- **Development tools** - Language runtimes (Go, Python, Rust), GPG, Pass, etc.
+
+This is a **monorepo** containing configurations for multiple independent tools, not a single application.
+
+## Repository Structure
+
+```
+oh-my-workspace/
+├── emacs/           # Emacs configuration (lisp/, init.el, setup.sh)
+├── vim/             # Vim configuration (vimrc, setup.sh)
+├── zsh/             # Zsh configuration (zshrc, aliases, functions)
+├── README.md        # Comprehensive setup guide for all tools
+└── CLAUDE.md        # This file (AI assistant guidance)
+```
 
 ## Setup Commands
 
 ```bash
-# Emacs configuration
-./emacs/setup.sh    # Creates symlink ~/.emacs -> emacs/init.el
+# Emacs configuration (creates ~/.emacs symlink)
+./emacs/setup.sh
 
-# Vim configuration
-./vim/setup.sh      # Creates symlink ~/.vimrc -> vim/vimrc
+# Vim configuration (creates ~/.vimrc symlink)
+./vim/setup.sh
+
+# Zsh configuration is managed separately (source ~/.zshrc from this repo)
 ```
+
+Each setup script:
+1. Creates symbolic links to configuration files
+2. Displays dependency installation guides
+3. Validates environment setup
+
+## Common Development Commands
+
+### Emacs
+| Command | Function |
+|---------|----------|
+| `M-x config-dependency-validate` | Verify external dependencies (LSP servers, tools) |
+| `M-x cleanup-config-timers` | Clean up configuration timers |
+| `C-c p p` | Switch project (Projectile) |
+| `C-c p f` | Find file in project |
+| `C-x b` | Switch buffer (Vertico) |
+| `C-s` | Search in buffer (Consult) |
+
+### Zsh
+| Command | Function |
+|---------|----------|
+| `menu` | Browse command history with fzf |
+| `j` | Autojump to frequently visited directories |
+| `gcd` | Go to git repository root |
 
 ## Quick Start
 
-### First-time Installation
+### First-time Emacs Setup
+
 ```bash
 cd ~/oh-my-workspace/emacs
 ./setup.sh
-```
-
-### Verify Installation
-```bash
-# Start Emacs
 emacs
 
 # Inside Emacs, verify dependencies
 M-x config-dependency-validate
 ```
 
-### Common Commands
+### Verify Installation
 
-| Command | Function |
-|---------|----------|
-| `M-x config-dependency-validate` | Verify external dependencies |
-| `M-x cleanup-config-timers` | Clean up configuration timers |
-| `M-x describe-variable` | Show variable documentation |
-| `C-c p p` | Switch project (Projectile) |
-| `C-c p f` | Find file in project |
-| `C-c p b` | Switch project buffer |
-| `C-x b` | Switch buffer (Vertico) |
-| `C-s` | Search in buffer (Consult) |
+```bash
+# Test Emacs config loads without errors
+emacs --debug-init
+
+# Inside Emacs, run dependency validation
+M-x config-dependency-validate
+```
 
 ## Emacs Configuration Architecture
 
-The Emacs configuration is modular and loads in a specific order defined in `emacs/init.el`:
-
-### Directory Structure
-
-```
-emacs/
-├── init.el              # Entry point, early init, module loading
-├── custom_settings.el   # User-specific settings (git-ignored)
-├── lisp/
-│   ├── init-packages.el # Package management (straight.el)
-│   ├── init-funcs.el    # Utilities, timer system, validation
-│   ├── init-base.el     # Core settings, GC management
-│   ├── init-env.el      # Environment, proxy, macOS settings
-│   ├── init-fonts.el    # Font configuration
-│   ├── init-ui.el       # Theme, modeline, tabs, dashboard
-│   ├── init-completion.el # Vertico, Corfu, Consult, etc.
-│   ├── init-editing.el  # Editing enhancements
-│   ├── init-dired.el    # File manager
-│   ├── init-projects.el # Projectile
-│   ├── tools/           # External tool integration
-│   │   ├── init-vc.el       # Magit
-│   │   ├── init-terminal.el # Vterm
-│   │   ├── init-ai.el       # Claude Code IDE
-│   │   └── init-auth.el     # Auth-source
-│   └── lang/            # Language support
-│       ├── init-prog.el     # Base programming mode
-│       ├── init-python.el   # Python + LSP
-│       ├── init-go.el       # Go + LSP
-│       └── ...              # Other languages
-```
+The Emacs configuration (`emacs/`) is modular with a specific loading order defined in `init.el`:
 
 ### Module Loading Order
 
-1. **Core**: `init-packages` → `init-funcs` → `init-base` → `init-env`
+1. **Core**: `init-packages` → `init-funcs` → `init-base`
 2. **UI**: `init-fonts` → `init-ui`
 3. **Editor**: `init-completion` → `init-editing` → `init-dired` → `init-projects`
 4. **Tools**: `init-vc` → `init-terminal` → `init-ai` → `init-auth`
-5. **Languages**: `init-prog` → language-specific modules
+5. **Languages**: `init-prog` → language-specific modules (Python, Go, C/C++, etc.)
 
-### Key Patterns
+### Key Architecture Patterns
 
-- **Dependencies**: All modules `require 'init-funcs` for utilities
-- **Validation**: `M-x config-dependency-validate` checks external dependencies
-- **Timer System**: `run-config-timer` defers initialization for faster startup
-- **Package Management**: Uses `straight.el` with `use-package` macros
-- **Emacs Version**: Requires Emacs 30.2+
+- **Dependency Injection**: All modules `require 'init-funcs` for utilities
+- **Validation System**: `config-dependency-validate` checks external tools via registered validators
+- **Timer Management**: `run-config-timer` defers expensive operations for faster startup
+- **Package Management**: Uses `straight.el` with `use-package` macros for package management
+- **Advisable System**: Many hooks use `advice-add` for extension rather than redefinition
 
 ### Adding New Modules
 
-1. Create file in appropriate location (`lisp/`, `lisp/tools/`, or `lisp/lang/`)
+1. Create file in appropriate location:
+   - `lisp/` - Core editor features
+   - `lisp/tools/` - External tool integrations
+   - `lisp/lang/` - Language-specific configurations
 2. Add `(require 'init-funcs)` if using utilities
-3. Add `(provide 'init-module-name)` at end
-4. Add `(require 'init-module-name)` in `init.el` at correct position
+3. Add `(provide 'module-name)` at end
+4. Add `(require 'module-name)` in `init.el` at correct position based on loading order
+
+### Customization
+
+User-specific settings go in `emacs/custom_settings.el` (git-ignored). This file is automatically created on first run and can override any defcustom variable.
+
+## Vim Configuration
+
+The Vim configuration (`vim/`) is managed through `vimrc` with:
+- Plugin management via vim-plug
+- Custom color schemes and themes
+- NERDTree for file navigation
+- FZF for fuzzy finding
+- Custom keybindings for productivity
+
+## Zsh Configuration
+
+The Zsh configuration is spread across:
+- `zsh/zshrc` - Main configuration file
+- `zsh/aliases` - Command aliases
+- `zsh/functions` - Custom functions
+- `zsh/completions` - Custom completions
+
+Key features:
+- **fzf integration**: Menu-based command history browsing
+- **autojump**: Directory jumping based on frequency
+- **zsh-autosuggestions**: Command suggestions based on history
+- **syntax-highlighting**: Real-time syntax highlighting as you type
+- **zsh-completions**: Enhanced completions for various commands
 
 ## External Dependencies
 
@@ -130,6 +169,13 @@ M-x config-dependency-validate
 | Dockerfile | docker-langserver | npm install -g dockerfile-language-server-nodejs |
 | CMake | cmake-language-server | pip install cmake-language-server |
 
+### Formatters (P1 - Development)
+| Language | Formatter | Install |
+|----------|-----------|---------|
+| Python | black | pip install black |
+| Go | gofumpt | go install mvdan.cc/gofumpt@latest |
+| C/C++ | clang-format | Xcode Command Line Tools |
+
 ### Auxiliary Tools (P2 - Optional)
 | Tool | Purpose | Install |
 |------|---------|---------|
@@ -138,13 +184,6 @@ M-x config-dependency-validate
 | pandoc | Document conversion | brew install pandoc |
 | marksman | Markdown LSP | brew install marksman |
 | libvterm | Emacs vterm dependency | brew install libvterm |
-
-### Formatters (P1 - Development)
-| Language | Formatter | Install |
-|----------|-----------|---------|
-| Python | black | pip install black |
-| Go | gofumpt | go install mvdan.cc/gofumpt@latest |
-| C/C++ | clang-format | Xcode Command Line Tools |
 
 ### Fonts
 Run `M-x nerd-icons-install-fonts` after setup to install icon fonts.
@@ -164,7 +203,6 @@ M-x config-dependency-validate
 ### Slow Emacs Startup
 1. Check for byte-compile cache issues
    ```bash
-   # Remove old byte-compiled files
    rm -rf ~/.emacs.d/eln-cache/
    ```
 2. Run dependency validation
@@ -173,8 +211,7 @@ M-x config-dependency-validate
    ```
 3. Review startup logs
    ```bash
-   # View *Messages* buffer
-   C-h e
+   C-h e  ; View *Messages* buffer
    ```
 
 ### Package Installation Fails
@@ -206,12 +243,28 @@ M-x config-dependency-validate
    C-h b  ; Switch to *eglot-events* buffer
    ```
 
-### centaur-tabs Not Showing in Some Buffers
-1. Check if buffer is explicitly hidden
-   ```bash
-   C-h v centaur-tabs-hide-predicates RET
-   ```
-2. Force refresh tabs
-   ```bash
-   M-x centaur-tabs-local-mode
-   ```
+## Git Workflow
+
+### Commit Messages
+Follow conventional commit format:
+```
+<type>: <description>
+
+<optional body>
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+```
+
+Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`, `style`
+
+### Branches
+- **master** - Main development branch
+- Feature branches are typically created for specific tool improvements
+
+## Important Notes
+
+- **Multi-tool repository**: This is NOT a single application but configurations for multiple independent tools
+- **macOS-focused**: Most configurations assume macOS as the primary OS
+- **Symlink-based setup**: Configuration files are symlinked rather than copied for easier updates
+- **Validation-driven**: Use `M-x config-dependency-validate` to check if all required tools are installed
+- **Emacs-centric**: The Emacs configuration is the most complex and has the most extensive validation system
