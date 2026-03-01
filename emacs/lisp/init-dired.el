@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 15:55:57 Sunday by zhengyu.li>
+;; Time-stamp: <2026-03-01 21:59:48 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -28,11 +28,10 @@
 
 ;;; Code:
 
-(require 'init-funcs)
-
 ;; ==================================================================================
 ;; Dired-filter - dired filtering utilities
 (use-package dired-filter
+  :ensure t
   :defer t
   :config
   (setq dired-filter-stack '()))

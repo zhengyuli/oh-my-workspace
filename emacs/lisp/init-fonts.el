@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 16:28:32 Sunday by zhengyu.li>
+;; Time-stamp: <2026-03-01 19:09:50 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -27,8 +27,6 @@
 ;; Font configuration: default fonts, Chinese fallback, textsize.
 
 ;;; Code:
-
-(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Font family definitions (customizable)
@@ -112,25 +110,13 @@ First available font will be used."
                (or var-font "N/A")
                (or cjk-font "N/A")))))
 
-;; ==================================================================================
-;; Initialize fonts (GUI only, deferred for faster startup)
-(defvar emacs-fonts-initialized nil
-  "Flag to track if fonts have been initialized.")
-
-(defun emacs-setup-fonts-deferred ()
-  "Setup fonts after a short idle delay for faster startup."
-  (when (and (display-graphic-p)
-             (not emacs-fonts-initialized))
-    (setq emacs-fonts-initialized t)
-    (emacs-setup-fonts)))
-
-(add-hook 'window-setup-hook
-          (lambda ()
-            (run-with-idle-timer 0.5 nil #'emacs-setup-fonts-deferred)))
+(when (display-graphic-p)
+  (add-hook 'after-init-hook #'emacs-setup-fonts))
 
 ;; ==================================================================================
 ;; Textsize - automatic font sizing based on screen resolution (GUI only)
 (use-package textsize
+  :ensure t
   :when (display-graphic-p)
   :defer t
   :hook (after-init . textsize-mode)

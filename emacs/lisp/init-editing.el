@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-21 21:32:55 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 21:57:43 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -28,8 +28,6 @@
 ;; multiple-cursors, smart copy/kill, etc.
 
 ;;; Code:
-
-(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Buffer utilities
@@ -87,107 +85,51 @@
       (read-only-mode -1)
     (read-only-mode 1)))
 
+(defun smart-kill-buffer ()
+  "Smart buffer close: kill modified file buffers with prompt, kill others directly.
+If buffer has unsaved changes and is associated with a file, prompt to save.
+Otherwise kill the buffer directly."
+  (interactive)
+  (if (and buffer-file-name (buffer-modified-p))
+      (if (yes-or-no-p (format "Buffer %s has unsaved changes. Save before killing? "
+                               (buffer-name)))
+          (progn (save-buffer) (kill-current-buffer))
+        (kill-current-buffer))
+    (kill-current-buffer)))
+
+;; Set key binding directly (not in after-init-hook)
+(global-set-key (kbd "C-x k") #'smart-kill-buffer)
+
 ;; ==================================================================================
 ;; Vundo - visual undo tree (replaces undo-tree)
 (use-package vundo
-  :bind ("M-_" . vundo)
-  :config
-  (setq vundo-compact-display t))
-
-;; ==================================================================================
-;; Move text
-(use-package move-text
-  :defer t)
+  :ensure t
+  :defer t
+  :bind ("M-_" . vundo))
 
 ;; ==================================================================================
 ;; Expand region
 (use-package expand-region
+  :ensure t
   :defer t)
-
-;; ==================================================================================
-;; Multiple cursors
-(use-package multiple-cursors
-  :defer t)
-
-;; ==================================================================================
-;; Visual regexp steroids - enhanced visual regexp replacement
-(use-package visual-regexp-steroids
-  :defer t
-  :bind (("C-c r" . vr/replace)
-         ("C-c q" . vr/query-replace)
-         ("C-c m" . vr/mc-mark)
-         :map vr/minibuffer-keymap
-         ("C-p" . previous-history-element)
-         ("C-n" . next-history-element)))
 
 ;; ==================================================================================
 ;; Browse kill ring
 (use-package browse-kill-ring
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Goto last change
 (use-package goto-chg
+  :ensure t
   :defer t)
-
-;; ==================================================================================
-;; Goto line preview
-(use-package goto-line-preview
-  :defer t)
-
-;; ==================================================================================
-;; Flyspell - spell checking
-;; Default to aspell (works out of the box), hunspell requires extra dictionary config
-(use-package flyspell
-  :ensure nil  ; Built-in package
-  :defer t
-  :config
-  ;; Choose spell checker: aspell (default) > hunspell > ispell
-  ;; hunspell requires dictionary files, aspell works out of the box
-  (cond
-   ;; Prefer aspell (more common, no extra config needed)
-   ((executable-find "aspell")
-    (setq ispell-program-name "aspell"
-          ispell-dictionary "american"
-          ispell-extra-args '("--sug-mode=ultra" "--run-together")))
-   ;; hunspell requires dictionary path configuration
-   ((executable-find "hunspell")
-    (setq ispell-program-name "hunspell"
-          ispell-dictionary "en_US"
-          ;; macOS Homebrew hunspell dictionary path
-          ispell-hunspell-dictionary-alist
-          '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
-    ;; Set dictionary path if it exists
-    (let ((dict-path (expand-file-name "~/Library/Spelling")))
-      (when (file-directory-p dict-path)
-        (setenv "DICPATH" dict-path))))
-   (t
-    (setq ispell-program-name "ispell")))
-
-  (setq ispell-personal-dictionary "~/.emacs.d/ispell-personal-dict"
-        flyspell-issue-message-flag nil     ; Disable message output
-        flyspell-mark-duplications-flag t   ; Mark duplicate words
-        flyspell-delay 0.5)                 ; Check delay
-
-  ;; Create personal dictionary file if not exists
-  (unless (file-exists-p ispell-personal-dictionary)
-    (make-directory (file-name-directory ispell-personal-dictionary) t)
-    (write-region "" nil ispell-personal-dictionary))
-
-  ;; Key unbindings (avoid conflict with other key bindings)
-  (lazy-unset-key '("C-," "C-." "C-;") flyspell-mode-map))
-
-;; ==================================================================================
-;; Flyspell correct
-(use-package flyspell-correct
-  :defer t
-  :config
-  (require 'flyspell-correct-avy-menu))
 
 ;; ==================================================================================
 ;; Auto insert
 (use-package autoinsert
   :ensure nil  ; Built-in package
+  :defer t
   :hook (after-init . auto-insert-mode)
   :config
   (defun define-auto-insert-custom (condition action)
@@ -238,92 +180,19 @@
     ["template.org" autoinsert-yas-expand]))
 
 ;; ==================================================================================
-;; Smart kill buffer - close saved buffers directly, ask for modified ones
-(defun smart-kill-buffer ()
-  "Smart buffer close: kill modified file buffers with prompt, kill others directly.
-If buffer has unsaved changes and is associated with a file, prompt to save.
-Otherwise kill the buffer directly."
-  (interactive)
-  (if (and buffer-file-name (buffer-modified-p))
-      (if (yes-or-no-p (format "Buffer %s has unsaved changes. Save before killing? "
-                               (buffer-name)))
-          (progn (save-buffer) (kill-current-buffer))
-        (kill-current-buffer))
-    (kill-current-buffer)))
-
-;; Set key binding directly (not in after-init-hook)
-(global-set-key (kbd "C-x k") #'smart-kill-buffer)
-
-;; ==================================================================================
-;; Text scale aliases
-(defalias 'increase-text 'text-scale-increase)
-(defalias 'decrease-text 'text-scale-decrease)
-
-;; ==================================================================================
-;; Switch window - label windows with letters for quick switching
-(use-package switch-window
-  :defer t
-  :config
-  (setq switch-window-shortcut-style 'qwerty  ; Use QWERTY key layout
-        switch-window-timeout 5               ; Auto-cancel after 5 seconds
-        switch-window-threshold 3))            ; Enable labels only with 3+ windows
-
-;; ==================================================================================
-;; Global editing keybindings
-(add-hook 'after-init-hook
-          (lambda ()
-            (lazy-set-key
-             '(;; Undo (explicit binding to prevent override)
-               ("C-/" . undo)
-               ;; Smart edit
-               ("C-x TAB" . smart-indent-region)
-               ("M-w" . smart-copy-region)
-               ("M-k" . smart-kill-region)
-               ;; Expand region
-               ("M-M" . er/expand-region)
-               ;; Move text
-               ("C-S-p" . move-text-up)
-               ("C-S-n" . move-text-down)
-               ;; Multi cursors
-               ("C-x m" . set-rectangular-region-anchor)
-               ("C-x M" . mc/mark-all-dwim)
-               ;; Browse kill ring
-               ("M-Y" . browse-kill-ring)
-               ;; Goto last change
-               ("M-o" . goto-last-change)
-               ;; Flyspell correct
-               ("C-: c" . flyspell-correct-wrapper)
-               ("C-: p" . flyspell-correct-previous)
-               ("C-: n" . flyspell-correct-next)
-               ;; Switch window
-               ("C-x o" . switch-window)
-               ;; Scale text
-               ("C-x =" . text-scale-increase)
-               ("C-x _" . text-scale-decrease)
-               ("C-x +" . text-scale-increase)
-               ("C-x -" . text-scale-decrease)))))
-
-;; ==================================================================================
-;; Spell Tools Validation
-;; Spell checking tools validation
-(defvar required-spell-tools
-  '((aspell . "brew install aspell")
-    (hunspell . "brew install hunspell"))
-  "List of spell checking tools.
-Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
-
-(config-dependency-register
- 'spell-tools
- (lambda () (config-dependency-validate-executables required-spell-tools)))
-
-;; ==================================================================================
-;; Text mode hook (merged from init-text.el)
-(add-hook 'text-mode-hook
-          (lambda ()
-            ;; Enable visual line mode
-            (visual-line-mode 1)
-            ;; Enable flyspell mode
-            (flyspell-mode 1)))
+(lazy-set-key
+ '(;; Undo (explicit binding to prevent override)
+   ("C-/" . undo)
+   ;; Smart edit
+   ("C-x TAB" . smart-indent-region)
+   ("M-w" . smart-copy-region)
+   ("M-k" . smart-kill-region)
+   ;; Expand region
+   ("M-M" . er/expand-region)
+   ;; Browse kill ring
+   ("M-Y" . browse-kill-ring)
+   ;; Goto last change
+   ("M-o" . goto-last-change)))
 
 ;; ==================================================================================
 ;;; Provide features

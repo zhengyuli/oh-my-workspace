@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 16:46:27 Sunday by zhengyu.li>
+;; Time-stamp: <2026-03-01 19:42:01 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -36,48 +36,39 @@
 
 ;;; Code:
 
-(require 'init-funcs)
-
-;; ==================================================================================
-;; Frame UI suppression (avoid startup flicker)
-;; These should be called before the first frame is displayed
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-
 ;; ==================================================================================
 ;; Smooth scrolling - use built-in pixel-scroll-precision-mode (Emacs 29+)
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (when (and (display-graphic-p)
-                       (fboundp 'pixel-scroll-precision-mode))
-              (pixel-scroll-precision-mode 1))))
+(when (and (display-graphic-p)
+           (fboundp 'pixel-scroll-precision-mode))
+  (add-hook 'emacs-startup-hook #'pixel-scroll-precision-mode))
 
 ;; ==================================================================================
 ;; Emojify - enable only in specific modes
 (use-package emojify
+  :ensure t
   :defer t
   :hook ((org-mode . emojify-mode)
          (markdown-mode . emojify-mode)
          (text-mode . emojify-mode)))
 
 ;; ==================================================================================
-;; Nerd-icons - unified icon system (deferred)
+;; Nerd-icons - unified icon system
 (use-package nerd-icons
+  :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;; Theme - doom-themes
 (use-package doom-themes
+  :ensure t
   :demand t
   :config
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
   (load-theme 'doom-xcode t))
 
 ;; ==================================================================================
 ;; Modeline - doom-modeline
 (use-package doom-modeline
+  :ensure t
   :defer t
   :hook (after-init . doom-modeline-mode)
   :config
@@ -86,43 +77,14 @@
 ;; ==================================================================================
 ;; Visual highlights - pulsar (cursor highlighting)
 (use-package pulsar
+  :ensure t
   :defer t
-  :hook (after-init . pulsar-global-mode)
-  :config
-  (setq pulsar-pulse-functions '(recenter-top-bottom
-                                 move-to-window-line-top-bottom
-                                 reposition-window
-                                 bookmark-jump
-                                 other-window
-                                 delete-other-windows
-                                 forward-page
-                                 backward-page
-                                 scroll-up-command
-                                 scroll-down-command
-                                 windmove-right
-                                 windmove-left
-                                 windmove-up
-                                 windmove-down
-                                 tab-new
-                                 tab-close
-                                 tab-next
-                                 tab-previous)
-        pulsar-delay 0.055))
+  :hook (after-init . pulsar-global-mode))
 
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
-;;
-;; Buffer grouping logic (default centaur-tabs behavior):
-;;   - Magit modes (magit-status-mode, magit-log-mode, etc.) -> "Magit"
-;;   - Terminal modes (vterm, shell, eshell) -> "Terminal"
-;;   - Programming modes (python, go, c/c++, elisp) -> project-based groups
-;;   - Special modes (dashboard, org) -> individual groups
-;;
-;; Note: To customize grouping behavior, use advice-add on
-;;       centaur-tabs-buffer-groups rather than redefining it.
-;; ==================================================================================
-;; Tabs - centaur-tabs
 (use-package centaur-tabs
+  :ensure t
   :defer t
   :hook (after-init . centaur-tabs-mode)
   :bind
@@ -153,18 +115,15 @@
         centaur-tabs-set-icons nil
         centaur-tabs-gray-out-icons 'buffer
         centaur-tabs-show-count t
-        centaur-tabs-cycle-scope 'tabs)
-
-  (centaur-tabs-mode 1))
+        centaur-tabs-cycle-scope 'tabs))
 
 ;; ==================================================================================
 ;; Winum - window numbers
 (use-package winum
+  :ensure t
   :defer t
   :hook (after-init . winum-mode)
   :config
-  (setq winum-auto-setup-mode-line t
-        winum-format " %s ")
   (dotimes (i 9)
     (global-set-key (kbd (format "M-%d" (1+ i)))
                     (intern (format "winum-select-window-%d" (1+ i))))))
@@ -182,6 +141,7 @@ Returns nil in terminal mode (uses official banner instead)."
 
 ;; Dashboard package
 (use-package dashboard
+  :ensure t
   :defer t
   :hook (after-init . dashboard-open)
   :config

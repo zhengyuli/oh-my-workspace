@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 16:57:14 Sunday by zhengyu.li>
+;; Time-stamp: <2026-03-01 21:42:35 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -28,242 +28,92 @@
 
 ;;; Code:
 
-(require 'init-funcs)
-
-;; ==================================================================================
-;; Which-key - key hints, deferred loading for faster startup
-(use-package which-key
-  :defer t
-  :hook (after-init . which-key-mode)
-  :config
-  (setq which-key-idle-delay 0.5                 ; Show hints 0.5s after keystroke
-        which-key-idle-secondary-delay 0.05      ; Subsequent hint delay
-        which-key-sort-order 'which-key-key-order-alpha  ; Sort alphabetically
-        which-key-show-remaining-keys t)          ; Show remaining keys
-  (which-key-setup-side-window-right))
-
-;; ==================================================================================
-;; Vertico - vertical completion UI
-(use-package vertico
-  :defer t
-  :hook (after-init . vertico-mode)
-  :config
-  (setq vertico-cycle t
-        vertico-count 15
-        vertico-resize t
-        vertico-scroll-margin 4))
-
 ;; ==================================================================================
 ;; Orderless - fuzzy matching
 (use-package orderless
-  :after vertico
-  :config
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+  :ensure t
+  :demand t)
 
 ;; ==================================================================================
 ;; Marginalia - completion annotations
 (use-package marginalia
-  :after vertico
-  :config
-  (setq marginalia-annotators '(marginalia-annotators-heavy  ; Detailed annotations
-                                marginalia-annotators-light) ; Lightweight annotations
-        marginalia-align-offset 15)            ; Alignment offset
-  (marginalia-mode 1))
+  :ensure t
+  :defer t
+  :hook (after-init . marginalia-mode))
 
 ;; ==================================================================================
-;; Consult - enhanced commands
-(use-package consult
+;; Vertico - vertical completion UI
+(use-package vertico
+  :ensure t
   :defer t
-  :bind
-  (;; Search
-   ("C-s" . consult-line)
-   ("C-r" . isearch-backward)             ; Backward search
-   ;; Buffer and file navigation
-   ("C-x b" . consult-buffer)
-   ("C-x B" . consult-recent-file)
-   ;; Help commands - use built-in apropos
-   ("C-h f" . apropos-command)
-   ;; Yank
-   ("M-y" . consult-yank-pop)
-   ;; Goto line
-   ("M-g g" . consult-goto-line)
-   ("M-g M-g" . consult-goto-line)
-   ;; Search in project
-   ("C-x g" . consult-grep)
-   ("C-x G" . consult-git-grep)
-   ("C-x f" . consult-find)
-   ("C-x F" . consult-locate))
-  :config
-  (setq consult-line-numbers-widen t
-        consult-async-min-input 2
-        consult-async-refresh-delay 0.15
-        consult-async-input-throttle 0.2
-        consult-preview-key 'any))
+  :hook (after-init . vertico-mode))
 
 ;; ==================================================================================
 ;; Embark - context actions
 (use-package embark
-  :defer t
-  :config
-  (setq embark-prompter 'embark-keymap-prompter    ; Use keymap prompter
-        embark-cycle-key nil                       ; Disable cycle key
-        embark-help-key "C-h")                      ; Help key
-  :bind
-  (;; Context actions
-   ("C-." . embark-act)
-   ("C-," . embark-dwim)
-   ("C-h B" . embark-bindings)))
+  :ensure t
+  :defer t)
 
+;; ==================================================================================
+;; Consult - enhanced commands
+(use-package consult
+  :ensure t
+  :defer t)
 
 ;; ==================================================================================
 ;; Embark-consult - Embark and Consult integration
 (use-package embark-consult
+  :ensure t
+  :defer t
   :after (embark consult)
   :hook
-  (embark-collect-mode . embark-consult-preview-minor-mode))
-
-;; ==================================================================================
-;; Consult-projectile - project integration
-(use-package consult-projectile
-  :after (consult projectile)
-  :bind
-  (:map projectile-command-map
-        ("f" . consult-projectile-find-file)
-        ("b" . consult-projectile-switch-project-buffer)))
-
-;; ==================================================================================
-;; Prescient - smart sorting
-(use-package prescient
+  (embark-collect-mode . consult-preview-at-point-mode)
   :config
-  (prescient-persist-mode))
-
-(use-package vertico-prescient
-  :after (vertico prescient)
-  :config
-  (vertico-prescient-mode))
+  (setq embark-collect-use-consult-preview t))
 
 ;; ==================================================================================
 ;; Corfu - completion framework
 (use-package corfu
+  :ensure t
+  :defer t
+  :hook ((after-init . global-corfu-mode)
+         (corfu-mode . corfu-popupinfo-mode))
   :config
-  (setq corfu-cycle t                      ; Cycle through candidates
-        corfu-auto t                       ; Auto completion
-        corfu-auto-delay 0.2               ; Trigger 0.2s after input to avoid lag
-        corfu-auto-prefix 2                ; At least 2 characters to trigger completion
-        corfu-min-width 40                 ; Popup minimum width
-        corfu-max-width 80                 ; Popup maximum width
-        corfu-count 12                     ; Show 12 candidates
-        corfu-scroll-margin 4              ; Scroll margin
-        corfu-echo-documentation 0.25)      ; Show documentation after 0.25s
-  (global-corfu-mode))
-
-;; Corfu terminal support
-(use-package corfu-terminal
-  :after corfu
-  :config
-  (unless (display-graphic-p)
-    (corfu-terminal-mode)))
-
-;; Corfu prescient integration
-(use-package corfu-prescient
-  :after (corfu prescient)
-  :config
-  (corfu-prescient-mode))
+  (setq corfu-auto t))
 
 ;; ==================================================================================
-;; Cape - completion backends
-;; Order matters: file > keyword > dabbrev > line
 (use-package cape
+  :ensure t
+  :defer t
   :after corfu
+  :hook
+  (prog-mode . my/cape-setup)
   :config
-  ;; Set completion backend order (highest to lowest priority)
-  (setq completion-at-point-functions
-        (list #'cape-file           ; File path completion (fastest)
-              #'cape-keyword        ; Keyword completion
-              #'cape-dabbrev        ; Dynamic abbreviation completion
-              #'cape-line)))        ; Line completion
+  (defun my/cape-setup ()
+    (add-to-list 'completion-at-point-functions #'cape-file t)
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
+    (add-to-list 'completion-at-point-functions #'cape-symbol t)))
 
 ;; ==================================================================================
-;; Yasnippet - deferred loading
 (use-package yasnippet
+  :ensure t
   :defer t
   :hook ((prog-mode . yas-minor-mode)
-         (org-mode . yas-minor-mode)
-         (markdown-mode . yas-minor-mode))
+         (text-mode . yas-minor-mode))
   :config
-  ;; Key unbindings
-  (lazy-unset-key '("<tab>" "TAB") yas-minor-mode-map))
+  ;; Prevent TAB conflicts with Corfu
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+
+  ;; Modern snippet behavior
+  (setq yas-triggers-in-field t
+        yas-verbosity 1))
 
 (use-package yasnippet-snippets
-  :after yasnippet)
-
-;; ==================================================================================
-;; Wgrep - writable grep
-(use-package wgrep
+  :ensure t
   :defer t
-  :config
-  (setq wgrep-enable-key "r"
-        wgrep-auto-save-buffer t))
-
-(use-package wgrep-ag
-  :defer t
-  :after (ag wgrep)
-  :config
-  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
-
-;; ==================================================================================
-;; Ag - The Silver Searcher (retained for wgrep integration)
-(use-package ag
-  :commands (ag ag-project ag-dired-regexp)
-  :config
-  (setq ag-reuse-buffers t)
-  ;; Advice for selecting window after next-error - check before adding to prevent accumulation
-  (defun ag-next-error-function-after (&rest _)
-    "Select ag buffer window after next-error."
-    (select-window
-     (get-buffer-window (ag/buffer-name "" "" ""))))
-
-  ;; Only add advice if not already present (prevents accumulation on config reload)
-  (unless (advice-member-p #'ag-next-error-function-after 'ag/next-error-function)
-    (advice-add 'ag/next-error-function :after #'ag-next-error-function-after))
-
-  (add-hook 'ag-search-finished-hook
-            (lambda ()
-              (select-window
-               (get-buffer-window (ag/buffer-name "" "" ""))))))
-
-;; ==================================================================================
-;; Avy - fast jumping
-(use-package avy
-  :defer t
-  :config
-  (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p)
-        avy-background t                      ; Background mode, dim non-targets
-        avy-all-windows nil                   ; Current window only
-        avy-timeout-seconds 0.3               ; Timeout
-        avy-style 'pre))                       ; Label style
-
-;; ==================================================================================
-;; Nerd-icons for completion
-(use-package nerd-icons-corfu
-  :after (corfu nerd-icons)
-  :config
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-;; ==================================================================================
-;; Search tools validation
-(defvar required-search-tools
-  '((rg . "brew install ripgrep")
-    (ag . "brew install the_silver_searcher"))
-  "List of required search tools.
-Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
-
-(config-dependency-register
- 'search-tools
- (lambda () (config-dependency-validate-executables required-search-tools)))
-
+  :after yasnippet
+  :hook (yas-minor-mode . yasnippet-snippets-initialize))
 ;; ==================================================================================
 ;;; Provide features
 (provide 'init-completion)
