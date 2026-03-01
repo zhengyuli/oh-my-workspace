@@ -39,13 +39,11 @@
   (vterm-scroll-enable-emacs-bar t)      ; Emacs-style scrollbar
   (vterm-kill-buffer-on-exit t)          ; Kill buffer on exit
   (vterm-enable-manipulate-selection-data t) ; Allow selection manipulation
+  :bind
+  (:map vterm-mode-map
+        ("C-g" . vterm--self-insert)
+        ("M-<backspace>" . vterm-send-meta-backspace))
   :config
-  ;; Key bindings
-  (lazy-set-key
-   '(("C-g" . vterm--self-insert)
-     ("M-<backspace>" . vterm-send-meta-backspace))
-   vterm-mode-map)
-
   ;; Hooks
   (add-hook 'vterm-mode-hook
             (lambda ()

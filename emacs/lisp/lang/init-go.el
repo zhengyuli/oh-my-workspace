@@ -36,10 +36,15 @@
 (use-package go-mode
   :defer t
   :hook (go-mode . go-mode-setup)
+  :custom
+  (gofmt-command "gofumpt")
+  :bind
+  (:map go-mode-map
+        ("C-c C-j" . go-goto-imports)
+        ("C-c C-k" . godoc)
+        ("C-c C-a" . go-import-add)
+        ("C-c C-r" . go-remove-unused-imports))
   :config
-  ;; Globally set gofmt command
-  (setq gofmt-command "gofumpt")
-
   (defun go-mode-setup ()
     "Setup Go mode environment."
     ;; Load golang related envs (macOS)
@@ -49,20 +54,6 @@
       (exec-path-from-shell-copy-env "GOPATH"))
     ;; Auto format on save
     (add-hook 'before-save-hook #'gofmt-before-save nil t)))
-
-;; ==================================================================================
-;; Go mode keybindings
-;; Note: M-. and M-, already bound in prog-mode-map to xref-find-definitions/xref-pop-marker-stack
-;; Navigation via eglot + gopls, no need for godef
-(with-eval-after-load 'go-mode
-  (lazy-set-key
-   '(;; Go specific navigation
-     ("C-c C-j" . go-goto-imports)
-     ("C-c C-k" . godoc)
-     ;; Import management
-     ("C-c C-a" . go-import-add)
-     ("C-c C-r" . go-remove-unused-imports))
-   go-mode-map))
 
 ;; ==================================================================================
 ;; Go Tools Validation

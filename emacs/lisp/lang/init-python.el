@@ -237,13 +237,15 @@ Package names are validated and properly shell-quoted to prevent injection."
 
 ;; ==================================================================================
 ;; Python mode keybindings
-(with-eval-after-load 'python
-  (setq python-indent-guess-indent-offset-verbose nil
-        python-indent-offset 4)
-  ;; C-c C-c already bound in prog-mode-map, no need to repeat
-  (lazy-set-key
-   '(("C-c d f" . sphinx-doc-format))
-   python-mode-map))
+(use-package python
+  :ensure nil
+  :defer t
+  :custom
+  (python-indent-guess-indent-offset-verbose nil)
+  (python-indent-offset 4)
+  :bind
+  (:map python-mode-map
+        ("C-c d f" . sphinx-doc-format)))
 
 ;; ==================================================================================
 ;; Python Tools Validation

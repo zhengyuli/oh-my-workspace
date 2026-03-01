@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-21 21:32:00 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 12:34:14 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -33,17 +33,14 @@
 ;; ==================================================================================
 ;; Which-key - key hints, deferred loading for faster startup
 (use-package which-key
-  :defer t
   :custom
   (which-key-idle-delay 0.5)                 ; Show hints 0.5s after keystroke
   (which-key-idle-secondary-delay 0.05)      ; Subsequent hint delay
   (which-key-sort-order 'which-key-key-order-alpha)  ; Sort alphabetically
   (which-key-show-remaining-keys t)          ; Show remaining keys
-  :init
-  ;; which-key-mode is autoloaded, so calling it triggers package loading
-  (run-config-timer 2 nil #'which-key-mode)
   :config
-  (which-key-setup-side-window-right))
+  (which-key-setup-side-window-right)
+  (which-key-mode))
 
 ;; ==================================================================================
 ;; Vertico - vertical completion UI
@@ -137,10 +134,10 @@
 ;; Consult-projectile - project integration
 (use-package consult-projectile
   :after (consult projectile)
-  :config
-  (with-eval-after-load 'projectile
-    (bind-key "f" #'consult-projectile-find-file projectile-command-map)
-    (bind-key "b" #'consult-projectile-switch-project-buffer projectile-command-map)))
+  :bind
+  (:map projectile-command-map
+        ("f" . consult-projectile-find-file)
+        ("b" . consult-projectile-switch-project-buffer)))
 
 ;; ==================================================================================
 ;; Prescient - smart sorting
@@ -210,12 +207,26 @@
   :after yasnippet)
 
 ;; ==================================================================================
+;; Wgrep - writable grep
+(use-package wgrep
+  :defer t
+  :custom
+  (wgrep-enable-key "r")
+  (wgrep-auto-save-buffer t))
+
+(use-package wgrep-ag
+  :defer t
+  :after (ag wgrep)
+  :config
+  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
+;; ==================================================================================
 ;; Ag - The Silver Searcher (retained for wgrep integration)
 (use-package ag
   :commands (ag ag-project ag-dired-regexp)
+  :custom
+  (ag-reuse-buffers t)
   :config
-  (require 'wgrep-ag)
-
   ;; Advice for selecting window after next-error - check before adding to prevent accumulation
   (defun ag-next-error-function-after (&rest _)
     "Select ag buffer window after next-error."
@@ -225,13 +236,6 @@
   ;; Only add advice if not already present (prevents accumulation on config reload)
   (unless (advice-member-p #'ag-next-error-function-after 'ag/next-error-function)
     (advice-add 'ag/next-error-function :after #'ag-next-error-function-after))
-
-  (setq ag-reuse-buffers t
-        wgrep-enable-key "r"
-        wgrep-auto-save-buffer t)
-
-  ;; Hooks
-  (add-hook 'ag-mode-hook 'wgrep-ag-setup)
 
   (add-hook 'ag-search-finished-hook
             (lambda ()

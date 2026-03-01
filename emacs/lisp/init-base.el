@@ -1,5 +1,5 @@
 ;;; init-base.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-28 17:09:16 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 12:26:21 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -144,17 +144,8 @@ Customize in `user-emacs-directory'/custom_settings.el:
 ;; Optimization: use -l instead of -i to avoid slow shell startup
 (use-package exec-path-from-shell
   :when (memq window-system '(mac ns))
-  :defer t)
-
-;; Initialize exec-path from shell (deferred)
-;; Note: Must be outside use-package :config because :defer t means :config
-;; only runs when the package is loaded. Without any autoload trigger,
-;; the package never loads and initialize is never called.
-(when (memq window-system '(mac ns))
-  (run-config-timer 1 nil
-    (lambda ()
-      (require 'exec-path-from-shell)
-      (exec-path-from-shell-initialize))))
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; ==================================================================================
 ;; Base configuration hooks

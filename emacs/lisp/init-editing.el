@@ -115,13 +115,10 @@
   :defer t
   :bind (("C-c r" . vr/replace)
          ("C-c q" . vr/query-replace)
-         ("C-c m" . vr/mc-mark))
-  :config
-  ;; Key bindings for `vr/minibuffer-keymap'
-  (lazy-set-key
-   '(("C-p" . previous-history-element)
-     ("C-n" . next-history-element))
-   vr/minibuffer-keymap))
+         ("C-c m" . vr/mc-mark)
+         :map vr/minibuffer-keymap
+         ("C-p" . previous-history-element)
+         ("C-n" . next-history-element)))
 
 ;; ==================================================================================
 ;; Browse kill ring

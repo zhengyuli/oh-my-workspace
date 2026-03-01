@@ -138,11 +138,9 @@
 (use-package format-all
   :defer t
   :hook (prog-mode . format-all-mode-maybe)
-  :config
-  ;; Manual format keybinding
-  (lazy-set-key
-   '(("C-c f" . format-all-buffer))
-   prog-mode-map))
+  :bind
+  (:map prog-mode-map
+        ("C-c f" . format-all-buffer)))
 
 ;; ==================================================================================
 ;; Devdocs
@@ -217,21 +215,22 @@
             (hs-minor-mode 1)))
 
 ;; Keybindings for prog-mode
-(with-eval-after-load 'prog-mode
-  (lazy-set-key
-   '(("<return>" . newline-and-indent)
-     ("RET" . newline-and-indent)
-     ("C-c M-a" . beginning-of-defun)
-     ("C-c M-e" . end-of-defun)
-     ("C-]" . jump-to-matched-paren)
-     ("C-c C-c" . comment-line)
-     ("M-r" . xref-find-references)
-     ("M-." . xref-find-definitions)
-     ("M-," . xref-pop-marker-stack)
-     ("C-x C-;" . quickrun)
-     ("C-h C-d" . devdocs-lookup)
-     ("C-h C-s" . devdocs-search))
-   prog-mode-map))
+(use-package prog-mode
+  :ensure nil
+  :bind
+  (:map prog-mode-map
+        ("<return>" . newline-and-indent)
+        ("RET" . newline-and-indent)
+        ("C-c M-a" . beginning-of-defun)
+        ("C-c M-e" . end-of-defun)
+        ("C-]" . jump-to-matched-paren)
+        ("C-c C-c" . comment-line)
+        ("M-r" . xref-find-references)
+        ("M-." . xref-find-definitions)
+        ("M-," . xref-pop-marker-stack)
+        ("C-x C-;" . quickrun)
+        ("C-h C-d" . devdocs-lookup)
+        ("C-h C-s" . devdocs-search)))
 
 ;; ==================================================================================
 ;; Before save hooks (mode-specific)
