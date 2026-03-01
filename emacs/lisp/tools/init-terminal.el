@@ -1,5 +1,5 @@
 ;;; init-terminal.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-21 21:33:12 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 23:03:31 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -27,8 +27,6 @@
 ;; Terminal configuration: vterm, multi-vterm.
 
 ;;; Code:
-
-(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Vterm - modern terminal emulator

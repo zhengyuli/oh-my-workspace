@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-27 14:00:00 Thursday by zhengyuli>
+;; Time-stamp: <2026-03-01 23:03:47 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,7 +29,6 @@
 
 ;;; Code:
 
-(require 'init-funcs)
 (require 'copyright)  ; For copyright-update in prog-before-save-hook
 
 ;; ==================================================================================

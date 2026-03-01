@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-21 21:48:36 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 23:04:12 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -27,8 +27,6 @@
 ;; Python mode configuration.
 
 ;;; Code:
-
-(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Python development packages

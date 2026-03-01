@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-16 19:22:15 Monday by zhengyuli>
+;; Time-stamp: <2026-03-01 23:04:04 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -28,8 +28,6 @@
 ;; Features: GFM support, code block editing, TOC generation, LSP via marksman.
 
 ;;; Code:
-
-(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Valign - table alignment display

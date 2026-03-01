@@ -1,5 +1,5 @@
 ;;; init-vc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-21 21:46:40 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 23:03:13 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -27,8 +27,6 @@
 ;; Version control configuration: magit, git utilities.
 
 ;;; Code:
-
-(require 'init-funcs)
 
 ;; ==================================================================================
 ;; Git utilities
