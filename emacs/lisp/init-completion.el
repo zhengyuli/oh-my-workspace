@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 12:34:14 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-01 16:57:14 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -33,60 +33,49 @@
 ;; ==================================================================================
 ;; Which-key - key hints, deferred loading for faster startup
 (use-package which-key
-  :custom
-  (which-key-idle-delay 0.5)                 ; Show hints 0.5s after keystroke
-  (which-key-idle-secondary-delay 0.05)      ; Subsequent hint delay
-  (which-key-sort-order 'which-key-key-order-alpha)  ; Sort alphabetically
-  (which-key-show-remaining-keys t)          ; Show remaining keys
+  :defer t
+  :hook (after-init . which-key-mode)
   :config
-  (which-key-setup-side-window-right)
-  (which-key-mode))
+  (setq which-key-idle-delay 0.5                 ; Show hints 0.5s after keystroke
+        which-key-idle-secondary-delay 0.05      ; Subsequent hint delay
+        which-key-sort-order 'which-key-key-order-alpha  ; Sort alphabetically
+        which-key-show-remaining-keys t)          ; Show remaining keys
+  (which-key-setup-side-window-right))
 
 ;; ==================================================================================
 ;; Vertico - vertical completion UI
 (use-package vertico
-  :custom
-  (vertico-cycle t)                       ; Cycle through candidates
-  (vertico-count 15)                      ; Show 15 candidates
-  (vertico-resize t)                      ; Adaptive height
-  (vertico-scroll-margin 4)               ; Scroll margin
+  :defer t
+  :hook (after-init . vertico-mode)
   :config
-  (vertico-mode)
-  ;; Enable mouse support
-  (vertico-mouse-mode))
+  (setq vertico-cycle t
+        vertico-count 15
+        vertico-resize t
+        vertico-scroll-margin 4))
 
 ;; ==================================================================================
 ;; Orderless - fuzzy matching
 (use-package orderless
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  :after vertico
+  :config
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
 
 ;; ==================================================================================
 ;; Marginalia - completion annotations
 (use-package marginalia
   :after vertico
-  :custom
-  (marginalia-annotators '(marginalia-annotators-heavy  ; Detailed annotations
-                           marginalia-annotators-light)) ; Lightweight annotations
-  (marginalia-align-offset 15)            ; Alignment offset
   :config
-  (marginalia-mode))
+  (setq marginalia-annotators '(marginalia-annotators-heavy  ; Detailed annotations
+                                marginalia-annotators-light) ; Lightweight annotations
+        marginalia-align-offset 15)            ; Alignment offset
+  (marginalia-mode 1))
 
 ;; ==================================================================================
 ;; Consult - enhanced commands
 (use-package consult
-  :custom
-  (consult-line-numbers-widen t)          ; Auto-widen line numbers
-  (consult-async-min-input 2)             ; Minimum input for async search
-  (consult-async-refresh-delay 0.15)      ; Refresh delay
-  (consult-async-input-throttle 0.2)      ; Input throttle
-  ;; Preview optimization: use delayed preview to avoid frequent triggers
-  ;; 'any = trigger on any key (may be too frequent)
-  ;; "M-." = preview only on M-. (on-demand)
-  ;; (:keys "any" :delay 0.3) = any key + 0.3s delay
-  (consult-preview-key 'any)              ; Trigger preview on any key
+  :defer t
   :bind
   (;; Search
    ("C-s" . consult-line)
@@ -105,23 +94,28 @@
    ("C-x g" . consult-grep)
    ("C-x G" . consult-git-grep)
    ("C-x f" . consult-find)
-   ("C-x F" . consult-locate)))
+   ("C-x F" . consult-locate))
+  :config
+  (setq consult-line-numbers-widen t
+        consult-async-min-input 2
+        consult-async-refresh-delay 0.15
+        consult-async-input-throttle 0.2
+        consult-preview-key 'any))
 
 ;; ==================================================================================
 ;; Embark - context actions
 (use-package embark
   :defer t
-  :custom
-  (embark-prompter 'embark-keymap-prompter)    ; Use keymap prompter
-  (embark-cycle-key nil)                       ; Disable cycle key
-  (embark-help-key "C-h")                      ; Help key
+  :config
+  (setq embark-prompter 'embark-keymap-prompter    ; Use keymap prompter
+        embark-cycle-key nil                       ; Disable cycle key
+        embark-help-key "C-h")                      ; Help key
   :bind
   (;; Context actions
-   ("C-." . embark-act)                        ; Act on current target
-   ("C-," . embark-dwim)                       ; Smart default action
-   ("C-h B" . embark-bindings)                 ; View all key bindings
-   :map embark-command-map
-   ("C-." . embark-act)))
+   ("C-." . embark-act)
+   ("C-," . embark-dwim)
+   ("C-h B" . embark-bindings)))
+
 
 ;; ==================================================================================
 ;; Embark-consult - Embark and Consult integration
@@ -153,17 +147,16 @@
 ;; ==================================================================================
 ;; Corfu - completion framework
 (use-package corfu
-  :custom
-  (corfu-cycle t)                      ; Cycle through candidates
-  (corfu-auto t)                       ; Auto completion
-  (corfu-auto-delay 0.2)               ; Trigger 0.2s after input to avoid lag
-  (corfu-auto-prefix 2)                ; At least 2 characters to trigger completion
-  (corfu-min-width 40)                 ; Popup minimum width
-  (corfu-max-width 80)                 ; Popup maximum width
-  (corfu-count 12)                     ; Show 12 candidates
-  (corfu-scroll-margin 4)              ; Scroll margin
-  (corfu-echo-documentation 0.25)      ; Show documentation after 0.25s
   :config
+  (setq corfu-cycle t                      ; Cycle through candidates
+        corfu-auto t                       ; Auto completion
+        corfu-auto-delay 0.2               ; Trigger 0.2s after input to avoid lag
+        corfu-auto-prefix 2                ; At least 2 characters to trigger completion
+        corfu-min-width 40                 ; Popup minimum width
+        corfu-max-width 80                 ; Popup maximum width
+        corfu-count 12                     ; Show 12 candidates
+        corfu-scroll-margin 4              ; Scroll margin
+        corfu-echo-documentation 0.25)      ; Show documentation after 0.25s
   (global-corfu-mode))
 
 ;; Corfu terminal support
@@ -210,9 +203,9 @@
 ;; Wgrep - writable grep
 (use-package wgrep
   :defer t
-  :custom
-  (wgrep-enable-key "r")
-  (wgrep-auto-save-buffer t))
+  :config
+  (setq wgrep-enable-key "r"
+        wgrep-auto-save-buffer t))
 
 (use-package wgrep-ag
   :defer t
@@ -224,9 +217,8 @@
 ;; Ag - The Silver Searcher (retained for wgrep integration)
 (use-package ag
   :commands (ag ag-project ag-dired-regexp)
-  :custom
-  (ag-reuse-buffers t)
   :config
+  (setq ag-reuse-buffers t)
   ;; Advice for selecting window after next-error - check before adding to prevent accumulation
   (defun ag-next-error-function-after (&rest _)
     "Select ag buffer window after next-error."
@@ -246,12 +238,12 @@
 ;; Avy - fast jumping
 (use-package avy
   :defer t
-  :custom
-  (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p))
-  (avy-background t)                      ; Background mode, dim non-targets
-  (avy-all-windows nil)                   ; Current window only
-  (avy-timeout-seconds 0.3)               ; Timeout
-  (avy-style 'pre))                       ; Label style
+  :config
+  (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p)
+        avy-background t                      ; Background mode, dim non-targets
+        avy-all-windows nil                   ; Current window only
+        avy-timeout-seconds 0.3               ; Timeout
+        avy-style 'pre))                       ; Label style
 
 ;; ==================================================================================
 ;; Nerd-icons for completion

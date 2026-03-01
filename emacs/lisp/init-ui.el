@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-28 21:58:28 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 16:46:27 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -46,55 +46,12 @@
 (menu-bar-mode -1)
 
 ;; ==================================================================================
-;; Theme - doom-themes
-(use-package doom-themes
-  :custom
-  (doom-themes-enable-bold t)
-  (doom-themes-enable-italic t)
-  :config
-  (load-theme 'doom-xcode t))
-
-;; ==================================================================================
-;; Modeline - doom-modeline
-(use-package doom-modeline
-  :defer t
-  :custom
-  (doom-modeline-icon (display-graphic-p))  ; Disable icons in terminal
-  :hook (after-init . doom-modeline-mode))
-
-;; ==================================================================================
 ;; Smooth scrolling - use built-in pixel-scroll-precision-mode (Emacs 29+)
-(when (>= emacs-major-version 29)
-  (add-hook 'emacs-startup-hook
-            (lambda ()
-              (when (display-graphic-p)
-                (pixel-scroll-precision-mode 1)))))
-
-;; ==================================================================================
-;; Visual highlights - pulsar (cursor highlighting)
-(use-package pulsar
-  :defer t
-  :hook (after-init . pulsar-global-mode)
-  :config
-  (setq pulsar-pulse-functions '(recenter-top-bottom
-                                  move-to-window-line-top-bottom
-                                  reposition-window
-                                  bookmark-jump
-                                  other-window
-                                  delete-other-windows
-                                  forward-page
-                                  backward-page
-                                  scroll-up-command
-                                  scroll-down-command
-                                  windmove-right
-                                  windmove-left
-                                  windmove-up
-                                  windmove-down
-                                  tab-new
-                                  tab-close
-                                  tab-next
-                                  tab-previous)
-        pulsar-delay 0.055))
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (when (and (display-graphic-p)
+                       (fboundp 'pixel-scroll-precision-mode))
+              (pixel-scroll-precision-mode 1))))
 
 ;; ==================================================================================
 ;; Emojify - enable only in specific modes
@@ -105,13 +62,52 @@
          (text-mode . emojify-mode)))
 
 ;; ==================================================================================
-;; Winner mode - undo/redo window layout
-(winner-mode 1)
-
-;; ==================================================================================
 ;; Nerd-icons - unified icon system (deferred)
 (use-package nerd-icons
   :defer t)
+
+;; ==================================================================================
+;; Theme - doom-themes
+(use-package doom-themes
+  :demand t
+  :config
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-xcode t))
+
+;; ==================================================================================
+;; Modeline - doom-modeline
+(use-package doom-modeline
+  :defer t
+  :hook (after-init . doom-modeline-mode)
+  :config
+  (setq doom-modeline-icon (display-graphic-p)))
+
+;; ==================================================================================
+;; Visual highlights - pulsar (cursor highlighting)
+(use-package pulsar
+  :defer t
+  :hook (after-init . pulsar-global-mode)
+  :config
+  (setq pulsar-pulse-functions '(recenter-top-bottom
+                                 move-to-window-line-top-bottom
+                                 reposition-window
+                                 bookmark-jump
+                                 other-window
+                                 delete-other-windows
+                                 forward-page
+                                 backward-page
+                                 scroll-up-command
+                                 scroll-down-command
+                                 windmove-right
+                                 windmove-left
+                                 windmove-up
+                                 windmove-down
+                                 tab-new
+                                 tab-close
+                                 tab-next
+                                 tab-previous)
+        pulsar-delay 0.055))
 
 ;; ==================================================================================
 ;; Tabs - centaur-tabs
@@ -187,47 +183,24 @@ Returns nil in terminal mode (uses official banner instead)."
 ;; Dashboard package
 (use-package dashboard
   :defer t
-  :custom
-  (dashboard-center-content t)
-  (dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name))
-  (dashboard-set-heading-icons (display-graphic-p))
-  (dashboard-set-file-icons (display-graphic-p))
-  (dashboard-set-navigator t)
-  (dashboard-items '((recents  . 5)
-                     (bookmarks . 5)
-                     (projects . 5)
-                     (agenda . 5)
-                     (registers . 5)))
-  (dashboard-projects-switch-function 'projectile-switch-project)
+  :hook (after-init . dashboard-open)
   :config
   (require 'dashboard-widgets)
-  ;; Set random banner
-  (add-hook 'dashboard-before-initialize-hook
-            (lambda ()
-              (setq dashboard-startup-banner
-                    (or (omw--get-random-banner) 'official))))
-  ;; Dashboard mode hook
-  (add-hook 'dashboard-mode-hook
-            (lambda ()
-              (centaur-tabs-local-mode 1)))
-  ;; Set dashboard as initial buffer
-  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+
+  (setq dashboard-center-content t
+        dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name)
+        dashboard-set-heading-icons (display-graphic-p)
+        dashboard-set-file-icons (display-graphic-p)
+        dashboard-set-navigator t
+        dashboard-items '((recents  . 5)
+                          (bookmarks . 5)
+                          (projects . 5)
+                          (agenda . 5)
+                          (registers . 5))
+        dashboard-projects-switch-function 'projectile-switch-project
+        dashboard-startup-banner (or (omw--get-random-banner) 'official)
+        initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
   (dashboard-setup-startup-hook))
-
-;; Dashboard activation
-(add-hook 'after-init-hook
-          (lambda ()
-            (require 'dashboard)
-            (dashboard-open)))
-
-;; ==================================================================================
-;; UI keybindings
-(add-hook 'after-init-hook
-          (lambda ()
-            (lazy-set-key
-             '(;; Winner mode (window layout undo/redo)
-               ("C-c w u" . winner-undo)
-               ("C-c w r" . winner-redo)))))
 
 ;; ==================================================================================
 ;;; Provide features

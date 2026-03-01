@@ -263,10 +263,10 @@ Otherwise kill the buffer directly."
 ;; Switch window - label windows with letters for quick switching
 (use-package switch-window
   :defer t
-  :custom
-  (switch-window-shortcut-style 'qwerty)  ; Use QWERTY key layout
-  (switch-window-timeout 5)               ; Auto-cancel after 5 seconds
-  (switch-window-threshold 3))            ; Enable labels only with 3+ windows
+  :config
+  (setq switch-window-shortcut-style 'qwerty  ; Use QWERTY key layout
+        switch-window-timeout 5               ; Auto-cancel after 5 seconds
+        switch-window-threshold 3))            ; Enable labels only with 3+ windows
 
 ;; ==================================================================================
 ;; Global editing keybindings

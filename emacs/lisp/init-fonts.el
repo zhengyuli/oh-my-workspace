@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-28 21:12:16 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 16:28:32 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -122,14 +122,11 @@ First available font will be used."
   (when (and (display-graphic-p)
              (not emacs-fonts-initialized))
     (setq emacs-fonts-initialized t)
-    (emacs-setup-fonts)
-    ;; Re-apply fonts after theme load (theme may override)
-    (with-eval-after-load 'doom-themes
-      (add-hook 'doom-load-theme-hook #'emacs-setup-fonts))))
+    (emacs-setup-fonts)))
 
 (add-hook 'window-setup-hook
           (lambda ()
-            (run-config-timer 0.5 nil #'emacs-setup-fonts-deferred)))
+            (run-with-idle-timer 0.5 nil #'emacs-setup-fonts-deferred)))
 
 ;; ==================================================================================
 ;; Textsize - automatic font sizing based on screen resolution (GUI only)
@@ -142,26 +139,6 @@ First available font will be used."
         '((0 . -3) (350 . -1) (500 . 0))
         textsize-pixel-pitch-thresholds
         '((0 . 5) (0.12 . 3) (0.18 . 1) (0.20 . 0) (0.25 . -2))))
-
-;; ==================================================================================
-;; Utility functions
-(defun emacs-reload-fonts ()
-  "Reload font configuration."
-  (interactive)
-  (emacs-setup-fonts)
-  (message "Fonts reloaded"))
-
-(defun emacs-describe-fonts ()
-  "Display current font configuration."
-  (interactive)
-  (message "Current fonts:
-  Default:     %s (height: %s)
-  Fixed-pitch: %s
-  Variable:    %s"
-           (face-attribute 'default :family)
-           (face-attribute 'default :height)
-           (face-attribute 'fixed-pitch :family)
-           (face-attribute 'variable-pitch :family)))
 
 ;; ==================================================================================
 (provide 'init-fonts)

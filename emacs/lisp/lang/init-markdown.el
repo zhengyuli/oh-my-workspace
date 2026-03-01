@@ -36,8 +36,8 @@
 ;; Provides visual alignment for Org and Markdown tables
 (use-package valign
   :hook (markdown-mode . valign-mode)
-  :custom
-  (valign-fancy-bar t))                  ; Use fancy separator
+  :config
+  (setq valign-fancy-bar t))                  ; Use fancy separator
 
 ;; ==================================================================================
 ;; Markdownfmt - code formatting
@@ -54,8 +54,8 @@
 ;; Supports native mode editing for ```lang code blocks
 (use-package edit-indirect
   :defer t
-  :custom
-  (edit-indirect-guess-mode-function
+  :config
+  (setq edit-indirect-guess-mode-function
    (lambda (_parent-buffer _beg _end)
      (let ((lang (save-excursion
                    (goto-char (marker-position edit-indirect--beg))
@@ -186,9 +186,9 @@
 (use-package markdown-toc
   :defer t
   :after markdown-mode
-  :custom
-  (markdown-toc-header-toc-start "<!-- TOC start -->")
-  (markdown-toc-header-toc-end "<!-- TOC end -->"))
+  :config
+  (setq markdown-toc-header-toc-start "<!-- TOC start -->"
+        markdown-toc-header-toc-end "<!-- TOC end -->"))
 
 ;; ==================================================================================
 ;; GFM (GitHub Flavored Markdown) mode - Claude Code compatible
@@ -338,9 +338,9 @@
 (use-package visual-fill-column
   :defer t
   :hook (markdown-mode . visual-fill-column-mode)
-  :custom
-  (visual-fill-column-width 100)          ; Content width
-  (visual-fill-column-center-text t))     ; Center display
+  :config
+  (setq visual-fill-column-width 100          ; Content width
+        visual-fill-column-center-text t))     ; Center display
 
 ;; ==================================================================================
 ;; Auto-associate file extensions

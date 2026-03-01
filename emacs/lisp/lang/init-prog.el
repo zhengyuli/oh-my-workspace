@@ -52,12 +52,11 @@
 (use-package smartparens
   :defer t
   :hook (prog-mode . smartparens-mode)
-  :custom
-  (sp-highlight-pair-overlay nil)        ; Disable pair highlighting, reduce visual noise
-  (sp-highlight-wrap-overlay nil)        ; Disable wrap highlighting
-  (sp-highlight-wrap-tag-overlay nil)    ; Disable tag wrap highlighting
-  (sp-cancel-autoskip-on-backward-movement nil)  ; Allow backward skip
   :config
+  (setq sp-highlight-pair-overlay nil        ; Disable pair highlighting, reduce visual noise
+        sp-highlight-wrap-overlay nil        ; Disable wrap highlighting
+        sp-highlight-wrap-tag-overlay nil    ; Disable tag wrap highlighting
+        sp-cancel-autoskip-on-backward-movement nil)  ; Allow backward skip
   (require 'smartparens-config))
 
 ;; ==================================================================================
@@ -77,9 +76,8 @@
 (use-package hl-todo
   :defer t
   :hook (prog-mode . hl-todo-mode)
-  :custom
-  (hl-todo-highlight-punctuation ":")    ; Highlight colon
   :config
+  (setq hl-todo-highlight-punctuation ":")    ; Highlight colon
   ;; Custom TODO keyword colors
   (setq hl-todo-keyword-faces
         '(("TODO" . "#FF0000")
@@ -95,13 +93,12 @@
 (use-package flycheck
   :defer t
   :hook (prog-mode . flycheck-mode)
-  :custom
-  (flycheck-indication-mode 'left-margin)  ; Show errors in left margin
-  (flycheck-check-syntax-automatically '(save idle-change))  ; Check on save and idle
-  (flycheck-idle-change-delay 0.5)         ; Check after 0.5s idle
-  (flycheck-display-errors-delay 0.3)      ; Show errors after 0.3s
-  (flycheck-highlighting-mode 'symbols)    ; Highlight at symbol level
   :config
+  (setq flycheck-indication-mode 'left-margin  ; Show errors in left margin
+        flycheck-check-syntax-automatically '(save idle-change)  ; Check on save and idle
+        flycheck-idle-change-delay 0.5         ; Check after 0.5s idle
+        flycheck-display-errors-delay 0.3      ; Show errors after 0.3s
+        flycheck-highlighting-mode 'symbols)    ; Highlight at symbol level
   ;; Define error level fringe bitmap
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
     [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))

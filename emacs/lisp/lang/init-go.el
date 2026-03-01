@@ -36,8 +36,8 @@
 (use-package go-mode
   :defer t
   :hook (go-mode . go-mode-setup)
-  :custom
-  (gofmt-command "gofumpt")
+  :config
+  (setq gofmt-command "gofumpt")
   :bind
   (:map go-mode-map
         ("C-c C-j" . go-goto-imports)

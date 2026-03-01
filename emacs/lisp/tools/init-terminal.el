@@ -34,11 +34,11 @@
 ;; Vterm - modern terminal emulator
 (use-package vterm
   :commands (vterm)
-  :custom
-  (vterm-max-scrollback 10000)           ; Maximum scrollback history
-  (vterm-scroll-enable-emacs-bar t)      ; Emacs-style scrollbar
-  (vterm-kill-buffer-on-exit t)          ; Kill buffer on exit
-  (vterm-enable-manipulate-selection-data t) ; Allow selection manipulation
+  :config
+  (setq vterm-max-scrollback 10000           ; Maximum scrollback history
+        vterm-scroll-enable-emacs-bar t      ; Emacs-style scrollbar
+        vterm-kill-buffer-on-exit t          ; Kill buffer on exit
+        vterm-enable-manipulate-selection-data t) ; Allow selection manipulation
   :bind
   (:map vterm-mode-map
         ("C-g" . vterm--self-insert)

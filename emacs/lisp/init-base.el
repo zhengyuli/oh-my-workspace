@@ -1,5 +1,5 @@
 ;;; init-base.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 12:26:21 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-01 16:22:47 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -33,15 +33,15 @@
 
 ;; ==================================================================================
 ;; GC optimization with gcmh
-;; gcmh manages GC automatically: high threshold when idle, low when active
 (use-package gcmh
   :demand t
-  :custom
-  (gcmh-idle-delay 10)                   ; GC after 10 seconds idle
-  (gcmh-high-cons-threshold #x10000000)  ; 256MB when idle
-  (gcmh-low-cons-threshold (* 8 1024 1024))  ; 8MB when active
   :config
   (gcmh-mode 1))
+
+;; ==================================================================================
+;; Async - asynchronous operations
+(use-package async
+  :defer t)
 
 ;; ==================================================================================
 ;; Restart Emacs
@@ -144,6 +144,7 @@ Customize in `user-emacs-directory'/custom_settings.el:
 ;; Optimization: use -l instead of -i to avoid slow shell startup
 (use-package exec-path-from-shell
   :when (memq window-system '(mac ns))
+  :demand t
   :config
   (exec-path-from-shell-initialize))
 
@@ -193,8 +194,7 @@ Customize in `user-emacs-directory'/custom_settings.el:
                   user-mail-address emacs-user-email)
 
             ;; Browser settings
-            (when (featurep 'xwidget-internal)
-              (setq browse-url-browser-function 'xwidget-webkit-browse-url))
+            (setq browse-url-browser-function 'xwidget-webkit-browse-url)
 
             ;; Mac system settings
             (when (memq window-system '(mac ns))

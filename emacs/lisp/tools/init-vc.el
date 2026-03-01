@@ -106,11 +106,10 @@ Result is cached in `git-user-email-cache'."
 ;; Magit - Git version control interface
 (use-package magit
   :commands (magit-status magit-log-all)
-  :custom
-  (magit-diff-refine-hunk t)             ; Show character-level differences
-  (magit-revert-buffers 'silent)         ; Silently revert files
-  (magit-no-message '("Turning on magit-auto-revert-mode"))
   :config
+  (setq magit-diff-refine-hunk t             ; Show character-level differences
+        magit-revert-buffers 'silent         ; Silently revert files
+        magit-no-message '("Turning on magit-auto-revert-mode"))
   (require 'magit-diff)
 
   ;; Customized faces

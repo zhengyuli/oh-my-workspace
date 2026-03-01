@@ -1,5 +1,5 @@
 ;;; init-packages.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-28 17:01:03 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 16:13:45 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -48,16 +48,6 @@
 (package-initialize)
 
 ;; ==================================================================================
-;; Package version locking (Emacs 30+)
-;; Lock package versions to prevent incompatibility from MELPA rolling updates
-;; Lock file located at ~/.emacs.d/package-lock.eld
-(when (boundp 'package-lock-file)
-  (setq package-lock-file
-        (expand-file-name "package-lock.eld" user-emacs-directory))
-  ;; Enable package locking for reproducible package versions
-  (setq package-lock-locked-package-versions t))
-
-;; ==================================================================================
 ;; use-package setup
 ;; Note: use-package is critical infrastructure - ensure it's installed via setup.sh
 ;; or manually run M-x package-refresh-contents then M-x package-install RET use-package
@@ -80,43 +70,13 @@
       use-package-minimum-reported-time 0.5)
 
 ;; ==================================================================================
+
+;; ==================================================================================
 ;; Auto package update
 (use-package auto-package-update
   :defer t
-  :custom
-  (auto-package-update-delete-old-versions t)
-  (auto-package-update-hide-output t))
-
-;; Check for package updates in background
-(defun package-check-updates ()
-  "Check for package updates in background and notify if updates available."
-  (interactive)
-  (message "Checking for package updates...")
-  (package-refresh-contents)
-  (let ((upgrades (package-menu--find-upgrades)))
-    (if upgrades
-        (let ((count (length upgrades)))
-          (message "")
-          (if (yes-or-no-p (format "Found %d package(s) with updates. Upgrade now? " count))
-              (auto-package-upgrade-all)
-            (message "Run `M-x auto-package-upgrade-all' to upgrade later.")))
-      (message "All packages are up to date."))))
-
-;; Check for updates after startup (after 60 seconds idle)
-(run-config-timer 60 nil #'package-check-updates)
-
-;; Package upgrade function
-(defun auto-package-upgrade-all ()
-  "Upgrade all packages installed."
-  (interactive)
-  (require 'auto-package-update)
-  (package-refresh-contents)
-  (auto-package-update-now))
-
-;; Convenience aliases
-(defalias 'package-upgrade-all 'auto-package-upgrade-all
-  "Upgrade all packages interactively.")
-(defalias 'upgrade-packages 'auto-package-upgrade-all)
+  :config
+  (setq auto-package-update-delete-old-versions t))
 
 ;; ==================================================================================
 ;;; Provide features

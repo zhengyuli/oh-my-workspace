@@ -1,5 +1,5 @@
 ;;; init-funcs.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-28 21:17:38 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 16:20:27 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,7 +30,6 @@
 ;; Provides:
 ;; - Customization group and user variables
 ;; - Key binding utilities (lazy-set-key, lazy-unset-key)
-;; - Timer management system (run-config-timer, cleanup-config-timers)
 ;; - Configuration validation system (config-dependency-validate, etc.)
 
 ;;; Code:
@@ -94,30 +93,6 @@ Each key in KEY-LIST can be:
     (define-key keymap key nil)))
 
 ;; ==================================================================================
-;; Timer management system
-;; Track and cleanup idle timers to prevent accumulation on config reload
-(defvar config-timers nil
-  "List of active config timers for cleanup.")
-
-(defun run-config-timer (secs repeat function)
-  "Run idle timer with tracking for cleanup.
-SECS is delay in seconds, REPEAT is non-nil for repeating timers,
-FUNCTION is the callback to execute."
-  (let ((timer (run-with-idle-timer secs repeat function)))
-    (push timer config-timers)
-    timer))
-
-(defun cleanup-config-timers ()
-  "Cancel all tracked config timers.
-Useful for cleaning up before config reload."
-  (interactive)
-  (let ((count (length config-timers)))
-    (dolist (timer config-timers)
-      (cancel-timer timer))
-    (setq config-timers nil)
-    (message "[Config] Cancelled %d timers" count)))
-
-;; ==================================================================================
 ;; Configuration validation utilities
 ;; Validation system architecture:
 ;;   - This file: provides registration mechanism and generic validation functions
@@ -127,7 +102,6 @@ Useful for cleaning up before config reload."
 ;;   - Manual call: M-x config-dependency-validate
 ;;   - Automatic on startup: set environment variable EMACS_CONFIG_VALIDATE=1
 
-;; ----------------------------------------------------------------------------------
 ;; Report theme faces
 (defface config-dependency-report-title-face
   '((t :foreground "#46dcb0" :weight bold :height 1.3))
@@ -153,14 +127,12 @@ Useful for cleaning up before config reload."
   '((t :foreground "#586e75"))
   "Face for validation report separators.")
 
-;; ----------------------------------------------------------------------------------
 ;; Validator registry
 (defvar config-dependency-validators nil
   "List of registered validators.
 Each element is (CATEGORY . VALIDATOR-FN).
 VALIDATOR-FN returns (INSTALLED . MISSING) where each is a list.")
 
-;; ----------------------------------------------------------------------------------
 ;; Validator registration
 (defun config-dependency-register (category validator-fn)
   "Register VALIDATOR-FN for CATEGORY.
@@ -168,7 +140,6 @@ VALIDATOR-FN is a function that returns (INSTALLED . MISSING).
 CATEGORY is a symbol identifying the validation category."
   (push (cons category validator-fn) config-dependency-validators))
 
-;; ----------------------------------------------------------------------------------
 ;; Generic validation functions
 (defun config-dependency-validate-executables (items)
   "Validate executables in ITEMS.
@@ -181,7 +152,6 @@ Return (INSTALLED . MISSING) where each is a list of items."
         (push item missing)))
     (cons (nreverse installed) (nreverse missing))))
 
-;; ----------------------------------------------------------------------------------
 ;; Report buffer helper
 (defun config-dependency-insert-with-face (text face)
   "Insert TEXT with FACE."
@@ -192,7 +162,6 @@ Return (INSTALLED . MISSING) where each is a list of items."
   (config-dependency-insert-with-face text face)
   (insert "\n"))
 
-;; ----------------------------------------------------------------------------------
 ;; Main validation orchestration
 (defvar config-dependency-results nil
   "Alist of (CATEGORY . (INSTALLED . MISSING)) from last validation.")

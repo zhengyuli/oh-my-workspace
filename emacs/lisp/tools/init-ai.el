@@ -44,16 +44,16 @@
              claude-code-ide-continue
              claude-code-ide-toggle
              claude-code-ide-send-prompt)
-  :custom
+  :config
   ;; CLI configuration
-  (claude-code-ide-cli-path "claude")        ; Claude Code CLI path
-  (claude-code-ide-cli-extra-flags "")       ; Extra CLI flags
-  ;; Terminal configuration
-  (claude-code-ide-terminal-backend 'vterm)  ; Use vterm backend
-  (claude-code-ide-vterm-anti-flicker t)     ; Reduce flicker
-  ;; Debug
-  (claude-code-ide-debug nil)                ; Disable debug mode
-  (claude-code-ide-cli-debug nil))           ; Disable CLI debug
+  (setq claude-code-ide-cli-path "claude"        ; Claude Code CLI path
+        claude-code-ide-cli-extra-flags ""       ; Extra CLI flags
+        ;; Terminal configuration
+        claude-code-ide-terminal-backend 'vterm  ; Use vterm backend
+        claude-code-ide-vterm-anti-flicker t     ; Reduce flicker
+        ;; Debug
+        claude-code-ide-debug nil                ; Disable debug mode
+        claude-code-ide-cli-debug nil))           ; Disable CLI debug
 
 ;; ==================================================================================
 ;; Claude Code terminal keybinding enhancements

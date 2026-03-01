@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 13:01:25 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-01 15:55:57 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,31 +31,23 @@
 (require 'init-funcs)
 
 ;; ==================================================================================
-;; Async - asynchronous operations
-(use-package async
-  :defer t
-  :config
-  (require 'dired-async)
-  (dired-async-mode 1))
-
-;; ==================================================================================
 ;; Dired-filter - dired filtering utilities
 (use-package dired-filter
   :defer t
-  :custom
-  (dired-filter-stack '()))
+  :config
+  (setq dired-filter-stack '()))
 
 ;; ==================================================================================
 ;; Dired configuration - basic settings (Dirvish compatible)
 (use-package dired
   :ensure nil
   :hook (dired-mode . dired-omit-mode)
-  :custom
-  (dired-dwim-target t)
-  (dired-recursive-copies 'always)
-  (dired-recursive-deletes 'always)
-  (dired-deletion-confirmer 'y-or-n-p)          ; Use y/n to confirm deletion
-  (dired-bind-info nil)
+  :config
+  (setq dired-dwim-target t
+        dired-recursive-copies 'always
+        dired-recursive-deletes 'always
+        dired-deletion-confirmer 'y-or-n-p          ; Use y/n to confirm deletion
+        dired-bind-info nil)
   :bind
   (:map dired-mode-map
         ("<return>" . dired-single-buffer)
@@ -99,6 +91,9 @@
   (require 'dired-x)
   (require 'dired-custom-extension)
 
+  (require 'dired-async)
+  (dired-async-mode 1)
+
   ;; dired-x omit settings (must be after require dired-x)
   (setq dired-omit-extensions (append dired-omit-extensions '(".cache"))
         dired-omit-files (concat dired-omit-files "\\|^\\.\\|^semantic.cache$\\|^CVS$"))
@@ -138,15 +133,15 @@ To add custom entries, use:
 ;; Replaces: diredfl, nerd-icons-dired, dired-preview, dired-collapse
 ;; Docs: https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org
 (use-package dirvish
-  :custom
-  (dirvish-use-header-line 'global)            ; Header line across all panes
-  (dirvish-header-line-height 25)              ; Header line height
-  (dirvish-mode-line-height 25)                ; Mode line height
-  (dirvish-preview-delay 0.1)                  ; Preview delay in seconds
-  (dirvish-large-directory-threshold 20000)    ; Use async for large dirs
-  (dirvish-header-line-format '(:left (path) :right (free-space)))
-  (dirvish-mode-line-format '(:left (sort symlink) :right (omit yank index)))
-  (dirvish-mode-line-bar-image-width 0)        ; Hide leading bar
+  :config
+  (setq dirvish-use-header-line 'global            ; Header line across all panes
+        dirvish-header-line-height 25              ; Header line height
+        dirvish-mode-line-height 25                ; Mode line height
+        dirvish-preview-delay 0.1                  ; Preview delay in seconds
+        dirvish-large-directory-threshold 20000    ; Use async for large dirs
+        dirvish-header-line-format '(:left (path) :right (free-space))
+        dirvish-mode-line-format '(:left (sort symlink) :right (omit yank index))
+        dirvish-mode-line-bar-image-width 0)        ; Hide leading bar
   :bind
   (:map dirvish-mode-map
         ;; Help and menus

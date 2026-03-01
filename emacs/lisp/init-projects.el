@@ -34,20 +34,19 @@
   :defer t
   :bind-keymap
   ("C-c p" . projectile-command-map)            ; Key binding immediate, package deferred
-  :custom
-  (projectile-completion-system 'default)       ; Use default completion system (vertico)
-  (projectile-enable-caching t)                 ; Enable caching for speed
-  (projectile-indexing-method 'hybrid)          ; Hybrid indexing method
-  (projectile-sort-order 'recentf)              ; Sort by recently visited
-  (projectile-auto-discover nil)                ; Disable auto project discovery
-  (projectile-globally-ignored-directories
-   '(".git" ".svn" ".hg" "node_modules" ".venv" "venv" "__pycache__"
-     ".pytest_cache" "dist" "build" "target" ".gradle" ".idea" ".vscode"))
-  (projectile-globally-ignored-files
-   '(".DS_Store" "*.pyc" "*.elc" "*.o" "*.class" "*.jar" "*.log" "*.lock"))
-  (projectile-globally-ignored-file-suffixes
-   '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock"))
   :config
+  (setq projectile-completion-system 'default       ; Use default completion system (vertico)
+        projectile-enable-caching t                 ; Enable caching for speed
+        projectile-indexing-method 'hybrid          ; Hybrid indexing method
+        projectile-sort-order 'recentf              ; Sort by recently visited
+        projectile-auto-discover nil                ; Disable auto project discovery
+        projectile-globally-ignored-directories
+        '(".git" ".svn" ".hg" "node_modules" ".venv" "venv" "__pycache__"
+          ".pytest_cache" "dist" "build" "target" ".gradle" ".idea" ".vscode")
+        projectile-globally-ignored-files
+        '(".DS_Store" "*.pyc" "*.elc" "*.o" "*.class" "*.jar" "*.log" "*.lock")
+        projectile-globally-ignored-file-suffixes
+        '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock"))
   (projectile-mode 1)
   ;; Custom projectile-command-map key bindings
   (define-key projectile-command-map (kbd "f") #'projectile-find-file)

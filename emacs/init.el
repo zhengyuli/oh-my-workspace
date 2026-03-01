@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-02-28 22:22:09 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-01 15:48:47 Sunday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -34,25 +34,10 @@
   (error "The Emacs version must be >= 30.2 (current: %s)" emacs-version))
 
 ;; ==================================================================================
-;; Early initialization
-;; These settings must be set before any package loading for optimal performance
-
 ;; GC tuning - use large threshold during startup for faster initialization
 ;; gcmh (in init-base.el) will manage GC after startup with reasonable thresholds
 (setq gc-cons-threshold (* 100 1024 1024)  ; 100MB during startup
       gc-cons-percentage 0.6)
-
-;; Prevent package.el from loading too early
-(setq package-enable-at-startup nil)
-
-;; Enable package-quickstart for faster loading (Emacs 27+)
-(when (fboundp 'package-quickstart-refresh)
-  (setq package-quickstart t))
-
-;; Native compilation settings (Emacs 29+)
-(when (boundp 'native-comp-deferred-compilation)
-  (setq native-comp-deferred-compilation t
-        native-comp-async-report-warnings-errors 'silent))
 
 ;; ==================================================================================
 ;; Global variables
@@ -71,7 +56,6 @@ Automatically resolves symlinks to find the actual configuration directory.")
 (defvar emacs-config-packages-path (expand-file-name "site-packages/" emacs-config-root)
   "Emacs configuration custom site packages path.")
 
-;; ==================================================================================
 ;; Helper function for load-path
 (defun emacs-add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.
@@ -80,7 +64,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
-;; ==================================================================================
 ;; Add custom directories to load-path first
 (emacs-add-subdirs-to-load-path emacs-config-lisp-path)
 (emacs-add-subdirs-to-load-path emacs-config-packages-path)
@@ -123,4 +106,5 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 (load-custom-settings)
 
+;; ==================================================================================
 ;;; init.el ends here

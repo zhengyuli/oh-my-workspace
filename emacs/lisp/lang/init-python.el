@@ -240,9 +240,9 @@ Package names are validated and properly shell-quoted to prevent injection."
 (use-package python
   :ensure nil
   :defer t
-  :custom
-  (python-indent-guess-indent-offset-verbose nil)
-  (python-indent-offset 4)
+  :config
+  (setq python-indent-guess-indent-offset-verbose nil
+        python-indent-offset 4)
   :bind
   (:map python-mode-map
         ("C-c d f" . sphinx-doc-format)))
