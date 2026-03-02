@@ -17,7 +17,14 @@ This is a **monorepo** containing configurations for multiple independent tools,
 
 ```
 oh-my-workspace/
-├── emacs/           # Emacs configuration (lisp/, init.el, setup.sh)
+├── emacs/           # Emacs configuration
+│   ├── init.el      # Main entry point (symlinked to ~/.emacs)
+│   ├── lisp/        # Configuration modules
+│   │   ├── init-*.el            # Core feature modules
+│   │   ├── lang/                # Language-specific configs
+│   │   └── tools/               # External tool integrations
+│   ├── site-packages/ # Custom Emacs packages
+│   └── setup.sh      # Installation script
 ├── vim/             # Vim configuration (vimrc, setup.sh)
 ├── zsh/             # Zsh configuration (zshrc, aliases, functions)
 ├── README.md        # Comprehensive setup guide for all tools
@@ -46,8 +53,7 @@ Each setup script:
 ### Emacs
 | Command | Function |
 |---------|----------|
-| `M-x config-dependency-validate` | Verify external dependencies (LSP servers, tools) |
-| `M-x cleanup-config-timers` | Clean up configuration timers |
+| `M-x emacs-config-validate-all` | Verify all external dependencies (LSP servers, tools) |
 | `C-c p p` | Switch project (Projectile) |
 | `C-c p f` | Find file in project |
 | `C-x b` | Switch buffer (Vertico) |
@@ -70,7 +76,7 @@ cd ~/oh-my-workspace/emacs
 emacs
 
 # Inside Emacs, verify dependencies
-M-x config-dependency-validate
+M-x emacs-config-validate-all
 ```
 
 ### Verify Installation
@@ -79,8 +85,8 @@ M-x config-dependency-validate
 # Test Emacs config loads without errors
 emacs --debug-init
 
-# Inside Emacs, run dependency validation
-M-x config-dependency-validate
+# Inside Emacs, validate dependencies
+M-x emacs-config-validate-all
 ```
 
 ## Emacs Configuration Architecture
@@ -89,33 +95,52 @@ The Emacs configuration (`emacs/`) is modular with a specific loading order defi
 
 ### Module Loading Order
 
-1. **Core**: `init-packages` → `init-funcs` → `init-base`
-2. **UI**: `init-fonts` → `init-ui`
-3. **Editor**: `init-completion` → `init-editing` → `init-dired` → `init-projects`
-4. **Tools**: `init-vc` → `init-terminal` → `init-ai` → `init-auth`
-5. **Languages**: `init-prog` → language-specific modules (Python, Go, C/C++, etc.)
+Core modules (loaded in order):
+1. **UI**: `init-ui` → `init-fonts`
+2. **Editor**: `init-editing` → `init-completion` → `init-dired`
+3. **Tools**: `init-vc` → `init-terminal` → `init-ai` → `init-auth`
+4. **Languages**: `init-prog` → language-specific modules in `lisp/lang/`
+
+Language modules (loaded via dolist):
+- `init-elisp`, `init-cc`, `init-python`, `init-go`
+- `init-typescript`, `init-dockerfile`, `init-cmake`, `init-yaml`, `init-markdown`
 
 ### Key Architecture Patterns
 
-- **Dependency Injection**: All modules `require 'init-funcs` for utilities
-- **Validation System**: `config-dependency-validate` checks external tools via registered validators
-- **Timer Management**: `run-config-timer` defers expensive operations for faster startup
-- **Package Management**: Uses `straight.el` with `use-package` macros for package management
-- **Advisable System**: Many hooks use `advice-add` for extension rather than redefinition
+- **use-package**: All package configurations use `use-package` macros with `:ensure t`
+- **Deferred Loading**: Most packages use `:defer t` for faster startup
+- **Package Management**: Uses built-in `package.el` with MELPA, non-GNU, and GNU ELPA archives
+- **Custom Packages**: Local packages in `site-packages/` are automatically added to load-path
+- **Customization**: User settings go in `custom.el` (auto-generated, git-ignored)
+
+### Directory Structure
+
+- **`lisp/`**: Core Emacs Lisp modules (init-*.el)
+- **`lisp/lang/`**: Language-specific configurations (LSP, formatting, etc.)
+- **`lisp/tools/`**: External tool integrations (AI, authentication, terminal, etc.)
+- **`site-packages/`**: Custom/locally-installed Emacs packages
+  - `dired-single-0.3.1/`: Single-buffer dired
+  - `dired-custom-extension-0.0.1/`: Custom dired enhancements
+- **`templates/`**: File templates for new files
+- **`snippets/`**: YASnippet code snippets
+- **`banners/`**: Dashboard banner images
 
 ### Adding New Modules
 
 1. Create file in appropriate location:
-   - `lisp/` - Core editor features
-   - `lisp/tools/` - External tool integrations
+   - `lisp/` - Core editor features (init-*.el)
    - `lisp/lang/` - Language-specific configurations
-2. Add `(require 'init-funcs)` if using utilities
-3. Add `(provide 'module-name)` at end
-4. Add `(require 'module-name)` in `init.el` at correct position based on loading order
+   - `lisp/tools/` - External tool integrations
+2. Add `(provide 'module-name)` at end
+3. Add `(require 'module-name)` in `init.el` at correct position based on loading order
 
-### Customization
+### Custom Packages
 
-User-specific settings go in `emacs/custom_settings.el` (git-ignored). This file is automatically created on first run and can override any defcustom variable.
+The `site-packages/` directory contains custom Emacs packages that are automatically added to `load-path`. When adding new custom packages:
+
+1. Create a subdirectory in `site-packages/package-name/`
+2. Add a `.el` file with `(provide 'package-name)`
+3. Reference in other modules with `(require 'package-name)`
 
 ## Vim Configuration
 
@@ -146,7 +171,7 @@ Key features:
 ### Verify Dependencies
 ```bash
 # Run in Emacs
-M-x config-dependency-validate
+M-x emacs-config-validate-all
 ```
 
 ### Core Tools (P0 - Required)
@@ -157,6 +182,9 @@ M-x config-dependency-validate
 | the_silver_searcher | Fallback search | brew install the_silver_searcher |
 | fd | Fast file find | brew install fd |
 | coreutils | macOS GNU ls | brew install coreutils |
+| aspell | Spell checking | brew install aspell |
+| pandoc | Document conversion | brew install pandoc |
+| libvterm | Emacs vterm dependency | brew install libvterm |
 
 ### LSP Servers (P1 - Development)
 | Language | Server | Install |
@@ -164,26 +192,25 @@ M-x config-dependency-validate
 | Python | pylsp | pip install python-lsp-server[all] |
 | Go | gopls | go install golang.org/x/tools/gopls@latest |
 | C/C++ | clangd | Xcode Command Line Tools |
+| TypeScript | typescript-language-server | npm install -g typescript-language-server typescript |
 | YAML | yaml-language-server | npm install -g yaml-language-server |
 | Bash | bash-language-server | npm install -g bash-language-server |
 | Dockerfile | docker-langserver | npm install -g dockerfile-language-server-nodejs |
 | CMake | cmake-language-server | pip install cmake-language-server |
+| Markdown | marksman | brew install marksman |
 
 ### Formatters (P1 - Development)
 | Language | Formatter | Install |
 |----------|-----------|---------|
-| Python | black | pip install black |
+| Python | black, isort | pip install black black-macchiato isort |
 | Go | gofumpt | go install mvdan.cc/gofumpt@latest |
 | C/C++ | clang-format | Xcode Command Line Tools |
 
-### Auxiliary Tools (P2 - Optional)
+### Debug Tools (P1 - Development)
 | Tool | Purpose | Install |
 |------|---------|---------|
-| aspell | Spell checking | brew install aspell |
-| hunspell | Spell checking alternative | brew install hunspell |
-| pandoc | Document conversion | brew install pandoc |
-| marksman | Markdown LSP | brew install marksman |
-| libvterm | Emacs vterm dependency | brew install libvterm |
+| debugpy | Python debugger | pip install debugpy |
+| pylint | Python linter | pip install pylint |
 
 ### Fonts
 Run `M-x nerd-icons-install-fonts` after setup to install icon fonts.
@@ -195,7 +222,7 @@ Run `M-x nerd-icons-install-fonts` after setup to install icon fonts.
 emacs --debug-init
 
 # Inside Emacs, validate dependencies
-M-x config-dependency-validate
+M-x emacs-config-validate-all
 ```
 
 ## Troubleshooting
@@ -207,7 +234,7 @@ M-x config-dependency-validate
    ```
 2. Run dependency validation
    ```bash
-   M-x config-dependency-validate
+   M-x emacs-config-validate-all
    ```
 3. Review startup logs
    ```bash
@@ -224,15 +251,11 @@ M-x config-dependency-validate
    ```bash
    M-x package-refresh-contents
    ```
-3. Verify use-package is installed
-   ```bash
-   M-x package-install RET use-package
-   ```
 
 ### LSP Not Working
 1. Confirm LSP server is installed
    ```bash
-   M-x config-dependency-validate
+   M-x emacs-config-validate-all
    ```
 2. Check eglot status
    ```bash
@@ -252,7 +275,7 @@ Follow conventional commit format:
 
 <optional body>
 
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
 
 Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`, `style`
@@ -266,5 +289,6 @@ Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`, `style`
 - **Multi-tool repository**: This is NOT a single application but configurations for multiple independent tools
 - **macOS-focused**: Most configurations assume macOS as the primary OS
 - **Symlink-based setup**: Configuration files are symlinked rather than copied for easier updates
-- **Validation-driven**: Use `M-x config-dependency-validate` to check if all required tools are installed
+- **Validation-driven**: Use `M-x emacs-config-validate-all` to check if all required tools are installed
 - **Emacs-centric**: The Emacs configuration is the most complex and has the most extensive validation system
+- **Minimum Emacs version**: Requires Emacs >= 30.2
