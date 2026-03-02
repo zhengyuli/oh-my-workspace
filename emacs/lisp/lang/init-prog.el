@@ -101,8 +101,7 @@
          (sh-mode . eglot-ensure)
          (cmake-mode . eglot-ensure)
          (dockerfile-mode . eglot-ensure)
-         (yaml-mode . eglot-ensure)
-         (markdown-mode . eglot-ensure))
+         (yaml-mode . eglot-ensure))
   :config
   (setq eglot-sync-connect nil
         completion-category-defaults nil

@@ -45,32 +45,11 @@
   :defer t)
 
 ;; ==================================================================================
-;; Edit indirect - edit code blocks in separate buffer
-(use-package edit-indirect
-  :ensure t
-  :defer t)
-
-;; ==================================================================================
-;; Visual enhancements
-(use-package visual-fill-column
-  :ensure t
-  :defer t
-  :hook (markdown-mode . visual-fill-column-mode)
-  :config
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t))
-
-;; ==================================================================================
 ;; Markdown mode - main mode
 (use-package markdown-mode
   :ensure t
   :defer t
   :hook (markdown-mode . my/markdown-mode-setup)
-  :bind
-  (:map markdown-mode-map
-        ("C-c C-e" . edit-indirect-region-or-buffer)
-        ("C-c C-t" . markdown-toc-generate-or-refresh-toc)
-        ("C-c C-f" . markdownfmt-format-buffer))
   :config
   (defun my/markdown-mode-setup ()
     "Setup markdown mode."
@@ -86,8 +65,7 @@
         markdown-enable-wiki-links t
         markdown-indent-on-enter 'indent-and-new-item
         markdown-hide-urls t
-        markdown-fontify-code-blocks-natively t
-        markdown-list-item-bullets '("-" "*" "+")))
+        markdown-fontify-code-blocks-natively t))
 
 ;; ==================================================================================
 ;; Markdown theme beautification

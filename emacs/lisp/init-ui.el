@@ -88,6 +88,43 @@
         ("M-N" . centaur-tabs-switch-group))
 
   :config
+  ;; --------------------------------------------------------------------------
+  ;; Custom centaur tabs buffer groups
+  (defun my/centaur-tabs-buffer-groups ()
+    "`centaur-tabs-buffer-groups' control buffers' group rules.
+
+Group centaur-tabs with mode if buffer is derived from `eshell-mode'
+`emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+All buffer name start with * will group to \"Emacs\".
+Other buffer group by `centaur-tabs-get-group-name' with project name."
+    (list
+     (cond
+      ((string-match-p "\\[.*\\]$" (buffer-name)) nil)
+      ((when-let* ((project-name (centaur-tabs-project-name)))
+         project-name))
+      ((memq major-mode '( magit-process-mode
+                           magit-status-mode
+                           magit-log-mode
+                           magit-file-mode
+                           magit-blob-mode
+                           magit-blame-mode
+                           magit-diff-mode
+                           magit-revision-mode
+                           magit-stash-mode))
+       "Magit")
+      ((derived-mode-p 'shell-mode) "Shell")
+      ((derived-mode-p 'eshell-mode) "EShell")
+      ((derived-mode-p 'dired-mode) "Dired")
+      ((memq major-mode '( org-mode org-agenda-mode diary-mode)) "OrgMode")
+      ((and centaur-tabs-custom-buffer-groups
+            (funcall centaur-tabs-custom-buffer-groups)))
+      ((derived-mode-p 'emacs-lisp-mode) "Elisp")
+      ((string-equal "*" (substring (buffer-name) 0 1))
+       "Emacs")
+      (t
+       (centaur-tabs-get-group-name (current-buffer))))))
+
+  ;; --------------------------------------------------------------------------
   ;; Core appearance and behavior settings
   (setq
    ;; Tab height in pixels
@@ -99,7 +136,9 @@
    ;; Show buffer count in tab groups
    centaur-tabs-show-count t
    ;; Limit tab cycling within the current tab group
-   centaur-tabs-cycle-scope 'tabs)
+   centaur-tabs-cycle-scope 'tabs
+   ;; Set custom tabs buffer group
+   centaur-tabs-buffer-groups-function #'my/centaur-tabs-buffer-groups)
 
   ;; --------------------------------------------------------------------------
   ;; Face customization (tab colors and states)
