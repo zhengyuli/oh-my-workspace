@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 19:09:50 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-02 15:19:53 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -114,17 +114,17 @@ First available font will be used."
   (add-hook 'after-init-hook #'emacs-setup-fonts))
 
 ;; ==================================================================================
-;; Textsize - automatic font sizing based on screen resolution (GUI only)
+;; textsize: Auto-adjust font size based on screen resolution/density
+;; Disabled key bindings as requested, only keep core font scaling logic
 (use-package textsize
   :ensure t
   :when (display-graphic-p)
   :defer t
   :hook (after-init . textsize-mode)
   :config
-  (setq textsize-monitor-size-thresholds
-        '((0 . -3) (350 . -1) (500 . 0))
-        textsize-pixel-pitch-thresholds
-        '((0 . 5) (0.12 . 3) (0.18 . 1) (0.20 . 0) (0.25 . -2))))
+  (setq textsize-pixel-pitch-thresholds nil
+        textsize-monitor-size-thresholds nil)
+  (set-face-attribute 'default nil :height 140))
 
 ;; ==================================================================================
 (provide 'init-fonts)

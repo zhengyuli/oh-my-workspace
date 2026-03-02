@@ -1,5 +1,5 @@
 ;;; init-cmake.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-02 21:48:46 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,21 +30,9 @@
 
 ;; ==================================================================================
 ;; CMake mode
-;; eglot already configured for cmake-mode eglot-ensure in init-prog.el
 (use-package cmake-mode
+  :ensure t
   :defer t)
-
-;; ==================================================================================
-;; CMake Tools Validation
-;; CMake LSP server validation
-(defvar required-cmake-tools
-  '((cmake-language-server . "pip install cmake-language-server"))
-  "CMake LSP server.
-Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
-
-(config-dependency-register
- 'cmake-tools
- (lambda () (config-dependency-validate-executables required-cmake-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

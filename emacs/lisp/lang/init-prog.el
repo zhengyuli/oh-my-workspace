@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 23:03:47 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-02 21:25:36 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,12 +29,93 @@
 
 ;;; Code:
 
-(require 'copyright)  ; For copyright-update in prog-before-save-hook
+;; ==================================================================================
+;; Smartparens - automatic parenthesis pairing
+(use-package smartparens
+  :ensure t
+  :defer t
+  :hook (prog-mode . smartparens-mode)
+  :config
+  (require 'smartparens-config))
 
 ;; ==================================================================================
-;; Utility function
+;; Hungry delete
+(use-package hungry-delete
+  :ensure t
+  :defer t
+  :hook (prog-mode . hungry-delete-mode))
+
+;; ==================================================================================
+;; Rainbow delimiters
+(use-package rainbow-delimiters
+  :ensure t
+  :defer t
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+;; ==================================================================================
+;; Highlight TODO
+(use-package hl-todo
+  :ensure t
+  :defer t
+  :hook (prog-mode . hl-todo-mode))
+
+;; ==================================================================================
+;; Flycheck - syntax checking
+(use-package flycheck
+  :ensure t
+  :defer t
+  :hook (prog-mode . flycheck-mode))
+
+;; ==================================================================================
+;; Whitespace cleanup
+(use-package whitespace-cleanup-mode
+  :ensure t
+  :defer t
+  :hook (prog-mode . whitespace-cleanup-mode))
+
+;; ==================================================================================
+;; Quickrun
+(use-package quickrun
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+;; Dumb jump
+(use-package dumb-jump
+  :ensure t
+  :demand t
+  :config
+  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
+
+;; ==================================================================================
+;; Eglot - lightweight LSP client (Emacs 29+ built-in)
+;; Performance optimization: async connection, deferred startup
+(use-package eglot
+  :ensure nil
+  :defer t
+  :hook ((c-mode . eglot-ensure)
+         (c++-mode . eglot-ensure)
+         (go-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
+         (typescript-mode . eglot-ensure)
+         (sh-mode . eglot-ensure)
+         (cmake-mode . eglot-ensure)
+         (dockerfile-mode . eglot-ensure)
+         (yaml-mode . eglot-ensure)
+         (markdown-mode . eglot-ensure))
+  :config
+  (setq eglot-sync-connect nil
+        completion-category-defaults nil
+        completion-category-overrides '((eglot (styles orderless flex)))))
+
+;; ==================================================================================
+;; Jump to the matched parenthesis/bracket/brace
 (defun jump-to-matched-paren ()
-  "Jump to the matched parenthesis."
+  "Jump to the matched parenthesis/bracket/brace for the current position.
+Behavior:
+- If cursor is on/after an opening delimiter ([{\"), jump to its closing match
+- If cursor is on/before a closing delimiter (]})\"), jump to its opening match
+- If no delimiter is found, show an error message"
   (interactive)
   (cond ((looking-at "[ \t]*[[\"({]")
          (forward-sexp)
@@ -46,205 +127,76 @@
          (backward-sexp))
         (t (message "couldn't find matched paren"))))
 
-;; ==================================================================================
-;; Smartparens - automatic parenthesis pairing
-(use-package smartparens
-  :defer t
-  :hook (prog-mode . smartparens-mode)
-  :config
-  (setq sp-highlight-pair-overlay nil        ; Disable pair highlighting, reduce visual noise
-        sp-highlight-wrap-overlay nil        ; Disable wrap highlighting
-        sp-highlight-wrap-tag-overlay nil    ; Disable tag wrap highlighting
-        sp-cancel-autoskip-on-backward-movement nil)  ; Allow backward skip
-  (require 'smartparens-config))
+;; Core prog-mode hook
+(defun my/prog-mode-setup ()
+  "Custom settings for all programming modes."
+  ;; Indentation
+  (setq-local tab-width 4
+              indent-tabs-mode nil)
+  ;; Line numbers
+  (display-line-numbers-mode 1)
+  ;; Symbol prettification
+  (prettify-symbols-mode 1)
+  ;; Code folding
+  (hs-minor-mode 1)
+  ;; Optional: jump to matching paren function
+  (local-set-key (kbd "C-]") #'jump-to-matched-paren))
 
-;; ==================================================================================
-;; Hungry delete
-(use-package hungry-delete
-  :defer t
-  :hook (prog-mode . hungry-delete-mode))
+(add-hook 'prog-mode-hook #'my/prog-mode-setup)
 
-;; ==================================================================================
-;; Rainbow delimiters
-(use-package rainbow-delimiters
-  :defer t
-  :hook (prog-mode . rainbow-delimiters-mode))
+(defun my/prog-mode-setup ()
+  "Apply custom buffer-local settings for all programming modes.
+These settings only affect the current buffer and do not modify global Emacs state."
+  ;; Indentation Configuration (Consistent across all programming modes)
+  (setq-local tab-width 4
+              indent-tabs-mode nil)
+  ;; Line Numbers: Enable relative/absolute line numbers for code navigation
+  (display-line-numbers-mode 1)
+  ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
+  (prettify-symbols-mode 1)
+  ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
+  (hs-minor-mode 1)
+  ;; Custom Keybinding (Buffer-Local): Jump to matching parenthesis/bracket/brace
+  (local-set-key (kbd "C-]") #'jump-to-matched-paren))
 
-;; ==================================================================================
-;; Highlight TODO
-(use-package hl-todo
-  :defer t
-  :hook (prog-mode . hl-todo-mode)
-  :config
-  (setq hl-todo-highlight-punctuation ":")    ; Highlight colon
-  ;; Custom TODO keyword colors
-  (setq hl-todo-keyword-faces
-        '(("TODO" . "#FF0000")
-          ("FIXME" . "#FF0000")
-          ("DEBUG" . "#A020F0")
-          ("GOTCHA" . "#FF4500")
-          ("STUB" . "#1E90FF")
-          ("NOTE" . "#90EE90")
-          ("HACK" . "#FFD700"))))
+;; Attach the setup function to prog-mode hook
+(add-hook 'prog-mode-hook #'my/prog-mode-setup)
 
-;; ==================================================================================
-;; Flycheck - syntax checking
-(use-package flycheck
-  :defer t
-  :hook (prog-mode . flycheck-mode)
-  :config
-  (setq flycheck-indication-mode 'left-margin  ; Show errors in left margin
-        flycheck-check-syntax-automatically '(save idle-change)  ; Check on save and idle
-        flycheck-idle-change-delay 0.5         ; Check after 0.5s idle
-        flycheck-display-errors-delay 0.3      ; Show errors after 0.3s
-        flycheck-highlighting-mode 'symbols)    ; Highlight at symbol level
-  ;; Define error level fringe bitmap
-  (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-    [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
-
-;; ==================================================================================
-;; Whitespace cleanup
-(use-package whitespace-cleanup-mode
-  :defer t
-  :hook (prog-mode . whitespace-cleanup-mode))
-
-;; ==================================================================================
-;; Quickrun
-(use-package quickrun
-  :defer t)
-
-;; ==================================================================================
-;; Dumb jump
-(use-package dumb-jump
-  :defer t
-  :config
-  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
-
-;; ==================================================================================
-;; Format all - code formatting
-;; Note: files larger than 500KB not auto-formatted to avoid lag
-(defconst format-all-max-file-size (* 500 1024)  ; 500KB
-  "Maximum file size for auto-formatting on save.")
-
-(defun format-all-mode-maybe ()
-  "Enable format-all-mode only for reasonably sized files."
-  (when (< (buffer-size) format-all-max-file-size)
-    (format-all-mode 1)))
-
-(use-package format-all
-  :defer t
-  :hook (prog-mode . format-all-mode-maybe)
-  :bind
-  (:map prog-mode-map
-        ("C-c f" . format-all-buffer)))
-
-;; ==================================================================================
-;; Devdocs
-(use-package devdocs
-  :defer t)
-
-;; ==================================================================================
-;; Eglot - lightweight LSP client (Emacs 29+ built-in)
-;; Performance optimization: async connection, deferred startup
-(use-package eglot
-  :ensure nil  ; Built-in package
-  :defer t
-  :hook ((python-mode . eglot-ensure)
-         (go-mode . eglot-ensure)
-         (c-mode . eglot-ensure)
-         (c++-mode . eglot-ensure)
-         (yaml-mode . eglot-ensure)
-         (sh-mode . eglot-ensure)
-         (dockerfile-mode . eglot-ensure)
-         (cmake-mode . eglot-ensure))
-  :config
-  ;; Performance settings: async connection to avoid blocking
-  (setq eglot-sync-connect nil         ; Async connection (don't block)
-        eglot-connect-timeout 30       ; Connection timeout in seconds
-        eglot-autoshutdown t           ; Auto-shutdown LSP when no buffers
-        eglot-ignored-server-capabilities '(:documentHighlightProvider))
-
-  ;; Configure LSP servers for each language
-  ;; Python: pip install python-lsp-server[all]
-  (add-to-list 'eglot-server-programs
-               '((python-mode python-ts-mode) . ("pylsp")))
-
-  ;; Go: go install golang.org/x/tools/gopls@latest
-  (add-to-list 'eglot-server-programs
-               '((go-mode go-ts-mode) . ("gopls")))
-
-  ;; C/C++: Xcode Command Line Tools or LLVM provides clangd
-  (add-to-list 'eglot-server-programs
-               '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
-
-   ;; YAML: npm install -g yaml-language-server
-  (add-to-list 'eglot-server-programs
-               '((yaml-mode yaml-ts-mode) . ("yaml-language-server" "--stdio")))
-
-  ;; Bash: npm install -g bash-language-server
-  (add-to-list 'eglot-server-programs
-               '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
-
-  ;; Dockerfile: npm install -g dockerfile-language-server-nodejs
-  (add-to-list 'eglot-server-programs
-               '(dockerfile-mode . ("docker-langserver" "--stdio")))
-
-  ;; CMake: pip install cmake-language-server
-  (add-to-list 'eglot-server-programs
-               '((cmake-mode cmake-ts-mode) . ("cmake-language-server"))))
-
-;; ==================================================================================
-;; Programming mode keybindings
-(add-hook 'prog-mode-hook
-          (lambda ()
-            ;; Set tab width with 4 white spaces
-            (setq-local tab-width 4)
-            ;; Disable tab characters for indentation
-            (setq-local indent-tabs-mode nil)
-            ;; Enable line numbers mode
-            (display-line-numbers-mode 1)
-            ;; Enable show paren mode
-            (show-paren-local-mode 1)
-            ;; Enable prettify symbol mode
-            (prettify-symbols-mode 1)
-            ;; Enable hide show mode
-            (hs-minor-mode 1)))
-
-;; Keybindings for prog-mode
+;; Core prog-mode keybindings (built-in)
 (use-package prog-mode
   :ensure nil
+  :defer t
   :bind
   (:map prog-mode-map
-        ("<return>" . newline-and-indent)
-        ("RET" . newline-and-indent)
+        ;; Navigation
         ("C-c M-a" . beginning-of-defun)
         ("C-c M-e" . end-of-defun)
-        ("C-]" . jump-to-matched-paren)
+        ;; Comment toggle
         ("C-c C-c" . comment-line)
-        ("M-r" . xref-find-references)
+        ;; Xref
         ("M-." . xref-find-definitions)
         ("M-," . xref-pop-marker-stack)
-        ("C-x C-;" . quickrun)
-        ("C-h C-d" . devdocs-lookup)
-        ("C-h C-s" . devdocs-search)))
+        ("M-r" . xref-find-references)
+        ;; Newline + indent
+        ("RET" . newline-and-indent)
+        ("<return>" . newline-and-indent)))
 
 ;; ==================================================================================
-;; Before save hooks (mode-specific)
-;; Time-stamp: globally enabled (only affects files with Time-stamp marker)
+(require 'copyright)
 
-;; Programming mode specific before-save hook
-(defun prog-before-save-hook ()
-  "Actions to run before saving programming files."
-  ;; Update copyright (only in project files)
-  (when (vc-root-dir)
-    (copyright-update))
-  ;; Delete trailing whitespace
-  (delete-trailing-whitespace))
+(define-minor-mode my/prog-save-mode
+  "Minor mode for programming buffers to run custom before-save hooks."
+  :lighter " SaveHook"
+  :global nil
+  ;; Code to run when the minor mode is enabled or disabled
+  (if my/prog-save-mode
+      ;; When enabled, add the custom function to the buffer-local before-save-hook
+      (add-hook 'before-save-hook #'my/prog-before-save nil t)
+    ;; When disabled, remove the function from the buffer-local before-save-hook
+    (remove-hook 'before-save-hook #'my/prog-before-save t)))
 
-;; Enable only for programming modes
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook #'prog-before-save-hook nil t)))
+;; Automatically enable this minor mode for all programming modes
+(add-hook 'prog-mode-hook #'my/prog-save-mode)
 
 ;; ==================================================================================
 ;;; Provide features

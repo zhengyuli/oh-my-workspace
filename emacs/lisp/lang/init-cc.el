@@ -1,5 +1,5 @@
 ;;; init-cc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-02-20 21:48:57 Friday by zhengyuli>
+;; Time-stamp: <2026-03-02 21:28:04 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -27,11 +27,6 @@
 ;; C/C++ mode configuration.
 
 ;;; Code:
-
-;; ==================================================================================
-;; Google C style
-(use-package google-c-style
-  :defer t)
 
 ;; ==================================================================================
 ;; Utility function
@@ -77,16 +72,10 @@ Return absolute path of selected file."
               (google-set-c-style))))
 
 ;; ==================================================================================
-;; C/C++ Tools Validation
-;; C/C++ LSP server validation
-(defvar required-cc-tools
-  '((clangd . "Xcode CLI or LLVM (brew install llvm)"))
-  "C/C++ LSP server.
-Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
-
-(config-dependency-register
- 'cc-tools
- (lambda () (config-dependency-validate-executables required-cc-tools)))
+;; Google C style
+(use-package google-c-style
+  :ensure t
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features

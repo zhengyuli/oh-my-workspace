@@ -1,5 +1,5 @@
 ;;; init-dockerfile.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2025-10-18 20:05:59 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-02 21:48:21 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,22 +30,9 @@
 
 ;; ==================================================================================
 ;; Dockerfile mode
-;; eglot already configured for dockerfile-mode eglot-ensure in init-prog.el
 (use-package dockerfile-mode
+  :ensure t
   :defer t)
-
-;; ==================================================================================
-;; Dockerfile Tools Validation
-;; Dockerfile LSP server validation
-(defvar required-docker-tools
-  '((docker-langserver . "npm install -g dockerfile-language-server-nodejs"))
-  "Dockerfile LSP server.
-Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).
-Note: The executable name is 'docker-langserver' (no hyphen).")
-
-(config-dependency-register
- 'docker-tools
- (lambda () (config-dependency-validate-executables required-docker-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

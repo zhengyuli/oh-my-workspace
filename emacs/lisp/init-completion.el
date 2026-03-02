@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 21:42:35 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-02 22:15:58 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -23,8 +23,6 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;
-;; Completion system: vertico, marginalia, consult, corfu, yasnippet, which-key, avy, ag.
 
 ;;; Code:
 
@@ -32,7 +30,9 @@
 ;; Orderless - fuzzy matching
 (use-package orderless
   :ensure t
-  :demand t)
+  :demand t
+  :custom
+  (completion-styles '(orderless basic)))
 
 ;; ==================================================================================
 ;; Marginalia - completion annotations
@@ -49,23 +49,45 @@
   :hook (after-init . vertico-mode))
 
 ;; ==================================================================================
+;; Consult - enhanced commands
+;; Consult provides many enhanced versions of built-in Emacs commands, especially
+;; for searching, switching buffers, and finding files, with incremental completion.
+(use-package consult
+  :ensure t
+  :defer t  ;; Load lazily when first needed to improve startup time
+  :bind
+  (;; Search for a string in the current buffer using incremental search
+   ("C-s" . consult-line)
+   ;; Switch to another buffer (enhanced interface with completion)
+   ("C-x b" . consult-buffer)
+   ;; Open a recently visited file
+   ("C-x B" . consult-recent-file)
+   ;; Show and select from the kill ring (yank history)
+   ("M-y" . consult-yank-pop)
+   ;; Go to a specific line in the current buffer
+   ("M-g g" . consult-goto-line)
+   ("M-g M-g" . consult-goto-line)  ;; Same as above, for convenience
+   ;; Search for a string in files using grep
+   ("C-x g" . consult-grep)
+   ;; Search in a git repository using git grep
+   ("C-x G" . consult-git-grep)
+   ;; Find a file in the current directory tree
+   ("C-x f" . consult-find)))
+
+;; ==================================================================================
 ;; Embark - context actions
 (use-package embark
   :ensure t
-  :defer t)
-
-;; ==================================================================================
-;; Consult - enhanced commands
-(use-package consult
-  :ensure t
-  :defer t)
+  :defer t
+  :bind
+  (("C-." . embark-act)
+   ("C-;" . embark-dwim)))
 
 ;; ==================================================================================
 ;; Embark-consult - Embark and Consult integration
 (use-package embark-consult
   :ensure t
-  :defer t
-  :after (embark consult)
+  :after (consult embark)
   :hook
   (embark-collect-mode . consult-preview-at-point-mode)
   :config
@@ -76,23 +98,31 @@
 (use-package corfu
   :ensure t
   :defer t
-  :hook ((after-init . global-corfu-mode)
-         (corfu-mode . corfu-popupinfo-mode))
+  :hook (after-init . global-corfu-mode)
   :config
-  (setq corfu-auto t))
+  (setq corfu-auto t)
+  (corfu-popupinfo-mode 1))
 
 ;; ==================================================================================
+;; Corfu-terminal - completion framework
+(use-package corfu-terminal
+  :ensure t
+  :unless (display-graphic-p)
+  :after corfu
+  :config
+  (corfu-terminal-mode 1))
+
+;; ==================================================================================
+;; Cape - completion at point extensions
 (use-package cape
   :ensure t
-  :defer t
   :after corfu
-  :hook
-  (prog-mode . my/cape-setup)
   :config
   (defun my/cape-setup ()
     (add-to-list 'completion-at-point-functions #'cape-file t)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
-    (add-to-list 'completion-at-point-functions #'cape-symbol t)))
+    (add-to-list 'completion-at-point-functions #'cape-elisp-symbol t))
+  (add-hook 'prog-mode-hook #'my/cape-setup))
 
 ;; ==================================================================================
 (use-package yasnippet
@@ -111,7 +141,6 @@
 
 (use-package yasnippet-snippets
   :ensure t
-  :defer t
   :after yasnippet
   :hook (yas-minor-mode . yasnippet-snippets-initialize))
 ;; ==================================================================================

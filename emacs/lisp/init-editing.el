@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 21:57:43 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-02 22:15:49 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -23,19 +23,11 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;
-;; Editing enhancements: buffer utilities, vundo, move-text, expand-region,
-;; multiple-cursors, smart copy/kill, etc.
 
 ;;; Code:
 
 ;; ==================================================================================
 ;; Buffer utilities
-(defun current-major-mode-name ()
-  "Display major mode and mode name."
-  (interactive)
-  (message "major-mode: %s, mode-name: %s" major-mode mode-name))
-
 (defun indent-entire-buffer ()
   "Automatic format current buffer."
   (interactive)
@@ -97,9 +89,6 @@ Otherwise kill the buffer directly."
         (kill-current-buffer))
     (kill-current-buffer)))
 
-;; Set key binding directly (not in after-init-hook)
-(global-set-key (kbd "C-x k") #'smart-kill-buffer)
-
 ;; ==================================================================================
 ;; Vundo - visual undo tree (replaces undo-tree)
 (use-package vundo
@@ -111,19 +100,22 @@ Otherwise kill the buffer directly."
 ;; Expand region
 (use-package expand-region
   :ensure t
-  :defer t)
+  :defer t
+  :bind ("M-M" . er/expand-region))
 
 ;; ==================================================================================
 ;; Browse kill ring
 (use-package browse-kill-ring
   :ensure t
-  :defer t)
+  :defer t
+  :bind ("M-Y" . browse-kill-ring))
 
 ;; ==================================================================================
 ;; Goto last change
 (use-package goto-chg
   :ensure t
-  :defer t)
+  :defer t
+  :bind ("M-o" . goto-last-change))
 
 ;; ==================================================================================
 ;; Auto insert
@@ -148,51 +140,58 @@ Otherwise kill the buffer directly."
 
   ;; Templates
   (define-auto-insert-custom
-    '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
+    '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C/C++ header")
     ["template.h" autoinsert-yas-expand])
-
   (define-auto-insert-custom
-    '("\\.\\([Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C / C++ program")
+    '("\\.\\([Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C/C++ source")
     ["template.c" autoinsert-yas-expand])
-
   (define-auto-insert-custom
     '("\\.py\\'" . "Python header")
     ["template.py" autoinsert-yas-expand])
-
   (define-auto-insert-custom
     '("\\.go\\'" . "Golang header")
     ["template.go" autoinsert-yas-expand])
-
   (define-auto-insert-custom
     '("\\.el\\'" . "Emacs Lisp header")
     ["template.el" autoinsert-yas-expand])
-
   (define-auto-insert-custom
     '("\\.hs\\'" . "Haskell header")
     ["template.hs" autoinsert-yas-expand])
-
   (define-auto-insert-custom
     '("\\.sh\\'" . "Shell script header")
     ["template.sh" autoinsert-yas-expand])
-
   (define-auto-insert-custom
     '("\\.org\\'" . "Org header")
     ["template.org" autoinsert-yas-expand]))
 
 ;; ==================================================================================
-(lazy-set-key
- '(;; Undo (explicit binding to prevent override)
-   ("C-/" . undo)
-   ;; Smart edit
-   ("C-x TAB" . smart-indent-region)
-   ("M-w" . smart-copy-region)
-   ("M-k" . smart-kill-region)
-   ;; Expand region
-   ("M-M" . er/expand-region)
-   ;; Browse kill ring
-   ("M-Y" . browse-kill-ring)
-   ;; Goto last change
-   ("M-o" . goto-last-change)))
+;; Keybindings for common editing commands
+;; Undo and redo
+;; Undo last change
+(global-set-key (kbd "C-/") #'undo)
+ ;; Redo last undone change (requires undo-redo package or Emacs 28+)
+(global-set-key (kbd "C-?") #'undo-redo)
+
+;; Active mark (selection)
+ ;; Set mark at point
+(global-set-key (kbd "M-m") #'set-mark-command)
+
+;; Smart editing commands
+;; Indent selected region smartly
+(global-set-key (kbd "C-x TAB") #'smart-indent-region)
+ ;; Copy selected region smartly
+(global-set-key (kbd "M-w") #'smart-copy-region)
+ ;; Kill (cut) selected region smartly
+(global-set-key (kbd "M-k") #'smart-kill-region)
+
+;; Buffer management
+ ;; Kill current buffer with smart behavior
+(global-set-key (kbd "C-x k") #'smart-kill-buffer)
+
+;; ==================================================================================
+;; Before save hooks (global)
+;; Time-stamp: globally enabled (only affects files with Time-stamp marker)
+(add-hook 'before-save-hook #'time-stamp)
 
 ;; ==================================================================================
 ;;; Provide features

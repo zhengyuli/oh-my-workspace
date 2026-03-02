@@ -1,5 +1,5 @@
 ;;; init-vc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 23:03:13 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-02 22:16:07 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -23,118 +23,48 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;
-;; Version control configuration: magit, git utilities.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Git utilities
-(defvar git-user-name-cache nil
-  "Cached git user name.")
-(defvar git-user-email-cache nil
-  "Cached git user email.")
-
-(defun git-user-name-async (&optional callback)
-  "Get git user name asynchronously.
-If CALLBACK is provided, call it with the result;
-otherwise display in minibuffer.
-Result is cached in `git-user-name-cache'."
-  (interactive)
-  (if (and git-user-name-cache
-           (not (called-interactively-p 'interactive)))
-      (when callback (funcall callback git-user-name-cache))
-    (let ((default-directory (or (vc-root-dir) default-directory)))
-      (make-process
-       :name "git-user-name"
-       :command '("git" "config" "--get" "user.name")
-       :sentinel
-       (lambda (proc _event)
-         (when (eq (process-status proc) 'exit)
-           (with-current-buffer (process-buffer proc)
-             (let ((result (string-trim (buffer-string)))
-                   (buf (process-buffer proc)))
-               (setq git-user-name-cache
-                     (unless (string-empty-p result) result))
-               ;; Clean up process buffer after extracting result
-               (kill-buffer buf)
-               (if callback
-                   (funcall callback git-user-name-cache)
-                 (message "Git user name: %s"
-                          (or git-user-name-cache "not set")))))))))))
-
-(defun git-user-email-async (&optional callback)
-  "Get git user email asynchronously.
-If CALLBACK is provided, call it with the result;
-otherwise display in minibuffer.
-Result is cached in `git-user-email-cache'."
-  (interactive)
-  (if (and git-user-email-cache
-           (not (called-interactively-p 'interactive)))
-      (when callback (funcall callback git-user-email-cache))
-    (let ((default-directory (or (vc-root-dir) default-directory)))
-      (make-process
-       :name "git-user-email"
-       :command '("git" "config" "--get" "user.email")
-       :sentinel
-       (lambda (proc _event)
-         (when (eq (process-status proc) 'exit)
-           (with-current-buffer (process-buffer proc)
-             (let ((result (string-trim (buffer-string)))
-                   (buf (process-buffer proc)))
-               (setq git-user-email-cache
-                     (unless (string-empty-p result) result))
-               ;; Clean up process buffer after extracting result
-               (kill-buffer buf)
-               (if callback
-                   (funcall callback git-user-email-cache)
-                 (message "Git user email: %s"
-                          (or git-user-email-cache "not set")))))))))))
-
-;; Aliases for convenience
-(defalias 'git-user-name #'git-user-name-async
-  "Get git user name.
-\(Async version, use `git-user-name-async' directly for callbacks)")
-
-(defalias 'git-user-email #'git-user-email-async
-  "Get git user email.
-\(Async version, use `git-user-email-async' directly for callbacks)")
-
-;; ==================================================================================
-;; Magit - Git version control interface
+;; Magit - Git Integration for Emacs
+;; Magit provides a powerful, intuitive interface for Git operations within Emacs,
+;; replacing the need for most command-line Git interactions with a visual workflow.
 (use-package magit
+  :ensure t
+  :defer t
   :commands (magit-status magit-log-all)
+  :bind
+  ((;; Global keybinding for Magit status (core entry point to Git workflow)
+    "C-c g s" . magit-status)
+   ;; Global keybinding for viewing full Git commit log (all branches)
+   ("C-c g l" . magit-log-all))
   :config
-  (setq magit-diff-refine-hunk t             ; Show character-level differences
-        magit-revert-buffers 'silent         ; Silently revert files
-        magit-no-message '("Turning on magit-auto-revert-mode"))
+  ;; Load magit-diff
   (require 'magit-diff)
 
-  ;; Customized faces
-  ;; Semantic: added = green, removed = red
+  ;; --------------------------------------------------------------------------
+  ;; Core Magit Configuration (Optional Enhancements)
+  ;; Improve diff performance and readability
+  (setq
+   ;; Show word-level diffs in hunks (more precise)
+   magit-diff-refine-hunk 'all
+   magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+
+  ;; --------------------------------------------------------------------------
+  ;; Custom Magit Diff Faces (Semantic Coloring)
+  ;; Semantic color scheme: green for added content, red for removed content
   (custom-set-faces
-   '(magit-diff-added ((t (:background "#98FB98" :foreground "black"))))              ; light green
-   '(magit-diff-removed ((t (:background "#FFB6C1" :foreground "black"))))            ; light red
-   '(magit-diff-added-highlight ((t (:background "#90EE90" :foreground "black"))))    ; highlighted green
-   '(magit-diff-removed-highlight ((t (:background "#F08080" :foreground "black"))))  ; highlighted red
+   ;; Basic added line (light green background, black text for contrast)
+   '(magit-diff-added ((t (:background "#98FB98" :foreground "black"))))
+   ;; Basic removed line (light pink background, black text for contrast)
+   '(magit-diff-removed ((t (:background "#FFB6C1" :foreground "black"))))
+   ;; Highlighted added line (darker green for active hunk)
+   '(magit-diff-added-highlight ((t (:background "#90EE90" :foreground "black"))))
+   ;; Highlighted removed line (darker red for active hunk)
+   '(magit-diff-removed-highlight ((t (:background "#F08080" :foreground "black"))))
+   ;; Highlighted diff hunk heading (dark gray background, white text)
    '(magit-diff-hunk-heading-highlight ((t (:background "#383838" :foreground "white"))))))
-
-;; ==================================================================================
-;; Function aliases
-(defalias 'git-status 'magit-status)
-(defalias 'git-log 'magit-log-all)
-
-;; ==================================================================================
-;; VC Tools Validation
-;; Version control tools validation
-(defvar required-vc-tools
-  '((git . "brew install git"))
-  "List of required version control tools.
-Each element is (EXECUTABLE . INSTALL-INSTRUCTIONS).")
-
-(config-dependency-register
- 'vc-tools
- (lambda () (config-dependency-validate-executables required-vc-tools)))
 
 ;; ==================================================================================
 ;;; Provide features

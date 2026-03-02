@@ -1,11 +1,11 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 23:14:49 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-02 22:36:29 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: none
-;; Dependencies: init-funcs
+;; Keywords: dired, dirvish, file manager
+;; Dependencies: init-funcs, dired-custom-extension
 
 ;; This file is not part of GNU Emacs.
 
@@ -23,148 +23,136 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;
-;; Editing enhancements: buffer utilities, vundo, move-text, expand-region,
-;; multiple-cursors, smart copy/kill, etc.
 
 ;;; Code:
 
 ;; ==================================================================================
-;;; init-dired.el -*- lexical-binding: t; -*-
-;;; Commentary:
-;; Modern Dired + Dirvish configuration
-
-;;; Code:
-
-;; ==================================================================================
-(use-package nerd-icons-dired
-  :ensure t
-  :defer t
-  :hook (dired-mode . nerd-icons-dired-mode))
-
-;; ==================================================================================
+;; Core Dired Configuration
+;; Built-in directory editor with optimized settings for Dirvish compatibility
 (use-package dired
   :ensure nil
   :defer t
-  :init
+  :hook ((dired-mode . dired-omit-mode)
+         (dired-mode . dired-async-mode))
+  :bind
+  (("C-x j" . dired-jump)
+   (:map dired-mode-map
+         ;; --------------------------------------------------------------------------
+         ;; Navigation keys
+         ;; Open file or directory in current buffer (single buffer mode)
+         ("<return>" . dired-single-buffer)
+         ("RET" . dired-single-buffer)
+         ;; Go to parent directory in single buffer mode
+         ("h" . dired-up-directory-single)
+         ;; Navigate to previous/next file
+         ("p" . dired-hacks-previous-file)
+         ("n" . dired-hacks-next-file)
+         ;; Jump to first/last line in directory listing
+         ("M-{" . dired-goto-first-line)
+         ("M-}" . dired-goto-last-line)
+         ;; Toggle omit mode
+         ("M-o" . dired-omit-mode)
 
-  ;; ;; 稳定排序
-  ;; (setq dired-listing-switches
-  ;;       "-alh --group-directories-first")
+         ;; --------------------------------------------------------------------------
+         ;; File operations
+         ;; View file in read-only mode
+         ("v" . dired-view-file)
+         ;; Delete marked files
+         ("C-k" . dired-do-delete)
+         ;; Edit filenames in-place (wdired mode)
+         ("r" . wdired-change-to-wdired-mode)
+         ;; Update file timestamp (touch)
+         ("E" . dired-do-touch)
+         ;; Create backup of marked files
+         ("B" . dired-backup-file)
+         ;; Diff file changes
+         ("d" . dired-diff)
+         ;; Diff two directories
+         ("D" . ediff-directories)
+         ;; Compress files
+         ("z" . dired-do-compress)
+         ("Z" . dired-do-compress)
 
-  ;; ;; 自动刷新
-  (setq dired-auto-revert-buffer t)
+         ;; --------------------------------------------------------------------------
+         ;; Cryptography (GPG/PGP operations)
+         ;; Encrypt file with GPG
+         (": e" . epa-dired-do-encrypt)
+         ;; Decrypt GPG encrypted file
+         (": d" . epa-dired-do-decrypt)
+         ;; Sign file with GPG
+         (": s" . epa-dired-do-sign)
+         ;; Verify GPG signature
+         (": v" . epa-dired-do-verify)
 
-  ;; 递归操作
-  (setq dired-recursive-copies 'always
-        dired-recursive-deletes 'always)
+         ;; --------------------------------------------------------------------------
+         ;; Copy/Cut/Paste (clipboard operations)
+         ;; Copy marked files to clipboard
+         ("M-w" . dired-copy-files)
+         ;; Cut marked files to clipboard
+         ("M-k" . dired-cut-files)
+         ;; Paste files from clipboard
+         ("C-y" . dired-paste-files)
 
-  ;; 智能目标
-  (setq dired-dwim-target t)
-
-  ;; 提升性能
-  (setq dired-kill-when-opening-new-dired-buffer t)
+         ;; --------------------------------------------------------------------------
+         ;; File path utilities (copy to clipboard)
+         ;; Copy filename without path to clipboard
+         ("; n" . dired-get-file-name-without-path)
+         ;; Copy full file path to clipboard
+         ("; N" . dired-get-file-name-with-path)
+         ;; Copy directory path only to clipboard
+         ("; p" . dired-get-file-name-only-path)))
 
   :config
-  (require 'dired-x)
-  (require 'epa-dired)
+  ;; Load custom Dired extensions (with safety check)
+  (require 'dired-custom-extension)
 
-  ;; omit 设置
-  (setq dired-omit-extensions
-        (append dired-omit-extensions '(".cache")))
+  (setq
+   ;; --------------------------------------------------------------------------
+   ;; Configure copy/move/delete behavior and confirmation prompts
+   ;; Smart target selection: use other dired buffer as target for copy/move operations
+   dired-dwim-target t
+   ;; Allow recursive copy operations without additional confirmation prompts
+   dired-recursive-copies 'always
+   ;; Allow recursive delete operations without additional confirmation prompts
+   dired-recursive-deletes 'always
+   ;; Use simple y/n confirmation for deletion (instead of full yes/no prompts)
+   dired-deletion-confirmer 'y-or-n-p
 
-  (setq dired-omit-files
-        (concat dired-omit-files
-                "\\|^\\.\\|^semantic.cache$\\|^CVS$")))
+   ;; --------------------------------------------------------------------------
+   ;; Auto-revert dired buffer only for local directories (performance optimization for remote files)
+   dired-auto-revert-buffer (not (file-remote-p default-directory))
 
-;; ==================================================================================
-;; Dirvish（核心）
-;; ==================================================================================
+   ;; --------------------------------------------------------------------------
+   ;; Customize which files/directories are hidden in Dired buffer
+   ;; Core omit filter rules (fixed regex with exact matching)
+   dired-omit-files
+   (concat
+    ;; Hide all hidden files/directories starting with . (e.g., .git, .env)
+    "^\\.\\|"
+    ;; Hide compiled Python/Emacs Lisp files (exact suffix match)
+    "\\.pyc\\'\\|\\.elc\\'\\|"
+    ;; Hide compiled object/class files
+    "\\.o\\'\\|\\.class\\'\\|"
+    ;; Hide jar, log, and lock files (exact match)
+    "\\.jar\\'\\|\\.log\\'\\|\\.lock\\'\\|"
+    ;; Hide specified directories (exact name match to avoid false positives)
+    "\\(node_modules\\|__pycache__\\|.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
+    ;; Hide macOS special file (exact match)
+    "\\.DS_Store\\'")
+   ;; Supplementary file extension filter (aligned with omit-files, redundant but as fallback)
+   dired-omit-extensions '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")
+   ;; Enable toggle shortcut to show/hide omitted files
+   dired-omit-toggle-show-hidden t
+   ;; Hide ellipsis marker (...) in dired buffer for cleaner interface
+   dired-omit-verbose nil)
 
-(use-package dirvish
-  :ensure t
-  :defer t
-
-  ;; ⭐ override 必须放 init
-  :init
-  (dirvish-override-dired-mode)
-
-  :config
-  ;; UI
-  (setq dirvish-attributes
-        '(vc-state
-          subtree-state
-          nerd-icons
-          collapse
-          file-time
-          file-size))
-
-  ;; 布局
-  (setq dirvish-default-layout '(0 0 0.4))
-
-  ;; preview
-  (setq dirvish-preview-delay 0.1)
-
-  (setq dirvish-preview-dispatchers
-        '(image video audio pdf archive))
-
-  ;; 打开文件
-  (setq dirvish-open-with-programs
-        '(("pdf" . ("open"))
-          ("mp4" . ("mpv"))
-          ("mkv" . ("mpv"))))
-
-  ;; UI 清爽
-  (setq dirvish-use-mode-line nil)
-
-  ;; 侧边栏
-  (setq dirvish-side-follow-mode t)
-
-  ;; override dired
-  (dirvish-override-dired-mode))
-
-;; ==================================================================================
-;; Dirvish extras（可选）
-;; ==================================================================================
-
-(use-package dirvish-extras
-  :after dirvish
-  :defer t)
-
-;; ==================================================================================
-;; Keybindings（保留原始习惯 + modern）
-;; ==================================================================================
-
-(with-eval-after-load 'dired
-
-  ;; Vim 风格导航
-  (define-key dired-mode-map (kbd "h") #'dired-up-directory)
-  (define-key dired-mode-map (kbd "l") #'dired-find-file)
-  (define-key dired-mode-map (kbd "j") #'dired-next-line)
-  (define-key dired-mode-map (kbd "k") #'dired-previous-line)
-
-  ;; modern navigation
-  (define-key dired-mode-map (kbd "TAB") #'dirvish-subtree-toggle)
-
-  ;; dirvish menus
-  (define-key dired-mode-map (kbd "C-c C-m") #'dirvish-mark-menu)
-  (define-key dired-mode-map (kbd "C-c C-e") #'dirvish-emerge)
-  (define-key dired-mode-map (kbd "C-c C-f") #'dirvish-file-info-menu))
-
-;; ==================================================================================
-;; 快捷入口
-;; ==================================================================================
-
-(global-set-key (kbd "C-x C-d") #'dired)
-(global-set-key (kbd "C-x d") #'dired-jump)
-
-;; ==================================================================================
-;; macOS 依赖检测
-;; ==================================================================================
-
-(defvar required-dired-tools
-  '((gls . "brew install coreutils")
-    (fd . "brew install fd")))
+  ;; --------------------------------------------------------------------------
+  ;; Configure how directories/files are displayed in Dired buffer
+  ;; Default ls switches: show all files, long format, human-readable sizes, directories first
+  (if (executable-find "gls")
+      (setq insert-directory-program "gls"
+            dired-listing-switches "-alh --group-directories-first")
+    (setq dired-listing-switches "-alh")))
 
 ;; ==================================================================================
 ;;; Provide features

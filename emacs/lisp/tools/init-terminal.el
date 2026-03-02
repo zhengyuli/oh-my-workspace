@@ -1,5 +1,5 @@
 ;;; init-terminal.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-01 23:03:31 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-02 22:16:13 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -23,69 +23,71 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;
-;; Terminal configuration: vterm, multi-vterm.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Vterm - modern terminal emulator
+;; Vterm - Emacs Terminal Emulator
+;; Vterm provides a fast, feature-rich terminal emulator for Emacs with native PTY support,
+;; offering better performance than built-in shell modes like eshell or term.
 (use-package vterm
+  :ensure t
+  :defer t
   :commands (vterm)
-  :config
-  (setq vterm-max-scrollback 10000           ; Maximum scrollback history
-        vterm-scroll-enable-emacs-bar t      ; Emacs-style scrollbar
-        vterm-kill-buffer-on-exit t          ; Kill buffer on exit
-        vterm-enable-manipulate-selection-data t) ; Allow selection manipulation
   :bind
   (:map vterm-mode-map
+        ;; Fix C-g to insert literal C-g instead of interrupting vterm
         ("C-g" . vterm--self-insert)
+        ;; Send meta-backspace (Alt+Backspace) to terminal (delete word left)
         ("M-<backspace>" . vterm-send-meta-backspace))
+  :hook
+  (vterm-mode . my/vterm-mode-setup)
   :config
-  ;; Hooks
-  (add-hook 'vterm-mode-hook
-            (lambda ()
-              ;; Disable auto fill mode
-              (auto-fill-mode -1)
-              ;; Disable yasnippet mode (check availability first)
-              (when (fboundp 'yas-minor-mode)
-                (yas-minor-mode -1))
-              ;; Disable corfu mode (check availability first)
-              (when (fboundp 'corfu-mode)
-                (corfu-mode -1))
-              ;; Disable line highlighting (use hl-line-mode, not global-hl-line-mode)
-              (when (fboundp 'hl-line-mode)
-                (hl-line-mode -1))
-              ;; Unbind M-0~9 to allow winnum to work
-              (lazy-unset-key '("M-0" "M-1" "M-2" "M-3" "M-4"
-                                "M-5" "M-6" "M-7" "M-8" "M-9")
-                              vterm-mode-map)
-              ;; Set buffer-local variables
-              (setq-local truncate-lines t))))
+  (setq
+   ;; Maximum scrollback history lines (10k for sufficient history)
+   vterm-max-scrollback 10000
+   ;; Use Emacs-style scrollbar instead of terminal scrollbar
+   vterm-scroll-enable-emacs-bar t
+   ;; Auto-kill vterm buffer when terminal exits (cleanup)
+   vterm-kill-buffer-on-exit t
+   ;; Allow Emacs to manipulate terminal selection data
+   vterm-enable-manipulate-selection-data t)
+
+  ;; --------------------------------------------------------------------------
+  ;; Custom Vterm Mode Setup (Consolidated Hook Function)
+  (defun my/vterm-mode-setup ()
+    "Custom initialization for vterm-mode (buffer-local settings & mode disabling)."
+    ;; Disable auto-fill mode (prevents line wrapping in terminal)
+    (auto-fill-mode -1)
+
+    ;; Disable line highlighting (avoids visual clutter in terminal)
+    (when (fboundp 'hl-line-mode)
+      (hl-line-mode -1))
+
+    ;; Disable snippet/completion modes (avoid conflicts with terminal input)
+    ;; Disable yasnippet if available
+    (when (fboundp 'yas-minor-mode)
+      (yas-minor-mode -1))
+    ;; Disable corfu completion if available
+    (when (fboundp 'corfu-mode)
+      (corfu-mode -1))
+
+    ;; Unbind M-0~9 to allow winnum package to control window switching
+    (dolist (key '("M-0" "M-1" "M-2" "M-3" "M-4"
+                   "M-5" "M-6" "M-7" "M-8" "M-9"))
+      (define-key vterm-mode-map (kbd key) nil))
+
+    ;; Buffer-local settings (only apply to vterm buffers)
+    ;; Disable line wrapping (use terminal's own wrapping)
+    (setq-local truncate-lines t)))
 
 ;; ==================================================================================
 ;; Multi-vterm
 (use-package multi-vterm
-  :commands (multi-vterm))
-
-;; ==================================================================================
-;; Terminal keybinding
-(add-hook 'after-init-hook
-          (lambda ()
-            (lazy-set-key
-             '(("C-x C-t" . multi-vterm)))))
-
-;; ==================================================================================
-;; Terminal Tools Validation
-;; Terminal tools validation (vterm module requires libvterm library compilation)
-(defvar required-terminal-tools
-  '((vterm-dump . "brew install libvterm (vterm compilation dependency)"))
-  "List of terminal tools.
-vterm-dump is provided by libvterm homebrew package.")
-
-(config-dependency-register
- 'terminal-tools
- (lambda () (config-dependency-validate-executables required-terminal-tools)))
+  :ensure t
+  :defer t
+  :commands (multi-vterm)
+  :bind ("C-x C-t" . multi-vterm))
 
 ;; ==================================================================================
 ;;; Provide features
