@@ -192,8 +192,8 @@ sudo apt -y install fzf autojump
 
 ```shell
 git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-completions ~/.oh-my-zsh/custom/plugins/zsh-completions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-completions.git ~/.oh-my-zsh/custom/plugins/zsh-completions
 ```
 
 **Configure in `~/.zshrc`:**
@@ -447,6 +447,11 @@ pyenv rehash
 
 [Emacs](https://www.gnu.org/software/emacs/) is an extensible, customizable text editor.
 
+### Requirements
+
+- **macOS**: Emacs >= 30.2 (install via Homebrew)
+- **Ubuntu**: Emacs >= 30.2 (install via snap)
+
 ### Installation
 
 **Mac:**
@@ -473,12 +478,44 @@ The setup script will:
 - Create symbolic link from `~/.emacs` to the project configuration
 - Display a comprehensive dependency installation guide including:
   - Core tools (git, aspell, pandoc, ripgrep, etc.)
-  - LSP servers (Python, Go, C/C++, Haskell, YAML, Bash, Dockerfile, CMake, Markdown)
+  - LSP servers (Python, Go, C/C++, TypeScript, YAML, Bash, Dockerfile, CMake, Markdown)
   - Code formatters and linters
   - Debug tools
   - Fonts for GUI mode
 
-After setup, install fonts in Emacs:
+### Dependencies
+
+Install all dependencies with:
+
+```shell
+# Core tools
+brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm marksman fd
+
+# Node.js LSP servers
+npm install -g yaml-language-server bash-language-server dockerfile-language-server-nodejs typescript-language-server typescript
+
+# Python tools (auto-installed when activating venv)
+pip install "python-lsp-server[all]" pylint black black-macchiato isort debugpy cmake-language-server
+
+# Go tools
+go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
+```
+
+### Verification
+
+Test that Emacs loads without errors:
+
+```shell
+emacs --debug-init
+```
+
+Inside Emacs, validate all dependencies:
+
+```text
+M-x emacs-config-validate-all
+```
+
+Install icons fonts (GUI mode):
 
 ```text
 M-x nerd-icons-install-fonts
