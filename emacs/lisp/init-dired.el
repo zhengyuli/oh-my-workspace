@@ -27,6 +27,11 @@
 ;;; Code:
 
 ;; ==================================================================================
+(use-package dirvish
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
 ;; Core Dired Configuration
 ;; Built-in directory editor with optimized settings for Dirvish compatibility
 (use-package dired
@@ -152,7 +157,9 @@
   (if (executable-find "gls")
       (setq insert-directory-program "gls"
             dired-listing-switches "-alh --group-directories-first")
-    (setq dired-listing-switches "-alh")))
+    (setq dired-listing-switches "-alh"))
+
+  (dirvish-override-dired-mode 1))
 
 ;; ==================================================================================
 ;;; Provide features
