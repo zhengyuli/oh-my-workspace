@@ -1,10 +1,12 @@
-;;; package --- init-typescript.el -*- lexical-binding:t -*-
+;;; init-typescript.el --- TypeScript mode configuration -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-03 11:00:00 星期二 by zhengyu.li>
 
-;; Copyright (c) 2026 Zhengyu Li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: none
-;;
+;; Keywords: typescript, ts
+;; Dependencies: init-funcs, init-prog
+
 ;; This file is not part of GNU Emacs.
 ;;
 ;; This program is free software; you can redistribute it and/or modify
@@ -21,13 +23,10 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
+;; TypeScript mode configuration.
 
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-typescript)
-
-;;; Require:
+;;; Code:
 
 
 ;;; Code:

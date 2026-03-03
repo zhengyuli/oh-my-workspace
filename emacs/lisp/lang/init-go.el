@@ -4,7 +4,7 @@
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: none
+;; Keywords: go, golang
 ;; Dependencies: init-funcs, init-prog
 
 ;; This file is not part of GNU Emacs.

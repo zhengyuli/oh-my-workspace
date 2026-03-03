@@ -5,6 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: none
+;; Dependencies: init-funcs, init-completion
 
 ;; This file is not part of GNU Emacs.
 
