@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-02 22:15:09 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-03 08:27:50 星期二 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -211,6 +211,11 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; use-package setup
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+;; ==================================================================================
+(use-package async
+  :ensure t
+  :defer t)
 
 ;; ==================================================================================
 ;; GC optimization with gcmh
