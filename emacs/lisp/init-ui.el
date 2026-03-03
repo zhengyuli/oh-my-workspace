@@ -126,6 +126,8 @@
   :defer t
   :hook (after-init . winum-mode)
   :config
+  ;; Bind M-1 through M-9 to select windows 1-9
+  ;; Note: Using loop to generate bindings dynamically (cannot use :bind)
   (dotimes (i 9)
     (global-set-key (kbd (format "M-%d" (1+ i))) (intern (format "winum-select-window-%d" (1+ i))))))
 

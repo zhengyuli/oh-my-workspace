@@ -165,28 +165,34 @@ Otherwise kill the buffer directly."
     ["template.org" autoinsert-yas-expand]))
 
 ;; ==================================================================================
-;; Keybindings for common editing commands
-;; Undo and redo
-;; Undo last change
-(global-set-key (kbd "C-/") #'undo)
- ;; Redo last undone change (requires undo-redo package or Emacs 28+)
-(global-set-key (kbd "C-?") #'undo-redo)
+;; Built-in Emacs keybindings
+(use-package emacs
+  :ensure nil
+  :bind
+  (;; Undo and redo
+   ("C-/" . undo)           ; Undo last change
+   ("C-?" . undo-redo)      ; Redo last undone change (Emacs 28+)
 
-;; Active mark (selection)
- ;; Set mark at point
-(global-set-key (kbd "M-m") #'set-mark-command)
+   ;; Active mark (selection)
+   ("M-m" . set-mark-command)))  ; Set mark at point
 
-;; Smart editing commands
-;; Indent selected region smartly
-(global-set-key (kbd "C-x TAB") #'smart-indent-region)
- ;; Copy selected region smartly
-(global-set-key (kbd "M-w") #'smart-copy-region)
- ;; Kill (cut) selected region smartly
-(global-set-key (kbd "M-k") #'smart-kill-region)
+;; ==================================================================================
+;; Personal editing utilities
+;; Note: Custom functions defined above in this file:
+;;   - smart-indent-region
+;;   - smart-copy-region
+;;   - smart-kill-region
+;;   - smart-kill-buffer
+(use-package personal-editing
+  :ensure nil
+  :bind
+  (;; Smart editing commands
+   ("C-x TAB" . smart-indent-region)  ; Indent region or buffer
+   ("M-w" . smart-copy-region)        ; Copy region or line
+   ("M-k" . smart-kill-region)        ; Kill region or line
 
-;; Buffer management
- ;; Kill current buffer with smart behavior
-(global-set-key (kbd "C-x k") #'smart-kill-buffer)
+   ;; Buffer management
+   ("C-x k" . smart-kill-buffer)))    ; Smart buffer kill
 
 ;; ==================================================================================
 ;; Before save hooks (global)

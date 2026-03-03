@@ -302,12 +302,17 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
         mac-option-modifier 'meta))
 
 ;; ==================================================================================
-;; Basic keybindings
-;; Translate '<return>' to 'RET'
-(define-key key-translation-map (kbd "<return>") (kbd "RET"))
+;; Built-in Emacs keybinding overrides
+(use-package emacs
+  :ensure nil
+  :bind
+  (;; Replace list-buffers with ibuffer (better buffer management)
+   ("C-x C-b" . ibuffer)))
 
-;; Use ibuffer instead of list-buffers
-(global-set-key (kbd "C-x C-b") #'ibuffer)
+;; ==================================================================================
+;; Key translation (must be set early, before init.el finishes)
+;; Translate '<return>' key to 'RET' for consistency
+(define-key key-translation-map (kbd "<return>") (kbd "RET"))
 
 ;; ==================================================================================
 ;; ==================================================================================
