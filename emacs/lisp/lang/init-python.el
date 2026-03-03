@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 21:46:48 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-03 23:51:43 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -60,7 +60,7 @@
     (and (fboundp 'poetry-find-project-name)
          (let ((name (poetry-find-project-name)))
            (and name
-                (propertize (format " 📦%s " name)
+                (propertize (format " 📦[%s] " name)
                             'face 'font-lock-keyword-face
                             'help-echo "Poetry project")))))
   (add-to-list 'mode-line-misc-info
