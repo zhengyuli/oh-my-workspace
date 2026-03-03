@@ -1,11 +1,11 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 21:25:36 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-03 23:08:21 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: prog, programming, hooks
-;; Dependencies: init-funcs
+;; Dependencies: (none)
 
 ;; This file is not part of GNU Emacs.
 
@@ -165,7 +165,32 @@ These settings only affect the current buffer and do not modify global Emacs sta
         ("<return>" . newline-and-indent)))
 
 ;; ==================================================================================
+;; Copyright update - automatic copyright year updates
 (require 'copyright)
+
+;; Configure copyright update behavior
+;; Enable automatic copyright updates
+(setq copyright-update t
+      copyright-query nil                 ; Don't ask, just update
+      copyright-names-regexp             ; Recognize common copyright holders
+      (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
+              emacs-user-name))
+
+(defun my/prog-before-save ()
+  "Function to run before saving programming files.
+Performs:
+1. Whitespace cleanup (delete trailing whitespace, convert tabs to spaces)
+2. Copyright update (if file contains copyright marker)"
+
+  ;; 1. Whitespace cleanup
+  (unless (derived-mode-p 'markdown-mode)  ; Skip markdown mode (preserves intentional trailing spaces)
+    (delete-trailing-whitespace))
+  ;; Convert tabs to spaces (use tab-width from buffer-local settings)
+  (untabify (point-min) (point-max))
+  ;; 2. Copyright update
+  (ignore-errors (copyright-update))
+  ;; Return nil to allow save to proceed
+  nil)
 
 (define-minor-mode my/prog-save-mode
   "Minor mode for programming buffers to run custom before-save hooks."

@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: dockerfile, docker
-;; Dependencies: init-funcs, init-prog
+;; Dependencies: init-prog
 
 ;; This file is not part of GNU Emacs.
 

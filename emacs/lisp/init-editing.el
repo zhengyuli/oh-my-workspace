@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: editing, deletion, whitespace, pairs
-;; Dependencies: init-funcs
+;; Dependencies: (none)
 
 ;; This file is not part of GNU Emacs.
 

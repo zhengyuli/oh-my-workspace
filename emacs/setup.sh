@@ -4,7 +4,7 @@
 # Name: setup.sh
 # Purpose: Emacs configurations setup script for macOS
 #
-# Time-stamp: <2026-02-16 14:00:00 Sunday by zhengyuli>
+# Time-stamp: <2026-03-03 23:12:12 Tuesday by zhengyu.li>
 #
 # Author: zhengyu li
 # Created: 2014-03-26
@@ -130,7 +130,7 @@ setup_proxy() {
     if [[ -n "${http_proxy:-}" ]]; then
         log_warning "Proxy detected: $http_proxy"
         log_warning "Since using symlink mode, proxy configuration will modify init.el directly"
-        log_warning "Consider setting proxy via environment variable or custom_settings.el instead"
+        log_warning "Consider setting proxy via environment variable or $HOME/.emacs.d/custom.el instead"
         log_info "Skipping automatic proxy configuration to preserve project file integrity"
     else
         log_info "No proxy environment variable found"
@@ -161,6 +161,84 @@ validate_installation() {
     return 0
 }
 
+# Function to check if LSP servers are installed
+check_lsp_servers() {
+    echo ""
+    echo -e "${CYAN}Checking LSP servers...${NC}"
+    echo ""
+
+    local missing_servers=()
+
+    # Python
+    if ! command -v pylsp &> /dev/null; then
+        missing_servers+=("pylsp (pip install python-lsp-server[all])")
+    else
+        echo -e "  ${GREEN}✓${NC} Python LSP (pylsp)"
+    fi
+
+    # Go
+    if ! command -v gopls &> /dev/null; then
+        missing_servers+=("gopls (go install golang.org/x/tools/gopls@latest)")
+    else
+        echo -e "  ${GREEN}✓${NC} Go LSP (gopls)"
+    fi
+
+    # TypeScript
+    if ! command -v typescript-language-server &> /dev/null; then
+        missing_servers+=("typescript-language-server (npm install -g typescript-language-server)")
+    else
+        echo -e "  ${GREEN}✓${NC} TypeScript LSP"
+    fi
+
+    # YAML
+    if ! command -v yaml-language-server &> /dev/null; then
+        missing_servers+=("yaml-language-server (npm install -g yaml-language-server)")
+    else
+        echo -e "  ${GREEN}✓${NC} YAML LSP"
+    fi
+
+    # Bash
+    if ! command -v bash-language-server &> /dev/null; then
+        missing_servers+=("bash-language-server (npm install -g bash-language-server)")
+    else
+        echo -e "  ${GREEN}✓${NC} Bash LSP"
+    fi
+
+    # Dockerfile
+    if ! command -v docker-langserver &> /dev/null; then
+        missing_servers+=("docker-langserver (npm install -g dockerfile-language-server-nodejs)")
+    else
+        echo -e "  ${GREEN}✓${NC} Dockerfile LSP"
+    fi
+
+    # CMake
+    if ! command -v cmake-language-server &> /dev/null; then
+        missing_servers+=("cmake-language-server (pip install cmake-language-server)")
+    else
+        echo -e "  ${GREEN}✓${NC} CMake LSP"
+    fi
+
+    # Marksman (Markdown)
+    if ! command -v marksman &> /dev/null; then
+        missing_servers+=("marksman (brew install marksman)")
+    else
+        echo -e "  ${GREEN}✓${NC} Markdown LSP (marksman)"
+    fi
+
+    if [ ${#missing_servers[@]} -gt 0 ]; then
+        echo ""
+        echo -e "${YELLOW}Missing LSP servers:${NC}"
+        for server in "${missing_servers[@]}"; do
+            echo -e "  ${RED}✗${NC} $server"
+        done
+        return 1
+    else
+        echo ""
+        echo -e "${GREEN}All LSP servers installed!${NC}"
+        return 0
+    fi
+}
+
 # Function to print dependency installation guide
 print_dependency_guide() {
     echo ""
@@ -168,21 +246,33 @@ print_dependency_guide() {
     echo -e "${CYAN}                    External Dependencies Installation Guide                  ${NC}"
     echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════════${NC}"
     echo ""
-    echo -e "${GREEN}Run M-x emacs-config-validate-all in Emacs to check all dependencies.${NC}"
+    echo -e "${CYAN}Configuration Structure:${NC}"
+    echo "  lisp/          - Core modules (UI, editing, completion)"
+    echo "  lisp/tools/    - Tool integrations (AI, auth, terminal, VC)"
+    echo "  lisp/lang/     - Language-specific configs (10 languages)"
+    echo "  site-packages/ - Custom Emacs packages"
     echo ""
     echo -e "${YELLOW}Quick Install (copy and paste):${NC}"
     echo ""
-    echo "  # Core tools"
+    echo "  # Core tools (P0 - Required)"
     echo "  brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm marksman fd"
     echo ""
-    echo "  # Node.js LSP servers"
-    echo "  npm install -g yaml-language-server bash-language-server dockerfile-language-server-nodejs"
+    echo "  # LSP servers (P1 - Development)"
+    echo "  npm install -g \\"
+    echo "    typescript-language-server typescript \\"
+    echo "    yaml-language-server \\"
+    echo "    bash-language-server \\"
+    echo "    dockerfile-language-server-nodejs"
     echo ""
-    echo "  # Python tools (auto-installed when activating venv)"
-    echo "  pip install 'python-lsp-server[all]' pylint black black-macchiato isort debugpy cmake-language-server"
+    echo "  pip install 'python-lsp-server[all]' cmake-language-server"
+    echo "  go install golang.org/x/tools/gopls@latest"
     echo ""
-    echo "  # Go tools"
-    echo "  go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest"
+    echo "  # Formatters & Linters"
+    echo "  pip install black black-macchiato isort pylint debugpy"
+    echo "  go install mvdan.cc/gofumpt@latest"
+    echo ""
+    echo -e "${GREEN}Verify installation:${NC}"
+    echo "  M-x emacs-config-validate-all"
     echo ""
     echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════════${NC}"
 }
@@ -217,6 +307,9 @@ main() {
 
     # Setup proxy if configured
     setup_proxy
+
+    # Check LSP servers (informational, doesn't fail setup)
+    check_lsp_servers || log_warning "Some LSP servers are missing. See installation guide above."
 
     # Validate installation
     if validate_installation "$EMACS_CONFIG_FILE" "$SCRIPT_DIR/init.el"; then

@@ -5,7 +5,7 @@
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: dired, dirvish, file manager
-;; Dependencies: init-funcs, dired-custom-extension
+;; Dependencies: dired-custom-extension
 
 ;; This file is not part of GNU Emacs.
 
