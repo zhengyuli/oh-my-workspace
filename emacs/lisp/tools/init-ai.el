@@ -35,11 +35,11 @@
 ;; claude-code-ide integrates Anthropic's Claude AI into Emacs, providing code completion,
 ;; debugging, and natural language code assistance via the Claude Code CLI.
 (use-package claude-code-ide
-  :defer t
   ;; Install from GitHub (package not yet published to ELPA/MELPA)
   ;; TODO: Replace :vc with :ensure t once package is available in official repos
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el"
        :rev :newest)
+  :defer t
   :commands (claude-code-ide
              claude-code-ide-resume
              claude-code-ide-continue
