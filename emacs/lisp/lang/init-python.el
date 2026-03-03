@@ -34,14 +34,38 @@
 (use-package pyvenv
   :ensure t
   :defer t
-  :hook (python-mode . pyvenv-tracking-mode))
+  :hook (python-mode . pyvenv-tracking-mode)
+  :init
+  (defun my/pyvenv-mode-line-indicator ()
+    "Return pyvenv indicator for mode line."
+    (and (boundp 'pyvenv-virtual-env) pyvenv-virtual-env
+         (let ((name (file-name-nondirectory (directory-file-name pyvenv-virtual-env))))
+           (propertize (format " 🐍[%s] " name)
+                       'face 'font-lock-constant-face
+                       'help-echo pyvenv-virtual-env))))
+  (add-to-list 'mode-line-misc-info
+               '(:eval (my/pyvenv-mode-line-indicator))
+               'append))
 
 ;; ==================================================================================
 ;; Poetry - Python dependency and packaging manager
 ;; Integration with Poetry projects for modern Python development
 (use-package poetry
   :ensure t
-  :defer t)
+  :defer t
+  :hook (python-mode . poetry-tracking-mode)
+  :init
+  (defun my/poetry-mode-line-indicator ()
+    "Return Poetry project indicator for mode line."
+    (and (fboundp 'poetry-find-project-name)
+         (let ((name (poetry-find-project-name)))
+           (and name
+                (propertize (format " 📦%s " name)
+                            'face 'font-lock-keyword-face
+                            'help-echo "Poetry project")))))
+  (add-to-list 'mode-line-misc-info
+               '(:eval (my/poetry-mode-line-indicator))
+               'append))
 
 ;; ==================================================================================
 ;; Python mode - built-in Python editing support
