@@ -24,19 +24,16 @@
 
 ;;; Commentary:
 ;;
-;; AI coding assistants configuration.
-;; Currently includes: Claude Code IDE
-;; Future: GitHub Copilot, GPTel, Aider, etc.
+;; AI coding assistants: Claude Code IDE integration.
+;; Future: GitHub Copilot, GPTel, Aider support.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Claude Code IDE - AI-Powered Code Assistance
-;; claude-code-ide integrates Anthropic's Claude AI into Emacs, providing code completion,
-;; debugging, and natural language code assistance via the Claude Code CLI.
+;; Claude Code IDE - AI-powered coding assistance
+;; Integrates Anthropic's Claude into Emacs for code completion, debugging, and chat
 (use-package claude-code-ide
-  ;; Install from GitHub (package not yet published to ELPA/MELPA)
-  ;; TODO: Replace :vc with :ensure t once package is available in official repos
+  ;; Install from GitHub (not yet in ELPA/MELPA)
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el"
        :rev :newest)
   :defer t
@@ -47,17 +44,13 @@
              claude-code-ide-send-prompt)
   :config
   (setq
-   ;; ------------------------------ CLI Configuration ------------------------------
-   ;; Path to Claude Code CLI executable (assumes "claude" is in $PATH)
-   claude-code-ide-cli-path "claude"
-   ;; Extra command-line flags passed to the Claude Code CLI (e.g., "--model claude-3-5-sonnet")
-   claude-code-ide-cli-extra-flags ""
+   ;; CLI Configuration
+   claude-code-ide-cli-path "claude"              ; Path to Claude Code CLI
+   claude-code-ide-cli-extra-flags ""            ; Extra CLI flags
 
-   ;; ---------------------------- Terminal Configuration ---------------------------
-   ;; Terminal backend for Claude Code IDE (vterm = fast, native PTY support)
-   claude-code-ide-terminal-backend 'vterm
-   ;; Reduce visual flicker in vterm when interacting with Claude AI
-   claude-code-ide-vterm-anti-flicker t
+   ;; Terminal Configuration
+   claude-code-ide-terminal-backend 'vterm       ; Use vterm for performance
+   claude-code-ide-vterm-anti-flicker t         ; Reduce vterm flicker
 
    ;; ------------------------------- Debug Configuration ---------------------------
    ;; Disable debug logging (set to t for troubleshooting issues)

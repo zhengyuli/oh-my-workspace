@@ -24,79 +24,60 @@
 
 ;;; Commentary:
 ;;
-;; Dired configuration with Dirvish integration.
+;; Dired configuration with Dirvish for modern file management.
+;; Features: single-buffer navigation, async operations, GPG encryption.
 
 ;;; Code:
 
 ;; ==================================================================================
-
-;; ==================================================================================
+;; Dired hacks - utility functions for enhanced dired functionality
 (use-package dired-hacks-utils
   :ensure t
   :defer t)
 
 ;; ==================================================================================
+;; Dirvish - modern file manager with tree view and preview
 (use-package dirvish
   :ensure t
   :defer t)
 
 ;; ==================================================================================
-;; Core Dired Configuration
-;; Built-in directory editor with optimized settings for Dirvish compatibility
+;; Core Dired Configuration - enhanced directory editor
+;; Optimized for single-buffer navigation and async file operations
 (use-package dired
   :ensure nil
   :defer t
-  :hook ((dired-mode . dired-omit-mode)
-         (dired-mode . dired-async-mode))
+  :hook ((dired-mode . dired-omit-mode)    ; Hide dotfiles by default
+         (dired-mode . dired-async-mode))  ; Async operations for performance
   :bind
-  (("C-x j" . dired-jump)
+  (("C-x j" . dired-jump)                  ; Quick jump to directory
    (:map dired-mode-map
-         ;; --------------------------------------------------------------------------
-         ;; Navigation keys
-         ;; Open file or directory in current buffer (single buffer mode)
-         ("<return>" . dired-single-buffer)
+         ;; Navigation
+         ("<return>" . dired-single-buffer)         ; Open in current buffer
          ("RET" . dired-single-buffer)
-         ;; Go to parent directory in single buffer mode
-         ("h" . dired-up-directory-single)
-         ;; Navigate to previous/next file
-         ("p" . dired-hacks-previous-file)
-         ("n" . dired-hacks-next-file)
-         ;; Jump to first/last line in directory listing
-         ("M-{" . dired-goto-first-line)
-         ("M-}" . dired-goto-last-line)
-         ;; Toggle omit mode
-         ("M-o" . dired-omit-mode)
+         ("h" . dired-up-directory-single)          ; Go to parent directory
+         ("p" . dired-hacks-previous-file)          ; Previous file
+         ("n" . dired-hacks-next-file)              ; Next file
+         ("M-{" . dired-goto-first-line)            ; Jump to first file
+         ("M-}" . dired-goto-last-line)             ; Jump to last file
+         ("M-o" . dired-omit-mode)                  ; Toggle omit mode
 
-         ;; --------------------------------------------------------------------------
          ;; File operations
-         ;; View file in read-only mode
-         ("v" . dired-view-file)
-         ;; Delete marked files
-         ("C-k" . dired-do-delete)
-         ;; Edit filenames in-place (wdired mode)
-         ("r" . wdired-change-to-wdired-mode)
-         ;; Update file timestamp (touch)
-         ("E" . dired-do-touch)
-         ;; Create backup of marked files
-         ("B" . dired-backup-file)
-         ;; Diff file changes
-         ("d" . dired-diff)
-         ;; Diff two directories
-         ("D" . ediff-directories)
-         ;; Compress files
-         ("z" . dired-do-compress)
+         ("v" . dired-view-file)                    ; View file (read-only)
+         ("C-k" . dired-do-delete)                  ; Delete marked files
+         ("r" . wdired-change-to-wdired-mode)       ; Edit filenames in-place
+         ("E" . dired-do-touch)                     ; Update file timestamp
+         ("B" . dired-backup-file)                  ; Create backup
+         ("d" . dired-diff)                         ; Diff file changes
+         ("D" . ediff-directories)                  ; Diff two directories
+         ("z" . dired-do-compress)                  ; Compress files
          ("Z" . dired-do-compress)
 
-         ;; --------------------------------------------------------------------------
          ;; Cryptography (GPG/PGP operations)
-         ;; Encrypt file with GPG
-         (": e" . epa-dired-do-encrypt)
-         ;; Decrypt GPG encrypted file
-         (": d" . epa-dired-do-decrypt)
-         ;; Sign file with GPG
-         (": s" . epa-dired-do-sign)
-         ;; Verify GPG signature
-         (": v" . epa-dired-do-verify)
+         (": e" . epa-dired-do-encrypt)             ; Encrypt with GPG
+         (": d" . epa-dired-do-decrypt)             ; Decrypt GPG file
+         (": s" . epa-dired-do-sign)                ; Sign with GPG
+         (": v" . epa-dired-do-verify)              ; Verify GPG signature
 
          ;; --------------------------------------------------------------------------
          ;; Copy/Cut/Paste (clipboard operations)

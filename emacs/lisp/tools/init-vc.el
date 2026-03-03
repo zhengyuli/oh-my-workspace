@@ -23,47 +23,34 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Version control integration with Magit for powerful Git operations.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Magit - Git Integration for Emacs
-;; Magit provides a powerful, intuitive interface for Git operations within Emacs,
-;; replacing the need for most command-line Git interactions with a visual workflow.
+;; Magit - complete Git interface for Emacs
+;; Replaces command-line Git with intuitive visual workflow
 (use-package magit
   :ensure t
   :defer t
   :commands (magit-status magit-log-all)
   :bind
-  ((;; Global keybinding for Magit status (core entry point to Git workflow)
-    "C-c g s" . magit-status)
-   ;; Global keybinding for viewing full Git commit log (all branches)
-   ("C-c g l" . magit-log-all))
+  (("C-c g s" . magit-status)    ; Open Magit status
+   ("C-c g l" . magit-log-all))   ; View commit log
   :config
-  ;; Load magit-diff
   (require 'magit-diff)
 
-  ;; --------------------------------------------------------------------------
-  ;; Core Magit Configuration (Optional Enhancements)
-  ;; Improve diff performance and readability
-  (setq
-   ;; Show word-level diffs in hunks (more precise)
-   magit-diff-refine-hunk 'all
-   magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+  ;; Core Magit configuration
+  (setq magit-diff-refine-hunk 'all               ; Show word-level diffs
+        magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 
-  ;; --------------------------------------------------------------------------
-  ;; Custom Magit Diff Faces (Semantic Coloring)
-  ;; Semantic color scheme: green for added content, red for removed content
+  ;; Custom diff faces: green for additions, red for deletions
   (custom-set-faces
-   ;; Basic added line (light green background, black text for contrast)
    '(magit-diff-added ((t (:background "#98FB98" :foreground "black"))))
-   ;; Basic removed line (light pink background, black text for contrast)
    '(magit-diff-removed ((t (:background "#FFB6C1" :foreground "black"))))
-   ;; Highlighted added line (darker green for active hunk)
    '(magit-diff-added-highlight ((t (:background "#90EE90" :foreground "black"))))
-   ;; Highlighted removed line (darker red for active hunk)
    '(magit-diff-removed-highlight ((t (:background "#F08080" :foreground "black"))))
-   ;; Highlighted diff hunk heading (dark gray background, white text)
    '(magit-diff-hunk-heading-highlight ((t (:background "#383838" :foreground "white"))))))
 
 ;; ==================================================================================

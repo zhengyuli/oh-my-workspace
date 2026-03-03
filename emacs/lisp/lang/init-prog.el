@@ -128,22 +128,6 @@ Behavior:
 
 ;; Core prog-mode hook
 (defun my/prog-mode-setup ()
-  "Custom settings for all programming modes."
-  ;; Indentation
-  (setq-local tab-width 4
-              indent-tabs-mode nil)
-  ;; Line numbers
-  (display-line-numbers-mode 1)
-  ;; Symbol prettification
-  (prettify-symbols-mode 1)
-  ;; Code folding
-  (hs-minor-mode 1)
-  ;; Optional: jump to matching paren function
-  (local-set-key (kbd "C-]") #'jump-to-matched-paren))
-
-(add-hook 'prog-mode-hook #'my/prog-mode-setup)
-
-(defun my/prog-mode-setup ()
   "Apply custom buffer-local settings for all programming modes.
 These settings only affect the current buffer and do not modify global Emacs state."
   ;; Indentation Configuration (Consistent across all programming modes)

@@ -23,13 +23,14 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Terminal emulation configuration with vterm for fast, native PTY support.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Vterm - Emacs Terminal Emulator
-;; Vterm provides a fast, feature-rich terminal emulator for Emacs with native PTY support,
-;; offering better performance than built-in shell modes like eshell or term.
+;; Vterm - fast terminal emulator with native PTY support
+;; Superior performance compared to term/eshell for interactive shells
 (use-package vterm
   :ensure t
   :defer t

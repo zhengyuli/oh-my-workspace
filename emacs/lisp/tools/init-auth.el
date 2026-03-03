@@ -23,27 +23,30 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Authentication and credential management configuration.
+;; Features: GPG integration, pass password store, pinentry.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Pinentry
+;; Pinentry - GPG passphrase entry interface
 (use-package pinentry
   :ensure t
   :defer t
   :hook (after-init . pinentry-start))
 
 ;; ==================================================================================
-;; EPG config
+;; EPG configuration - EasyPG (GPG) settings
 (use-package epg-config
   :ensure nil
   :demand t
   :config
-  (setq epg-pinentry-mode 'loopback
-        epg-debug t))
+  (setq epg-pinentry-mode 'loopback    ; Use loopback pinentry mode
+        epg-debug t))                  ; Enable debug logging
 
 ;; ==================================================================================
-;; Auth source pass
+;; Auth-source pass - integrate pass password store with Emacs auth
 (use-package auth-source
   :ensure nil
   :demand t
@@ -52,7 +55,7 @@
   (auth-source-pass-enable))
 
 ;; ==================================================================================
-;; Password store
+;; Password-store - pass support for Emacs
 (use-package password-store
   :ensure t
   :defer t)

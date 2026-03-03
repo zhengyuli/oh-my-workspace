@@ -24,25 +24,28 @@
 
 ;;; Commentary:
 ;;
-;; Python mode configuration.
+;; Python mode configuration with virtual environment and Poetry support.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Pyvenv
+;; Pyvenv - Python virtual environment management
+;; Automatic tracking of virtualenv directories for seamless project switching
 (use-package pyvenv
   :ensure t
   :defer t
   :hook (python-mode . pyvenv-tracking-mode))
 
 ;; ==================================================================================
-;; Poetry
+;; Poetry - Python dependency and packaging manager
+;; Integration with Poetry projects for modern Python development
 (use-package poetry
   :ensure t
   :defer t)
 
 ;; ==================================================================================
-;; Python mode keybindings
+;; Python mode - built-in Python editing support
+;; Use fixed 4-space indentation (PEP 8 standard) without auto-detection
 (use-package python
   :ensure nil
   :defer t

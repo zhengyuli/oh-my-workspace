@@ -24,12 +24,14 @@
 
 ;;; Commentary:
 ;;
-;; CMake mode configuration.
+;; CMake mode configuration with LSP support.
+;; LSP server (cmake-language-server) is configured in init-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; CMake mode
+;; CMake mode - major mode for CMake build system files
+;; Provides syntax highlighting and basic editing support for CMakeLists.txt
 (use-package cmake-mode
   :ensure t
   :defer t)

@@ -24,14 +24,14 @@
 
 ;;; Commentary:
 ;;
-;; TypeScript mode configuration.
+;; TypeScript mode configuration with LSP support.
+;; LSP server (typescript-language-server) is configured in init-prog.el.
 
 ;;; Code:
 
-
-;;; Code:
 ;; ==================================================================================
-;; Typescript mode
+;; TypeScript mode - major mode for TypeScript and JavaScript
+;; Provides syntax highlighting and basic editing support for .ts/.tsx files
 (use-package typescript-mode
   :ensure t
   :defer t)

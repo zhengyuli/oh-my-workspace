@@ -53,11 +53,10 @@
   ;; Define per-mode setup function
   (defun my/visual-fill-column-setup ()
     "Initialize visual-fill-column settings for markdown-mode (per buffer)."
-    ;; Core: Center text block (key writing comfort feature)
+    ;; Center text block for better writing experience
     (setq-local visual-fill-column-center-text t)
-    ;; Avoid conflict with hard line wrapping (auto-fill-mode)
+    ;; Avoid conflicts with auto-fill-mode
     (setq-local visual-fill-column-enable-sensible-window-split t)
-    ;; Ensure the mode is enabled (redundant safety check)
     (visual-fill-column-mode 1)))
 
 ;; ==================================================================================
@@ -73,9 +72,7 @@
   :config
   (defun my/markdown-mode-setup ()
     "Setup markdown mode."
-    ;; Set buffer column width to 120
     (setq-local fill-column 120)
-    ;; Enable auto fill mode
     (auto-fill-mode 1))
 
   ;; Customize variables - Claude Code compatibility optimization
@@ -104,17 +101,17 @@
     (header-6 . "#46dcb0")
     (code-bg . "#293134")
     (code-fg . "#e0e2e4")
-    (inline-code-fg . "#e0e2e4")
-    (link . "#79b6e8")
+    (hr . "#586e75")
     (url . "#888888")
+    (link . "#79b6e8")
     (bold . "#ff7a52")
     (italic . "#ffab52")
-    (blockquote . "#777777")
-    (list-marker . "#75e349")
-    (hr . "#586e75")
     (metadata . "#93a1a1")
     (table-bg . "#293134")
-    (table-fg . "#e0e2e4"))
+    (table-fg . "#e0e2e4")
+    (blockquote . "#777777")
+    (list-marker . "#75e349")
+    (inline-code-fg . "#e0e2e4"))
   "Colors for Mou Sublime theme markdown rendering."
   :type 'alist
   :group 'markdown-mou-theme)
@@ -130,17 +127,17 @@
          (h6 (cdr (assq 'header-6 colors)))
          (code-bg (cdr (assq 'code-bg colors)))
          (code-fg (cdr (assq 'code-fg colors)))
-         (inline-code-fg (cdr (assq 'inline-code-fg colors)))
-         (link (cdr (assq 'link colors)))
+         (hr (cdr (assq 'hr colors)))
          (url (cdr (assq 'url colors)))
+         (link (cdr (assq 'link colors)))
          (bold (cdr (assq 'bold colors)))
          (italic (cdr (assq 'italic colors)))
-         (blockquote (cdr (assq 'blockquote colors)))
-         (list-marker (cdr (assq 'list-marker colors)))
-         (hr (cdr (assq 'hr colors)))
          (metadata (cdr (assq 'metadata colors)))
          (table-bg (cdr (assq 'table-bg colors)))
-         (table-fg (cdr (assq 'table-fg colors))))
+         (table-fg (cdr (assq 'table-fg colors)))
+         (blockquote (cdr (assq 'blockquote colors)))
+         (list-marker (cdr (assq 'list-marker colors)))
+         (inline-code-fg (cdr (assq 'inline-code-fg colors))))
     ;; Header styles - Mou Sublime style, unified cyan-green
     (face-remap-add-relative 'markdown-header-face-1 `(:foreground ,h1 :weight bold :height 1.5))
     (face-remap-add-relative 'markdown-header-face-2 `(:foreground ,h2 :weight bold :height 1.35))

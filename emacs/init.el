@@ -93,23 +93,50 @@ Used for setting `user-mail-address'."
 
 ;; ==================================================================================
 ;; HTTP Proxy configuration
+;;
+;; This section provides HTTP/HTTPS proxy support for Emacs network operations.
+;; Useful for:
+;;   - Package installation behind corporate proxies or firewalls
+;;   - Accessing MELPA/ELPA repositories through proxy servers
+;;   - Git operations through proxy (Magit, vc.el)
+;;   - External tool integration (LSP servers, formatters) that need proxy
+;;
+;; Configuration:
+;;   Add to custom.el: (setq emacs-http-proxy "127.0.0.1:7890")
+;;   Then run: M-x enable-http-proxy
+;;
+;; Common proxy formats:
+;;   - HTTP proxy: "127.0.0.1:7890" or "http://127.0.0.1:7890"
+;;   - SOCKS5 proxy: use "socks5://127.0.0.1:1080"
+;;   - Auth proxy: "http://user:pass@proxy.example.com:8080"
+
 (defcustom emacs-http-proxy nil
-  "Emacs configuration http proxy.
-Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy."
+  "Default HTTP/HTTPS proxy for Emacs network operations.
+Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy.
+This affects package installation, HTTP requests, and Git operations."
   :type '(choice (const :tag "No proxy" nil)
                  (string :tag "Proxy address"))
   :group 'omw-emacs-config)
 
 (defun show-http-proxy ()
-  "Show http/https proxy."
+  "Display current HTTP/HTTPS proxy configuration."
   (interactive)
   (if url-proxy-services
       (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
     (message "No http proxy")))
 
 (defun set-http-proxy (proxy)
-  "Set HTTP/HTTPS proxy to PROXY.
-PROXY should be like \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\"."
+  "Configure HTTP/HTTPS proxy for Emacs and subprocess environment.
+
+Sets proxy for:
+- Emacs internal URL library (url-proxy-services)
+- Environment variables (http_proxy, https_proxy, all_proxy)
+- Subprocesses (Git, curl, wget, etc.)
+
+PROXY format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\"
+Also supports: \"socks5://127.0.0.1:1080\" or \"http://user:pass@host:port\"
+
+Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
   (interactive
    (list (read-string
           (format "HTTP Proxy [%s]: " emacs-http-proxy)
@@ -117,22 +144,24 @@ PROXY should be like \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\"."
   (when (string-empty-p proxy)
     (user-error "Proxy cannot be empty"))
   (condition-case err
-      (let* (;; Normalize proxy URL
+      (let* (;; Normalize proxy URL: add http:// prefix if missing
              (proxy-url (if (string-match-p "\\`https?://" proxy)
                             proxy
                           (concat "http://" proxy)))
+             ;; Parse proxy URL to extract host and port
              (parsed (url-generic-parse-url proxy-url))
              (host (url-host parsed))
              (port (url-port parsed)))
-        ;; Validate
+        ;; Validate proxy configuration
         (unless (and host port)
           (error "Invalid proxy: missing host or port"))
-        ;; Apply environment
+        ;; Set environment variables for subprocesses (Git, curl, etc.)
         (dolist (var '("http_proxy" "https_proxy" "all_proxy"))
           (setenv var proxy-url))
-        ;; Emacs internal proxy
+        ;; Configure Emacs internal proxy with bypass rules
         (setq url-proxy-services
               `(("no_proxy"
+                 ;; Bypass proxy for localhost and private networks
                  . "^\\(127\\.0\\.0\\.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
                 ("http"  . ,(format "%s:%d" host port))
                 ("https" . ,(format "%s:%d" host port))))
@@ -141,17 +170,28 @@ PROXY should be like \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\"."
      (message "Proxy error: %s" (error-message-string err)))))
 
 (defun enable-http-proxy ()
-  "Enable HTTP proxy if `emacs-http-proxy' is configured.
-Customize in `user-emacs-directory'/custom_settings.el:
+  "Enable HTTP proxy using `emacs-http-proxy' custom variable.
 
-  (setq emacs-http-proxy \"127.0.0.1:7890\")"
+Configuration:
+  Add to custom.el:
+    (setq emacs-http-proxy \"127.0.0.1:7890\")
+
+  Then call: M-x enable-http-proxy
+
+This automatically applies proxy settings on startup if configured."
   (interactive)
   (if emacs-http-proxy
       (set-http-proxy emacs-http-proxy)
-    (message "HTTP proxy not configured. Add to custom_settings.el: (setq emacs-http-proxy \"127.0.0.1:7890\")")))
+    (message "HTTP proxy not configured. Add to custom.el: (setq emacs-http-proxy \"127.0.0.1:7890\")")))
 
 (defun unset-http-proxy ()
-  "Unset http/https proxy."
+  "Disable HTTP/HTTPS proxy for Emacs and subprocess environment.
+
+Clears all proxy settings:
+- Emacs internal proxy (url-proxy-services)
+- Environment variables (http_proxy, https_proxy, all_proxy)
+
+Useful for switching between proxy and direct connections."
   (interactive)
   (setenv "http_proxy")
   (setenv "https_proxy")
@@ -159,6 +199,7 @@ Customize in `user-emacs-directory'/custom_settings.el:
   (setq url-proxy-services nil)
   (show-http-proxy))
 
+;; Alias for convenience: M-x disable-http-proxy
 (defalias 'disable-http-proxy 'unset-http-proxy)
 
 ;; ==================================================================================
@@ -255,35 +296,25 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; =============================================================================
 ;; Backup and version control
-;; Always copy files when creating backups (safer for symlinks and versioned files)
-(setq backup-by-copying t)
-;; Store all backup files in a single directory
-(setq backup-directory-alist '((".*" . "~/.emacs.d/backup-files")))
-;; Enable versioned backups
-(setq version-control t)
-;; Automatically delete old backup versions
-(setq delete-old-versions t)
+;; Backup settings: use copying to avoid issues with symlinks in version control
+(setq backup-by-copying t
+      backup-directory-alist '((".*" . "~/.emacs.d/backup-files"))
+      version-control t
+      delete-old-versions t)
 
 ;; Startup behavior
-;; Disable default initialization (useful when managing full configuration)
-(setq inhibit-default-init t)
-;; Disable startup echo message in minibuffer
+(setq inhibit-default-init t)      ; Skip default.el to avoid conflicts with full config
 (setq inhibit-startup-echo-area-message t)
-;; Disable the startup screen
 (setq inhibit-startup-screen t)
 
 ;; UI and interaction
-;; Use shorter yes/no answers (y or n instead of full words)
-(setq use-short-answers t)
-;; Disable bell sound and visual bell
-(setq ring-bell-function 'ignore)
+(setq use-short-answers t)          ; Faster confirmation: y/n instead of yes/no
+(setq ring-bell-function 'ignore)   ; Disable both audio and visual bell
 
 ;; File and buffer management
-;; Maximum number of recent files saved
 (setq recentf-max-saved-items 100)
-;; Use forward-style buffer naming (e.g., dir/file instead of file<dir>)
+;; Use forward-style buffer naming for clarity: dir/file instead of file<dir>
 (setq uniquify-buffer-name-style 'forward)
-;; Separator used in uniquify buffer names
 (setq uniquify-separator "/")
 
 ;; Timestamp configuration
@@ -291,7 +322,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u")
 
 ;; User identity
-;; These variables are expected to be defined elsewhere in your config
 (setq user-full-name emacs-user-name
       user-mail-address emacs-user-email)
 
@@ -306,35 +336,24 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (use-package emacs
   :ensure nil
   :bind
-  (;; Replace list-buffers with ibuffer (better buffer management)
-   ("C-x C-b" . ibuffer)))
+  (("C-x C-b" . ibuffer)))
 
 ;; ==================================================================================
 ;; Key translation (must be set early, before init.el finishes)
-;; Translate '<return>' key to 'RET' for consistency
 (define-key key-translation-map (kbd "<return>") (kbd "RET"))
 
 ;; ==================================================================================
-;; ==================================================================================
 ;; Base configuration hooks
-;; Run after Emacs initialization
 (add-hook 'after-init-hook
           (lambda ()
-            ;; --------------------------------------------------
             ;; File and buffer auto management
-            ;; Automatically refresh buffers when files change on disk
-            (global-auto-revert-mode 1)
-            ;; Remember last cursor position in files
-            (save-place-mode 1)
-            ;; Track recently opened files
-            (recentf-mode 1)
+            (global-auto-revert-mode 1)   ; Auto-refresh when files change on disk
+            (save-place-mode 1)           ; Remember cursor position
+            (recentf-mode 1)              ; Track recently opened files
 
-            ;; --------------------------------------------------
             ;; UI and editing enhancements
-            ;; Show column number in mode line
-            (column-number-mode 1)
-            ;; Enable JIT font locking for better performance
-            (jit-lock-mode 1)))
+            (column-number-mode 1)        ; Show column number in mode line
+            (jit-lock-mode 1)))           ; JIT font locking for performance
 
 ;; Startup completion hook
 ;; GC settings managed automatically by gcmh-mode, no manual restore needed

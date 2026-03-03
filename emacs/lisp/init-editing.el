@@ -23,13 +23,16 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Editing enhancements: smart text operations, visual undo,
+;; expand region, kill ring browser, and file templates.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Buffer utilities
+;; Buffer utilities - smart text and buffer operations
 (defun indent-entire-buffer ()
-  "Automatic format current buffer."
+  "Format entire buffer: indent, delete trailing whitespace, convert tabs to spaces."
   (interactive)
   (save-excursion
     (indent-region (point-min) (point-max) nil)
@@ -37,7 +40,7 @@
     (untabify (point-min) (point-max))))
 
 (defun smart-indent-region ()
-  "If mark is active, indent region, else indent all buffer."
+  "Indent region if mark active, otherwise indent entire buffer."
   (interactive)
   (save-excursion
     (if mark-active
@@ -45,18 +48,18 @@
       (call-interactively 'indent-entire-buffer))))
 
 (defun copy-region ()
-  "Copy region."
+  "Copy active region to kill ring."
   (interactive)
   (copy-region-as-kill (region-beginning) (region-end)))
 
 (defun copy-current-line ()
-  "Copy current line."
+  "Copy current line (or from point to end of line) to kill ring."
   (interactive)
   (let ((end (min (point-max) (line-end-position))))
     (copy-region-as-kill (line-beginning-position) end)))
 
 (defun smart-copy-region ()
-  "If mark is active, copy region, else copy current line."
+  "Copy region if mark active, otherwise copy current line."
   (interactive)
   (save-excursion
     (if mark-active
@@ -64,23 +67,23 @@
       (call-interactively 'copy-current-line))))
 
 (defun smart-kill-region ()
-  "If mark is active, kill region, else kill whole line."
+  "Kill region if mark active, otherwise kill entire line."
   (interactive)
   (if mark-active
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
 
 (defun toggle-buffer-writable ()
-  "Toggle buffer writable."
+  "Toggle buffer read-only state."
   (interactive)
   (if buffer-read-only
       (read-only-mode -1)
     (read-only-mode 1)))
 
 (defun smart-kill-buffer ()
-  "Smart buffer close: kill modified file buffers with prompt, kill others directly.
-If buffer has unsaved changes and is associated with a file, prompt to save.
-Otherwise kill the buffer directly."
+  "Smart buffer close: prompt for file buffers with changes, kill others directly.
+If buffer has unsaved changes and is a file, offer to save.
+Otherwise kill buffer without confirmation."
   (interactive)
   (if (and buffer-file-name (buffer-modified-p))
       (if (yes-or-no-p (format "Buffer %s has unsaved changes. Save before killing? "
@@ -90,55 +93,60 @@ Otherwise kill the buffer directly."
     (kill-current-buffer)))
 
 ;; ==================================================================================
-;; Vundo - visual undo tree (replaces undo-tree)
+;; Vundo - visual undo history with tree navigation
+;; Replaces undo-tree with better performance and visualization
 (use-package vundo
   :ensure t
   :defer t
   :bind ("M-_" . vundo))
 
 ;; ==================================================================================
-;; Expand region
+;; Expand region - incremental text selection
+;; Expand selection semantically: word → sentence → paragraph → block
 (use-package expand-region
   :ensure t
   :defer t
   :bind ("M-M" . er/expand-region))
 
 ;; ==================================================================================
-;; Browse kill ring
+;; Browse kill ring - visualize and select from kill ring history
 (use-package browse-kill-ring
   :ensure t
   :defer t
   :bind ("M-Y" . browse-kill-ring))
 
 ;; ==================================================================================
-;; Goto last change
+;; Goto last change - jump to last edit position
 (use-package goto-chg
   :ensure t
   :defer t
   :bind ("M-o" . goto-last-change))
 
 ;; ==================================================================================
-;; Auto insert
+;; Auto insert - automatic file template insertion
+;; Insert predefined templates when creating new files based on file extension
 (use-package autoinsert
   :ensure nil  ; Built-in package
   :defer t
   :hook (after-init . auto-insert-mode)
   :config
   (defun define-auto-insert-custom (condition action)
-    "Custom implementation of `define-auto-insert'."
+    "Add or update auto-insert rule for CONDITION with ACTION.
+CONDITION is a regex matching file names.
+ACTION is a template file or function to insert."
     (let ((elt (assoc condition auto-insert-alist)))
       (if elt
           (setcdr elt action)
         (add-to-list 'auto-insert-alist (cons condition action)))))
 
   (defun autoinsert-yas-expand ()
-    "Replace text in yasnippet template."
+    "Expand YASnippet template in current buffer."
     (yas-expand-snippet (buffer-string) (point-min) (point-max)))
 
-  (setq auto-insert 'other
+  (setq auto-insert 'other                        ; Query before inserting
         auto-insert-directory (concat emacs-config-root "/templates/"))
 
-  ;; Templates
+  ;; File templates: expand YASnippet template for matching file types
   (define-auto-insert-custom
     '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C/C++ header")
     ["template.h" autoinsert-yas-expand])
@@ -165,7 +173,7 @@ Otherwise kill the buffer directly."
     ["template.org" autoinsert-yas-expand]))
 
 ;; ==================================================================================
-;; Built-in Emacs keybindings
+;; Built-in Emacs keybinding overrides
 (use-package emacs
   :ensure nil
   :bind
@@ -177,12 +185,12 @@ Otherwise kill the buffer directly."
    ("M-m" . set-mark-command)))  ; Set mark at point
 
 ;; ==================================================================================
-;; Personal editing utilities
-;; Note: Custom functions defined above in this file:
-;;   - smart-indent-region
-;;   - smart-copy-region
-;;   - smart-kill-region
-;;   - smart-kill-buffer
+;; Personal editing utilities keybindings
+;; Custom functions defined in this file:
+;;   - smart-indent-region: Smart indentation
+;;   - smart-copy-region: Smart copy (region or line)
+;;   - smart-kill-region: Smart kill (region or line)
+;;   - smart-kill-buffer: Smart buffer kill with save prompt
 (use-package personal-editing
   :ensure nil
   :bind
@@ -195,8 +203,8 @@ Otherwise kill the buffer directly."
    ("C-x k" . smart-kill-buffer)))    ; Smart buffer kill
 
 ;; ==================================================================================
-;; Before save hooks (global)
-;; Time-stamp: globally enabled (only affects files with Time-stamp marker)
+;; Global hooks
+;; Time-stamp: update timestamp in files with Time-stamp marker on save
 (add-hook 'before-save-hook #'time-stamp)
 
 ;; ==================================================================================

@@ -23,11 +23,15 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Modern completion framework with vertico (UI), orderless (matching),
+;; marginalia (annotations), consult (commands), and embark (actions).
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Orderless - fuzzy matching
+;; Orderless - space-separated pattern matching for completion
+;; Supports multiple patterns like 'flex regexp' for powerful filtering
 (use-package orderless
   :ensure t
   :demand t
@@ -35,14 +39,16 @@
   (completion-styles '(orderless basic)))
 
 ;; ==================================================================================
-;; Marginalia - completion annotations
+;; Marginalia - rich annotations in completion UI
+;; Displays file info, command descriptions, and keybindings
 (use-package marginalia
   :ensure t
   :defer t
   :hook (after-init . marginalia-mode))
 
 ;; ==================================================================================
-;; Vertico - vertical completion UI
+;; Vertico - vertical completion UI with incremental narrowing
+;; Replaces default completion with more intuitive vertical interface
 (use-package vertico
   :ensure t
   :defer t

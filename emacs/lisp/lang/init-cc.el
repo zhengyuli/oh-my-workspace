@@ -24,16 +24,17 @@
 
 ;;; Commentary:
 ;;
-;; C/C++ mode configuration.
+;; C/C++ mode configuration with clangd LSP and Google code style.
+;; LSP server (clangd) is configured in init-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Utility function
+;; C/C++ utility functions
 (defun generate-compile-commands (root-dir)
-  "Call `cmake' to generate `compile_commands.json' for clangd to index.
+  "Generate compile_commands.json for clangd LSP indexing by running cmake.
 ROOT-DIR is the project root directory.
-Directory paths are properly shell-quoted to prevent injection."
+Uses shell-quoting to prevent command injection."
   (interactive (list (read-directory-name "Project root directory: " "./")))
   (let* ((source-dir root-dir)
          (build-dir (expand-file-name "build" root-dir))
@@ -45,8 +46,8 @@ Directory paths are properly shell-quoted to prevent injection."
 
 (defun cc-get-debug-target-program-path ()
   "Get absolute path of target C/C++ program to debug.
-Interactively prompt for a file, with smart defaults:
-- Use project root's build/ dir (if in a VC project) as default dir
+Interactively prompt for a file with smart defaults:
+- Use project root's build/ dir (if in VC project) as default dir
 - Use project name as default filename (if available)
 - Fallback to current buffer's directory if no project root
 Return absolute path of selected file."
@@ -63,16 +64,15 @@ Return absolute path of selected file."
     (expand-file-name target-path)))
 
 ;; ==================================================================================
-;; C/C++ mode hooks
-;; eglot already configured for c-mode/c++-mode eglot-ensure in init-prog.el
+;; C/C++ mode hooks - apply Google code style
+;; LSP (clangd via eglot) is configured in init-prog.el
 (dolist (hook '(c-mode-hook c++-mode-hook))
   (add-hook hook
             (lambda ()
-              ;; Enable google cc style
               (google-set-c-style))))
 
 ;; ==================================================================================
-;; Google C style
+;; Google C/C++ code style - indentation and formatting standards
 (use-package google-c-style
   :ensure t
   :defer t)

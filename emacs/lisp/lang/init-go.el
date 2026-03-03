@@ -23,11 +23,15 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Go mode configuration with LSP support via gopls.
+;; LSP server (gopls) is configured in init-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Go mode
+;; Go mode - major mode for Go programming
+;; Provides syntax highlighting, indentation, and basic editing support
 (use-package go-mode
   :ensure t
   :defer t)

@@ -24,12 +24,14 @@
 
 ;;; Commentary:
 ;;
-;; YAML mode configuration.
+;; YAML mode configuration with LSP support.
+;; LSP server (yaml-language-server) is configured in init-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; YAML mode
+;; YAML mode - major mode for YAML configuration files
+;; Provides syntax highlighting for Kubernetes, Ansible, and config files
 (use-package yaml-mode
   :ensure t
   :defer t)

@@ -24,12 +24,14 @@
 
 ;;; Commentary:
 ;;
-;; Dockerfile mode configuration.
+;; Dockerfile mode configuration with LSP support.
+;; LSP server (docker-langserver) is configured in init-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Dockerfile mode
+;; Dockerfile mode - major mode for Docker Dockerfiles
+;; Provides syntax highlighting for Dockerfile format
 (use-package dockerfile-mode
   :ensure t
   :defer t)
