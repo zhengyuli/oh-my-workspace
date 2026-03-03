@@ -89,42 +89,6 @@
 
   :config
   ;; --------------------------------------------------------------------------
-  ;; Custom centaur tabs buffer groups
-  (defun my/centaur-tabs-buffer-groups ()
-    "`centaur-tabs-buffer-groups' control buffers' group rules.
-
-Group centaur-tabs with mode if buffer is derived from `eshell-mode'
-`emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
-All buffer name start with * will group to \"Emacs\".
-Other buffer group by `centaur-tabs-get-group-name' with project name."
-    (list
-     (cond
-      ((string-match-p "\\[.*\\]$" (buffer-name)) nil)
-      ((when-let* ((project-name (centaur-tabs-project-name)))
-         project-name))
-      ((memq major-mode '( magit-process-mode
-                           magit-status-mode
-                           magit-log-mode
-                           magit-file-mode
-                           magit-blob-mode
-                           magit-blame-mode
-                           magit-diff-mode
-                           magit-revision-mode
-                           magit-stash-mode))
-       "Magit")
-      ((derived-mode-p 'shell-mode) "Shell")
-      ((derived-mode-p 'eshell-mode) "EShell")
-      ((derived-mode-p 'dired-mode) "Dired")
-      ((memq major-mode '( org-mode org-agenda-mode diary-mode)) "OrgMode")
-      ((and centaur-tabs-custom-buffer-groups
-            (funcall centaur-tabs-custom-buffer-groups)))
-      ((derived-mode-p 'emacs-lisp-mode) "Elisp")
-      ((string-equal "*" (substring (buffer-name) 0 1))
-       "Emacs")
-      (t
-       (centaur-tabs-get-group-name (current-buffer))))))
-
-  ;; --------------------------------------------------------------------------
   ;; Core appearance and behavior settings
   (setq
    ;; Tab height in pixels
@@ -136,36 +100,24 @@ Other buffer group by `centaur-tabs-get-group-name' with project name."
    ;; Show buffer count in tab groups
    centaur-tabs-show-count t
    ;; Limit tab cycling within the current tab group
-   centaur-tabs-cycle-scope 'tabs
-   ;; Set custom tabs buffer group
-   centaur-tabs-buffer-groups-function #'my/centaur-tabs-buffer-groups)
+   centaur-tabs-cycle-scope 'tabs)
 
   ;; --------------------------------------------------------------------------
   ;; Face customization (tab colors and states)
   ;; Selected tab appearance
   (custom-set-faces
-   '(centaur-tabs-selected
-     ((t (:bold t :foreground "#28cd41"))))
-
+   '(centaur-tabs-selected ((t (:bold t :foreground "#28cd41"))))
    ;; Selected tab with unsaved changes
-   '(centaur-tabs-selected-modified
-     ((t (:bold t :foreground "#ff9300"))))
-
+   '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300"))))
    ;; Unselected tab appearance
-   '(centaur-tabs-unselected
-     ((t (:bold t :foreground "grey"))))
-
+   '(centaur-tabs-unselected ((t (:bold t :foreground "grey"))))
    ;; Unselected tab with unsaved changes
-   '(centaur-tabs-unselected-modified
-     ((t (:bold t :foreground "#ff9300")))))
+   '(centaur-tabs-unselected-modified ((t (:bold t :foreground "#ff9300")))))
 
   ;; --------------------------------------------------------------------------
   ;; Remove extra visual decorations from the tab separator line
-  (set-face-attribute centaur-tabs-display-line nil
-                      :inherit 'default
-                      :box nil
-                      :overline nil
-                      :underline nil))
+  (set-face-attribute centaur-tabs-display-line nil :inherit 'default :box nil
+                      :overline nil :underline nil))
 
 ;; ==================================================================================
 ;; Winum - window numbers
@@ -175,8 +127,7 @@ Other buffer group by `centaur-tabs-get-group-name' with project name."
   :hook (after-init . winum-mode)
   :config
   (dotimes (i 9)
-    (global-set-key (kbd (format "M-%d" (1+ i)))
-                    (intern (format "winum-select-window-%d" (1+ i))))))
+    (global-set-key (kbd (format "M-%d" (1+ i))) (intern (format "winum-select-window-%d" (1+ i))))))
 
 ;; ==================================================================================
 ;; Dashboard - random banner
@@ -213,11 +164,8 @@ Returns nil in terminal mode (uses official banner instead)."
    ;; Dashboard content items
    ;; Show recent files, bookmarks, projects, agenda, registers
    ;; with max 5 items each
-   dashboard-items '((recents  . 5)
-                     (bookmarks . 5)
-                     (projects . 5)
-                     (agenda . 5)
-                     (registers . 5))
+   dashboard-items '((recents  . 5) (bookmarks . 5) (projects . 5)
+                     (agenda . 5) (registers . 5))
 
    ;; Function to switch to a project (integrates with Projectile)
    dashboard-projects-switch-function 'projectile-switch-project

@@ -45,11 +45,31 @@
   :defer t)
 
 ;; ==================================================================================
+(use-package visual-fill-column
+  :ensure t
+  :defer t
+  :hook (markdown-mode . my/visual-fill-column-setup)
+  :config
+  ;; Define per-mode setup function
+  (defun my/visual-fill-column-setup ()
+    "Initialize visual-fill-column settings for markdown-mode (per buffer)."
+    ;; Core: Center text block (key writing comfort feature)
+    (setq-local visual-fill-column-center-text t)
+    ;; Avoid conflict with hard line wrapping (auto-fill-mode)
+    (setq-local visual-fill-column-enable-sensible-window-split t)
+    ;; Ensure the mode is enabled (redundant safety check)
+    (visual-fill-column-mode 1)))
+
+;; ==================================================================================
 ;; Markdown mode - main mode
 (use-package markdown-mode
   :ensure t
   :defer t
   :hook (markdown-mode . my/markdown-mode-setup)
+  :bind
+  (:map markdown-mode-map
+        ("M-n" . nil)
+        ("M-p" . nil))
   :config
   (defun my/markdown-mode-setup ()
     "Setup markdown mode."
