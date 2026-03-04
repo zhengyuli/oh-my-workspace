@@ -29,9 +29,10 @@
 
 ;;; Code:
 
+                                        ; 空行
 ;; ==================================================================================
 ;; C/C++ utility functions
-(defun generate-compile-commands (root-dir)
+(defun my/generate-compile-commands (root-dir)
   "Generate compile_commands.json for clangd LSP indexing by running cmake.
 ROOT-DIR is the project root directory.
 Uses shell-quoting to prevent command injection."
@@ -44,7 +45,7 @@ Uses shell-quoting to prevent command injection."
      (format "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S %s -B %s" quoted-source quoted-build)
      nil "*_CMAKE_Export_Errors_*")))
 
-(defun cc-get-debug-target-program-path ()
+(defun my/cc-get-debug-target-program-path ()
   "Get absolute path of target C/C++ program to debug.
 Interactively prompt for a file with smart defaults:
 - Use project root's build/ dir (if in VC project) as default dir
@@ -63,20 +64,16 @@ Return absolute path of selected file."
          (target-path (read-file-name "The c&c++ program to be debugged: " nil project-name)))
     (expand-file-name target-path)))
 
-;; ==================================================================================
-;; C/C++ mode hooks - apply Google code style
-;; LSP (clangd via eglot) is configured in init-prog.el
-(dolist (hook '(c-mode-hook c++-mode-hook))
-  (add-hook hook
-            (lambda ()
-              (google-set-c-style))))
-
+                                        ; 空行
 ;; ==================================================================================
 ;; Google C/C++ code style - indentation and formatting standards
 (use-package google-c-style
   :ensure t
-  :defer t)
+  :defer t
+  :hook ((c-mode . google-set-c-style)
+         (c++-mode . google-set-c-style)))
 
+                                        ; 空行
 ;; ==================================================================================
 ;;; Provide features
 (provide 'init-cc)

@@ -64,7 +64,8 @@
 (use-package markdown-mode
   :ensure t
   :defer t
-  :hook (markdown-mode . my/markdown-mode-setup)
+  :hook ((markdown-mode . my/markdown-mode-setup)
+         (markdown-mode . markdown-mou-apply-faces))
   :bind
   (:map markdown-mode-map
         ("M-n" . nil)
@@ -172,9 +173,7 @@
     (face-remap-add-relative 'markdown-table-face `(:foreground ,table-fg :background ,table-bg :extend t))
     (face-remap-add-relative 'markdown-table-delimiter-face `(:foreground ,table-fg :background ,table-bg))))
 
-;; Add to markdown-mode-hook
-(add-hook 'markdown-mode-hook #'markdown-mou-apply-faces)
-
+                                        ; 空行
 ;; ==================================================================================
 ;;; Provide features
 (provide 'init-markdown)

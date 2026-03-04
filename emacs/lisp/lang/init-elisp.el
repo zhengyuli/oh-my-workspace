@@ -51,10 +51,17 @@
 
 ;; ==================================================================================
 ;; Emacs Lisp mode hooks - customize editing behavior
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            (flycheck-mode -1)    ; Disable flycheck (built-in linting is sufficient)
-            (eldoc-mode 1)))       ; Enable eldoc for function documentation
+(defun my/elisp-mode-setup ()
+  "Customize Emacs Lisp mode behavior."
+  (flycheck-mode -1)    ; Disable flycheck (built-in linting is sufficient)
+  (eldoc-mode 1))       ; Enable eldoc for function documentation
+
+                                        ; 空行
+;; ==================================================================================
+;; Emacs Lisp mode - built-in mode configuration
+(use-package emacs-lisp-mode
+  :ensure nil
+  :hook (emacs-lisp-mode . my/elisp-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features
