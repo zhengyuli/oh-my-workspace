@@ -1,4 +1,4 @@
-;;; init-vc.el -*- lexical-binding: t; -*-
+;;; init-magit.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-04 13:41:54 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
@@ -54,6 +54,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-vc)
+(provide 'init-magit)
 
-;;; init-vc.el ends here
+;;; init-magit.el ends here

@@ -120,7 +120,7 @@
   "Return random banner path from banners directory.
 Returns nil in terminal mode (uses official banner instead)."
   (when (display-graphic-p)
-    (let* ((banners-dir (concat emacs-config-root "/banners"))
+    (let* ((banners-dir (concat omw/emacs-config-root "/banners"))
            (banners (directory-files banners-dir t "\\.png\\'")))
       (when banners
         (nth (random (length banners)) banners)))))

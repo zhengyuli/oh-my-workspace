@@ -30,8 +30,7 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Buffer utilities - smart text and buffer operations
-(defun indent-entire-buffer ()
+(defun omw/indent-entire-buffer ()
   "Format entire buffer: indent, delete trailing whitespace, convert tabs to spaces."
   (interactive)
   (save-excursion
@@ -39,48 +38,48 @@
     (delete-trailing-whitespace)
     (untabify (point-min) (point-max))))
 
-(defun smart-indent-region ()
+(defun omw/smart-indent-region ()
   "Indent region if mark active, otherwise indent entire buffer."
   (interactive)
   (save-excursion
     (if mark-active
         (call-interactively 'indent-region)
-      (call-interactively 'indent-entire-buffer))))
+      (call-interactively 'omw/indent-entire-buffer))))
 
-(defun copy-region ()
+(defun omw/copy-region ()
   "Copy active region to kill ring."
   (interactive)
   (copy-region-as-kill (region-beginning) (region-end)))
 
-(defun copy-current-line ()
+(defun omw/copy-current-line ()
   "Copy current line (or from point to end of line) to kill ring."
   (interactive)
   (let ((end (min (point-max) (line-end-position))))
     (copy-region-as-kill (line-beginning-position) end)))
 
-(defun smart-copy-region ()
+(defun omw/smart-copy-region ()
   "Copy region if mark active, otherwise copy current line."
   (interactive)
   (save-excursion
     (if mark-active
-        (call-interactively 'copy-region)
-      (call-interactively 'copy-current-line))))
+        (call-interactively 'omw/copy-region)
+      (call-interactively 'omw/copy-current-line))))
 
-(defun smart-kill-region ()
+(defun omw/smart-kill-region ()
   "Kill region if mark active, otherwise kill entire line."
   (interactive)
   (if mark-active
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
 
-(defun toggle-buffer-writable ()
+(defun omw/toggle-buffer-writable ()
   "Toggle buffer read-only state."
   (interactive)
   (if buffer-read-only
       (read-only-mode -1)
     (read-only-mode 1)))
 
-(defun smart-kill-buffer ()
+(defun omw/smart-kill-buffer ()
   "Smart buffer close: prompt for file buffers with changes, kill others directly.
 If buffer has unsaved changes and is a file, offer to save.
 Otherwise kill buffer without confirmation."
@@ -93,44 +92,35 @@ Otherwise kill buffer without confirmation."
     (kill-current-buffer)))
 
 ;; ==================================================================================
-;; Vundo - visual undo history with tree navigation
-;; Replaces undo-tree with better performance and visualization
 (use-package vundo
   :ensure t
   :defer t
-  :bind ("M-_" . vundo))
+  :bind* ("M-_" . vundo))
 
 ;; ==================================================================================
-;; Expand region - incremental text selection
-;; Expand selection semantically: word → sentence → paragraph → block
 (use-package expand-region
   :ensure t
   :defer t
-  :bind ("M-M" . er/expand-region))
+  :bind* ("M-M" . er/expand-region))
 
 ;; ==================================================================================
-;; Browse kill ring - visualize and select from kill ring history
 (use-package browse-kill-ring
   :ensure t
   :defer t
-  :bind ("M-Y" . browse-kill-ring))
+  :bind* ("M-Y" . browse-kill-ring))
 
 ;; ==================================================================================
-;; Goto last change - jump to last edit position
 (use-package goto-chg
   :ensure t
   :defer t
-  :bind ("M-o" . goto-last-change))
+  :bind* ("M-o" . goto-last-change))
 
 ;; ==================================================================================
-;; Auto insert - automatic file template insertion
-;; Insert predefined templates when creating new files based on file extension
 (use-package autoinsert
-  :ensure nil  ; Built-in package
+  :ensure nil
   :defer t
-  :hook (after-init . auto-insert-mode)
   :config
-  (defun define-auto-insert-custom (condition action)
+  (defun omw/define-auto-insert-custom (condition action)
     "Add or update auto-insert rule for CONDITION with ACTION.
 CONDITION is a regex matching file names.
 ACTION is a template file or function to insert."
@@ -139,68 +129,50 @@ ACTION is a template file or function to insert."
           (setcdr elt action)
         (add-to-list 'auto-insert-alist (cons condition action)))))
 
-  (defun autoinsert-yas-expand ()
+  (defun omw/autoinsert-yas-expand ()
     "Expand YASnippet template in current buffer."
     (yas-expand-snippet (buffer-string) (point-min) (point-max)))
 
-  (setq auto-insert 'other                        ; Query before inserting
-        auto-insert-directory (concat emacs-config-root "/templates/"))
+  (setq auto-insert 'other
+        auto-insert-directory (concat omw/emacs-config-root "/templates/"))
 
-  ;; File templates: expand YASnippet template for matching file types
-  (define-auto-insert-custom
+  (omw/define-auto-insert-custom
     '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C/C++ header")
-    ["template.h" autoinsert-yas-expand])
-  (define-auto-insert-custom
+    ["template.h" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
     '("\\.\\([Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C/C++ source")
-    ["template.c" autoinsert-yas-expand])
-  (define-auto-insert-custom
+    ["template.c" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
     '("\\.py\\'" . "Python header")
-    ["template.py" autoinsert-yas-expand])
-  (define-auto-insert-custom
+    ["template.py" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
     '("\\.go\\'" . "Golang header")
-    ["template.go" autoinsert-yas-expand])
-  (define-auto-insert-custom
+    ["template.go" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
     '("\\.el\\'" . "Emacs Lisp header")
-    ["template.el" autoinsert-yas-expand])
-  (define-auto-insert-custom
+    ["template.el" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
     '("\\.hs\\'" . "Haskell header")
-    ["template.hs" autoinsert-yas-expand])
-  (define-auto-insert-custom
+    ["template.hs" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
     '("\\.sh\\'" . "Shell script header")
-    ["template.sh" autoinsert-yas-expand])
-  (define-auto-insert-custom
+    ["template.sh" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
     '("\\.org\\'" . "Org header")
-    ["template.org" autoinsert-yas-expand]))
+    ["template.org" omw/autoinsert-yas-expand]))
 
 ;; ==================================================================================
-;; Built-in Emacs keybinding overrides
 (use-package emacs
   :ensure nil
-  :bind
-  (;; Undo and redo
-   ("C-/" . undo)           ; Undo last change
-   ("C-?" . undo-redo)      ; Redo last undone change (Emacs 28+)
-
-   ;; Active mark (selection)
-   ("M-m" . set-mark-command)))  ; Set mark at point
-
-;; ==================================================================================
-;; Personal editing utilities keybindings
-;; Custom functions defined in this file:
-;;   - smart-indent-region: Smart indentation
-;;   - smart-copy-region: Smart copy (region or line)
-;;   - smart-kill-region: Smart kill (region or line)
-;;   - smart-kill-buffer: Smart buffer kill with save prompt
-(use-package personal-editing
-  :ensure nil
-  :bind
-  (;; Smart editing commands
-   ("C-x TAB" . smart-indent-region)  ; Indent region or buffer
-   ("M-w" . smart-copy-region)        ; Copy region or line
-   ("M-k" . smart-kill-region)        ; Kill region or line
-
-   ;; Buffer management
-   ("C-x k" . smart-kill-buffer)))    ; Smart buffer kill
+  :demand t
+  :hook (after-init . auto-insert-mode)
+  :bind* (("C-/" . undo)                        ; Undo last change
+          ("C-?" . undo-redo)                   ; Redo last undone change (Emacs 28+)
+          ("C-x TAB" . omw/smart-indent-region) ; Indent region or buffer
+          ("M-m" . set-mark-command)            ; Set mark at point
+          ("M-w" . omw/smart-copy-region)       ; Copy region or line
+          ("M-k" . omw/smart-kill-region)       ; Kill region or line
+          ("C-x k" . omw/smart-kill-buffer)))   ; Smart buffer kill
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,4 +1,4 @@
-;;; init-ai.el -*- lexical-binding: t; -*-
+;;; init-agent.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-02 17:39:08 星期一 by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
@@ -72,6 +72,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-ai)
+(provide 'init-agent)
 
-;;; init-ai.el ends here
+;;; init-agent.el ends here

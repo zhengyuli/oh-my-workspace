@@ -171,7 +171,7 @@ Performs:
 ;; Core prog-mode hook
 (use-package prog-mode
   :ensure nil
-  :defer t
+  :demand t
   :hook (prog-mode . my/prog-mode-setup)
   :bind
   (:map prog-mode-map
@@ -186,22 +186,22 @@ Performs:
         ("M-," . xref-pop-marker-stack)
         ("M-r" . xref-find-references)
         ;; Newline + indent
-        ("RET" . newline-and-indent)
-        ("<return>" . newline-and-indent))
+        ("RET" . newline-and-indent))
   :config
   (defun my/prog-mode-setup ()
-    "Apply custom buffer-local settings for all programming modes.
-These settings only affect the current buffer and do not modify global Emacs state."
-    ;; Indentation Configuration (Consistent across all programming modes)
     (setq-local tab-width 4
-                indent-tabs-mode nil)
-    ;; Line Numbers: Enable relative/absolute line numbers for code navigation
+                completion-at-point-functions (list (cape-capf-super
+                                                     #'eglot-completion-at-point
+                                                     #'yasnippet-capf
+                                                     #'cape-file
+                                                     #'cape-dabbrev
+                                                     #'cape-elisp-symbol)))
+    ;; Other modes to enable
+    (indent-tabs-mode -1)
     (display-line-numbers-mode 1)
-    ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
     (prettify-symbols-mode 1)
-    ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
     (hs-minor-mode 1)
-    ;; Enable custom save hooks (whitespace cleanup, copyright update)
+    (yas-minor-mode 1)
     (my/prog-save-mode 1)))
 
 ;; ==================================================================================
