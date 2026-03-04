@@ -510,6 +510,45 @@ Details with - bullets for key points."
 
 use-package automatically adds `-hook` suffix internally.
 
+### Mode Setup Functions
+
+**✅ Preferred: Encapsulate related settings in setup function**
+```elisp
+;; Define setup function that encapsulates all buffer-local settings
+(defun my/prog-mode-setup ()
+  "Apply custom buffer-local settings for all programming modes."
+  (setq-local tab-width 4)
+  (display-line-numbers-mode 1)
+  (hs-minor-mode 1)
+  (my/custom-save-mode 1))  ; Enable related minor mode
+
+;; Single hook in use-package
+(use-package prog-mode
+  :ensure nil
+  :defer t
+  :hook (prog-mode . my/prog-mode-setup))
+```
+
+**❌ Avoid: Multiple hooks for related settings**
+```elisp
+;; 不推荐：分散的 hook 定义
+(use-package prog-mode
+  :ensure nil
+  :defer t
+  :hook ((prog-mode . my/prog-mode-setup)
+         (prog-mode . my/custom-save-mode)))
+```
+
+**When to use setup functions**:
+- Multiple related buffer-local settings for the same mode
+- Settings that should always be applied together
+- Improves maintainability and clarity
+
+**Setup function naming**: Use `my/<mode>-setup` convention:
+- `my/prog-mode-setup` ✓
+- `my/python-mode-setup` ✓
+- `my/text-mode-setup` ✓
+
 ### Block Separators
 
 ```elisp
@@ -549,8 +588,10 @@ use-package automatically adds `-hook` suffix internally.
 - [ ] Custom functions use `my/` prefix
 - [ ] Custom variables use `emacs-` prefix
 - [ ] use-package with correct `:ensure` (t/nil)
+- [ ] All packages (including built-ins) use use-package format
 - [ ] Most packages use `:defer t`
 - [ ] Hooks defined in `:hook` (not global `add-hook`)
+- [ ] Related buffer-local settings encapsulated in setup function
 - [ ] Functions have docstrings
 - [ ] Line-end comments have 2+ spaces before `;`
 - [ ] Block separators with blank lines before/after

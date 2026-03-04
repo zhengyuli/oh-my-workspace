@@ -1,5 +1,5 @@
 ;;; init-cc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 21:28:04 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 11:35:07 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,7 +29,6 @@
 
 ;;; Code:
 
-                                        ; 空行
 ;; ==================================================================================
 ;; C/C++ utility functions
 (defun my/generate-compile-commands (root-dir)
@@ -64,7 +63,6 @@ Return absolute path of selected file."
          (target-path (read-file-name "The c&c++ program to be debugged: " nil project-name)))
     (expand-file-name target-path)))
 
-                                        ; 空行
 ;; ==================================================================================
 ;; Google C/C++ code style - indentation and formatting standards
 (use-package google-c-style
@@ -73,7 +71,6 @@ Return absolute path of selected file."
   :hook ((c-mode . google-set-c-style)
          (c++-mode . google-set-c-style)))
 
-                                        ; 空行
 ;; ==================================================================================
 ;;; Provide features
 (provide 'init-cc)

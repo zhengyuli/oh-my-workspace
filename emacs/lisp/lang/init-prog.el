@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-03 23:08:21 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-04 11:06:24 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -126,55 +126,17 @@ Behavior:
          (backward-sexp))
         (t (message "couldn't find matched paren"))))
 
-;; Core prog-mode hook
-(defun my/prog-mode-setup ()
-  "Apply custom buffer-local settings for all programming modes.
-These settings only affect the current buffer and do not modify global Emacs state."
-  ;; Indentation Configuration (Consistent across all programming modes)
-  (setq-local tab-width 4
-              indent-tabs-mode nil)
-  ;; Line Numbers: Enable relative/absolute line numbers for code navigation
-  (display-line-numbers-mode 1)
-  ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
-  (prettify-symbols-mode 1)
-  ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
-  (hs-minor-mode 1)
-  ;; Custom Keybinding (Buffer-Local): Jump to matching parenthesis/bracket/brace
-  (local-set-key (kbd "C-]") #'jump-to-matched-paren))
-
-;; Attach the setup function to prog-mode hook
-(add-hook 'prog-mode-hook #'my/prog-mode-setup)
-
-;; Core prog-mode keybindings (built-in)
-(use-package prog-mode
-  :ensure nil
-  :defer t
-  :bind
-  (:map prog-mode-map
-        ;; Navigation
-        ("C-c M-a" . beginning-of-defun)
-        ("C-c M-e" . end-of-defun)
-        ;; Comment toggle
-        ("C-c C-c" . comment-line)
-        ;; Xref
-        ("M-." . xref-find-definitions)
-        ("M-," . xref-pop-marker-stack)
-        ("M-r" . xref-find-references)
-        ;; Newline + indent
-        ("RET" . newline-and-indent)
-        ("<return>" . newline-and-indent)))
-
 ;; ==================================================================================
 ;; Copyright update - automatic copyright year updates
-(require 'copyright)
-
-;; Configure copyright update behavior
-;; Enable automatic copyright updates
-(setq copyright-update t
-      copyright-query nil                 ; Don't ask, just update
-      copyright-names-regexp             ; Recognize common copyright holders
-      (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
-              emacs-user-name))
+(use-package copyright
+  :ensure nil
+  :defer t
+  :config
+  (setq copyright-update t               ; Enable automatic copyright updates
+        copyright-query nil               ; Don't ask, just update
+        copyright-names-regexp            ; Recognize common copyright holders
+        (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
+                emacs-user-name)))
 
 (defun my/prog-before-save ()
   "Function to run before saving programming files.
@@ -203,8 +165,44 @@ Performs:
     ;; When disabled, remove the function from the buffer-local before-save-hook
     (remove-hook 'before-save-hook #'my/prog-before-save t)))
 
-;; Automatically enable this minor mode for all programming modes
-(add-hook 'prog-mode-hook #'my/prog-save-mode)
+;; ==================================================================================
+;; Core prog-mode hook
+(defun my/prog-mode-setup ()
+  "Apply custom buffer-local settings for all programming modes.
+These settings only affect the current buffer and do not modify global Emacs state."
+  ;; Indentation Configuration (Consistent across all programming modes)
+  (setq-local tab-width 4
+              indent-tabs-mode nil)
+  ;; Line Numbers: Enable relative/absolute line numbers for code navigation
+  (display-line-numbers-mode 1)
+  ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
+  (prettify-symbols-mode 1)
+  ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
+  (hs-minor-mode 1)
+  ;; Enable custom save hooks (whitespace cleanup, copyright update)
+  (my/prog-save-mode 1))
+
+;; Attach the setup function to prog-mode hook
+;; Core prog-mode keybindings (built-in)
+(use-package prog-mode
+  :ensure nil
+  :defer t
+  :hook (prog-mode . my/prog-mode-setup)
+  :bind
+  (:map prog-mode-map
+        ;; Navigation
+        ("C-c M-a" . beginning-of-defun)
+        ("C-c M-e" . end-of-defun)
+        ("C-]" . jump-to-matched-paren)
+        ;; Comment toggle
+        ("C-c C-c" . comment-line)
+        ;; Xref
+        ("M-." . xref-find-definitions)
+        ("M-," . xref-pop-marker-stack)
+        ("M-r" . xref-find-references)
+        ;; Newline + indent
+        ("RET" . newline-and-indent)
+        ("<return>" . newline-and-indent)))
 
 ;; ==================================================================================
 ;;; Provide features

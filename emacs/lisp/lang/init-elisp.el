@@ -56,7 +56,6 @@
   (flycheck-mode -1)    ; Disable flycheck (built-in linting is sufficient)
   (eldoc-mode 1))       ; Enable eldoc for function documentation
 
-                                        ; 空行
 ;; ==================================================================================
 ;; Emacs Lisp mode - built-in mode configuration
 (use-package emacs-lisp-mode

@@ -173,7 +173,6 @@
     (face-remap-add-relative 'markdown-table-face `(:foreground ,table-fg :background ,table-bg :extend t))
     (face-remap-add-relative 'markdown-table-delimiter-face `(:foreground ,table-fg :background ,table-bg))))
 
-                                        ; 空行
 ;; ==================================================================================
 ;;; Provide features
 (provide 'init-markdown)
