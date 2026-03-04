@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:15:31 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:56:54 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -61,7 +61,6 @@
 (use-package doom-modeline
   :ensure t
   :defer t
-  :hook (after-init . doom-modeline-mode)
   :config
   (setq doom-modeline-icon (display-graphic-p)))
 
@@ -70,8 +69,7 @@
 ;; Visual feedback for navigation commands (avy, goto-char, etc.)
 (use-package pulsar
   :ensure t
-  :defer t
-  :hook (after-init . pulsar-global-mode))
+  :defer t)
 
 ;; ==================================================================================
 ;; Centaur Tabs - modern tab bar for buffer management
@@ -79,13 +77,11 @@
 (use-package centaur-tabs
   :ensure t
   :defer t
-  :hook (after-init . centaur-tabs-mode)
-  :bind
-  (:map centaur-tabs-mode-map
-        ("M-p" . centaur-tabs-backward)            ; Previous tab
-        ("M-n" . centaur-tabs-forward)             ; Next tab
-        ("M-P" . centaur-tabs-switch-group)        ; Previous tab group
-        ("M-N" . centaur-tabs-switch-group))       ; Next tab group
+  :bind (:map centaur-tabs-mode-map
+              ("M-p" . centaur-tabs-backward)            ; Previous tab
+              ("M-n" . centaur-tabs-forward)             ; Next tab
+              ("M-P" . centaur-tabs-switch-group)        ; Previous tab group
+              ("M-N" . centaur-tabs-switch-group))       ; Next tab group
 
   :config
   ;; Tab appearance and behavior
@@ -112,7 +108,6 @@
 (use-package winum
   :ensure t
   :defer t
-  :hook (after-init . winum-mode)
   :config
   ;; Bind M-1 through M-9 to select windows 1-9
   (dotimes (i 9)
@@ -133,7 +128,6 @@ Returns nil in terminal mode (uses official banner instead)."
 (use-package dashboard
   :ensure t
   :defer t
-  :hook (after-init . dashboard-open)
   :config
   ;; Layout and appearance
   (setq dashboard-center-content t             ; Center content in window
@@ -143,15 +137,25 @@ Returns nil in terminal mode (uses official banner instead)."
         dashboard-set-file-icons (display-graphic-p)    ; Icons for files
         dashboard-set-navigator t                         ; Bottom navigator
         dashboard-items '((recents  . 5)                 ; Show 5 recent files
-                        (bookmarks . 5)                 ; Show 5 bookmarks
-                        (projects . 5)                  ; Show 5 projects
-                        (agenda   . 5)                  ; Show 5 agenda items
-                        (registers . 5))                ; Show 5 registers
+                          (bookmarks . 5)                 ; Show 5 bookmarks
+                          (projects . 5)                  ; Show 5 projects
+                          (agenda   . 5)                  ; Show 5 agenda items
+                          (registers . 5))                ; Show 5 registers
         dashboard-projects-switch-function 'projectile-switch-project  ; Integration
         dashboard-startup-banner (or (omw--get-random-banner) 'official)  ; Random banner
         initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))  ; Startup buffer
 
   (dashboard-setup-startup-hook))
+
+;; ==================================================================================
+(use-package emacs
+  :ensure nil
+  :defer t
+  :hook ((after-init . doom-modeline-mode)
+         (after-init . pulsar-global-mode)
+         (after-init . centaur-tabs-mode)
+         (after-init . winum-mode)
+         (after-init . dashboard-open)))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:36:29 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:46:57 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -49,53 +49,52 @@
   :defer t
   :hook ((dired-mode . dired-omit-mode)    ; Hide dotfiles by default
          (dired-mode . dired-async-mode))  ; Async operations for performance
-  :bind
-  (("C-x j" . dired-jump)                  ; Quick jump to directory
-   (:map dired-mode-map
-         ;; Navigation
-         ("<return>" . dired-single-buffer)         ; Open in current buffer
-         ("RET" . dired-single-buffer)
-         ("h" . dired-up-directory-single)          ; Go to parent directory
-         ("p" . dired-hacks-previous-file)          ; Previous file
-         ("n" . dired-hacks-next-file)              ; Next file
-         ("M-{" . dired-goto-first-line)            ; Jump to first file
-         ("M-}" . dired-goto-last-line)             ; Jump to last file
-         ("M-o" . dired-omit-mode)                  ; Toggle omit mode
+  :bind (("C-x j" . dired-jump)                  ; Quick jump to directory
+         (:map dired-mode-map
+               ;; Navigation
+               ("<return>" . dired-single-buffer)         ; Open in current buffer
+               ("RET" . dired-single-buffer)
+               ("h" . dired-up-directory-single)          ; Go to parent directory
+               ("p" . dired-hacks-previous-file)          ; Previous file
+               ("n" . dired-hacks-next-file)              ; Next file
+               ("M-{" . dired-goto-first-line)            ; Jump to first file
+               ("M-}" . dired-goto-last-line)             ; Jump to last file
+               ("M-o" . dired-omit-mode)                  ; Toggle omit mode
 
-         ;; File operations
-         ("v" . dired-view-file)                    ; View file (read-only)
-         ("C-k" . dired-do-delete)                  ; Delete marked files
-         ("r" . wdired-change-to-wdired-mode)       ; Edit filenames in-place
-         ("E" . dired-do-touch)                     ; Update file timestamp
-         ("B" . dired-backup-file)                  ; Create backup
-         ("d" . dired-diff)                         ; Diff file changes
-         ("D" . ediff-directories)                  ; Diff two directories
-         ("z" . dired-do-compress)                  ; Compress files
-         ("Z" . dired-do-compress)
+               ;; File operations
+               ("v" . dired-view-file)                    ; View file (read-only)
+               ("C-k" . dired-do-delete)                  ; Delete marked files
+               ("r" . wdired-change-to-wdired-mode)       ; Edit filenames in-place
+               ("E" . dired-do-touch)                     ; Update file timestamp
+               ("B" . dired-backup-file)                  ; Create backup
+               ("d" . dired-diff)                         ; Diff file changes
+               ("D" . ediff-directories)                  ; Diff two directories
+               ("z" . dired-do-compress)                  ; Compress files
+               ("Z" . dired-do-compress)
 
-         ;; Cryptography (GPG/PGP operations)
-         (": e" . epa-dired-do-encrypt)             ; Encrypt with GPG
-         (": d" . epa-dired-do-decrypt)             ; Decrypt GPG file
-         (": s" . epa-dired-do-sign)                ; Sign with GPG
-         (": v" . epa-dired-do-verify)              ; Verify GPG signature
+               ;; Cryptography (GPG/PGP operations)
+               (": e" . epa-dired-do-encrypt)             ; Encrypt with GPG
+               (": d" . epa-dired-do-decrypt)             ; Decrypt GPG file
+               (": s" . epa-dired-do-sign)                ; Sign with GPG
+               (": v" . epa-dired-do-verify)              ; Verify GPG signature
 
-         ;; --------------------------------------------------------------------------
-         ;; Copy/Cut/Paste (clipboard operations)
-         ;; Copy marked files to clipboard
-         ("M-w" . dired-copy-files)
-         ;; Cut marked files to clipboard
-         ("M-k" . dired-cut-files)
-         ;; Paste files from clipboard
-         ("C-y" . dired-paste-files)
+               ;; --------------------------------------------------------------------------
+               ;; Copy/Cut/Paste (clipboard operations)
+               ;; Copy marked files to clipboard
+               ("M-w" . dired-copy-files)
+               ;; Cut marked files to clipboard
+               ("M-k" . dired-cut-files)
+               ;; Paste files from clipboard
+               ("C-y" . dired-paste-files)
 
-         ;; --------------------------------------------------------------------------
-         ;; File path utilities (copy to clipboard)
-         ;; Copy filename without path to clipboard
-         ("; n" . dired-get-file-name-without-path)
-         ;; Copy full file path to clipboard
-         ("; N" . dired-get-file-name-with-path)
-         ;; Copy directory path only to clipboard
-         ("; p" . dired-get-file-name-only-path)))
+               ;; --------------------------------------------------------------------------
+               ;; File path utilities (copy to clipboard)
+               ;; Copy filename without path to clipboard
+               ("; n" . dired-get-file-name-without-path)
+               ;; Copy full file path to clipboard
+               ("; N" . dired-get-file-name-with-path)
+               ;; Copy directory path only to clipboard
+               ("; p" . dired-get-file-name-only-path)))
 
   :config
   ;; Load custom Dired extensions (with safety check)

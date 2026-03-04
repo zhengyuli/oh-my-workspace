@@ -206,7 +206,7 @@ validate_destination_dir() {
 setup_proxy() {
     if [[ -n "${http_proxy:-}" ]]; then
         log_info "Proxy detected: $http_proxy"
-        log_info "Consider setting proxy in $HOME/.emacs.d/custom.el by appending (setq emacs-http-proxy $http_proxy)"
+        log_info "Consider setting proxy in $HOME/.emacs.d/custom.el by appending (setq omw/emacs-http-proxy $http_proxy)"
     else
         log_info "No proxy environment variable found"
     fi

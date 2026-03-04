@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 15:19:53 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:53:00 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -112,22 +112,24 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
                (or var-font "N/A")
                (or cjk-font "N/A")))))
 
-;; Auto-configure fonts after Emacs initialization (GUI only)
-(when (display-graphic-p)
-  (add-hook 'after-init-hook #'emacs-setup-fonts))
-
 ;; ==================================================================================
 ;; Textsize - automatic font scaling based on screen resolution
 ;; Adjusts font size for different display densities (Retina vs standard)
 (use-package textsize
   :ensure t
-  :when (display-graphic-p)
   :defer t
-  :hook (after-init . textsize-mode)
   :config
   (setq textsize-pixel-pitch-thresholds nil    ; Disable automatic thresholds
         textsize-monitor-size-thresholds nil)  ; Use manual configuration
   (set-face-attribute 'default nil :height 140))
+
+;; ==================================================================================
+(use-package emacs
+  :ensure nil
+  :when (display-graphic-p)
+  :defer t
+  :hook ((after-init . emacs-setup-fonts)
+         (after-init . textsize-mode)))
 
 ;; ==================================================================================
 (provide 'init-fonts)

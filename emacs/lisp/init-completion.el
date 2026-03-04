@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:15:58 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:44:35 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -61,41 +61,38 @@
 (use-package consult
   :ensure t
   :defer t  ;; Load lazily when first needed to improve startup time
-  :bind
-  (;; Search for a string in the current buffer using incremental search
-   ("C-s" . consult-line)
-   ;; Switch to another buffer (enhanced interface with completion)
-   ("C-x b" . consult-buffer)
-   ;; Open a recently visited file
-   ("C-x B" . consult-recent-file)
-   ;; Show and select from the kill ring (yank history)
-   ("M-y" . consult-yank-pop)
-   ;; Go to a specific line in the current buffer
-   ("M-g g" . consult-goto-line)
-   ("M-g M-g" . consult-goto-line)  ;; Same as above, for convenience
-   ;; Search for a string in files using grep
-   ("C-x g" . consult-grep)
-   ;; Search in a git repository using git grep
-   ("C-x G" . consult-git-grep)
-   ;; Find a file in the current directory tree
-   ("C-x f" . consult-find)))
+  :bind (;; Search for a string in the current buffer using incremental search
+         ("C-s" . consult-line)
+         ;; Switch to another buffer (enhanced interface with completion)
+         ("C-x b" . consult-buffer)
+         ;; Open a recently visited file
+         ("C-x B" . consult-recent-file)
+         ;; Show and select from the kill ring (yank history)
+         ("M-y" . consult-yank-pop)
+         ;; Go to a specific line in the current buffer
+         ("M-g g" . consult-goto-line)
+         ("M-g M-g" . consult-goto-line)  ;; Same as above, for convenience
+         ;; Search for a string in files using grep
+         ("C-x g" . consult-grep)
+         ;; Search in a git repository using git grep
+         ("C-x G" . consult-git-grep)
+         ;; Find a file in the current directory tree
+         ("C-x f" . consult-find)))
 
 ;; ==================================================================================
 ;; Embark - context actions
 (use-package embark
   :ensure t
   :defer t
-  :bind
-  (("C-." . embark-act)
-   ("C-;" . embark-dwim)))
+  :bind (("C-." . embark-act)
+         ("C-;" . embark-dwim)))
 
 ;; ==================================================================================
 ;; Embark-consult - Embark and Consult integration
 (use-package embark-consult
   :ensure t
   :after (consult embark)
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode)
+  :hook (embark-collect-mode . consult-preview-at-point-mode)
   :config
   (setq embark-collect-use-consult-preview t))
 

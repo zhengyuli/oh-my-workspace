@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:17:22 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:39:34 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -60,32 +60,6 @@
     (visual-fill-column-mode 1)))
 
 ;; ==================================================================================
-;; Markdown mode - main mode
-(use-package markdown-mode
-  :ensure t
-  :defer t
-  :hook ((markdown-mode . my/markdown-mode-setup)
-         (markdown-mode . markdown-mou-apply-faces))
-  :bind
-  (:map markdown-mode-map
-        ("M-n" . nil)
-        ("M-p" . nil))
-  :config
-  (defun my/markdown-mode-setup ()
-    "Setup markdown mode."
-    (setq-local fill-column 120)
-    (auto-fill-mode 1))
-
-  ;; Customize variables - Claude Code compatibility optimization
-  (setq markdown-command "pandoc -s --mathjax --from=gfm"
-        markdown-enable-math t
-        markdown-display-remote-images t
-        markdown-enable-wiki-links t
-        markdown-indent-on-enter 'indent-and-new-item
-        markdown-hide-urls t
-        markdown-fontify-code-blocks-natively t))
-
-;; ==================================================================================
 ;; Markdown theme beautification
 ;; Based on Mou Sublime theme colors
 (defgroup markdown-mou-theme nil
@@ -117,7 +91,7 @@
   :type 'alist
   :group 'markdown-mou-theme)
 
-(defun markdown-mou-apply-faces ()
+(defun my/markdown-mou-apply-faces ()
   "Apply Mou Sublime style faces to markdown buffer."
   (let* ((colors markdown-mou-colors)
          (h1 (cdr (assq 'header-1 colors)))
@@ -172,6 +146,32 @@
     ;; Table styles - dark background + gray-white foreground
     (face-remap-add-relative 'markdown-table-face `(:foreground ,table-fg :background ,table-bg :extend t))
     (face-remap-add-relative 'markdown-table-delimiter-face `(:foreground ,table-fg :background ,table-bg))))
+
+;; ==================================================================================
+;; Markdown mode - main mode
+(use-package markdown-mode
+  :ensure t
+  :defer t
+  :hook (markdown-mode . my/markdown-mode-setup)
+  :bind
+  (:map markdown-mode-map
+        ("M-n" . nil)
+        ("M-p" . nil))
+  :config
+  ;; Customize variables - Claude Code compatibility optimization
+  (setq markdown-command "pandoc -s --mathjax --from=gfm"
+        markdown-enable-math t
+        markdown-display-remote-images t
+        markdown-enable-wiki-links t
+        markdown-indent-on-enter 'indent-and-new-item
+        markdown-hide-urls t
+        markdown-fontify-code-blocks-natively t)
+
+  (defun my/markdown-mode-setup ()
+    "Setup markdown mode."
+    (setq-local fill-column 120)
+    (my/markdown-mou-apply-faces)
+    (auto-fill-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features

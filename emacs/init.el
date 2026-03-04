@@ -70,10 +70,10 @@ Used for setting `user-mail-address'."
 
 ;; ==================================================================================
 ;; Fullscreen toggle
-(defvar emacs-old-fullscreen nil
+(defvar omw/emacs-old-fullscreen nil
   "Store the previous fullscreen state for toggle-fullscreen.")
 
-(defun toggle-fullscreen ()
+(defun omw/toggle-fullscreen ()
   "Toggle full screen."
   (interactive)
   (let ((current-value (frame-parameter nil 'fullscreen)))
@@ -87,10 +87,6 @@ Used for setting `user-mail-address'."
        (setq emacs-old-fullscreen current-value)
        'fullboth))))
 
-;; Auto fullscreen on startup (GUI only)
-(when (display-graphic-p)
-  (add-hook 'emacs-startup-hook #'toggle-fullscreen))
-
 ;; ==================================================================================
 ;; HTTP Proxy configuration
 ;;
@@ -102,15 +98,15 @@ Used for setting `user-mail-address'."
 ;;   - External tool integration (LSP servers, formatters) that need proxy
 ;;
 ;; Configuration:
-;;   Add to custom.el: (setq emacs-http-proxy "127.0.0.1:7890")
-;;   Then run: M-x enable-http-proxy
+;;   Add to custom.el: (setq omw/emacs-http-proxy "127.0.0.1:7890")
+;;   Then run: M-x omw/enable-http-proxy
 ;;
 ;; Common proxy formats:
 ;;   - HTTP proxy: "127.0.0.1:7890" or "http://127.0.0.1:7890"
 ;;   - SOCKS5 proxy: use "socks5://127.0.0.1:1080"
 ;;   - Auth proxy: "http://user:pass@proxy.example.com:8080"
 
-(defcustom emacs-http-proxy nil
+(defcustom omw/emacs-http-proxy nil
   "Default HTTP/HTTPS proxy for Emacs network operations.
 Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy.
 This affects package installation, HTTP requests, and Git operations."
@@ -118,14 +114,14 @@ This affects package installation, HTTP requests, and Git operations."
                  (string :tag "Proxy address"))
   :group 'omw-emacs-config)
 
-(defun show-http-proxy ()
+(defun omw/show-http-proxy ()
   "Display current HTTP/HTTPS proxy configuration."
   (interactive)
   (if url-proxy-services
       (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
     (message "No http proxy")))
 
-(defun set-http-proxy (proxy)
+(defun omw/set-http-proxy (proxy)
   "Configure HTTP/HTTPS proxy for Emacs and subprocess environment.
 
 Sets proxy for:
@@ -139,8 +135,8 @@ Also supports: \"socks5://127.0.0.1:1080\" or \"http://user:pass@host:port\"
 Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
   (interactive
    (list (read-string
-          (format "HTTP Proxy [%s]: " emacs-http-proxy)
-          nil nil emacs-http-proxy)))
+          (format "HTTP Proxy [%s]: " omw/emacs-http-proxy)
+          nil nil omw/emacs-http-proxy)))
   (when (string-empty-p proxy)
     (user-error "Proxy cannot be empty"))
   (condition-case err
@@ -169,22 +165,22 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
     (error
      (message "Proxy error: %s" (error-message-string err)))))
 
-(defun enable-http-proxy ()
-  "Enable HTTP proxy using `emacs-http-proxy' custom variable.
+(defun omw/enable-http-proxy ()
+  "Enable HTTP proxy using `omw/emacs-http-proxy' custom variable.
 
 Configuration:
   Add to custom.el:
-    (setq emacs-http-proxy \"127.0.0.1:7890\")
+    (setq omw/emacs-http-proxy \"127.0.0.1:7890\")
 
   Then call: M-x enable-http-proxy
 
 This automatically applies proxy settings on startup if configured."
   (interactive)
-  (if emacs-http-proxy
-      (set-http-proxy emacs-http-proxy)
-    (message "HTTP proxy not configured. Add to custom.el: (setq emacs-http-proxy \"127.0.0.1:7890\")")))
+  (if omw/emacs-http-proxy
+      (set-http-proxy omw/emacs-http-proxy)
+    (message "HTTP proxy not configured. Add to custom.el: (setq omw/emacs-http-proxy \"127.0.0.1:7890\")")))
 
-(defun unset-http-proxy ()
+(defun omw/unset-http-proxy ()
   "Disable HTTP/HTTPS proxy for Emacs and subprocess environment.
 
 Clears all proxy settings:
@@ -197,10 +193,10 @@ Useful for switching between proxy and direct connections."
   (setenv "https_proxy")
   (setenv "all_proxy")
   (setq url-proxy-services nil)
-  (show-http-proxy))
+  (omw/show-http-proxy))
 
 ;; Alias for convenience: M-x disable-http-proxy
-(defalias 'disable-http-proxy 'unset-http-proxy)
+(defalias 'omw/disable-http-proxy 'omw/unset-http-proxy)
 
 ;; ==================================================================================
 ;; Global variables

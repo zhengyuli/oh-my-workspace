@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:15:49 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:49:43 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -201,11 +201,6 @@ ACTION is a template file or function to insert."
 
    ;; Buffer management
    ("C-x k" . smart-kill-buffer)))    ; Smart buffer kill
-
-;; ==================================================================================
-;; Global hooks
-;; Time-stamp: update timestamp in files with Time-stamp marker on save
-(add-hook 'before-save-hook #'time-stamp)
 
 ;; ==================================================================================
 ;;; Provide features

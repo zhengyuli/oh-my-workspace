@@ -1,5 +1,5 @@
 ;;; init-vc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:16:07 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:41:54 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -35,9 +35,8 @@
   :ensure t
   :defer t
   :commands (magit-status magit-log-all)
-  :bind
-  (("C-c g s" . magit-status)    ; Open Magit status
-   ("C-c g l" . magit-log-all))   ; View commit log
+  :bind (("C-c g s" . magit-status)    ; Open Magit status
+         ("C-c g l" . magit-log-all))   ; View commit log
   :config
   (require 'magit-diff)
 

@@ -549,6 +549,64 @@ use-package automatically adds `-hook` suffix internally.
 - `my/python-mode-setup` ✓
 - `my/text-mode-setup` ✓
 
+### Case Study: init-prog.el Refactoring
+
+**Before**: Multiple hooks in use-package, traditional require pattern
+```elisp
+(require 'copyright)
+(setq copyright-update t)
+
+(defun my/prog-mode-setup ()
+  "Apply custom buffer-local settings for all programming modes.
+These settings only affect the current buffer and do not modify global Emacs state."
+  ;; Indentation Configuration (Consistent across all programming modes)
+  (setq-local tab-width 4
+              indent-tabs-mode nil)
+  ;; Line Numbers: Enable relative/absolute line numbers for code navigation
+  (display-line-numbers-mode 1)
+  ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
+  (prettify-symbols-mode 1)
+  ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
+  (hs-minor-mode 1)
+  ;; Enable custom save hooks (whitespace cleanup, copyright update)
+  (my/prog-save-mode 1))
+
+(use-package prog-mode
+  :ensure nil
+  :defer t
+  :hook ((prog-mode . my/prog-mode-setup)
+         (prog-mode . my/prog-save-mode)))
+```
+
+**After**: use-package for built-ins, concise comments, consolidated hooks
+```elisp
+(use-package copyright
+  :ensure nil
+  :defer t
+  :config
+  (setq copyright-update t))
+
+(defun my/prog-mode-setup ()
+  "Apply custom buffer-local settings for all programming modes."
+  (setq-local tab-width 4
+              indent-tabs-mode nil)
+  (display-line-numbers-mode 1)
+  (prettify-symbols-mode 1)
+  (hs-minor-mode 1)
+  (my/prog-save-mode 1))
+
+(use-package prog-mode
+  :ensure nil
+  :defer t
+  :hook (prog-mode . my/prog-mode-setup))
+```
+
+**Key improvements**:
+1. Built-in packages use use-package format
+2. Verbose comments removed (code is self-explanatory)
+3. Multiple hooks consolidated into single setup function
+4. More maintainable and easier to read
+
 ### Block Separators
 
 ```elisp
@@ -571,6 +629,57 @@ use-package automatically adds `-hook` suffix internally.
 
 **Line-end comments**: 2+ spaces before semicolon
 
+### Comment Simplicity Guidelines
+
+**✅ Preferred: Concise, meaningful comments**
+```elisp
+;; One-line summary
+(defun my/function (arg)
+  "Brief description."
+  (code))
+```
+
+**❌ Avoid: Overly verbose or redundant comments**
+```elisp
+;; Function to do X (bad: obvious from name)
+;; Step 1: Do thing  (bad: unnecessary numbering)
+;; Step 2: Do other thing
+(defun my/function (arg)
+  "Function to do X.
+Does:
+1. Thing
+2. Other thing"
+  ;; 1. Do thing (bad: code is self-explanatory)
+  (do-thing)
+  ;; 2. Do other thing
+  (do-other-thing))
+```
+
+**Comment simplicity principles**:
+- Docstrings: One line for simple functions, multi-line only when complex
+- Line-end comments: Only when non-obvious or explaining "why" not "what"
+- No numbered steps in functions (code should be self-explanatory)
+- Group related functionality with section headers, not verbose explanations
+
+### Built-in Package Configuration
+
+**✅ Preferred: Use use-package for all packages (including built-ins)**
+```elisp
+(use-package copyright
+  :ensure nil
+  :defer t
+  :config
+  (setq copyright-update t))
+```
+
+**❌ Avoid: Traditional require + setq pattern**
+```elisp
+(require 'copyright)
+(setq copyright-update t)
+```
+
+**Rationale**: Consistency, lazy loading support, clearer dependency structure
+
 ### File Footer
 
 ```elisp
@@ -592,8 +701,9 @@ use-package automatically adds `-hook` suffix internally.
 - [ ] Most packages use `:defer t`
 - [ ] Hooks defined in `:hook` (not global `add-hook`)
 - [ ] Related buffer-local settings encapsulated in setup function
-- [ ] Functions have docstrings
-- [ ] Line-end comments have 2+ spaces before `;`
+- [ ] Docstrings concise (one line for simple functions)
+- [ ] No numbered steps or verbose comments in functions
+- [ ] Line-end comments only when non-obvious
 - [ ] Block separators with blank lines before/after
 - [ ] File ends with `(provide '...)` and end comment
 

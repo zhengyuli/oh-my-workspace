@@ -1,5 +1,5 @@
 ;;; init-terminal.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:16:13 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:41:15 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -41,8 +41,7 @@
         ("C-g" . vterm--self-insert)
         ;; Send meta-backspace (Alt+Backspace) to terminal (delete word left)
         ("M-<backspace>" . vterm-send-meta-backspace))
-  :hook
-  (vterm-mode . my/vterm-mode-setup)
+  :hook (vterm-mode . my/vterm-mode-setup)
   :config
   (setq
    ;; Maximum scrollback history lines (10k for sufficient history)
@@ -54,7 +53,6 @@
    ;; Allow Emacs to manipulate terminal selection data
    vterm-enable-manipulate-selection-data t)
 
-  ;; --------------------------------------------------------------------------
   ;; Custom Vterm Mode Setup (Consolidated Hook Function)
   (defun my/vterm-mode-setup ()
     "Custom initialization for vterm-mode (buffer-local settings & mode disabling)."

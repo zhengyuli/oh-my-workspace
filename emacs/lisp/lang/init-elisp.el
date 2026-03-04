@@ -1,5 +1,5 @@
 ;;; init-elisp.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 21:27:03 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:30:24 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -56,7 +56,6 @@
   (flycheck-mode -1)    ; Disable flycheck (built-in linting is sufficient)
   (eldoc-mode 1))       ; Enable eldoc for function documentation
 
-;; ==================================================================================
 ;; Emacs Lisp mode - built-in mode configuration
 (use-package emacs-lisp-mode
   :ensure nil

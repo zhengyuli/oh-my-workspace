@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 11:06:24 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-04 13:49:37 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -149,8 +149,10 @@ Performs:
     (delete-trailing-whitespace))
   ;; Convert tabs to spaces (use tab-width from buffer-local settings)
   (untabify (point-min) (point-max))
-  ;; 2. Copyright update
+  ;; Copyright update
   (ignore-errors (copyright-update))
+  ;; Timestamp update
+  (ignore-errors (time-stamp))
   ;; Return nil to allow save to proceed
   nil)
 
@@ -167,23 +169,6 @@ Performs:
 
 ;; ==================================================================================
 ;; Core prog-mode hook
-(defun my/prog-mode-setup ()
-  "Apply custom buffer-local settings for all programming modes.
-These settings only affect the current buffer and do not modify global Emacs state."
-  ;; Indentation Configuration (Consistent across all programming modes)
-  (setq-local tab-width 4
-              indent-tabs-mode nil)
-  ;; Line Numbers: Enable relative/absolute line numbers for code navigation
-  (display-line-numbers-mode 1)
-  ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
-  (prettify-symbols-mode 1)
-  ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
-  (hs-minor-mode 1)
-  ;; Enable custom save hooks (whitespace cleanup, copyright update)
-  (my/prog-save-mode 1))
-
-;; Attach the setup function to prog-mode hook
-;; Core prog-mode keybindings (built-in)
 (use-package prog-mode
   :ensure nil
   :defer t
@@ -202,7 +187,22 @@ These settings only affect the current buffer and do not modify global Emacs sta
         ("M-r" . xref-find-references)
         ;; Newline + indent
         ("RET" . newline-and-indent)
-        ("<return>" . newline-and-indent)))
+        ("<return>" . newline-and-indent))
+  :config
+  (defun my/prog-mode-setup ()
+    "Apply custom buffer-local settings for all programming modes.
+These settings only affect the current buffer and do not modify global Emacs state."
+    ;; Indentation Configuration (Consistent across all programming modes)
+    (setq-local tab-width 4
+                indent-tabs-mode nil)
+    ;; Line Numbers: Enable relative/absolute line numbers for code navigation
+    (display-line-numbers-mode 1)
+    ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
+    (prettify-symbols-mode 1)
+    ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
+    (hs-minor-mode 1)
+    ;; Enable custom save hooks (whitespace cleanup, copyright update)
+    (my/prog-save-mode 1)))
 
 ;; ==================================================================================
 ;;; Provide features
