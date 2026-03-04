@@ -72,7 +72,7 @@ readonly DEPENDENCY_CONFIG=(
     # LSP Servers (P1)
     "command -v pylsp|Python LSP (pylsp)|pip install 'python-lsp-server[all]'|lsp|P1"
     "command -v gopls|Go LSP (gopls)|go install golang.org/x/tools/gopls@latest|lsp|P1"
-    "command -v typescript-language-server|TypeScript LSP|npm install -g typescript-language-server typescript|lsp|P1"
+    "command -v typescript-language-server|TypeScript LSP|npm install -g typescript-language-server|lsp|P1"
     "command -v yaml-language-server|YAML LSP|npm install -g yaml-language-server|lsp|P1"
     "command -v bash-language-server|Bash LSP|npm install -g bash-language-server|lsp|P1"
     "command -v docker-langserver|Dockerfile LSP|npm install -g dockerfile-language-server-nodejs|lsp|P1"
