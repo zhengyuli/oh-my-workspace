@@ -4,11 +4,11 @@
 # Name: setup.sh
 # Purpose: Emacs configurations setup script for macOS
 #
-# Time-stamp: <2026-03-03 23:12:12 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-04 13:11:40 Wednesday by zhengyu.li>
 #
 # Author: zhengyu li
 # Created: 2014-03-26
-# Optimized: Symlink mode with dependency guide
+# Optimized: Symlink mode with interactive dependency installation
 #
 # Copyright (c) 2014, 2022, 2023, 2024, 2025, 2026 zhengyu li <lizhengyu419@gmail.com>
 #---------------------------------------------------------------------------------
@@ -27,7 +27,67 @@ readonly BLUE='\033[0;34m'
 readonly CYAN='\033[0;36m'
 readonly NC='\033[0m' # No Color
 
-# Logging function
+# Global arrays for missing dependencies
+declare -a MISSING_CORE_TOOLS=()
+declare -a MISSING_LSP_SERVERS=()
+declare -a MISSING_FORMATTERS=()
+
+# Add missing dependency to global array
+add_missing_dependency() {
+    local category="$1"
+    local install_cmd="$2"
+
+    case "$category" in
+        core)
+            MISSING_CORE_TOOLS+=("$install_cmd")
+            ;;
+        lsp)
+            MISSING_LSP_SERVERS+=("$install_cmd")
+            ;;
+        formatter)
+            MISSING_FORMATTERS+=("$install_cmd")
+            ;;
+        *)
+            log_error "Unknown dependency category: $category"
+            return 1
+            ;;
+    esac
+    return 0
+}
+
+# Dependency configuration data
+# Format: "check_command|display_name|install_command|category|priority"
+# Priority levels: P0 (Required), P1 (Development)
+readonly DEPENDENCY_CONFIG=(
+    # Core Tools (P0)
+    "command -v git|git|brew install git|core|P0"
+    "command -v aspell|aspell|brew install aspell|core|P0"
+    "command -v pandoc|pandoc|brew install pandoc|core|P0"
+    "command -v ag|the_silver_searcher (ag)|brew install the_silver_searcher|core|P0"
+    "command -v rg|ripgrep (rg)|brew install ripgrep|core|P0"
+    "command -v gls|coreutils (gls)|brew install coreutils|core|P0"
+    "command -v fd|fd|brew install fd|core|P0"
+    "brew list libvterm &> /dev/null 2>&1|libvterm|brew install libvterm|core|P0"
+
+    # LSP Servers (P1)
+    "command -v pylsp|Python LSP (pylsp)|pip install 'python-lsp-server[all]'|lsp|P1"
+    "command -v gopls|Go LSP (gopls)|go install golang.org/x/tools/gopls@latest|lsp|P1"
+    "command -v typescript-language-server|TypeScript LSP|npm install -g typescript-language-server typescript|lsp|P1"
+    "command -v yaml-language-server|YAML LSP|npm install -g yaml-language-server|lsp|P1"
+    "command -v bash-language-server|Bash LSP|npm install -g bash-language-server|lsp|P1"
+    "command -v docker-langserver|Dockerfile LSP|npm install -g dockerfile-language-server-nodejs|lsp|P1"
+    "command -v cmake-language-server|CMake LSP|pip install cmake-language-server|lsp|P1"
+    "command -v marksman|Markdown LSP (marksman)|brew install marksman|lsp|P1"
+
+    # Formatters & Linters (P1)
+    "command -v black|Python formatter (black)|pip install black black-macchiato|formatter|P1"
+    "command -v isort|Python import sorter (isort)|pip install isort|formatter|P1"
+    "command -v pylint|Python linter (pylint)|pip install pylint|formatter|P1"
+    "command -v gofumpt|Go formatter (gofumpt)|go install mvdan.cc/gofumpt@latest|formatter|P1"
+    "python3 -c \"import debugpy\" &> /dev/null 2>&1|Python debugger (debugpy)|pip install debugpy|formatter|P1"
+)
+
+# Core logging function with timestamp and colored output
 log() {
     local level="$1"
     shift
@@ -48,29 +108,46 @@ log() {
     fi
 }
 
+# Log informational message
 log_info() {
     log "INFO" "$*"
 }
 
+# Log error message
 log_error() {
     log "ERROR" "$*"
 }
 
+# Log success message
 log_success() {
     log "SUCCESS" "$*"
 }
 
+# Log warning message
 log_warning() {
     log "WARNING" "$*"
 }
 
-# Function to handle errors
+# Log section header with bordered formatting
+log_section() {
+    local title="$1"
+    local border="═══════════════════════════════════════════════════════════════════════════"
+    echo ""
+    echo -e "${CYAN}${border}${NC}"
+    echo -e "${CYAN}$(printf "%-73s" "$title")${NC}"
+    echo -e "${CYAN}${border}${NC}"
+}
+
+# Log error message and exit with failure status
+#
+# Used for fatal errors that should immediately stop script execution.
+# Log error message and exit with status 1
 error_exit() {
     log_error "$1"
     exit 1
 }
 
-# Function to check if running on macOS
+# Verify OS is macOS
 check_macos() {
     if [[ "$OSTYPE" != "darwin"* ]]; then
         error_exit "This script only supports macOS. Current OS: $OSTYPE"
@@ -78,7 +155,7 @@ check_macos() {
     log_info "Running on macOS"
 }
 
-# Function to check if Emacs is installed
+# Verify Emacs is installed and meets minimum version (30.2)
 check_emacs_installed() {
     if ! command -v emacs &> /dev/null; then
         error_exit "Emacs is not installed. Please install Emacs first:
@@ -99,7 +176,7 @@ check_emacs_installed() {
     fi
 }
 
-# Function to validate source file
+# Validate source file exists and is readable
 validate_source_file() {
     local source_file="$1"
     if [[ ! -f "$source_file" ]]; then
@@ -110,7 +187,7 @@ validate_source_file() {
     fi
 }
 
-# Function to validate destination directory
+# Validate destination directory exists and is writable
 validate_destination_dir() {
     local dir="$1"
     if [[ ! -d "$dir" ]]; then
@@ -125,19 +202,17 @@ validate_destination_dir() {
     fi
 }
 
-# Function to safely set proxy
+# Check for proxy configuration and warn about limitations
 setup_proxy() {
     if [[ -n "${http_proxy:-}" ]]; then
-        log_warning "Proxy detected: $http_proxy"
-        log_warning "Since using symlink mode, proxy configuration will modify init.el directly"
-        log_warning "Consider setting proxy via environment variable or $HOME/.emacs.d/custom.el instead"
-        log_info "Skipping automatic proxy configuration to preserve project file integrity"
+        log_info "Proxy detected: $http_proxy"
+        log_info "Consider setting proxy in $HOME/.emacs.d/custom.el by appending (setq emacs-http-proxy $http_proxy)"
     else
         log_info "No proxy environment variable found"
     fi
 }
 
-# Function to validate installation
+# Validate symlink installation was successful
 validate_installation() {
     local config_file="$1"
     local source_file="$2"
@@ -161,120 +236,319 @@ validate_installation() {
     return 0
 }
 
-# Function to check if LSP servers are installed
-check_lsp_servers() {
+# Check dependencies by category using data-driven configuration
+check_dependencies_by_category() {
+    local category="$1"
+    local priority="$2"
+    local missing_count=0
+    local category_name=""
+
+    case "$category" in
+        core) category_name="Core Tools" ;;
+        lsp) category_name="LSP Servers" ;;
+        formatter) category_name="Formatters & Linters" ;;
+    esac
+
     echo ""
-    echo -e "${CYAN}Checking LSP servers...${NC}"
+    echo -e "${CYAN}Checking $category_name ($priority - ${priority/P0/Required/P1:Development})...${NC}"
     echo ""
 
-    local missing_servers=()
+    for dep_config in "${DEPENDENCY_CONFIG[@]}"; do
+        IFS='|' read -r check_cmd display_name install_cmd dep_category dep_priority <<< "$dep_config"
 
-    # Python
-    if ! command -v pylsp &> /dev/null; then
-        missing_servers+=("pylsp (pip install python-lsp-server[all])")
+        # Skip if not matching category and priority
+        [[ "$dep_category" != "$category" ]] && continue
+        [[ "$dep_priority" != "$priority" ]] && continue
+
+        # Check if dependency exists
+        if eval "$check_cmd"; then
+            echo -e "  ${GREEN}✓${NC} $display_name"
+        else
+            add_missing_dependency "$category" "$install_cmd"
+            ((missing_count++))
+            echo -e "  ${RED}✗${NC} $display_name"
+        fi
+    done
+
+    echo ""
+    if [[ $missing_count -eq 0 ]]; then
+        echo -e "${GREEN}All $category_name installed!${NC}"
     else
-        echo -e "  ${GREEN}✓${NC} Python LSP (pylsp)"
+        echo -e "${YELLOW}Missing $missing_count $category_name(s)${NC}"
     fi
 
-    # Go
-    if ! command -v gopls &> /dev/null; then
-        missing_servers+=("gopls (go install golang.org/x/tools/gopls@latest)")
-    else
-        echo -e "  ${GREEN}✓${NC} Go LSP (gopls)"
-    fi
+    return $missing_count
+}
 
-    # TypeScript
-    if ! command -v typescript-language-server &> /dev/null; then
-        missing_servers+=("typescript-language-server (npm install -g typescript-language-server)")
-    else
-        echo -e "  ${GREEN}✓${NC} TypeScript LSP"
-    fi
+# Wrapper functions for backward compatibility and clarity
+check_core_tools() {
+    check_dependencies_by_category "core" "P0"
+}
 
-    # YAML
-    if ! command -v yaml-language-server &> /dev/null; then
-        missing_servers+=("yaml-language-server (npm install -g yaml-language-server)")
-    else
-        echo -e "  ${GREEN}✓${NC} YAML LSP"
-    fi
+check_lsp_servers_enhanced() {
+    check_dependencies_by_category "lsp" "P1"
+}
 
-    # Bash
-    if ! command -v bash-language-server &> /dev/null; then
-        missing_servers+=("bash-language-server (npm install -g bash-language-server)")
-    else
-        echo -e "  ${GREEN}✓${NC} Bash LSP"
-    fi
+check_formatters_linters() {
+    check_dependencies_by_category "formatter" "P1"
+}
 
-    # Dockerfile
-    if ! command -v docker-langserver &> /dev/null; then
-        missing_servers+=("docker-langserver (npm install -g dockerfile-language-server-nodejs)")
-    else
-        echo -e "  ${GREEN}✓${NC} Dockerfile LSP"
-    fi
+# Collect all missing dependencies across all categories
+collect_all_dependencies() {
+    log_section "Checking External Dependencies"
 
-    # CMake
-    if ! command -v cmake-language-server &> /dev/null; then
-        missing_servers+=("cmake-language-server (pip install cmake-language-server)")
-    else
-        echo -e "  ${GREEN}✓${NC} CMake LSP"
-    fi
+    local missing_core=0
+    local missing_lsp=0
+    local missing_formatters=0
 
-    # Marksman (Markdown)
-    if ! command -v marksman &> /dev/null; then
-        missing_servers+=("marksman (brew install marksman)")
-    else
-        echo -e "  ${GREEN}✓${NC} Markdown LSP (marksman)"
-    fi
+    check_core_tools || missing_core=$?
+    check_lsp_servers_enhanced || missing_lsp=$?
+    check_formatters_linters || missing_formatters=$?
 
-    if [ ${#missing_servers[@]} -gt 0 ]; then
-        echo ""
-        echo -e "${YELLOW}Missing LSP servers:${NC}"
-        for server in "${missing_servers[@]}"; do
-            echo -e "  ${RED}✗${NC} $server"
-        done
-        return 1
-    else
-        echo ""
-        echo -e "${GREEN}All LSP servers installed!${NC}"
+    local total_missing=$((missing_core + missing_lsp + missing_formatters))
+    return $total_missing
+}
+
+# Display formatted summary of missing dependencies
+display_missing_dependencies() {
+    local total_missing=${#MISSING_CORE_TOOLS[@]}
+    total_missing=$((total_missing + ${#MISSING_LSP_SERVERS[@]}))
+    total_missing=$((total_missing + ${#MISSING_FORMATTERS[@]}))
+
+    if [[ $total_missing -eq 0 ]]; then
         return 0
+    fi
+
+    log_section "Missing Dependencies Summary"
+    echo ""
+
+    # Core Tools
+    if [[ ${#MISSING_CORE_TOOLS[@]} -gt 0 ]]; then
+        echo -e "${YELLOW}Core Tools (P0 - Required):${NC}"
+        for cmd in "${MISSING_CORE_TOOLS[@]}"; do
+            echo "  $cmd"
+        done
+        echo ""
+    fi
+
+    # LSP Servers
+    if [[ ${#MISSING_LSP_SERVERS[@]} -gt 0 ]]; then
+        echo -e "${YELLOW}LSP Servers (P1 - Development):${NC}"
+        for cmd in "${MISSING_LSP_SERVERS[@]}"; do
+            echo "  $cmd"
+        done
+        echo ""
+    fi
+
+    # Formatters & Linters
+    if [[ ${#MISSING_FORMATTERS[@]} -gt 0 ]]; then
+        echo -e "${YELLOW}Formatters & Linters (P1 - Development):${NC}"
+        for cmd in "${MISSING_FORMATTERS[@]}"; do
+            echo "  $cmd"
+        done
+        echo ""
     fi
 }
 
-# Function to print dependency installation guide
-print_dependency_guide() {
+# Prompt user to install missing dependencies
+prompt_install_dependencies() {
+    local total_missing=${#MISSING_CORE_TOOLS[@]}
+    total_missing=$((total_missing + ${#MISSING_LSP_SERVERS[@]}))
+    total_missing=$((total_missing + ${#MISSING_FORMATTERS[@]}))
+
+    if [[ $total_missing -eq 0 ]]; then
+        return 1
+    fi
+
+    log_section "Install Missing Dependencies?"
+    echo ""
+    echo "Found $total_missing missing dependencies across all categories."
+    echo ""
+    echo "Would you like to install them now?"
+    echo "  [y] Yes - Install all missing dependencies"
+    echo "  [N] No  - Skip installation (you can install manually later)"
+    echo ""
+
+    local choice
+    read -p "Your choice (y/N): " choice
+    echo ""
+
+    if [[ "$choice" =~ ^[Yy]$ ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Execute single install command (type-safe, no eval)
+execute_install_command() {
+    local cmd="$1"
+    local category="$2"
+
+    echo -e "Installing: ${BLUE}$cmd${NC}"
+    echo -e "Category:   ${YELLOW}$category${NC}"
+
+    local exit_code=0
+
+    # Type-safe execution based on command prefix
+    case "$cmd" in
+        brew\ install*)
+            local package="${cmd#brew install }"
+            if brew install $package &> /dev/null; then
+                echo -e "${GREEN}✓ Success: $cmd${NC}"
+            else
+                echo -e "${RED}✗ Failed: $cmd${NC}"
+                exit_code=1
+            fi
+            ;;
+        pip\ install*)
+            local package="${cmd#pip install }"
+            if pip install $package &> /dev/null; then
+                echo -e "${GREEN}✓ Success: $cmd${NC}"
+            else
+                echo -e "${RED}✗ Failed: $cmd${NC}"
+                exit_code=1
+            fi
+            ;;
+        npm\ install\ -g*)
+            local package="${cmd#npm install -g }"
+            if npm install -g $package &> /dev/null; then
+                echo -e "${GREEN}✓ Success: $cmd${NC}"
+            else
+                echo -e "${RED}✗ Failed: $cmd${NC}"
+                exit_code=1
+            fi
+            ;;
+        go\ install*)
+            local package="${cmd#go install }"
+            if go install $package &> /dev/null; then
+                echo -e "${GREEN}✓ Success: $cmd${NC}"
+            else
+                echo -e "${RED}✗ Failed: $cmd${NC}"
+                exit_code=1
+            fi
+            ;;
+        *)
+            echo -e "${RED}✗ Unknown command type: $cmd${NC}"
+            exit_code=1
+            ;;
+    esac
+
+    echo ""
+    return $exit_code
+}
+
+# Install all missing dependencies with progress tracking
+install_missing_dependencies() {
+    declare -a failed_commands=()
+    local success_count=0
+    local fail_count=0
+    local step=1
+
+    # Install Core Tools
+    if [[ ${#MISSING_CORE_TOOLS[@]} -gt 0 ]]; then
+        echo -e "${CYAN}[$step/3] Installing Core Tools (P0)...${NC}"
+        echo ""
+        for cmd in "${MISSING_CORE_TOOLS[@]}"; do
+            if execute_install_command "$cmd" "Core Tools"; then
+                ((success_count++))
+            else
+                ((fail_count++))
+                failed_commands+=("$cmd")
+            fi
+        done
+        ((step++))
+    fi
+
+    # Install LSP Servers
+    if [[ ${#MISSING_LSP_SERVERS[@]} -gt 0 ]]; then
+        echo -e "${CYAN}[$step/3] Installing LSP Servers (P1)...${NC}"
+        echo ""
+        for cmd in "${MISSING_LSP_SERVERS[@]}"; do
+            if execute_install_command "$cmd" "LSP Servers"; then
+                ((success_count++))
+            else
+                ((fail_count++))
+                failed_commands+=("$cmd")
+            fi
+        done
+        ((step++))
+    fi
+
+    # Install Formatters & Linters
+    if [[ ${#MISSING_FORMATTERS[@]} -gt 0 ]]; then
+        echo -e "${CYAN}[$step/3] Installing Formatters & Linters (P1)...${NC}"
+        echo ""
+        for cmd in "${MISSING_FORMATTERS[@]}"; do
+            if execute_install_command "$cmd" "Formatters & Linters"; then
+                ((success_count++))
+            else
+                ((fail_count++))
+                failed_commands+=("$cmd")
+            fi
+        done
+    fi
+
+    # Print installation summary
+    log_section "Installation Summary"
+    echo ""
+    echo -e "${GREEN}Successfully installed: $success_count${NC}"
+
+    if [[ $fail_count -gt 0 ]]; then
+        echo -e "${RED}Failed to install:    $fail_count${NC}"
+        echo ""
+        echo -e "${YELLOW}Failed packages:${NC}"
+        for cmd in "${failed_commands[@]}"; do
+            echo "  • $cmd"
+        done
+    fi
     echo ""
     echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════════${NC}"
-    echo -e "${CYAN}                    External Dependencies Installation Guide                  ${NC}"
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════════${NC}"
-    echo ""
-    echo -e "${CYAN}Configuration Structure:${NC}"
-    echo "  lisp/          - Core modules (UI, editing, completion)"
-    echo "  lisp/tools/    - Tool integrations (AI, auth, terminal, VC)"
-    echo "  lisp/lang/     - Language-specific configs (10 languages)"
-    echo "  site-packages/ - Custom Emacs packages"
-    echo ""
-    echo -e "${YELLOW}Quick Install (copy and paste):${NC}"
-    echo ""
-    echo "  # Core tools (P0 - Required)"
-    echo "  brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm marksman fd"
-    echo ""
-    echo "  # LSP servers (P1 - Development)"
-    echo "  npm install -g \\"
-    echo "    typescript-language-server typescript \\"
-    echo "    yaml-language-server \\"
-    echo "    bash-language-server \\"
-    echo "    dockerfile-language-server-nodejs"
-    echo ""
-    echo "  pip install 'python-lsp-server[all]' cmake-language-server"
-    echo "  go install golang.org/x/tools/gopls@latest"
-    echo ""
-    echo "  # Formatters & Linters"
-    echo "  pip install black black-macchiato isort pylint debugpy"
-    echo "  go install mvdan.cc/gofumpt@latest"
-    echo ""
-    echo -e "${GREEN}Verify installation:${NC}"
-    echo "  M-x emacs-config-validate-all"
-    echo ""
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════════${NC}"
+}
+
+# Offer interactive dependency installation workflow
+offer_install_dependencies() {
+    # Clear arrays before collecting
+    MISSING_CORE_TOOLS=()
+    MISSING_LSP_SERVERS=()
+    MISSING_FORMATTERS=()
+
+    # Collect all dependencies
+    collect_all_dependencies
+    local total_missing=$?
+
+    if [[ $total_missing -eq 0 ]]; then
+        echo ""
+        echo -e "${GREEN}All dependencies already installed!${NC}"
+        echo ""
+        echo -e "${CYAN}Verify installation:${NC}"
+        echo "  M-x emacs-config-validate-all"
+        return 0
+    fi
+
+    # Display missing dependencies
+    display_missing_dependencies
+
+    # Prompt user to install
+    if prompt_install_dependencies; then
+        # User wants to install
+        install_missing_dependencies
+
+        echo ""
+        echo -e "${GREEN}Setup completed!${NC}"
+        echo ""
+        echo -e "${CYAN}Verify installation:${NC}"
+        echo "  M-x emacs-config-validate-all"
+    else
+        # User declined installation
+        echo ""
+        echo -e "${YELLOW}Installation skipped.${NC}"
+        echo ""
+        echo -e "${CYAN}To install manually, run the commands listed above.${NC}"
+        echo ""
+        echo -e "${CYAN}Verify installation:${NC}"
+        echo "  M-x emacs-config-validate-all"
+    fi
 }
 
 # Main installation function
@@ -308,17 +582,14 @@ main() {
     # Setup proxy if configured
     setup_proxy
 
-    # Check LSP servers (informational, doesn't fail setup)
-    check_lsp_servers || log_warning "Some LSP servers are missing. See installation guide above."
-
     # Validate installation
     if validate_installation "$EMACS_CONFIG_FILE" "$SCRIPT_DIR/init.el"; then
         log_success "Setup Emacs configuration successfully!"
         log_info "Configuration file: $EMACS_CONFIG_FILE -> $SCRIPT_DIR/init.el"
         log_info "Note: Any changes to init.el in the project will be immediately effective"
 
-        # Print dependency guide
-        print_dependency_guide
+        # Offer interactive dependency installation
+        offer_install_dependencies
 
         return 0
     else
