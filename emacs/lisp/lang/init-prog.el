@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:49:37 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-04 23:58:17 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -168,27 +168,26 @@ Performs:
     (remove-hook 'before-save-hook #'my/prog-before-save t)))
 
 ;; ==================================================================================
-;; Core prog-mode hook
 (use-package prog-mode
   :ensure nil
   :demand t
   :hook (prog-mode . my/prog-mode-setup)
-  :bind
-  (:map prog-mode-map
-        ;; Navigation
-        ("C-c M-a" . beginning-of-defun)
-        ("C-c M-e" . end-of-defun)
-        ("C-]" . jump-to-matched-paren)
-        ;; Comment toggle
-        ("C-c C-c" . comment-line)
-        ;; Xref
-        ("M-." . xref-find-definitions)
-        ("M-," . xref-pop-marker-stack)
-        ("M-r" . xref-find-references)
-        ;; Newline + indent
-        ("RET" . newline-and-indent))
+  :bind (:map prog-mode-map
+              ;; Navigation
+              ("C-c M-a" . beginning-of-defun)
+              ("C-c M-e" . end-of-defun)
+              ("C-]" . jump-to-matched-paren)
+              ;; Comment toggle
+              ("C-c C-c" . comment-line)
+              ;; Xref
+              ("M-." . xref-find-definitions)
+              ("M-," . xref-pop-marker-stack)
+              ("M-r" . xref-find-references)
+              ;; Newline + indent
+              ("RET" . newline-and-indent))
   :config
   (defun my/prog-mode-setup ()
+    "Apply custom buffer-local settings for all programming modes."
     (setq-local tab-width 4
                 completion-at-point-functions (list (cape-capf-super
                                                      #'eglot-completion-at-point
@@ -196,7 +195,6 @@ Performs:
                                                      #'cape-file
                                                      #'cape-dabbrev
                                                      #'cape-elisp-symbol)))
-    ;; Other modes to enable
     (indent-tabs-mode -1)
     (display-line-numbers-mode 1)
     (prettify-symbols-mode 1)
