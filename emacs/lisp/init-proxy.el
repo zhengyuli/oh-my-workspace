@@ -1,5 +1,5 @@
 ;;; init-proxy.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 13:29:05 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-06 18:19:59 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -95,7 +95,7 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
   "Enable HTTP proxy using `omw/emacs-http-proxy' custom variable.
 
 Configuration:
-  Add to custom.el:
+  Add to custom.el, example:
     (setq omw/emacs-http-proxy \"127.0.0.1:7890\")
 
   Then call: M-x omw/enable-http-proxy
@@ -104,7 +104,7 @@ This automatically applies proxy settings on startup if configured."
   (interactive)
   (if omw/emacs-http-proxy
       (omw/set-http-proxy omw/emacs-http-proxy)
-    (message "HTTP proxy not configured. Add to custom.el: (setq omw/emacs-http-proxy \"127.0.0.1:7890\")")))
+    (message "HTTP proxy not configured. Add to custom.el, Example: (setq omw/emacs-http-proxy \"127.0.0.1:7890\")")))
 
 ;; ==================================================================================
 (defun omw/unset-http-proxy ()

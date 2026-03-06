@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 17:01:53 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:13:49 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -40,11 +40,17 @@
   :defer t)
 
 ;; ==================================================================================
+(defun omw/dired-mode-setup ()
+  (require 'dired-x)
+  (require 'dired-async)
+
+  (dired-omit-mode 1)
+  (dired-async-mode 1))
+
 (use-package dired
   :ensure nil
   :defer t
-  :hook ((dired-mode . dired-omit-mode)
-         (dired-mode . dired-async-mode))
+  :hook (dired-mode . omw/dired-mode-setup)
   :bind (("C-x j" . dired-jump)
          (:map dired-mode-map
                ;; Navigation
@@ -53,8 +59,8 @@
                ("h" . dired-up-directory-single)
                ("p" . dired-hacks-previous-file)
                ("n" . dired-hacks-next-file)
-               ("M-{" . dired-goto-first-line)
-               ("M-}" . dired-goto-last-line)
+               ("M-<" . dired-goto-first-line)
+               ("M->" . dired-goto-last-line)
                ("M-o" . dired-omit-mode)
                ;; File operations
                ("v" . dired-view-file)
@@ -89,6 +95,7 @@
         dired-recursive-deletes 'always
         dired-deletion-confirmer 'y-or-n-p
         dired-auto-revert-buffer (not (file-remote-p default-directory))
+
         ;; Core omit filter rules (fixed regex with exact matching)
         dired-omit-files (concat
                           ;; Hide all hidden files/directories starting with . (e.g., .git, .env)

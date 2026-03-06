@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 17:37:01 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:23:13 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -40,11 +40,6 @@
                        'face 'font-lock-constant-face
                        'help-echo pyvenv-virtual-env)))))
 
-(defun omw/pyvenv-mode-line-setup ()
-  (setq-local mode-line-misc-info
-              (append mode-line-misc-info
-                      '((:eval (omw/pyvenv-mode-line-indicator))))))
-
 (defun omw/update-pyvenv-mode-line-indicator ()
   "Add mode-line indicator to current buffer."
   (setq-local mode-line-misc-info
@@ -77,7 +72,6 @@
 (use-package python
   :ensure nil
   :defer t
-  :hook (python-mode . omw/pyvenv-mode-line-setup)
   :bind (:map python-mode-map
               ("C-c C-c" . comment-line))
   :config

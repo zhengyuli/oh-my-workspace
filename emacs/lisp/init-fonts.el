@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 15:06:53 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-06 18:52:40 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,69 +30,68 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Font family definitions (customizable priority lists)
-(defcustom omw/emacs-font-monospace
+(defcustom omw/font-monospace
   '(".SF NS Mono" "Source Code Pro" "Menlo" "Monospace")
   "Priority list of monospace fonts for code editing.
 First available font in the list will be used."
   :type '(repeat string)
   :group 'omw/emacs-config)
 
-(defcustom omw/emacs-font-variable-pitch
+(defcustom omw/font-variable-pitch
   '(".SF NS" "Helvetica Neue" "Arial" "Sans Serif")
   "Priority list of variable-pitch fonts for prose and UI text.
 First available font in the list will be used."
   :type '(repeat string)
   :group 'omw/emacs-config)
 
-(defcustom omw/emacs-font-chinese
+(defcustom omw/font-chinese
   '("Hiragino Sans GB" "Heiti SC" "Songti SC")
   "Priority list of Chinese fonts for CJK character display.
 First available font in the list will be used."
   :type '(repeat string)
   :group 'omw/emacs-config)
 
-(defcustom omw/emacs-font-size-default 140
+(defcustom omw/font-size-default 140
   "Default font height in 1/10pt units (140 = 14pt)."
   :type 'integer
   :group 'omw/emacs-config)
 
-(defcustom omw/emacs-font-size-variable-multiplier 1.0
+(defcustom omw/font-size-variable-multiplier 1.0
   "Variable-pitch font size multiplier relative to monospace font."
   :type 'number
   :group 'omw/emacs-config)
 
 ;; ==================================================================================
-(defun omw/emacs-find-available-font (font-list)
+(defun omw/find-available-font (font-list)
   "Return first available font from FONT-LIST."
   (cl-find-if (lambda (font)
                  (and font
                       (x-list-fonts font)))
                font-list))
 
-(defun omw/emacs-setup-fonts ()
+(defun omw/setup-fonts ()
   "Configure all font faces based on available fonts.
 Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   (when (display-graphic-p)
-    (let ((mono-font (omw/emacs-find-available-font omw/emacs-font-monospace))
-          (var-font (omw/emacs-find-available-font omw/emacs-font-variable-pitch))
-          (cjk-font (omw/emacs-find-available-font omw/emacs-font-chinese)))
+    (let ((mono-font (omw/find-available-font omw/font-monospace))
+          (var-font (omw/find-available-font omw/font-variable-pitch))
+          (cjk-font (omw/find-available-font omw/font-chinese)))
 
       ;; Configure default and fixed-pitch faces (for code)
       (when mono-font
         (set-face-attribute 'default nil
                             :family mono-font
-                            :height omw/emacs-font-size-default)
+                            :height omw/font-size-default)
         (set-face-attribute 'fixed-pitch nil
                             :family mono-font
-                            :height omw/emacs-font-size-default))
+                            :height omw/font-size-default))
 
       ;; Configure variable-pitch face (for prose and UI)
       (when var-font
         (set-face-attribute 'variable-pitch nil
                             :family var-font
-                            :height (round (* omw/emacs-font-size-default
-                                              omw/emacs-font-size-variable-multiplier))))
+                            :height (round (* omw/font-size-default
+                                              omw/font-size-variable-multiplier))))
 
       ;; Configure Chinese font fallback for CJK character ranges
       (when cjk-font
@@ -111,22 +110,23 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
                (or var-font "N/A")
                (or cjk-font "N/A")))))
 
+
+(use-package emacs
+  :ensure nil
+  :when (display-graphic-p)
+  :demand t
+  :hook (after-init . omw/setup-fonts))
+
 ;; ==================================================================================
 (use-package textsize
   :ensure t
+  :when (display-graphic-p)
   :defer t
+  :hook (after-init . textsize-mode)
   :config
   (setq textsize-pixel-pitch-thresholds nil
         textsize-monitor-size-thresholds nil)
   (set-face-attribute 'default nil :height 140))
-
-;; ==================================================================================
-(use-package emacs
-  :ensure nil
-  :when (display-graphic-p)
-  :defer t
-  :hook ((after-init . omw/emacs-setup-fonts)
-         (after-init . textsize-mode)))
 
 ;; ==================================================================================
 (provide 'init-fonts)

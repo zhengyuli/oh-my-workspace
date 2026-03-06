@@ -1,5 +1,5 @@
 ;;; init-cc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 17:35:14 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:10:29 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -32,11 +32,6 @@
 ;; ==================================================================================
 (use-package google-c-style
   :ensure t
-  :defer t)
-
-;; ==================================================================================
-(use-package cc-mode
-  :ensure nil
   :defer t
   :hook ((c-mode . google-set-c-style)
          (c++-mode . google-set-c-style)))

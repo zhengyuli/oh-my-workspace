@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 12:15:06 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:06:38 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -51,7 +51,6 @@
   :hook (after-init . marginalia-mode))
 
 ;; ==================================================================================
-;; Search /navigation
 (use-package consult
   :ensure t
   :defer t
@@ -67,20 +66,18 @@
          ("C-x f" . consult-find)))
 
 ;; ==================================================================================
-;; Embark
+;; Will be loaded by embark automatically.
+(use-package embark-consult
+  :ensure t
+  :defer t)
+
 (use-package embark
   :ensure t
   :defer t
   :bind (("C-." . embark-act)
          ("C-;" . embar-dwim)))
 
-;; Will be loaded by embark automatically.
-(use-package embark-consult
-  :ensure t
-  :defer t)
-
 ;; ==================================================================================
-;; Corfu (in-buffer completion)
 (use-package corfu
   :ensure t
   :defer t
@@ -100,6 +97,7 @@
 (use-package yasnippet
   :ensure t
   :defer t
+  :hook (prog-mode . yas-minor-mode)
   :bind (:map yas-minor-mode-map
               ("TAB" . nil)
               ("<tab>" . nil))

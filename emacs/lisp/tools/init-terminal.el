@@ -1,5 +1,5 @@
 ;;; init-terminal.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 17:15:17 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:03:14 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,9 +29,17 @@
 ;;; Code:
 
 ;; ==================================================================================
+(defun omw/vterm-mode-setup ()
+  (setq-local truncate-lines t)
+
+  (hl-line-mode -1)
+  (auto-fill-mode -1)
+  (corfu-mode -1))
+
 (use-package vterm
   :ensure t
   :defer t
+  :hook (vterm-mode . omw/vterm-mode-setup)
   :bind (:map vterm-mode-map
               ("M-1" . nil)
               ("M-2" . nil)
@@ -43,22 +51,12 @@
               ("M-8" . nil)
               ("M-9" . nil)
               ("C-g" . vterm--self-insert)
-              ("M-<backspace>" . vterm-send-meta-backspace))
-  :hook (vterm-mode . omw/vterm-mode-setup)
-  :config
-  (defun omw/vterm-mode-setup ()
-    (setq-local truncate-lines t)
-
-    (hl-line-mode -1)
-    (auto-fill-mode -1)
-    (corfu-mode -1)
-    (yas-minor-mode -1)))
+              ("M-<backspace>" . vterm-send-meta-backspace)))
 
 ;; ==================================================================================
 (use-package multi-vterm
   :ensure t
   :defer t
-  :commands (multi-vterm)
   :bind ("C-x C-t" . multi-vterm))
 
 ;; ==================================================================================

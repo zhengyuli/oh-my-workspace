@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 15:34:53 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:06:42 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -77,28 +77,33 @@ Behavior:
 (use-package smartparens
   :ensure t
   :defer t
+  :hook (prog-mode . smartparens-mode)
   :config
   (require 'smartparens-config))
 
 ;; ==================================================================================
 (use-package hungry-delete
   :ensure t
-  :defer t)
+  :defer t
+  :hook (prog-mode . hungry-delete-mode))
 
 ;; ==================================================================================
 (use-package rainbow-delimiters
   :ensure t
-  :defer t)
+  :defer t
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; ==================================================================================
 (use-package hl-todo
   :ensure t
-  :defer t)
+  :defer t
+  :hook (prog-mode . hl-todo-mode))
 
 ;; ==================================================================================
 (use-package whitespace-cleanup-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (prog-mode . whitespace-cleanup-mode))
 
 ;; ==================================================================================
 (use-package quickrun
@@ -141,12 +146,6 @@ Behavior:
   (indent-tabs-mode -1)
   (display-line-numbers-mode 1)
   (prettify-symbols-mode 1)
-  (smartparens-mode 1)
-  (hungry-delete-mode 1)
-  (rainbow-delimiters-mode 1)
-  (hl-todo-mode 1)
-  (whitespace-cleanup-mode 1)
-  (yas-minor-mode 1)
   (omw/prog-before-save-mode 1))
 
 (use-package prog-mode

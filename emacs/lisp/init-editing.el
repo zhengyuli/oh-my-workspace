@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 12:19:29 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-06 18:10:55 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,7 +31,8 @@
 
 ;; ==================================================================================
 (defun omw/indent-entire-buffer ()
-  "Format entire buffer: indent, delete trailing whitespace, convert tabs to spaces."
+  "Format entire buffer.
+ Indent, delete trailing whitespace, convert tabs to spaces."
   (interactive)
   (save-excursion
     (indent-region (point-min) (point-max) nil)
@@ -39,48 +40,48 @@
     (untabify (point-min) (point-max))))
 
 (defun omw/smart-indent-region ()
-  "Indent region if mark active, otherwise indent entire buffer."
+  "Indent region.
+If mark active, otherwise indent entire buffer."
   (interactive)
   (save-excursion
     (if mark-active
         (call-interactively 'indent-region)
       (call-interactively 'omw/indent-entire-buffer))))
 
+;; ==================================================================================
 (defun omw/copy-region ()
   "Copy active region to kill ring."
   (interactive)
   (copy-region-as-kill (region-beginning) (region-end)))
 
 (defun omw/copy-current-line ()
-  "Copy current line (or from point to end of line) to kill ring."
+  "Copy current line to kill ring."
   (interactive)
   (let ((end (min (point-max) (line-end-position))))
     (copy-region-as-kill (line-beginning-position) end)))
 
 (defun omw/smart-copy-region ()
-  "Copy region if mark active, otherwise copy current line."
+  "Copy region.
+If mark active, copy current line."
   (interactive)
   (save-excursion
     (if mark-active
         (call-interactively 'omw/copy-region)
       (call-interactively 'omw/copy-current-line))))
 
+;; ==================================================================================
 (defun omw/smart-kill-region ()
-  "Kill region if mark active, otherwise kill entire line."
+  "Kill region.
+If mark active, kill entire line."
   (interactive)
   (if mark-active
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
 
-(defun omw/toggle-buffer-writable ()
-  "Toggle buffer read-only state."
-  (interactive)
-  (if buffer-read-only
-      (read-only-mode -1)
-    (read-only-mode 1)))
-
+;; ==================================================================================
 (defun omw/smart-kill-buffer ()
-  "Smart buffer close: prompt for file buffers with changes, kill others directly.
+  "Smart buffer close.
+Prompt for file buffers with changes, kill others directly.
 If buffer has unsaved changes and is a file, offer to save.
 Otherwise kill buffer without confirmation."
   (interactive)
@@ -95,7 +96,7 @@ Otherwise kill buffer without confirmation."
 (use-package vundo
   :ensure t
   :defer t
-  :bind ("M--" . vundo))
+  :bind ("M-u" . vundo))
 
 ;; ==================================================================================
 (use-package expand-region

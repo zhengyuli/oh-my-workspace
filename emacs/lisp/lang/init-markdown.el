@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 15:45:17 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:19:08 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defcustom omw/markdown-mou-colors
+(defcustom omw/markdown-colors
   '((header-1 . "#46dcb0")
     (header-2 . "#46dcb0")
     (header-3 . "#46dcb0")
@@ -49,13 +49,13 @@
     (blockquote . "#777777")
     (list-marker . "#75e349")
     (inline-code-fg . "#e0e2e4"))
-  "Colors for Mou Sublime theme markdown rendering."
+  "Colors markdown rendering."
   :type 'alist
   :group 'omw/emacs-config)
 
-(defun omw/markdown-mou-faces-setup ()
-  "Apply Mou Sublime style faces to markdown buffer."
-  (let* ((colors omw/markdown-mou-colors)
+(defun omw/markdown-faces-setup ()
+  "Apply faces to markdown buffer."
+  (let* ((colors omw/markdown-colors)
          (h1 (cdr (assq 'header-1 colors)))
          (h2 (cdr (assq 'header-2 colors)))
          (h3 (cdr (assq 'header-3 colors)))
@@ -75,7 +75,7 @@
          (blockquote (cdr (assq 'blockquote colors)))
          (list-marker (cdr (assq 'list-marker colors)))
          (inline-code-fg (cdr (assq 'inline-code-fg colors))))
-    ;; Header styles - Mou Sublime style, unified cyan-green
+    ;; Header styles
     (face-remap-add-relative 'markdown-header-face-1 `(:foreground ,h1 :weight bold :height 1.5))
     (face-remap-add-relative 'markdown-header-face-2 `(:foreground ,h2 :weight bold :height 1.35))
     (face-remap-add-relative 'markdown-header-face-3 `(:foreground ,h3 :weight bold :height 1.2))
@@ -126,7 +126,8 @@
 ;; ==================================================================================
 (use-package visual-fill-column
   :ensure t
-  :defer t)
+  :defer t
+  :hook (markdown-mode . visual-fill-column-mode))
 
 ;; ==================================================================================
 (defun omw/markdown-align-all-tables ()
@@ -145,11 +146,9 @@
               visual-fill-column-center-text t
               visual-fill-column-enable-sensible-window-split t)
   (auto-fill-mode 1)
-  (emojify-mode 1)
-  (visual-fill-column-mode 1)
   (unless (display-graphic-p)
     (omw/markdown-align-all-tables))
-  (omw/markdown-mou-faces-setup))
+  (omw/markdown-faces-setup))
 
 (use-package markdown-mode
   :ensure t

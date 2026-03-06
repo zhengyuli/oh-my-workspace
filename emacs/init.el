@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-06 16:33:58 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-06 16:45:33 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -152,20 +152,13 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   "Emacs cusom configuration file path.")
 
 (defun omw/after-init-setup ()
-  ;;  global-auto-revert-mode: Auto-refresh buffers when files change on disk
   (global-auto-revert-mode 1)
-  ;; save-place-mode: Remember cursor position in files
   (save-place-mode 1)
-  ;; recentf-mode: Track recently opened files
   (recentf-mode 1)
-  ;; column-number-mode: Show column number in mode line
   (column-number-mode 1)
-  ;; jit-lock-mode: Enable JIT font locking for performance
   (jit-lock-mode 1))
 
 (defun omw/emacs-startup-setup ()
-  "Display startup completion message with timing information.
-Shows elapsed time and number of garbage collections during init."
   (message "Emacs ready in %.2f seconds with %d garbage collections."
            (float-time (time-subtract after-init-time before-init-time))
            gcs-done))
@@ -174,7 +167,7 @@ Shows elapsed time and number of garbage collections during init."
   :ensure nil
   :demand t
   :hook ((after-init . omw/after-init-setup)
-         (after-init . omw/emacs-startup-setup))
+         (emacs-startup . omw/emacs-startup-setup))
   :bind ("C-x C-b" . ibuffer)
   :config
   (setq inhibit-default-init t
@@ -187,7 +180,8 @@ Shows elapsed time and number of garbage collections during init."
 
         ;; Backup and version control
         backup-by-copying t
-        backup-directory-alist '((".*" . "~/.emacs.d/backup-files"))
+        backup-directory-alist (list (cons ".*" (expand-file-name
+                                                 "backup-files" user-emacs-directory)))
         version-control t
         delete-old-versions t
 

@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 16:57:50 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-06 18:30:53 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -33,7 +33,8 @@
 (use-package emojify
   :ensure t
   :when (display-graphic-p)
-  :defer t)
+  :defer t
+  :hook (markdown-mode . emojify-mode))
 
 ;; ==================================================================================
 (use-package nerd-icons
@@ -52,18 +53,21 @@
 (use-package doom-modeline
   :ensure t
   :defer t
+  :hook (after-init . doom-modeline-mode)
   :config
   (setq doom-modeline-icon (display-graphic-p)))
 
 ;; ==================================================================================
 (use-package pulsar
   :ensure t
-  :defer t)
+  :defer t
+  :hook (after-init . pulsar-global-mode))
 
 ;; ==================================================================================
 (use-package centaur-tabs
   :ensure t
   :defer t
+  :hook (after-init . centaur-tabs-mode)
   :bind (:map centaur-tabs-mode-map
               ("M-p" . centaur-tabs-backward)
               ("M-n" . centaur-tabs-forward)
@@ -90,6 +94,7 @@
 (use-package winum
   :ensure t
   :defer t
+  :hook (after-init . winum-mode)
   :bind (("M-1" . winum-select-window-1)
          ("M-2" . winum-select-window-2)
          ("M-3" . winum-select-window-3)
@@ -113,6 +118,7 @@ Returns nil in terminal mode (uses official banner instead)."
 (use-package dashboard
   :ensure t
   :defer t
+  :hook (after-init . dashboard-open)
   :config
   (setq dashboard-center-content t
         dashboard-set-navigator t
@@ -126,16 +132,6 @@ Returns nil in terminal mode (uses official banner instead)."
         initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
   (dashboard-setup-startup-hook))
-
-;; ==================================================================================
-(use-package emacs
-  :ensure nil
-  :demand t
-  :hook ((after-init . doom-modeline-mode)
-         (after-init . pulsar-global-mode)
-         (after-init . centaur-tabs-mode)
-         (after-init . winum-mode)
-         (after-init . dashboard-open)))
 
 ;; ==================================================================================
 ;;; Provide features
