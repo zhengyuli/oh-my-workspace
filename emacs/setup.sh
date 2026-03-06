@@ -4,7 +4,7 @@
 # Name: setup.sh
 # Purpose: Emacs configurations setup script for macOS
 #
-# Time-stamp: <2026-03-04 13:11:40 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-05 13:26:00 Thursday by zhengyu.li>
 #
 # Author: zhengyu li
 # Created: 2014-03-26
@@ -60,6 +60,7 @@ add_missing_dependency() {
 # Priority levels: P0 (Required), P1 (Development)
 readonly DEPENDENCY_CONFIG=(
     # Core Tools (P0)
+    "command -v pinentry|pinentry|brew install pinentry|core|P0"
     "command -v git|git|brew install git|core|P0"
     "command -v aspell|aspell|brew install aspell|core|P0"
     "command -v pandoc|pandoc|brew install pandoc|core|P0"

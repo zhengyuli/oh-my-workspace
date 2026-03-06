@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-03 23:51:43 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:37:01 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,56 +29,59 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Pyvenv - Python virtual environment management
-;; Automatic tracking of virtualenv directories for seamless project switching
+(defun omw/pyvenv-mode-line-indicator ()
+  "Return pyvenv indicator for Python buffers."
+  (when (eq major-mode 'python-mode)
+    (and (boundp 'pyvenv-virtual-env)
+         pyvenv-virtual-env
+         (let ((name (file-name-nondirectory
+                      (directory-file-name pyvenv-virtual-env))))
+           (propertize (format " 🐍[%s] " name)
+                       'face 'font-lock-constant-face
+                       'help-echo pyvenv-virtual-env)))))
+
+(defun omw/pyvenv-mode-line-setup ()
+  (setq-local mode-line-misc-info
+              (append mode-line-misc-info
+                      '((:eval (omw/pyvenv-mode-line-indicator))))))
+
+(defun omw/update-pyvenv-mode-line-indicator ()
+  "Add mode-line indicator to current buffer."
+  (setq-local mode-line-misc-info
+              (cons '(:eval (omw/pyvenv-mode-line-indicator))
+                    (remove '(:eval (omw/pyvenv-mode-line-indicator))
+                            mode-line-misc-info))))
+
+(defun omw/remove-pyvenv-mode-line-indicator ()
+  "Remove mode-line indicator from current buffer."
+  (setq-local mode-line-misc-info
+              (remove '(:eval (omw/pyvenv-mode-line-indicator))
+                      mode-line-misc-info)))
+
+;; ==================================================================================
 (use-package pyvenv
   :ensure t
   :defer t
   :hook (python-mode . pyvenv-tracking-mode)
-  :init
-  (defun my/pyvenv-mode-line-indicator ()
-    "Return pyvenv indicator for mode line."
-    (and (boundp 'pyvenv-virtual-env) pyvenv-virtual-env
-         (let ((name (file-name-nondirectory (directory-file-name pyvenv-virtual-env))))
-           (propertize (format " 🐍[%s] " name)
-                       'face 'font-lock-constant-face
-                       'help-echo pyvenv-virtual-env))))
-  (add-to-list 'mode-line-misc-info
-               '(:eval (my/pyvenv-mode-line-indicator))
-               'append))
+  :config
+  (add-to-list 'pyvenv-post-activate-hooks #'omw/update-pyvenv-mode-line-indicator)
+  (add-to-list 'pyvenv-post-deactivate-hooks #'omw/remove-pyvenv-mode-line-indicator))
 
 ;; ==================================================================================
-;; Poetry - Python dependency and packaging manager
-;; Integration with Poetry projects for modern Python development
 (use-package poetry
   :ensure t
   :defer t
-  :hook (python-mode . poetry-tracking-mode)
-  :init
-  (defun my/poetry-mode-line-indicator ()
-    "Return Poetry project indicator for mode line."
-    (and (fboundp 'poetry-find-project-name)
-         (let ((name (poetry-find-project-name)))
-           (and name
-                (propertize (format " 📦[%s] " name)
-                            'face 'font-lock-keyword-face
-                            'help-echo "Poetry project")))))
-  (add-to-list 'mode-line-misc-info
-               '(:eval (my/poetry-mode-line-indicator))
-               'append))
+  :hook (python-mode . poetry-tracking-mode))
 
 ;; ==================================================================================
-;; Python mode - built-in Python editing support
-;; Use fixed 4-space indentation (PEP 8 standard) without auto-detection
 (use-package python
   :ensure nil
   :defer t
-  :bind
-  (:map python-mode-map
-        ("C-c C-c" . comment-line))
+  :hook (python-mode . omw/pyvenv-mode-line-setup)
+  :bind (:map python-mode-map
+              ("C-c C-c" . comment-line))
   :config
-  (setq python-indent-offset 4
-        python-indent-guess-indent-offset nil
+  (setq python-indent-guess-indent-offset nil
         python-indent-guess-indent-offset-verbose nil))
 
 ;; ==================================================================================

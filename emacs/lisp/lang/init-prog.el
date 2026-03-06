@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 23:58:17 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-06 15:34:53 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -25,90 +25,11 @@
 ;;; Commentary:
 ;;
 ;; Base programming configuration: smartparens, rainbow-delimiters,
-;; flycheck, format-all, eglot, etc.
+;; eglot, etc.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Smartparens - automatic parenthesis pairing
-(use-package smartparens
-  :ensure t
-  :defer t
-  :hook (prog-mode . smartparens-mode)
-  :config
-  (require 'smartparens-config))
-
-;; ==================================================================================
-;; Hungry delete
-(use-package hungry-delete
-  :ensure t
-  :defer t
-  :hook (prog-mode . hungry-delete-mode))
-
-;; ==================================================================================
-;; Rainbow delimiters
-(use-package rainbow-delimiters
-  :ensure t
-  :defer t
-  :hook (prog-mode . rainbow-delimiters-mode))
-
-;; ==================================================================================
-;; Highlight TODO
-(use-package hl-todo
-  :ensure t
-  :defer t
-  :hook (prog-mode . hl-todo-mode))
-
-;; ==================================================================================
-;; Flycheck - syntax checking
-(use-package flycheck
-  :ensure t
-  :defer t
-  :hook (prog-mode . flycheck-mode))
-
-;; ==================================================================================
-;; Whitespace cleanup
-(use-package whitespace-cleanup-mode
-  :ensure t
-  :defer t
-  :hook (prog-mode . whitespace-cleanup-mode))
-
-;; ==================================================================================
-;; Quickrun
-(use-package quickrun
-  :ensure t
-  :defer t)
-
-;; ==================================================================================
-;; Dumb jump
-(use-package dumb-jump
-  :ensure t
-  :demand t
-  :config
-  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
-
-;; ==================================================================================
-;; Eglot - lightweight LSP client (Emacs 29+ built-in)
-;; Performance optimization: async connection, deferred startup
-(use-package eglot
-  :ensure nil
-  :defer t
-  :hook ((c-mode . eglot-ensure)
-         (c++-mode . eglot-ensure)
-         (go-mode . eglot-ensure)
-         (python-mode . eglot-ensure)
-         (typescript-mode . eglot-ensure)
-         (sh-mode . eglot-ensure)
-         (cmake-mode . eglot-ensure)
-         (dockerfile-mode . eglot-ensure)
-         (yaml-mode . eglot-ensure))
-  :config
-  (setq eglot-sync-connect nil
-        completion-category-defaults nil
-        completion-category-overrides '((eglot (styles orderless flex)))))
-
-;; ==================================================================================
-;; Jump to the matched parenthesis/bracket/brace
 (defun jump-to-matched-paren ()
   "Jump to the matched parenthesis/bracket/brace for the current position.
 Behavior:
@@ -127,51 +48,111 @@ Behavior:
         (t (message "couldn't find matched paren"))))
 
 ;; ==================================================================================
-;; Copyright update - automatic copyright year updates
 (use-package copyright
   :ensure nil
   :defer t
   :config
-  (setq copyright-update t               ; Enable automatic copyright updates
-        copyright-query nil               ; Don't ask, just update
-        copyright-names-regexp            ; Recognize common copyright holders
+  (setq copyright-update t
+        copyright-query nil
+        copyright-names-regexp
         (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
                 emacs-user-name)))
 
-(defun my/prog-before-save ()
-  "Function to run before saving programming files.
-Performs:
-1. Whitespace cleanup (delete trailing whitespace, convert tabs to spaces)
-2. Copyright update (if file contains copyright marker)"
-
-  ;; 1. Whitespace cleanup
-  (unless (derived-mode-p 'markdown-mode)  ; Skip markdown mode (preserves intentional trailing spaces)
-    (delete-trailing-whitespace))
-  ;; Convert tabs to spaces (use tab-width from buffer-local settings)
-  (untabify (point-min) (point-max))
-  ;; Copyright update
+(defun omw/prog-before-save ()
+  "Function to run before saving programming files."
   (ignore-errors (copyright-update))
-  ;; Timestamp update
   (ignore-errors (time-stamp))
-  ;; Return nil to allow save to proceed
+  (untabify (point-min) (point-max))
   nil)
 
-(define-minor-mode my/prog-save-mode
+(define-minor-mode omw/prog-before-save-mode
   "Minor mode for programming buffers to run custom before-save hooks."
   :lighter " SaveHook"
   :global nil
-  ;; Code to run when the minor mode is enabled or disabled
-  (if my/prog-save-mode
-      ;; When enabled, add the custom function to the buffer-local before-save-hook
-      (add-hook 'before-save-hook #'my/prog-before-save nil t)
-    ;; When disabled, remove the function from the buffer-local before-save-hook
-    (remove-hook 'before-save-hook #'my/prog-before-save t)))
+  (if omw/prog-before-save-mode
+      (add-hook 'before-save-hook #'omw/prog-before-save nil t)
+    (remove-hook 'before-save-hook #'omw/prog-before-save t)))
 
 ;; ==================================================================================
+(use-package smartparens
+  :ensure t
+  :defer t
+  :config
+  (require 'smartparens-config))
+
+;; ==================================================================================
+(use-package hungry-delete
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(use-package rainbow-delimiters
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(use-package hl-todo
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(use-package whitespace-cleanup-mode
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(use-package quickrun
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(use-package dumb-jump
+  :ensure t
+  :demand t)
+
+;; ==================================================================================
+(use-package xref
+  :ensure nil
+  :defer t
+  :config
+  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
+
+;; ==================================================================================
+(use-package eglot
+  :ensure nil
+  :defer t
+  :hook ((c-mode . eglot-ensure)
+         (c++-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
+         (go-mode . eglot-ensure)
+         (typescript-mode . eglot-ensure)
+         (sh-mode . eglot-ensure)
+         (dockerfile-mode . eglot-ensure)
+         (cmake-mode . eglot-ensure)
+         (yaml-mode . eglot-ensure)
+         )
+  :config
+  (setq eglot-sync-connect nil
+        eglot-autoshutdown t))
+
+;; ==================================================================================
+(defun omw/prog-mode-setup ()
+  (setq-local tab-width 4)
+  (indent-tabs-mode -1)
+  (display-line-numbers-mode 1)
+  (prettify-symbols-mode 1)
+  (smartparens-mode 1)
+  (hungry-delete-mode 1)
+  (rainbow-delimiters-mode 1)
+  (hl-todo-mode 1)
+  (whitespace-cleanup-mode 1)
+  (yas-minor-mode 1)
+  (omw/prog-before-save-mode 1))
+
 (use-package prog-mode
   :ensure nil
   :demand t
-  :hook (prog-mode . my/prog-mode-setup)
+  :hook ((prog-mode . omw/prog-mode-setup))
   :bind (:map prog-mode-map
               ;; Navigation
               ("C-c M-a" . beginning-of-defun)
@@ -184,23 +165,7 @@ Performs:
               ("M-," . xref-pop-marker-stack)
               ("M-r" . xref-find-references)
               ;; Newline + indent
-              ("RET" . newline-and-indent))
-  :config
-  (defun my/prog-mode-setup ()
-    "Apply custom buffer-local settings for all programming modes."
-    (setq-local tab-width 4
-                completion-at-point-functions (list (cape-capf-super
-                                                     #'eglot-completion-at-point
-                                                     #'yasnippet-capf
-                                                     #'cape-file
-                                                     #'cape-dabbrev
-                                                     #'cape-elisp-symbol)))
-    (indent-tabs-mode -1)
-    (display-line-numbers-mode 1)
-    (prettify-symbols-mode 1)
-    (hs-minor-mode 1)
-    (yas-minor-mode 1)
-    (my/prog-save-mode 1)))
+              ("RET" . newline-and-indent)))
 
 ;; ==================================================================================
 ;;; Provide features

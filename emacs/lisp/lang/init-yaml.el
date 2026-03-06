@@ -1,5 +1,5 @@
 ;;; init-yaml.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 21:49:06 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:41:58 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,8 +30,6 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; YAML mode - major mode for YAML configuration files
-;; Provides syntax highlighting for Kubernetes, Ansible, and config files
 (use-package yaml-mode
   :ensure t
   :defer t)

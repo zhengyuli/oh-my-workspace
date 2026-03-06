@@ -1,5 +1,5 @@
 ;;; init-go.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:17:05 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-06 15:17:34 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,8 +30,6 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Go mode - major mode for Go programming
-;; Provides syntax highlighting, indentation, and basic editing support
 (use-package go-mode
   :ensure t
   :defer t)

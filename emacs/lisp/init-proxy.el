@@ -1,5 +1,5 @@
 ;;; init-proxy.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 15:00:00 星期二 by zhengyu.li>
+;; Time-stamp: <2026-03-05 13:29:05 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,34 +31,15 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; HTTP Proxy configuration
-;;
-;; This section provides HTTP/HTTPS proxy support for Emacs network operations.
-;; Useful for:
-;;   - Package installation behind corporate proxies or firewalls
-;;   - Accessing MELPA/ELPA repositories through proxy servers
-;;   - Git operations through proxy (Magit, vc.el)
-;;   - External tool integration (LSP servers, formatters) that need proxy
-;;
-;; Configuration:
-;;   Add to custom.el: (setq omw/emacs-http-proxy "127.0.0.1:7890")
-;;   Then run: M-x omw/enable-http-proxy
-;;
-;; Common proxy formats:
-;;   - HTTP proxy: "127.0.0.1:7890" or "http://127.0.0.1:7890"
-;;   - SOCKS5 proxy: use "socks5://127.0.0.1:1080"
-;;   - Auth proxy: "http://user:pass@proxy.example.com:8080"
-
 (defcustom omw/emacs-http-proxy nil
   "Default HTTP/HTTPS proxy for Emacs network operations.
 Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy.
 This affects package installation, HTTP requests, and Git operations."
   :type '(choice (const :tag "No proxy" nil)
                  (string :tag "Proxy address"))
-  :group 'omw-emacs-config)
+  :group 'omw/emacs-config)
 
 ;; ==================================================================================
-;; Display proxy status - Show current HTTP/HTTPS proxy configuration
 (defun omw/show-http-proxy ()
   "Display current HTTP/HTTPS proxy configuration."
   (interactive)
@@ -67,7 +48,6 @@ This affects package installation, HTTP requests, and Git operations."
     (message "No http proxy")))
 
 ;; ==================================================================================
-;; Set proxy - Configure HTTP/HTTPS proxy for Emacs and subprocess environment
 (defun omw/set-http-proxy (proxy)
   "Configure HTTP/HTTPS proxy for Emacs and subprocess environment.
 
@@ -111,7 +91,6 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
      (message "Proxy error: %s" (error-message-string err)))))
 
 ;; ==================================================================================
-;; Enable proxy - Enable HTTP proxy using custom variable
 (defun omw/enable-http-proxy ()
   "Enable HTTP proxy using `omw/emacs-http-proxy' custom variable.
 
@@ -128,7 +107,6 @@ This automatically applies proxy settings on startup if configured."
     (message "HTTP proxy not configured. Add to custom.el: (setq omw/emacs-http-proxy \"127.0.0.1:7890\")")))
 
 ;; ==================================================================================
-;; Disable proxy - Disable HTTP/HTTPS proxy for Emacs and subprocess environment
 (defun omw/unset-http-proxy ()
   "Disable HTTP/HTTPS proxy for Emacs and subprocess environment.
 

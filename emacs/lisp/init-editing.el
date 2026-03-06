@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:49:43 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-06 12:19:29 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -95,30 +95,25 @@ Otherwise kill buffer without confirmation."
 (use-package vundo
   :ensure t
   :defer t
-  :bind* ("M-_" . vundo))
+  :bind ("M--" . vundo))
 
 ;; ==================================================================================
 (use-package expand-region
   :ensure t
   :defer t
-  :bind* ("M-M" . er/expand-region))
-
-;; ==================================================================================
-(use-package browse-kill-ring
-  :ensure t
-  :defer t
-  :bind* ("M-Y" . browse-kill-ring))
+  :bind ("M-M" . er/expand-region))
 
 ;; ==================================================================================
 (use-package goto-chg
   :ensure t
   :defer t
-  :bind* ("M-o" . goto-last-change))
+  :bind ("M-o" . goto-last-change))
 
 ;; ==================================================================================
 (use-package autoinsert
   :ensure nil
   :defer t
+  :hook (after-init . auto-insert-mode)
   :config
   (defun omw/define-auto-insert-custom (condition action)
     "Add or update auto-insert rule for CONDITION with ACTION.
@@ -165,14 +160,13 @@ ACTION is a template file or function to insert."
 (use-package emacs
   :ensure nil
   :demand t
-  :hook (after-init . auto-insert-mode)
-  :bind* (("C-/" . undo)                        ; Undo last change
-          ("C-?" . undo-redo)                   ; Redo last undone change (Emacs 28+)
-          ("C-x TAB" . omw/smart-indent-region) ; Indent region or buffer
-          ("M-m" . set-mark-command)            ; Set mark at point
-          ("M-w" . omw/smart-copy-region)       ; Copy region or line
-          ("M-k" . omw/smart-kill-region)       ; Kill region or line
-          ("C-x k" . omw/smart-kill-buffer)))   ; Smart buffer kill
+  :bind (("C-/" . undo)
+         ("C-?" . undo-redo)
+         ("C-x TAB" . omw/smart-indent-region)
+         ("M-m" . set-mark-command)
+         ("M-w" . omw/smart-copy-region)
+         ("M-k" . omw/smart-kill-region)
+         ("C-x k" . omw/smart-kill-buffer)))
 
 ;; ==================================================================================
 ;;; Provide features

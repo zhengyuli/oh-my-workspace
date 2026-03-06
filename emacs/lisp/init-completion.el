@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:44:35 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-06 12:15:06 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -33,57 +33,62 @@
 (use-package orderless
   :ensure t
   :demand t
-  :custom
-  (completion-styles '(orderless basic)))
+  :config
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
 
 ;; ==================================================================================
-(use-package marginalia
-  :ensure t
-  :defer t)
-
-;; ==================================================================================
+;; Completion UI (minibuffer)
 (use-package vertico
   :ensure t
-  :defer t)
+  :defer t
+  :hook (after-init . vertico-mode))
+
+(use-package marginalia
+  :ensure t
+  :defer t
+  :hook (after-init . marginalia-mode))
 
 ;; ==================================================================================
+;; Search /navigation
 (use-package consult
   :ensure t
   :defer t
-  :bind* (("C-s" . consult-line)
-          ("C-x b" . consult-buffer)
-          ("C-x B" . consult-recent-file)
-          ("M-y" . consult-yank-pop)
-          ("M-g g" . consult-goto-line)
-          ("M-g M-g" . consult-goto-line)
-          ("C-x g" . consult-grep)
-          ("C-x G" . consult-git-grep)
-          ("C-x f" . consult-find)))
+  :hook (embark-collect-mode . consult-preview-at-point-mode)
+  :bind (("C-s" . consult-line)
+         ("C-r" . consult-line-multi)
+         ("C-x b" . consult-buffer)
+         ("C-x B" . consult-recent-file)
+         ("M-y" . consult-yank-pop)
+         ("M-g g" . consult-goto-line)
+         ("M-g M-g" . consult-goto-line)
+         ("C-x g" . consult-ripgrep)
+         ("C-x f" . consult-find)))
 
 ;; ==================================================================================
+;; Embark
 (use-package embark
   :ensure t
   :defer t
-  :bind* (("C-." . embark-act)
-          ("C-;" . embark-dwim)))
+  :bind (("C-." . embark-act)
+         ("C-;" . embar-dwim)))
 
-;; ==================================================================================
+;; Will be loaded by embark automatically.
 (use-package embark-consult
   :ensure t
-  :after (consult embark)
-  :hook (embark-collect-mode . consult-preview-at-point-mode)
-  :config
-  (setq embark-collect-use-consult-preview t))
+  :defer t)
 
 ;; ==================================================================================
+;; Corfu (in-buffer completion)
 (use-package corfu
   :ensure t
   :defer t
+  :hook (after-init . global-corfu-mode)
   :config
   (setq corfu-auto t)
   (corfu-popupinfo-mode 1))
 
-;; ==================================================================================
 (use-package corfu-terminal
   :ensure t
   :unless (display-graphic-p)
@@ -92,17 +97,6 @@
   (corfu-terminal-mode 1))
 
 ;; ==================================================================================
-(use-package cape
-  :ensure t
-  :defer t)
-
-;; ==================================================================================
-(use-package yasnippet-snippets
-  :ensure t
-  :after yasnippet
-  :config
-  (yasnippet-snippets-initialize))
-
 (use-package yasnippet
   :ensure t
   :defer t
@@ -112,17 +106,25 @@
   :config
   (setq yas-triggers-in-field t))
 
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet
+  :config
+  (yasnippet-snippets-initialize))
+
 (use-package yasnippet-capf
   :ensure t
   :defer t)
 
 ;; ==================================================================================
-(use-package emacs
-  :ensure nil
+(use-package cape
+  :ensure t
   :demand t
-  :hook ((after-init . marginalia-mode)
-         (after-init . vertico-mode)
-         (after-init . global-corfu-mode)))
+  :config
+  (add-to-list 'completion-at-point-functions (cape-capf-super
+                                               #'yasnippet-capf
+                                               #'cape-file
+                                               #'cape-dabbrev)))
 
 ;; ==================================================================================
 ;;; Provide features

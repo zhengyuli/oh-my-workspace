@@ -1,5 +1,5 @@
 ;;; init-cc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:36:34 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:35:14 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,32 +30,6 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; C/C++ utility functions
-(defun my/generate-compile-commands (root-dir)
-  "Generate compile_commands.json for clangd LSP indexing by running cmake."
-  (interactive (list (read-directory-name "Project root directory: " "./")))
-  (let* ((build-dir (expand-file-name "build" root-dir))
-         (quoted-source (shell-quote-argument root-dir))
-         (quoted-build (shell-quote-argument build-dir)))
-    (shell-command
-     (format "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -S %s -B %s" quoted-source quoted-build)
-     nil "*_CMAKE_Export_Errors_*")))
-
-(defun my/cc-get-debug-target-program-path ()
-  "Get absolute path of target C/C++ program to debug with smart project defaults."
-  (interactive)
-  (let* ((project-path (vc-root-dir))
-         (project-name (when project-path
-                         (file-name-nondirectory
-                          (directory-file-name project-path))))
-         (default-directory (if project-path
-                                (expand-file-name "build/" project-path)
-                              (file-name-directory (buffer-file-name))))
-         (target-path (read-file-name "C/C++ program to debug: " nil project-name)))
-    (expand-file-name target-path)))
-
-;; ==================================================================================
-;; Google C/C++ code style - indentation and formatting standards
 (use-package google-c-style
   :ensure t
   :defer t)

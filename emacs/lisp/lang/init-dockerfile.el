@@ -1,5 +1,5 @@
 ;;; init-dockerfile.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 21:48:21 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:41:25 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,8 +30,6 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Dockerfile mode - major mode for Docker Dockerfiles
-;; Provides syntax highlighting for Dockerfile format
 (use-package dockerfile-mode
   :ensure t
   :defer t)

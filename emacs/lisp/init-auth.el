@@ -1,5 +1,5 @@
 ;;; init-auth.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 22:16:32 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-05 13:27:58 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -25,41 +25,27 @@
 ;;; Commentary:
 ;;
 ;; Authentication and credential management configuration.
-;; Features: GPG integration, pass password store, pinentry.
+;; Features: GPG integration, pass password store.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Pinentry - GPG passphrase entry interface
-(use-package pinentry
-  :ensure t
-  :defer t
-  :hook (after-init . pinentry-start))
-
-;; ==================================================================================
-;; EPG configuration - EasyPG (GPG) settings
 (use-package epg-config
   :ensure nil
   :demand t
   :config
-  (setq epg-pinentry-mode 'loopback    ; Use loopback pinentry mode
-        epg-debug t))                  ; Enable debug logging
+  ;; Use loopback pinentry mode, make sure pinentry
+  ;; program is installed.
+  (setq epg-pinentry-mode 'loopback))
 
 ;; ==================================================================================
-;; Auth-source pass - integrate pass password store with Emacs auth
-(use-package auth-source
+(use-package auth-source-pass
   :ensure nil
   :demand t
   :config
-  (require 'auth-source-pass)
   (auth-source-pass-enable))
 
 ;; ==================================================================================
-;; Password-store - pass support for Emacs
-(use-package password-store
-  :ensure t
-  :defer t)
-
 (use-package pass
   :ensure t
   :defer t)

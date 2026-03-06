@@ -1,5 +1,5 @@
 ;;; init-terminal.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:41:15 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:15:17 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,59 +29,32 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Vterm - fast terminal emulator with native PTY support
-;; Superior performance compared to term/eshell for interactive shells
 (use-package vterm
   :ensure t
   :defer t
-  :commands (vterm)
-  :bind
-  (:map vterm-mode-map
-        ;; Fix C-g to insert literal C-g instead of interrupting vterm
-        ("C-g" . vterm--self-insert)
-        ;; Send meta-backspace (Alt+Backspace) to terminal (delete word left)
-        ("M-<backspace>" . vterm-send-meta-backspace))
-  :hook (vterm-mode . my/vterm-mode-setup)
+  :bind (:map vterm-mode-map
+              ("M-1" . nil)
+              ("M-2" . nil)
+              ("M-3" . nil)
+              ("M-4" . nil)
+              ("M-5" . nil)
+              ("M-6" . nil)
+              ("M-7" . nil)
+              ("M-8" . nil)
+              ("M-9" . nil)
+              ("C-g" . vterm--self-insert)
+              ("M-<backspace>" . vterm-send-meta-backspace))
+  :hook (vterm-mode . omw/vterm-mode-setup)
   :config
-  (setq
-   ;; Maximum scrollback history lines (10k for sufficient history)
-   vterm-max-scrollback 10000
-   ;; Use Emacs-style scrollbar instead of terminal scrollbar
-   vterm-scroll-enable-emacs-bar t
-   ;; Auto-kill vterm buffer when terminal exits (cleanup)
-   vterm-kill-buffer-on-exit t
-   ;; Allow Emacs to manipulate terminal selection data
-   vterm-enable-manipulate-selection-data t)
+  (defun omw/vterm-mode-setup ()
+    (setq-local truncate-lines t)
 
-  ;; Custom Vterm Mode Setup (Consolidated Hook Function)
-  (defun my/vterm-mode-setup ()
-    "Custom initialization for vterm-mode (buffer-local settings & mode disabling)."
-    ;; Disable auto-fill mode (prevents line wrapping in terminal)
+    (hl-line-mode -1)
     (auto-fill-mode -1)
-
-    ;; Disable line highlighting (avoids visual clutter in terminal)
-    (when (fboundp 'hl-line-mode)
-      (hl-line-mode -1))
-
-    ;; Disable snippet/completion modes (avoid conflicts with terminal input)
-    ;; Disable yasnippet if available
-    (when (fboundp 'yas-minor-mode)
-      (yas-minor-mode -1))
-    ;; Disable corfu completion if available
-    (when (fboundp 'corfu-mode)
-      (corfu-mode -1))
-
-    ;; Unbind M-0~9 to allow winnum package to control window switching
-    (dolist (key '("M-0" "M-1" "M-2" "M-3" "M-4"
-                   "M-5" "M-6" "M-7" "M-8" "M-9"))
-      (define-key vterm-mode-map (kbd key) nil))
-
-    ;; Buffer-local settings (only apply to vterm buffers)
-    ;; Disable line wrapping (use terminal's own wrapping)
-    (setq-local truncate-lines t)))
+    (corfu-mode -1)
+    (yas-minor-mode -1)))
 
 ;; ==================================================================================
-;; Multi-vterm
 (use-package multi-vterm
   :ensure t
   :defer t

@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:39:34 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-06 15:45:17 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,45 +29,7 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Valign - table alignment display
-;; Provides visual alignment for Org and Markdown tables
-(use-package valign
-  :ensure t
-  :defer t
-  :hook (markdown-mode . valign-mode)
-  :config
-  (setq valign-fancy-bar t))
-
-;; ==================================================================================
-;; Markdownfmt - code formatting
-(use-package markdownfmt
-  :ensure t
-  :defer t)
-
-;; ==================================================================================
-(use-package visual-fill-column
-  :ensure t
-  :defer t
-  :hook (markdown-mode . my/visual-fill-column-setup)
-  :config
-  ;; Define per-mode setup function
-  (defun my/visual-fill-column-setup ()
-    "Initialize visual-fill-column settings for markdown-mode (per buffer)."
-    ;; Center text block for better writing experience
-    (setq-local visual-fill-column-center-text t)
-    ;; Avoid conflicts with auto-fill-mode
-    (setq-local visual-fill-column-enable-sensible-window-split t)
-    (visual-fill-column-mode 1)))
-
-;; ==================================================================================
-;; Markdown theme beautification
-;; Based on Mou Sublime theme colors
-(defgroup markdown-mou-theme nil
-  "Mou Sublime style markdown rendering."
-  :group 'markdown)
-
-;; Mou Sublime theme colors (dark editor style)
-(defcustom markdown-mou-colors
+(defcustom omw/markdown-mou-colors
   '((header-1 . "#46dcb0")
     (header-2 . "#46dcb0")
     (header-3 . "#46dcb0")
@@ -89,11 +51,11 @@
     (inline-code-fg . "#e0e2e4"))
   "Colors for Mou Sublime theme markdown rendering."
   :type 'alist
-  :group 'markdown-mou-theme)
+  :group 'omw/emacs-config)
 
-(defun my/markdown-mou-apply-faces ()
+(defun omw/markdown-mou-faces-setup ()
   "Apply Mou Sublime style faces to markdown buffer."
-  (let* ((colors markdown-mou-colors)
+  (let* ((colors omw/markdown-mou-colors)
          (h1 (cdr (assq 'header-1 colors)))
          (h2 (cdr (assq 'header-2 colors)))
          (h3 (cdr (assq 'header-3 colors)))
@@ -148,30 +110,62 @@
     (face-remap-add-relative 'markdown-table-delimiter-face `(:foreground ,table-fg :background ,table-bg))))
 
 ;; ==================================================================================
-;; Markdown mode - main mode
+(use-package valign
+  :ensure t
+  :when (display-graphic-p)
+  :defer t
+  :hook (markdown-mode . valign-mode)
+  :config
+  (setq valign-fancy-bar t))
+
+;; ==================================================================================
+(use-package markdownfmt
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(use-package visual-fill-column
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(defun omw/markdown-align-all-tables ()
+  "Align all markdown tables in current buffer."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "^|.*|" nil t)
+      (goto-char (match-beginning 0))
+      (when (markdown-table-at-point-p)
+        (markdown-table-align))
+      (forward-line 1))))
+
+(defun omw/markdown-mode-setup ()
+  (setq-local fill-column 120
+              visual-fill-column-center-text t
+              visual-fill-column-enable-sensible-window-split t)
+  (auto-fill-mode 1)
+  (emojify-mode 1)
+  (visual-fill-column-mode 1)
+  (unless (display-graphic-p)
+    (omw/markdown-align-all-tables))
+  (omw/markdown-mou-faces-setup))
+
 (use-package markdown-mode
   :ensure t
   :defer t
-  :hook (markdown-mode . my/markdown-mode-setup)
-  :bind
-  (:map markdown-mode-map
-        ("M-n" . nil)
-        ("M-p" . nil))
+  :hook (markdown-mode . omw/markdown-mode-setup)
+  :bind (:map markdown-mode-map
+              ("M-n" . nil)
+              ("M-p" . nil))
   :config
-  ;; Customize variables - Claude Code compatibility optimization
   (setq markdown-command "pandoc -s --mathjax --from=gfm"
         markdown-enable-math t
         markdown-display-remote-images t
         markdown-enable-wiki-links t
         markdown-indent-on-enter 'indent-and-new-item
         markdown-hide-urls t
-        markdown-fontify-code-blocks-natively t)
-
-  (defun my/markdown-mode-setup ()
-    "Setup markdown mode."
-    (setq-local fill-column 120)
-    (my/markdown-mou-apply-faces)
-    (auto-fill-mode 1)))
+        markdown-fontify-code-blocks-natively t))
 
 ;; ==================================================================================
 ;;; Provide features

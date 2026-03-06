@@ -1,5 +1,5 @@
 ;;; init-magit.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:41:54 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:07:53 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,28 +29,11 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Magit - complete Git interface for Emacs
-;; Replaces command-line Git with intuitive visual workflow
 (use-package magit
   :ensure t
   :defer t
-  :commands (magit-status magit-log-all)
-  :bind (("C-c g s" . magit-status)    ; Open Magit status
-         ("C-c g l" . magit-log-all))   ; View commit log
-  :config
-  (require 'magit-diff)
-
-  ;; Core Magit configuration
-  (setq magit-diff-refine-hunk 'all               ; Show word-level diffs
-        magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
-
-  ;; Custom diff faces: green for additions, red for deletions
-  (custom-set-faces
-   '(magit-diff-added ((t (:background "#98FB98" :foreground "black"))))
-   '(magit-diff-removed ((t (:background "#FFB6C1" :foreground "black"))))
-   '(magit-diff-added-highlight ((t (:background "#90EE90" :foreground "black"))))
-   '(magit-diff-removed-highlight ((t (:background "#F08080" :foreground "black"))))
-   '(magit-diff-hunk-heading-highlight ((t (:background "#383838" :foreground "white"))))))
+  :bind (("C-c g s" . magit-status)
+         ("C-c g l" . magit-log-all)))
 
 ;; ==================================================================================
 ;;; Provide features

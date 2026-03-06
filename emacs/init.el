@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-04 23:51:32 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-06 16:33:58 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,7 +29,7 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defgroup omw-emacs-config nil
+(defgroup omw/emacs-config nil
   "Oh My Workspace Emacs configuration customization group."
   :group 'emacs
   :prefix "emacs-")
@@ -39,20 +39,19 @@
   "Emacs configuration user name.
 Used for dashboard banner and setting `user-full-name'."
   :type 'string
-  :group 'omw-emacs-config)
+  :group 'omw/emacs-config)
 
 (defcustom emacs-user-email "lizhengyu419@outlook.com"
   "Emacs configuration email address.
 Used for setting `user-mail-address'."
   :type 'string
-  :group 'omw-emacs-config)
+  :group 'omw/emacs-config)
 
 ;; ==================================================================================
-(defvar omw/emacs-config-root
-  (let ((config-file (or load-file-name buffer-file-name)))
-    (if config-file
-        (file-name-directory (file-chase-links config-file))
-      default-directory))
+(defvar omw/emacs-config-root (let ((config-file (or load-file-name buffer-file-name)))
+                                (if config-file
+                                    (file-name-directory (file-chase-links config-file))
+                                  default-directory))
   "Emacs configuration root path.
 Automatically resolves symlinks to find the actual configuration directory.")
 
@@ -120,7 +119,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; ==================================================================================
 (use-package gcmh
   :ensure t
-  :defer t)
+  :defer t
+  :hook (after-init . gcmh-mode))
 
 ;; ==================================================================================
 (use-package exec-path-from-shell
@@ -142,6 +142,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (use-package which-key
   :ensure t
   :defer t
+  :hook (after-init . which-key-mode)
   :config
   (which-key-setup-minibuffer))
 
@@ -172,11 +173,9 @@ Shows elapsed time and number of garbage collections during init."
 (use-package emacs
   :ensure nil
   :demand t
-  :hook ((after-init . gcmh-mode)
-         (after-init . which-key-mode)
-         (after-init . omw/after-init-setup)
+  :hook ((after-init . omw/after-init-setup)
          (after-init . omw/emacs-startup-setup))
-  :bind* ("C-x C-b" . ibuffer)
+  :bind ("C-x C-b" . ibuffer)
   :config
   (setq inhibit-default-init t
         inhibit-startup-echo-area-message t
@@ -204,10 +203,9 @@ Shows elapsed time and number of garbage collections during init."
 
   ;; Platform-specific: macOS key modifiers
   (when (eq system-type 'darwin)
-    (setq mac-command-modifier 'super   ; Map Command key to Super
-          mac-option-modifier 'meta))   ; Map Option to Meta
+    (setq mac-command-modifier 'super
+          mac-option-modifier 'meta))
 
-  ;; Load all other modules
   ;; Core modules
   (require 'init-editing)
   (require 'init-completion)
@@ -227,6 +225,7 @@ Shows elapsed time and number of garbage collections during init."
   (require 'init-python)
   (require 'init-go)
   (require 'init-typescript)
+  (require 'init-shell)
   (require 'init-dockerfile)
   (require 'init-cmake)
   (require 'init-yaml)

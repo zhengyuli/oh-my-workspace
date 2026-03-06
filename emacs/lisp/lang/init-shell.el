@@ -1,41 +1,43 @@
-;;; init-cmake.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 17:40:59 Thursday by zhengyu.li>
+;;; package --- init-shell.el -*- lexical-binding:t -*-
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
+;; Copyright (c) 2026 Zhengyu Li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: cmake
-;; Dependencies: init-prog
-
+;; Keywords: none
+;;
 ;; This file is not part of GNU Emacs.
-
+;;
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
-
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
 ;;
-;; CMake mode configuration with LSP support.
-;; LSP server (cmake-language-server) is configured in init-prog.el.
+
+;; Put this file into your load-path and the following into your ~/.emacs:
+;;   (require 'init-sh)
+
+;;; Require:
+
 
 ;;; Code:
-
 ;; ==================================================================================
-(use-package cmake-mode
-  :ensure t
+(use-package sh-script
+  :ensure nil
   :defer t)
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-cmake)
+(provide 'init-shell)
 
-;;; init-cmake.el ends here
+;;; init-shell.el ends here

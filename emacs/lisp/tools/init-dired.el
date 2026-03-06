@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:46:57 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:01:53 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,119 +30,76 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Dired hacks - utility functions for enhanced dired functionality
 (use-package dired-hacks-utils
   :ensure t
   :defer t)
 
 ;; ==================================================================================
-;; Dirvish - modern file manager with tree view and preview
 (use-package dirvish
   :ensure t
   :defer t)
 
 ;; ==================================================================================
-;; Core Dired Configuration - enhanced directory editor
-;; Optimized for single-buffer navigation and async file operations
 (use-package dired
   :ensure nil
   :defer t
-  :hook ((dired-mode . dired-omit-mode)    ; Hide dotfiles by default
-         (dired-mode . dired-async-mode))  ; Async operations for performance
-  :bind (("C-x j" . dired-jump)                  ; Quick jump to directory
+  :hook ((dired-mode . dired-omit-mode)
+         (dired-mode . dired-async-mode))
+  :bind (("C-x j" . dired-jump)
          (:map dired-mode-map
                ;; Navigation
-               ("<return>" . dired-single-buffer)         ; Open in current buffer
+               ("<return>" . dired-single-buffer)
                ("RET" . dired-single-buffer)
-               ("h" . dired-up-directory-single)          ; Go to parent directory
-               ("p" . dired-hacks-previous-file)          ; Previous file
-               ("n" . dired-hacks-next-file)              ; Next file
-               ("M-{" . dired-goto-first-line)            ; Jump to first file
-               ("M-}" . dired-goto-last-line)             ; Jump to last file
-               ("M-o" . dired-omit-mode)                  ; Toggle omit mode
-
+               ("h" . dired-up-directory-single)
+               ("p" . dired-hacks-previous-file)
+               ("n" . dired-hacks-next-file)
+               ("M-{" . dired-goto-first-line)
+               ("M-}" . dired-goto-last-line)
+               ("M-o" . dired-omit-mode)
                ;; File operations
-               ("v" . dired-view-file)                    ; View file (read-only)
-               ("C-k" . dired-do-delete)                  ; Delete marked files
-               ("r" . wdired-change-to-wdired-mode)       ; Edit filenames in-place
-               ("E" . dired-do-touch)                     ; Update file timestamp
-               ("B" . dired-backup-file)                  ; Create backup
-               ("d" . dired-diff)                         ; Diff file changes
-               ("D" . ediff-directories)                  ; Diff two directories
-               ("z" . dired-do-compress)                  ; Compress files
+               ("v" . dired-view-file)
+               ("C-k" . dired-do-delete)
+               ("r" . wdired-change-to-wdired-mode)
+               ("E" . dired-do-touch)
+               ("B" . dired-backup-file)
+               ("d" . dired-diff)
+               ("D" . ediff-directories)
+               ("z" . dired-do-compress)
                ("Z" . dired-do-compress)
-
                ;; Cryptography (GPG/PGP operations)
-               (": e" . epa-dired-do-encrypt)             ; Encrypt with GPG
-               (": d" . epa-dired-do-decrypt)             ; Decrypt GPG file
-               (": s" . epa-dired-do-sign)                ; Sign with GPG
-               (": v" . epa-dired-do-verify)              ; Verify GPG signature
-
-               ;; --------------------------------------------------------------------------
+               (": e" . epa-dired-do-encrypt)
+               (": d" . epa-dired-do-decrypt)
+               (": s" . epa-dired-do-sign)
+               (": v" . epa-dired-do-verify)
                ;; Copy/Cut/Paste (clipboard operations)
-               ;; Copy marked files to clipboard
                ("M-w" . dired-copy-files)
-               ;; Cut marked files to clipboard
                ("M-k" . dired-cut-files)
-               ;; Paste files from clipboard
                ("C-y" . dired-paste-files)
-
-               ;; --------------------------------------------------------------------------
                ;; File path utilities (copy to clipboard)
-               ;; Copy filename without path to clipboard
                ("; n" . dired-get-file-name-without-path)
-               ;; Copy full file path to clipboard
                ("; N" . dired-get-file-name-with-path)
-               ;; Copy directory path only to clipboard
                ("; p" . dired-get-file-name-only-path)))
 
   :config
-  ;; Load custom Dired extensions (with safety check)
+  (require 'dired-x)
   (require 'dired-custom-extension)
 
-  (setq
-   ;; --------------------------------------------------------------------------
-   ;; Configure copy/move/delete behavior and confirmation prompts
-   ;; Smart target selection: use other dired buffer as target for copy/move operations
-   dired-dwim-target t
-   ;; Allow recursive copy operations without additional confirmation prompts
-   dired-recursive-copies 'always
-   ;; Allow recursive delete operations without additional confirmation prompts
-   dired-recursive-deletes 'always
-   ;; Use simple y/n confirmation for deletion (instead of full yes/no prompts)
-   dired-deletion-confirmer 'y-or-n-p
+  (setq dired-dwim-target t
+        dired-recursive-copies 'always
+        dired-recursive-deletes 'always
+        dired-deletion-confirmer 'y-or-n-p
+        dired-auto-revert-buffer (not (file-remote-p default-directory))
+        ;; Core omit filter rules (fixed regex with exact matching)
+        dired-omit-files (concat
+                          ;; Hide all hidden files/directories starting with . (e.g., .git, .env)
+                          "^\\.\\|"
+                          ;; Hide specified directories (exact name match to avoid false positives)
+                          "\\(node_modules\\|__pycache__\\|.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
+                          ;; Hide macOS special file (exact match)
+                          "\\.DS_Store\\'")
+        ;; Supplementary file extension filter (aligned with omit-files, redundant but as fallback)
+        dired-omit-extensions (append dired-omit-extensions '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
 
-   ;; --------------------------------------------------------------------------
-   ;; Auto-revert dired buffer only for local directories (performance optimization for remote files)
-   dired-auto-revert-buffer (not (file-remote-p default-directory))
-
-   ;; --------------------------------------------------------------------------
-   ;; Customize which files/directories are hidden in Dired buffer
-   ;; Core omit filter rules (fixed regex with exact matching)
-   dired-omit-files
-   (concat
-    ;; Hide all hidden files/directories starting with . (e.g., .git, .env)
-    "^\\.\\|"
-    ;; Hide compiled Python/Emacs Lisp files (exact suffix match)
-    "\\.pyc\\'\\|\\.elc\\'\\|"
-    ;; Hide compiled object/class files
-    "\\.o\\'\\|\\.class\\'\\|"
-    ;; Hide jar, log, and lock files (exact match)
-    "\\.jar\\'\\|\\.log\\'\\|\\.lock\\'\\|"
-    ;; Hide specified directories (exact name match to avoid false positives)
-    "\\(node_modules\\|__pycache__\\|.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
-    ;; Hide macOS special file (exact match)
-    "\\.DS_Store\\'")
-   ;; Supplementary file extension filter (aligned with omit-files, redundant but as fallback)
-   dired-omit-extensions '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")
-   ;; Enable toggle shortcut to show/hide omitted files
-   dired-omit-toggle-show-hidden t
-   ;; Hide ellipsis marker (...) in dired buffer for cleaner interface
-   dired-omit-verbose nil)
-
-  ;; --------------------------------------------------------------------------
-  ;; Configure how directories/files are displayed in Dired buffer
-  ;; Default ls switches: show all files, long format, human-readable sizes, directories first
   (if (executable-find "gls")
       (setq insert-directory-program "gls"
             dired-listing-switches "-alh --group-directories-first")

@@ -1,5 +1,5 @@
 ;;; init-typescript.el --- TypeScript mode configuration -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-03 11:00:00 星期二 by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:37:27 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,8 +30,6 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; TypeScript mode - major mode for TypeScript and JavaScript
-;; Provides syntax highlighting and basic editing support for .ts/.tsx files
 (use-package typescript-mode
   :ensure t
   :defer t)

@@ -29,37 +29,30 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Elisp-slime-nav - navigation between function definitions and calls
 (use-package elisp-slime-nav
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . elisp-slime-nav-mode))
 
 ;; ==================================================================================
-;; Lisp extra font lock - enhanced syntax highlighting for Lisp code
 (use-package lisp-extra-font-lock
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . lisp-extra-font-lock-mode))
 
 ;; ==================================================================================
-;; Rainbow mode - highlight color codes with their actual colors
 (use-package rainbow-mode
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . rainbow-mode))
 
 ;; ==================================================================================
-;; Emacs Lisp mode hooks - customize editing behavior
-(defun my/elisp-mode-setup ()
-  "Customize Emacs Lisp mode behavior."
-  (flycheck-mode -1)    ; Disable flycheck (built-in linting is sufficient)
-  (eldoc-mode 1))       ; Enable eldoc for function documentation
+(defun omw/elisp-mode-setup ()
+  (eldoc-mode 1))
 
-;; Emacs Lisp mode - built-in mode configuration
-(use-package emacs-lisp-mode
+(use-package elisp-mode
   :ensure nil
-  :hook (emacs-lisp-mode . my/elisp-mode-setup))
+  :hook (emacs-lisp-mode . omw/elisp-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features

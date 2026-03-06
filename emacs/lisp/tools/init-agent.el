@@ -1,5 +1,5 @@
 ;;; init-agent.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-02 17:39:08 星期一 by zhengyu.li>
+;; Time-stamp: <2026-03-05 17:18:08 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,38 +30,10 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Claude Code IDE - AI-powered coding assistance
-;; Integrates Anthropic's Claude into Emacs for code completion, debugging, and chat
 (use-package claude-code-ide
   ;; Install from GitHub (not yet in ELPA/MELPA)
-  :vc (:url "https://github.com/manzaltu/claude-code-ide.el"
-       :rev :newest)
-  :defer t
-  :commands (claude-code-ide
-             claude-code-ide-resume
-             claude-code-ide-continue
-             claude-code-ide-toggle
-             claude-code-ide-send-prompt)
-  :config
-  (setq
-   ;; CLI Configuration
-   claude-code-ide-cli-path "claude"              ; Path to Claude Code CLI
-   claude-code-ide-cli-extra-flags ""            ; Extra CLI flags
-
-   ;; Terminal Configuration
-   claude-code-ide-terminal-backend 'vterm       ; Use vterm for performance
-   claude-code-ide-vterm-anti-flicker t         ; Reduce vterm flicker
-
-   ;; ------------------------------- Debug Configuration ---------------------------
-   ;; Disable debug logging (set to t for troubleshooting issues)
-   claude-code-ide-debug nil
-   ;; Disable CLI-level debug output (avoids cluttering terminal with verbose logs)
-   claude-code-ide-cli-debug nil)
-
-  ;; Optional: Verify CLI path exists (adds robustness)
-  (when (not (executable-find claude-code-ide-cli-path))
-    (message "WARNING: Claude Code CLI not found at '%s' - check path configuration"
-             claude-code-ide-cli-path)))
+  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+  :defer t)
 
 ;; ==================================================================================
 ;; Future AI tools that can be added:

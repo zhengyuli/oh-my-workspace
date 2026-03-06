@@ -48,30 +48,30 @@ Each setup script:
 ## Common Development Commands
 
 ### Emacs
-| Command | Function |
-|---------|----------|
-| `C-x b` | Switch buffer (Consult) |
-| `C-x B` | Open recent file (Consult) |
-| `C-s` | Search in buffer (Consult) |
-| `C-x f` | Find file in directory (Consult) |
-| `C-x g` | Search files with grep (Consult) |
-| `M-y` | Browse kill ring (Consult) |
-| `M-g g` | Go to line |
-| `C-.` | Embark actions |
-| `M-p` / `M-n` | Previous/Next tab (Centaur Tabs) |
-| `M-.` | Find definition (xref) |
-| `M-,` | Pop xref marker |
-| `M-x claude-code-ide` | Start Claude Code IDE |
+| Command               | Function                         |
+|-----------------------|----------------------------------|
+| `C-x b`               | Switch buffer (Consult)          |
+| `C-x B`               | Open recent file (Consult)       |
+| `C-s`                 | Search in buffer (Consult)       |
+| `C-x f`               | Find file in directory (Consult) |
+| `C-x g`               | Search files with grep (Consult) |
+| `M-y`                 | Browse kill ring (Consult)       |
+| `M-g g`               | Go to line                       |
+| `C-.`                 | Embark actions                   |
+| `M-p` / `M-n`         | Previous/Next tab (Centaur Tabs) |
+| `M-.`                 | Find definition (xref)           |
+| `M-,`                 | Pop xref marker                  |
+| `M-x claude-code-ide` | Start Claude Code IDE            |
 
 ### Vim
-| Command | Function |
-|---------|----------|
-| `:e` | Edit file |
-| `:b` | Switch buffer |
-| `:tabn` / `:tabp` | Next/Previous tab |
-| `:ls` | List buffers |
-| `gd` | Go to definition |
-| `Ctrl-n` / `Ctrl-p` | Auto-complete |
+| Command             | Function          |
+|---------------------|-------------------|
+| `:e`                | Edit file         |
+| `:b`                | Switch buffer     |
+| `:tabn` / `:tabp`   | Next/Previous tab |
+| `:ls`               | List buffers      |
+| `gd`                | Go to definition  |
+| `Ctrl-n` / `Ctrl-p` | Auto-complete     |
 
 ## Quick Start
 
@@ -272,43 +272,43 @@ The Vim configuration (`vim/`) is managed through `vimrc` with:
 ## External Dependencies
 
 ### Core Tools (P0 - Required)
-| Tool | Purpose | Install |
-|------|---------|---------|
-| git | Version control | `brew install git` |
-| ripgrep | Code search | `brew install ripgrep` |
-| the_silver_searcher | Fallback search | `brew install the_silver_searcher` |
-| fd | Fast file find | `brew install fd` |
-| coreutils | macOS GNU ls | `brew install coreutils` |
-| aspell | Spell checking | `brew install aspell` |
-| pandoc | Document conversion | `brew install pandoc` |
-| libvterm | Emacs vterm dependency | `brew install libvterm` |
+| Tool                | Purpose                | Install                            |
+|---------------------|------------------------|------------------------------------|
+| git                 | Version control        | `brew install git`                 |
+| ripgrep             | Code search            | `brew install ripgrep`             |
+| the_silver_searcher | Fallback search        | `brew install the_silver_searcher` |
+| fd                  | Fast file find         | `brew install fd`                  |
+| coreutils           | macOS GNU ls           | `brew install coreutils`           |
+| aspell              | Spell checking         | `brew install aspell`              |
+| pandoc              | Document conversion    | `brew install pandoc`              |
+| libvterm            | Emacs vterm dependency | `brew install libvterm`            |
 
 ### LSP Servers (P1 - Development)
-| Language | Server | Install |
-|----------|--------|---------|
-| Python | pylsp | `pip install python-lsp-server[all]` |
-| Go | gopls | `go install golang.org/x/tools/gopls@latest` |
-| C/C++ | clangd | Xcode Command Line Tools |
+| Language   | Server                     | Install                                                |
+|------------|----------------------------|--------------------------------------------------------|
+| Python     | pylsp                      | `pip install python-lsp-server[all]`                   |
+| Go         | gopls                      | `go install golang.org/x/tools/gopls@latest`           |
+| C/C++      | clangd                     | Xcode Command Line Tools                               |
 | TypeScript | typescript-language-server | `npm install -g typescript-language-server typescript` |
-| YAML | yaml-language-server | `npm install -g yaml-language-server` |
-| Bash | bash-language-server | `npm install -g bash-language-server` |
-| Dockerfile | docker-langserver | `npm install -g dockerfile-language-server-nodejs` |
-| CMake | cmake-language-server | `pip install cmake-language-server` |
-| Markdown | marksman | `brew install marksman` |
+| YAML       | yaml-language-server       | `npm install -g yaml-language-server`                  |
+| Bash       | bash-language-server       | `npm install -g bash-language-server`                  |
+| Dockerfile | docker-langserver          | `npm install -g dockerfile-language-server-nodejs`     |
+| CMake      | cmake-language-server      | `pip install cmake-language-server`                    |
+| Markdown   | marksman                   | `brew install marksman`                                |
 
 ### Formatters (P1 - Development)
-| Language | Formatter | Install |
-|----------|-----------|---------|
-| Python | black, isort | `pip install black black-macchiato isort` |
-| Go | gofumpt | `go install mvdan.cc/gofumpt@latest` |
-| C/C++ | clang-format | Xcode Command Line Tools |
-| Markdown | markdownfmt | `npm install -g markdownfmt` |
+| Language | Formatter    | Install                                   |
+|----------|--------------|-------------------------------------------|
+| Python   | black, isort | `pip install black black-macchiato isort` |
+| Go       | gofumpt      | `go install mvdan.cc/gofumpt@latest`      |
+| C/C++    | clang-format | Xcode Command Line Tools                  |
+| Markdown | markdownfmt  | `npm install -g markdownfmt`              |
 
 ### Debug Tools (P1 - Development)
-| Tool | Purpose | Install |
-|------|---------|---------|
+| Tool    | Purpose         | Install               |
+|---------|-----------------|-----------------------|
 | debugpy | Python debugger | `pip install debugpy` |
-| pylint | Python linter | `pip install pylint` |
+| pylint  | Python linter   | `pip install pylint`  |
 
 ### Fonts
 Run `M-x nerd-icons-install-fonts` after setup to install icon fonts (GUI mode only).
@@ -423,26 +423,26 @@ All `.el` files must include this header (replace placeholders):
 
 ### Naming Conventions
 
-| Type | Prefix | Example |
-|------|--------|---------|
-| Custom functions | `my/` | `my/prog-before-save` |
-| Custom variables | `emacs-` | `emacs-user-name` |
-| Custom minor modes | `my/` | `my/prog-save-mode` |
+| Type               | Prefix   | Example               |
+|--------------------|----------|-----------------------|
+| Custom functions   | `my/`    | `my/prog-before-save` |
+| Custom variables   | `emacs-` | `emacs-user-name`     |
+| Custom minor modes | `my/`    | `my/prog-save-mode`   |
 
 ### use-package Keywords
 
-| Keyword | Usage | Example |
-|----------|-------|---------|
-| `:ensure t` | Auto-install (external) | Most packages |
-| `:ensure nil` | Built-in package | `dired`, `emacs` |
-| `:defer t` | Lazy loading | Most packages |
-| `:demand t` | Immediate load | Core packages |
-| `:after` | Load after | `:after init-prog` |
-| `:hook` | Add hooks | `:hook (prog-mode . flycheck-mode)` |
-| `:bind` | Keybindings | See below |
-| `:config` | Config code | After package loads |
-| `:init` | Init code | Before package loads |
-| `:commands` | Declare commands | Enables autoloading |
+| Keyword       | Usage                   | Example                             |
+|---------------|-------------------------|-------------------------------------|
+| `:ensure t`   | Auto-install (external) | Most packages                       |
+| `:ensure nil` | Built-in package        | `dired`, `emacs`                    |
+| `:defer t`    | Lazy loading            | Most packages                       |
+| `:demand t`   | Immediate load          | Core packages                       |
+| `:after`      | Load after              | `:after init-prog`                  |
+| `:hook`       | Add hooks               | `:hook (prog-mode . flycheck-mode)` |
+| `:bind`       | Keybindings             | See below                           |
+| `:config`     | Config code             | After package loads                 |
+| `:init`       | Init code               | Before package loads                |
+| `:commands`   | Declare commands        | Enables autoloading                 |
 
 ### Code Format
 
@@ -620,12 +620,12 @@ These settings only affect the current buffer and do not modify global Emacs sta
 
 ### Comments
 
-| Type | Format | Example |
-|------|--------|---------|
-| Block | `;; text` | `;; Smartparens config` |
-| Section | `;; ===` | `;; ==================================================================================` |
-| Line-end | `; text` | `:defer t  ; Lazy load` |
-| Docstring | `"text"` | `"Function summary."` |
+| Type      | Format    | Example                                                                                 |
+|-----------|-----------|-----------------------------------------------------------------------------------------|
+| Block     | `;; text` | `;; Smartparens config`                                                                 |
+| Section   | `;; ===`  | `;; ==================================================================================` |
+| Line-end  | `; text`  | `:defer t  ; Lazy load`                                                                 |
+| Docstring | `"text"`  | `"Function summary."`                                                                   |
 
 **Line-end comments**: 2+ spaces before semicolon
 

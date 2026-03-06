@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-04 13:56:54 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-05 16:57:50 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,25 +30,18 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; Emojify - emoji display and insertion
-;; Display emojis as graphics in org-mode and markdown-mode
 (use-package emojify
   :ensure t
   :when (display-graphic-p)
-  :defer t
-  :hook ((org-mode . emojify-mode)
-         (markdown-mode . emojify-mode)))
-
-;; ==================================================================================
-;; Nerd-icons - comprehensive icon font
-;; Provides icons for file types, modes, and UI elements
-(use-package nerd-icons
-  :ensure t
   :defer t)
 
 ;; ==================================================================================
-;; Doom themes - modern color themes
-;; Using doom-xcode for clean, syntax-focused appearance
+(use-package nerd-icons
+  :ensure t
+  :when (display-graphic-p)
+  :defer t)
+
+;; ==================================================================================
 (use-package doom-themes
   :ensure t
   :demand t
@@ -56,8 +49,6 @@
   (load-theme 'doom-xcode t))
 
 ;; ==================================================================================
-;; Doom modeline - enriched mode line
-;; Display git branch, position, battery, and more in mode line
 (use-package doom-modeline
   :ensure t
   :defer t
@@ -65,58 +56,52 @@
   (setq doom-modeline-icon (display-graphic-p)))
 
 ;; ==================================================================================
-;; Pulsar - highlight cursor position after jumps
-;; Visual feedback for navigation commands (avy, goto-char, etc.)
 (use-package pulsar
   :ensure t
   :defer t)
 
 ;; ==================================================================================
-;; Centaur Tabs - modern tab bar for buffer management
-;; Provides visual tabs with project grouping and color-coded states
 (use-package centaur-tabs
   :ensure t
   :defer t
   :bind (:map centaur-tabs-mode-map
-              ("M-p" . centaur-tabs-backward)            ; Previous tab
-              ("M-n" . centaur-tabs-forward)             ; Next tab
-              ("M-P" . centaur-tabs-switch-group)        ; Previous tab group
-              ("M-N" . centaur-tabs-switch-group))       ; Next tab group
+              ("M-p" . centaur-tabs-backward)
+              ("M-n" . centaur-tabs-forward)
+              ("M-P" . centaur-tabs-switch-group)
+              ("M-N" . centaur-tabs-switch-group))
 
   :config
-  ;; Tab appearance and behavior
-  (setq centaur-tabs-height 25                    ; Tab height in pixels
-        centaur-tabs-set-close-button nil         ; Hide close button
-        centaur-tabs-gray-out-icons 'buffer       ; Gray out inactive icons
-        centaur-tabs-show-count t                 ; Show buffer count in groups
-        centaur-tabs-cycle-scope 'tabs)           ; Cycle within current group
+  (setq centaur-tabs-height 25
+        centaur-tabs-set-close-button nil
+        centaur-tabs-gray-out-icons 'buffer
+        centaur-tabs-show-count t
+        centaur-tabs-cycle-scope 'tabs)
 
-  ;; Color scheme for different tab states
   (custom-set-faces
    '(centaur-tabs-selected ((t (:bold t :foreground "#28cd41"))))
    '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300"))))
    '(centaur-tabs-unselected ((t (:bold t :foreground "grey"))))
    '(centaur-tabs-unselected-modified ((t (:bold t :foreground "#ff9300")))))
 
-  ;; Remove extra decorations from separator line
-  (set-face-attribute centaur-tabs-display-line nil :inherit 'default :box nil
-                      :overline nil :underline nil))
+  (set-face-attribute centaur-tabs-display-line
+                      nil :inherit 'default :box nil :overline nil :underline nil))
 
 ;; ==================================================================================
-;; Winum - window number navigation
-;; Assign numbers 1-9 to windows for quick switching (M-1 through M-9)
 (use-package winum
   :ensure t
   :defer t
-  :config
-  ;; Bind M-1 through M-9 to select windows 1-9
-  (dotimes (i 9)
-    (global-set-key (kbd (format "M-%d" (1+ i))) (intern (format "winum-select-window-%d" (1+ i))))))
+  :bind (("M-1" . winum-select-window-1)
+         ("M-2" . winum-select-window-2)
+         ("M-3" . winum-select-window-3)
+         ("M-4" . winum-select-window-4)
+         ("M-5" . winum-select-window-5)
+         ("M-6" . winum-select-window-6)
+         ("M-7" . winum-select-window-7)
+         ("M-8" . winum-select-window-8)
+         ("M-9" . winum-select-window-9)))
 
 ;; ==================================================================================
-;; Dashboard - startup screen with project navigation
-;; Provides quick access to recent files, bookmarks, and projects
-(defun omw--get-random-banner ()
+(defun omw/get-random-banner ()
   "Return random banner path from banners directory.
 Returns nil in terminal mode (uses official banner instead)."
   (when (display-graphic-p)
@@ -129,28 +114,23 @@ Returns nil in terminal mode (uses official banner instead)."
   :ensure t
   :defer t
   :config
-  ;; Layout and appearance
-  (setq dashboard-center-content t             ; Center content in window
-        dashboard-banner-logo-title             ; Personalized welcome
-        (format "Welcome to %s's Emacs" emacs-user-name)
-        dashboard-set-heading-icons (display-graphic-p)  ; Icons for headings
-        dashboard-set-file-icons (display-graphic-p)    ; Icons for files
-        dashboard-set-navigator t                         ; Bottom navigator
-        dashboard-items '((recents  . 5)                 ; Show 5 recent files
-                          (bookmarks . 5)                 ; Show 5 bookmarks
-                          (projects . 5)                  ; Show 5 projects
-                          (agenda   . 5)                  ; Show 5 agenda items
-                          (registers . 5))                ; Show 5 registers
-        dashboard-projects-switch-function 'projectile-switch-project  ; Integration
-        dashboard-startup-banner (or (omw--get-random-banner) 'official)  ; Random banner
-        initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))  ; Startup buffer
+  (setq dashboard-center-content t
+        dashboard-set-navigator t
+        dashboard-set-heading-icons (display-graphic-p)
+        dashboard-set-file-icons (display-graphic-p)
+        dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name)
+        dashboard-items '((recents . 5) (bookmarks . 5)
+                          (projects . 5) (agenda . 5) (registers . 5))
+        dashboard-projects-switch-function 'projectile-switch-project
+        dashboard-startup-banner (or (omw/get-random-banner) 'official)
+        initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
   (dashboard-setup-startup-hook))
 
 ;; ==================================================================================
 (use-package emacs
   :ensure nil
-  :defer t
+  :demand t
   :hook ((after-init . doom-modeline-mode)
          (after-init . pulsar-global-mode)
          (after-init . centaur-tabs-mode)
