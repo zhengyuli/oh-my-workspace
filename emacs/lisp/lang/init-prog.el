@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:06:42 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-06 19:29:50 Friday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -134,8 +134,7 @@ Behavior:
          (sh-mode . eglot-ensure)
          (dockerfile-mode . eglot-ensure)
          (cmake-mode . eglot-ensure)
-         (yaml-mode . eglot-ensure)
-         )
+         (yaml-mode . eglot-ensure))
   :config
   (setq eglot-sync-connect nil
         eglot-autoshutdown t))
