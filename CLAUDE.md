@@ -92,7 +92,7 @@ The `emacs/setup.sh` script validates dependencies and displays installation com
 ```elisp
 ;; ✅ CORRECT
 (defun omw/prog-mode-setup () ...)
-(defcustom omw/emacs-http-proxy nil ...)
+(defcustom omw/http-proxy nil ...)
 
 ;; ❌ WRONG
 (defun my/prog-mode-setup () ...)
@@ -128,7 +128,7 @@ omw/<feature>-mode-line-indicator
 **Examples:**
 - `omw/font-monospace`
 - `omw/font-size-default`
-- `omw/emacs-http-proxy`
+- `omw/http-proxy`
 - `omw/markdown-colors`
 
 **Variable Type:** Must use `defcustom` for user-configurable variables with `:group 'omw/emacs-config`
@@ -391,7 +391,7 @@ Returns: Description of return value."
 
 **Pattern B: Choice type variable**
 ```elisp
-(defcustom omw/emacs-http-proxy nil
+(defcustom omw/http-proxy nil
   "HTTP proxy for Emacs and subprocesses.
 Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
   :type '(choice (const :tag "No proxy" nil)

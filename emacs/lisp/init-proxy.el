@@ -31,7 +31,7 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defcustom omw/emacs-http-proxy nil
+(defcustom omw/http-proxy nil
   "Default HTTP/HTTPS proxy for Emacs network operations.
 Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy.
 This affects package installation, HTTP requests, and Git operations."
@@ -62,8 +62,8 @@ Also supports: \"socks5://127.0.0.1:1080\" or \"http://user:pass@host:port\"
 Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
   (interactive
    (list (read-string
-          (format "HTTP Proxy [%s]: " omw/emacs-http-proxy)
-          nil nil omw/emacs-http-proxy)))
+          (format "HTTP Proxy [%s]: " omw/http-proxy)
+          nil nil omw/http-proxy)))
   (when (string-empty-p proxy)
     (user-error "Proxy cannot be empty"))
   (condition-case err
@@ -92,19 +92,19 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
 
 ;; ==================================================================================
 (defun omw/enable-http-proxy ()
-  "Enable HTTP proxy using `omw/emacs-http-proxy' custom variable.
+  "Enable HTTP proxy using `omw/http-proxy' custom variable.
 
 Configuration:
   Add to custom.el, example:
-    (setq omw/emacs-http-proxy \"127.0.0.1:7890\")
+    (setq omw/http-proxy \"127.0.0.1:7890\")
 
   Then call: M-x omw/enable-http-proxy
 
 This automatically applies proxy settings on startup if configured."
   (interactive)
-  (if omw/emacs-http-proxy
-      (omw/set-http-proxy omw/emacs-http-proxy)
-    (message "HTTP proxy not configured. Add to custom.el, Example: (setq omw/emacs-http-proxy \"127.0.0.1:7890\")")))
+  (if omw/http-proxy
+      (omw/set-http-proxy omw/http-proxy)
+    (message "HTTP proxy not configured. Add to custom.el, Example: (setq omw/http-proxy \"127.0.0.1:7890\")")))
 
 ;; ==================================================================================
 (defun omw/unset-http-proxy ()
