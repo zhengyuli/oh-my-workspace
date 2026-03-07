@@ -24,7 +24,8 @@
 
 ;;; Commentary:
 ;;
-
+;; PDF viewing and navigation configuration using pdf-tools.
+;; Features: PDF viewing, editing, navigation, and state restoration.
 ;;; Code:
 
 ;; ==================================================================================
@@ -33,7 +34,9 @@
   :defer t)
 
 ;; ==================================================================================
-(defun pdf-view-mode-setup ()
+(defun omw/pdf-view-mode-setup ()
+  "Enable auto-revert mode for PDF viewing."
+  (interactive)
   (auto-revert-mode 1))
 
 (use-package pdf-view
