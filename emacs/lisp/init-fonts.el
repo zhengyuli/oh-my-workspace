@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 18:52:40 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 07:51:31 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,27 +31,27 @@
 
 ;; ==================================================================================
 (defcustom omw/font-monospace
-  '(".SF NS Mono" "Source Code Pro" "Menlo" "Monospace")
+  '("Source Code Pro" "Menlo" "Monaco" "Monospace")
   "Priority list of monospace fonts for code editing.
 First available font in the list will be used."
   :type '(repeat string)
   :group 'omw/emacs-config)
 
 (defcustom omw/font-variable-pitch
-  '(".SF NS" "Helvetica Neue" "Arial" "Sans Serif")
+  '("Helvetica Neue" "Arial" "Sans Serif")
   "Priority list of variable-pitch fonts for prose and UI text.
 First available font in the list will be used."
   :type '(repeat string)
   :group 'omw/emacs-config)
 
 (defcustom omw/font-chinese
-  '("Hiragino Sans GB" "Heiti SC" "Songti SC")
+  '("PingFang SC" "Hiragino Sans GB" "Songti SC")
   "Priority list of Chinese fonts for CJK character display.
 First available font in the list will be used."
   :type '(repeat string)
   :group 'omw/emacs-config)
 
-(defcustom omw/font-size-default 140
+(defcustom omw/font-size-default 150
   "Default font height in 1/10pt units (140 = 14pt)."
   :type 'integer
   :group 'omw/emacs-config)
