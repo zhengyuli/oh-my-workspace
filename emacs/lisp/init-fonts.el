@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 07:51:31 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 07:55:07 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -52,7 +52,7 @@ First available font in the list will be used."
   :group 'omw/emacs-config)
 
 (defcustom omw/font-size-default 150
-  "Default font height in 1/10pt units (140 = 14pt)."
+  "Default font height in 1/10pt units (150 = 15pt)."
   :type 'integer
   :group 'omw/emacs-config)
 
