@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-06 16:45:33 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-07 21:57:39 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -48,6 +48,9 @@ Used for setting `user-mail-address'."
   :group 'omw/emacs-config)
 
 ;; ==================================================================================
+(defvar omw/emacs-custom-file-path (expand-file-name "custom.el" user-emacs-directory)
+  "Emacs custom file path, which will be used to add extra customization.")
+
 (defvar omw/emacs-config-root (let ((config-file (or load-file-name buffer-file-name)))
                                 (if config-file
                                     (file-name-directory (file-chase-links config-file))
@@ -58,7 +61,7 @@ Automatically resolves symlinks to find the actual configuration directory.")
 (defvar omw/emacs-config-lisp-path (expand-file-name "lisp/" omw/emacs-config-root)
   "Emacs configuration custom settings path.")
 
-(defvar omw/emacs-config-packages-path (expand-file-name "site-packages/" omw/emacs-config-root)
+(defvar omw/emacs-config-site-packages-path (expand-file-name "site-packages/" omw/emacs-config-root)
   "Emacs configuration custom site packages path.")
 
 (defun omw/emacs-add-subdirs-to-load-path (base-dir)
@@ -68,8 +71,13 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
+;; ==================================================================================
+;; Set custom file early to prevent Emacs from writing customizations to init.el
+(setq custom-file omw/emacs-custom-file-path)
+
+;; Recursively add emacs configuration custom path to load path
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-lisp-path)
-(omw/emacs-add-subdirs-to-load-path omw/emacs-config-packages-path)
+(omw/emacs-add-subdirs-to-load-path omw/emacs-config-site-packages-path)
 
 ;; ==================================================================================
 (require 'use-package)
@@ -146,11 +154,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :config
   (which-key-setup-minibuffer))
 
-;; ==================================================================================
-(defvar omw/emacs-custom-config-path
-  (expand-file-name "custom.el" user-emacs-directory)
-  "Emacs cusom configuration file path.")
-
 (defun omw/after-init-setup ()
   (global-auto-revert-mode 1)
   (save-place-mode 1)
@@ -209,6 +212,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (require 'init-ui)
   ;; Tool modules
   (require 'init-dired)
+  (require 'init-pdf)
   (require 'init-magit)
   (require 'init-terminal)
   (require 'init-agent)
@@ -224,12 +228,11 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (require 'init-cmake)
   (require 'init-yaml)
   (require 'init-markdown)
-
-  ;; File used for storing customization information.
-  (setq custom-file omw/emacs-custom-config-path)
-  ;; Load custom settings if the file exists
-  (when (file-readable-p omw/emacs-custom-config-path)
-    (load omw/emacs-custom-config-path nil 'nomessage)))
+  ;; Load custom settings
+  (when (file-readable-p custom-file)
+    (load custom-file nil 'nomessage)))
 
 ;; ==================================================================================
+(provide 'init)
+
 ;;; init.el ends here

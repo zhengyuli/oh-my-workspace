@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-07 10:16:45 Saturday by zhengyu.li>
+;; Time-stamp: <2026-03-07 22:04:56 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -37,9 +37,42 @@
 ;; ==================================================================================
 (use-package dirvish
   :ensure t
-  :defer t)
+  :defer t
+  :bind (:map dirvish-mode-map
+              ("TAB" . dirvish-subtree-toggle))
+  :config
+  ;; Add dirvish extensions dir to load path
+  (let* ((dir (file-name-directory (locate-library "dirvish")))
+         (ext (expand-file-name "extensions" dir)))
+    (add-to-list 'load-path ext))
+
+  (require 'dirvish-vc)
+  (require 'dirvish-subtree)
+  (require 'dirvish-icons)
+  (require 'dirvish-collapse)
+  (setq dirvish-use-header-line 'global
+        dirvish-header-line-format '(:left (path) :right (free-space))
+        dirvish-mode-line-bar-image-width 0
+        dirvish-mode-line-format '(:left (sort file-time " " file-size symlink)
+                                         :right (omit yank index))
+        dirvish-attributes (append '(vc-state subtree-state nerd-icons collapse)
+                                   '(git-msg file-modes file-time file-size))
+        dirvish-large-directory-threshold 20000))
 
 ;; ==================================================================================
+(defun omw/dired-open-externally ()
+  "Open file (or marked files) externally."
+  (interactive)
+  (let* ((command
+          (cond
+           ((eq system-type 'darwin) "open")
+           (t (error "Unsupported system"))))
+         (files (if (dired-get-marked-files)
+                    (dired-get-marked-files)
+                  (list (dired-get-file-for-visit)))))
+    (dolist (file files)
+      (start-process "dired-open" nil command file))))
+
 (defun omw/dired-mode-setup ()
   (require 'dired-x)
   (require 'dired-async)
@@ -56,16 +89,17 @@
          ("C-x j" . dired-jump)
          (:map dired-mode-map
                ;; Navigation
-               ("<return>" . dired-single-buffer)
                ("RET" . dired-single-buffer)
                ("h" . dired-up-directory-single)
                ("p" . dired-hacks-previous-file)
                ("n" . dired-hacks-next-file)
+               ("k" . omw/smart-kill-buffer)
                ("M-<" . dired-goto-first-line)
                ("M->" . dired-goto-last-line)
                ("M-o" . dired-omit-mode)
                ;; File operations
                ("v" . dired-view-file)
+               ("o" . omw/dired-open-externally)
                ("C-k" . dired-do-delete)
                ("r" . wdired-change-to-wdired-mode)
                ("E" . dired-do-touch)

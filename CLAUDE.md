@@ -57,7 +57,7 @@ The `emacs/setup.sh` script validates dependencies and displays installation com
 
 **Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
 
-**Loading order** (lines 203-226 of init.el):
+**Loading order** (lines 206-229 of init.el):
 1. **Core**: init-editing → init-completion → init-auth → init-proxy → init-fonts → init-ui
 2. **Tools**: init-dired → init-magit → init-terminal → init-agent
 3. **Languages**: init-prog → [language modules in lang/]
@@ -80,6 +80,17 @@ The `emacs/setup.sh` script validates dependencies and displays installation com
 ```
 
 **Custom Packages**: The `site-packages/` directory is automatically added to `load-path` by `init.el`. Custom packages there can be required with `(require 'package-name)`.
+
+**Custom File Separation**: Emacs customizations are stored in `~/.emacs.d/custom.el`, not in init.el. The `custom-file` variable is set early (before package initialization) to prevent Emacs from writing customizations to init.el:
+
+```elisp
+;; Set custom file early (before package-initialize)
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+;; Load custom file after all modules are loaded
+(when (file-readable-p custom-file)
+  (load custom-file nil 'nomessage))
+```
 
 **Path Resolution**: The config uses `omw/emacs-config-root` to find the actual config directory, resolving symlinks correctly.
 
@@ -568,17 +579,17 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 
 ## Common Emacs Commands
 
-| Command | Function |
-|---------|----------|
-| `C-x b` | Switch buffer (Consult) |
-| `C-x f` | Find file in directory (Consult) |
-| `C-x g` | Search files with grep (Consult) |
-| `C-s` | Search in buffer (Consult) |
-| `M-y` | Browse kill ring (Consult) |
-| `C-.` | Embark actions |
-| `M-.` / `M-,` | Go to definition / pop marker |
-| `M-x eglot` | Start LSP manually |
-| `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode) |
+| Command                        | Function                         |
+|--------------------------------|----------------------------------|
+| `C-x b`                        | Switch buffer (Consult)          |
+| `C-x f`                        | Find file in directory (Consult) |
+| `C-x g`                        | Search files with grep (Consult) |
+| `C-s`                          | Search in buffer (Consult)       |
+| `M-y`                          | Browse kill ring (Consult)       |
+| `C-.`                          | Embark actions                   |
+| `M-.` / `M-,`                  | Go to definition / pop marker    |
+| `M-x eglot`                    | Start LSP manually               |
+| `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode)    |
 
 ## Validation and Troubleshooting
 
