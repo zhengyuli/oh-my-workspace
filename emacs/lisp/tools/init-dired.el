@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:13:49 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-07 10:16:45 Saturday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -51,7 +51,9 @@
   :ensure nil
   :defer t
   :hook (dired-mode . omw/dired-mode-setup)
-  :bind (("C-x j" . dired-jump)
+  :bind (("C-x d" . dired)
+         ("C-x C-d" . dired)
+         ("C-x j" . dired-jump)
          (:map dired-mode-map
                ;; Navigation
                ("<return>" . dired-single-buffer)
