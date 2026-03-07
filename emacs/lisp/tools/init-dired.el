@@ -39,7 +39,8 @@
   :ensure t
   :defer t
   :bind (:map dirvish-mode-map
-              ("TAB" . dirvish-subtree-toggle))
+              ("TAB" . dirvish-subtree-toggle)
+              ("<tab>" . dirvish-subtree-toggle))
   :config
   ;; Add dirvish extensions dir to load path
   (let* ((dir (file-name-directory (locate-library "dirvish")))
@@ -90,6 +91,7 @@
          (:map dired-mode-map
                ;; Navigation
                ("RET" . dired-single-buffer)
+               ("<return>" . dired-single-buffer)
                ("h" . dired-up-directory-single)
                ("p" . dired-hacks-previous-file)
                ("n" . dired-hacks-next-file)

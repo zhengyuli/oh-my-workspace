@@ -163,7 +163,8 @@ Behavior:
               ("M-," . xref-pop-marker-stack)
               ("M-r" . xref-find-references)
               ;; Newline + indent
-              ("RET" . newline-and-indent)))
+              ("RET" . newline-and-indent)
+              ("<return>" . newline-and-indent)))
 
 ;; ==================================================================================
 ;;; Provide features
