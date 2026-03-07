@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:29:50 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 07:09:17 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -56,7 +56,7 @@ Behavior:
         copyright-query nil
         copyright-names-regexp
         (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
-                emacs-user-name)))
+                omw/emacs-user-name)))
 
 (defun omw/prog-before-save ()
   "Function to run before saving programming files."

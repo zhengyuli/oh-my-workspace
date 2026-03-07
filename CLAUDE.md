@@ -57,9 +57,9 @@ The `emacs/setup.sh` script validates dependencies and displays installation com
 
 **Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
 
-**Loading order** (lines 206-229 of init.el):
+**Loading order** (lines 207-228 of init.el):
 1. **Core**: init-editing → init-completion → init-auth → init-proxy → init-fonts → init-ui
-2. **Tools**: init-dired → init-magit → init-terminal → init-agent
+2. **Tools**: init-dired → init-pdf → init-magit → init-terminal → init-agent
 3. **Languages**: init-prog → [language modules in lang/]
 
 **When adding new modules**:
@@ -534,7 +534,7 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 - External executable detection
 - Custom setup functions for tool behavior
 
-**Examples:** init-magit.el, init-terminal.el, init-dired.el
+**Examples:** init-magit.el, init-terminal.el, init-dired.el, init-pdf.el
 
 ### Language Modules (lisp/lang/init-*.el)
 
@@ -590,6 +590,25 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 | `M-.` / `M-,`                  | Go to definition / pop marker    |
 | `M-x eglot`                    | Start LSP manually               |
 | `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode)    |
+
+### Dired/Dirvish Keybindings (in dired-mode)
+
+| Key     | Command                      | Description          |
+|---------|------------------------------|----------------------|
+| `C-x d` | dired                        | Open dired           |
+| `C-x j` | dired-jump                   | Jump to dired        |
+| `o`     | omw/dired-open-externally    | Open file externally |
+| `k`     | omw/smart-kill-buffer        | Kill buffer          |
+| `TAB`   | dirvish-subtree-toggle       | Toggle subtree       |
+
+### PDF View Keybindings (in pdf-view-mode)
+
+| Key | Command                                      | Description        |
+|-----|----------------------------------------------|--------------------|
+| `j` | pdf-view-next-line-or-next-page              | Next line/page     |
+| `k` | pdf-view-previous-line-or-previous-page      | Previous line/page |
+| `+` | pdf-view-enlarge                             | Zoom in            |
+| `-` | pdf-view-shrink                              | Zoom out           |
 
 ## Validation and Troubleshooting
 

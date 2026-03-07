@@ -1,5 +1,5 @@
 ;;; init-pdf.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-07 22:00:28 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-08 07:14:36 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -42,7 +42,7 @@
 (use-package pdf-view
   :ensure nil
   :defer t
-  :hook (pdf-view-mode . pdf-view-mode-setup)
+  :hook (pdf-view-mode . omw/pdf-view-mode-setup)
   :bind (:map pdf-view-mode-map
               ("j" . pdf-view-next-line-or-next-page)
               ("k" . pdf-view-previous-line-or-previous-page)

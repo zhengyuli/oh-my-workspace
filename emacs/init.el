@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-07 21:57:39 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-08 07:20:41 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -35,13 +35,13 @@
   :prefix "emacs-")
 
 ;; ==================================================================================
-(defcustom emacs-user-name "Zhengyu Li"
+(defcustom omw/emacs-user-name "Zhengyu Li"
   "Emacs configuration user name.
 Used for dashboard banner and setting `user-full-name'."
   :type 'string
   :group 'omw/emacs-config)
 
-(defcustom emacs-user-email "lizhengyu419@outlook.com"
+(defcustom omw/emacs-user-email "lizhengyu419@outlook.com"
   "Emacs configuration email address.
 Used for setting `user-mail-address'."
   :type 'string
@@ -134,10 +134,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (use-package exec-path-from-shell
   :ensure t
   :when (eq system-type 'darwin)
-  :demand t
-  :config
-  (setq exec-path-from-shell-arguments '("-l"))
-  (exec-path-from-shell-initialize))
+  :defer
+  :hook (after-init . exec-path-from-shell-initialize))
 
 ;; ==================================================================================
 (use-package auto-package-update
@@ -195,8 +193,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
         ;; User identity and timestamps
         time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u"
-        user-full-name emacs-user-name
-        user-mail-address emacs-user-email)
+        user-full-name omw/emacs-user-name
+        user-mail-address omw/emacs-user-email)
 
   ;; Platform-specific: macOS key modifiers
   (when (eq system-type 'darwin)

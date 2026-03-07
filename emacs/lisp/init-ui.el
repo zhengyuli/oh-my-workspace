@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:27:33 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 07:22:43 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -124,7 +124,7 @@ Returns nil in terminal mode (uses official banner instead)."
         dashboard-set-navigator t
         dashboard-set-heading-icons (display-graphic-p)
         dashboard-set-file-icons (display-graphic-p)
-        dashboard-banner-logo-title (format "Welcome to %s's Emacs" emacs-user-name)
+        dashboard-banner-logo-title (format "Welcome to %s's Emacs" omw/emacs-user-name)
         dashboard-items '((recents . 5) (bookmarks . 5)
                           (projects . 5) (agenda . 5) (registers . 5))
         dashboard-projects-switch-function 'projectile-switch-project
