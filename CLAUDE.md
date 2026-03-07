@@ -4,716 +4,650 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **workspace configuration repository** (dotfiles) that provides comprehensive development environment setup for macOS. It contains configurations for multiple tools:
+This is a **workspace configuration repository** (dotfiles) providing comprehensive development environment setup for macOS. It contains configurations for multiple independent tools:
 
-- **Emacs** - Text editor with LSP, completion, and project management
-- **Vim** - Lightweight modal editor with modern enhancements
+- **Emacs** (>= 30.2) - Text editor with LSP, completion, and project management
+- **Vim** (>= 8.0) - Lightweight modal editor with modern enhancements
 
-This is a **monorepo** containing configurations for multiple independent tools, not a single application.
+This is a **monorepo** of configurations, not a single application. Each tool's configuration is independent.
 
 ## Repository Structure
 
 ```
 oh-my-workspace/
-├── emacs/           # Emacs configuration
-│   ├── init.el      # Main entry point (symlinked to ~/.emacs)
-│   ├── lisp/        # Configuration modules
-│   │   ├── init-*.el            # Core feature modules
-│   │   ├── tools/               # Tool integrations (Magit, vterm, AI, auth)
-│   │   └── lang/                # Language-specific configs
-│   ├── site-packages/ # Custom Emacs packages
-│   └── setup.sh      # Installation script
-├── vim/             # Vim configuration
-│   ├── vimrc        # Main configuration file
-│   └── setup.sh     # Installation script
-├── README.md        # Comprehensive setup guide for all tools
-└── CLAUDE.md        # This file (AI assistant guidance)
+├── emacs/
+│   ├── init.el              # Main entry point (symlinked to ~/.emacs)
+│   ├── lisp/
+│   │   ├── init-*.el        # Core feature modules
+│   │   ├── tools/           # Tool integrations (Magit, vterm, AI, auth)
+│   │   └── lang/            # Language-specific configs
+│   ├── site-packages/       # Custom Emacs packages (auto-added to load-path)
+│   └── setup.sh             # Installation script with dependency validation
+├── vim/
+│   ├── vimrc                # Main configuration (symlinked to ~/.vimrc)
+│   └── setup.sh             # Installation script
+├── README.md                # Comprehensive setup guide
+└── CLAUDE.md                # This file
 ```
 
-## Setup Commands
+## Setup and Validation
 
 ```bash
-# Emacs configuration (creates ~/.emacs symlink)
+# Emacs setup
 ./emacs/setup.sh
-
-# Vim configuration (creates ~/.vimrc symlink)
-./vim/setup.sh
-```
-
-Each setup script:
-1. Creates symbolic links to configuration files
-2. Displays dependency installation guides
-3. Validates environment setup
-
-## Common Development Commands
-
-### Emacs
-| Command               | Function                         |
-|-----------------------|----------------------------------|
-| `C-x b`               | Switch buffer (Consult)          |
-| `C-x B`               | Open recent file (Consult)       |
-| `C-s`                 | Search in buffer (Consult)       |
-| `C-x f`               | Find file in directory (Consult) |
-| `C-x g`               | Search files with grep (Consult) |
-| `M-y`                 | Browse kill ring (Consult)       |
-| `M-g g`               | Go to line                       |
-| `C-.`                 | Embark actions                   |
-| `M-p` / `M-n`         | Previous/Next tab (Centaur Tabs) |
-| `M-.`                 | Find definition (xref)           |
-| `M-,`                 | Pop xref marker                  |
-| `M-x claude-code-ide` | Start Claude Code IDE            |
-
-### Vim
-| Command             | Function          |
-|---------------------|-------------------|
-| `:e`                | Edit file         |
-| `:b`                | Switch buffer     |
-| `:tabn` / `:tabp`   | Next/Previous tab |
-| `:ls`               | List buffers      |
-| `gd`                | Go to definition  |
-| `Ctrl-n` / `Ctrl-p` | Auto-complete     |
-
-## Quick Start
-
-### First-time Emacs Setup
-
-```bash
-cd ~/oh-my-workspace/emacs
-./setup.sh
-emacs
 
 # Test configuration loads without errors
 emacs --debug-init
+
+# Install all dependencies (macOS)
+brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm fd marksman
+npm install -g typescript-language-server yaml-language-server bash-language-server dockerfile-language-server-nodejs
+pip install "python-lsp-server[all]" black black-macchiato isort pylint debugpy cmake-language-server
+go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
+
+# Vim setup
+./vim/setup.sh
 ```
 
-### First-time Vim Setup
-
-```bash
-cd ~/oh-my-workspace/vim
-./setup.sh
-vim
-```
+The `emacs/setup.sh` script validates dependencies and displays installation commands for missing tools. Use it to check what's missing.
 
 ## Emacs Configuration Architecture
 
-The Emacs configuration (`emacs/`) is modular with a specific loading order defined in `init.el`:
+### Module Loading System
 
-### Module Loading Order
+**Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
 
-**Core modules** (loaded in order):
-1. **UI**: `init-ui` → `init-fonts`
-2. **Editor**: `init-editing` → `init-completion` → `init-dired`
-3. **Tools**: `init-vc` → `init-terminal` → `init-ai` → `init-auth`
-4. **Languages**: `init-prog` → language-specific modules in `lisp/lang/`
+**Loading order** (lines 203-226 of init.el):
+1. **Core**: init-editing → init-completion → init-auth → init-proxy → init-fonts → init-ui
+2. **Tools**: init-dired → init-magit → init-terminal → init-agent
+3. **Languages**: init-prog → [language modules in lang/]
 
-**Language modules** (loaded via dolist):
-- `init-elisp` - Emacs Lisp configuration
-- `init-cc` - C/C++ (Google C++ style, compile_commands.json generation)
-- `init-python` - Python (pyvenv + Poetry integration, mode line indicators)
-- `init-go` - Go (gopls LSP)
-- `init-typescript` - TypeScript/JavaScript
-- `init-dockerfile` - Dockerfile
-- `init-cmake` - CMake
-- `init-yaml` - YAML
-- `init-markdown` - Markdown (table alignment, formatting)
+**When adding new modules**:
+- Add `(provide 'init-module-name)` at end of file
+- Add `(require 'init-module-name)` in `init.el` at correct position
+- For language modules: just place in `lisp/lang/` - they're auto-loaded via dolist
 
 ### Key Architecture Patterns
 
-- **use-package**: All package configurations use `use-package` macros with `:ensure t`
-- **Deferred Loading**: Most packages use `:defer t` for faster startup
-- **Package Management**: Uses built-in `package.el` with MELPA, non-GNU, and GNU ELPA archives
-- **Custom Packages**: Local packages in `site-packages/` are automatically added to load-path
-- **Customization**: User settings go in `custom.el` (auto-generated, git-ignored)
+**Centralized LSP Configuration**: All language LSP servers are configured in `init-prog.el` via a single `eglot` use-package block. Language modules should NOT configure LSP servers themselves.
 
-### Directory Structure
-
-- **`lisp/`**: Core Emacs Lisp modules (init-*.el)
-- **`lisp/tools/`**: External tool integrations
-- **`lisp/lang/`**: Language-specific configurations (LSP, formatting, etc.)
-- **`site-packages/`**: Custom/locally-installed Emacs packages
-  - `dired-single-0.3.1/`: Single-buffer dired
-  - `dired-custom-extension-0.0.1/`: Custom dired enhancements
-
-### Special Features
-
-**Mode Line Indicators**:
-- Python virtual environment: `🐍[venv-name]` (displayed via pyvenv)
-- Poetry project: `📦[project-name]` (displayed via poetry)
-
-**Programming Save Hooks** (`my/prog-save-mode`):
-- Automatically delete trailing whitespace
-- Convert tabs to spaces
-- Update copyright years
-
-### Adding New Modules
-
-1. Create file in appropriate location:
-   - `lisp/init-*.el` - Core editor features
-   - `lisp/lang/` - Language-specific configurations
-   - `lisp/tools/` - External tool integrations
-2. Add `(provide 'module-name)` at end
-3. Add `(require 'module-name)` in `init.el` at correct position based on loading order
-
-### Custom Packages
-
-The `site-packages/` directory contains custom Emacs packages that are automatically added to `load-path`. When adding new custom packages:
-
-1. Create a subdirectory in `site-packages/package-name/`
-2. Add a `.el` file with `(provide 'package-name)`
-3. Reference in other modules with `(require 'package-name)`
-
-## Emacs Module Details
-
-### Core Modules (lisp/)
-
-**init-ui.el** - User Interface
-- Doom themes (doom-xcode)
-- Doom modeline (enriched mode line)
-- Centaur tabs (tab bar)
-- Nerd icons (file icons)
-- Pulsar (cursor position highlighting)
-- Dashboard (startup screen)
-
-**init-fonts.el** - Font Configuration
-- Monospace font configuration
-- Chinese character fallback
-- Dynamic text scaling
-
-**init-editing.el** - Editing Enhancements
-- Smart text operations (indent, copy, kill)
-- Vundo (visual undo history)
-- Expand region (semantic selection)
-- Browse kill ring
-- File templates (auto-insert)
-
-**init-completion.el** - Modern Completion Framework
-- Vertico (vertical completion UI)
-- Orderless (flexible matching)
-- Marginalia (rich annotations)
-- Consult (enhanced commands)
-- Embark (context actions)
-
-**init-dired.el** - File Management
-- Dirvish (enhanced dired)
-- Single-buffer navigation
-- Async operations
-
-### Tool Modules (lisp/tools/)
-
-**init-vc.el** - Version Control
-- Magit (Git operations)
-
-**init-terminal.el** - Terminal
-- vterm (native PTY support)
-
-**init-ai.el** - AI Integration
-- Claude Code IDE (AI coding assistant)
-
-**init-auth.el** - Authentication
-- GPG integration
-- pass password store
-- pinentry
-
-### Language Modules (lisp/lang/)
-
-**init-prog.el** - Base Programming Configuration
-- Smartparens (automatic parenthesis pairing)
-- Rainbow delimiters (colorized brackets)
-- Flycheck (syntax checking)
-- Eglot (LSP client) - hooks into all supported modes
-- Quickrun (execute code quickly)
-- Dumb jump (code navigation)
-- Copyright updates
-- `my/prog-save-mode` (save hooks for cleanup)
-
-**init-python.el** - Python
-- pyvenv (virtual environment tracking)
-- Poetry (Python packaging manager)
-- Mode line indicators: 🐍[venv-name] and 📦[project-name]
-
-**init-go.el** - Go
-- gopls LSP configuration
-
-**init-cc.el** - C/C++
-- Google C++ style
-- clang-format integration
-- compile_commands.json generation
-
-**init-typescript.el** - TypeScript/JavaScript
-- typescript-language-server integration
-
-**init-dockerfile.el** - Dockerfile
-- docker-langserver integration
-
-**init-cmake.el** - CMake
-- cmake-language-server integration
-
-**init-yaml.el** - YAML
-- yaml-language-server integration
-
-**init-markdown.el** - Markdown
-- Table alignment
-- Format checking
-- marksman LSP integration
-
-**init-elisp.el** - Emacs Lisp
-- Emacs Lisp enhancements
-
-## Vim Configuration
-
-The Vim configuration (`vim/`) is managed through `vimrc` with:
-- Modern Vim 8+ settings with true color support
-- Native package management support (`~/.vim/pack/plugins/start/`)
-- Custom keybindings for productivity
-- Status line with file info and cursor position
-- Persistent undo history
-- Optional vim-plug plugin support (commented out in vimrc)
-
-## External Dependencies
-
-### Core Tools (P0 - Required)
-| Tool                | Purpose                | Install                            |
-|---------------------|------------------------|------------------------------------|
-| git                 | Version control        | `brew install git`                 |
-| ripgrep             | Code search            | `brew install ripgrep`             |
-| the_silver_searcher | Fallback search        | `brew install the_silver_searcher` |
-| fd                  | Fast file find         | `brew install fd`                  |
-| coreutils           | macOS GNU ls           | `brew install coreutils`           |
-| aspell              | Spell checking         | `brew install aspell`              |
-| pandoc              | Document conversion    | `brew install pandoc`              |
-| libvterm            | Emacs vterm dependency | `brew install libvterm`            |
-
-### LSP Servers (P1 - Development)
-| Language   | Server                     | Install                                                |
-|------------|----------------------------|--------------------------------------------------------|
-| Python     | pylsp                      | `pip install python-lsp-server[all]`                   |
-| Go         | gopls                      | `go install golang.org/x/tools/gopls@latest`           |
-| C/C++      | clangd                     | Xcode Command Line Tools                               |
-| TypeScript | typescript-language-server | `npm install -g typescript-language-server typescript` |
-| YAML       | yaml-language-server       | `npm install -g yaml-language-server`                  |
-| Bash       | bash-language-server       | `npm install -g bash-language-server`                  |
-| Dockerfile | docker-langserver          | `npm install -g dockerfile-language-server-nodejs`     |
-| CMake      | cmake-language-server      | `pip install cmake-language-server`                    |
-| Markdown   | marksman                   | `brew install marksman`                                |
-
-### Formatters (P1 - Development)
-| Language | Formatter    | Install                                   |
-|----------|--------------|-------------------------------------------|
-| Python   | black, isort | `pip install black black-macchiato isort` |
-| Go       | gofumpt      | `go install mvdan.cc/gofumpt@latest`      |
-| C/C++    | clang-format | Xcode Command Line Tools                  |
-| Markdown | markdownfmt  | `npm install -g markdownfmt`              |
-
-### Debug Tools (P1 - Development)
-| Tool    | Purpose         | Install               |
-|---------|-----------------|-----------------------|
-| debugpy | Python debugger | `pip install debugpy` |
-| pylint  | Python linter   | `pip install pylint`  |
-
-### Fonts
-Run `M-x nerd-icons-install-fonts` after setup to install icon fonts (GUI mode only).
-
-## Validation and Troubleshooting
-
-### Emacs Startup Issues
-
-Test that configuration loads without errors:
-```bash
-emacs --debug-init
+**Minimal Language Modules**: Language modules in `lisp/lang/` should be minimal (3-10 lines typical). They only install the major mode package. Example:
+```elisp
+(use-package go-mode
+  :ensure t
+  :defer t)
+; LSP server (gopls) is configured in init-prog.el
 ```
 
-Check *Messages* buffer for startup logs:
-```
-C-h e  ; View *Messages* buffer
-```
+**Custom Packages**: The `site-packages/` directory is automatically added to `load-path` by `init.el`. Custom packages there can be required with `(require 'package-name)`.
 
-### LSP Not Working
-
-1. Confirm LSP server is installed:
-   ```bash
-   # Check if server is in PATH
-   which pylsp gopls clangd typescript-language-server
-   ```
-
-2. Check Eglot status:
-   ```
-   M-x eglot  ; Start LSP manually
-   ```
-
-3. Review LSP events log:
-   ```
-   C-h b  ; Switch to *eglot-events* buffer
-   ```
-
-### Package Installation Fails
-
-1. Check network and proxy settings:
-   ```elisp
-   M-x show-http-proxy  ; Check current proxy
-   M-x set-http-proxy   ; Set proxy if needed
-   ```
-
-2. Refresh package contents:
-   ```bash
-   M-x package-refresh-contents
-   ```
-
-### Slow Emacs Startup
-
-1. Check for byte-compile cache issues:
-   ```bash
-   rm -rf ~/.emacs.d/eln-cache/
-   ```
-
-2. Review startup logs:
-   ```bash
-   C-h e  ; View *Messages* buffer
-   ```
-
-## Git Workflow
-
-### Commit Messages
-
-Follow conventional commit format:
-```
-<type>: <description>
-
-<optional body>
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
-```
-
-Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`, `style`
-
-### Branches
-
-- **master** - Main development branch
-- Feature branches are typically created for specific tool improvements
+**Path Resolution**: The config uses `omw/emacs-config-root` to find the actual config directory, resolving symlinks correctly.
 
 ## Emacs Lisp Coding Standards
 
-### File Header Template
+### Naming Convention (CRITICAL)
 
-All `.el` files must include this header (replace placeholders):
+**All custom functions and variables MUST use `omw/` prefix** (not `my/`):
 
 ```elisp
-;;; filename.el -*- lexical-binding: t; -*-
+;; ✅ CORRECT
+(defun omw/prog-mode-setup () ...)
+(defcustom omw/emacs-http-proxy nil ...)
+
+;; ❌ WRONG
+(defun my/prog-mode-setup () ...)
+```
+
+The `omw/` prefix stands for "oh-my-workspace" and is used consistently throughout the codebase.
+
+#### Function Naming Patterns
+
+**Pattern A: Setup functions** (for mode configuration)
+```
+omw/<mode>-setup
+```
+- Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`, `omw/vterm-mode-setup`
+- Used when: 3+ buffer-local settings for the same mode
+
+**Pattern B: Action functions** (for operations)
+```
+omw/<noun>-<verb>
+```
+- Examples: `omw/indent-entire-buffer`, `omw/show-http-proxy`, `omw/set-http-proxy`
+
+**Pattern C: Mode indicators** (for mode-line display)
+```
+omw/<feature>-mode-line-indicator
+```
+- Examples: `omw/pyvenv-mode-line-indicator`, `omw/poetry-mode-line-indicator`
+
+#### Variable Naming Patterns
+
+**Format:** `omw/<category>-<item>`
+
+**Examples:**
+- `omw/font-monospace`
+- `omw/font-size-default`
+- `omw/emacs-http-proxy`
+- `omw/markdown-colors`
+
+**Variable Type:** Must use `defcustom` for user-configurable variables with `:group 'omw/emacs-config`
+
+#### Minor Mode Naming
+
+**Format:** `omw/<feature>-mode`
+
+**Examples:**
+- `omw/prog-before-save-mode`
+
+### File Header Format (MANDATORY)
+
+Every `.el` file must start with:
+
+```elisp
+;;; init-module.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <YYYY-MM-DD HH:MM:SS Weekday by zhengyu.li>
 
-;; Copyright (C) 2021-2026 zhengyu li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: keyword1, keyword2
-;; Dependencies: (none) or (module1 module2)
+;; Keywords: keyword1, keyword2, keyword3
+;; Dependencies: (none) or module-name
 
-;; GPL license text...
+;; This file is not part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 ;;
-;; One or two sentences describing file purpose.
+;; One or two sentence description of module purpose.
 
 ;;; Code:
 
 ;; ==================================================================================
-;; Section name - description
-(code...)
 ```
 
-**Required**: `-*- lexical-binding: t; -*-`, Time-stamp, Copyright (current year), Keywords, Dependencies
+**Required fields checklist:**
+- ✅ `-*- lexical-binding: t; -*-` on line 1
+- ✅ Time-stamp with **current date**
+- ✅ Copyright must include **current year** (2026)
+- ✅ Keywords: 2-4 relevant tags
+- ✅ Dependencies: list if any, otherwise "(none)"
+- ✅ Commentary: Brief description (1-2 sentences)
 
-### Naming Conventions
+### use-package Keyword Order (MANDATORY)
 
-| Type               | Prefix   | Example               |
-|--------------------|----------|-----------------------|
-| Custom functions   | `my/`    | `my/prog-before-save` |
-| Custom variables   | `emacs-` | `emacs-user-name`     |
-| Custom minor modes | `my/`    | `my/prog-save-mode`   |
+**Keywords MUST appear in this exact order:**
 
-### use-package Keywords
-
-| Keyword       | Usage                   | Example                             |
-|---------------|-------------------------|-------------------------------------|
-| `:ensure t`   | Auto-install (external) | Most packages                       |
-| `:ensure nil` | Built-in package        | `dired`, `emacs`                    |
-| `:defer t`    | Lazy loading            | Most packages                       |
-| `:demand t`   | Immediate load          | Core packages                       |
-| `:after`      | Load after              | `:after init-prog`                  |
-| `:hook`       | Add hooks               | `:hook (prog-mode . flycheck-mode)` |
-| `:bind`       | Keybindings             | See below                           |
-| `:config`     | Config code             | After package loads                 |
-| `:init`       | Init code               | Before package loads                |
-| `:commands`   | Declare commands        | Enables autoloading                 |
-
-### Code Format
-
-**Indentation**: 2 spaces (standard Emacs Lisp)
-
-**setq multi-line**:
-```elisp
-(setq var1 value1  ; Comment
-      var2 value2  ; Comment
-      var3 value3) ; Comment
+```
+1. :ensure or :vc          # Package source
+2. :when or :if            # Conditional loading (optional)
+3. :defer or :demand       # Loading strategy
+4. :after                  # Dependencies (optional)
+5. :hook                   # Mode hooks
+6. :bind                   # Keybindings
+7. :config                 # Configuration
 ```
 
-**Keybindings**:
+#### :ensure/:vc Rules
+
+**Rule A: External packages from ELPA/MELPA**
 ```elisp
-:bind
-(("C-c p" . command)         ; Global
- (:map mode-map              ; Mode-local
-       ("C-c a" . cmd1)
-       ("C-c b" . cmd2)))
+(use-package <package>
+  :ensure t)  ; ✅ CORRECT
 ```
 
-**Functions**:
+**Rule B: Built-in Emacs packages**
 ```elisp
-(defun my/function-name (arg)
-  "One-line summary for simple functions."
-  (interactive)
-  (body))
-
-(defun my/complex-function (arg)
-  "Multi-line summary when complex.
-Details with - bullets for key points."
-  (let ((var value))
-    (when condition
-      (do-something))))
+(use-package <built-in>
+  :ensure nil)  ; ✅ CORRECT
 ```
 
-### Hook Guidelines
-
-**✅ Preferred: Use `:hook` in use-package**
+**Rule C: Packages from Git/VCS**
 ```elisp
-(use-package package-name
-  :hook (mode-symbol . function))
-
-;; Multiple hooks
-(use-package package-name
-  :hook ((mode1 . function1)
-         (mode2 . function2)))
+(use-package <package>
+  :vc (:url "https://github.com/<user>/<repo>" :rev :newest))  ; ✅ CORRECT
 ```
 
-**❌ Avoid: Global `add-hook` outside use-package**
-```elisp
-;; 不推荐
-(add-hook 'prog-mode-hook #'my-function)
+#### :defer vs :demand Rules
 
-;; 推荐封装到 use-package 中
-(use-package prog-mode
-  :ensure nil
-  :hook (prog-mode . my-function))
+**Rule A: Default behavior - Use :defer t**
+```elisp
+(use-package <package>
+  :ensure t
+  :defer t)  ; ✅ CORRECT for 95% of packages
 ```
 
-**Hook naming**: Use `mode-symbol` (without `-hook` suffix):
-- `:hook (prog-mode . function)` ✓
-- `:hook (python-mode . function)` ✓
-- `:hook (markdown-mode . function)` ✓
-
-use-package automatically adds `-hook` suffix internally.
-
-### Mode Setup Functions
-
-**✅ Preferred: Encapsulate related settings in setup function**
+**Rule B: Critical packages requiring immediate load**
 ```elisp
-;; Define setup function that encapsulates all buffer-local settings
-(defun my/prog-mode-setup ()
-  "Apply custom buffer-local settings for all programming modes."
+(use-package <critical-package>
+  :ensure t
+  :demand t  ; ✅ Use for: theme system, completion framework core
+  :config
+  ...)
+```
+
+**When to use :demand t:**
+- Theme packages (doom-themes)
+- Completion framework core (vertico, orderless)
+- Packages that must be available at startup
+
+**When to use :defer t:**
+- All language modes
+- All tool integrations
+- All enhancement packages
+
+#### :hook Rules
+
+**Rule A: Single hook - Simple form**
+```elisp
+:hook (prog-mode . smartparens-mode)  ; ✅ CORRECT
+```
+
+**Rule B: Multiple hooks - List form**
+```elisp
+:hook ((c-mode . eglot-ensure)       ; ✅ CORRECT
+       (c++-mode . eglot-ensure)
+       (python-mode . eglot-ensure))
+```
+
+**Rule C: Setup function for complex configurations**
+```elisp
+;; Define setup function when multiple buffer-local settings needed
+(defun omw/prog-mode-setup ()
+  "Apply custom settings for programming modes."
   (setq-local tab-width 4)
   (display-line-numbers-mode 1)
-  (hs-minor-mode 1)
-  (my/custom-save-mode 1))  ; Enable related minor mode
+  (hs-minor-mode 1))
 
-;; Single hook in use-package
 (use-package prog-mode
-  :ensure nil
-  :defer t
-  :hook (prog-mode . my/prog-mode-setup))
+  :hook (prog-mode . omw/prog-mode-setup))  ; ✅ CORRECT
 ```
 
-**❌ Avoid: Multiple hooks for related settings**
-```elisp
-;; 不推荐：分散的 hook 定义
-(use-package prog-mode
-  :ensure nil
-  :defer t
-  :hook ((prog-mode . my/prog-mode-setup)
-         (prog-mode . my/custom-save-mode)))
-```
+**Setup function naming:** `omw/<mode>-setup`
+- Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`, `omw/vterm-mode-setup`
 
-**When to use setup functions**:
-- Multiple related buffer-local settings for the same mode
+**When to use setup functions:**
+- 3+ buffer-local settings for the same mode
 - Settings that should always be applied together
-- Improves maintainability and clarity
+- Improves maintainability
 
-**Setup function naming**: Use `my/<mode>-setup` convention:
-- `my/prog-mode-setup` ✓
-- `my/python-mode-setup` ✓
-- `my/text-mode-setup` ✓
+#### :bind Rules
 
-### Case Study: init-prog.el Refactoring
-
-**Before**: Multiple hooks in use-package, traditional require pattern
+**Rule A: Global keybindings only**
 ```elisp
-(require 'copyright)
-(setq copyright-update t)
-
-(defun my/prog-mode-setup ()
-  "Apply custom buffer-local settings for all programming modes.
-These settings only affect the current buffer and do not modify global Emacs state."
-  ;; Indentation Configuration (Consistent across all programming modes)
-  (setq-local tab-width 4
-              indent-tabs-mode nil)
-  ;; Line Numbers: Enable relative/absolute line numbers for code navigation
-  (display-line-numbers-mode 1)
-  ;; Requires a font that supports unicode symbols (e.g., Fira Code, Source Code Pro)
-  (prettify-symbols-mode 1)
-  ;; Code Folding (Hide-Show Mode): Allow collapsing/expanding code blocks (functions/classes)
-  (hs-minor-mode 1)
-  ;; Enable custom save hooks (whitespace cleanup, copyright update)
-  (my/prog-save-mode 1))
-
-(use-package prog-mode
-  :ensure nil
-  :defer t
-  :hook ((prog-mode . my/prog-mode-setup)
-         (prog-mode . my/prog-save-mode)))
+:bind (("C-x C-t" . multi-vterm)    ; ✅ CORRECT
+       ("C-c g s" . magit-status))
 ```
 
-**After**: use-package for built-ins, concise comments, consolidated hooks
+**Rule B: Mode-local keybindings only**
 ```elisp
-(use-package copyright
-  :ensure nil
-  :defer t
-  :config
-  (setq copyright-update t))
-
-(defun my/prog-mode-setup ()
-  "Apply custom buffer-local settings for all programming modes."
-  (setq-local tab-width 4
-              indent-tabs-mode nil)
-  (display-line-numbers-mode 1)
-  (prettify-symbols-mode 1)
-  (hs-minor-mode 1)
-  (my/prog-save-mode 1))
-
-(use-package prog-mode
-  :ensure nil
-  :defer t
-  :hook (prog-mode . my/prog-mode-setup))
+:bind (:map vterm-mode-map          ; ✅ CORRECT
+            ("M-1" . nil)
+            ("C-g" . vterm--self-insert))
 ```
 
-**Key improvements**:
-1. Built-in packages use use-package format
-2. Verbose comments removed (code is self-explanatory)
-3. Multiple hooks consolidated into single setup function
-4. More maintainable and easier to read
+**Rule C: Both global and mode-local**
+```elisp
+:bind (("C-x j" . dired-jump)       ; ✅ CORRECT
+       (:map dired-mode-map
+             ("C-c C-c" . dired-do-copy)
+             ("C-c C-r" . dired-do-rename)))
+```
 
-### Block Separators
+**Keybinding prefix guidelines:**
+- `C-c <letter>` - For mode-specific commands
+- `C-c <letter> <letter>` - For sub-modes (e.g., `C-c g s` for git status)
+- Avoid overriding Emacs defaults unless documented
 
+#### :config Rules
+
+**Rule A: Simple configuration**
+```elisp
+:config
+(setq var1 value1
+      var2 value2)  ; ✅ CORRECT
+```
+
+**Rule B: Complex configuration**
+```elisp
+:config
+(setq var1 value1)
+(setq var2 value2)
+(function-call arg1 arg2)  ; ✅ CORRECT
+```
+
+**Rule C: Configuration with requires**
+```elisp
+:config
+(require 'dired-x)
+(require 'dired-async)  ; ✅ CORRECT
+(setq dired-dwim-target t)
+```
+
+### Function and Variable Patterns
+
+#### Function Definition Patterns
+
+**Pattern A: Simple function (1-10 lines)**
+```elisp
+(defun omw/simple-function ()
+  "One-line summary of what function does."
+  (interactive)
+  (body))
+```
+
+**Pattern B: Medium complexity (10-30 lines)**
+```elisp
+(defun omw/medium-function (arg)
+  "One-line summary with additional context.
+Details about behavior, arguments, or side effects."
+  (body))
+```
+
+**Pattern C: Complex function (30+ lines) or complex behavior**
+```elisp
+(defun omw/complex-function (arg)
+  "Multi-line summary with details.
+
+Argument ARG is used for...
+
+Behavior:
+- First action
+- Second action
+- Third action
+
+Returns: Description of return value."
+  (body))
+```
+
+**Docstring guidelines:**
+- Simple functions (1-10 lines): One-line docstring
+- Medium complexity (10-30 lines): One-line with brief context
+- Complex (30+ lines) or non-obvious behavior: Multi-line with details
+- ❌ Never use numbered steps in docstrings
+- ❌ Don't state the obvious (e.g., "Function to do X")
+
+#### Variable Definition Patterns
+
+**Pattern A: Simple custom variable**
+```elisp
+(defcustom omw/font-monospace "JetBrains Mono"
+  "Default monospace font for coding."
+  :type 'string
+  :group 'omw/emacs-config)  ; ✅ REQUIRED
+```
+
+**Pattern B: Choice type variable**
+```elisp
+(defcustom omw/emacs-http-proxy nil
+  "HTTP proxy for Emacs and subprocesses.
+Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
+  :type '(choice (const :tag "No proxy" nil)
+                 (string :tag "Proxy address"))
+  :group 'omw/emacs-config)  ; ✅ REQUIRED
+```
+
+**Pattern C: Alist type variable**
+```elisp
+(defcustom omw/markdown-colors
+  '((("#" . font-lock-keyword-face) ...)
+  "Colors for Markdown syntax highlighting."
+  :type 'alist
+  :group 'omw/emacs-config)  ; ✅ REQUIRED
+```
+
+#### Minor Mode Definition Pattern
+
+**Template:**
+```elisp
+(define-minor-mode omw/<feature>-mode
+  "Description of minor mode."
+  :lighter " ModeLineIndicator"
+  :global nil
+  (if omw/<feature>-mode
+      (add-hook 'hook-name #'omw/function nil t)
+    (remove-hook 'hook-name #'omw/function t)))
+```
+
+**Example:**
+```elisp
+(define-minor-mode omw/prog-before-save-mode
+  "Minor mode for programming buffers to run custom before-save hooks."
+  :lighter " SaveHook"
+  :global nil
+  (if omw/prog-before-save-mode
+      (add-hook 'before-save-hook #'omw/prog-before-save nil t)
+    (remove-hook 'before-save-hook #'omw/prog-before-save t)))
+```
+
+### Comment Style Guidelines
+
+#### Inline Comments
+
+**Rule: Use inline comments ONLY when:**
+- Explaining "why" not "what"
+- Documenting non-obvious behavior
+- Providing context for complex logic
+
+**✅ Good inline comment:**
+```elisp
+(setq dirvish-attributes
+      (append dirvish-attributes
+              '(git-msg file-modes)))  ; Add custom attributes not in default set
+```
+
+**❌ Unnecessary inline comment:**
+```elisp
+(setq tab-width 4)  ; Set tab width to 4  ; ❌ Obvious from code
+```
+
+#### Section Separators
+
+**Required format (with blank lines before/after):**
 ```elisp
 ;; ==================================================================================
-;; Package/Feature - Description
-;; Optional second line
+
 (use-package ...)
+
+;; ==================================================================================
 ```
 
-**Required**: Separator before each major use-package block, with blank line before/after
+**Usage:**
+- ✅ Before each major use-package block
+- ✅ Before each major function definition (if file has multiple sections)
+- ✅ Before "Provide features" section
+- ✅ With blank line before and after
 
-### Comments
+### Code Formatting
 
-| Type      | Format    | Example                                                                                 |
-|-----------|-----------|-----------------------------------------------------------------------------------------|
-| Block     | `;; text` | `;; Smartparens config`                                                                 |
-| Section   | `;; ===`  | `;; ==================================================================================` |
-| Line-end  | `; text`  | `:defer t  ; Lazy load`                                                                 |
-| Docstring | `"text"`  | `"Function summary."`                                                                   |
+**Indentation:** 2 spaces (Emacs Lisp default)
 
-**Line-end comments**: 2+ spaces before semicolon
-
-### Comment Simplicity Guidelines
-
-**✅ Preferred: Concise, meaningful comments**
+**Multi-line setq:**
 ```elisp
-;; One-line summary
-(defun my/function (arg)
-  "Brief description."
-  (code))
+(setq var1 value1
+      var2 value2
+      var3 value3)
 ```
 
-**❌ Avoid: Overly verbose or redundant comments**
+**Multi-line setq with comments:**
 ```elisp
-;; Function to do X (bad: obvious from name)
-;; Step 1: Do thing  (bad: unnecessary numbering)
-;; Step 2: Do other thing
-(defun my/function (arg)
-  "Function to do X.
-Does:
-1. Thing
-2. Other thing"
-  ;; 1. Do thing (bad: code is self-explanatory)
-  (do-thing)
-  ;; 2. Do other thing
-  (do-other-thing))
+(setq var1 value1      ; Comment for var1
+      var2 value2      ; Comment for var2
+      var3 value3)     ; Comment for var3
 ```
 
-**Comment simplicity principles**:
-- Docstrings: One line for simple functions, multi-line only when complex
-- Line-end comments: Only when non-obvious or explaining "why" not "what"
-- No numbered steps in functions (code should be self-explanatory)
-- Group related functionality with section headers, not verbose explanations
-
-### Built-in Package Configuration
-
-**✅ Preferred: Use use-package for all packages (including built-ins)**
-```elisp
-(use-package copyright
-  :ensure nil
-  :defer t
-  :config
-  (setq copyright-update t))
-```
-
-**❌ Avoid: Traditional require + setq pattern**
-```elisp
-(require 'copyright)
-(setq copyright-update t)
-```
-
-**Rationale**: Consistency, lazy loading support, clearer dependency structure
+**Line-end comments:** 2+ spaces before semicolon
 
 ### File Footer
 
 ```elisp
 ;; ==================================================================================
-;;; Provide features
-(provide 'init-filename)
+(provide 'init-module)
 
-;;; init-filename.el ends here
+;;; init-module.el ends here
 ```
 
-### Checklist
+## Module Type Guidelines
 
-- [ ] `-*- lexical-binding: t; -*-` in first line
-- [ ] Time-stamp current, Copyright includes current year
-- [ ] Custom functions use `my/` prefix
-- [ ] Custom variables use `emacs-` prefix
-- [ ] use-package with correct `:ensure` (t/nil)
-- [ ] All packages (including built-ins) use use-package format
-- [ ] Most packages use `:defer t`
-- [ ] Hooks defined in `:hook` (not global `add-hook`)
-- [ ] Related buffer-local settings encapsulated in setup function
-- [ ] Docstrings concise (one line for simple functions)
-- [ ] No numbered steps or verbose comments in functions
-- [ ] Line-end comments only when non-obvious
-- [ ] Block separators with blank lines before/after
-- [ ] File ends with `(provide '...)` and end comment
+### Core Modules (lisp/init-*.el)
+
+**Purpose:** Fundamental editor features (UI, editing, completion)
+
+**Characteristics:**
+- May use `:demand t` for critical packages
+- Complex configurations acceptable
+- Multiple packages per file
+- Cross-cutting concerns
+
+**Examples:** init-ui.el, init-completion.el, init-editing.el
+
+### Tool Modules (lisp/tools/init-*.el)
+
+**Purpose:** External tool integration (Magit, vterm, AI tools)
+
+**Characteristics:**
+- May use `:vc` for Git-based packages
+- Platform-specific code acceptable
+- External executable detection
+- Custom setup functions for tool behavior
+
+**Examples:** init-magit.el, init-terminal.el, init-dired.el
+
+### Language Modules (lisp/lang/init-*.el)
+
+**Purpose:** Language-specific configuration
+
+**Characteristics:**
+- **MUST be minimal** - 3 to 10 lines typical
+- **MUST NOT configure LSP servers** - LSP is centralized in init-prog.el
+- Simple `:ensure t :defer t` preferred
+- Use setup functions only for language-specific buffer-local settings
+
+**Example minimal language module:**
+```elisp
+;;; init-go.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-06 19:29:50 Friday by zhengyu.li>
+
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
+;;
+;; Author: chieftain <lizhengyu419@outlook.com>
+;; Keywords: go, golang
+;; Dependencies: (none)
+
+;; [GPL license text]
+
+;;; Commentary:
+;;
+;; Go language configuration.
+
+;;; Code:
+
+;; ==================================================================================
+(use-package go-mode
+  :ensure t
+  :defer t)
+;; LSP server (gopls) is configured in init-prog.el.
+
+;; ==================================================================================
+(provide 'init-go)
+
+;;; init-go.el ends here
+```
+
+## Common Emacs Commands
+
+| Command | Function |
+|---------|----------|
+| `C-x b` | Switch buffer (Consult) |
+| `C-x f` | Find file in directory (Consult) |
+| `C-x g` | Search files with grep (Consult) |
+| `C-s` | Search in buffer (Consult) |
+| `M-y` | Browse kill ring (Consult) |
+| `C-.` | Embark actions |
+| `M-.` / `M-,` | Go to definition / pop marker |
+| `M-x eglot` | Start LSP manually |
+| `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode) |
+
+## Validation and Troubleshooting
+
+**Test Emacs loads without errors:**
+```bash
+emacs --debug-init
+```
+
+**Check for LSP issues:**
+1. Verify server installed: `which pylsp gopls clangd`
+2. Start LSP manually: `M-x eglot`
+3. Check events log: Switch to `*eglot-events*` buffer
+
+**Package installation issues:**
+```elisp
+M-x package-refresh-contents  ; Refresh package list
+```
+
+**Slow startup**: Check `*Messages*` buffer with `C-h e`
 
 ## Important Notes
 
-- **Multi-tool repository**: This is NOT a single application but configurations for multiple independent tools
-- **macOS-focused**: Most configurations assume macOS as the primary OS
-- **Symlink-based setup**: Configuration files are symlinked rather than copied for easier updates
-- **Emacs-centric**: The Emacs configuration is the most complex
-- **Minimum Emacs version**: Requires Emacs >= 30.2
-- **Minimum Vim version**: Requires Vim >= 8.0
-- **Zsh configuration**: This repository does NOT contain Zsh configuration files. The README.md provides manual Oh My Zsh setup instructions
-- **No `emacs-config-validate-all` function**: The setup.sh mentions this function but it is not implemented in the Lisp code. Use the `check_lsp_servers()` function in setup.sh to verify LSP server installation
+- **macOS-focused**: Configuration assumes macOS as primary OS
+- **Symlink-based**: Config files are symlinked, not copied
+- **Emacs minimum version**: 30.2 (hard check in init.el)
+- **No Zsh config**: Repository doesn't contain Zsh files (see README.md for setup)
+- **Prefix correction**: Code uses `omw/` prefix, not `my/`
+
+## Quick Reference Card
+
+### Essential Rules
+
+1. **File Header:** Must include Time-stamp, current copyright year, Dependencies
+2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :config`
+3. **Naming Prefix:** Always `omw/` for custom functions/variables
+4. **Setup Functions:** Use for 3+ buffer-local settings
+5. **Comments:** Minimal, only for non-obvious code
+6. **Separators:** `;; ==================================================================================`
+7. **Language Modules:** Keep minimal, LSP in init-prog.el
+
+### Common Patterns
+
+```elisp
+;; Minimal language module
+(use-package <lang>-mode
+  :ensure t
+  :defer t)
+
+;; Setup function pattern
+(defun omw/<mode>-setup ()
+  "Apply custom settings for <mode>."
+  (setq-local var1 value1)
+  (mode-enable))
+
+(use-package <mode>
+  :hook (<mode> . omw/<mode>-setup))
+
+;; Custom variable
+(defcustom omw/<var> <default>
+  "Description."
+  :type '<type>
+  :group 'omw/emacs-config)
+
+;; Minor mode
+(define-minor-mode omw/<mode>-mode
+  "Description."
+  :lighter " Indicator"
+  :global nil
+  (if omw/<mode>-mode
+      (add-hook 'hook-name #'omw/function nil t)
+    (remove-hook 'hook-name #'omw/function t)))
+```

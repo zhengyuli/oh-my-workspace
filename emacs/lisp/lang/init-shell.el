@@ -1,10 +1,12 @@
-;;; package --- init-shell.el -*- lexical-binding:t -*-
+;;; init-shell.el --- Shell script mode configuration -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-07 08:56:40 Saturday by zhengyu.li>
 
-;; Copyright (c) 2026 Zhengyu Li
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: none
-;;
+;; Keywords: shell, bash, sh
+;; Dependencies: init-prog
+
 ;; This file is not part of GNU Emacs.
 ;;
 ;; This program is free software; you can redistribute it and/or modify
@@ -21,16 +23,12 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (require 'init-sh)
-
-;;; Require:
-
+;; Shell script mode configuration.
+;; LSP server (bash-language-server) is configured in init-prog.el.
 
 ;;; Code:
+
 ;; ==================================================================================
 (use-package sh-script
   :ensure nil
