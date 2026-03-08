@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 13:06:48 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 21:21:46 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,36 +30,36 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defcustom omw/font-monospace
+(defcustom omw/font-monospace-list
   '("Source Code Pro" "Menlo" "Monaco" "Monospace")
   "Priority list of monospace fonts for code editing.
 First available font in the list will be used."
   :type '(repeat string)
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
-(defcustom omw/font-variable-pitch
+(defcustom omw/font-variable-pitch-list
   '("Helvetica Neue" "Arial" "Sans Serif")
   "Priority list of variable-pitch fonts for prose and UI text.
 First available font in the list will be used."
   :type '(repeat string)
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
-(defcustom omw/font-chinese
+(defcustom omw/font-chinese-list
   '("PingFang SC" "Hiragino Sans GB" "Songti SC")
   "Priority list of Chinese fonts for CJK character display.
 First available font in the list will be used."
   :type '(repeat string)
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 (defcustom omw/font-size-default 150
   "Default font height in 1/10pt units (150 = 15pt)."
   :type 'integer
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 (defcustom omw/font-size-variable-multiplier 1.0
   "Variable-pitch font size multiplier relative to monospace font."
   :type 'number
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 ;; ==================================================================================
 (defun omw/find-available-font (font-list)
@@ -73,9 +73,9 @@ First available font in the list will be used."
   "Configure all font faces based on available fonts.
 Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   (when (display-graphic-p)
-    (let ((mono-font (omw/find-available-font omw/font-monospace))
-          (var-font (omw/find-available-font omw/font-variable-pitch))
-          (cjk-font (omw/find-available-font omw/font-chinese)))
+    (let ((mono-font (omw/find-available-font omw/font-monospace-list))
+          (var-font (omw/find-available-font omw/font-variable-pitch-list))
+          (cjk-font (omw/find-available-font omw/font-chinese-list)))
 
       ;; Configure default and fixed-pitch faces (for code)
       (when mono-font
@@ -129,9 +129,9 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
 ;; ==================================================================================
 (use-package mixed-pitch
   :ensure t
+  :when (display-graphic-p)
   :defer t
-  ;; :hook (markdown-mode . mixed-pitch-mode)
-  )
+  :hook (markdown-mode . mixed-pitch-mode))
 
 ;; ==================================================================================
 (provide 'init-fonts)

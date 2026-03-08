@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-08 12:57:02 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 21:20:38 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,23 +29,23 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defgroup omw/emacs-config nil
-  "Oh My Workspace Emacs configuration customization group."
-  :group 'emacs
-  :prefix "emacs-")
+(defgroup omw-emacs nil
+  "Oh My Workspace configuration group."
+  :group 'convenience
+  :prefix "omw/")
 
 ;; ==================================================================================
 (defcustom omw/emacs-user-name "Zhengyu Li"
   "Emacs configuration user name.
 Used for dashboard banner and setting `user-full-name'."
   :type 'string
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 (defcustom omw/emacs-user-email "lizhengyu419@outlook.com"
   "Emacs configuration email address.
 Used for setting `user-mail-address'."
   :type 'string
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 ;; ==================================================================================
 (defvar omw/emacs-custom-file-path (expand-file-name "custom.el" user-emacs-directory)

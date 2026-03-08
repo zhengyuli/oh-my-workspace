@@ -1,5 +1,5 @@
 ;;; init-proxy.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 18:19:59 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 21:22:38 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -37,7 +37,7 @@ Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy.
 This affects package installation, HTTP requests, and Git operations."
   :type '(choice (const :tag "No proxy" nil)
                  (string :tag "Proxy address"))
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 ;; ==================================================================================
 (defun omw/show-http-proxy ()
