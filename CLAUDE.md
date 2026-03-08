@@ -590,6 +590,7 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 | `M-.` / `M-,`                  | Go to definition / pop marker    |
 | `M-x eglot`                    | Start LSP manually               |
 | `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode)    |
+| `<f11>`                        | Toggle fullscreen                |
 
 ### Dired/Dirvish Keybindings (in dired-mode)
 
