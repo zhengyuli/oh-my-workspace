@@ -1,5 +1,5 @@
 ;;; init-pdf.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 07:14:36 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 07:59:29 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -37,6 +37,7 @@
 (defun omw/pdf-view-mode-setup ()
   "Enable auto-revert mode for PDF viewing."
   (interactive)
+  (setq-local pdf-view-display-size 'fit-height)
   (auto-revert-mode 1))
 
 (use-package pdf-view
@@ -50,8 +51,7 @@
               ("-" . pdf-view-shrink))
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
-  (pdf-tools-install :no-query)
-  (setq pdf-view-display-size 'fit-page))
+  (pdf-tools-install :no-query))
 
 ;; ==================================================================================
 (defvar omw/pdf-view-restore-path (expand-file-name "pdf-view-restore" user-emacs-directory)
