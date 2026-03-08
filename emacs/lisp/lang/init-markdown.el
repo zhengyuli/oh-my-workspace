@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 12:58:34 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 13:04:15 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -129,8 +129,8 @@
               visual-fill-column-width fill-column
               visual-fill-column-center-text t)
   ;; Use proportional font for main text，and enlarge the text locally
-  (variable-pitch-mode 1)
-  (face-remap-add-relative 'variable-pitch :height 1.05)
+  ;; (variable-pitch-mode 1)
+  ;; (face-remap-add-relative 'variable-pitch :height 1.05)
   ;; Enable auto-wrap and visual centering
   (auto-fill-mode 1)
   (visual-fill-column-mode 1))
