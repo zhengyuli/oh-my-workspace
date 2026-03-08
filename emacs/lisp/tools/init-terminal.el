@@ -1,5 +1,5 @@
 ;;; init-terminal.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:03:14 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 12:29:00 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,9 +31,7 @@
 ;; ==================================================================================
 (defun omw/vterm-mode-setup ()
   (setq-local truncate-lines t)
-
   (hl-line-mode -1)
-  (auto-fill-mode -1)
   (corfu-mode -1))
 
 (use-package vterm

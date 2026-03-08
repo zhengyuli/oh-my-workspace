@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:19:08 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 12:58:34 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -124,10 +124,29 @@
   :defer t)
 
 ;; ==================================================================================
+(defun omw/visual-fill-column-mode-setup ()
+  (setq-local fill-column 150
+              visual-fill-column-width fill-column
+              visual-fill-column-center-text t)
+  ;; Use proportional font for main text，and enlarge the text locally
+  (variable-pitch-mode 1)
+  (face-remap-add-relative 'variable-pitch :height 1.05)
+  ;; Enable auto-wrap and visual centering
+  (auto-fill-mode 1)
+  (visual-fill-column-mode 1))
+
 (use-package visual-fill-column
   :ensure t
   :defer t
-  :hook (markdown-mode . visual-fill-column-mode))
+  :hook (markdown-mode . omw/visual-fill-column-mode-setup)
+  :config
+  (setq visual-fill-column-enable-sensible-window-split t))
+
+;; ==================================================================================
+(use-package olivetti
+  :ensure t
+  :defer t
+  :hook (markdown-mode . olivetti-mode))
 
 ;; ==================================================================================
 (defun omw/markdown-align-all-tables ()
@@ -142,10 +161,6 @@
       (forward-line 1))))
 
 (defun omw/markdown-mode-setup ()
-  (setq-local fill-column 120
-              visual-fill-column-center-text t
-              visual-fill-column-enable-sensible-window-split t)
-  (auto-fill-mode 1)
   (unless (display-graphic-p)
     (omw/markdown-align-all-tables))
   (omw/markdown-faces-setup))

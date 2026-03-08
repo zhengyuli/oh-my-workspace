@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 07:22:43 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 12:58:11 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -73,7 +73,6 @@
               ("M-n" . centaur-tabs-forward)
               ("M-P" . centaur-tabs-switch-group)
               ("M-N" . centaur-tabs-switch-group))
-
   :config
   (setq centaur-tabs-height 25
         centaur-tabs-set-close-button nil
@@ -86,7 +85,6 @@
    '(centaur-tabs-selected-modified ((t (:bold t :foreground "#ff9300"))))
    '(centaur-tabs-unselected ((t (:bold t :foreground "grey"))))
    '(centaur-tabs-unselected-modified ((t (:bold t :foreground "#ff9300")))))
-
   (set-face-attribute centaur-tabs-display-line
                       nil :inherit 'default :box nil :overline nil :underline nil))
 
