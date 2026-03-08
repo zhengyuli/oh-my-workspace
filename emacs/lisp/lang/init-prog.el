@@ -141,8 +141,8 @@ Behavior:
 
 ;; ==================================================================================
 (defun omw/prog-mode-setup ()
-  (setq-local tab-width 4)
-  (indent-tabs-mode -1)
+  (setq-local tab-width 4
+              indent-tabs-mode nil)
   (display-line-numbers-mode 1)
   (prettify-symbols-mode 1)
   (omw/prog-before-save-mode 1))

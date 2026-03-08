@@ -313,6 +313,20 @@ Every `.el` file must start with:
 - Settings that should always be applied together
 - Improves maintainability
 
+**Setup function rules:**
+```elisp
+;; ✅ CORRECT: Use setq-local for variables
+(defun omw/prog-mode-setup ()
+  (setq-local tab-width 4
+              indent-tabs-mode nil)  ; Variable, not a mode
+  (display-line-numbers-mode 1))    ; Mode function
+
+;; ❌ AVOID: Treating variable as mode function
+(defun omw/prog-mode-setup ()
+  (setq-local tab-width 4)
+  (indent-tabs-mode -1))  ; WRONG: indent-tabs-mode is a variable!
+```
+
 **Prefer built-in functions over custom wrappers:**
 ```elisp
 ;; ✅ CORRECT: Use built-in function directly
@@ -708,7 +722,7 @@ M-x package-refresh-contents  ; Refresh package list
 1. **File Header:** Must include Time-stamp, current copyright year, Dependencies
 2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
-4. **Setup Functions:** Use for 3+ buffer-local settings; prefer built-in functions over wrappers
+4. **Setup Functions:** Use `setq-local` for variables, mode functions for toggles; prefer built-in functions
 5. **Comments:** Minimal, only for non-obvious code
 6. **Separators:** `;; ==================================================================================`
 7. **Language Modules:** Keep minimal, LSP in init-prog.el
