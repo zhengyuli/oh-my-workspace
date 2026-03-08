@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 13:04:15 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 21:51:58 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -30,84 +30,31 @@
 
 ;; ==================================================================================
 (defcustom omw/markdown-colors
-  '((header-1 . "#46dcb0")
-    (header-2 . "#46dcb0")
-    (header-3 . "#46dcb0")
-    (header-4 . "#46dcb0")
-    (header-5 . "#46dcb0")
-    (header-6 . "#46dcb0")
+  '((header . "#46dcb0")
     (code-bg . "#293134")
-    (code-fg . "#e0e2e4")
-    (hr . "#586e75")
-    (url . "#888888")
-    (link . "#79b6e8")
-    (bold . "#ff7a52")
-    (italic . "#ffab52")
-    (metadata . "#93a1a1")
-    (table-bg . "#293134")
-    (table-fg . "#e0e2e4")
-    (blockquote . "#777777")
-    (list-marker . "#75e349")
-    (inline-code-fg . "#e0e2e4"))
+    (code-fg . "#e0e2e4"))
   "Colors markdown rendering."
   :type 'alist
   :group 'omw/emacs-config)
 
-(defun omw/markdown-faces-setup ()
+(defun omw/markdown-faces-remap ()
   "Apply faces to markdown buffer."
   (let* ((colors omw/markdown-colors)
-         (h1 (cdr (assq 'header-1 colors)))
-         (h2 (cdr (assq 'header-2 colors)))
-         (h3 (cdr (assq 'header-3 colors)))
-         (h4 (cdr (assq 'header-4 colors)))
-         (h5 (cdr (assq 'header-5 colors)))
-         (h6 (cdr (assq 'header-6 colors)))
+         (header-color (cdr (assq 'header colors)))
          (code-bg (cdr (assq 'code-bg colors)))
          (code-fg (cdr (assq 'code-fg colors)))
-         (hr (cdr (assq 'hr colors)))
-         (url (cdr (assq 'url colors)))
-         (link (cdr (assq 'link colors)))
-         (bold (cdr (assq 'bold colors)))
-         (italic (cdr (assq 'italic colors)))
-         (metadata (cdr (assq 'metadata colors)))
-         (table-bg (cdr (assq 'table-bg colors)))
-         (table-fg (cdr (assq 'table-fg colors)))
-         (blockquote (cdr (assq 'blockquote colors)))
-         (list-marker (cdr (assq 'list-marker colors)))
          (inline-code-fg (cdr (assq 'inline-code-fg colors))))
     ;; Header styles
-    (face-remap-add-relative 'markdown-header-face-1 `(:foreground ,h1 :weight bold :height 1.5))
-    (face-remap-add-relative 'markdown-header-face-2 `(:foreground ,h2 :weight bold :height 1.35))
-    (face-remap-add-relative 'markdown-header-face-3 `(:foreground ,h3 :weight bold :height 1.2))
-    (face-remap-add-relative 'markdown-header-face-4 `(:foreground ,h4 :weight bold :height 1.1))
-    (face-remap-add-relative 'markdown-header-face-5 `(:foreground ,h5 :weight bold :height 1.05))
-    (face-remap-add-relative 'markdown-header-face-6 `(:foreground ,h6 :weight bold :height 1.0))
+    (face-remap-add-relative 'markdown-header-face-1 `(:foreground ,header-color :weight bold :height 1.25))
+    (face-remap-add-relative 'markdown-header-face-2 `(:foreground ,header-color :weight bold :height 1.20))
+    (face-remap-add-relative 'markdown-header-face-3 `(:foreground ,header-color :weight bold :height 1.15))
+    (face-remap-add-relative 'markdown-header-face-4 `(:foreground ,header-color :weight bold :height 1.1))
+    (face-remap-add-relative 'markdown-header-face-5 `(:foreground ,header-color :weight bold :height 1.05))
+    (face-remap-add-relative 'markdown-header-face-6 `(:foreground ,header-color :weight bold :height 1.0))
     ;; Code block styles
     (face-remap-add-relative 'markdown-code-face `(:foreground ,code-fg :background ,code-bg :extend t))
     (face-remap-add-relative 'markdown-pre-face `(:foreground ,code-fg :background ,code-bg :extend t))
-    (face-remap-add-relative 'markdown-inline-code-face `(:foreground ,inline-code-fg))
-    ;; Link styles
-    (face-remap-add-relative 'markdown-link-face `(:foreground ,link :weight semi-bold :underline t))
-    (face-remap-add-relative 'markdown-url-face `(:foreground ,url :slant italic))
-    (face-remap-add-relative 'markdown-reference-face `(:foreground ,link :weight semi-bold))
-    ;; Emphasis styles
-    (face-remap-add-relative 'markdown-bold-face `(:foreground ,bold :weight ultra-bold))
-    (face-remap-add-relative 'markdown-italic-face `(:foreground ,italic :slant italic))
-    (face-remap-add-relative 'markdown-bolditalic-face `(:foreground ,bold :weight ultra-bold :slant italic))
-    ;; Blockquote styles
-    (face-remap-add-relative 'markdown-blockquote-face `(:foreground ,blockquote :slant italic :extend t))
-    (face-remap-add-relative 'markdown-markup-face `(:foreground ,blockquote))
-    ;; List styles
-    (face-remap-add-relative 'markdown-list-face `(:foreground ,list-marker :weight bold))
-    (face-remap-add-relative 'markdown-footnote-marker-face `(:foreground ,list-marker :weight bold))
-    ;; Horizontal rule
-    (face-remap-add-relative 'markdown-hr-face `(:foreground ,hr :strike-through t :height 1.5))
-    ;; Metadata (YAML front matter)
-    (face-remap-add-relative 'markdown-metadata-key-face `(:foreground ,metadata :weight bold))
-    (face-remap-add-relative 'markdown-metadata-value-face `(:foreground ,metadata :slant italic))
-    ;; Table styles - dark background + gray-white foreground
-    (face-remap-add-relative 'markdown-table-face `(:foreground ,table-fg :background ,table-bg :extend t))
-    (face-remap-add-relative 'markdown-table-delimiter-face `(:foreground ,table-fg :background ,table-bg))))
+    (face-remap-add-relative 'markdown-inline-code-face `(:foreground ,code-fg))))
 
 ;; ==================================================================================
 (use-package valign
@@ -128,10 +75,6 @@
   (setq-local fill-column 150
               visual-fill-column-width fill-column
               visual-fill-column-center-text t)
-  ;; Use proportional font for main text，and enlarge the text locally
-  ;; (variable-pitch-mode 1)
-  ;; (face-remap-add-relative 'variable-pitch :height 1.05)
-  ;; Enable auto-wrap and visual centering
   (auto-fill-mode 1)
   (visual-fill-column-mode 1))
 
@@ -163,7 +106,7 @@
 (defun omw/markdown-mode-setup ()
   (unless (display-graphic-p)
     (omw/markdown-align-all-tables))
-  (omw/markdown-faces-setup))
+  (omw/markdown-faces-remap))
 
 (use-package markdown-mode
   :ensure t

@@ -137,12 +137,12 @@ omw/<feature>-mode-line-indicator
 **Format:** `omw/<category>-<item>`
 
 **Examples:**
-- `omw/font-monospace`
+- `omw/font-monospace-list`
 - `omw/font-size-default`
 - `omw/http-proxy`
 - `omw/markdown-colors`
 
-**Variable Type:** Must use `defcustom` for user-configurable variables with `:group 'omw/emacs-config`
+**Variable Type:** Must use `defcustom` for user-configurable variables with `:group 'omw-emacs`
 
 #### Minor Mode Naming
 
@@ -208,7 +208,8 @@ Every `.el` file must start with:
 4. :after                  # Dependencies (optional)
 5. :hook                   # Mode hooks
 6. :bind                   # Keybindings
-7. :config                 # Configuration
+7. :custom-face            # Face customization (optional)
+8. :config                 # Configuration
 ```
 
 #### :ensure/:vc Rules
@@ -322,6 +323,29 @@ Every `.el` file must start with:
 - `C-c <letter> <letter>` - For sub-modes (e.g., `C-c g s` for git status)
 - Avoid overriding Emacs defaults unless documented
 
+#### :custom-face Rules
+
+**Rule A: Use `:custom-face` instead of `custom-set-faces`**
+```elisp
+:custom-face
+(centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41"))))  ; ✅ CORRECT
+```
+
+**Rule B: Use explicit face attributes to prevent buffer-local remapping issues**
+```elisp
+;; ✅ CORRECT: Explicit attributes prevent inheritance from buffer-local remapping
+:custom-face
+(centaur-tabs-display-line ((t (:inherit fixed-pitch :box nil :underline nil))))
+
+;; ❌ AVOID: Inheriting from 'default can pick up buffer-local face remapping
+:custom-face
+(some-face ((t (:inherit default))))  ; May be affected by markdown-mode scaling
+```
+
+**Why use `:inherit fixed-pitch` instead of `:inherit default`:**
+- Buffer-local face remapping (e.g., `face-remap-add-relative` in markdown-mode) affects faces that inherit from `default`
+- Using `fixed-pitch` or explicit attributes prevents unintended font scaling in UI elements like tab bars
+
 #### :config Rules
 
 **Rule A: Simple configuration**
@@ -394,10 +418,18 @@ Returns: Description of return value."
 
 **Pattern A: Simple custom variable**
 ```elisp
-(defcustom omw/font-monospace "JetBrains Mono"
-  "Default monospace font for coding."
-  :type 'string
-  :group 'omw/emacs-config)  ; ✅ REQUIRED
+(defcustom omw/font-monospace-list '("JetBrains Mono" "Menlo")
+  "Priority list of monospace fonts for coding."
+  :type '(repeat string)
+  :group 'omw-emacs)  ; ✅ REQUIRED
+```
+
+**Pattern A2: Integer variable**
+```elisp
+(defcustom omw/font-size-default 160
+  "Default font height in 1/10pt units (160 = 16pt)."
+  :type 'integer
+  :group 'omw-emacs)  ; ✅ REQUIRED
 ```
 
 **Pattern B: Choice type variable**
@@ -407,16 +439,18 @@ Returns: Description of return value."
 Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
   :type '(choice (const :tag "No proxy" nil)
                  (string :tag "Proxy address"))
-  :group 'omw/emacs-config)  ; ✅ REQUIRED
+  :group 'omw-emacs)  ; ✅ REQUIRED
 ```
 
 **Pattern C: Alist type variable**
 ```elisp
 (defcustom omw/markdown-colors
-  '((("#" . font-lock-keyword-face) ...)
+  '((header . "#46dcb0")
+    (code-bg . "#293134")
+    (code-fg . "#e0e2e4"))
   "Colors for Markdown syntax highlighting."
   :type 'alist
-  :group 'omw/emacs-config)  ; ✅ REQUIRED
+  :group 'omw-emacs)  ; ✅ REQUIRED
 ```
 
 #### Minor Mode Definition Pattern
@@ -643,12 +677,13 @@ M-x package-refresh-contents  ; Refresh package list
 ### Essential Rules
 
 1. **File Header:** Must include Time-stamp, current copyright year, Dependencies
-2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :config`
+2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
 4. **Setup Functions:** Use for 3+ buffer-local settings
 5. **Comments:** Minimal, only for non-obvious code
 6. **Separators:** `;; ==================================================================================`
 7. **Language Modules:** Keep minimal, LSP in init-prog.el
+8. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
 
 ### Common Patterns
 
@@ -671,7 +706,7 @@ M-x package-refresh-contents  ; Refresh package list
 (defcustom omw/<var> <default>
   "Description."
   :type '<type>
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 ;; Minor mode
 (define-minor-mode omw/<mode>-mode
@@ -681,4 +716,10 @@ M-x package-refresh-contents  ; Refresh package list
   (if omw/<mode>-mode
       (add-hook 'hook-name #'omw/function nil t)
     (remove-hook 'hook-name #'omw/function t)))
+
+;; Package with custom faces (use fixed-pitch to avoid buffer-local remapping)
+(use-package centaur-tabs
+  :ensure t
+  :custom-face
+  (centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41")))))
 ```
