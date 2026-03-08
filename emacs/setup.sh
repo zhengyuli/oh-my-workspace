@@ -4,7 +4,7 @@
 # Name: setup.sh
 # Purpose: Emacs configurations setup script for macOS
 #
-# Time-stamp: <2026-03-05 13:26:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-08 23:45:00 Sunday by zhengyu.li>
 #
 # Author: zhengyu li
 # Created: 2014-03-26
@@ -71,6 +71,7 @@ readonly DEPENDENCY_CONFIG=(
     "brew list libvterm &> /dev/null 2>&1|libvterm|brew install libvterm|core|P0"
 
     # LSP Servers (P1)
+    "command -v clangd|C/C++ LSP (clangd)|brew install llvm|lsp|P1"
     "command -v pylsp|Python LSP (pylsp)|pip install 'python-lsp-server[all]'|lsp|P1"
     "command -v gopls|Go LSP (gopls)|go install golang.org/x/tools/gopls@latest|lsp|P1"
     "command -v typescript-language-server|TypeScript LSP|npm install -g typescript-language-server|lsp|P1"
