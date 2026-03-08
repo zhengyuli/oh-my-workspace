@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-08 07:20:41 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 10:30:27 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -95,7 +95,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   ;; These should be called before the first frame is displayed
   (dolist (mode '(tool-bar-mode
                   scroll-bar-mode
-                  menu-bar-mode))
+                  menu-bar-mode
+                  tooltip-mode))
     (funcall mode -1))
 
   ;; GC tuning - use large threshold during startup for faster initialization
@@ -152,6 +153,19 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :config
   (which-key-setup-minibuffer))
 
+;; ==================================================================================
+(defun omw/toggle-fullscreen ()
+  "Cross-platform fullscreen toggle."
+  (interactive)
+  (cond
+   ((eq system-type 'darwin)
+    (set-frame-parameter nil 'fullscreen
+                         (when (not (frame-parameter nil 'fullscreen))
+                           'fullboth)))
+   (t
+    (toggle-frame-fullscreen))))
+
+;; ==================================================================================
 (defun omw/after-init-setup ()
   (global-auto-revert-mode 1)
   (save-place-mode 1)
@@ -169,7 +183,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :demand t
   :hook ((after-init . omw/after-init-setup)
          (emacs-startup . omw/emacs-startup-setup))
-  :bind ("C-x C-b" . ibuffer)
+  :bind (("C-x C-b" . ibuffer)
+         ("<f11>" . omw/toggle-fullscreen))
   :config
   (setq inhibit-default-init t
         inhibit-startup-echo-area-message t
@@ -198,7 +213,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
   ;; Platform-specific: macOS key modifiers
   (when (eq system-type 'darwin)
-    (setq mac-command-modifier 'super
+    (setq frame-resize-pixelwise t
+          ns-use-native-fullscreen nil
+          ;; Mac modifiers remapping
+          mac-command-modifier 'super
           mac-option-modifier 'meta))
 
   ;; Core modules

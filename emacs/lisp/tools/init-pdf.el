@@ -1,5 +1,5 @@
 ;;; init-pdf.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 07:59:29 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 10:55:20 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,6 +31,7 @@
 ;; ==================================================================================
 (use-package pdf-tools
   :ensure t
+  :when (display-graphic-p)
   :defer t)
 
 ;; ==================================================================================
@@ -42,6 +43,7 @@
 
 (use-package pdf-view
   :ensure nil
+  :when (display-graphic-p)
   :defer t
   :hook (pdf-view-mode . omw/pdf-view-mode-setup)
   :bind (:map pdf-view-mode-map
@@ -59,6 +61,7 @@
 
 (use-package pdf-view-restore
   :ensure t
+  :when (display-graphic-p)
   :defer t
   :hook (pdf-view-mode . pdf-view-restore-mode)
   :config

@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 08:11:10 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 10:14:48 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -39,10 +39,10 @@
                                      :face 'nerd-icons-blue
                                      :height 0.9
                                      :v-adjust -0.05)))
-      (concat " " icon (propertize
-                        (format " [%s]" name)
-                        'face 'font-lock-constant-face
-                        'help-echo pyvenv-virtual-env) " "))))
+      (concat icon (propertize
+                    (format "[venv/%s] " name)
+                    'face 'nerd-icons-blue
+                    'help-echo (format "Python virtualenv: %s" pyvenv-virtual-env))))))
 
 (defun omw/update-pyvenv-mode-line-indicator ()
   "Add mode-line indicator to current buffer."
