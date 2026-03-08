@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:23:13 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 08:11:10 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -31,14 +31,18 @@
 ;; ==================================================================================
 (defun omw/pyvenv-mode-line-indicator ()
   "Return pyvenv indicator for Python buffers."
-  (when (eq major-mode 'python-mode)
-    (and (boundp 'pyvenv-virtual-env)
-         pyvenv-virtual-env
-         (let ((name (file-name-nondirectory
-                      (directory-file-name pyvenv-virtual-env))))
-           (propertize (format " 🐍[%s] " name)
-                       'face 'font-lock-constant-face
-                       'help-echo pyvenv-virtual-env)))))
+  (when (and (eq major-mode 'python-mode)
+             (bound-and-true-p pyvenv-virtual-env))
+    (let* ((name (file-name-nondirectory
+                  (directory-file-name pyvenv-virtual-env)))
+           (icon (nerd-icons-devicon "nf-dev-python"
+                                     :face 'nerd-icons-blue
+                                     :height 0.9
+                                     :v-adjust -0.05)))
+      (concat " " icon (propertize
+                        (format " [%s]" name)
+                        'face 'font-lock-constant-face
+                        'help-echo pyvenv-virtual-env) " "))))
 
 (defun omw/update-pyvenv-mode-line-indicator ()
   "Add mode-line indicator to current buffer."
