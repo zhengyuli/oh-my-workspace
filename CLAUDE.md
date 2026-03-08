@@ -40,7 +40,7 @@ oh-my-workspace/
 emacs --debug-init
 
 # Install all dependencies (macOS)
-brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm fd marksman
+brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm fd marksman llvm
 npm install -g typescript-language-server yaml-language-server bash-language-server dockerfile-language-server-nodejs
 pip install "python-lsp-server[all]" black black-macchiato isort pylint debugpy cmake-language-server
 go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
