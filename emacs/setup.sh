@@ -522,9 +522,6 @@ offer_install_dependencies() {
     if [[ $total_missing -eq 0 ]]; then
         echo ""
         echo -e "${GREEN}All dependencies already installed!${NC}"
-        echo ""
-        echo -e "${CYAN}Verify installation:${NC}"
-        echo "  M-x emacs-config-validate-all"
         return 0
     fi
 
@@ -538,18 +535,12 @@ offer_install_dependencies() {
 
         echo ""
         echo -e "${GREEN}Setup completed!${NC}"
-        echo ""
-        echo -e "${CYAN}Verify installation:${NC}"
-        echo "  M-x emacs-config-validate-all"
     else
         # User declined installation
         echo ""
         echo -e "${YELLOW}Installation skipped.${NC}"
         echo ""
         echo -e "${CYAN}To install manually, run the commands listed above.${NC}"
-        echo ""
-        echo -e "${CYAN}Verify installation:${NC}"
-        echo "  M-x emacs-config-validate-all"
     fi
 }
 
