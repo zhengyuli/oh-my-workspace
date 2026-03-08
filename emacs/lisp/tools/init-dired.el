@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-07 22:04:56 Saturday by zhengyuli>
+;; Time-stamp: <2026-03-08 22:44:44 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -51,11 +51,11 @@
   (require 'dirvish-subtree)
   (require 'dirvish-icons)
   (require 'dirvish-collapse)
+
   (setq dirvish-use-header-line 'global
         dirvish-header-line-format '(:left (path) :right (free-space))
         dirvish-mode-line-bar-image-width 0
-        dirvish-mode-line-format '(:left (sort file-time " " file-size symlink)
-                                         :right (omit yank index))
+        dirvish-mode-line-format '(:left (sort file-time " " file-size symlink) :right (omit yank index))
         dirvish-attributes (append '(vc-state subtree-state nerd-icons collapse)
                                    '(git-msg file-modes file-time file-size))
         dirvish-large-directory-threshold 20000))
@@ -64,10 +64,9 @@
 (defun omw/dired-open-externally ()
   "Open file (or marked files) externally."
   (interactive)
-  (let* ((command
-          (cond
-           ((eq system-type 'darwin) "open")
-           (t (error "Unsupported system"))))
+  (let* ((command (cond
+                   ((eq system-type 'darwin) "open")
+                   (t (error "Unsupported system"))))
          (files (if (dired-get-marked-files)
                     (dired-get-marked-files)
                   (list (dired-get-file-for-visit)))))
@@ -76,10 +75,7 @@
 
 (defun omw/dired-mode-setup ()
   (require 'dired-x)
-  (require 'dired-async)
-
-  (dired-omit-mode 1)
-  (dired-async-mode 1))
+  (dired-omit-mode 1))
 
 (use-package dired
   :ensure nil
@@ -126,6 +122,7 @@
 
   :config
   (require 'dired-x)
+  (require 'dired-async)
   (require 'dired-custom-extension)
 
   (setq dired-dwim-target t
@@ -150,7 +147,8 @@
             dired-listing-switches "-alh --group-directories-first")
     (setq dired-listing-switches "-alh"))
 
-  (dirvish-override-dired-mode 1))
+  (dirvish-override-dired-mode 1)
+  (dired-async-mode 1))
 
 ;; ==================================================================================
 ;;; Provide features

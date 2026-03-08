@@ -1,5 +1,5 @@
 ;;; init-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 10:14:48 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 23:08:15 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -40,7 +40,7 @@
                                      :height 0.9
                                      :v-adjust -0.05)))
       (concat icon (propertize
-                    (format "[venv/%s] " name)
+                    (format " [venv/%s] " name)
                     'face 'nerd-icons-blue
                     'help-echo (format "Python virtualenv: %s" pyvenv-virtual-env))))))
 
@@ -60,17 +60,18 @@
 ;; ==================================================================================
 (use-package pyvenv
   :ensure t
-  :defer t
-  :hook (python-mode . pyvenv-tracking-mode)
+  :demand t
   :config
   (add-to-list 'pyvenv-post-activate-hooks #'omw/update-pyvenv-mode-line-indicator)
-  (add-to-list 'pyvenv-post-deactivate-hooks #'omw/remove-pyvenv-mode-line-indicator))
+  (add-to-list 'pyvenv-post-deactivate-hooks #'omw/remove-pyvenv-mode-line-indicator)
+  (pyvenv-tracking-mode 1))
 
 ;; ==================================================================================
 (use-package poetry
   :ensure t
-  :defer t
-  :hook (python-mode . poetry-tracking-mode))
+  :demand t
+  :config
+  (poetry-tracking-mode 1))
 
 ;; ==================================================================================
 (use-package python

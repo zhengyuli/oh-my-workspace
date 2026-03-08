@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 18:10:55 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 22:38:27 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -130,7 +130,7 @@ ACTION is a template file or function to insert."
     (yas-expand-snippet (buffer-string) (point-min) (point-max)))
 
   (setq auto-insert 'other
-        auto-insert-directory (concat omw/emacs-config-root "/templates/"))
+        auto-insert-directory (concat omw/emacs-config-root-path "/templates/"))
 
   (omw/define-auto-insert-custom
     '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C/C++ header")

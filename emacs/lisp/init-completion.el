@@ -1,5 +1,5 @@
 ;;; init-completion.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-06 19:25:36 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-08 22:32:01 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -53,7 +53,6 @@
 (use-package consult
   :ensure t
   :defer t
-  :hook (embark-collect-mode . consult-preview-at-point-mode)
   :bind (("C-s" . consult-line)
          ("C-r" . consult-line-multi)
          ("C-x b" . consult-buffer)
@@ -77,13 +76,18 @@
          ("C-;" . embar-dwim)))
 
 ;; ==================================================================================
+(defun corfu-mode-setup ()
+  (require 'corfu)
+  (require 'corfu-popupinfo)
+
+  (setq corfu-auto t)
+  (global-corfu-mode 1)
+  (corfu-popupinfo-mode 1))
+
 (use-package corfu
   :ensure t
   :defer t
-  :hook (after-init . global-corfu-mode)
-  :config
-  (setq corfu-auto t)
-  (corfu-popupinfo-mode 1))
+  :hook (after-init . corfu-mode-setup))
 
 (use-package corfu-terminal
   :ensure t

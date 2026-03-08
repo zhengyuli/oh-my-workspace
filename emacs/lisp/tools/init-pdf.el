@@ -1,5 +1,5 @@
 ;;; init-pdf.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 10:55:20 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 22:51:26 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -35,17 +35,11 @@
   :defer t)
 
 ;; ==================================================================================
-(defun omw/pdf-view-mode-setup ()
-  "Enable auto-revert mode for PDF viewing."
-  (interactive)
-  (setq-local pdf-view-display-size 'fit-height)
-  (auto-revert-mode 1))
-
 (use-package pdf-view
   :ensure nil
   :when (display-graphic-p)
   :defer t
-  :hook (pdf-view-mode . omw/pdf-view-mode-setup)
+  :hook (pdf-view-mode . pdf-view-fit-height-to-window)
   :bind (:map pdf-view-mode-map
               ("j" . pdf-view-next-line-or-next-page)
               ("k" . pdf-view-previous-line-or-previous-page)

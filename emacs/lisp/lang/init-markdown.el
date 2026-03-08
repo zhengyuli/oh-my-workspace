@@ -1,5 +1,5 @@
 ;;; init-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 21:51:58 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 23:27:14 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -29,31 +29,28 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defcustom omw/markdown-colors
-  '((header . "#46dcb0")
-    (code-bg . "#293134")
-    (code-fg . "#e0e2e4"))
+(defcustom omw/markdown-colors '((header . "#46dcb0")
+                                 (code-bg . "#293134")
+                                 (code-fg . "#e0e2e4"))
   "Colors markdown rendering."
   :type 'alist
   :group 'omw/emacs-config)
 
 (defun omw/markdown-faces-remap ()
-  "Apply faces to markdown buffer."
-  (let* ((colors omw/markdown-colors)
-         (header-color (cdr (assq 'header colors)))
-         (code-bg (cdr (assq 'code-bg colors)))
-         (code-fg (cdr (assq 'code-fg colors)))
-         (inline-code-fg (cdr (assq 'inline-code-fg colors))))
-    ;; Header styles
-    (face-remap-add-relative 'markdown-header-face-1 `(:foreground ,header-color :weight bold :height 1.25))
+  "Remap markdown buffer faces."
+  (let* ((header-color (cdr (assq 'header omw/markdown-colors)))
+         (code-bg (cdr (assq 'code-bg omw/markdown-colors)))
+         (code-fg (cdr (assq 'code-fg omw/markdown-colors))))
+    ;; Header faces
+    (face-remap-add-relative 'markdown-header-face-1 `(:foreground ,header-color :weight bold :height 1.30))
     (face-remap-add-relative 'markdown-header-face-2 `(:foreground ,header-color :weight bold :height 1.20))
     (face-remap-add-relative 'markdown-header-face-3 `(:foreground ,header-color :weight bold :height 1.15))
     (face-remap-add-relative 'markdown-header-face-4 `(:foreground ,header-color :weight bold :height 1.1))
     (face-remap-add-relative 'markdown-header-face-5 `(:foreground ,header-color :weight bold :height 1.05))
     (face-remap-add-relative 'markdown-header-face-6 `(:foreground ,header-color :weight bold :height 1.0))
-    ;; Code block styles
-    (face-remap-add-relative 'markdown-code-face `(:foreground ,code-fg :background ,code-bg :extend t))
+    ;; Code block faces
     (face-remap-add-relative 'markdown-pre-face `(:foreground ,code-fg :background ,code-bg :extend t))
+    (face-remap-add-relative 'markdown-code-face `(:foreground ,code-fg :background ,code-bg :extend t))
     (face-remap-add-relative 'markdown-inline-code-face `(:foreground ,code-fg))))
 
 ;; ==================================================================================
@@ -71,17 +68,9 @@
   :defer t)
 
 ;; ==================================================================================
-(defun omw/visual-fill-column-mode-setup ()
-  (setq-local fill-column 150
-              visual-fill-column-width fill-column
-              visual-fill-column-center-text t)
-  (auto-fill-mode 1)
-  (visual-fill-column-mode 1))
-
 (use-package visual-fill-column
   :ensure t
   :defer t
-  :hook (markdown-mode . omw/visual-fill-column-mode-setup)
   :config
   (setq visual-fill-column-enable-sensible-window-split t))
 
@@ -104,8 +93,21 @@
       (forward-line 1))))
 
 (defun omw/markdown-mode-setup ()
-  (unless (display-graphic-p)
+  (require 'visual-fill-column)
+
+  (setq-local fill-column 150
+              visual-fill-column-width fill-column
+              visual-fill-column-center-text t
+              markdown-enable-math t
+              markdown-hide-urls t)
+  ;; Enable auto fill and visual fill column modes
+  (auto-fill-mode 1)
+  (visual-fill-column-mode 1)
+  ;; Align tables
+  (if (display-graphic-p)
+      (valign-mode 1)
     (omw/markdown-align-all-tables))
+  ;; Remap markdown faces
   (omw/markdown-faces-remap))
 
 (use-package markdown-mode
@@ -117,11 +119,9 @@
               ("M-p" . nil))
   :config
   (setq markdown-command "pandoc -s --mathjax --from=gfm"
-        markdown-enable-math t
         markdown-display-remote-images t
         markdown-enable-wiki-links t
         markdown-indent-on-enter 'indent-and-new-item
-        markdown-hide-urls t
         markdown-fontify-code-blocks-natively t))
 
 ;; ==================================================================================

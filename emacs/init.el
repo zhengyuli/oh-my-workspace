@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-08 21:20:38 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 23:11:21 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -51,17 +51,17 @@ Used for setting `user-mail-address'."
 (defvar omw/emacs-custom-file-path (expand-file-name "custom.el" user-emacs-directory)
   "Emacs custom file path, which will be used to add extra customization.")
 
-(defvar omw/emacs-config-root (let ((config-file (or load-file-name buffer-file-name)))
-                                (if config-file
-                                    (file-name-directory (file-chase-links config-file))
-                                  default-directory))
+(defvar omw/emacs-config-root-path (let ((config-file (or load-file-name buffer-file-name)))
+                                     (if config-file
+                                         (file-name-directory (file-chase-links config-file))
+                                       default-directory))
   "Emacs configuration root path.
 Automatically resolves symlinks to find the actual configuration directory.")
 
-(defvar omw/emacs-config-lisp-path (expand-file-name "lisp/" omw/emacs-config-root)
+(defvar omw/emacs-config-lisp-path (expand-file-name "lisp/" omw/emacs-config-root-path)
   "Emacs configuration custom settings path.")
 
-(defvar omw/emacs-config-site-packages-path (expand-file-name "site-packages/" omw/emacs-config-root)
+(defvar omw/emacs-config-site-packages-path (expand-file-name "site-packages/" omw/emacs-config-root-path)
   "Emacs configuration custom site packages path.")
 
 (defun omw/emacs-add-subdirs-to-load-path (base-dir)
@@ -155,11 +155,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 (defun omw/after-init-setup ()
-  (global-auto-revert-mode 1)
   (save-place-mode 1)
   (recentf-mode 1)
   (column-number-mode 1)
-  (jit-lock-mode 1))
+  (global-auto-revert-mode 1))
 
 (defun omw/emacs-startup-setup ()
   (message "Emacs ready in %.2f seconds with %d garbage collections."
@@ -198,14 +197,12 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
         user-full-name omw/emacs-user-name
         user-mail-address omw/emacs-user-email)
 
-  ;; Platform-specific: macOS key modifiers
+  ;; MacOS key modifiers
   (when (eq system-type 'darwin)
-    (setq frame-resize-pixelwise t
-          ns-use-native-fullscreen nil
-          ;; Mac modifiers remapping
-          mac-command-modifier 'super
+    (setq mac-command-modifier 'super
           mac-option-modifier 'meta))
 
+  ;; Load all other modules
   ;; Core modules
   (require 'init-editing)
   (require 'init-completion)
@@ -231,6 +228,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (require 'init-cmake)
   (require 'init-yaml)
   (require 'init-markdown)
+
   ;; Load custom settings
   (when (file-readable-p custom-file)
     (load custom-file nil 'nomessage)))

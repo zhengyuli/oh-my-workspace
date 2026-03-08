@@ -1,5 +1,5 @@
 ;;; init-auth.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-05 13:27:58 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-08 22:34:29 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -34,8 +34,6 @@
   :ensure nil
   :demand t
   :config
-  ;; Use loopback pinentry mode, make sure pinentry
-  ;; program is installed.
   (setq epg-pinentry-mode 'loopback))
 
 ;; ==================================================================================

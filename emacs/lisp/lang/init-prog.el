@@ -1,5 +1,5 @@
 ;;; init-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 07:09:17 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 23:03:17 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -52,26 +52,10 @@ Behavior:
   :ensure nil
   :defer t
   :config
-  (setq copyright-update t
-        copyright-query nil
+  (setq copyright-query nil
         copyright-names-regexp
         (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
                 omw/emacs-user-name)))
-
-(defun omw/prog-before-save ()
-  "Function to run before saving programming files."
-  (ignore-errors (copyright-update))
-  (ignore-errors (time-stamp))
-  (untabify (point-min) (point-max))
-  nil)
-
-(define-minor-mode omw/prog-before-save-mode
-  "Minor mode for programming buffers to run custom before-save hooks."
-  :lighter " SaveHook"
-  :global nil
-  (if omw/prog-before-save-mode
-      (add-hook 'before-save-hook #'omw/prog-before-save nil t)
-    (remove-hook 'before-save-hook #'omw/prog-before-save t)))
 
 ;; ==================================================================================
 (use-package smartparens
@@ -138,6 +122,22 @@ Behavior:
   :config
   (setq eglot-sync-connect nil
         eglot-autoshutdown t))
+
+;; ==================================================================================
+(defun omw/prog-before-save ()
+  "Function to run before saving programming files."
+  (ignore-errors (copyright-update))
+  (ignore-errors (time-stamp))
+  (untabify (point-min) (point-max))
+  nil)
+
+(define-minor-mode omw/prog-before-save-mode
+  "Minor mode for programming buffers to run custom before-save hooks."
+  :lighter " SaveHook"
+  :global nil
+  (if omw/prog-before-save-mode
+      (add-hook 'before-save-hook #'omw/prog-before-save nil t)
+    (remove-hook 'before-save-hook #'omw/prog-before-save t)))
 
 ;; ==================================================================================
 (defun omw/prog-mode-setup ()

@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 21:23:32 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-08 22:53:03 Sunday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -53,9 +53,7 @@
 (use-package doom-modeline
   :ensure t
   :defer t
-  :hook (after-init . doom-modeline-mode)
-  :config
-  (setq doom-modeline-icon (display-graphic-p)))
+  :hook (after-init . doom-modeline-mode))
 
 ;; ==================================================================================
 (use-package pulsar
@@ -106,7 +104,7 @@
   "Return random banner path from banners directory.
 Returns nil in terminal mode (uses official banner instead)."
   (when (display-graphic-p)
-    (let* ((banners-dir (concat omw/emacs-config-root "/banners"))
+    (let* ((banners-dir (concat omw/emacs-config-root-path "/banners"))
            (banners (directory-files banners-dir t "\\.png\\'")))
       (when banners
         (nth (random (length banners)) banners)))))

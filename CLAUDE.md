@@ -92,7 +92,7 @@ The `emacs/setup.sh` script validates dependencies and displays installation com
   (load custom-file nil 'nomessage))
 ```
 
-**Path Resolution**: The config uses `omw/emacs-config-root` to find the actual config directory, resolving symlinks correctly.
+**Path Resolution**: The config uses `omw/emacs-config-root-path` to find the actual config directory, resolving symlinks correctly.
 
 ## Emacs Lisp Coding Standards
 
@@ -137,8 +137,9 @@ omw/<feature>-mode-line-indicator
 **Format:** `omw/<category>-<item>`
 
 **Examples:**
-- `omw/font-monospace-list`
-- `omw/font-size-default`
+- `omw/font-monospace-list` (list of items)
+- `omw/font-size-default` (simple value)
+- `omw/emacs-config-root-path` (file path - use `-path` suffix)
 - `omw/http-proxy`
 - `omw/markdown-colors`
 
@@ -254,6 +255,23 @@ Every `.el` file must start with:
 - Theme packages (doom-themes)
 - Completion framework core (vertico, orderless)
 - Packages that must be available at startup
+- Environment tracking packages (pyvenv, poetry) - need to track state immediately
+
+**Rule C: Environment tracking packages**
+```elisp
+;; ✅ CORRECT: Tracking packages need :demand t to activate immediately
+(use-package pyvenv
+  :ensure t
+  :demand t
+  :config
+  (pyvenv-tracking-mode 1))
+
+;; ❌ AVOID: :defer t prevents tracking from working correctly
+(use-package pyvenv
+  :ensure t
+  :defer t
+  :hook (python-mode . pyvenv-tracking-mode))  ; May miss environment changes
+```
 
 **When to use :defer t:**
 - All language modes
@@ -294,6 +312,17 @@ Every `.el` file must start with:
 - 3+ buffer-local settings for the same mode
 - Settings that should always be applied together
 - Improves maintainability
+
+**Prefer built-in functions over custom wrappers:**
+```elisp
+;; ✅ CORRECT: Use built-in function directly
+:hook (pdf-view-mode . pdf-view-fit-height-to-window)
+
+;; ❌ AVOID: Unnecessary wrapper function
+(defun omw/pdf-view-mode-setup ()
+  (setq-local pdf-view-display-size 'fit-height))
+:hook (pdf-view-mode . omw/pdf-view-mode-setup)
+```
 
 #### :bind Rules
 
@@ -679,11 +708,12 @@ M-x package-refresh-contents  ; Refresh package list
 1. **File Header:** Must include Time-stamp, current copyright year, Dependencies
 2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
-4. **Setup Functions:** Use for 3+ buffer-local settings
+4. **Setup Functions:** Use for 3+ buffer-local settings; prefer built-in functions over wrappers
 5. **Comments:** Minimal, only for non-obvious code
 6. **Separators:** `;; ==================================================================================`
 7. **Language Modules:** Keep minimal, LSP in init-prog.el
 8. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
+9. **Tracking Packages:** Use `:demand t` for environment tracking (pyvenv, poetry)
 
 ### Common Patterns
 
@@ -722,4 +752,11 @@ M-x package-refresh-contents  ; Refresh package list
   :ensure t
   :custom-face
   (centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41")))))
+
+;; Environment tracking package (use :demand t for immediate activation)
+(use-package pyvenv
+  :ensure t
+  :demand t
+  :config
+  (pyvenv-tracking-mode 1))
 ```
