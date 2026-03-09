@@ -29,3 +29,71 @@ oh-my-workspace/
 ├── README.md                # Comprehensive setup guide
 └── CLAUDE.md                # This file
 ```
+## Quick Start
+
+### Setup
+
+```bash
+# Emacs setup
+./emacs/setup.sh
+
+# Test configuration loads without errors
+emacs --debug-init
+
+# Install all dependencies (macOS)
+brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm fd marksman llvm
+npm install -g typescript-language-server yaml-language-server bash-language-server dockerfile-language-server-nodejs
+pip install "python-lsp-server[all]" black black-macchiato isort pylint debugpy cmake-language-server
+go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
+
+# Vim setup
+./vim/setup.sh
+```
+
+The `emacs/setup.sh` script validates dependencies and displays installation commands for missing tools. Use it to check what's missing.
+
+### Common Commands
+
+| Command                        | Function                         |
+|--------------------------------|----------------------------------|
+| `C-x b`                        | Switch buffer (Consult)          |
+| `C-x f`                        | Find file in directory (Consult) |
+| `C-x g`                        | Search files with grep (Consult) |
+| `C-s`                          | Search in buffer (Consult)       |
+| `M-y`                          | Browse kill ring (Consult)       |
+| `C-.`                          | Embark actions                   |
+| `M-.` / `M-,`                  | Go to definition / pop marker    |
+| `M-x eglot`                    | Start LSP manually               |
+| `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode)    |
+| `<f11>`                        | Toggle fullscreen                |
+
+**Dired/Dirvish Keybindings** (in dired-mode):
+
+| Key     | Command                      | Description          |
+|---------|------------------------------|----------------------|
+| `C-x d` | dired                        | Open dired           |
+| `C-x j` | dired-jump                   | Jump to dired        |
+| `o`     | omw/dired-open-externally    | Open file externally |
+| `k`     | omw/smart-kill-buffer        | Kill buffer          |
+| `TAB`   | dirvish-subtree-toggle       | Toggle subtree       |
+
+**PDF View Keybindings** (in pdf-view-mode):
+
+| Key | Command                                      | Description        |
+|-----|----------------------------------------------|--------------------|
+| `j` | pdf-view-next-line-or-next-page              | Next line/page     |
+| `k` | pdf-view-previous-line-or-previous-page      | Previous line/page |
+| `+` | pdf-view-enlarge                             | Zoom in            |
+| `-` | pdf-view-shrink                              | Zoom out           |
+
+### Quick Validation
+
+**Test configuration loads without errors:**
+```bash
+# Full initialization test
+emacs --debug-init
+
+# Batch mode test (faster for CI/CD)
+emacs --batch --eval '(progn (load-file "init.el") (message "Configuration loaded successfully"))'
+```
+
