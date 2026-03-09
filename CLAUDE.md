@@ -821,5 +821,4 @@ grep -rn "defcustom.*:group" emacs/lisp --include="*.el" | grep -v "omw-emacs"
   (pyvenv-tracking-mode 1))
 ```
 
----
 
