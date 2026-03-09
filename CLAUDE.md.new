@@ -1,0 +1,31 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is a **workspace configuration repository** (dotfiles) providing comprehensive development environment setup for macOS. It contains configurations for multiple independent tools:
+
+- **Emacs** (>= 30.2) - Text editor with LSP, completion, and project management
+- **Vim** (>= 8.0) - Lightweight modal editor with modern enhancements
+
+This is a **monorepo** of configurations, not a single application. Each tool's configuration is independent.
+
+## Repository Structure
+
+```
+oh-my-workspace/
+├── emacs/
+│   ├── init.el              # Main entry point (symlinked to ~/.emacs)
+│   ├── lisp/
+│   │   ├── init-*.el        # Core feature modules
+│   │   ├── tools/           # Tool integrations (Magit, vterm, AI, auth)
+│   │   └── lang/            # Language-specific configs
+│   ├── site-packages/       # Custom Emacs packages (auto-added to load-path)
+│   └── setup.sh             # Installation script with dependency validation
+├── vim/
+│   ├── vimrc                # Main configuration (symlinked to ~/.vimrc)
+│   └── setup.sh             # Installation script
+├── README.md                # Comprehensive setup guide
+└── CLAUDE.md                # This file
+```
