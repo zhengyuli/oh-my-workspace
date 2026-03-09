@@ -235,3 +235,171 @@ Every `.el` file must start with:
 ;;; init-module.el ends here
 ```
 
+
+### use-package Patterns (MANDATORY)
+
+**Keywords MUST appear in this exact order:**
+
+```
+1. :ensure or :vc          # Package source
+2. :when or :if            # Conditional loading (optional)
+3. :defer or :demand       # Loading strategy
+4. :after                  # Dependencies (optional)
+5. :hook                   # Mode hooks
+6. :bind                   # Keybindings
+7. :custom-face            # Face customization (optional)
+8. :config                 # Configuration
+```
+
+#### :ensure/:vc Rules
+
+**External packages from ELPA/MELPA:**
+```elisp
+(use-package <package>
+  :ensure t)
+```
+
+**Built-in Emacs packages:**
+```elisp
+(use-package <built-in>
+  :ensure nil)
+```
+
+**Packages from Git/VCS:**
+```elisp
+(use-package <package>
+  :vc (:url "https://github.com/<user>/<repo>" :rev :newest))
+```
+
+#### :defer vs :demand Rules
+
+**Default behavior - Use `:defer t` for 95% of packages:**
+```elisp
+(use-package <package>
+  :ensure t
+  :defer t)
+```
+
+**Critical packages requiring immediate load** (themes, completion core, environment tracking):
+```elisp
+(use-package <critical-package>
+  :ensure t
+  :demand t
+  :config
+  ...)
+```
+
+**Environment tracking packages** (pyvenv, poetry) need `:demand t` to activate immediately:
+```elisp
+(use-package pyvenv
+  :ensure t
+  :demand t
+  :config
+  (pyvenv-tracking-mode 1))
+```
+
+#### :hook Rules
+
+**Single hook - Simple form:**
+```elisp
+:hook (prog-mode . smartparens-mode)
+```
+
+**Multiple hooks - List form:**
+```elisp
+:hook ((c-mode . eglot-ensure)
+       (c++-mode . eglot-ensure)
+       (python-mode . eglot-ensure))
+```
+
+**Setup function for complex configurations** (3+ buffer-local settings):
+```elisp
+(defun omw/prog-mode-setup ()
+  "Apply custom settings for programming modes."
+  (setq-local tab-width 4)
+  (display-line-numbers-mode 1)
+  (hs-minor-mode 1))
+
+(use-package prog-mode
+  :hook (prog-mode . omw/prog-mode-setup))
+```
+
+**Setup function rules:**
+- Use `setq-local` for variables, mode functions for toggles
+- Naming: `omw/<mode>-setup`
+- Prefer built-in functions over custom wrappers
+
+#### :bind Rules
+
+**Global keybindings only:**
+```elisp
+:bind (("C-x C-t" . multi-vterm)
+       ("C-c g s" . magit-status))
+```
+
+**Mode-local keybindings only:**
+```elisp
+:bind (:map vterm-mode-map
+            ("M-1" . nil)
+            ("C-g" . vterm--self-insert))
+```
+
+**Both global and mode-local:**
+```elisp
+:bind (("C-x j" . dired-jump)
+       (:map dired-mode-map
+             ("C-c C-c" . dired-do-copy)
+             ("C-c C-r" . dired-do-rename)))
+```
+
+**Keybinding prefix guidelines:**
+- `C-c <letter>` - For mode-specific commands
+- `C-c <letter> <letter>` - For sub-modes
+- Avoid overriding Emacs defaults unless documented
+
+#### :custom-face Rules
+
+**Use `:custom-face` instead of `custom-set-faces`:**
+```elisp
+:custom-face
+(centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41"))))
+```
+
+**Use `fixed-pitch` inheritance to prevent buffer-local remapping issues:**
+```elisp
+;; ✅ CORRECT: Explicit attributes prevent inheritance from buffer-local remapping
+:custom-face
+(centaur-tabs-display-line ((t (:inherit fixed-pitch :box nil :underline nil))))
+
+;; ❌ AVOID: Inheriting from 'default can pick up buffer-local face remapping
+:custom-face
+(some-face ((t (:inherit default))))
+```
+
+**Why:** Buffer-local face remapping affects faces that inherit from `default`. Using `fixed-pitch` or explicit attributes prevents unintended font scaling in UI elements.
+
+#### :config Rules
+
+**Simple configuration:**
+```elisp
+:config
+(setq var1 value1
+      var2 value2)
+```
+
+**Complex configuration:**
+```elisp
+:config
+(setq var1 value1)
+(setq var2 value2)
+(function-call arg1 arg2)
+```
+
+**Configuration with requires:**
+```elisp
+:config
+(require 'dired-x)
+(require 'dired-async)
+(setq dired-dwim-target t)
+```
+
