@@ -30,6 +30,7 @@
 
 ;; ==================================================================================
 (defun omw/vterm-mode-setup ()
+  "Apply custom settings for vterm mode."
   (setq-local truncate-lines t)
   (hl-line-mode -1)
   (corfu-mode -1))

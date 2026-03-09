@@ -48,6 +48,7 @@
 
 ;; ==================================================================================
 (defun omw/elisp-mode-setup ()
+  "Apply custom settings for Emacs Lisp mode."
   (eldoc-mode 1))
 
 (use-package elisp-mode

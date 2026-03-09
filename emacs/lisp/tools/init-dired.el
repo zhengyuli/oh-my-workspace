@@ -74,6 +74,7 @@
       (start-process "dired-open" nil command file))))
 
 (defun omw/dired-mode-setup ()
+  "Apply custom settings for dired mode."
   (require 'dired-x)
   (dired-omit-mode 1))
 

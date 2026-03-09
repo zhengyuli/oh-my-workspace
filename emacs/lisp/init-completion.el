@@ -76,7 +76,8 @@
          ("C-;" . embar-dwim)))
 
 ;; ==================================================================================
-(defun corfu-mode-setup ()
+(defun omw/corfu-mode-setup ()
+  "Configure corfu and corfu-popupinfo."
   (require 'corfu)
   (require 'corfu-popupinfo)
 
@@ -87,7 +88,7 @@
 (use-package corfu
   :ensure t
   :defer t
-  :hook (after-init . corfu-mode-setup))
+  :hook (after-init . omw/corfu-mode-setup))
 
 (use-package corfu-terminal
   :ensure t

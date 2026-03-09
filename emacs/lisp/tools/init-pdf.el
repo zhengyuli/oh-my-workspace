@@ -39,13 +39,13 @@
   :ensure nil
   :when (display-graphic-p)
   :defer t
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . pdf-view-fit-height-to-window)
   :bind (:map pdf-view-mode-map
               ("j" . pdf-view-next-line-or-next-page)
               ("k" . pdf-view-previous-line-or-previous-page)
               ("+" . pdf-view-enlarge)
               ("-" . pdf-view-shrink))
-  :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (pdf-tools-install :no-query))
 

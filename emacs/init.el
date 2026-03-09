@@ -135,7 +135,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (use-package exec-path-from-shell
   :ensure t
   :when (eq system-type 'darwin)
-  :defer
+  :defer t
   :hook (after-init . exec-path-from-shell-initialize))
 
 ;; ==================================================================================

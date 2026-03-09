@@ -34,7 +34,7 @@
                                  (code-fg . "#e0e2e4"))
   "Colors markdown rendering."
   :type 'alist
-  :group 'omw/emacs-config)
+  :group 'omw-emacs)
 
 (defun omw/markdown-faces-remap ()
   "Remap markdown buffer faces."
@@ -93,6 +93,7 @@
       (forward-line 1))))
 
 (defun omw/markdown-mode-setup ()
+  "Apply custom settings for markdown mode."
   (require 'visual-fill-column)
 
   (setq-local fill-column 150

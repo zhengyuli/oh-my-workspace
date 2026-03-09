@@ -30,12 +30,11 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun jump-to-matched-paren ()
+(defun omw/jump-to-matched-paren ()
   "Jump to the matched parenthesis/bracket/brace for the current position.
-Behavior:
-- If cursor is on/after an opening delimiter ([{\"), jump to its closing match
-- If cursor is on/before a closing delimiter (]})\"), jump to its opening match
-- If no delimiter is found, show an error message"
+If cursor is on/after an opening delimiter, jump to its closing match.
+If cursor is on/before a closing delimiter, jump to its opening match.
+If no delimiter is found, show an error message."
   (interactive)
   (cond ((looking-at "[ \t]*[[\"({]")
          (forward-sexp)
@@ -141,6 +140,7 @@ Behavior:
 
 ;; ==================================================================================
 (defun omw/prog-mode-setup ()
+  "Apply custom settings for programming modes."
   (setq-local tab-width 4
               indent-tabs-mode nil)
   (display-line-numbers-mode 1)
@@ -155,7 +155,7 @@ Behavior:
               ;; Navigation
               ("C-c M-a" . beginning-of-defun)
               ("C-c M-e" . end-of-defun)
-              ("C-]" . jump-to-matched-paren)
+              ("C-]" . omw/jump-to-matched-paren)
               ;; Comment toggle
               ("C-c C-c" . comment-line)
               ;; Xref
