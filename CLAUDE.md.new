@@ -403,3 +403,167 @@ Every `.el` file must start with:
 (setq dired-dwim-target t)
 ```
 
+
+### Function & Variable Patterns
+
+#### Function Definition Patterns
+
+**Pattern A: Simple function (1-10 lines)**
+```elisp
+(defun omw/simple-function ()
+  "One-line summary of what function does."
+  (interactive)
+  (body))
+```
+
+**Pattern B: Medium complexity (10-30 lines)**
+```elisp
+(defun omw/medium-function (arg)
+  "One-line summary with additional context.
+Details about behavior, arguments, or side effects."
+  (body))
+```
+
+**Pattern C: Complex function (30+ lines) or complex behavior**
+```elisp
+(defun omw/complex-function (arg)
+  "Multi-line summary with details.
+
+Argument ARG is used for...
+
+Behavior:
+- First action
+- Second action
+- Third action
+
+Returns: Description of return value."
+  (body))
+```
+
+**Docstring guidelines:**
+- Simple functions (1-10 lines): One-line docstring
+- Medium complexity (10-30 lines): One-line with brief context
+- Complex (30+ lines) or non-obvious behavior: Multi-line with details
+- ❌ Never use numbered steps in docstrings
+- ❌ Don't state the obvious (e.g., "Function to do X")
+
+#### Variable Definition Patterns
+
+**Pattern A: Simple custom variable**
+```elisp
+(defcustom omw/font-monospace-list '("JetBrains Mono" "Menlo")
+  "Priority list of monospace fonts for coding."
+  :type '(repeat string)
+  :group 'omw-emacs)  ; ✅ REQUIRED
+```
+
+**Pattern A2: Integer variable**
+```elisp
+(defcustom omw/font-size-default 160
+  "Default font height in 1/10pt units (160 = 16pt)."
+  :type 'integer
+  :group 'omw-emacs)  ; ✅ REQUIRED
+```
+
+**Pattern B: Choice type variable**
+```elisp
+(defcustom omw/http-proxy nil
+  "HTTP proxy for Emacs and subprocesses.
+Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
+  :type '(choice (const :tag "No proxy" nil)
+                 (string :tag "Proxy address"))
+  :group 'omw-emacs)  ; ✅ REQUIRED
+```
+
+**Pattern C: Alist type variable**
+```elisp
+(defcustom omw/markdown-colors
+  '((header . "#46dcb0")
+    (code-bg . "#293134")
+    (code-fg . "#e0e2e4"))
+  "Colors for Markdown syntax highlighting."
+  :type 'alist
+  :group 'omw-emacs)  ; ✅ REQUIRED
+```
+
+#### Minor Mode Definition Pattern
+
+**Template:**
+```elisp
+(define-minor-mode omw/<feature>-mode
+  "Description of minor mode."
+  :lighter " ModeLineIndicator"
+  :global nil
+  (if omw/<feature>-mode
+      (add-hook 'hook-name #'omw/function nil t)
+    (remove-hook 'hook-name #'omw/function t)))
+```
+
+**Example:**
+```elisp
+(define-minor-mode omw/prog-before-save-mode
+  "Minor mode for programming buffers to run custom before-save hooks."
+  :lighter " SaveHook"
+  :global nil
+  (if omw/prog-before-save-mode
+      (add-hook 'before-save-hook #'omw/prog-before-save nil t)
+    (remove-hook 'before-save-hook #'omw/prog-before-save t)))
+```
+
+### Code Style
+
+#### Inline Comments
+
+**Rule: Use inline comments ONLY when:**
+- Explaining "why" not "what"
+- Documenting non-obvious behavior
+- Providing context for complex logic
+
+**✅ Good inline comment:**
+```elisp
+(setq dirvish-attributes
+      (append dirvish-attributes
+              '(git-msg file-modes)))  ; Add custom attributes not in default set
+```
+
+**❌ Unnecessary inline comment:**
+```elisp
+(setq tab-width 4)  ; Set tab width to 4  ; ❌ Obvious from code
+```
+
+#### Section Separators
+
+**Required format (with blank lines before/after):**
+```elisp
+;; ==================================================================================
+
+(use-package ...)
+
+;; ==================================================================================
+```
+
+**Usage:**
+- ✅ Before each major use-package block
+- ✅ Before each major function definition (if file has multiple sections)
+- ✅ Before "Provide features" section
+- ✅ With blank line before and after
+
+#### Code Formatting
+
+**Indentation:** 2 spaces (Emacs Lisp default)
+
+**Multi-line setq:**
+```elisp
+(setq var1 value1
+      var2 value2
+      var3 value3)
+```
+
+**Multi-line setq with comments:**
+```elisp
+(setq var1 value1      ; Comment for var1
+      var2 value2      ; Comment for var2
+      var3 value3)     ; Comment for var3
+```
+
+**Line-end comments:** 2+ spaces before semicolon
