@@ -97,3 +97,51 @@ emacs --debug-init
 emacs --batch --eval '(progn (load-file "init.el") (message "Configuration loaded successfully"))'
 ```
 
+
+## Architecture
+
+### Module Loading System
+
+**Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
+
+**Loading order** (lines 207-228 of init.el):
+1. **Core**: init-editing → init-completion → init-auth → init-proxy → init-fonts → init-ui
+2. **Tools**: init-dired → init-pdf → init-magit → init-terminal → init-agent
+3. **Languages**: init-prog → [language modules in lang/]
+
+**When adding new modules**:
+- Add `(provide 'init-module-name)` at end of file
+- Add `(require 'init-module-name)` in `init.el` at correct position
+- For language modules: just place in `lisp/lang/` - they're auto-loaded via dolist
+
+### Key Architecture Patterns
+
+**Centralized LSP Configuration**: All language LSP servers are configured in `init-prog.el` via a single `eglot` use-package block. Language modules should NOT configure LSP servers themselves.
+
+**Minimal Language Modules**: Language modules in `lisp/lang/` should be minimal (3-10 lines typical). They only install the major mode package.
+
+**Custom Packages**: The `site-packages/` directory is automatically added to `load-path` by `init.el`. Custom packages there can be required with `(require 'package-name)`.
+
+**Custom File Separation**: Emacs customizations are stored in `~/.emacs.d/custom.el`, not in init.el. The `custom-file` variable is set early (before package initialization) to prevent Emacs from writing customizations to init.el.
+
+**Path Resolution**: The config uses `omw/emacs-config-root-path` to find the actual config directory, resolving symlinks correctly.
+
+### Module Guidelines
+
+**Core Modules** (`lisp/init-*.el`)
+- Purpose: Fundamental editor features (UI, editing, completion)
+- Characteristics: May use `:demand t` for critical packages, complex configurations acceptable
+- Examples: init-ui.el, init-completion.el, init-editing.el
+
+**Tool Modules** (`lisp/tools/init-*.el`)
+- Purpose: External tool integration (Magit, vterm, AI tools)
+- Characteristics: May use `:vc` for Git-based packages, platform-specific code acceptable
+- Examples: init-magit.el, init-terminal.el, init-dired.el, init-pdf.el
+
+**Language Modules** (`lisp/lang/init-*.el`)
+- Purpose: Language-specific configuration
+- Characteristics: Should be concise and focused, MUST NOT configure LSP servers (centralized in init-prog.el)
+- Simple `:ensure t :defer t` preferred for most cases
+- Use setup functions only for language-specific buffer-local settings
+- Keep language-related code together for module cohesion
+
