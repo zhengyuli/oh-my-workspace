@@ -659,3 +659,92 @@ M-x package-refresh-contents  ; Refresh package list
 - **No Zsh config**: Repository doesn't contain Zsh files (see README.md for setup)
 - **Prefix correction**: Code uses `omw/` prefix, not `my/`
 - **Quality assurance**: Codebase maintains 98%+ compliance with documented standards through regular audits
+
+## Best Practices
+
+### 1. Language Module Cohesion
+
+**Principle**: Keep language-related code together, even if it means more lines.
+
+**Examples from the codebase:**
+- `init-python.el` (46 lines) - Includes pyvenv and poetry tracking because these are essential for Python development
+- `init-markdown.el` (82 lines) - Includes visual editing tools (valign, olivetti, visual-fill-column) because they're part of the Markdown writing experience
+- `init-elisp.el` (19 lines) - Includes enhancement tools (elisp-slime-nav, lisp-extra-font-lock, rainbow-mode) for better Lisp development
+
+**Why this works better than artificial limits:**
+- ✅ **Cohesion**: All code for Language X is in one place
+- ✅ **Discoverability**: Developers know where to find language-specific features
+- ✅ **Maintainability**: Language features are not scattered across multiple files
+- ✅ **Pragmatism**: Real-world languages have different complexity levels
+
+### 2. Docstring Style
+
+**Use paragraph form, not bullet lists:**
+
+```elisp
+;; ❌ AVOID: Bullet list in docstrings
+"Do X.
+- Step 1
+- Step 2
+- Step 3"
+
+;; ✅ CORRECT: Paragraph form
+"Do X by first doing step 1, then step 2.
+Finally complete step 3."
+```
+
+**Why**: Bullet lists are hard to read in docstrings and violate Emacs conventions.
+
+### 3. Testing Before Committing
+
+**Always run these commands before committing changes:**
+
+```bash
+# 1. Syntax check
+emacs --batch --eval '(progn (load-file "emacs/init.el") (message "✅ OK"))'
+
+# 2. Debug check
+emacs --debug-init
+
+# 3. Quick audit
+grep -rn "defun (?!omw/)" emacs/lisp --include="*.el"
+grep -rn "defcustom.*:group" emacs/lisp --include="*.el" | grep -v "omw-emacs"
+```
+
+**Why**: Catches common issues before they reach the repository.
+
+### 4. File Header Consistency
+
+**Keep file headers consistent** - use the exact same format:
+
+- Line 1: `;;; filename -*- lexical-binding: t; -*-`
+- Line 2: `;; Time-stamp: <YYYY-MM-DD HH:MM:SS Weekday by zhengyu.li>`
+- Lines 4-5: Copyright (C) with current year (2026)
+- Line 7: Author
+- Line 8: Keywords (2-4 tags)
+- Line 9: Dependencies ((none) or module-name)
+- Lines 11-23: Full GPL license text
+- Lines 25-27: Commentary (1-2 sentence description)
+
+**Why**: Consistency makes the codebase easier to navigate and understand.
+
+### 5. Special Cases
+
+**Environment tracking packages** (pyvenv, poetry) need `:demand t`:
+```elisp
+(use-package pyvenv
+  :ensure t
+  :demand t
+  :config
+  (pyvenv-tracking-mode 1))
+```
+
+**Face customization** uses `:custom-face` with `fixed-pitch`:
+```elisp
+(use-package centaur-tabs
+  :ensure t
+  :custom-face
+  (centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41")))))
+```
+
+**Why**: Prevents buffer-local face remapping issues and ensures tracking activates immediately.
