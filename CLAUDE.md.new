@@ -145,3 +145,93 @@ emacs --batch --eval '(progn (load-file "init.el") (message "Configuration loade
 - Use setup functions only for language-specific buffer-local settings
 - Keep language-related code together for module cohesion
 
+
+## Coding Standards
+
+### Naming Convention (CRITICAL)
+
+**All custom functions and variables MUST use `omw/` prefix** (not `my/`):
+
+```elisp
+;; ✅ CORRECT
+(defun omw/prog-mode-setup () ...)
+(defcustom omw/http-proxy nil ...)
+
+;; ❌ WRONG
+(defun my/prog-mode-setup () ...)
+```
+
+The `omw/` prefix stands for "oh-my-workspace" and is used consistently throughout the codebase.
+
+**Function Naming Patterns:**
+- **Setup functions** (mode configuration): `omw/<mode>-setup`
+  - Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`
+- **Action functions** (operations): `omw/<noun>-<verb>`
+  - Examples: `omw/indent-entire-buffer`, `omw/set-http-proxy`
+- **Mode indicators** (mode-line display): `omw/<feature>-mode-line-indicator`
+  - Examples: `omw/pyvenv-mode-line-indicator`
+
+**Variable Naming Patterns:**
+- Format: `omw/<category>-<item>`
+- Examples: `omw/font-monospace-list`, `omw/font-size-default`, `omw/http-proxy`
+- Must use `defcustom` with `:group 'omw-emacs`
+
+**Minor Mode Naming:**
+- Format: `omw/<feature>-mode`
+- Examples: `omw/prog-before-save-mode`
+
+### File Header Format (MANDATORY)
+
+Every `.el` file must start with:
+
+```elisp
+;;; init-module.el -*- lexical-binding: t; -*-
+;; Time-stamp: <YYYY-MM-DD HH:MM:SS Weekday by zhengyu.li>
+
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
+;;
+;; Author: chieftain <lizhengyu419@outlook.com>
+;; Keywords: keyword1, keyword2, keyword3
+;; Dependencies: (none) or module-name
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; One or two sentence description of module purpose.
+
+;;; Code:
+
+;; ==================================================================================
+```
+
+**Required fields checklist:**
+- ✅ `-*- lexical-binding: t; -*-` on line 1
+- ✅ Time-stamp with **current date**
+- ✅ Copyright must include **current year** (2026)
+- ✅ Keywords: 2-4 relevant tags
+- ✅ Dependencies: list if any, otherwise "(none)"
+- ✅ Commentary: Brief description (1-2 sentences)
+
+### File Footer (MANDATORY)
+
+```elisp
+;; ==================================================================================
+(provide 'init-module)
+
+;;; init-module.el ends here
+```
+
