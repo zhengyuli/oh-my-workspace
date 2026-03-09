@@ -29,9 +29,8 @@ oh-my-workspace/
 ├── README.md                # Comprehensive setup guide
 └── CLAUDE.md                # This file
 ```
-## Quick Start
 
-### Setup
+## Setup and Validation
 
 ```bash
 # Emacs setup
@@ -52,53 +51,7 @@ go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
 
 The `emacs/setup.sh` script validates dependencies and displays installation commands for missing tools. Use it to check what's missing.
 
-### Common Commands
-
-| Command                        | Function                         |
-|--------------------------------|----------------------------------|
-| `C-x b`                        | Switch buffer (Consult)          |
-| `C-x f`                        | Find file in directory (Consult) |
-| `C-x g`                        | Search files with grep (Consult) |
-| `C-s`                          | Search in buffer (Consult)       |
-| `M-y`                          | Browse kill ring (Consult)       |
-| `C-.`                          | Embark actions                   |
-| `M-.` / `M-,`                  | Go to definition / pop marker    |
-| `M-x eglot`                    | Start LSP manually               |
-| `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode)    |
-| `<f11>`                        | Toggle fullscreen                |
-
-**Dired/Dirvish Keybindings** (in dired-mode):
-
-| Key     | Command                      | Description          |
-|---------|------------------------------|----------------------|
-| `C-x d` | dired                        | Open dired           |
-| `C-x j` | dired-jump                   | Jump to dired        |
-| `o`     | omw/dired-open-externally    | Open file externally |
-| `k`     | omw/smart-kill-buffer        | Kill buffer          |
-| `TAB`   | dirvish-subtree-toggle       | Toggle subtree       |
-
-**PDF View Keybindings** (in pdf-view-mode):
-
-| Key | Command                                      | Description        |
-|-----|----------------------------------------------|--------------------|
-| `j` | pdf-view-next-line-or-next-page              | Next line/page     |
-| `k` | pdf-view-previous-line-or-previous-page      | Previous line/page |
-| `+` | pdf-view-enlarge                             | Zoom in            |
-| `-` | pdf-view-shrink                              | Zoom out           |
-
-### Quick Validation
-
-**Test configuration loads without errors:**
-```bash
-# Full initialization test
-emacs --debug-init
-
-# Batch mode test (faster for CI/CD)
-emacs --batch --eval '(progn (load-file "init.el") (message "Configuration loaded successfully"))'
-```
-
-
-## Architecture
+## Emacs Configuration Architecture
 
 ### Module Loading System
 
@@ -118,35 +71,30 @@ emacs --batch --eval '(progn (load-file "init.el") (message "Configuration loade
 
 **Centralized LSP Configuration**: All language LSP servers are configured in `init-prog.el` via a single `eglot` use-package block. Language modules should NOT configure LSP servers themselves.
 
-**Minimal Language Modules**: Language modules in `lisp/lang/` should be minimal (3-10 lines typical). They only install the major mode package.
+**Minimal Language Modules**: Language modules in `lisp/lang/` should be minimal (3-10 lines typical). They only install the major mode package. Example:
+```elisp
+(use-package go-mode
+  :ensure t
+  :defer t)
+; LSP server (gopls) is configured in init-prog.el
+```
 
 **Custom Packages**: The `site-packages/` directory is automatically added to `load-path` by `init.el`. Custom packages there can be required with `(require 'package-name)`.
 
-**Custom File Separation**: Emacs customizations are stored in `~/.emacs.d/custom.el`, not in init.el. The `custom-file` variable is set early (before package initialization) to prevent Emacs from writing customizations to init.el.
+**Custom File Separation**: Emacs customizations are stored in `~/.emacs.d/custom.el`, not in init.el. The `custom-file` variable is set early (before package initialization) to prevent Emacs from writing customizations to init.el:
+
+```elisp
+;; Set custom file early (before package-initialize)
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+;; Load custom file after all modules are loaded
+(when (file-readable-p custom-file)
+  (load custom-file nil 'nomessage))
+```
 
 **Path Resolution**: The config uses `omw/emacs-config-root-path` to find the actual config directory, resolving symlinks correctly.
 
-### Module Guidelines
-
-**Core Modules** (`lisp/init-*.el`)
-- Purpose: Fundamental editor features (UI, editing, completion)
-- Characteristics: May use `:demand t` for critical packages, complex configurations acceptable
-- Examples: init-ui.el, init-completion.el, init-editing.el
-
-**Tool Modules** (`lisp/tools/init-*.el`)
-- Purpose: External tool integration (Magit, vterm, AI tools)
-- Characteristics: May use `:vc` for Git-based packages, platform-specific code acceptable
-- Examples: init-magit.el, init-terminal.el, init-dired.el, init-pdf.el
-
-**Language Modules** (`lisp/lang/init-*.el`)
-- Purpose: Language-specific configuration
-- Characteristics: Should be concise and focused, MUST NOT configure LSP servers (centralized in init-prog.el)
-- Simple `:ensure t :defer t` preferred for most cases
-- Use setup functions only for language-specific buffer-local settings
-- Keep language-related code together for module cohesion
-
-
-## Coding Standards
+## Emacs Lisp Coding Standards
 
 ### Naming Convention (CRITICAL)
 
@@ -163,22 +111,46 @@ emacs --batch --eval '(progn (load-file "init.el") (message "Configuration loade
 
 The `omw/` prefix stands for "oh-my-workspace" and is used consistently throughout the codebase.
 
-**Function Naming Patterns:**
-- **Setup functions** (mode configuration): `omw/<mode>-setup`
-  - Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`
-- **Action functions** (operations): `omw/<noun>-<verb>`
-  - Examples: `omw/indent-entire-buffer`, `omw/set-http-proxy`
-- **Mode indicators** (mode-line display): `omw/<feature>-mode-line-indicator`
-  - Examples: `omw/pyvenv-mode-line-indicator`
+#### Function Naming Patterns
 
-**Variable Naming Patterns:**
-- Format: `omw/<category>-<item>`
-- Examples: `omw/font-monospace-list`, `omw/font-size-default`, `omw/http-proxy`
-- Must use `defcustom` with `:group 'omw-emacs`
+**Pattern A: Setup functions** (for mode configuration)
+```
+omw/<mode>-setup
+```
+- Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`, `omw/vterm-mode-setup`
+- Used when: 3+ buffer-local settings for the same mode
 
-**Minor Mode Naming:**
-- Format: `omw/<feature>-mode`
-- Examples: `omw/prog-before-save-mode`
+**Pattern B: Action functions** (for operations)
+```
+omw/<noun>-<verb>
+```
+- Examples: `omw/indent-entire-buffer`, `omw/show-http-proxy`, `omw/set-http-proxy`
+
+**Pattern C: Mode indicators** (for mode-line display)
+```
+omw/<feature>-mode-line-indicator
+```
+- Examples: `omw/pyvenv-mode-line-indicator`, `omw/poetry-mode-line-indicator`
+
+#### Variable Naming Patterns
+
+**Format:** `omw/<category>-<item>`
+
+**Examples:**
+- `omw/font-monospace-list` (list of items)
+- `omw/font-size-default` (simple value)
+- `omw/emacs-config-root-path` (file path - use `-path` suffix)
+- `omw/http-proxy`
+- `omw/markdown-colors`
+
+**Variable Type:** Must use `defcustom` for user-configurable variables with `:group 'omw-emacs`
+
+#### Minor Mode Naming
+
+**Format:** `omw/<feature>-mode`
+
+**Examples:**
+- `omw/prog-before-save-mode`
 
 ### File Header Format (MANDATORY)
 
@@ -226,17 +198,7 @@ Every `.el` file must start with:
 - ✅ Dependencies: list if any, otherwise "(none)"
 - ✅ Commentary: Brief description (1-2 sentences)
 
-### File Footer (MANDATORY)
-
-```elisp
-;; ==================================================================================
-(provide 'init-module)
-
-;;; init-module.el ends here
-```
-
-
-### use-package Patterns (MANDATORY)
+### use-package Keyword Order (MANDATORY)
 
 **Keywords MUST appear in this exact order:**
 
@@ -253,67 +215,86 @@ Every `.el` file must start with:
 
 #### :ensure/:vc Rules
 
-**External packages from ELPA/MELPA:**
+**Rule A: External packages from ELPA/MELPA**
 ```elisp
 (use-package <package>
-  :ensure t)
+  :ensure t)  ; ✅ CORRECT
 ```
 
-**Built-in Emacs packages:**
+**Rule B: Built-in Emacs packages**
 ```elisp
 (use-package <built-in>
-  :ensure nil)
+  :ensure nil)  ; ✅ CORRECT
 ```
 
-**Packages from Git/VCS:**
+**Rule C: Packages from Git/VCS**
 ```elisp
 (use-package <package>
-  :vc (:url "https://github.com/<user>/<repo>" :rev :newest))
+  :vc (:url "https://github.com/<user>/<repo>" :rev :newest))  ; ✅ CORRECT
 ```
 
 #### :defer vs :demand Rules
 
-**Default behavior - Use `:defer t` for 95% of packages:**
+**Rule A: Default behavior - Use :defer t**
 ```elisp
 (use-package <package>
   :ensure t
-  :defer t)
+  :defer t)  ; ✅ CORRECT for 95% of packages
 ```
 
-**Critical packages requiring immediate load** (themes, completion core, environment tracking):
+**Rule B: Critical packages requiring immediate load**
 ```elisp
 (use-package <critical-package>
   :ensure t
-  :demand t
+  :demand t  ; ✅ Use for: theme system, completion framework core
   :config
   ...)
 ```
 
-**Environment tracking packages** (pyvenv, poetry) need `:demand t` to activate immediately:
+**When to use :demand t:**
+- Theme packages (doom-themes)
+- Completion framework core (vertico, orderless)
+- Packages that must be available at startup
+- Environment tracking packages (pyvenv, poetry) - need to track state immediately
+
+**Rule C: Environment tracking packages**
 ```elisp
+;; ✅ CORRECT: Tracking packages need :demand t to activate immediately
 (use-package pyvenv
   :ensure t
   :demand t
   :config
   (pyvenv-tracking-mode 1))
+
+;; ❌ AVOID: :defer t prevents tracking from working correctly
+(use-package pyvenv
+  :ensure t
+  :defer t
+  :hook (python-mode . pyvenv-tracking-mode))  ; May miss environment changes
 ```
+
+**When to use :defer t:**
+- All language modes
+- All tool integrations
+- All enhancement packages
 
 #### :hook Rules
 
-**Single hook - Simple form:**
+**Rule A: Single hook - Simple form**
 ```elisp
-:hook (prog-mode . smartparens-mode)
+:hook (prog-mode . smartparens-mode)  ; ✅ CORRECT
 ```
 
-**Multiple hooks - List form:**
+**Rule B: Multiple hooks - List form**
 ```elisp
-:hook ((c-mode . eglot-ensure)
+:hook ((c-mode . eglot-ensure)       ; ✅ CORRECT
        (c++-mode . eglot-ensure)
        (python-mode . eglot-ensure))
 ```
 
-**Setup function for complex configurations** (3+ buffer-local settings):
+**Rule C: Setup function for complex configurations**
 ```elisp
+;; Define setup function when multiple buffer-local settings needed
 (defun omw/prog-mode-setup ()
   "Apply custom settings for programming modes."
   (setq-local tab-width 4)
@@ -321,32 +302,60 @@ Every `.el` file must start with:
   (hs-minor-mode 1))
 
 (use-package prog-mode
-  :hook (prog-mode . omw/prog-mode-setup))
+  :hook (prog-mode . omw/prog-mode-setup))  ; ✅ CORRECT
 ```
 
+**Setup function naming:** `omw/<mode>-setup`
+- Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`, `omw/vterm-mode-setup`
+
+**When to use setup functions:**
+- 3+ buffer-local settings for the same mode
+- Settings that should always be applied together
+- Improves maintainability
+
 **Setup function rules:**
-- Use `setq-local` for variables, mode functions for toggles
-- Naming: `omw/<mode>-setup`
-- Prefer built-in functions over custom wrappers
+```elisp
+;; ✅ CORRECT: Use setq-local for variables
+(defun omw/prog-mode-setup ()
+  (setq-local tab-width 4
+              indent-tabs-mode nil)  ; Variable, not a mode
+  (display-line-numbers-mode 1))    ; Mode function
+
+;; ❌ AVOID: Treating variable as mode function
+(defun omw/prog-mode-setup ()
+  (setq-local tab-width 4)
+  (indent-tabs-mode -1))  ; WRONG: indent-tabs-mode is a variable!
+```
+
+**Prefer built-in functions over custom wrappers:**
+```elisp
+;; ✅ CORRECT: Use built-in function directly
+:hook (pdf-view-mode . pdf-view-fit-height-to-window)
+
+;; ❌ AVOID: Unnecessary wrapper function
+(defun omw/pdf-view-mode-setup ()
+  (setq-local pdf-view-display-size 'fit-height))
+:hook (pdf-view-mode . omw/pdf-view-mode-setup)
+```
 
 #### :bind Rules
 
-**Global keybindings only:**
+**Rule A: Global keybindings only**
 ```elisp
-:bind (("C-x C-t" . multi-vterm)
+:bind (("C-x C-t" . multi-vterm)    ; ✅ CORRECT
        ("C-c g s" . magit-status))
 ```
 
-**Mode-local keybindings only:**
+**Rule B: Mode-local keybindings only**
 ```elisp
-:bind (:map vterm-mode-map
+:bind (:map vterm-mode-map          ; ✅ CORRECT
             ("M-1" . nil)
             ("C-g" . vterm--self-insert))
 ```
 
-**Both global and mode-local:**
+**Rule C: Both global and mode-local**
 ```elisp
-:bind (("C-x j" . dired-jump)
+:bind (("C-x j" . dired-jump)       ; ✅ CORRECT
        (:map dired-mode-map
              ("C-c C-c" . dired-do-copy)
              ("C-c C-r" . dired-do-rename)))
@@ -354,18 +363,18 @@ Every `.el` file must start with:
 
 **Keybinding prefix guidelines:**
 - `C-c <letter>` - For mode-specific commands
-- `C-c <letter> <letter>` - For sub-modes
+- `C-c <letter> <letter>` - For sub-modes (e.g., `C-c g s` for git status)
 - Avoid overriding Emacs defaults unless documented
 
 #### :custom-face Rules
 
-**Use `:custom-face` instead of `custom-set-faces`:**
+**Rule A: Use `:custom-face` instead of `custom-set-faces`**
 ```elisp
 :custom-face
-(centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41"))))
+(centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41"))))  ; ✅ CORRECT
 ```
 
-**Use `fixed-pitch` inheritance to prevent buffer-local remapping issues:**
+**Rule B: Use explicit face attributes to prevent buffer-local remapping issues**
 ```elisp
 ;; ✅ CORRECT: Explicit attributes prevent inheritance from buffer-local remapping
 :custom-face
@@ -373,38 +382,39 @@ Every `.el` file must start with:
 
 ;; ❌ AVOID: Inheriting from 'default can pick up buffer-local face remapping
 :custom-face
-(some-face ((t (:inherit default))))
+(some-face ((t (:inherit default))))  ; May be affected by markdown-mode scaling
 ```
 
-**Why:** Buffer-local face remapping affects faces that inherit from `default`. Using `fixed-pitch` or explicit attributes prevents unintended font scaling in UI elements.
+**Why use `:inherit fixed-pitch` instead of `:inherit default`:**
+- Buffer-local face remapping (e.g., `face-remap-add-relative` in markdown-mode) affects faces that inherit from `default`
+- Using `fixed-pitch` or explicit attributes prevents unintended font scaling in UI elements like tab bars
 
 #### :config Rules
 
-**Simple configuration:**
+**Rule A: Simple configuration**
 ```elisp
 :config
 (setq var1 value1
-      var2 value2)
+      var2 value2)  ; ✅ CORRECT
 ```
 
-**Complex configuration:**
+**Rule B: Complex configuration**
 ```elisp
 :config
 (setq var1 value1)
 (setq var2 value2)
-(function-call arg1 arg2)
+(function-call arg1 arg2)  ; ✅ CORRECT
 ```
 
-**Configuration with requires:**
+**Rule C: Configuration with requires**
 ```elisp
 :config
 (require 'dired-x)
-(require 'dired-async)
+(require 'dired-async)  ; ✅ CORRECT
 (setq dired-dwim-target t)
 ```
 
-
-### Function & Variable Patterns
+### Function and Variable Patterns
 
 #### Function Definition Patterns
 
@@ -510,7 +520,7 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
     (remove-hook 'before-save-hook #'omw/prog-before-save t)))
 ```
 
-### Code Style
+### Comment Style Guidelines
 
 #### Inline Comments
 
@@ -548,7 +558,7 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 - ✅ Before "Provide features" section
 - ✅ With blank line before and after
 
-#### Code Formatting
+### Code Formatting
 
 **Indentation:** 2 spaces (Emacs Lisp default)
 
@@ -568,9 +578,126 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 
 **Line-end comments:** 2+ spaces before semicolon
 
-## Code Quality
+### File Footer
 
-### Validation Commands
+```elisp
+;; ==================================================================================
+(provide 'init-module)
+
+;;; init-module.el ends here
+```
+
+## Module Type Guidelines
+
+### Core Modules (lisp/init-*.el)
+
+**Purpose:** Fundamental editor features (UI, editing, completion)
+
+**Characteristics:**
+- May use `:demand t` for critical packages
+- Complex configurations acceptable
+- Multiple packages per file
+- Cross-cutting concerns
+
+**Examples:** init-ui.el, init-completion.el, init-editing.el
+
+### Tool Modules (lisp/tools/init-*.el)
+
+**Purpose:** External tool integration (Magit, vterm, AI tools)
+
+**Characteristics:**
+- May use `:vc` for Git-based packages
+- Platform-specific code acceptable
+- External executable detection
+- Custom setup functions for tool behavior
+
+**Examples:** init-magit.el, init-terminal.el, init-dired.el, init-pdf.el
+
+### Language Modules (lisp/lang/init-*.el)
+
+**Purpose:** Language-specific configuration
+
+**Characteristics:**
+- **Should be concise and focused** - Keep only language-specific configuration
+- **MUST NOT configure LSP servers** - LSP is centralized in init-prog.el
+- Simple `:ensure t :defer t` preferred for most cases
+- Use setup functions only for language-specific buffer-local settings
+- **Language-related tools and enhancements belong in lang/** - Don't artificially limit lines if the language requires complex setup
+
+**When language modules become complex:**
+- If the language requires environment tracking (e.g., Python with pyvenv/poetry), include it in the language module
+- If the language has tool integrations (e.g., Markdown with visual editing tools), include them in the language module
+- Focus on **module cohesion** over arbitrary line count limits
+- The goal is **clear organization**: all configuration for Language X should be in init-X.el
+
+**Example minimal language module:**
+```elisp
+;;; init-go.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-06 19:29:50 Friday by zhengyu.li>
+
+;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
+;;
+;; Author: chieftain <lizhengyu419@outlook.com>
+;; Keywords: go, golang
+;; Dependencies: (none)
+
+;; [GPL license text]
+
+;;; Commentary:
+;;
+;; Go language configuration.
+
+;;; Code:
+
+;; ==================================================================================
+(use-package go-mode
+  :ensure t
+  :defer t)
+;; LSP server (gopls) is configured in init-prog.el.
+
+;; ==================================================================================
+(provide 'init-go)
+
+;;; init-go.el ends here
+```
+
+## Common Emacs Commands
+
+| Command                        | Function                         |
+|--------------------------------|----------------------------------|
+| `C-x b`                        | Switch buffer (Consult)          |
+| `C-x f`                        | Find file in directory (Consult) |
+| `C-x g`                        | Search files with grep (Consult) |
+| `C-s`                          | Search in buffer (Consult)       |
+| `M-y`                          | Browse kill ring (Consult)       |
+| `C-.`                          | Embark actions                   |
+| `M-.` / `M-,`                  | Go to definition / pop marker    |
+| `M-x eglot`                    | Start LSP manually               |
+| `M-x nerd-icons-install-fonts` | Install icon fonts (GUI mode)    |
+| `<f11>`                        | Toggle fullscreen                |
+
+### Dired/Dirvish Keybindings (in dired-mode)
+
+| Key     | Command                      | Description          |
+|---------|------------------------------|----------------------|
+| `C-x d` | dired                        | Open dired           |
+| `C-x j` | dired-jump                   | Jump to dired        |
+| `o`     | omw/dired-open-externally    | Open file externally |
+| `k`     | omw/smart-kill-buffer        | Kill buffer          |
+| `TAB`   | dirvish-subtree-toggle       | Toggle subtree       |
+
+### PDF View Keybindings (in pdf-view-mode)
+
+| Key | Command                                      | Description        |
+|-----|----------------------------------------------|--------------------|
+| `j` | pdf-view-next-line-or-next-page              | Next line/page     |
+| `k` | pdf-view-previous-line-or-previous-page      | Previous line/page |
+| `+` | pdf-view-enlarge                             | Zoom in            |
+| `-` | pdf-view-shrink                              | Zoom out           |
+
+## Code Quality and Compliance Validation
+
+### Automated Checks
 
 **Test configuration loads without errors:**
 ```bash
@@ -578,7 +705,7 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 emacs --debug-init
 
 # Batch mode test (faster for CI/CD)
-emacs --batch --eval '(progn (load-file "init.el") (message "Configuration loaded successfully"))'
+emacs --batch --eval '(progn (load-file "init.el") (message "✅ Configuration loaded successfully"))'
 ```
 
 **Check naming conventions:**
@@ -610,7 +737,7 @@ done
 grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 ```
 
-### Compliance Checklist
+### Manual Review Checklist
 
 - [ ] All custom functions use `omw/` prefix
 - [ ] All defcustom use `:group 'omw-emacs`
@@ -618,12 +745,12 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 - [ ] All files have complete GPL license text
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
-- [ ] Section separators (`;; ==================================================================================`) used correctly
+- [ ] Section separators (`;; ==================================================================================` ) used correctly
 - [ ] Files end with `(provide 'init-xxx)` and `;;; init-xxx.el ends here`
 
-### Current Status
+### Compliance Scoring
 
-**Compliance Level:** 98%+ (as of 2026-03-09)
+Based on comprehensive audits (2026-03-09), the configuration achieves **98%+ compliance** with these standards.
 
 **Key metrics:**
 - Naming convention violations: 0
@@ -632,14 +759,14 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 - use-package order violations: 0
 - Configuration load errors: 0
 
-### Troubleshooting
+## Validation and Troubleshooting
 
-**Emacs fails to load:**
+**Test Emacs loads without errors:**
 ```bash
-emacs --debug-init  # Check error messages
+emacs --debug-init
 ```
 
-**LSP issues:**
+**Check for LSP issues:**
 1. Verify server installed: `which pylsp gopls clangd`
 2. Start LSP manually: `M-x eglot`
 3. Check events log: Switch to `*eglot-events*` buffer
@@ -649,9 +776,9 @@ emacs --debug-init  # Check error messages
 M-x package-refresh-contents  ; Refresh package list
 ```
 
-**Slow startup:** Check `*Messages*` buffer with `C-h e`
+**Slow startup**: Check `*Messages*` buffer with `C-h e`
 
-### Important Notes
+## Important Notes
 
 - **macOS-focused**: Configuration assumes macOS as primary OS
 - **Symlink-based**: Config files are symlinked, not copied
@@ -660,9 +787,9 @@ M-x package-refresh-contents  ; Refresh package list
 - **Prefix correction**: Code uses `omw/` prefix, not `my/`
 - **Quality assurance**: Codebase maintains 98%+ compliance with documented standards through regular audits
 
-## Best Practices
+## Best Practices from Experience
 
-### 1. Language Module Cohesion
+### 1. Language Module Organization
 
 **Principle**: Keep language-related code together, even if it means more lines.
 
@@ -677,9 +804,22 @@ M-x package-refresh-contents  ; Refresh package list
 - ✅ **Maintainability**: Language features are not scattered across multiple files
 - ✅ **Pragmatism**: Real-world languages have different complexity levels
 
-### 2. Docstring Style
+### 2. Setup Function Pattern
 
-**Use paragraph form, not bullet lists:**
+**Always use docstrings** for setup functions, even simple ones:
+
+```elisp
+(defun omw/<mode>-setup ()
+  "Apply custom settings for <mode>."
+  (setq-local var1 value1)
+  (mode-enable))
+```
+
+**Why**: Makes code self-documenting and helps with maintenance.
+
+### 3. Documentation String Style
+
+**Use paragraph form, not bullet lists**:
 
 ```elisp
 ;; ❌ AVOID: Bullet list in docstrings
@@ -695,7 +835,32 @@ Finally complete step 3."
 
 **Why**: Bullet lists are hard to read in docstrings and violate Emacs conventions.
 
-### 3. Testing Before Committing
+### 4. use-package Keyword Order
+
+**Always follow the exact order** to avoid confusion:
+
+```
+:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config
+```
+
+**Special cases:**
+- `:mode` can come with `:hook` or before it (for mode associations)
+- `:demand t` instead of `:defer t` for packages that must activate immediately
+
+### 5. Custom Variables
+
+**Always use `defcustom` with `:group 'omw-emacs`**:
+
+```elisp
+(defcustom omw/your-variable <default>
+  "Description of what this variable does."
+  :type '<type>
+  :group 'omw-emacs)  ; ✅ Always required
+```
+
+**Why**: Makes variables discoverable and customizable via Emacs customization UI.
+
+### 6. Testing Before Committing
 
 **Always run these commands before committing changes:**
 
@@ -713,7 +878,7 @@ grep -rn "defcustom.*:group" emacs/lisp --include="*.el" | grep -v "omw-emacs"
 
 **Why**: Catches common issues before they reach the repository.
 
-### 4. File Header Consistency
+### 7. File Header Consistency
 
 **Keep file headers consistent** - use the exact same format:
 
@@ -728,10 +893,69 @@ grep -rn "defcustom.*:group" emacs/lisp --include="*.el" | grep -v "omw-emacs"
 
 **Why**: Consistency makes the codebase easier to navigate and understand.
 
-### 5. Special Cases
+## Quick Reference Card
 
-**Environment tracking packages** (pyvenv, poetry) need `:demand t`:
+### Essential Rules
+
+1. **File Header:** Must include Time-stamp, current copyright year (2026), Dependencies
+2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
+3. **Naming Prefix:** Always `omw/` for custom functions/variables
+4. **Setup Functions:** Use `setq-local` for variables, mode functions for toggles; prefer built-in functions
+5. **Comments:** Minimal, only for non-obvious code
+6. **Separators:** `;; ==================================================================================`
+7. **Language Modules:** Keep language-related code together, don't artificially limit lines
+8. **LSP Configuration:** Centralize all LSP in init-prog.el, never in language modules
+9. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
+10. **Tracking Packages:** Use `:demand t` for environment tracking (pyvenv, poetry)
+
+### Pre-Commit Checklist
+
+- [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs/init.el") ...)'`
+- [ ] No naming violations: All functions use `omw/` prefix
+- [ ] No variable violations: All defcustom use `:group 'omw-emacs`
+- [ ] File headers complete: Time-stamp, Copyright 2026, Dependencies, Commentary, GPL
+- [ ] Docstrings present: All setup functions have documentation
+- [ ] use-package order correct: Keywords in standard order
+
+### Common Patterns
+
 ```elisp
+;; Minimal language module
+(use-package <lang>-mode
+  :ensure t
+  :defer t)
+
+;; Setup function pattern
+(defun omw/<mode>-setup ()
+  "Apply custom settings for <mode>."
+  (setq-local var1 value1)
+  (mode-enable))
+
+(use-package <mode>
+  :hook (<mode> . omw/<mode>-setup))
+
+;; Custom variable
+(defcustom omw/<var> <default>
+  "Description."
+  :type '<type>
+  :group 'omw-emacs)
+
+;; Minor mode
+(define-minor-mode omw/<mode>-mode
+  "Description."
+  :lighter " Indicator"
+  :global nil
+  (if omw/<mode>-mode
+      (add-hook 'hook-name #'omw/function nil t)
+    (remove-hook 'hook-name #'omw/function t)))
+
+;; Package with custom faces (use fixed-pitch to avoid buffer-local remapping)
+(use-package centaur-tabs
+  :ensure t
+  :custom-face
+  (centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41")))))
+
+;; Environment tracking package (use :demand t for immediate activation)
 (use-package pyvenv
   :ensure t
   :demand t
@@ -739,47 +963,9 @@ grep -rn "defcustom.*:group" emacs/lisp --include="*.el" | grep -v "omw-emacs"
   (pyvenv-tracking-mode 1))
 ```
 
-**Face customization** uses `:custom-face` with `fixed-pitch`:
-```elisp
-(use-package centaur-tabs
-  :ensure t
-  :custom-face
-  (centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41")))))
-```
+---
 
-**Why**: Prevents buffer-local face remapping issues and ensures tracking activates immediately.
-
-## History
-
-### 2026-03-09: Documentation Optimization
-
-**Achievement**: Reduced CLAUDE.md from 1025 to 750 lines (27% reduction) while improving organization.
-
-**Summary**:
-- Consolidated redundant content (3 Code Quality sections → 1)
-- Streamlined Best Practices (7 practices → 5)
-- Reorganized into 8 clear sections with better flow
-- Eliminated duplicate information across sections
-- Preserved all CRITICAL and MANDATORY markers
-
-**Changes**:
-- Reduced line count from 1025 to 750 lines (27% reduction)
-- Consolidated validation commands and troubleshooting
-- Removed duplicate use-package keyword order explanations
-- Streamlined best practices to avoid redundancy
-- Maintained all coding standards and compliance requirements
-
-**Impact**:
-- Improved readability and navigation
-- Faster onboarding for new contributors
-- Reduced cognitive load
-- Better separation of concerns
-
-**Structure Changes**:
-- Architecture: Module loading, patterns, guidelines (3 sections → 1)
-- Coding Standards: Naming, file structure, use-package, functions, style (5 sections → 1)
-- Code Quality: Validation, compliance, troubleshooting (3 sections → 1)
-- Best Practices: Streamlined from 7 to 5 core practices
+## Code Quality History
 
 ### 2026-03-09: Major Compliance Improvement
 
