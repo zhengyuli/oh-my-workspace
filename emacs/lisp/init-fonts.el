@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 21:34:15 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-10 17:25:07 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -122,9 +122,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   :ensure t
   :when (display-graphic-p)
   :defer t
-  :hook (after-init . textsize-mode)
-  :config
-  (setq textsize-monitor-size-thresholds nil))
+  :hook (after-init . textsize-mode))
 
 ;; ==================================================================================
 (use-package mixed-pitch
