@@ -1,5 +1,5 @@
 ;;; init-ui.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 22:53:03 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-10 21:24:49 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -62,6 +62,11 @@
   :hook (after-init . pulsar-global-mode))
 
 ;; ==================================================================================
+(defface omw/centaur-tabs-base
+  '((t :family "Monospace" :height 1.0))
+  "Base face for centaur-tabs with fixed-pitch font."
+  :group 'omw-emacs)
+
 (use-package centaur-tabs
   :ensure t
   :defer t
@@ -72,11 +77,11 @@
               ("M-P" . centaur-tabs-switch-group)
               ("M-N" . centaur-tabs-switch-group))
   :custom-face
-  (centaur-tabs-selected ((t (:inherit fixed-pitch :bold t :foreground "#28cd41" :height 1.0))))
-  (centaur-tabs-selected-modified ((t (:inherit fixed-pitch :bold t :foreground "#ff9300" :height 1.0))))
-  (centaur-tabs-unselected ((t (:inherit fixed-pitch :bold t :foreground "grey" :height 1.0))))
-  (centaur-tabs-unselected-modified ((t (:inherit fixed-pitch :bold t :foreground "#ff9300" :height 1.0))))
-  (centaur-tabs-display-line ((t (:inherit fixed-pitch :box nil :overline nil :underline nil))))
+  (centaur-tabs-selected ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#28cd41" :height 1.0))))
+  (centaur-tabs-selected-modified ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#ff9300" :height 1.0))))
+  (centaur-tabs-unselected ((t (:inherit omw/centaur-tabs-base :bold t :foreground "grey" :height 1.0))))
+  (centaur-tabs-unselected-modified ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#ff9300" :height 1.0))))
+  (centaur-tabs-display-line ((t (:inherit omw/centaur-tabs-base :box nil :overline nil :underline nil))))
   :config
   (setq centaur-tabs-height 25
         centaur-tabs-set-close-button nil
