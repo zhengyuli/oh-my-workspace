@@ -69,22 +69,22 @@ The `emacs/setup.sh` script validates dependencies and displays installation com
 
 **Dired/Dirvish Keybindings** (in dired-mode):
 
-| Key     | Command                      | Description          |
-|---------|------------------------------|----------------------|
-| `C-x d` | dired                        | Open dired           |
-| `C-x j` | dired-jump                   | Jump to dired        |
-| `o`     | omw/dired-open-externally    | Open file externally |
-| `k`     | omw/smart-kill-buffer        | Kill buffer          |
-| `TAB`   | dirvish-subtree-toggle       | Toggle subtree       |
+| Key     | Command                   | Description          |
+|---------|---------------------------|----------------------|
+| `C-x d` | dired                     | Open dired           |
+| `C-x j` | dired-jump                | Jump to dired        |
+| `o`     | omw/dired-open-externally | Open file externally |
+| `k`     | omw/smart-kill-buffer     | Kill buffer          |
+| `TAB`   | dirvish-subtree-toggle    | Toggle subtree       |
 
 **PDF View Keybindings** (in pdf-view-mode):
 
-| Key | Command                                      | Description        |
-|-----|----------------------------------------------|--------------------|
-| `j` | pdf-view-next-line-or-next-page              | Next line/page     |
-| `k` | pdf-view-previous-line-or-previous-page      | Previous line/page |
-| `+` | pdf-view-enlarge                             | Zoom in            |
-| `-` | pdf-view-shrink                              | Zoom out           |
+| Key | Command                                 | Description        |
+|-----|-----------------------------------------|--------------------|
+| `j` | pdf-view-next-line-or-next-page         | Next line/page     |
+| `k` | pdf-view-previous-line-or-previous-page | Previous line/page |
+| `+` | pdf-view-enlarge                        | Zoom in            |
+| `-` | pdf-view-shrink                         | Zoom out           |
 
 ### Quick Validation
 

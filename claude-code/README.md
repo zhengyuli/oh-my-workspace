@@ -87,16 +87,16 @@ claude
 
 ### 配置文件位置
 
-| 文件     | 路径                          | 用途                  |
-|----------|-------------------------------|-----------------------|
+| 文件     | 路径                          | 用途                    |
+|----------|-------------------------------|-------------------------|
 | 全局设置 | `~/.claude/settings.json`     | 模型、环境变量、Plugins |
-| 用户配置 | `~/.claude.json`              | MCP 服务器、项目配置   |
-| 项目权限 | `.claude/settings.local.json` | 项目级权限设置        |
+| 用户配置 | `~/.claude.json`              | MCP 服务器、项目配置    |
+| 项目权限 | `.claude/settings.local.json` | 项目级权限设置          |
 
 ### GLM 模型配置
 
-| 环境变量                         | 推荐值        | 说明                      |
-|----------------------------------|---------------|---------------------------|
+| 环境变量                         | 推荐值        | 说明                       |
+|----------------------------------|---------------|----------------------------|
 | `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | `glm-4.5-air` | 轻量快速模型，用于简单任务 |
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | `glm-5`       | 平衡模型，日常开发推荐     |
 | `ANTHROPIC_DEFAULT_OPUS_MODEL`   | `glm-5`       | 最强模型，用于复杂任务     |
@@ -109,12 +109,12 @@ claude
 
 ### 1. claude-plugins-official (官方插件)
 
-| Plugin            | 功能                                  |
-|-------------------|---------------------------------------|
+| Plugin            | 功能                                   |
+|-------------------|----------------------------------------|
 | `context7`        | 实时文档查询，获取最新库文档和代码示例 |
 | `playwright`      | E2E 测试，浏览器自动化                 |
-| `commit-commands` | Git 提交工作流                        |
-| `firecrawl`       | 网页爬取和内容提取                    |
+| `commit-commands` | Git 提交工作流                         |
+| `firecrawl`       | 网页爬取和内容提取                     |
 
 ### 2. claude-code-workflows (工作流插件集)
 
@@ -155,8 +155,8 @@ claude
 
 ### 3. thedotmack (社区插件)
 
-| Plugin       | 功能                        |
-|--------------|-----------------------------|
+| Plugin       | 功能                         |
+|--------------|------------------------------|
 | `claude-mem` | 持久化记忆，跨会话保存上下文 |
 
 ### 4. zai-coding-plugins (智谱插件)
@@ -167,24 +167,24 @@ claude
 
 ### 5. everything-claude-code (全能插件)
 
-| Plugin                   | 功能                                     |
-|--------------------------|------------------------------------------|
+| Plugin                   | 功能                                        |
+|--------------------------|---------------------------------------------|
 | `everything-claude-code` | 代码审查、TDD、安全扫描、E2E 测试等全能插件 |
 
 ### 6. marketingskills (营销插件)
 
-| Plugin             | 功能                     |
-|--------------------|--------------------------|
+| Plugin             | 功能                       |
+|--------------------|----------------------------|
 | `marketing-skills` | 营销策略、定价、转化优化等 |
 
 ### MCP 服务器
 
-| 服务器             | 类型  | 功能                                 |
-|--------------------|-------|--------------------------------------|
+| 服务器             | 类型  | 功能                                    |
+|--------------------|-------|-----------------------------------------|
 | `zai-mcp-server`   | stdio | 图像分析、视频分析、UI 转代码、错误诊断 |
-| `web-search-prime` | http  | 网页搜索，获取最新信息                |
-| `web-reader`       | http  | 网页内容读取和解析                   |
-| `tavily`           | http  | 高级网页搜索和研究                   |
+| `web-search-prime` | http  | 网页搜索，获取最新信息                  |
+| `web-reader`       | http  | 网页内容读取和解析                      |
+| `tavily`           | http  | 高级网页搜索和研究                      |
 
 ---
 
@@ -196,12 +196,12 @@ claude
 
 **目标**: 市场调研、竞品分析、商业可行性评估
 
-| Plugin                     | 主要 Skills                                    | 用途                  |
-|----------------------------|------------------------------------------------|-----------------------|
+| Plugin                     | 主要 Skills                                    | 用途                   |
+|----------------------------|------------------------------------------------|------------------------|
 | `startup-business-analyst` | `/market-opportunity`, `/business-case`        | 市场机会分析、商业案例 |
 | `marketing-skills`         | `/competitor-alternatives`, `/marketing-ideas` | 竞品分析、营销创意     |
-| `business-analytics`       | `/data-storytelling`                           | 数据驱动的商业洞察    |
-| `content-marketing`        | `/search-specialist`                           | 市场调研搜索          |
+| `business-analytics`       | `/data-storytelling`                           | 数据驱动的商业洞察     |
+| `content-marketing`        | `/search-specialist`                           | 市场调研搜索           |
 
 **推荐 MCP**: `tavily` (深度研究), `web-search-prime` (快速搜索)
 
@@ -213,8 +213,8 @@ claude
 
 #### 产品设计
 
-| Plugin      | 主要 Skills                                 | 用途                |
-|-------------|---------------------------------------------|---------------------|
+| Plugin      | 主要 Skills                                 | 用途                 |
+|-------------|---------------------------------------------|----------------------|
 | `ui-design` | `/design-system-setup`, `/create-component` | 设计系统、组件设计   |
 | `ui-design` | `/accessibility-audit`, `/design-review`    | 无障碍审计、设计审查 |
 
@@ -229,10 +229,10 @@ claude
 
 #### 数据库设计
 
-| Plugin             | 主要 Skills                       | 用途                |
-|--------------------|-----------------------------------|---------------------|
+| Plugin             | 主要 Skills                       | 用途                 |
+|--------------------|-----------------------------------|----------------------|
 | `database-design`  | `/database-architect`, `/sql-pro` | 数据库设计、SQL 优化 |
-| `data-engineering` | `/data-engineer`                  | 数据管道设计        |
+| `data-engineering` | `/data-engineer`                  | 数据管道设计         |
 
 ---
 
@@ -318,17 +318,17 @@ claude
 
 #### 云基础设施
 
-| Plugin                 | 主要 Skills                                       | 用途            |
-|------------------------|---------------------------------------------------|-----------------|
-| `cloud-infrastructure` | `/cloud-architect`, `/terraform-specialist`       | 云架构          |
-| `cloud-infrastructure` | `/kubernetes-architect`                           | Kubernetes      |
+| Plugin                 | 主要 Skills                                       | 用途             |
+|------------------------|---------------------------------------------------|------------------|
+| `cloud-infrastructure` | `/cloud-architect`, `/terraform-specialist`       | 云架构           |
+| `cloud-infrastructure` | `/kubernetes-architect`                           | Kubernetes       |
 | `cloud-infrastructure` | `/hybrid-cloud-architect`, `/service-mesh-expert` | 混合云、服务网格 |
 
 #### 容器编排
 
-| Plugin                  | 主要 Skills                                        | 用途            |
-|-------------------------|----------------------------------------------------|-----------------|
-| `kubernetes-operations` | `/kubernetes-architect`, `/helm-chart-scaffolding` | K8s 运维        |
+| Plugin                  | 主要 Skills                                        | 用途             |
+|-------------------------|----------------------------------------------------|------------------|
+| `kubernetes-operations` | `/kubernetes-architect`, `/helm-chart-scaffolding` | K8s 运维         |
 | `kubernetes-operations` | `/gitops-workflow`, `/k8s-security-policies`       | GitOps、安全策略 |
 
 ---
@@ -337,13 +337,13 @@ claude
 
 **目标**: 系统稳定性、性能优化
 
-| Plugin                    | 主要 Skills                                        | 用途            |
-|---------------------------|----------------------------------------------------|-----------------|
-| `application-performance` | `/performance-engineer`, `/observability-engineer` | 性能优化        |
-| `cicd-automation`         | `/devops-troubleshooter`                           | DevOps 故障排查 |
+| Plugin                    | 主要 Skills                                        | 用途             |
+|---------------------------|----------------------------------------------------|------------------|
+| `application-performance` | `/performance-engineer`, `/observability-engineer` | 性能优化         |
+| `cicd-automation`         | `/devops-troubleshooter`                           | DevOps 故障排查  |
 | `debugging-toolkit`       | `/debugger`, `/dx-optimizer`                       | 调试、开发者体验 |
-| `error-debugging`         | `/debugger`, `/error-detective`                    | 错误诊断        |
-| `backend-development`     | `/security-auditor`                                | 安全审计        |
+| `error-debugging`         | `/debugger`, `/error-detective`                    | 错误诊断         |
+| `backend-development`     | `/security-auditor`                                | 安全审计         |
 
 ---
 
@@ -369,11 +369,11 @@ claude
 
 #### 增长优化
 
-| Plugin             | 主要 Skills                                        | 用途              |
-|--------------------|----------------------------------------------------|-------------------|
+| Plugin             | 主要 Skills                                        | 用途               |
+|--------------------|----------------------------------------------------|--------------------|
 | `marketing-skills` | `/pricing-strategy`, `/referral-program`           | 定价、推荐计划     |
 | `marketing-skills` | `/analytics-tracking`, `/ab-test-setup`            | 数据追踪、A/B 测试 |
-| `marketing-skills` | `/page-cro`, `/signup-flow-cro`, `/onboarding-cro` | 转化优化          |
+| `marketing-skills` | `/page-cro`, `/signup-flow-cro`, `/onboarding-cro` | 转化优化           |
 
 ---
 
@@ -383,27 +383,27 @@ claude
 
 ### Git 工作流
 
-| Plugin                 | Skills                                      | 用途             |
-|------------------------|---------------------------------------------|------------------|
+| Plugin                 | Skills                                      | 用途              |
+|------------------------|---------------------------------------------|-------------------|
 | `commit-commands`      | `/commit`, `/commit-push-pr`, `/clean_gone` | Git 提交、PR 创建 |
-| `git-pr-workflows`     | `/git-workflow`                             | Git 工作流编排   |
-| `developer-essentials` | `/git-advanced-workflows`                   | 高级 Git 操作    |
+| `git-pr-workflows`     | `/git-workflow`                             | Git 工作流编排    |
+| `developer-essentials` | `/git-advanced-workflows`                   | 高级 Git 操作     |
 
 ### 文档与知识管理
 
-| Plugin                     | Skills                                                     | 用途                  |
-|----------------------------|------------------------------------------------------------|-----------------------|
-| `documentation-generation` | `/docs-architect`, `/api-documenter`, `/tutorial-engineer` | 文档生成              |
-| `code-documentation`       | `/code-reviewer`, `/docs-architect`                        | 代码文档              |
+| Plugin                     | Skills                                                     | 用途                   |
+|----------------------------|------------------------------------------------------------|------------------------|
+| `documentation-generation` | `/docs-architect`, `/api-documenter`, `/tutorial-engineer` | 文档生成               |
+| `code-documentation`       | `/code-reviewer`, `/docs-architect`                        | 代码文档               |
 | `claude-mem`               | `/mem-search`                                              | 持久化记忆、上下文保存 |
 
 ### 调试与诊断
 
-| Plugin              | Skills                          | 用途            |
-|---------------------|---------------------------------|-----------------|
+| Plugin              | Skills                          | 用途             |
+|---------------------|---------------------------------|------------------|
 | `debugging-toolkit` | `/debugger`, `/dx-optimizer`    | 调试、开发者体验 |
-| `error-debugging`   | `/debugger`, `/error-detective` | 错误调试        |
-| `error-diagnostics` | `/debugger`, `/error-detective` | 错误诊断        |
+| `error-debugging`   | `/debugger`, `/error-detective` | 错误调试         |
+| `error-diagnostics` | `/debugger`, `/error-detective` | 错误诊断         |
 
 ### 多 Agent 协作
 
@@ -440,7 +440,7 @@ claude
 | Skill             | 说明                 |
 |-------------------|----------------------|
 | `/commit`         | 创建 Git 提交        |
-| `/commit-push-pr` | 提交、推送并创建 PR   |
+| `/commit-push-pr` | 提交、推送并创建 PR  |
 | `/clean_gone`     | 清理已删除的远程分支 |
 | `/git-workflow`   | Git 工作流编排       |
 
