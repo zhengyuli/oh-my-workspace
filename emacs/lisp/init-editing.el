@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 22:38:27 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-10 22:59:27 Tuesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -109,6 +109,13 @@ Otherwise kill buffer without confirmation."
   :ensure t
   :defer t
   :bind ("M-o" . goto-last-change))
+
+;; ==================================================================================
+(use-package wgrep
+  :ensure t
+  :defer t
+  :config
+  (setq wgrep-auto-save-buffer t))
 
 ;; ==================================================================================
 (use-package autoinsert
