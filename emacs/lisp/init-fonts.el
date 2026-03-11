@@ -1,5 +1,5 @@
 ;;; init-fonts.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-10 21:24:30 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-11 10:21:41 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -126,7 +126,13 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
          (move-frame-functions . textsize-fix-frame))
   :config
   (setq textsize-monitor-size-thresholds nil
-        textsize-pixel-pitch-thresholds '((0 . 0) (0.15 . 1) (0.20 . 2) (0.23 . 3))))
+        ;; An offset will be selected from the monitor's pixel pitch in mm
+        ;; pitch < 0.12: high-end Retina display
+        ;; pitch < 0.18: MacBook Retina baseline
+        ;; pitch < 0.25: 2K 27-inch monitor
+        ;; pitch >= 0.25: 1080p large screen
+        textsize-pixel-pitch-thresholds '((0 . 0) (0.12 . 0) (0.18 . 0) (0.25 . 0))))
+
 
 ;; ==================================================================================
 (use-package mixed-pitch
