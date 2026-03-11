@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-10 22:59:27 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-11 08:52:13 Wednesday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -114,6 +114,8 @@ Otherwise kill buffer without confirmation."
 (use-package wgrep
   :ensure t
   :defer t
+  :bind (:map grep-mode-map
+              ("r" . wgrep-change-to-wgrep-mode))
   :config
   (setq wgrep-auto-save-buffer t))
 
