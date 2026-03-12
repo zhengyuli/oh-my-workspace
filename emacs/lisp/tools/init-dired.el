@@ -1,5 +1,5 @@
 ;;; init-dired.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 22:44:44 Sunday by zhengyuli>
+;; Time-stamp: <2026-03-12 18:02:15 Thursday by zhengyu.li>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -56,7 +56,7 @@
         dirvish-header-line-format '(:left (path) :right (free-space))
         dirvish-mode-line-bar-image-width 0
         dirvish-mode-line-format '(:left (sort file-time " " file-size symlink) :right (omit yank index))
-        dirvish-attributes (append '(vc-state subtree-state nerd-icons collapse)
+        dirvish-attributes (append '(vc-state subtree-state nerd-icons)
                                    '(git-msg file-modes file-time file-size))
         dirvish-large-directory-threshold 20000))
 
