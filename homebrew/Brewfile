@@ -1,0 +1,123 @@
+# Brewfile -*- mode: ruby; -*-
+# Time-stamp: <2026-03-13 15:33:04 星期五 by zhengyu.li>
+#
+# Homebrew bundle file for oh-my-dotfiles
+# Run: brew bundle
+#
+# Version: 2.0.0
+
+# ==============================================================================
+# Shell Environment
+# ==============================================================================
+
+brew "zsh"                      # Shell
+brew "starship"                 # Cross-shell prompt
+
+# ==============================================================================
+# Version Control
+# ==============================================================================
+
+brew "git"                      # Version control system
+
+# ==============================================================================
+# Security & Encryption
+# ==============================================================================
+
+brew "pinentry"                 # GPG passphrase entry
+
+# ==============================================================================
+# File Search
+# ==============================================================================
+
+brew "fzf"                      # Fuzzy finder
+brew "ripgrep"                  # Fast grep replacement (rg)
+brew "fd"                       # Fast find replacement
+brew "tree"                     # Directory tree display
+
+# ==============================================================================
+# Build Tools
+# ==============================================================================
+
+brew "autoconf"                 # Auto configuration script generator
+brew "automake"                 # Makefile generator
+brew "cmake"                    # Cross-platform build system
+brew "pkg-config"               # Library configuration helper
+brew "libtool"                  # Generic library support script
+brew "ninja"                    # Small build system with focus on speed
+
+# ==============================================================================
+# Compiler & Libraries
+# ==============================================================================
+
+brew "llvm"                     # C/C++ compiler toolchain (provides clangd)
+brew "libvterm"                 # Terminal emulator library
+brew "openssl@3"                # Cryptography library (TLS/SSL)
+brew "readline"                 # Command line editing library
+brew "zlib"                     # Compression library
+brew "libffi"                   # Foreign Function Interface library
+brew "ncurses"                  # Terminal UI library
+brew "xz"                       # LZMA compression library
+brew "bzip2"                    # Burrows-Wheeler compression
+
+# ==============================================================================
+# Document Tools
+# ==============================================================================
+
+brew "pandoc"                   # Universal document converter
+brew "markdown"                 # Markdown parser and renderer
+brew "glow"                     # Markdown renderer for terminal
+
+# ==============================================================================
+# Spell Checking
+# ==============================================================================
+
+brew "aspell"                   # Spell checker
+
+# ==============================================================================
+# Terminal Tools
+# ==============================================================================
+
+brew "tmux"                     # Terminal multiplexer
+cask "iterm2"                   # Terminal emulator
+
+# ==============================================================================
+# Text Editors
+# ==============================================================================
+
+cask "emacs-app"                # Emacs text editor
+cask "neovim"                   # Hyperextensible Vim-based editor
+
+# ==============================================================================
+# Data Processing
+# ==============================================================================
+
+brew "jq"                       # JSON processor
+brew "yq"                       # YAML processor
+
+# ==============================================================================
+# System Utilities
+# ==============================================================================
+
+brew "wget"                     # HTTP downloader
+brew "htop"                     # Process viewer
+brew "coreutils"                # GNU core utilities (gls, etc.)
+
+# ==============================================================================
+# Language Runtimes
+# ==============================================================================
+
+# Node.js
+brew "fnm"                      # Fast Node Manager
+
+# Python
+brew "pyenv"                    # Python version manager
+brew "pyenv-virtualenvwrapper"  # Virtualenv wrapper
+
+# Go
+brew "go"                       # Go programming language
+
+# ==============================================================================
+# Window Management
+# ==============================================================================
+
+cask "rectangle"                # Window management

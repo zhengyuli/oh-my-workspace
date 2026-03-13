@@ -1,0 +1,192 @@
+# gitconfig.symlink -*- mode: gitconfig; -*-
+# Time-stamp: <2026-03-11 16:00:00 Tuesday by zhengyu.li>
+#
+# Git configuration
+# Note: Put personal user info in ~/.gitconfig.local
+
+# ==============================================================================
+# User (override in ~/.gitconfig.local)
+# ==============================================================================
+
+# [user]
+#     name = Your Name
+#     email = you@example.com
+
+# Include local config for machine-specific settings
+[include]
+    path = ~/.gitconfig.local
+
+# ==============================================================================
+# Core
+# ==============================================================================
+
+[core]
+    editor = vim
+    pager = less -R -F -X
+    autocrlf = input
+    safecrlf = warn
+    quotepath = false
+    ignorecase = false
+    precomposeunicode = true
+    excludesfile = ~/.gitignore_global
+
+# ==============================================================================
+# Init
+# ==============================================================================
+
+[init]
+    defaultBranch = main
+
+# ==============================================================================
+# Alias
+# ==============================================================================
+
+[alias]
+    # Status
+    st = status -sb
+    s = status -s
+
+    # Log
+    l = log --oneline -n 10
+    ll = log --oneline --graph --decorate
+    lg = log --graph --oneline --decorate --all
+    last = log -1 HEAD --stat
+
+    # Diff
+    d = diff
+    dc = diff --cached
+    ds = diff --stat
+
+    # Commit
+    c = commit
+    cm = commit -m
+    ca = commit --amend
+    cam = commit --amend -m
+
+    # Branch
+    b = branch
+    ba = branch -a
+    bd = branch -d
+    bD = branch -D
+
+    # Checkout
+    co = checkout
+    cob = checkout -b
+    com = checkout main
+
+    # Merge
+    m = merge
+    mnf = merge --no-ff
+
+    # Rebase
+    r = rebase
+    ri = rebase -i
+    rc = rebase --continue
+    ra = rebase --abort
+
+    # Remote
+    rem = remote -v
+
+    # Stash
+    ss = stash
+    sp = stash pop
+    sl = stash list
+    sd = stash drop
+
+    # Reset
+    undo = reset HEAD~1 --mixed
+    unstage = reset HEAD --
+
+    # Clean
+    clean-branches = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
+
+    # Useful
+    contributors = shortlog -sn
+    wip = "!git add -A && git commit -m 'WIP'"
+    uncommit = reset --soft HEAD^
+    amend = commit --amend --no-edit
+
+# ==============================================================================
+# Color
+# ==============================================================================
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow bold
+    local = green bold
+    remote = cyan bold
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+
+[color "status"]
+    added = green bold
+    changed = yellow bold
+    untracked = red bold
+
+# ==============================================================================
+# Push/Pull
+# ==============================================================================
+
+[push]
+    default = current
+    autoSetupRemote = true
+
+[pull]
+    rebase = true
+
+# ==============================================================================
+# Diff
+# ==============================================================================
+
+[diff]
+    tool = vimdiff
+    algorithm = histogram
+
+[diff "golang"]
+    xfuncname = "^func[[:space:]]+\\([^)]+\\)[[:space:]]+([^_(]+)"
+
+# ==============================================================================
+# Merge
+# ==============================================================================
+
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+
+[mergetool]
+    prompt = false
+
+# ==============================================================================
+# Credential (macOS)
+# ==============================================================================
+
+[credential]
+    helper = osxkeychain
+
+# ==============================================================================
+# GPG
+# ==============================================================================
+
+# Uncomment to enable GPG signing
+# [commit]
+#     gpgsign = true
+#
+# [tag]
+#     gpgsign = true
+#
+# [gpg]
+#     program = gpg
+
+# ==============================================================================
+# URL Rewrites (useful for SSH)
+# ==============================================================================
+
+# [url "git@github.com:"]
+#     insteadOf = https://github.com/

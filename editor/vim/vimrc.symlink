@@ -1,0 +1,289 @@
+" vimrc -*- mode: vim; -*-
+" Time-stamp: <2026-03-13 07:15:00 Friday by zhengyu.li>
+"
+" Minimal, plugin-free Vim config
+" Theme: doom-one (ported from doom-emacs, Atom One Dark lineage)
+
+" ==============================================================================
+" Baseline
+" ==============================================================================
+
+set nocompatible
+set encoding=utf-8
+set backspace=indent,eol,start  " Sane backspace in insert mode
+
+" ==============================================================================
+" Display
+" ==============================================================================
+
+set number                   " Absolute line number on current line
+set relativenumber           " Relative numbers on all other lines
+set cursorline               " Highlight the current line
+set scrolloff=8              " Keep 8 lines of context above/below cursor
+set sidescrolloff=5
+set wrap                     " Soft-wrap long lines …
+set linebreak                " … at word boundaries, not mid-word
+set showmatch                " Briefly jump to matching bracket on input
+set matchtime=2              " … for 0.2 s
+set laststatus=2             " Always show status line
+set showcmd                  " Show partial command bottom-right
+set ruler                    " Show line/col in status line
+set wildmenu                 " Enhanced : completion menu
+set wildmode=longest:full,full
+set signcolumn=yes           " Always-on sign column (no layout jitter)
+
+" ==============================================================================
+" Search
+" ==============================================================================
+
+set incsearch                " Highlight matches as you type
+set hlsearch                 " Keep matches highlighted
+set ignorecase               " Case-insensitive by default …
+set smartcase                " … unless pattern contains uppercase
+
+" Clear search highlight without leaving normal mode
+nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
+
+" ==============================================================================
+" Indentation
+" ==============================================================================
+
+set expandtab                " Spaces, not tabs
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set autoindent
+set smartindent
+
+" ==============================================================================
+" Files & Persistence
+" ==============================================================================
+
+set hidden                   " Switch buffers without saving
+set nobackup
+set noswapfile
+set autoread                 " Reload file if changed outside Vim
+
+" Persistent undo (XDG-aware)
+set undofile
+let s:vim_data = ($XDG_DATA_HOME != '' ? $XDG_DATA_HOME : $HOME . '/.local/share') . '/vim'
+let &undodir  = s:vim_data . '/undo'
+if !isdirectory(&undodir) | call mkdir(&undodir, 'p') | endif
+
+" ==============================================================================
+" Behaviour
+" ==============================================================================
+
+set mouse=a                  " Mouse support in all modes
+set splitbelow               " Horizontal splits open below
+set splitright               " Vertical splits open to the right
+set confirm                  " Ask instead of failing on unsaved changes
+set noerrorbells visualbell  " No audio bell; flash instead
+set t_vb=                    " … actually suppress the flash too
+set updatetime=200           " Faster CursorHold / sign-column refresh
+set timeoutlen=500
+
+" Keep cursor centred when jumping / searching
+nnoremap n     nzzzv
+nnoremap N     Nzzzv
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
+" Y behaves like C and D (yank to end of line)
+nnoremap Y y$
+
+" Stay in visual mode after indent
+vnoremap < <gv
+vnoremap > >gv
+
+" Window navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Disable accidental Ex mode
+nnoremap Q <Nop>
+
+" ==============================================================================
+" Auto Commands
+" ==============================================================================
+
+augroup vimrc
+    autocmd!
+
+    " Return to last cursor position when reopening a file
+    autocmd BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \     execute 'normal! g`"' |
+        \ endif
+
+    " Strip trailing whitespace on save (skip binary/diff buffers)
+    autocmd BufWritePre *
+        \ if &filetype !~# '\v^(diff|xxd)$' |
+        \     let b:_view = winsaveview() |
+        \     silent! %s/\s\+$//e |
+        \     call winrestview(b:_view) |
+        \ endif
+
+    " Equalize splits when terminal is resized
+    autocmd VimResized * wincmd =
+
+augroup END
+
+" ==============================================================================
+" File-type Overrides
+" ==============================================================================
+
+augroup vimrc_ft
+    autocmd!
+    autocmd FileType python                               setlocal tabstop=4 shiftwidth=4
+    autocmd FileType javascript,typescript,json,yaml,
+                    \html,css,scss                        setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd FileType go                                   setlocal noexpandtab tabstop=4 shiftwidth=4
+    autocmd FileType markdown,text                        setlocal wrap linebreak spell spelllang=en_us nolist
+    autocmd FileType gitcommit                            setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
+augroup END
+
+" ==============================================================================
+" Status Line (built-in, no plugin)
+" ==============================================================================
+"
+" Shows: mode | filepath [modified][readonly] | filetype | encoding | col:line %
+
+function! StatuslineGit() abort
+    " Display current git branch via fugitive when available, else empty
+    return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+endfunction
+
+set statusline=
+set statusline+=\ %{toupper(mode())}    " Current mode
+set statusline+=%{StatuslineGit()}      " Git branch (if fugitive loaded)
+set statusline+=\ %f                    " File path (relative)
+set statusline+=\ %m%r                  " [+] modified, [RO] readonly
+set statusline+=%=                      " Switch to right side
+set statusline+=\ %y                    " Filetype
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\ %3l:%-2c             " line:col
+set statusline+=\ %3p%%\               " Percentage through file
+
+" ==============================================================================
+" Syntax Highlighting
+" ==============================================================================
+
+syntax enable                " Enable syntax highlighting (keeps current colors)
+filetype plugin indent on    " Enable filetype detection, plugins, and indent rules
+
+" ==============================================================================
+" Doom-One Color Theme (plugin-free, inline highlight definitions)
+"
+" Palette sourced from doomemacs/themes doom-one-theme.el
+"   bg       #282c34    bg-alt   #21242b    fg       #bbc2cf
+"   red      #ff6c6b    orange   #da8548    green    #98be65
+"   yellow   #ECBE7B    blue     #51afef    dark-blue #2257A0
+"   magenta  #c678dd    violet   #a9a1e1    cyan     #46D9FF
+"   grey     #3B3F46    dark-grey #23272e
+" ==============================================================================
+
+set background=dark
+
+if has('termguicolors')
+    set termguicolors
+endif
+
+" Reset everything before applying
+highlight clear
+if exists('syntax_on') | syntax reset | endif
+let g:colors_name = 'doom-one'
+
+" ── Core ─────────────────────────────────────────────────────────────────────
+hi Normal         guifg=#bbc2cf guibg=#282c34 gui=NONE
+hi NormalNC       guifg=#bbc2cf guibg=#21242b gui=NONE  " inactive windows slightly darker
+
+" ── Cursor & Line ─────────────────────────────────────────────────────────────
+hi Cursor         guifg=#282c34 guibg=#bbc2cf gui=NONE
+hi CursorLine     guifg=NONE    guibg=#23272e gui=NONE
+hi CursorLineNr   guifg=#51afef guibg=#23272e gui=bold
+hi ColorColumn    guifg=NONE    guibg=#23272e gui=NONE
+
+" ── Line Numbers ─────────────────────────────────────────────────────────────
+hi LineNr         guifg=#5B6268 guibg=NONE    gui=NONE
+hi SignColumn     guifg=NONE    guibg=#282c34 gui=NONE
+
+" ── Selection & Search ───────────────────────────────────────────────────────
+hi Visual         guifg=NONE    guibg=#2257A0 gui=NONE
+hi Search         guifg=#282c34 guibg=#ECBE7B gui=bold
+hi IncSearch      guifg=#282c34 guibg=#51afef gui=bold
+hi MatchParen     guifg=#46D9FF guibg=NONE    gui=bold,underline
+
+" ── Syntax ───────────────────────────────────────────────────────────────────
+hi Comment        guifg=#5B6268 guibg=NONE    gui=italic
+hi Constant       guifg=#a9a1e1 guibg=NONE    gui=NONE  " violet
+hi String         guifg=#98be65 guibg=NONE    gui=NONE  " green
+hi Character      guifg=#98be65 guibg=NONE    gui=NONE
+hi Number         guifg=#da8548 guibg=NONE    gui=NONE  " orange
+hi Boolean        guifg=#da8548 guibg=NONE    gui=NONE
+hi Float          guifg=#da8548 guibg=NONE    gui=NONE
+hi Identifier     guifg=#bbc2cf guibg=NONE    gui=NONE
+hi Function       guifg=#c678dd guibg=NONE    gui=NONE  " magenta
+hi Statement      guifg=#51afef guibg=NONE    gui=NONE  " blue  (keywords)
+hi Conditional    guifg=#51afef guibg=NONE    gui=NONE
+hi Repeat         guifg=#51afef guibg=NONE    gui=NONE
+hi Label          guifg=#51afef guibg=NONE    gui=NONE
+hi Operator       guifg=#51afef guibg=NONE    gui=NONE
+hi Keyword        guifg=#51afef guibg=NONE    gui=NONE
+hi Exception      guifg=#51afef guibg=NONE    gui=NONE
+hi PreProc        guifg=#c678dd guibg=NONE    gui=NONE  " magenta
+hi Include        guifg=#c678dd guibg=NONE    gui=NONE
+hi Define         guifg=#c678dd guibg=NONE    gui=NONE
+hi Macro          guifg=#c678dd guibg=NONE    gui=NONE
+hi Type           guifg=#ECBE7B guibg=NONE    gui=NONE  " yellow
+hi StorageClass   guifg=#ECBE7B guibg=NONE    gui=NONE
+hi Structure      guifg=#ECBE7B guibg=NONE    gui=NONE
+hi Typedef        guifg=#ECBE7B guibg=NONE    gui=NONE
+hi Special        guifg=#46D9FF guibg=NONE    gui=NONE  " cyan
+hi SpecialChar    guifg=#46D9FF guibg=NONE    gui=NONE
+hi Tag            guifg=#51afef guibg=NONE    gui=NONE
+hi Delimiter      guifg=#bbc2cf guibg=NONE    gui=NONE
+hi SpecialComment guifg=#5B6268 guibg=NONE    gui=italic
+hi Debug          guifg=#ff6c6b guibg=NONE    gui=NONE
+hi Underlined     guifg=#51afef guibg=NONE    gui=underline
+hi Ignore         guifg=#5B6268 guibg=NONE    gui=NONE
+hi Error          guifg=#ff6c6b guibg=NONE    gui=bold
+hi Todo           guifg=#282c34 guibg=#ECBE7B gui=bold
+
+" ── UI Chrome ────────────────────────────────────────────────────────────────
+hi StatusLine     guifg=#bbc2cf guibg=#3E4556 gui=NONE
+hi StatusLineNC   guifg=#5B6268 guibg=#23272e gui=NONE
+hi WildMenu       guifg=#282c34 guibg=#51afef gui=bold
+hi Pmenu          guifg=#bbc2cf guibg=#3E4556 gui=NONE
+hi PmenuSel       guifg=#282c34 guibg=#51afef gui=bold
+hi PmenuSbar      guifg=NONE    guibg=#3B3F46 gui=NONE
+hi PmenuThumb     guifg=NONE    guibg=#51afef gui=NONE
+hi TabLine        guifg=#5B6268 guibg=#23272e gui=NONE
+hi TabLineSel     guifg=#bbc2cf guibg=#282c34 gui=bold
+hi TabLineFill    guifg=NONE    guibg=#21242b gui=NONE
+hi VertSplit      guifg=#3B3F46 guibg=#3B3F46 gui=NONE
+hi Folded         guifg=#5B6268 guibg=#23272e gui=italic
+hi FoldColumn     guifg=#5B6268 guibg=#282c34 gui=NONE
+hi NonText        guifg=#3B3F46 guibg=NONE    gui=NONE
+hi SpecialKey     guifg=#3B3F46 guibg=NONE    gui=NONE
+hi Title          guifg=#51afef guibg=NONE    gui=bold
+hi Directory      guifg=#51afef guibg=NONE    gui=NONE
+
+" ── Diagnostics ──────────────────────────────────────────────────────────────
+hi ErrorMsg       guifg=#ff6c6b guibg=NONE    gui=bold
+hi WarningMsg     guifg=#ECBE7B guibg=NONE    gui=NONE
+hi ModeMsg        guifg=#98be65 guibg=NONE    gui=bold
+hi MoreMsg        guifg=#98be65 guibg=NONE    gui=bold
+hi Question       guifg=#98be65 guibg=NONE    gui=NONE
+hi SpellBad       guifg=#ff6c6b guibg=NONE    gui=undercurl
+hi SpellCap       guifg=#ECBE7B guibg=NONE    gui=undercurl
+hi SpellRare      guifg=#46D9FF guibg=NONE    gui=undercurl
+hi SpellLocal     guifg=#da8548 guibg=NONE    gui=undercurl
+
+" ── Diff ─────────────────────────────────────────────────────────────────────
+hi DiffAdd        guifg=#98be65 guibg=#1e2b1e gui=NONE
+hi DiffChange     guifg=#ECBE7B guibg=#2b2510 gui=NONE
+hi DiffDelete     guifg=#ff6c6b guibg=#2b1010 gui=NONE
+hi DiffText       guifg=#ECBE7B guibg=#3b3000 gui=bold

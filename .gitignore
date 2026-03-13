@@ -23,6 +23,7 @@ emacs/tests/
 # IDE files
 .idea/
 .vscode/
+.claude/
 *.swp
 *.swo
 
