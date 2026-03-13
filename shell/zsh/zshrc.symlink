@@ -1,0 +1,149 @@
+# zshrc.symlink -*- mode: zsh; -*-
+# Time-stamp: <2026-03-13 18:30:00 Friday by zhengyu.li>
+#
+# This file is sourced for every interactive shell.
+# Put plugins, completion, aliases, and UI configuration here.
+
+# ==============================================================================
+# Setup
+# ==============================================================================
+
+# Plugin directory
+ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-$XDG_DATA_HOME/zsh/plugins}"
+
+# DOTFILES is set by ~/.zshenv via symlink resolution
+# Verify it's set correctly before proceeding
+if [[ -z "$DOTFILES" ]] || [[ ! -d "$DOTFILES/shell/zsh/conf.d" ]]; then
+    echo "ERROR: DOTFILES not set or invalid. Ensure ~/.zshenv is a symlink." >&2
+    return 1
+fi
+
+# ==============================================================================
+# Step 1: Basic Shell Configuration
+# ==============================================================================
+
+# Shell options
+source "$DOTFILES/shell/zsh/conf.d/options.zsh"
+
+# History configuration
+source "$DOTFILES/shell/zsh/conf.d/history.zsh"
+
+# Aliases
+source "$DOTFILES/shell/zsh/conf.d/aliases.zsh"
+
+# Utility functions
+source "$DOTFILES/shell/zsh/conf.d/functions.zsh"
+
+# ==============================================================================
+# Step 2: Topic Directories
+# ==============================================================================
+
+# Language runtimes (Node.js, Python)
+for lang_dir in nodejs python; do
+    [[ -f "$DOTFILES/lang/$lang_dir/$lang_dir.zsh" ]] && \
+        source "$DOTFILES/lang/$lang_dir/$lang_dir.zsh"
+done
+
+# Other topic directories (git, homebrew, etc.)
+# Use (N.on) glob qualifiers: N=null_glob, .=regular files only, on=order by name
+for file in "$DOTFILES"/**/*.zsh(N.on); do
+    # Skip zsh/conf.d (loaded explicitly) and lang/ (loaded above)
+    if [[ "$file" != "$DOTFILES/shell/zsh/conf.d/"* && "$file" != "$DOTFILES/lang/"* ]]; then
+        source "$file"
+    fi
+done
+
+# ==============================================================================
+# Step 3: Completion System
+# ==============================================================================
+
+# Completion styles (must be loaded BEFORE compinit)
+source "$DOTFILES/shell/zsh/conf.d/completion.zsh"
+
+# Add zsh-completions to fpath before compinit
+[[ -d "$ZSH_PLUGIN_DIR/zsh-completions/src" ]] && \
+    fpath=("$ZSH_PLUGIN_DIR/zsh-completions/src" $fpath)
+
+# Completion cache directory
+ZSH_CACHE="${ZSH_CACHE:-$XDG_CACHE_HOME/zsh}"
+[[ -d "$ZSH_CACHE" ]] || mkdir -p "$ZSH_CACHE"
+
+# Initialize completion system
+autoload -Uz compinit
+
+# Check if we need to rebuild completion cache (daily)
+# This speeds up shell startup significantly
+if [[ -n "$ZSH_CACHE/zcompdump"(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
+
+# ==============================================================================
+# Step 4: Plugins
+# ==============================================================================
+
+# zsh-autosuggestions - Fish-like autosuggestions
+[[ -f "$ZSH_PLUGIN_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+    source "$ZSH_PLUGIN_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# zsh-history-substring-search - Arrow key history search
+[[ -f "$ZSH_PLUGIN_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && \
+    source "$ZSH_PLUGIN_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
+
+# ==============================================================================
+# Step 5: Key Bindings (after plugins)
+# ==============================================================================
+
+# Key bindings must be loaded after plugins because some bindings
+# depend on widgets provided by plugins (e.g., history-substring-search)
+source "$DOTFILES/shell/zsh/conf.d/keybindings.zsh"
+
+# ==============================================================================
+# Step 6: Tools
+# ==============================================================================
+
+# fzf Configuration
+if command -v fzf &>/dev/null; then
+    # Use fd for fzf if available
+    if command -v fd &>/dev/null; then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    fi
+
+    # Cache fzf prefix to avoid duplicate brew --prefix forks
+    local _fzf_prefix="${FZF_BASE:-$(brew --prefix fzf 2>/dev/null)}"
+    [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/shell/key-bindings.zsh"
+    [[ -f "$_fzf_prefix/shell/completion.zsh" ]]   && source "$_fzf_prefix/shell/completion.zsh"
+    unset _fzf_prefix
+fi
+
+# ==============================================================================
+# Step 7: Prompt
+# ==============================================================================
+
+# Prompt configuration (Starship/Pure/vcs_info)
+source "$DOTFILES/shell/zsh/conf.d/prompt.zsh"
+
+# ==============================================================================
+# Step 8: Local Configuration
+# ==============================================================================
+
+# Machine-specific overrides (not tracked in git)
+[[ -f "$XDG_CONFIG_HOME/zsh/zshrc.local" ]] && source "$XDG_CONFIG_HOME/zsh/zshrc.local"
+
+# Private configuration (sensitive data, API keys, etc.)
+[[ -f "$XDG_CONFIG_HOME/zsh/extra" ]] && source "$XDG_CONFIG_HOME/zsh/extra"
+
+# ==============================================================================
+# Step 9: zsh-syntax-highlighting (MUST be last!)
+# ==============================================================================
+
+[[ -f "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+    source "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# Validate that syntax highlighting loaded successfully
+if ! typeset -f _zsh_highlight_add_highlight > /dev/null 2>&1; then
+    echo "Warning: zsh-syntax-highlighting failed to load" >&2
+fi

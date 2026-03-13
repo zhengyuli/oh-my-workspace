@@ -1,0 +1,74 @@
+# zshenv.symlink -*- mode: zsh; -*-
+# Time-stamp: <2026-03-13 17:00:00 Friday by zhengyu.li>
+#
+# This file is sourced by all zsh instances (including scripts).
+# Keep it minimal - only essential environment variables.
+
+# ==============================================================================
+# XDG Base Directory Specification
+# ==============================================================================
+
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# ==============================================================================
+# Dotfiles Location
+# ==============================================================================
+
+# DOTFILES is resolved from this file's symlink location
+# macOS readlink doesn't support -f, so use realpath or Python fallback
+if [[ -L "$HOME/.zshenv" ]]; then
+    _resolve_dotfiles() {
+        local real
+        if command -v realpath &>/dev/null; then
+            real="$(realpath "$HOME/.zshenv")"
+        else
+            real="$(python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$HOME/.zshenv")"
+        fi
+        echo "$(cd "$(dirname "$real")/../.." && pwd)"
+    }
+    export DOTFILES="$(_resolve_dotfiles)"
+    unfunction _resolve_dotfiles
+else
+    echo "ERROR: ~/.zshenv is not a symlink. Run: ./setup.sh" >&2
+    return 1 2>/dev/null || exit 1
+fi
+
+# ==============================================================================
+# Language Version Managers
+# ==============================================================================
+
+export FNM_DIR="${FNM_DIR:-$XDG_DATA_HOME/fnm}"
+export PYENV_ROOT="${PYENV_ROOT:-$XDG_DATA_HOME/pyenv}"
+export GOPATH="${GOPATH:-$HOME/go}"
+
+# ==============================================================================
+# Editor
+# ==============================================================================
+
+export EDITOR="vim"
+export VISUAL="vim"
+
+# ==============================================================================
+# Pager
+# ==============================================================================
+
+export PAGER="less"
+export LESS="-R -F"
+
+# ==============================================================================
+# Language
+# ==============================================================================
+
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
+# ==============================================================================
+# Browser
+# ==============================================================================
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    export BROWSER="open"
+fi
