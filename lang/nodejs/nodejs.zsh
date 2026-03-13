@@ -14,8 +14,15 @@ if command -v fnm &>/dev/null; then
         # Not initialized yet (non-login shell scenario): full initialization
         eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
     else
-        # Already initialized by zprofile, only register cd hook (skip PATH re-export)
-        eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh 2>/dev/null | command grep -v '^export PATH')"
+        # Already initialized by zprofile
+        # Only register the chpwd hook for --use-on-cd functionality
+        # Avoid calling fnm env again to prevent accumulating multishell paths
+        autoload -U add-zsh-hook
+        _fnm_autoload_hook() {
+            fnm use --silent-if-unchanged 2>/dev/null
+        }
+        add-zsh-hook -D chpwd _fnm_autoload_hook 2>/dev/null
+        add-zsh-hook chpwd _fnm_autoload_hook
     fi
 
     # ==============================================================================

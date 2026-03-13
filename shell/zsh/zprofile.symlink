@@ -49,9 +49,10 @@ typeset -U path  # Remove duplicates
 
 # FNM_DIR is set in zshenv
 # Initialize fnm for PATH setup (without interactive hooks)
-# Interactive shells get additional --use-on-cd via nodejs.zsh
+# Interactive shells get --use-on-cd hook via nodejs.zsh
+# Set version-file-strategy here so it's consistent across all shells
 if command -v fnm &>/dev/null; then
-    eval "$(fnm env --shell zsh)"
+    eval "$(fnm env --shell zsh --version-file-strategy=recursive)"
 fi
 
 # ------------------------------------------------------------------------------
