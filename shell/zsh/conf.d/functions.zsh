@@ -164,7 +164,7 @@ timer() {
     local seconds=${1:-60}
     echo "Timer set for $seconds seconds..."
     sleep "$seconds"
-    echo "\aTimer done!"
+    printf '\aTimer done!\n'
 }
 
 # Colorized man pages (only if not already defined)
