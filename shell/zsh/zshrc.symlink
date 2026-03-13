@@ -74,9 +74,9 @@ autoload -Uz compinit
 # Check if we need to rebuild completion cache (daily)
 # This speeds up shell startup significantly
 if [[ -n "$ZSH_CACHE/zcompdump"(#qN.mh+24) ]]; then
-    compinit
+    compinit -d "$ZSH_CACHE/zcompdump"
 else
-    compinit -C
+    compinit -C -d "$ZSH_CACHE/zcompdump"
 fi
 
 # ==============================================================================
@@ -113,7 +113,7 @@ if command -v fzf &>/dev/null; then
     fi
 
     # Cache fzf prefix to avoid duplicate brew --prefix forks
-    local _fzf_prefix="${FZF_BASE:-$(brew --prefix fzf 2>/dev/null)}"
+    _fzf_prefix="${FZF_BASE:-$(brew --prefix fzf 2>/dev/null)}"
     [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/shell/key-bindings.zsh"
     [[ -f "$_fzf_prefix/shell/completion.zsh" ]]   && source "$_fzf_prefix/shell/completion.zsh"
     unset _fzf_prefix
