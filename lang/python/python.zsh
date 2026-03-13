@@ -62,35 +62,36 @@ _lazy_virtualenvwrapper() {
 }
 
 # Create wrapper functions for lazy loading
-# Using 'command' to call the real function after loading virtualenvwrapper
+# After _lazy_virtualenvwrapper sources virtualenvwrapper.sh, it redefines these
+# as real shell functions (not external commands), so 'command' must NOT be used.
 workon() {
     _lazy_virtualenvwrapper || return 1
-    command workon "$@"
+    workon "$@"
 }
 
 mkvirtualenv() {
     _lazy_virtualenvwrapper || return 1
-    command mkvirtualenv "$@"
+    mkvirtualenv "$@"
 }
 
 rmvirtualenv() {
     _lazy_virtualenvwrapper || return 1
-    command rmvirtualenv "$@"
+    rmvirtualenv "$@"
 }
 
 lsvirtualenv() {
     _lazy_virtualenvwrapper || return 1
-    command lsvirtualenv "$@"
+    lsvirtualenv "$@"
 }
 
 cdvirtualenv() {
     _lazy_virtualenvwrapper || return 1
-    command cdvirtualenv "$@"
+    cdvirtualenv "$@"
 }
 
 cdsitepackages() {
     _lazy_virtualenvwrapper || return 1
-    command cdsitepackages "$@"
+    cdsitepackages "$@"
 }
 
 # ==============================================================================

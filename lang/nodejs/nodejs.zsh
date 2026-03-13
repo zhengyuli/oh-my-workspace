@@ -21,7 +21,7 @@ if command -v fnm &>/dev/null; then
         _fnm_autoload_hook() {
             fnm use --silent-if-unchanged 2>/dev/null
         }
-        add-zsh-hook -D chpwd _fnm_autoload_hook 2>/dev/null
+        add-zsh-hook -d chpwd _fnm_autoload_hook 2>/dev/null
         add-zsh-hook chpwd _fnm_autoload_hook
     fi
 
