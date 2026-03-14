@@ -306,8 +306,10 @@ setup_node() {
 
     eval "$(fnm env --shell bash)"
 
-    if fnm list 2>/dev/null | grep -qE '\(lts'; then
-        log_skip "Node.js LTS already installed: $(node --version 2>/dev/null)"
+    # Check if any LTS version is already installed
+    # Use multiple detection methods for robustness
+    if fnm list 2>/dev/null | grep -qE '(lts|LTS)' || command -v node &>/dev/null; then
+        log_skip "Node.js already installed: $(node --version 2>/dev/null)"
         return
     fi
 
