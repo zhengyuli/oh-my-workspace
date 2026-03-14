@@ -379,7 +379,9 @@ setup_python() {
         local latest
         latest="$(pyenv install --list \
             | grep -E '^\s+[0-9]+\.[0-9]+\.[0-9]+$' \
-            | tail -1 | tr -d ' ')"
+            | tr -d ' ' \
+            | sort -V \
+            | tail -1)"
         [[ -n "$latest" ]] || latest="3.12.0"
 
         log_info "Installing Python $latest..."
