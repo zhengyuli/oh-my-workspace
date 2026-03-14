@@ -749,7 +749,7 @@ show_help() {
     echo "  switch-shell    Switch default shell to Homebrew zsh"
     echo ""
     echo -e "${BOLD}Options:${NC}"
-    echo "  VERBOSE=0       Suppress command output"
+    echo "  VERBOSE=0       Suppress command output (default: 1, verbose)"
     echo ""
     echo -e "${BOLD}Requirements:${NC}"
     echo "  bash 4.3+       Required for nameref feature (brew install bash)"
