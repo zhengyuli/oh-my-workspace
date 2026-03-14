@@ -68,11 +68,11 @@ readonly CYAN=$'\033[0;36m'
 readonly BOLD=$'\033[1m'
 readonly NC=$'\033[0m'
 
-log_info()  { echo -e "${BLUE}[INFO]${NC}  $*"; }
-log_ok()    { echo -e "${GREEN}[OK]${NC}    $*"; }
-log_skip()  { echo -e "${CYAN}[SKIP]${NC}  $*"; }
-log_warn()  { echo -e "${YELLOW}[WARN]${NC}  $*"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+log_info()  { printf '%b\n' "${BLUE}[INFO]${NC}  $*"; }
+log_ok()    { printf '%b\n' "${GREEN}[OK]${NC}    $*"; }
+log_skip()  { printf '%b\n' "${CYAN}[SKIP]${NC}  $*"; }
+log_warn()  { printf '%b\n' "${YELLOW}[WARN]${NC}  $*"; }
+log_error() { printf '%b\n' "${RED}[ERROR]${NC} $*" >&2; }
 
 print_header() {
     echo ""
