@@ -201,7 +201,7 @@ setup_homebrew() {
 
     log_info "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    # shellcheck disable=SC1091
+    # shellcheck disable=SC1091  # Homebrew shellenv generates shell init code
     if [[ -f "/opt/homebrew/bin/brew" ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
     elif [[ -f "/usr/local/bin/brew" ]]; then
@@ -318,6 +318,7 @@ setup_node() {
     require_command fnm "Install via Homebrew: brew install fnm" || return 1
     log_ok "fnm $(fnm --version)"
 
+    # shellcheck disable=SC1091  # fnm env generates shell init code
     eval "$(fnm env --shell bash)"
 
     # Check if any LTS version is already installed
@@ -368,6 +369,7 @@ setup_python() {
     require_command pyenv "Install via Homebrew: brew install pyenv" || return 1
     log_ok "pyenv $(pyenv --version | awk '{print $2}')"
 
+    # shellcheck disable=SC1091  # pyenv init generates shell init code
     eval "$(pyenv init -)"
 
     local current
