@@ -1,11 +1,28 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-14 14:25:34 Saturday by zhengyuli>
+# Time-stamp: <2026-03-14 16:30:00 Saturday by zhengyuli>
 #
-# Copyright (C) 2026 zhengyu li
+# ==============================================================================
+# File: setup.sh
+# Role: Dotfiles setup and maintenance utility for macOS
 #
 # Author: zhengyuli <lizhengyu419@outlook.com>
-# Description: Dotfiles setup and maintenance utility
+# Copyright (C) 2026 zhengyu li
+#
+# Load context : Called directly by user: ./setup.sh <command>
+# Dependencies : bash 4.3+, git, curl
+# Side effects :
+#   - Creates symlinks in $HOME from *.symlink files
+#   - Installs Homebrew, zsh plugins, Node.js, Python
+#   - Modifies /etc/shells (requires sudo)
+#   - Creates ~/.dotfiles-backup for conflicting files
+#
+# Usage:
+#   ./setup.sh full-setup      # Full setup
+#   ./setup.sh create-links    # Re-link symlinks only
+#   ./setup.sh show-status     # Check current status
+#   ./setup.sh help            # Show all commands
+# ==============================================================================
 
 set -euo pipefail
 
@@ -227,6 +244,19 @@ _plugin_default_branch() {
         | awk '/^ref:/ { sub("refs/heads/", "", $2); print $2; exit }'
 }
 
+# Install or update a zsh plugin from a git repository.
+#
+# Arguments:
+#   $1  name  Plugin directory name
+#   $2  url   Git repository URL
+#
+# Returns:
+#   0    success (installed or updated)
+#   1    installation failed (update failures are logged but not fatal)
+#
+# Side effects:
+#   Creates directory under $ZSH_PLUGIN_DIR/$name
+#   Clones with --depth=1 for faster downloads
 install_or_update_plugin() {
     local name="$1" url="$2"
     local plugin_path="$ZSH_PLUGIN_DIR/$name"
@@ -304,6 +334,20 @@ _openssl_prefix() {
     done
 }
 
+# Setup Python environment using pyenv.
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0    success (Python ready to use)
+#   1    pyenv not found
+#
+# Side effects:
+#   Installs latest stable Python via pyenv if not present
+#   Sets Python as global default via pyenv global
+#   Installs virtualenvwrapper via pip
+#   Creates $XDG_DATA_HOME/virtualenvs if WORKON_HOME not set
 setup_python() {
     require_command pyenv "Install via Homebrew: brew install pyenv" || return 1
     log_ok "pyenv $(pyenv --version | awk '{print $2}')"
@@ -327,9 +371,10 @@ setup_python() {
         local ssl_prefix
         ssl_prefix="$(_openssl_prefix)"
         if [[ -n "$ssl_prefix" ]]; then
-            export LDFLAGS="-L${ssl_prefix}/lib"
-            export CPPFLAGS="-I${ssl_prefix}/include"
-            export PKG_CONFIG_PATH="${ssl_prefix}/lib/pkgconfig"
+            # Append to existing flags rather than overwriting
+            export LDFLAGS="-L${ssl_prefix}/lib${LDFLAGS:+ $LDFLAGS}"
+            export CPPFLAGS="-I${ssl_prefix}/include${CPPFLAGS:+ $CPPFLAGS}"
+            export PKG_CONFIG_PATH="${ssl_prefix}/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
         fi
 
         quietly pyenv install -s "$latest"
@@ -357,6 +402,18 @@ setup_virtualenvwrapper() {
 # Symlinks  (*.symlink -> ~/.<name>)
 # ==============================================================================
 
+# Create symlinks from all *.symlink files to $HOME/.<name>.
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0    always (non-fatal)
+#
+# Side effects:
+#   Creates symlinks in $HOME for each *.symlink file found
+#   Backs up conflicting regular files to ~/.dotfiles-backup/
+#   Removes existing symlinks that point to different targets
 create_symlinks() {
     local backup_dir="$HOME/.dotfiles-backup" count=0
     local -a sources=()
@@ -397,6 +454,18 @@ create_symlinks() {
     fi
 }
 
+# Remove all managed symlinks and restore from backups if available.
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0    always (non-fatal)
+#
+# Side effects:
+#   Removes symlinks from $HOME that point to $DOTFILES_ROOT
+#   Restores original files from ~/.dotfiles-backup/ if present
+#   Removes backup directory if empty after restoration
 remove_symlinks() {
     local count=0
     local backup_dir="$HOME/.dotfiles-backup"
@@ -421,9 +490,11 @@ remove_symlinks() {
         fi
     done
 
-    # Clean up backup directory if empty or requested
+    # Clean up backup directory if empty
     if [[ -d "$backup_dir" ]]; then
-        rmdir "$backup_dir" 2>/dev/null && log_ok "Removed empty backup directory: $backup_dir" || true
+        if rmdir "$backup_dir" 2>/dev/null; then
+            log_ok "Removed empty backup directory: $backup_dir"
+        fi
     fi
 
     log_ok "Removed $count symlink(s)"
@@ -664,6 +735,9 @@ show_help() {
     echo ""
     echo -e "${BOLD}Options:${NC}"
     echo "  VERBOSE=0       Suppress command output"
+    echo ""
+    echo -e "${BOLD}Requirements:${NC}"
+    echo "  bash 4.3+       Required for nameref feature (brew install bash)"
     echo ""
     echo -e "${BOLD}Examples:${NC}"
     echo "  ./setup.sh                    # Show this help"
