@@ -240,8 +240,15 @@ ensure_plugin_dir() {
 }
 
 _plugin_default_branch() {
-    git ls-remote --symref "$1" HEAD 2>/dev/null \
-        | awk '/^ref:/ { sub("refs/heads/", "", $2); print $2; exit }'
+    local branch
+    branch="$(git ls-remote --symref "$1" HEAD 2>/dev/null \
+        | awk '/^ref:/ { sub("refs/heads/", "", $2); print $2; exit }')"
+
+    if [[ -z "$branch" ]]; then
+        log_warn "Could not detect default branch for $1 (network issue or repository not found)"
+    fi
+
+    echo "$branch"
 }
 
 # Install or update a zsh plugin from a git repository.
