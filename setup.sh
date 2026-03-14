@@ -270,9 +270,15 @@ install_or_update_plugin() {
 
     if [[ -d "$plugin_path" ]]; then
         log_info "Updating $name..."
-        quietly git -C "$plugin_path" pull --rebase --autostash -q origin \
-            "$(git -C "$plugin_path" symbolic-ref --short HEAD)" \
-            || log_warn "Failed to update $name"
+        local current_branch
+        current_branch="$(git -C "$plugin_path" symbolic-ref --short HEAD 2>/dev/null || true)"
+
+        if [[ -z "$current_branch" ]]; then
+            log_warn "$name is in detached HEAD state — skipping update"
+        else
+            quietly git -C "$plugin_path" pull --rebase --autostash -q origin "$current_branch" \
+                || log_warn "Failed to update $name"
+        fi
     else
         log_info "Installing $name..."
         local branch
