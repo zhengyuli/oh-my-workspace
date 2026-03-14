@@ -1,10 +1,8 @@
 #!/bin/bash
 # --------------------------------------------------------------------------------------
-# Name: `(file-name-nondirectory (buffer-file-name))`
-# Purpose: ${1:brief}
-#
+# File: `(file-name-nondirectory (buffer-file-name))`
 # Author: `user-full-name` <`user-mail-address`>
-# Created: `(format-time-string "%Y-%m-%d")`
+# Purpose: ${1:purpose}
 #
 # Copyright (C) `(format-time-string "%Y")` `user-full-name`
 #

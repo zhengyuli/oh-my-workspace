@@ -1,5 +1,5 @@
 # zshrc.symlink -*- mode: zsh; -*-
-# Time-stamp: <2026-03-13 18:30:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-14 16:00:00 Saturday by zhengyu.li>
 #
 # This file is sourced for every interactive shell.
 # Put plugins, completion, aliases, and UI configuration here.
@@ -13,7 +13,7 @@ ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-$XDG_DATA_HOME/zsh/plugins}"
 
 # DOTFILES is set by ~/.zshenv via symlink resolution
 # Verify it's set correctly before proceeding
-if [[ -z "$DOTFILES" ]] || [[ ! -d "$DOTFILES/shell/zsh/conf.d" ]]; then
+if [[ -z "$DOTFILES" ]] || [[ ! -d "$DOTFILES/zsh/conf.d" ]]; then
     echo "ERROR: DOTFILES not set or invalid. Ensure ~/.zshenv is a symlink." >&2
     return 1
 fi
@@ -22,43 +22,21 @@ fi
 # Step 1: Basic Shell Configuration
 # ==============================================================================
 
-# Shell options
-source "$DOTFILES/shell/zsh/conf.d/options.zsh"
+# Shell options and history configuration
+source "${DOTFILES}/zsh/conf.d/options.zsh"
 
-# History configuration
-source "$DOTFILES/shell/zsh/conf.d/history.zsh"
+# Utility functions and logging helpers
+source "${DOTFILES}/zsh/conf.d/functions.zsh"
 
 # Aliases
-source "$DOTFILES/shell/zsh/conf.d/aliases.zsh"
-
-# Utility functions
-source "$DOTFILES/shell/zsh/conf.d/functions.zsh"
+source "${DOTFILES}/zsh/conf.d/aliases.zsh"
 
 # ==============================================================================
-# Step 2: Topic Directories
-# ==============================================================================
-
-# Language runtimes (Node.js, Python)
-for lang_dir in nodejs python; do
-    [[ -f "$DOTFILES/lang/$lang_dir/$lang_dir.zsh" ]] && \
-        source "$DOTFILES/lang/$lang_dir/$lang_dir.zsh"
-done
-
-# Other topic directories (git, homebrew, etc.)
-# Use (N.on) glob qualifiers: N=null_glob, .=regular files only, on=order by name
-for file in "$DOTFILES"/**/*.zsh(N.on); do
-    # Skip zsh/conf.d (loaded explicitly) and lang/ (loaded above)
-    if [[ "$file" != "$DOTFILES/shell/zsh/conf.d/"* && "$file" != "$DOTFILES/lang/"* ]]; then
-        source "$file"
-    fi
-done
-
-# ==============================================================================
-# Step 3: Completion System
+# Step 2: Completion System
 # ==============================================================================
 
 # Completion styles (must be loaded BEFORE compinit)
-source "$DOTFILES/shell/zsh/conf.d/completion.zsh"
+source "${DOTFILES}/zsh/conf.d/completion.zsh"
 
 # Add zsh-completions to fpath before compinit
 [[ -d "$ZSH_PLUGIN_DIR/zsh-completions/src" ]] && \
@@ -80,7 +58,7 @@ else
 fi
 
 # ==============================================================================
-# Step 4: Plugins
+# Step 3: Plugins
 # ==============================================================================
 
 # zsh-autosuggestions - Fish-like autosuggestions
@@ -92,16 +70,19 @@ fi
     source "$ZSH_PLUGIN_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
 
 # ==============================================================================
-# Step 5: Key Bindings (after plugins)
+# Step 4: Key Bindings (after plugins)
 # ==============================================================================
 
 # Key bindings must be loaded after plugins because some bindings
 # depend on widgets provided by plugins (e.g., history-substring-search)
-source "$DOTFILES/shell/zsh/conf.d/keybindings.zsh"
+source "${DOTFILES}/zsh/conf.d/keybindings.zsh"
 
 # ==============================================================================
-# Step 6: Tools
+# Step 5: Tools
 # ==============================================================================
+
+# External tool initialization (Homebrew, Node.js, Python)
+source "${DOTFILES}/zsh/conf.d/tools.zsh"
 
 # fzf Configuration
 if command -v fzf &>/dev/null; then
@@ -113,31 +94,32 @@ if command -v fzf &>/dev/null; then
     fi
 
     # Cache fzf prefix to avoid duplicate brew --prefix forks
-    _fzf_prefix="${FZF_BASE:-$(brew --prefix fzf 2>/dev/null)}"
+    local _fzf_prefix="${FZF_BASE:-$(brew --prefix fzf 2>/dev/null)}"
     [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/shell/key-bindings.zsh"
     [[ -f "$_fzf_prefix/shell/completion.zsh" ]]   && source "$_fzf_prefix/shell/completion.zsh"
     unset _fzf_prefix
 fi
 
 # ==============================================================================
-# Step 7: Prompt
+# Step 6: Prompt
 # ==============================================================================
 
 # Prompt configuration (Starship/Pure/vcs_info)
-source "$DOTFILES/shell/zsh/conf.d/prompt.zsh"
+source "${DOTFILES}/zsh/conf.d/prompt.zsh"
 
 # ==============================================================================
-# Step 8: Local Configuration
+# Step 7: Local Configuration
 # ==============================================================================
 
-# Machine-specific overrides (not tracked in git)
+# Machine-specific overrides (gitignored)
+[[ -f "${DOTFILES}/zsh/conf.d/local.zsh" ]] && source "${DOTFILES}/zsh/conf.d/local.zsh"
+
+# Legacy local config locations (for backwards compatibility)
 [[ -f "$XDG_CONFIG_HOME/zsh/zshrc.local" ]] && source "$XDG_CONFIG_HOME/zsh/zshrc.local"
-
-# Private configuration (sensitive data, API keys, etc.)
 [[ -f "$XDG_CONFIG_HOME/zsh/extra" ]] && source "$XDG_CONFIG_HOME/zsh/extra"
 
 # ==============================================================================
-# Step 9: zsh-syntax-highlighting (MUST be last!)
+# Step 8: zsh-syntax-highlighting (MUST be last!)
 # ==============================================================================
 
 [[ -f "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
@@ -145,5 +127,5 @@ source "$DOTFILES/shell/zsh/conf.d/prompt.zsh"
 
 # Validate that syntax highlighting loaded successfully
 if ! typeset -f _zsh_highlight_add_highlight > /dev/null 2>&1; then
-    echo "Warning: zsh-syntax-highlighting failed to load" >&2
+    _zsh_warn "zsh-syntax-highlighting failed to load"
 fi

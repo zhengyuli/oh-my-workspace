@@ -1,11 +1,10 @@
-;;; init.el --- Emacs configuration entry point -*- lexical-binding:t -*-
-;; Time-stamp: <2026-03-13 21:26:26 星期五 by zhengyu.li>
-
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
-;;
+;;; emacs.symlink -*- lexical-binding: t; -*-
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: none
-;; Dependencies: init-completion
+;; Keywords: emacs, config
+;; Dependencies: (none)
+
+;; Copyright (C) 2026 zhengyu li
+;; Licensed under the GPL License version 3.0
 
 ;; This file is not part of GNU Emacs.
 
@@ -20,8 +19,10 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;;; History:
+;;
+;; 2026-03-14 15:30 chieftain <lizhengyu419@outlook.com> created.
 ;;; Commentary:
 ;;
 ;; Emacs configuration entry point.
@@ -72,7 +73,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (normal-top-level-add-subdirs-to-load-path)))
 
 ;; ==================================================================================
-;; Set custom file early to prevent Emacs from writing customizations to init.el
+;; Set custom file early to prevent Emacs from writing customizations to emacs.symlink
 (setq custom-file omw/emacs-custom-file-path)
 
 ;; Recursively add emacs configuration custom path to load path
@@ -234,6 +235,5 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (load custom-file nil 'nomessage)))
 
 ;; ==================================================================================
-(provide 'init)
 
-;;; init.el ends here
+;;; emacs.symlink ends here

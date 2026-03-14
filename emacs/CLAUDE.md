@@ -172,13 +172,14 @@ Every `.el` file must start with:
 
 ```elisp
 ;;; init-module.el -*- lexical-binding: t; -*-
-;; Time-stamp: <YYYY-MM-DD HH:MM:SS Weekday by zhengyu.li>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
-;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: keyword1, keyword2, keyword3
+;; Keywords: keyword1, keyword2
 ;; Dependencies: (none) or module-name
+
+;; Copyright (C) 2026 zhengyu li
+
+;; Licensed under the GPL License version 3.0
 
 ;; This file is not part of GNU Emacs.
 
@@ -193,7 +194,11 @@ Every `.el` file must start with:
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; History:
+;;
+;; YYYY-MM-DD HH:MM chieftain <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;
@@ -206,10 +211,13 @@ Every `.el` file must start with:
 
 **Required fields checklist:**
 - ✅ `-*- lexical-binding: t; -*-` on line 1
-- ✅ Time-stamp with **current date**
-- ✅ Copyright must include **current year** (2026)
+- ✅ Author line with name and email
 - ✅ Keywords: 2-4 relevant tags
 - ✅ Dependencies: list if any, otherwise "(none)"
+- ✅ Copyright with current year
+- ✅ GPL license short notice
+- ✅ Full GPL license text
+- ✅ History section with creation date
 - ✅ Commentary: Brief description (1-2 sentences)
 
 ### File Footer (MANDATORY)
@@ -578,11 +586,14 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs" | grep 
 
 **Check file header completeness:**
 ```bash
-# Verify Time-stamp presence
-grep -rn "Time-stamp:" lisp --include="*.el" | wc -l
+# Verify Author line presence
+grep -rn "^;; Author:" lisp --include="*.el" | wc -l
 
 # Verify current copyright year (2026)
 grep -rn "Copyright (C) 2026" lisp --include="*.el" | wc -l
+
+# Verify History section
+grep -rn "^;;; History:" lisp --include="*.el" | wc -l
 
 # Verify GPL license text
 for file in lisp/**/*.el lisp/*.el; do
@@ -600,7 +611,7 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 
 - [ ] All custom functions use `omw/` prefix
 - [ ] All defcustom use `:group 'omw-emacs`
-- [ ] All files have Time-stamp, Copyright 2026, Dependencies, Commentary
+- [ ] All files have Author, Copyright, Dependencies, History, Commentary
 - [ ] All files have complete GPL license text
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
@@ -703,13 +714,14 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 **Keep file headers consistent** - use the exact same format:
 
 - Line 1: `;;; filename -*- lexical-binding: t; -*-`
-- Line 2: `;; Time-stamp: <YYYY-MM-DD HH:MM:SS Weekday by zhengyu.li>`
-- Lines 4-5: Copyright (C) with current year (2026)
-- Line 7: Author
-- Line 8: Keywords (2-4 tags)
-- Line 9: Dependencies ((none) or module-name)
+- Line 3: Author with name and email
+- Line 4: Keywords (2-4 tags)
+- Line 5: Dependencies ((none) or module-name)
+- Line 7: Copyright with current year
+- Line 9: GPL license short notice
 - Lines 11-23: Full GPL license text
-- Lines 25-27: Commentary (1-2 sentence description)
+- Lines 25-27: History section with creation date
+- Lines 29-31: Commentary (1-2 sentence description)
 
 **Why**: Consistency makes the codebase easier to navigate and understand.
 
@@ -740,7 +752,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 ### Essential Rules
 
-1. **File Header:** Must include Time-stamp, current copyright year (2026), Dependencies
+1. **File Header:** Must include Author, Copyright, Dependencies, History, Commentary
 2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
 4. **Setup Functions:** Use `setq-local` for variables, mode functions for toggles; prefer built-in functions
@@ -756,7 +768,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 - [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs.symlink") ...)'`
 - [ ] No naming violations: All functions use `omw/` prefix
 - [ ] No variable violations: All defcustom use `:group 'omw-emacs`
-- [ ] File headers complete: Time-stamp, Copyright 2026, Dependencies, Commentary, GPL
+- [ ] File headers complete: Author, Copyright, Dependencies, History, Commentary, GPL
 - [ ] Docstrings present: All setup functions have documentation
 - [ ] use-package order correct: Keywords in standard order
 

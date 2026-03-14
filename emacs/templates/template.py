@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-# File:        `(file-name-nondirectory (buffer-file-name))`
-# Author:      `user-full-name` <`user-mail-address`>
+# File: `(file-name-nondirectory (buffer-file-name))`
+# Author: `user-full-name` <`user-mail-address`>
 #
 # Copyright (C) `(format-time-string "%Y")` `user-full-name`
 #
@@ -19,6 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ======================================================================================
+
+# History:
+# ================================================================
+# `(format-time-string "%Y-%m-%d %H:%M")` `user-full-name` <`user-mail-address`> created.
+
 
 """${1:brief}.
 

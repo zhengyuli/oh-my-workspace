@@ -11,61 +11,64 @@ This is a **dotfiles repository** providing comprehensive development environmen
 ```
 oh-my-dotfiles/
 ├── setup.sh              # Unified setup and maintenance utility
-├── editor/
-│   ├── emacs/            # Emacs configuration (>= 30.2)
-│   │   ├── CLAUDE.md     # Emacs-specific guidance (detailed)
-│   │   ├── init.el       # Main entry point
-│   │   └── lisp/         # Core and language modules
-│   └── vim/              # Vim configuration
+├── emacs/                # Emacs configuration (>= 30.2)
+│   ├── CLAUDE.md         # Emacs-specific guidance (detailed)
+│   ├── emacs.symlink     # Symlinked to ~/.emacs
+│   ├── lisp/             # Core and language modules
+│   ├── templates/        # File templates (C, Python, Go, etc.)
+│   └── banners/          # Startup banners
+├── vim/                  # Vim configuration
+│   └── vimrc.symlink     # Symlinked to ~/.vimrc
+├── zsh/                  # Zsh configuration
+│   ├── conf.d/           # Modular zsh configs (aliases, completion, etc.)
+│   ├── zshrc.symlink     # Symlinked to ~/.zshrc
+│   ├── zshenv.symlink    # Symlinked to ~/.zshenv
+│   └── zprofile.symlink  # Symlinked to ~/.zprofile
+├── git/                  # Git configuration
+│   ├── gitconfig.symlink # Symlinked to ~/.gitconfig
+│   └── gitignore.symlink # Symlinked to ~/.gitignore
 ├── homebrew/
 │   └── Brewfile          # Homebrew bundle for all packages
-├── lang/                 # Language runtime configurations
-├── macos/                # macOS-specific settings
-├── shell/
-│   └── zsh/              # Zsh configuration
-├── terminal/
-│   └── itermt2/          # iTerm2 configuration
-└── vc/
-    └── git/              # Git configuration
+└── macos/                # macOS-specific settings
 ```
 
 ## Setup Commands
 
 ```bash
 # Full setup (Homebrew, plugins, languages, symlinks, shell)
-./setup.sh setup
+./setup.sh full-setup
 
 # Re-create symlinks only
-./setup.sh link
+./setup.sh create-links
 
 # Remove all managed symlinks
-./setup.sh unlink
+./setup.sh remove-links
 
 # Update zsh plugins
-./setup.sh update
+./setup.sh update-plugins
 
 # Check symlink and tool status
-./setup.sh status
+./setup.sh show-status
 
 # Silent mode
-VERBOSE=0 ./setup.sh setup
+VERBOSE=0 ./setup.sh full-setup
 ```
 
 ## Symlink System
 
 Files named `*.symlink` are automatically linked to `$HOME`:
 
-| Source                              | Target           |
-|-------------------------------------|------------------|
-| `editor/emacs/emacs.symlink`        | `~/.emacs`       |
-| `editor/vim/vimrc.symlink`          | `~/.vimrc`       |
-| `shell/zsh/zshrc.symlink`           | `~/.zshrc`       |
-| `shell/zsh/zshenv.symlink`          | `~/.zshenv`      |
-| `shell/zsh/zprofile.symlink`        | `~/.zprofile`    |
-| `vc/git/gitconfig.symlink`          | `~/.gitconfig`   |
-| `vc/git/gitignore.symlink`          | `~/.gitignore`   |
+| Source                       | Target           |
+|------------------------------|------------------|
+| `emacs/emacs.symlink`        | `~/.emacs`       |
+| `vim/vimrc.symlink`          | `~/.vimrc`       |
+| `zsh/zshrc.symlink`          | `~/.zshrc`       |
+| `zsh/zshenv.symlink`         | `~/.zshenv`      |
+| `zsh/zprofile.symlink`       | `~/.zprofile`    |
+| `git/gitconfig.symlink`      | `~/.gitconfig`   |
+| `git/gitignore.symlink`      | `~/.gitignore`   |
 
-Existing files are backed up to `~/.dotfiles-backup-<timestamp>/` before linking.
+Existing files are backed up to `~/.dotfiles-backup/` before linking (single backup, no timestamps).
 
 ## XDG Base Directory
 
@@ -91,7 +94,7 @@ Zsh plugins are installed to `${XDG_DATA_HOME}/zsh/plugins/` (not Oh My Zsh depe
 
 Each major component has its own `CLAUDE.md` with detailed guidance:
 
-- **editor/emacs/CLAUDE.md** - Emacs coding standards, module architecture, use-package patterns, naming conventions (`omw/` prefix)
+- **emacs/CLAUDE.md** - Emacs coding standards, module architecture, use-package patterns, naming conventions (`omw/` prefix)
 
 These files are lazy-loaded when working in their respective directories.
 
@@ -105,7 +108,7 @@ These files are lazy-loaded when working in their respective directories.
 emacs --debug-init
 
 # Batch test Emacs
-emacs --batch --eval '(progn (load-file "editor/emacs/init.el") (message "OK"))'
+emacs --batch --eval '(progn (load-file "emacs/emacs.symlink") (message "OK"))'
 ```
 
 ## Key Conventions
@@ -114,3 +117,39 @@ emacs --batch --eval '(progn (load-file "editor/emacs/init.el") (message "OK"))'
 - **Symlink-based**: Config files are symlinked via `*.symlink` convention
 - **Unified setup**: Single `setup.sh` handles all components
 - **Emacs prefix**: Uses `omw/` prefix (oh-my-workspace) for custom functions/variables
+
+## Shell Script Coding Standards
+
+### Avoid `[[ cond ]] && cmd || true` Pattern
+
+**WRONG** - This pattern is error-prone and hides potential issues:
+
+```bash
+# Problem 1: Non-zero exit code from condition causes function to fail under set -e
+[[ -n "$var" ]] && log_warn "message"
+
+# Problem 2: Adding || true masks errors and is hard to read
+[[ -n "$var" ]] && log_warn "message" || true
+```
+
+**CORRECT** - Use explicit `if` statements:
+
+```bash
+if [[ -n "$var" ]]; then
+    log_warn "message"
+fi
+```
+
+**Rationale:**
+1. With `set -e`, a false condition (`[[ -n "$var" ]]` when var is empty) returns exit code 1, causing unexpected script termination
+2. Adding `|| true` masks potential errors in the command itself
+3. `if` statements are explicit, readable, and behave predictably
+
+**Acceptable uses of `&&`:**
+```bash
+# Early return pattern (function continues if condition is false)
+[[ -d "$dir" ]] && return
+
+# Conditional execution where false condition is expected and harmless
+[[ -n "$value" ]] && git config "$key" "$value"
+```

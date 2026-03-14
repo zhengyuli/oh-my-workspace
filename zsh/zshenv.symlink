@@ -1,5 +1,5 @@
 # zshenv.symlink -*- mode: zsh; -*-
-# Time-stamp: <2026-03-13 17:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-14 16:00:00 Saturday by zhengyu.li>
 #
 # This file is sourced by all zsh instances (including scripts).
 # Keep it minimal - only essential environment variables.
@@ -27,7 +27,7 @@ if [[ -L "$HOME/.zshenv" ]]; then
         else
             real="$(python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$HOME/.zshenv")"
         fi
-        echo "$(cd "$(dirname "$real")/../.." && pwd)"
+        echo "$(cd "$(dirname "$real")/.." && pwd)"
     }
     export DOTFILES="$(_resolve_dotfiles)"
     unfunction _resolve_dotfiles

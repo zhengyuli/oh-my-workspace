@@ -1,11 +1,12 @@
 ;;; `(file-name-nondirectory (buffer-file-name))` -*- lexical-binding: t; -*-
-;; Time-stamp: <`(format-time-string "%Y-%m-%d %H:%M:%S %A")` by `user-login-name`>
 
-;; Copyright (C) `(format-time-string "%Y")` `user-full-name`
-;;
 ;; Author: `user-full-name` <`user-mail-address`>
 ;; Keywords: ${1:keyword1, keyword2}
 ;; Dependencies: ${2:(none)}
+
+;; Copyright (C) `(format-time-string "%Y")` `user-full-name`
+
+;; Licensed under the GPL License version 3.0
 
 ;; This file is not part of GNU Emacs.
 
