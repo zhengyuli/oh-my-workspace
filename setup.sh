@@ -282,9 +282,9 @@ install_all_plugins() {
     for entry in "${ZSH_PLUGINS[@]}"; do
         local name="${entry%%|*}" url="${entry##*|}"
         if install_or_update_plugin "$name" "$url"; then
-            (( ++ok ))
+            ok=$(( ok + 1 ))
         else
-            (( ++fail ))
+            fail=$(( fail + 1 ))
         fi
     done
 
@@ -444,7 +444,7 @@ create_symlinks() {
 
         ln -s "$src" "$dst"
         log_ok "Linked: $dst"
-        (( ++count ))
+        count=$(( count + 1 ))
     done
 
     echo ""
@@ -486,7 +486,7 @@ remove_symlinks() {
                 mv "$backup_dir/$basename" "$dst"
                 log_ok "Restored: $dst"
             fi
-            (( ++count ))
+            count=$(( count + 1 ))
         fi
     done
 
