@@ -49,6 +49,7 @@
 If mark active, otherwise indent entire buffer."
   (interactive)
   (save-excursion
+    ;; Use region if active, otherwise indent entire buffer
     (if mark-active
         (call-interactively 'indent-region)
       (call-interactively 'omw/indent-entire-buffer))))
@@ -90,6 +91,7 @@ Prompt for file buffers with changes, kill others directly.
 If buffer has unsaved changes and is a file, offer to save.
 Otherwise kill buffer without confirmation."
   (interactive)
+  ;; Only prompt for save if buffer has unsaved changes and is visiting a file
   (if (and buffer-file-name (buffer-modified-p))
       (if (yes-or-no-p (format "Buffer %s has unsaved changes. Save before killing? "
                                (buffer-name)))
@@ -123,50 +125,6 @@ Otherwise kill buffer without confirmation."
               ("r" . wgrep-change-to-wgrep-mode))
   :config
   (setq wgrep-auto-save-buffer t))
-
-;; ==================================================================================
-(use-package autoinsert
-  :ensure nil
-  :defer t
-  :hook (after-init . auto-insert-mode)
-  :config
-  (defun omw/define-auto-insert-custom (condition action)
-    "Add or update auto-insert rule for CONDITION with ACTION.
-CONDITION is a regex matching file names.
-ACTION is a template file or function to insert."
-    (let ((elt (assoc condition auto-insert-alist)))
-      (if elt
-          (setcdr elt action)
-        (add-to-list 'auto-insert-alist (cons condition action)))))
-
-  (defun omw/autoinsert-yas-expand ()
-    "Expand YASnippet template in current buffer."
-    (yas-expand-snippet (buffer-string) (point-min) (point-max)))
-
-  (setq auto-insert 'other
-        auto-insert-directory (concat omw/emacs-config-root-path "/templates/"))
-
-  (omw/define-auto-insert-custom
-    '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C/C++ header")
-    ["template.h" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
-    '("\\.\\([Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C/C++ source")
-    ["template.c" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
-    '("\\.py\\'" . "Python header")
-    ["template.py" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
-    '("\\.go\\'" . "Golang header")
-    ["template.go" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
-    '("\\.el\\'" . "Emacs Lisp header")
-    ["template.el" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
-    '("\\.hs\\'" . "Haskell header")
-    ["template.hs" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
-    '("\\.sh\\'" . "Shell script header")
-    ["template.sh" omw/autoinsert-yas-expand]))
 
 ;; ==================================================================================
 (use-package emacs

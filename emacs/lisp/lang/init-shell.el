@@ -37,6 +37,7 @@
 ;; ==================================================================================
 (defun omw/ensure-bash-tools ()
   "Ensure bash-language-server is installed for LSP support."
+  ;; Install bash-language-server via npm if not found
   (unless (executable-find "bash-language-server")
     (message "Installing bash-language-server...")
     (shell-command "npm install -g bash-language-server")
@@ -45,7 +46,9 @@
 (use-package sh-script
   :ensure nil
   :defer t
-  :hook (sh-mode . omw/ensure-bash-tools))
+  :hook (sh-mode . omw/ensure-bash-tools)
+  :bind (:map sh-mode-map
+              ("C-c C-c" . comment-line)))
 
 ;; ==================================================================================
 ;;; Provide features
