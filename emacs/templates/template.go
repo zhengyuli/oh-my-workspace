@@ -1,5 +1,6 @@
-// Author:  `user-full-name` <`user-mail-address`>
-// Brief:   ${1:brief}
+// File: `(file-name-nondirectory (buffer-file-name))`
+// Author: `user-full-name` <`user-mail-address`>
+// Brief: ${1:brief}
 //
 // Copyright (C) `(format-time-string "%Y")` `user-full-name`
 //

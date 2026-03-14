@@ -1,11 +1,12 @@
 ;;; init-pdf.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-08 22:51:26 Sunday by zhengyuli>
 
-;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
-;;
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: pdf, pdf-tools, document-viewer
 ;; Dependencies: (none)
+
+;; Copyright (C) 2026 zhengyu li
+
+;; Licensed under the GPL License version 3.0
 
 ;; This file is not part of GNU Emacs.
 
@@ -20,12 +21,17 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; History:
+;;
+;; 2026-03-14 15:30 chieftain <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;
 ;; PDF viewing and navigation configuration using pdf-tools.
 ;; Features: PDF viewing, editing, navigation, and state restoration.
+
 ;;; Code:
 
 ;; ==================================================================================

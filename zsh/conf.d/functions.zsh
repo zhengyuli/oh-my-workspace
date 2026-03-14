@@ -1,184 +1,147 @@
-# functions.zsh -*- mode: zsh; -*-
-# Time-stamp: <2026-03-13 15:55:46 Friday by zhengyu.li>
+# ==============================================================================
+# File: conf.d/functions.zsh
+# Role: User utility functions and logging helpers for the interactive session
 #
-# Utility functions
-
+# Load context : Sourced by .zshrc after options.zsh
+# Dependencies : None
+# Side effects : Defines the following in the global namespace:
+#                 _zsh_error  _zsh_warn  _zsh_info  _zsh_debug
+#                 has  mkcd  path_contains  backup
 # ==============================================================================
-# File Operations
-# ==============================================================================
 
-# Create a backup of a file
+# ── Logging Helpers ───────────────────────────────────────────────────────────
+: "${ZSH_LOG_LEVEL:=2}"  # 0 silent | 1 error | 2 warn | 3 info | 4 debug
+
+_zsh_error() { print -u2 -- "[ERROR] $(date '+%T') zsh: $*"; }
+_zsh_warn()  { (( ZSH_LOG_LEVEL >= 2 )) && print -u2 -- "[WARN]  $(date '+%T') zsh: $*"; return 0; }
+_zsh_info()  { (( ZSH_LOG_LEVEL >= 3 )) && print -u2 -- "[INFO]  $(date '+%T') zsh: $*"; return 0; }
+_zsh_debug() { (( ZSH_LOG_LEVEL >= 4 )) && print -u2 -- "[DEBUG] $(date '+%T') zsh: $*"; return 0; }
+
+# ── Command Helpers ───────────────────────────────────────────────────────────
+
+# True if $1 exists anywhere in $PATH
+has() { command -v "$1" &>/dev/null }
+
+# Create directory and cd into it
+mkcd() {
+  (( $# == 1 )) || { _zsh_error "Usage: mkcd <directory>"; return 1 }
+  [[ -n "$1" ]]  || { _zsh_error "mkcd: argument must not be empty"; return 1 }
+  mkdir -p -- "$1" && cd -- "$1"
+}
+
+# Check if directory is in PATH
+path_contains() {
+  (( $# == 1 )) || { _zsh_error "Usage: path_contains <directory>"; return 1 }
+  local dir
+  for dir in "${path[@]}"; do
+    [[ "$dir" == "$1" ]] && return 0
+  done
+  return 1
+}
+
+# ── Backup Functions ───────────────────────────────────────────────────────────
+
+# Create timestamped backup
 backup() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: backup <file>" >&2
-        return 1
-    fi
-    if [[ ! -e "$1" ]]; then
-        echo "Error: '$1' does not exist" >&2
-        return 1
-    fi
-    cp "$1" "$1.backup-$(date +%Y%m%d_%H%M%S)"
+  (( $# >= 1 )) || { _zsh_error "Usage: backup <file> [suffix]"; return 1 }
+  local file="$1"
+  local suffix="${2:-bak}"
+  [[ -f "$file" ]] || { _zsh_error "backup: '$file' not found"; return 1 }
+  cp -a "$file" "${file}.${suffix}.$(date +%Y%m%d%H%M%S)"
 }
 
-# Extract various archive formats
+# ── File Functions ─────────────────────────────────────────────────────────────
+
+# Extract archive (smart extractor)
 extract() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: extract <archive>"
-        return 1
-    fi
+  (( $# == 1 )) || { _zsh_error "Usage: extract <archive>"; return 1 }
+  local file="$1"
+  [[ -f "$file" ]] || { _zsh_error "extract: '$file' not found"; return 1 }
 
-    if [[ ! -f "$1" ]]; then
-        echo "Error: '$1' is not a valid file"
-        return 1
-    fi
-
-    case "$1" in
-        *.tar.bz2)   tar xjf "$1"     ;;
-        *.tar.gz)    tar xzf "$1"     ;;
-        *.tar.xz)    tar xJf "$1"     ;;
-        *.tar.zst)   tar --zstd -xf "$1" ;;
-        *.bz2)       bunzip2 "$1"     ;;
-        *.rar)       unrar x "$1"     ;;
-        *.gz)        gunzip "$1"      ;;
-        *.tar)       tar xf "$1"      ;;
-        *.tbz2)      tar xjf "$1"     ;;
-        *.tgz)       tar xzf "$1"     ;;
-        *.zip)       unzip "$1"       ;;
-        *.Z)         uncompress "$1"  ;;
-        *.7z)        7z x "$1"        ;;
-        *.dmg)       hdiutil attach "$1" ;;
-        *)           echo "Error: Unknown archive format '$1'" ;;
-    esac
+  case "$file" in
+    *.tar.bz2)   tar xjf "$file"     ;;
+    *.tar.gz)    tar xzf "$file"     ;;
+    *.tar.xz)    tar xJf "$file"     ;;
+    *.bz2)       bunzip2 "$file"     ;;
+    *.rar)       unrar x "$file"     ;;
+    *.gz)        gunzip "$file"      ;;
+    *.tar)       tar xf "$file"      ;;
+    *.tbz2)      tar xjf "$file"     ;;
+    *.tgz)       tar xzf "$file"     ;;
+    *.zip)       unzip "$file"       ;;
+    *.Z)         uncompress "$file"  ;;
+    *.7z)        7z x "$file"        ;;
+    *.xz)        unxz "$file"        ;;
+    *.exe)       cabextract "$file"  ;;
+    *)           _zsh_error "extract: unknown format '$file'"; return 1 ;;
+  esac
 }
 
-# Find files by name
-ff() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: ff <pattern>"
-        return 1
-    fi
-    find . -type f -iname "*$1*" 2>/dev/null
+# ── Directory Functions ───────────────────────────────────────────────────────
+
+# Create directory and cd into it
+mkcd() {
+  (( $# == 1 )) || { _zsh_error "Usage: mkcd <directory>"; return 1 }
+  [[ -n "$1" ]] || { _zsh_error "mkcd: argument must not be empty"; return 1 }
+  mkdir -p -- "$1" && cd -- "$1"
 }
 
-# Find directories by name (use fdir to avoid conflict with fd file finder)
-fdir() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: fdir <pattern>"
-        return 1
-    fi
-    find . -type d -iname "*$1*" 2>/dev/null
-}
-
-# ==============================================================================
-# Process Management
-# ==============================================================================
-
-# Find process by name
-psg() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: psg <pattern>"
-        return 1
-    fi
-    ps aux | grep -i "$1" | grep -v grep
-}
-
-# Kill process by name
-killp() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: killp <pattern>"
-        return 1
-    fi
-    local pids=($(psg "$1" | awk '{print $2}'))
-    if [[ ${#pids[@]} -gt 0 ]]; then
-        echo "Killing: ${pids[*]}"
-        kill "${pids[@]}"
-    else
-        echo "No processes found matching '$1'"
-    fi
-}
-
-# ==============================================================================
-# Network
-# ==============================================================================
-
-# Check if a port is in use
-port() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: port <port_number>"
-        return 1
-    fi
-    lsof -i :"$1"
-}
-
-# ==============================================================================
-# Development
-# ==============================================================================
-
-# Generate a random string
-randstr() {
-    local length=${1:-16}
-    LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c "$length"
-    echo
-}
+# ── Development Functions ─────────────────────────────────────────────────────
 
 # JSON pretty print
-jsonpp() {
-    if [[ -z "$1" ]]; then
-        python3 -m json.tool
-    else
-        python3 -m json.tool "$1"
-    fi
+json() {
+  if [[ -z "$1" ]]; then
+    python3 -m json.tool
+  else
+    python3 -m json.tool "$1"
+  fi
 }
 
-# ==============================================================================
-# macOS Specific
-# ==============================================================================
+# ── macOS Specific ────────────────────────────────────────────────────────────
 
 if [[ "$(uname)" == "Darwin" ]]; then
-    # Open man page in Preview
-    pman() {
-        man -t "$1" | open -f -a Preview
-    }
+  # Open man page in Preview
+  pman() {
+    (( $# == 1 )) || { _zsh_error "Usage: pman <command>"; return 1 }
+    man -t "$1" | open -f -a Preview
+  }
 
-    # Quick Look a file
-    ql() {
-        qlmanage -p "$1" >&/dev/null &
-    }
+  # Quick Look a file
+  ql() {
+    (( $# == 1 )) || { _zsh_error "Usage: ql <file>"; return 1 }
+    qlmanage -p "$1" >&/dev/null &
+  }
 fi
 
-# ==============================================================================
-# Miscellaneous
-# ==============================================================================
+# ── Miscellaneous ─────────────────────────────────────────────────────────────
 
 # Calculator
 calc() {
-    # Validate input: only allow digits, operators, parentheses, decimal point, spaces, and power
-    # Use pattern without problematic character ranges
-    local pattern='^[0-9()+*/. ^-]+$'
-    if [[ ! "$*" =~ $pattern ]]; then
-        echo "Error: Invalid arithmetic expression" >&2
-        return 1
-    fi
-    echo "$*" | bc -l
+  local pattern='^[0-9()+*/. ^-]+$'
+  if [[ ! "$*" =~ $pattern ]]; then
+    _zsh_error "Invalid arithmetic expression"
+    return 1
+  fi
+  echo "$*" | bc -l
 }
 
 # Timer
 timer() {
-    local seconds=${1:-60}
-    echo "Timer set for $seconds seconds..."
-    sleep "$seconds"
-    printf '\aTimer done!\n'
+  local seconds="${1:-60}"
+  echo "Timer set for $seconds seconds..."
+  sleep "$seconds"
+  printf '\aTimer done!\n'
 }
 
 # Colorized man pages (only if not already defined)
 if (( ! ${+functions[man]} )); then
-    man() {
-        LESS_TERMCAP_md=$'\e[01;31m' \
-        LESS_TERMCAP_me=$'\e[0m' \
-        LESS_TERMCAP_us=$'\e[01;32m' \
-        LESS_TERMCAP_ue=$'\e[0m' \
-        LESS_TERMCAP_so=$'\e[45;93m' \
-        LESS_TERMCAP_se=$'\e[0m' \
-        command man "$@"
-    }
+  man() {
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[45;93m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    command man "$@"
+  }
 fi

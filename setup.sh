@@ -10,6 +10,20 @@
 set -euo pipefail
 
 # ==============================================================================
+# Error Handling
+# ==============================================================================
+
+# Trap errors to provide meaningful feedback instead of silent exit
+trap_error() {
+    local exit_code=$?
+    local line_no=$1
+    log_error "Script failed at line $line_no (exit code: $exit_code)"
+    log_error "Run with VERBOSE=1 for more details, or use bash -x ./setup.sh for tracing"
+    exit $exit_code
+}
+trap 'trap_error $LINENO' ERR
+
+# ==============================================================================
 # Bootstrap
 # ==============================================================================
 
@@ -238,16 +252,18 @@ install_all_plugins() {
     for entry in "${ZSH_PLUGINS[@]}"; do
         local name="${entry%%|*}" url="${entry##*|}"
         if install_or_update_plugin "$name" "$url"; then
-            (( ok++ )) || true
+            (( ++ok ))
         else
-            (( fail++ )) || true
+            (( ++fail ))
         fi
     done
 
     echo ""
     log_ok "$ok plugin(s) up to date"
-    (( fail > 0 )) && log_warn "$fail plugin(s) failed"
-    return $(( fail > 0 ? 1 : 0 ))
+    if (( fail > 0 )); then
+        log_warn "$fail plugin(s) failed"
+        return 1
+    fi
 }
 
 # ==============================================================================
@@ -342,7 +358,7 @@ setup_virtualenvwrapper() {
 # ==============================================================================
 
 create_symlinks() {
-    local backup_dir="" count=0
+    local backup_dir="$HOME/.dotfiles-backup" count=0
     local -a sources=()
     collect_symlinks sources
 
@@ -358,42 +374,57 @@ create_symlinks() {
             continue
         fi
 
-        # Conflict — back up first
-        if [[ -e "$dst" || -L "$dst" ]]; then
-            if [[ -z "$backup_dir" ]]; then
-                backup_dir="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
-                mkdir -p "$backup_dir"
-            fi
+        # Conflict: only back up regular files (not symlinks)
+        if [[ -e "$dst" && ! -L "$dst" ]]; then
+            mkdir -p "$backup_dir"
             mv "$dst" "$backup_dir/"
             log_warn "Backed up: $(basename "$dst") -> $backup_dir/"
+        elif [[ -L "$dst" ]]; then
+            # Existing symlink (pointing elsewhere) — just remove it
+            rm -f "$dst"
+            log_warn "Removed old symlink: $dst"
         fi
 
         ln -s "$src" "$dst"
         log_ok "Linked: $dst"
-        (( count++ )) || true
+        (( ++count ))
     done
 
     echo ""
     log_ok "Created $count new symlink(s)"
-    [[ -n "$backup_dir" ]] && log_warn "Backups saved to: $backup_dir"
+    if [[ -d "$backup_dir" ]]; then
+        log_warn "Backups saved to: $backup_dir"
+    fi
 }
 
 remove_symlinks() {
     local count=0
+    local backup_dir="$HOME/.dotfiles-backup"
     local -a sources=()
     collect_symlinks sources
 
     log_info "Removing managed symlinks..."
 
     for src in "${sources[@]}"; do
-        local dst
+        local dst basename
         dst="$(symlink_dst "$src")"
+        basename="$(basename "$dst")"
         if [[ -L "$dst" && "$(readlink "$dst")" == "$src" ]]; then
             rm -f "$dst"
             log_ok "Removed: $dst"
-            (( count++ )) || true
+            # Restore from backup if available
+            if [[ -e "$backup_dir/$basename" ]]; then
+                mv "$backup_dir/$basename" "$dst"
+                log_ok "Restored: $dst"
+            fi
+            (( ++count ))
         fi
     done
+
+    # Clean up backup directory if empty or requested
+    if [[ -d "$backup_dir" ]]; then
+        rmdir "$backup_dir" 2>/dev/null && log_ok "Removed empty backup directory: $backup_dir" || true
+    fi
 
     log_ok "Removed $count symlink(s)"
 }
@@ -412,9 +443,16 @@ _git_prompt_field() {
         return
     fi
 
+    # Check if running interactively
+    if [[ ! -t 0 ]]; then
+        log_warn "Git $key not set and stdin is not a TTY — skipping"
+        log_warn "Run './setup.sh config-git' interactively to configure"
+        return
+    fi
+
     log_info "Git $key not set. Enter your $field:"
     local value
-    read -r value
+    read -r value || { log_warn "Failed to read input — skipping"; return; }
     [[ -n "$value" ]] && git config -f "$git_local" "$key" "$value"
 }
 
@@ -436,10 +474,10 @@ switch_shell() {
         return
     fi
 
-    grep -qxF "$target_zsh" /etc/shells 2>/dev/null || {
+    if ! grep -qxF "$target_zsh" /etc/shells 2>/dev/null; then
         log_info "Registering $target_zsh in /etc/shells (requires sudo)..."
         echo "$target_zsh" | sudo tee -a /etc/shells >/dev/null
-    }
+    fi
 
     if [[ "$SHELL" == "$target_zsh" ]]; then
         log_skip "Default shell is already $target_zsh"
@@ -454,8 +492,8 @@ switch_shell() {
 # Commands
 # ==============================================================================
 
-cmd_setup() {
-    print_header "Dotfiles — Setup"
+cmd_full_setup() {
+    print_header "Dotfiles — Full Setup"
 
     print_header "Prerequisites"
     check_os
@@ -490,30 +528,70 @@ cmd_setup() {
     echo ""
 }
 
-cmd_link() {
-    print_header "Dotfiles — Link"
+cmd_create_links() {
+    print_header "Dotfiles — Create Links"
     create_symlinks
 }
 
-cmd_unlink() {
-    print_header "Dotfiles — Unlink"
+cmd_remove_links() {
+    print_header "Dotfiles — Remove Links"
     echo -e "${YELLOW}This will remove all managed symlinks from \$HOME.${NC}"
     echo -n "Continue? [y/N] "
-    read -r confirm
+    read -r confirm || { log_warn "Failed to read input — aborting."; return; }
     [[ "$confirm" =~ ^[Yy]$ ]] || { log_info "Aborted."; return; }
     remove_symlinks
     log_ok "Unlink complete. Homebrew packages and shell config untouched."
 }
 
-cmd_update() {
+# Individual step commands
+cmd_check_prereq() {
+    print_header "Dotfiles — Check Prerequisites"
+    check_os
+    check_command_line_tools
+}
+
+cmd_install_homebrew() {
+    print_header "Dotfiles — Install Homebrew"
+    setup_homebrew
+    install_brew_packages
+}
+
+cmd_install_plugins() {
+    print_header "Dotfiles — Install Plugins"
+    check_zsh || die "zsh is required"
+    ensure_plugin_dir
+    install_all_plugins
+}
+
+cmd_setup_node() {
+    print_header "Dotfiles — Setup Node.js"
+    setup_node || log_warn "Node.js setup failed"
+}
+
+cmd_setup_python() {
+    print_header "Dotfiles — Setup Python"
+    setup_python || log_warn "Python setup failed"
+}
+
+cmd_config_git() {
+    print_header "Dotfiles — Configure Git"
+    setup_git
+}
+
+cmd_switch_shell() {
+    print_header "Dotfiles — Switch Shell"
+    switch_shell
+}
+
+cmd_update_plugins() {
     print_header "Zsh Plugins — Update"
     check_zsh || die "zsh is required"
     ensure_plugin_dir
     install_all_plugins
 }
 
-cmd_status() {
-    print_header "Dotfiles — Status"
+cmd_show_status() {
+    print_header "Dotfiles — Show Status"
 
     echo -e "${BOLD}Symlinks:${NC}"
     local -a sources=()
@@ -565,25 +643,33 @@ show_help() {
     echo -e "${BOLD}dotfiles${NC} — Setup and maintenance utility"
     echo ""
     echo -e "${BOLD}Usage:${NC}"
-    echo "  ./setup.sh [command]"
+    echo "  ./setup.sh <command>"
     echo ""
-    echo -e "${BOLD}Commands:${NC}"
-    echo "  setup     Full setup: Homebrew, plugins, languages, symlinks, shell  ${CYAN}(default)${NC}"
-    echo "  link      Create symlinks from *.symlink files into \$HOME"
-    echo "  unlink    Remove all managed symlinks from \$HOME"
-    echo "  update    Update zsh plugins"
-    echo "  status    Show symlink and tool status"
-    echo "  help      Show this message"
+    echo -e "${BOLD}Workflow:${NC}"
+    echo "  full-setup      Full setup: all steps in sequence"
+    echo "  show-status     Show symlink and tool status"
+    echo "  update-plugins  Update zsh plugins"
+    echo ""
+    echo -e "${BOLD}Symlinks:${NC}"
+    echo "  create-links    Create symlinks from *.symlink files"
+    echo "  remove-links    Remove all managed symlinks"
+    echo ""
+    echo -e "${BOLD}Individual Steps:${NC}"
+    echo "  install-homebrew Install Homebrew and Brewfile packages"
+    echo "  install-plugins Install zsh plugins"
+    echo "  setup-node      Setup Node.js via fnm"
+    echo "  setup-python    Setup Python via pyenv"
+    echo "  config-git      Configure git user.name and user.email"
+    echo "  switch-shell    Switch default shell to Homebrew zsh"
     echo ""
     echo -e "${BOLD}Options:${NC}"
-    echo "  VERBOSE=0   Suppress command output  (e.g. VERBOSE=0 ./setup.sh setup)"
+    echo "  VERBOSE=0       Suppress command output"
     echo ""
     echo -e "${BOLD}Examples:${NC}"
-    echo "  ./setup.sh                    # Full setup"
-    echo "  ./setup.sh link               # Re-link symlinks only"
-    echo "  ./setup.sh update-plugins     # Update zsh plugins"
-    echo "  ./setup.sh status             # Check current state"
-    echo "  VERBOSE=0 ./setup.sh setup    # Run silently"
+    echo "  ./setup.sh                    # Show this help"
+    echo "  ./setup.sh full-setup         # Full setup"
+    echo "  ./setup.sh create-links       # Re-link symlinks only"
+    echo "  ./setup.sh setup-node setup-python  # Setup Node.js and Python"
     echo ""
 }
 
@@ -592,20 +678,32 @@ show_help() {
 # ==============================================================================
 
 main() {
-    local cmd="${1:-setup}"
+    local cmd="${1:-help}"
     shift || true
 
     case "$cmd" in
-        setup)
-            cmd_setup  "$@" ;;
-        link)
-            cmd_link   "$@" ;;
-        unlink)
-            cmd_unlink "$@" ;;
-        update)
-            cmd_update "$@" ;;
-        status)
-            cmd_status "$@" ;;
+        full-setup)
+            cmd_full_setup "$@" ;;
+        create-links)
+            cmd_create_links "$@" ;;
+        remove-links)
+            cmd_remove_links "$@" ;;
+        update-plugins)
+            cmd_update_plugins "$@" ;;
+        show-status)
+            cmd_show_status "$@" ;;
+        install-homebrew)
+            cmd_install_homebrew "$@" ;;
+        install-plugins)
+            cmd_install_plugins "$@" ;;
+        setup-node)
+            cmd_setup_node "$@" ;;
+        setup-python)
+            cmd_setup_python "$@" ;;
+        config-git)
+            cmd_config_git "$@" ;;
+        switch-shell)
+            cmd_switch_shell "$@" ;;
         help|--help|-h)
             show_help ;;
         *)
