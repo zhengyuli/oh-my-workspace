@@ -224,6 +224,7 @@ Every `.el` file must start with:
 
 ```elisp
 ;; ==================================================================================
+;;; Provide features
 (provide 'init-module)
 
 ;;; init-module.el ends here
