@@ -124,8 +124,10 @@ Returns nil in terminal mode (uses official banner instead)."
   :defer t
   :hook (after-init . dashboard-open)
   :config
+  ;; Dashboard configuration for startup screen
   (setq dashboard-center-content t
         dashboard-set-navigator t
+        ;; Show icons only in GUI mode
         dashboard-set-heading-icons (display-graphic-p)
         dashboard-set-file-icons (display-graphic-p)
         dashboard-banner-logo-title (format "Welcome to %s's Emacs" omw/emacs-user-name)

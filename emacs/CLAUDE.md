@@ -513,16 +513,40 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 - Documenting non-obvious behavior
 - Providing context for complex logic
 
-**✅ Good inline comment:**
+**Comment style guidelines:**
+- Use standalone line comments with `;;` prefix
+- Do NOT use end-of-line comments (alignment issues)
+- Comments in let bindings use `;;` prefix on same line as variable
+
+**✅ Good inline comment (standalone):**
 ```elisp
+;; Add custom attributes not in default set
 (setq dirvish-attributes
       (append dirvish-attributes
-              '(git-msg file-modes)))  ; Add custom attributes not in default set
+              '(git-msg file-modes)))
 ```
 
-**❌ Unnecessary inline comment:**
+**✅ Good let binding comment:**
 ```elisp
-(setq tab-width 4)  ; Set tab width to 4  ; ❌ Obvious from code
+(let* (;; Normalize proxy URL: add http:// prefix if missing
+       (proxy-url (if (string-match-p "\\`https?://" proxy)
+                      proxy
+                    (concat "http://" proxy)))
+       ;; Parse proxy URL to extract host and port
+       (parsed (url-generic-parse-url proxy-url)))
+  ...)
+```
+
+**❌ Avoid end-of-line comments:**
+```elisp
+;; ❌ End-of-line comments cause alignment issues
+(setq tab-width 4)  ; Set tab width to 4
+```
+
+**❌ Unnecessary comment:**
+```elisp
+;; ❌ Obvious from code
+(setq tab-width 4)
 ```
 
 #### Section Separators
@@ -553,14 +577,17 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
       var3 value3)
 ```
 
-**Multi-line setq with comments:**
+**Multi-line setq with comments (use standalone comments above):**
 ```elisp
-(setq var1 value1      ; Comment for var1
-      var2 value2      ; Comment for var2
-      var3 value3)     ; Comment for var3
+;; Configure variables for feature X
+(setq var1 value1
+      var2 value2
+      var3 value3)
 ```
 
-**Line-end comments:** 2+ spaces before semicolon
+**Comment prefix rules:**
+- Use `;;` for all inline code comments
+- Use `;;;` only for file-level section headers (;; Commentary:, ;;; Code:)
 
 ## Code Quality
 

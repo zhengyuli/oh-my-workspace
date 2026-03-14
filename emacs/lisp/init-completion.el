@@ -134,6 +134,55 @@
                                                #'cape-dabbrev)))
 
 ;; ==================================================================================
+(defun omw/define-auto-insert-custom (condition action)
+    "Add or update auto-insert rule for CONDITION with ACTION.
+CONDITION is a regex matching file names.
+ACTION is a template file or function to insert."
+    (require 'autoinsert)
+    ;; Check if rule exists and update, otherwise add new rule
+    (let ((elt (assoc condition auto-insert-alist)))
+      (if elt
+          (setcdr elt action)
+        (add-to-list 'auto-insert-alist (cons condition action)))))
+
+(defun omw/autoinsert-yas-expand ()
+    "Expand YASnippet template in current buffer."
+    (require 'yasnippet)
+    ;; Use buffer content as snippet template and expand
+    (yas-expand-snippet (buffer-string) (point-min) (point-max)))
+
+;; Configure auto-insert to use templates directory
+(use-package autoinsert
+  :ensure nil
+  :defer t
+  :hook (after-init . auto-insert-mode)
+  :config
+  (setq auto-insert 'other
+        auto-insert-directory (concat omw/emacs-config-root-path "/templates/"))
+
+  (omw/define-auto-insert-custom
+    '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C/C++ header")
+    ["template.h" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
+    '("\\.\\([Cc]\\|cc\\|cpp\\|cxx\\|c\\+\\+\\)\\'" . "C/C++ source")
+    ["template.c" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
+    '("\\.py\\'" . "Python header")
+    ["template.py" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
+    '("\\.go\\'" . "Golang header")
+    ["template.go" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
+    '("\\.el\\'" . "Emacs Lisp header")
+    ["template.el" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
+    '("\\.hs\\'" . "Haskell header")
+    ["template.hs" omw/autoinsert-yas-expand])
+  (omw/define-auto-insert-custom
+    '("\\.sh\\'" . "Shell script header")
+    ["template.sh" omw/autoinsert-yas-expand]))
+
+;; ==================================================================================
 ;;; Provide features
 (provide 'init-completion)
 

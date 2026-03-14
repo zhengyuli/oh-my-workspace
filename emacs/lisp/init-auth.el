@@ -39,6 +39,7 @@
   :ensure nil
   :demand t
   :config
+  ;; Use loopback mode for PIN entry (allows Emacs to prompt for GPG passphrase)
   (setq epg-pinentry-mode 'loopback))
 
 ;; ==================================================================================
@@ -46,6 +47,7 @@
   :ensure nil
   :demand t
   :config
+  ;; Enable pass (password-store.org) as auth source backend
   (auth-source-pass-enable))
 
 ;; ==================================================================================
