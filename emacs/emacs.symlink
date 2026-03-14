@@ -206,6 +206,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   ;; Load all other modules
   ;; Core modules
   (require 'init-editing)
+  (require 'init-search)
+  (require 'init-template)
   (require 'init-completion)
   (require 'init-auth)
   (require 'init-proxy)

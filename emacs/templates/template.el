@@ -37,6 +37,7 @@
 $0
 
 ;; ==================================================================================
-(provide `(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`)
+;;; Provide features
+(provide '`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`)
 
 ;;; `(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`.el ends here

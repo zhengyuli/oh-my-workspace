@@ -118,15 +118,6 @@ Otherwise kill buffer without confirmation."
   :bind ("M-o" . goto-last-change))
 
 ;; ==================================================================================
-(use-package wgrep
-  :ensure t
-  :defer t
-  :bind (:map grep-mode-map
-              ("r" . wgrep-change-to-wgrep-mode))
-  :config
-  (setq wgrep-auto-save-buffer t))
-
-;; ==================================================================================
 (use-package emacs
   :ensure nil
   :demand t

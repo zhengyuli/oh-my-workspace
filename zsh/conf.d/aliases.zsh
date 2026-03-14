@@ -7,7 +7,7 @@
 # Side effects : Defines aliases in global namespace
 # ==============================================================================
 
-# ── grep Replacements ─────────────────────────────────────────────────────
+# ── grep Replacements ─────────────────────────────────────────────────────────
 
 if command -v rg &>/dev/null; then
   alias grep='rg'
@@ -18,27 +18,27 @@ else
   alias egrep='egrep --color=auto'
 fi
 
-# ── File Operations ─────────────────────────────────────────────────────
+# ── File Operations ───────────────────────────────────────────────────────────
 
 alias cp='cp -iv'
 alias mv='mv -iv'
 alias rm='rm -iv'
 alias mkdir='mkdir -pv'
 
-# ── Disk Usage ─────────────────────────────────────────────────────
+# ── Disk Usage ────────────────────────────────────────────────────────────────
 
 alias du='du -h'
 alias df='df -h'
 alias ducks='du -sh * | sort -hr | head -10'
 
-# ── Network ─────────────────────────────────────────────────────
+# ── Network ───────────────────────────────────────────────────────────────────
 
 alias myip='curl -s ifconfig.me'
 alias localip='ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1'
 alias ping='ping -c 5'
 alias ports='lsof -i -P | grep LISTEN'
 
-# ── Development ─────────────────────────────────────────────────────
+# ── Development ───────────────────────────────────────────────────────────────
 
 # Python
 alias python='python3'
@@ -46,7 +46,7 @@ alias pip='pip3'
 alias venv='python3 -m venv'
 alias serve='python3 -m http.server'
 
-# ── macOS Specific ─────────────────────────────────────────────────────
+# ── macOS Specific ────────────────────────────────────────────────────────────
 
 if [[ "$(uname)" == "Darwin" ]]; then
   alias showhidden='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
@@ -58,7 +58,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
   alias brewup='brew update && brew upgrade && brew cleanup'
 fi
 
-# ── Safety ─────────────────────────────────────────────────────
+# ── Safety ────────────────────────────────────────────────────────────────────
 
 # --preserve-root is GNU coreutils specific, not available on macOS BSD tools
 if [[ "$(uname)" != "Darwin" ]]; then
@@ -67,7 +67,7 @@ if [[ "$(uname)" != "Darwin" ]]; then
   alias chgrp='chgrp --preserve-root'
 fi
 
-# ── Fun ─────────────────────────────────────────────────────
+# ── Fun ───────────────────────────────────────────────────────────────────────
 
 alias weather='curl wttr.in'
 alias moon='curl wttr.in/Moon'

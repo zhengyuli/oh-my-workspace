@@ -60,3 +60,16 @@ setopt NO_HUP                   # Don't kill background jobs on exit
 
 setopt NO_BEEP                  # Never beep
 setopt MULTIOS                  # Allow multiple redirections
+
+# ── Completion Options ─────────────────────────────────────────────────────
+
+setopt ALWAYS_TO_END            # Move cursor to end after completion
+setopt AUTO_MENU                # Show menu on multiple completions
+setopt AUTO_LIST                # List choices on ambiguous completion
+setopt AUTO_PARAM_SLASH         # Add trailing slash to directories
+setopt COMPLETE_IN_WORD         # Complete from cursor position
+setopt MENU_COMPLETE            # Insert first match immediately
+
+# ── Prompt Options ───────────────────────────────────────────────────────────
+
+setopt PROMPT_SUBST             # Allow parameter expansion in prompts
