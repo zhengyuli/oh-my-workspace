@@ -49,7 +49,7 @@ brew "ninja"                    # Small build system with focus on speed
 # Compiler & Libraries
 # ==============================================================================
 
-brew "llvm"                     # C/C++ compiler toolchain (provides clangd)
+#brew "llvm"                     # C/C++ compiler toolchain (provides clangd)
 brew "libvterm"                 # Terminal emulator library
 brew "openssl@3"                # Cryptography library (TLS/SSL)
 brew "readline"                 # Command line editing library

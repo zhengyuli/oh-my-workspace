@@ -1,3 +1,6 @@
+// Author:  `user-full-name` <`user-mail-address`>
+// Brief:   ${1:brief}
+//
 // Copyright (C) `(format-time-string "%Y")` `user-full-name`
 //
 // Licensed under the GPL License version 3.0
@@ -14,10 +17,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// ======================================================================
+// ======================================================================================
 
-// ${1:brief}.
+// History:
+// ================================================================
+// `(format-time-string "%Y-%m-%d %H:%M")` `user-full-name` <`user-mail-address`> created.
 
-package `(file-name-nondirectory (directory-file-name (file-name-directory buffer-file-name)))`
+package `(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`
 
 $0
