@@ -30,7 +30,6 @@
 ;;; Commentary:
 ;;
 ;; TypeScript mode configuration with LSP support.
-;;
 
 ;;; Code:
 

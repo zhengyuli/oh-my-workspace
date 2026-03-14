@@ -30,7 +30,6 @@
 ;;; Commentary:
 ;;
 ;; Go mode configuration with LSP support via gopls.
-;;
 
 ;;; Code:
 

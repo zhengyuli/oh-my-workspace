@@ -4,7 +4,7 @@
 ;; Keywords: template, yasnippet, autoinsert, snippet
 ;; Dependencies: (none)
 
-;; Copyright (C) 2026 Zhengyu Li
+;; Copyright (C) 2026 zhengyu li
 
 ;; Licensed under the GPL License version 3.0
 
@@ -25,7 +25,7 @@
 
 ;;; History:
 ;;
-;; 2026-03-14 19:10 Zhengyu Li <lizhengyu419@outlook.com> created.
+;; 2026-03-14 19:10 chieftain <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;
@@ -46,6 +46,7 @@
 
 (use-package yasnippet-snippets
   :ensure t
+  :defer t
   :after yasnippet
   :config
   (yasnippet-snippets-initialize))

@@ -43,8 +43,8 @@
 ;; ==================================================================================
 (use-package pdf-view
   :ensure nil
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . pdf-view-fit-height-to-window)
   :bind (:map pdf-view-mode-map
@@ -61,8 +61,8 @@
 
 (use-package pdf-view-restore
   :ensure t
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :hook (pdf-view-mode . pdf-view-restore-mode)
   :config
   (setq pdf-view-restore-filename omw/pdf-view-restore-path))
