@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-13 21:52:47 Friday by zhengyu.li>
+# Time-stamp: <2026-03-14 14:25:34 Saturday by zhengyuli>
 #
 # Copyright (C) 2026 zhengyu li
 #
@@ -568,7 +568,7 @@ show_help() {
     echo "  ./setup.sh [command]"
     echo ""
     echo -e "${BOLD}Commands:${NC}"
-    echo "  setup           Full setup: Homebrew, plugins, languages, symlinks, shell  ${CYAN}(default)${NC}"
+    echo "  setup     Full setup: Homebrew, plugins, languages, symlinks, shell  ${CYAN}(default)${NC}"
     echo "  link      Create symlinks from *.symlink files into \$HOME"
     echo "  unlink    Remove all managed symlinks from \$HOME"
     echo "  update    Update zsh plugins"
