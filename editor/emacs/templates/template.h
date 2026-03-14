@@ -27,7 +27,7 @@
  * `(format-time-string "%Y-%m-%d %H:%M")` `user-full-name` <`user-mail-address`> created.
  */
 
-#ifndef ${2:__`(upcase (replace-regexp-in-string "[^a-zA-Z0-9]" "_" (file-name-nondirectory (file-name-sans-extension (or (buffer-file-name) (buffer-name)))))`_H__}
+#ifndef ${2:__`(upcase (replace-regexp-in-string "[^A-Za-z0-9]" "_" (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))`_H__}
 #define $2
 
 $0
