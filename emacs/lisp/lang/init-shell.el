@@ -30,7 +30,6 @@
 ;;; Commentary:
 ;;
 ;; Shell script mode configuration.
-;;
 
 ;;; Code:
 

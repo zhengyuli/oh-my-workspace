@@ -30,7 +30,6 @@
 ;;; Commentary:
 ;;
 ;; Python mode configuration with virtual environment and Poetry support.
-;;
 
 ;;; Code:
 

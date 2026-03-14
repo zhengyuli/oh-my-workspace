@@ -61,8 +61,8 @@
 ;; ==================================================================================
 (use-package valign
   :ensure t
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :hook (markdown-mode . valign-mode)
   :config
   (setq valign-fancy-bar t))
