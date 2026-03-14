@@ -135,6 +135,7 @@ require_command() {
 }
 
 # Return the appropriate Homebrew zsh for the current arch
+# Returns: 0 and path if found, 1 if not found
 brew_zsh_path() {
     local arch
     arch="$(uname -m)"
@@ -143,10 +144,10 @@ brew_zsh_path() {
         local candidate_path="${entry##*|}"
         if [[ "$arch" == "$candidate_arch" && -f "$candidate_path" ]]; then
             echo "$candidate_path"
-            return
+            return 0
         fi
     done
-    echo ""
+    return 1
 }
 
 # Collect *.symlink sources into a named array (null-safe)
@@ -553,9 +554,7 @@ setup_git() {
 
 switch_shell() {
     local target_zsh
-    target_zsh="$(brew_zsh_path)"
-
-    if [[ -z "$target_zsh" ]]; then
+    if ! target_zsh="$(brew_zsh_path)"; then
         log_warn "Homebrew zsh not found — skipping shell switch"
         return
     fi
@@ -709,13 +708,16 @@ cmd_show_status() {
     done
 
     echo ""
-    echo -e "${BOLD}Shell:${NC}"
+    printf '%b\n' "${BOLD}Shell:${NC}"
     local target_zsh
-    target_zsh="$(brew_zsh_path)"
-    if [[ "$SHELL" == "$target_zsh" ]]; then
-        echo -e "  ${GREEN}✔${NC}  $SHELL"
+    if target_zsh="$(brew_zsh_path)"; then
+        if [[ "$SHELL" == "$target_zsh" ]]; then
+            printf '%b\n' "  ${GREEN}✔${NC}  $SHELL"
+        else
+            printf '%b\n' "  ${YELLOW}!${NC}  $SHELL  ${YELLOW}(expected $target_zsh)${NC}"
+        fi
     else
-        echo -e "  ${YELLOW}!${NC}  $SHELL  ${YELLOW}(expected $target_zsh)${NC}"
+        printf '%b\n' "  ${YELLOW}!${NC}  $SHELL  ${YELLOW}(Homebrew zsh not found)${NC}"
     fi
     echo ""
 }
