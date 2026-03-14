@@ -1,11 +1,11 @@
 ;;; `(file-name-nondirectory (buffer-file-name))` -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-13 21:40:01 Friday by zhengyu.li>
+;; Time-stamp: <`(format-time-string "%Y-%m-%d %H:%M:%S %A")` by `user-login-name`>
 
 ;; Copyright (C) `(format-time-string "%Y")` `user-full-name`
 ;;
 ;; Author: `user-full-name` <`user-mail-address`>
 ;; Keywords: ${1:keyword1, keyword2}
-;; Dependencies: (none)
+;; Dependencies: ${2:(none)}
 
 ;; This file is not part of GNU Emacs.
 
@@ -22,9 +22,13 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+;;; History:
+;;
+;; `(format-time-string "%Y-%m-%d %H:%M")` `user-full-name` <`user-mail-address`> created.
+
 ;;; Commentary:
 ;;
-;; ${2:One or two sentence description of module purpose.}
+;; ${3:One or two sentence description of module purpose.}
 
 ;;; Code:
 

@@ -1,7 +1,7 @@
 /*
  * File:    `(buffer-name)`
  * Author:  `user-full-name` <`user-mail-address`>
- * Brief:   ${2:brief}
+ * Brief:   ${1:brief}
  *
  * Copyright (C) `(format-time-string "%Y")` `user-full-name`
  *
@@ -27,9 +27,9 @@
  * `(format-time-string "%Y-%m-%d %H:%M")` `user-full-name` <`user-mail-address`> created.
  */
 
-#ifndef ${1:__`(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H__}
-#define $1
+#ifndef ${2:__`(upcase (replace-regexp-in-string "[^a-zA-Z0-9]" "_" (file-name-nondirectory (file-name-sans-extension (or (buffer-file-name) (buffer-name)))))`_H__}
+#define $2
 
 $0
 
-#endif /* $1 */
+#endif /* $2 */

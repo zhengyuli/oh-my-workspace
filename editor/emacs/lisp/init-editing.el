@@ -1,5 +1,5 @@
 ;;; init-editing.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-11 08:52:13 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-03-14 10:30:43 Saturday by zhengyuli>
 
 ;; Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 zhengyu li
 ;;
@@ -161,10 +161,7 @@ ACTION is a template file or function to insert."
     ["template.hs" omw/autoinsert-yas-expand])
   (omw/define-auto-insert-custom
     '("\\.sh\\'" . "Shell script header")
-    ["template.sh" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
-    '("\\.org\\'" . "Org header")
-    ["template.org" omw/autoinsert-yas-expand]))
+    ["template.sh" omw/autoinsert-yas-expand]))
 
 ;; ==================================================================================
 (use-package emacs
