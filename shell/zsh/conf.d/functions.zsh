@@ -152,7 +152,10 @@ fi
 
 # Calculator
 calc() {
-    if [[ ! "$*" =~ ^[0-9+\-*/\(\)\.\^[:space:]]+$ ]]; then
+    # Validate input: only allow digits, operators, parentheses, decimal point, spaces, and power
+    # Use pattern without problematic character ranges
+    local pattern='^[0-9()+*/. ^-]+$'
+    if [[ ! "$*" =~ $pattern ]]; then
         echo "Error: Invalid arithmetic expression" >&2
         return 1
     fi
