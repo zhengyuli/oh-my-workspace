@@ -45,7 +45,6 @@ else
   precmd_functions+=(_vcs_info_precmd)
 
   # Basic prompt with git info
-  setopt PROMPT_SUBST
   PROMPT='%F{cyan}%~%f${vcs_info_msg_0_} %F{green}❯%f '
   RPROMPT='%F{8}%n@%m%f'  # User@host on right side
 fi

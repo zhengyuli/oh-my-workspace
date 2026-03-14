@@ -1,8 +1,14 @@
 # zprofile.symlink -*- mode: zsh; -*-
 # Time-stamp: <2026-03-14 16:00:00 Saturday by zhengyu.li>
 #
-# This file is sourced once for login shells.
-# Put PATH construction and version manager initialization here.
+# ==============================================================================
+# File: .zprofile
+# Role: Login shell bootstrap - PATH construction and runtime init
+#
+# Load context : Sourced once per login session (before .zshrc)
+# Dependencies : DOTFILES (from .zshenv), XDG_* (from .zshenv)
+# Side effects : Modifies PATH, initializes Homebrew/fnm/pyenv
+# ==============================================================================
 
 # ==============================================================================
 # Setup

@@ -99,18 +99,6 @@ If no delimiter is found, show an error message."
   :defer t)
 
 ;; ==================================================================================
-(use-package dumb-jump
-  :ensure t
-  :demand t)
-
-;; ==================================================================================
-(use-package xref
-  :ensure nil
-  :defer t
-  :config
-  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
-
-;; ==================================================================================
 (use-package eglot
   :ensure nil
   :defer t

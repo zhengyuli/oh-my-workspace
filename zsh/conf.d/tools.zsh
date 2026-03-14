@@ -5,6 +5,9 @@
 # Load context : Sourced after functions.zsh (needs logging helpers)
 # Dependencies : functions.zsh (for _zsh_warn, _zsh_error)
 # Side effects : Initializes fnm, pyenv, adds to fpath
+#                 Defines: brdeps brleaves brinfo brupdate brlist brsearch
+#                 py-info mkvenv vex workon mkvirtualenv rmvirtualenv
+#                 lsvirtualenv cdvirtualenv cdsitepackages
 # ==============================================================================
 
 # ── Homebrew ─────────────────────────────────────────────────────────────────
@@ -24,7 +27,7 @@ brdeps() {
   brew deps --tree "$1"
 }
 
-# Helper: Show leaf packages
+# Helper: Show leaf packages (packages not depended on by others)
 brleaves() { brew leaves }
 
 # Helper: Show package info

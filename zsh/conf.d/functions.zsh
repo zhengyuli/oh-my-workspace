@@ -6,7 +6,8 @@
 # Dependencies : None
 # Side effects : Defines the following in the global namespace:
 #                 _zsh_error  _zsh_warn  _zsh_info  _zsh_debug
-#                 has  mkcd  path_contains  backup
+#                 has  mkcd  path_contains  backup  extract
+#                 json  pman  ql  calc  timer  man
 # ==============================================================================
 
 # ── Logging Helpers ───────────────────────────────────────────────────────────
@@ -75,15 +76,6 @@ extract() {
     *.exe)       cabextract "$file"  ;;
     *)           _zsh_error "extract: unknown format '$file'"; return 1 ;;
   esac
-}
-
-# ── Directory Functions ───────────────────────────────────────────────────────
-
-# Create directory and cd into it
-mkcd() {
-  (( $# == 1 )) || { _zsh_error "Usage: mkcd <directory>"; return 1 }
-  [[ -n "$1" ]] || { _zsh_error "mkcd: argument must not be empty"; return 1 }
-  mkdir -p -- "$1" && cd -- "$1"
 }
 
 # ── Development Functions ─────────────────────────────────────────────────────
