@@ -10,7 +10,7 @@ This is an **Emacs configuration** (>= 30.2) for macOS, featuring LSP support, c
 
 ```
 emacs/
-├── emacs.symlink        # Symlinked to ~/.emacs (main entry point)
+├── init.el              # Main entry point (symlinked to ~/.emacs)
 ├── lisp/
 │   ├── editor/          # Editor behavior (appearance, completion, edit, etc.)
 │   ├── system/          # System/environment (credential, proxy)
@@ -84,24 +84,26 @@ Dependencies are managed via `homebrew/Brewfile` at the repository root.
 emacs --debug-init
 
 # Batch mode test (faster for CI/CD)
-emacs --batch --eval '(progn (load-file "emacs.symlink") (message "Configuration loaded successfully"))'
+emacs --batch --eval '(progn (load-file "emacs/init.el") (message "Configuration loaded successfully"))'
 ```
 
 ## Architecture
 
 ### Module Loading System
 
-**Critical**: The `emacs.symlink` file loads modules in a specific order. Dependencies MUST be respected.
+**Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
 
-**Loading order** (lines 206-230 of emacs.symlink):
-1. **Editor**: edit → search → template → completion → credential → proxy → font → appearance
-2. **Tools**: explorer → pdf → git → term → ai
-3. **Languages**: prog → elisp → cc → python → go → javascript → shell → dockerfile → cmake → yaml → markdown
+**Loading order** (lines 209-236 of init.el):
+1. **Editor**: font → appearance → edit → search → template → completion → explorer
+2. **System**: credential → proxy
+3. **Tools**: git → term → pdf → ai
+4. **Languages**: prog → cc → go → python → javascript → elisp → shell → cmake → yaml → dockerfile
+5. **Text**: markdown
 
 **When adding new modules**:
 - Add `(provide 'module-name)` at end of file
-- Add `(require 'module-name)` in `emacs.symlink` at correct position
-- Language modules are explicitly required in emacs.symlink (not auto-loaded)
+- Add `(require 'module-name)` in `init.el` at correct position
+- Language modules are explicitly required in init.el (not auto-loaded)
 
 ### Key Architecture Patterns
 
@@ -109,9 +111,9 @@ emacs --batch --eval '(progn (load-file "emacs.symlink") (message "Configuration
 
 **Minimal Language Modules**: Language modules in `lisp/lang/` should be minimal (3-10 lines typical). They only install the major mode package.
 
-**Custom Packages**: The `site-packages/` directory is automatically added to `load-path` by `emacs.symlink`. Custom packages there can be required with `(require 'package-name)`.
+**Custom Packages**: The `site-packages/` directory is automatically added to `load-path` by `init.el`. Custom packages there can be required with `(require 'package-name)`.
 
-**Custom File Separation**: Emacs customizations are stored in `~/.emacs.d/custom.el`, not in emacs.symlink. The `custom-file` variable is set early (before package initialization) to prevent Emacs from writing customizations to emacs.symlink.
+**Custom File Separation**: Emacs customizations are stored in `~/.emacs.d/custom.el`, not in init.el. The `custom-file` variable is set early (before package initialization) to prevent Emacs from writing customizations to init.el.
 
 **Path Resolution**: The config uses `omw/emacs-config-root-path` to find the actual config directory, resolving symlinks correctly.
 
@@ -609,7 +611,7 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 emacs --debug-init
 
 # Batch mode test (faster for CI/CD)
-emacs --batch --eval '(progn (load-file "emacs.symlink") (message "Configuration loaded successfully"))'
+emacs --batch --eval '(progn (load-file "emacs/init.el") (message "Configuration loaded successfully"))'
 ```
 
 **Check naming conventions:**
@@ -689,7 +691,7 @@ M-x package-refresh-contents  ; Refresh package list
 
 - **macOS-focused**: Configuration assumes macOS as primary OS
 - **Symlink-based**: Config files are symlinked, not copied
-- **Emacs minimum version**: 30.2 (hard check in emacs.symlink)
+- **Emacs minimum version**: 30.2 (hard check in init.el)
 - **Prefix correction**: Code uses `omw/` prefix, not `my/`
 - **Quality assurance**: Codebase maintains 98%+ compliance with documented standards through regular audits
 
@@ -734,7 +736,7 @@ Finally complete step 3."
 
 ```bash
 # 1. Syntax check
-emacs --batch --eval '(progn (load-file "emacs.symlink") (message "✅ OK"))'
+emacs --batch --eval '(progn (load-file "emacs/init.el") (message "✅ OK"))'
 
 # 2. Debug check
 emacs --debug-init
@@ -802,7 +804,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 ### Pre-Commit Checklist
 
-- [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs.symlink") ...)'`
+- [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs/init.el") ...)'`
 - [ ] No naming violations: All functions use `omw/` prefix
 - [ ] No variable violations: All defcustom use `:group 'omw-emacs`
 - [ ] File headers complete: Author, Copyright, Dependencies, History, Commentary, GPL
