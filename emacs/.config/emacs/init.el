@@ -21,28 +21,16 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 chieftain <lizhengyu419@outlook.com> created.
+
 ;;; Commentary:
 ;;
 ;; Emacs configuration entry point.
 
 ;;; Code:
-
-;; ==================================================================================
-;; XDG Base Directory Configuration for Emacs
-(let ((xdg-data-home  (or (getenv "XDG_DATA_HOME")
-                          (expand-file-name "~/.local/share/")))
-      (xdg-cache-home (or (getenv "XDG_CACHE_HOME")
-                          (expand-file-name "~/.cache/"))))
-  (setq
-   ;; Main Emacs directory (replaces ~/.emacs.d)
-   user-emacs-directory (expand-file-name "emacs/" xdg-data-home)
-   ;; Directory where ELPA packages are installed
-   package-user-dir (expand-file-name "emacs/elpa/" xdg-data-home)
-   ;; Directory for native compilation output (.eln files)
-   native-compile-target-directory (expand-file-name "emacs/eln-cache/" xdg-cache-home)))
 
 ;; ==================================================================================
 (defgroup omw-emacs nil
@@ -62,6 +50,16 @@ Used for dashboard banner and setting `user-full-name'."
 Used for setting `user-mail-address'."
   :type 'string
   :group 'omw-emacs)
+
+;; ==================================================================================
+;; XDG Base Directory Configuration for Emacs
+(let ((xdg-data-home  (or (getenv "XDG_DATA_HOME")
+                          (expand-file-name "~/.local/share/")))
+      (xdg-cache-home (or (getenv "XDG_CACHE_HOME")
+                          (expand-file-name "~/.cache/"))))
+  (setq user-emacs-directory (expand-file-name "emacs/" xdg-data-home)
+        package-user-dir (expand-file-name "emacs/elpa/" xdg-data-home)
+        native-compile-target-directory (expand-file-name "emacs/eln-cache/" xdg-cache-home)))
 
 ;; ==================================================================================
 (defvar omw/emacs-custom-file-path (expand-file-name "custom.el" user-emacs-directory)
@@ -94,6 +92,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; Recursively add emacs configuration custom path to load path
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-lisp-path)
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-site-packages-path)
+
+;; ==================================================================================
+(require 'omw-proxy)
+(omw/enable-http-proxy)
 
 ;; ==================================================================================
 (require 'use-package)
@@ -218,36 +220,33 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (setq mac-command-modifier 'super
           mac-option-modifier 'meta))
 
-  ;; Load all other modules
-  ;; Core modules
-  (require 'init-font)
-  (require 'init-appearance)
-  (require 'init-edit)
-  (require 'init-search)
-  (require 'init-template)
-  (require 'init-completion)
-  (require 'init-explorer)
-  ;; System modules
-  (require 'init-credential)
-  (require 'init-proxy)
+  ;; Editor modules
+  (require 'omw-font)
+  (require 'omw-appearance)
+  (require 'omw-edit)
+  (require 'omw-search)
+  (require 'omw-template)
+  (require 'omw-completion)
+  (require 'omw-explorer)
   ;; Tool modules
-  (require 'init-git)
-  (require 'init-term)
-  (require 'init-pdf)
-  (require 'init-ai)
+  (require 'omw-pass)
+  (require 'omw-git)
+  (require 'omw-term)
+  (require 'omw-pdf)
+  (require 'omw-ai)
   ;; Prog mode modules
-  (require 'init-prog)
-  (require 'init-cc)
-  (require 'init-go)
-  (require 'init-python)
-  (require 'init-javascript)
-  (require 'init-elisp)
-  (require 'init-shell)
-  (require 'init-cmake)
-  (require 'init-yaml)
-  (require 'init-dockerfile)
+  (require 'omw-prog)
+  (require 'omw-cc)
+  (require 'omw-go)
+  (require 'omw-python)
+  (require 'omw-javascript)
+  (require 'omw-elisp)
+  (require 'omw-shell)
+  (require 'omw-cmake)
+  (require 'omw-yaml)
+  (require 'omw-dockerfile)
   ;; Text mode modules
-  (require 'init-markdown)
+  (require 'omw-markdown)
 
   ;; Load custom settings
   (when (file-readable-p custom-file)
