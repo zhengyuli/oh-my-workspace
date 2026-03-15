@@ -1,84 +1,56 @@
-# zprofile.symlink -*- mode: zsh; -*-
-# Time-stamp: <2026-03-14 16:00:00 Saturday by zhengyu.li>
+# $ZDOTDIR/.zprofile
+# =============================================================================
+# Login Shell Initialization
 #
-# ==============================================================================
-# File: .zprofile
-# Role: Login shell bootstrap - PATH construction and runtime init
+# Loaded by: Login shells only (first terminal open, SSH login)
+# Load order: After .zshenv, before .zshrc
 #
-# Load context : Sourced once per login session (before .zshrc)
-# Dependencies : DOTFILES (from .zshenv), XDG_* (from .zshenv)
-# Side effects : Modifies PATH, initializes Homebrew/fnm/pyenv
-# ==============================================================================
+# Responsibilities:
+#   1. Source conf.d fragments safe for non-interactive contexts
+#   2. Initialize SSH agent with macOS Keychain (once per login session)
+#
+# Do NOT add: plugins, completion, prompt, aliases, keybindings
+#             → Put these in .zshrc (interactive only)
+# =============================================================================
 
-# ==============================================================================
-# Setup
-# ==============================================================================
+# -----------------------------------------------------------------------------
+# Core Configuration Fragments
+# -----------------------------------------------------------------------------
+# These modules are safe for non-interactive contexts and should be available
+# to all login shells (including scripts run via 'ssh host command').
 
-# DOTFILES is set by ~/.zshenv via symlink resolution
-# Verify it's set correctly before proceeding
-if [[ -z "$DOTFILES" ]] || [[ ! -d "$DOTFILES" ]]; then
-    echo "ERROR: DOTFILES not set or invalid. Ensure ~/.zshenv is a symlink." >&2
-    return 1 2>/dev/null || exit 1
+# Environment variables (EDITOR, PAGER, tool XDG paths, Homebrew settings, etc.)
+source "$ZDOTDIR/conf.d/00-env.zsh"
+
+# PATH / FPATH / manpath management
+source "$ZDOTDIR/conf.d/05-path.zsh"
+
+# -----------------------------------------------------------------------------
+# SSH Agent -- macOS Keychain Integration
+# -----------------------------------------------------------------------------
+# Add all SSH private keys to macOS Keychain once per login session.
+# Supports multiple keys (id_ed25519, id_rsa, etc.)
+#
+# Prerequisites:
+#   1. Generate key: ssh-keygen -t ed25519 -C "your@email.com"
+#   2. Add to Keychain: ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+#   3. Add public key to GitHub/GitLab
+#
+# Alternative (simpler):
+#   Use ~/.ssh/config with UseKeychain yes instead of this script.
+#   See: https://docs.github.com/en/authentication/connecting-to-github-with-ssh
+# -----------------------------------------------------------------------------
+if [[ "$OSTYPE" == darwin* ]] && [[ -d ~/.ssh ]]; then
+  # Ensure ssh-agent is running (macOS usually starts it via launchd)
+  if [[ -z "$SSH_AGENT_PID" ]] && ! pgrep -q ssh-agent; then
+    eval "$(ssh-agent -s)"
+  fi
+
+  # Add keys from Keychain (silently skip if key doesn't exist or already added)
+  for key in ~/.ssh/id_*(N); do
+    case "$key" in
+      *.pub) continue ;;
+    esac
+    ssh-add --apple-use-keychain "$key" 2>/dev/null
+  done
 fi
-
-# ==============================================================================
-# Homebrew Initialization
-# ==============================================================================
-
-if [[ "$(uname)" == "Darwin" ]]; then
-    # Apple Silicon Macs
-    if [[ -d "/opt/homebrew" ]]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    # Intel Macs
-    elif [[ -d "/usr/local/Homebrew" ]]; then
-        eval "$(/usr/local/bin/brew shellenv)"
-    fi
-fi
-
-# ==============================================================================
-# PATH Construction
-# ==============================================================================
-
-# User binaries
-typeset -U path  # Remove duplicates
-
-# Add user bin directories if they exist
-[[ -d "$HOME/.local/bin" ]] && path=("$HOME/.local/bin" "${path[@]}")
-
-# ==============================================================================
-# Language Runtimes (Order: Node.js → Python → Go)
-# ==============================================================================
-
-# ------------------------------------------------------------------------------
-# Node.js (fnm)
-# ------------------------------------------------------------------------------
-
-# FNM_DIR is set in zshenv
-# Initialize fnm for PATH setup (without interactive hooks)
-# Interactive shells get --use-on-cd hook via nodejs.zsh
-# Set version-file-strategy here so it's consistent across all shells
-if command -v fnm &>/dev/null; then
-    eval "$(fnm env --shell zsh --version-file-strategy=recursive)"
-fi
-
-# ------------------------------------------------------------------------------
-# Python (pyenv)
-# ------------------------------------------------------------------------------
-
-if command -v pyenv &>/dev/null; then
-    # Use pyenv init --path for proper PATH setup in login shells
-    eval "$(pyenv init --path)"
-fi
-
-# ------------------------------------------------------------------------------
-# Go
-# ------------------------------------------------------------------------------
-
-# GOPATH is set in zshenv, only add to PATH here
-[[ -d "$GOPATH/bin" ]] && path=("$GOPATH/bin" "${path[@]}")
-
-# ==============================================================================
-# Local PATH Extensions
-# ==============================================================================
-
-[[ -f "$XDG_CONFIG_HOME/zsh/path" ]] && source "$XDG_CONFIG_HOME/zsh/path"
