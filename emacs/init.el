@@ -1,4 +1,5 @@
-;;; emacs.symlink -*- lexical-binding: t; -*-
+;;; init.el -*- lexical-binding: t; -*-
+
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
 ;; Dependencies: (none)
@@ -73,7 +74,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (normal-top-level-add-subdirs-to-load-path)))
 
 ;; ==================================================================================
-;; Set custom file early to prevent Emacs from writing customizations to emacs.symlink
+;; Set custom file early to prevent Emacs from writing customizations to init.el
 (setq custom-file omw/emacs-custom-file-path)
 
 ;; Recursively add emacs configuration custom path to load path
@@ -205,32 +206,34 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
   ;; Load all other modules
   ;; Core modules
-  (require 'init-editing)
-  (require 'init-search)
-  (require 'init-template)
-  (require 'init-completion)
-  (require 'init-auth)
-  (require 'init-proxy)
-  (require 'init-fonts)
-  (require 'init-ui)
+  (require 'font)
+  (require 'appearance)
+  (require 'edit)
+  (require 'search)
+  (require 'template)
+  (require 'completion)
+  (require 'explorer)
+  ;; System modules
+  (require 'credential)
+  (require 'proxy)
   ;; Tool modules
-  (require 'init-dired)
-  (require 'init-pdf)
-  (require 'init-magit)
-  (require 'init-terminal)
-  (require 'init-agent)
-  ;; Language modules
-  (require 'init-prog)
-  (require 'init-elisp)
-  (require 'init-cc)
-  (require 'init-python)
-  (require 'init-go)
-  (require 'init-typescript)
-  (require 'init-shell)
-  (require 'init-dockerfile)
-  (require 'init-cmake)
-  (require 'init-yaml)
-  (require 'init-markdown)
+  (require 'git)
+  (require 'term)
+  (require 'pdf)
+  (require 'ai)
+  ;; Prog mode modules
+  (require 'prog)
+  (require 'cc)
+  (require 'go)
+  (require 'python)
+  (require 'javascript)
+  (require 'elisp)
+  (require 'shell)
+  (require 'cmake)
+  (require 'yaml)
+  (require 'dockerfile)
+  ;; Text mode modules
+  (require 'markdown)
 
   ;; Load custom settings
   (when (file-readable-p custom-file)
@@ -238,6 +241,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 ;;; Provide features
-;; (provide 'emacs)
+(provide 'init)
 
-;;; emacs.symlink ends here
+;;; init.el ends here

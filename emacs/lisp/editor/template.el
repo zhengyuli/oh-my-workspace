@@ -1,4 +1,4 @@
-;;; init-template.el -*- lexical-binding: t; -*-
+;;; template.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: template, yasnippet, autoinsert, snippet
@@ -98,14 +98,11 @@ ACTION is a template file or function to insert."
     '("\\.el\\'" . "Emacs Lisp header")
     ["template.el" omw/autoinsert-yas-expand])
   (omw/define-auto-insert-custom
-    '("\\.hs\\'" . "Haskell header")
-    ["template.hs" omw/autoinsert-yas-expand])
-  (omw/define-auto-insert-custom
     '("\\.sh\\'" . "Shell script header")
     ["template.sh" omw/autoinsert-yas-expand]))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-template)
+(provide 'template)
 
-;;; init-template.el ends here
+;;; template.el ends here

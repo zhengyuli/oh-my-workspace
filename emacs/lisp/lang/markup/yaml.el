@@ -1,8 +1,8 @@
-;;; init-auth.el -*- lexical-binding: t; -*-
+;;; yaml.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: auth, gpg, pass, pinentry
-;; Dependencies: (none)
+;; Keywords: yaml
+;; Dependencies: prog
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,34 +29,18 @@
 
 ;;; Commentary:
 ;;
-;; Authentication and credential management configuration.
-;; Features: GPG integration, pass password store.
+;; YAML mode configuration with LSP support.
+;; LSP server (yaml-language-server) is configured in prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package epg-config
-  :ensure nil
-  :demand t
-  :config
-  ;; Use loopback mode for PIN entry (allows Emacs to prompt for GPG passphrase)
-  (setq epg-pinentry-mode 'loopback))
-
-;; ==================================================================================
-(use-package auth-source-pass
-  :ensure nil
-  :demand t
-  :config
-  ;; Enable pass (password-store.org) as auth source backend
-  (auth-source-pass-enable))
-
-;; ==================================================================================
-(use-package pass
+(use-package yaml-mode
   :ensure t
   :defer t)
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-auth)
+(provide 'yaml)
 
-;;; init-auth.el ends here
+;;; yaml.el ends here

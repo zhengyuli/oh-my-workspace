@@ -12,9 +12,13 @@ This is an **Emacs configuration** (>= 30.2) for macOS, featuring LSP support, c
 emacs/
 ├── emacs.symlink        # Symlinked to ~/.emacs (main entry point)
 ├── lisp/
-│   ├── init-*.el        # Core feature modules
-│   ├── tools/           # Tool integrations (Magit, vterm, AI, auth)
-│   └── lang/            # Language-specific configs
+│   ├── editor/          # Editor behavior (appearance, completion, edit, etc.)
+│   ├── system/          # System/environment (credential, proxy)
+│   ├── lang/            # Programming languages
+│   │   ├── *.el         # Language-specific configs (cc, python, go, etc.)
+│   │   └── markup/      # Markup/config languages (cmake, dockerfile, yaml)
+│   ├── text/            # Text/document modes (markdown)
+│   └── tool/            # Tool integrations (git, ai, pdf, term)
 ├── site-packages/       # Custom Emacs packages (auto-added to load-path)
 └── templates/           # File templates
 ```
@@ -90,18 +94,18 @@ emacs --batch --eval '(progn (load-file "emacs.symlink") (message "Configuration
 **Critical**: The `emacs.symlink` file loads modules in a specific order. Dependencies MUST be respected.
 
 **Loading order** (lines 206-230 of emacs.symlink):
-1. **Core**: init-editing → init-completion → init-auth → init-proxy → init-fonts → init-ui
-2. **Tools**: init-dired → init-pdf → init-magit → init-terminal → init-agent
-3. **Languages**: init-prog → init-elisp → init-cc → init-python → init-go → init-typescript → init-shell → init-dockerfile → init-cmake → init-yaml → init-markdown
+1. **Editor**: edit → search → template → completion → credential → proxy → font → appearance
+2. **Tools**: explorer → pdf → git → term → ai
+3. **Languages**: prog → elisp → cc → python → go → javascript → shell → dockerfile → cmake → yaml → markdown
 
 **When adding new modules**:
-- Add `(provide 'init-module-name)` at end of file
-- Add `(require 'init-module-name)` in `emacs.symlink` at correct position
+- Add `(provide 'module-name)` at end of file
+- Add `(require 'module-name)` in `emacs.symlink` at correct position
 - Language modules are explicitly required in emacs.symlink (not auto-loaded)
 
 ### Key Architecture Patterns
 
-**Centralized LSP Configuration**: All language LSP servers are configured in `init-prog.el` via a single `eglot` use-package block. Language modules should NOT configure LSP servers themselves.
+**Centralized LSP Configuration**: All language LSP servers are configured in `prog.el` via a single `eglot` use-package block. Language modules should NOT configure LSP servers themselves.
 
 **Minimal Language Modules**: Language modules in `lisp/lang/` should be minimal (3-10 lines typical). They only install the major mode package.
 
@@ -113,19 +117,24 @@ emacs --batch --eval '(progn (load-file "emacs.symlink") (message "Configuration
 
 ### Module Guidelines
 
-**Core Modules** (`lisp/init-*.el`)
-- Purpose: Fundamental editor features (UI, editing, completion)
+**Editor Modules** (`lisp/editor/*.el`)
+- Purpose: Fundamental editor features (appearance, editing, completion, fonts)
 - Characteristics: May use `:demand t` for critical packages, complex configurations acceptable
-- Examples: init-ui.el, init-completion.el, init-editing.el
+- Examples: appearance.el, completion.el, edit.el, font.el
 
-**Tool Modules** (`lisp/tools/init-*.el`)
-- Purpose: External tool integration (Magit, vterm, AI tools)
+**System Modules** (`lisp/system/*.el`)
+- Purpose: System/environment configuration (credentials, proxy settings)
+- Characteristics: Environment-specific, may contain sensitive configuration
+- Examples: credential.el, proxy.el
+
+**Tool Modules** (`lisp/tool/*.el`)
+- Purpose: External tool integration (Git, AI, PDF, terminal)
 - Characteristics: May use `:vc` for Git-based packages, platform-specific code acceptable
-- Examples: init-magit.el, init-terminal.el, init-dired.el, init-pdf.el
+- Examples: git.el, ai.el, pdf.el, term.el
 
-**Language Modules** (`lisp/lang/init-*.el`)
+**Language Modules** (`lisp/lang/*.el` and `lisp/lang/markup/*.el`)
 - Purpose: Language-specific configuration
-- Characteristics: Should be concise and focused, MUST NOT configure LSP servers (centralized in init-prog.el)
+- Characteristics: Should be concise and focused, MUST NOT configure LSP servers (centralized in prog.el)
 - Simple `:ensure t :defer t` preferred for most cases
 - Use setup functions only for language-specific buffer-local settings
 - Keep language-related code together for module cohesion
@@ -171,7 +180,7 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 Every `.el` file must start with:
 
 ```elisp
-;;; init-module.el -*- lexical-binding: t; -*-
+;;; module.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: keyword1, keyword2
@@ -225,9 +234,9 @@ Every `.el` file must start with:
 ```elisp
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-module)
+(provide 'module)
 
-;;; init-module.el ends here
+;;; module.el ends here
 ```
 
 
@@ -644,7 +653,7 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
 - [ ] Section separators (`;; ==================================================================================`) used correctly
-- [ ] Files end with `(provide 'init-xxx)` and `;;; init-xxx.el ends here`
+- [ ] Files end with `(provide 'xxx)` and `;;; xxx.el ends here`
 
 ### Current Status
 
@@ -691,9 +700,9 @@ M-x package-refresh-contents  ; Refresh package list
 **Principle**: Keep language-related code together, even if it means more lines.
 
 **Examples from the codebase:**
-- `init-python.el` (46 lines) - Includes pyvenv and poetry tracking because these are essential for Python development
-- `init-markdown.el` (82 lines) - Includes visual editing tools (valign, olivetti, visual-fill-column) because they're part of the Markdown writing experience
-- `init-elisp.el` (19 lines) - Includes enhancement tools (elisp-slime-nav, lisp-extra-font-lock, rainbow-mode) for better Lisp development
+- `python.el` (46 lines) - Includes pyvenv and poetry tracking because these are essential for Python development
+- `markdown.el` (82 lines) - Includes visual editing tools (valign, olivetti, visual-fill-column) because they're part of the Markdown writing experience
+- `elisp.el` (19 lines) - Includes enhancement tools (elisp-slime-nav, lisp-extra-font-lock, rainbow-mode) for better Lisp development
 
 **Why this works better than artificial limits:**
 - ✅ **Cohesion**: All code for Language X is in one place
@@ -787,7 +796,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 5. **Comments:** Minimal, only for non-obvious code
 6. **Separators:** `;; ==================================================================================`
 7. **Language Modules:** Keep language-related code together, don't artificially limit lines
-8. **LSP Configuration:** Centralize all LSP in init-prog.el, never in language modules
+8. **LSP Configuration:** Centralize all LSP in prog.el, never in language modules
 9. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
 10. **Tracking Packages:** Use `:demand t` for environment tracking (pyvenv, poetry)
 

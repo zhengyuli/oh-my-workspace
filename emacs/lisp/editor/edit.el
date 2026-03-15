@@ -1,4 +1,4 @@
-;;; init-editing.el -*- lexical-binding: t; -*-
+;;; edit.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: editing, deletion, whitespace, pairs
@@ -131,6 +131,6 @@ Otherwise kill buffer without confirmation."
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-editing)
+(provide 'edit)
 
-;;; init-editing.el ends here
+;;; edit.el ends here

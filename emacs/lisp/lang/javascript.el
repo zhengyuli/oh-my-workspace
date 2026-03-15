@@ -1,8 +1,8 @@
-;;; init-shell.el -*- lexical-binding: t; -*-
+;;; javascript.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: shell, bash, sh
-;; Dependencies: init-prog
+;; Keywords: typescript, ts
+;; Dependencies: prog
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,28 +29,25 @@
 
 ;;; Commentary:
 ;;
-;; Shell script mode configuration.
+;; TypeScript mode configuration with LSP support.
 
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-bash-tools ()
-  "Ensure bash-language-server is installed for LSP support."
-  ;; Install bash-language-server via npm if not found
-  (unless (executable-find "bash-language-server")
-    (message "Installing bash-language-server...")
-    (shell-command "npm install -g bash-language-server")
-    (message "bash-language-server installed successfully")))
+(defun omw/ensure-typescript-tools ()
+  "Ensure typescript-language-server is installed for LSP support."
+  (unless (executable-find "typescript-language-server")
+    (message "Installing typescript-language-server...")
+    (shell-command "npm install -g typescript-language-server")
+    (message "typescript-language-server installed successfully")))
 
-(use-package sh-script
-  :ensure nil
+(use-package typescript-mode
+  :ensure t
   :defer t
-  :hook (sh-mode . omw/ensure-bash-tools)
-  :bind (:map sh-mode-map
-              ("C-c C-c" . comment-line)))
+  :hook (typescript-mode . omw/ensure-typescript-tools))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-shell)
+(provide 'javascript)
 
-;;; init-shell.el ends here
+;;; javascript.el ends here

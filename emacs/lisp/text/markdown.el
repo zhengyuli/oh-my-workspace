@@ -1,4 +1,4 @@
-;;; init-markdown.el -*- lexical-binding: t; -*-
+;;; markdown.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: markdown, polymode
@@ -132,6 +132,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-markdown)
+(provide 'markdown)
 
-;;; init-markdown.el ends here
+;;; markdown.el ends here

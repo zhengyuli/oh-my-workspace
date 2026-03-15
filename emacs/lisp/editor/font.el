@@ -1,7 +1,7 @@
-;;; init-fonts.el -*- lexical-binding: t; -*-
+;;; font.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: fonts, faces
+;; Keywords: font, faces
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
@@ -148,6 +148,6 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-fonts)
+(provide 'font)
 
-;;; init-fonts.el ends here
+;;; font.el ends here

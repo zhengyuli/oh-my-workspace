@@ -1,4 +1,4 @@
-;;; init-completion.el -*- lexical-binding: t; -*-
+;;; completion.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: completion, corfu, vertico, cape, orderless
@@ -88,6 +88,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-completion)
+(provide 'completion)
 
-;;; init-completion.el ends here
+;;; completion.el ends here

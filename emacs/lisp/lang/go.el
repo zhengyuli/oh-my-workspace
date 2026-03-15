@@ -1,8 +1,8 @@
-;;; init-yaml.el -*- lexical-binding: t; -*-
+;;; go.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: yaml
-;; Dependencies: init-prog
+;; Keywords: go, golang
+;; Dependencies: prog
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,18 +29,31 @@
 
 ;;; Commentary:
 ;;
-;; YAML mode configuration with LSP support.
-;; LSP server (yaml-language-server) is configured in init-prog.el.
+;; Go mode configuration with LSP support via gopls.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package yaml-mode
+(defun omw/ensure-go-tools ()
+  "Ensure Go development tools (gopls, gofumpt) are installed."
+  ;; Check and install each tool if missing
+  (dolist (spec '(("gopls"   "go install golang.org/x/tools/gopls@latest")
+                  ("gofumpt" "go install mvdan.cc/gofumpt@latest")))
+    ;; spec format: (executable-name install-command)
+    (let ((exe (nth 0 spec))
+          (cmd (nth 1 spec)))
+      (unless (executable-find exe)
+        (message "Installing %s..." exe)
+        (shell-command cmd)
+        (message "%s installed successfully" exe)))))
+
+(use-package go-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (go-mode . omw/ensure-go-tools))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-yaml)
+(provide 'go)
 
-;;; init-yaml.el ends here
+;;; go.el ends here

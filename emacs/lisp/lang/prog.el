@@ -1,4 +1,4 @@
-;;; init-prog.el -*- lexical-binding: t; -*-
+;;; prog.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: prog, programming, hooks
@@ -158,6 +158,6 @@ If no delimiter is found, show an error message."
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-prog)
+(provide 'prog)
 
-;;; init-prog.el ends here
+;;; prog.el ends here
