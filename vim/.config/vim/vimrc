@@ -8,9 +8,36 @@
 " Baseline
 " ==============================================================================
 
-set nocompatible
-set encoding=utf-8
-set backspace=indent,eol,start  " Sane backspace in insert mode
+set nocompatible              " Use Vim settings, not Vi
+set encoding=utf-8            " Standard encoding
+set history=500               " Command line history
+set backspace=indent,eol,start  " Sane backspace behavior
+
+" ==============================================================================
+" XDG Paths (VIMINIT bypasses default vimrc loader, so we must do this manually)
+" ==============================================================================
+
+" Resolve XDG dirs with fallback for non-XDG environments
+let s:cfg   = ($XDG_CONFIG_HOME  != '' ? $XDG_CONFIG_HOME  : $HOME . '/.config')
+let s:data  = ($XDG_DATA_HOME    != '' ? $XDG_DATA_HOME    : $HOME . '/.local/share')
+let s:cache = ($XDG_CACHE_HOME   != '' ? $XDG_CACHE_HOME   : $HOME . '/.cache')  " Reserved
+let s:state = ($XDG_STATE_HOME   != '' ? $XDG_STATE_HOME   : $HOME . '/.local/state')
+
+" Redirect runtimepath (VIMINIT skips this; default still points to ~/.vim)
+let &runtimepath = s:cfg  . '/vim,'
+               \ . s:cfg  . '/vim/after,'
+               \ . $VIMRUNTIME
+
+" viminfo → state dir  (persistent but not config)
+let &viminfofile = s:state . '/vim/viminfo'
+
+" undo → data dir  (valuable, keep across reinstalls)
+let &undodir = s:data . '/vim/undo'
+
+" Ensure dirs exist (Vim will error on first write if they don't)
+for s:dir in [s:state . '/vim', s:data . '/vim/undo']
+    if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
+endfor
 
 " ==============================================================================
 " Display
@@ -20,7 +47,7 @@ set number                   " Absolute line number on current line
 set relativenumber           " Relative numbers on all other lines
 set cursorline               " Highlight the current line
 set scrolloff=8              " Keep 8 lines of context above/below cursor
-set sidescrolloff=5
+set sidescrolloff=5          " Keep 5 columns of context left/right
 set wrap                     " Soft-wrap long lines …
 set linebreak                " … at word boundaries, not mid-word
 set showmatch                " Briefly jump to matching bracket on input
@@ -28,8 +55,11 @@ set matchtime=2              " … for 0.2 s
 set laststatus=2             " Always show status line
 set showcmd                  " Show partial command bottom-right
 set ruler                    " Show line/col in status line
-set wildmenu                 " Enhanced : completion menu
-set wildmode=longest:full,full
+set wildmenu                 " Enhanced command-line completion
+set wildmode=longest:full,full  " Completion mode: longest match, then full
+" Ignore compiled files and VCS dirs in wildmenu
+set wildignore+=*.o,*.obj,*.pyc,*.class,*.swp,*.bak
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/node_modules/*
 set signcolumn=yes           " Always-on sign column (no layout jitter)
 
 " ==============================================================================
@@ -41,34 +71,31 @@ set hlsearch                 " Keep matches highlighted
 set ignorecase               " Case-insensitive by default …
 set smartcase                " … unless pattern contains uppercase
 
-" Clear search highlight without leaving normal mode
+" Clear search highlight with double-ESC
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
 " ==============================================================================
 " Indentation
 " ==============================================================================
 
-set expandtab                " Spaces, not tabs
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set autoindent
-set smartindent
+set expandtab                " Use spaces instead of tabs
+set tabstop=4                " Number of spaces per tab character
+set softtabstop=4            " Spaces inserted by <Tab> key
+set shiftwidth=4             " Spaces per indentation level
+set autoindent               " Copy indent from current line
+set smartindent              " Smart auto-indenting
 
 " ==============================================================================
 " Files & Persistence
 " ==============================================================================
 
-set hidden                   " Switch buffers without saving
-set nobackup
-set noswapfile
-set autoread                 " Reload file if changed outside Vim
+set hidden                   " Allow hidden buffers
+set nobackup                 " No backup files (use version control)
+set noswapfile               " No swap files
+set autoread                 " Auto-reload files changed externally
 
-" Persistent undo (XDG-aware)
+" Persistent undo (directory created in XDG section above)
 set undofile
-let s:vim_data = ($XDG_DATA_HOME != '' ? $XDG_DATA_HOME : $HOME . '/.local/share') . '/vim'
-let &undodir  = s:vim_data . '/undo'
-if !isdirectory(&undodir) | call mkdir(&undodir, 'p') | endif
 
 " ==============================================================================
 " Behaviour
@@ -78,32 +105,39 @@ set mouse=a                  " Mouse support in all modes
 set splitbelow               " Horizontal splits open below
 set splitright               " Vertical splits open to the right
 set confirm                  " Ask instead of failing on unsaved changes
-set noerrorbells visualbell  " No audio bell; flash instead
-set t_vb=                    " … actually suppress the flash too
-set updatetime=200           " Faster CursorHold / sign-column refresh
-set timeoutlen=500
+set noerrorbells visualbell  " No audio bell; visual bell instead
+set t_vb=                    " Disable visual bell flash
+set lazyredraw               " Don't redraw during macros (performance)
+set updatetime=200           " Faster CursorHold/sign-column refresh
+set timeoutlen=500           " Key sequence timeout (ms)
+set whichwrap+=<,>,h,l       " Allow cursor keys to wrap between lines
 
-" Keep cursor centred when jumping / searching
+" Keep cursor centered when navigating (zz=center, zv=unfold)
 nnoremap n     nzzzv
 nnoremap N     Nzzzv
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
 
-" Y behaves like C and D (yank to end of line)
+" Yank to end of line (consistent with C and D)
 nnoremap Y y$
 
-" Stay in visual mode after indent
+" Stay in visual mode after indenting
 vnoremap < <gv
 vnoremap > >gv
 
-" Window navigation
+" Window navigation with Ctrl+hjkl
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Disable accidental Ex mode
+" Disable accidental Ex mode entry
 nnoremap Q <Nop>
+
+" System clipboard integration
+if has('clipboard')
+    set clipboard=unnamedplus  " Use system clipboard for yank/paste
+endif
 
 " ==============================================================================
 " Auto Commands
@@ -129,6 +163,9 @@ augroup vimrc
     " Equalize splits when terminal is resized
     autocmd VimResized * wincmd =
 
+    " Auto-reload file when gaining focus (external changes)
+    autocmd FocusGained,BufEnter * silent! checktime
+
 augroup END
 
 " ==============================================================================
@@ -137,12 +174,19 @@ augroup END
 
 augroup vimrc_ft
     autocmd!
-    autocmd FileType python                               setlocal tabstop=4 shiftwidth=4
-    autocmd FileType javascript,typescript,json,yaml,
-                    \html,css,scss                        setlocal tabstop=2 softtabstop=2 shiftwidth=2
-    autocmd FileType go                                   setlocal noexpandtab tabstop=4 shiftwidth=4
-    autocmd FileType markdown,text                        setlocal wrap linebreak spell spelllang=en_us nolist
-    autocmd FileType gitcommit                            setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
+    " Python: 4 spaces
+    autocmd FileType python setlocal tabstop=4 shiftwidth=4
+    " Web files: 2 spaces
+    autocmd FileType javascript,typescript,json,yaml,html,css,scss
+                \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    " Go: tabs (convention)
+    autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
+    " Text files: wrap and spell check
+    autocmd FileType markdown,text
+                \ setlocal wrap linebreak spell spelllang=en_us nolist
+    " Git commits: 72 char width, spell check
+    autocmd FileType gitcommit
+                \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
 augroup END
 
 " ==============================================================================
@@ -157,15 +201,15 @@ function! StatuslineGit() abort
 endfunction
 
 set statusline=
-set statusline+=\ %{toupper(mode())}    " Current mode
-set statusline+=%{StatuslineGit()}      " Git branch (if fugitive loaded)
-set statusline+=\ %f                    " File path (relative)
-set statusline+=\ %m%r                  " [+] modified, [RO] readonly
-set statusline+=%=                      " Switch to right side
-set statusline+=\ %y                    " Filetype
-set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\ %3l:%-2c             " line:col
-set statusline+=\ %3p%%\               " Percentage through file
+set statusline+=\ %{toupper(mode())}   " Current mode
+set statusline+=%{StatuslineGit()}     " Git branch (optional)
+set statusline+=\ %f                   " File path
+set statusline+=\ %m%r                 " [+] modified, [RO] readonly
+set statusline+=%=                     " Right-align separator
+set statusline+=\ %y                   " Filetype
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}  " Encoding
+set statusline+=\ %3l:%-2c             " Line:column
+set statusline+=\ %3p%%                " Percentage
 
 " ==============================================================================
 " Syntax Highlighting
@@ -187,11 +231,12 @@ filetype plugin indent on    " Enable filetype detection, plugins, and indent ru
 
 set background=dark
 
+" Enable true color support in terminal (24-bit colors)
 if has('termguicolors')
     set termguicolors
 endif
 
-" Reset everything before applying
+" Clear existing highlights before applying theme
 highlight clear
 if exists('syntax_on') | syntax reset | endif
 let g:colors_name = 'doom-one'

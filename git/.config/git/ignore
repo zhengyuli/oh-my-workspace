@@ -1,14 +1,17 @@
 # gitignore.symlink -*- mode: gitignore; -*-
-# Time-stamp: <2026-03-11 16:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-15 21:00:00 Saturday by zhengyu.li>
 #
 # Global gitignore patterns
 # Symlinked to ~/.gitignore_global
+#
+# Patterns in this file are ignored across all Git repositories.
+# Repository-specific patterns should go in the local .gitignore file.
 
 # ==============================================================================
 # Operating Systems
 # ==============================================================================
 
-# macOS
+# macOS - Finder metadata, thumbnails, and system files
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -20,21 +23,21 @@
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
 
-# Windows
+# Windows - Explorer thumbnails and system files
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 *.lnk
 
-# Linux
+# Linux - Backup files created by editors
 *~
 
 # ==============================================================================
-# Editors
+# Editors & IDEs
 # ==============================================================================
 
-# Vim
+# Vim - Swap, backup, and session files
 *.swp
 *.swo
 .*.swp
@@ -43,7 +46,7 @@ $RECYCLE.BIN/
 Session.vim
 .netrwhist
 
-# Emacs
+# Emacs - Auto-save, backup, and lock files
 *~
 \#*\#
 .\#*
@@ -51,11 +54,11 @@ auto-save-list
 tramp
 .\#*
 
-# VSCode
+# VSCode - Workspace settings
 .vscode/
 *.code-workspace
 
-# JetBrains IDEs
+# JetBrains IDEs (IntelliJ, PyCharm, GoLand, etc.)
 .idea/
 *.iml
 *.iws
@@ -69,7 +72,7 @@ tramp
 # Languages
 # ==============================================================================
 
-# Python
+# Python - Bytecode, packages, and tools
 __pycache__/
 *.py[cod]
 *$py.class
@@ -105,7 +108,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 
-# Node.js
+# Node.js - Dependencies and logs
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -115,7 +118,11 @@ yarn-error.log*
 .pnp.*
 .yarn/
 
-# Go
+# pnpm - Fast, disk space efficient package manager
+.pnpm-debug.log*
+.pnpm-store/
+
+# Go - Binaries and build artifacts
 *.exe
 *.exe~
 *.dll
@@ -125,12 +132,12 @@ yarn-error.log*
 *.out
 go.sum
 
-# Rust
+# Rust - Build artifacts
 target/
 Cargo.lock
 **/*.rs.bk
 
-# Java
+# Java - Compiled classes and build
 *.class
 *.jar
 *.war
@@ -143,6 +150,7 @@ out/
 # Build Artifacts
 # ==============================================================================
 
+# Compiled object files
 *.o
 *.obj
 *.exe
@@ -183,17 +191,96 @@ out/
 # Environment & Secrets
 # ==============================================================================
 
+# Environment variables
 .env
 .env.*
 !.env.example
+
+# SSL/TLS certificates and keys
 *.pem
 *.key
 *.crt
+*.p12
+*.pfx
+
+# SSH keys and known hosts
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.pub
+.ssh/
+known_hosts
+
+# Cloud provider credentials
+.aws/
+.azure/
+.gc/
+.google/
+credentials.json
+service-account.json
+
+# Secrets directories
 secrets/
 .secrets
 
 # ==============================================================================
-# Misc
+# Containers & Infrastructure
+# ==============================================================================
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Kubernetes
+*.kubeconfig
+kubeconfig
+
+# Terraform - State and variable files
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+.terraform.lock.hcl
+
+# Ansible
+*.retry
+.ansible/
+
+# ==============================================================================
+# Package Managers
+# ==============================================================================
+
+# npm/yarn lock files (uncomment if you don't commit them)
+# package-lock.json
+# yarn.lock
+
+# Pipenv lock (usually committed)
+# Pipfile.lock
+
+# Poetry lock (usually committed)
+# poetry.lock
+
+# ==============================================================================
+# Test & Coverage
+# ==============================================================================
+
+coverage/
+.nyc_output/
+.test-output/
+test-results/
+
+# ==============================================================================
+# Documentation
+# ==============================================================================
+
+docs/_build/
+site/
+_site/
+
+# ==============================================================================
+# Temporary & Backup Files
 # ==============================================================================
 
 # Backup files
@@ -206,16 +293,25 @@ secrets/
 *.temp
 *.temp.*
 
-# Dependencies (lock files often should be committed)
-# package-lock.json
-# yarn.lock
-# Pipfile.lock
-# poetry.lock
+# ==============================================================================
+# Misc
+# ==============================================================================
 
-# Test coverage
-coverage/
-.nyc_output/
+# Dependency directories (uncomment if needed)
+# vendor/
+# third_party/
 
-# Documentation builds
-docs/_build/
-site/
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

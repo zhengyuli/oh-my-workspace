@@ -94,22 +94,22 @@ emacs --batch --eval '(progn (load-file "emacs/init.el") (message "Configuration
 **Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
 
 **Loading order** (lines 209-236 of init.el):
-1. **Editor**: init-font → init-appearance → init-edit → init-search → init-template → init-completion → init-explorer
-2. **System**: init-credential → init-proxy
-3. **Tools**: init-git → init-term → init-pdf → init-ai
-4. **Languages**: init-prog → init-cc → init-go → init-python → init-javascript → init-elisp → init-shell → init-cmake → init-yaml → init-dockerfile
-5. **Text**: init-markdown
+1. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
+2. **System**: omw-pass → omw-proxy
+3. **Tools**: omw-git → omw-term → omw-pdf → omw-ai
+4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-javascript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
+5. **Text**: omw-markdown
 
 **When adding new modules**:
-- Add `(provide 'init-xxx)` at end of file (where xxx is the module name)
-- Add `(require 'init-xxx)` in `init.el` at correct position
+- Add `(provide 'omw-xxx)` at end of file (where xxx is the module name)
+- Add `(require 'omw-xxx)` in `init.el` at correct position
 - Language modules are explicitly required in init.el (not auto-loaded)
 
 ### Key Architecture Patterns
 
-**Centralized LSP Configuration**: All language LSP servers are configured in `init-prog.el` via a single `eglot` use-package block. Language modules should NOT configure LSP servers themselves.
+**Centralized LSP Configuration**: All language LSP servers are configured in `omw-prog.el` via a single `eglot` use-package block. Language modules should NOT configure LSP servers themselves.
 
-**Minimal Language Modules**: Language modules in `lisp/lang/` (named `init-xxx.el`) should be minimal (3-10 lines typical). They only install the major mode package.
+**Minimal Language Modules**: Language modules in `lisp/lang/` (named `omw-xxx.el`) should be minimal (3-10 lines typical). They only install the major mode package.
 
 **Custom Packages**: The `site-packages/` directory is automatically added to `load-path` by `init.el`. Custom packages there can be required with `(require 'package-name)`.
 
@@ -119,24 +119,24 @@ emacs --batch --eval '(progn (load-file "emacs/init.el") (message "Configuration
 
 ### Module Guidelines
 
-**Editor Modules** (`lisp/editor/init-*.el`)
+**Editor Modules** (`lisp/editor/omw-*.el`)
 - Purpose: Fundamental editor features (appearance, editing, completion, fonts)
 - Characteristics: May use `:demand t` for critical packages, complex configurations acceptable
-- Examples: init-appearance.el, init-completion.el, init-edit.el, init-font.el
+- Examples: omw-appearance.el, omw-completion.el, omw-edit.el, omw-font.el
 
-**System Modules** (`lisp/system/init-*.el`)
+**System Modules** (`lisp/system/omw-*.el`)
 - Purpose: System/environment configuration (credentials, proxy settings)
 - Characteristics: Environment-specific, may contain sensitive configuration
-- Examples: init-credential.el, init-proxy.el
+- Examples: omw-pass.el, omw-proxy.el
 
-**Tool Modules** (`lisp/tool/init-*.el`)
+**Tool Modules** (`lisp/tool/omw-*.el`)
 - Purpose: External tool integration (Git, AI, PDF, terminal)
 - Characteristics: May use `:vc` for Git-based packages, platform-specific code acceptable
-- Examples: init-git.el, init-ai.el, init-pdf.el, init-term.el
+- Examples: omw-git.el, omw-ai.el, omw-pdf.el, omw-term.el
 
-**Language Modules** (`lisp/lang/init-*.el` and `lisp/lang/markup/init-*.el`)
+**Language Modules** (`lisp/lang/omw-*.el` and `lisp/lang/markup/omw-*.el`)
 - Purpose: Language-specific configuration
-- Characteristics: Should be concise and focused, MUST NOT configure LSP servers (centralized in init-prog.el)
+- Characteristics: Should be concise and focused, MUST NOT configure LSP servers (centralized in omw-prog.el)
 - Simple `:ensure t :defer t` preferred for most cases
 - Use setup functions only for language-specific buffer-local settings
 - Keep language-related code together for module cohesion
@@ -182,7 +182,7 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 Every `.el` file must start with:
 
 ```elisp
-;;; init-module.el -*- lexical-binding: t; -*-
+;;; omw-module.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: keyword1, keyword2
@@ -236,9 +236,9 @@ Every `.el` file must start with:
 ```elisp
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-module)
+(provide 'omw-module)
 
-;;; init-module.el ends here
+;;; omw-module.el ends here
 ```
 
 
@@ -655,11 +655,11 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
 - [ ] Section separators (`;; ==================================================================================`) used correctly
-- [ ] Files end with `(provide 'init-xxx)` and `;;; init-xxx.el ends here`
+- [ ] Files end with `(provide 'omw-xxx)` and `;;; omw-xxx.el ends here`
 
 ### Current Status
 
-**Compliance Level:** 98%+ (as of 2026-03-13)
+**Compliance Level:** 100% (as of 2026-03-15)
 
 **Key metrics:**
 - Naming convention violations: 0
@@ -702,9 +702,9 @@ M-x package-refresh-contents  ; Refresh package list
 **Principle**: Keep language-related code together, even if it means more lines.
 
 **Examples from the codebase:**
-- `init-python.el` (46 lines) - Includes pyvenv and poetry tracking because these are essential for Python development
-- `init-markdown.el` (82 lines) - Includes visual editing tools (valign, olivetti, visual-fill-column) because they're part of the Markdown writing experience
-- `init-elisp.el` (19 lines) - Includes enhancement tools (elisp-slime-nav, lisp-extra-font-lock, rainbow-mode) for better Lisp development
+- `omw-python.el` (46 lines) - Includes pyvenv and poetry tracking because these are essential for Python development
+- `omw-markdown.el` (82 lines) - Includes visual editing tools (valign, olivetti, visual-fill-column) because they're part of the Markdown writing experience
+- `omw-elisp.el` (19 lines) - Includes enhancement tools (elisp-slime-nav, lisp-extra-font-lock, rainbow-mode) for better Lisp development
 
 **Why this works better than artificial limits:**
 - ✅ **Cohesion**: All code for Language X is in one place
@@ -752,7 +752,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 **Keep file headers consistent** - use the exact same format:
 
-- Line 1: `;;; init-filename.el -*- lexical-binding: t; -*-`
+- Line 1: `;;; omw-filename.el -*- lexical-binding: t; -*-`
 - Line 3: Author with name and email
 - Line 4: Keywords (2-4 tags)
 - Line 5: Dependencies ((none) or module-name)
@@ -798,7 +798,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 5. **Comments:** Minimal, only for non-obvious code
 6. **Separators:** `;; ==================================================================================`
 7. **Language Modules:** Keep language-related code together, don't artificially limit lines
-8. **LSP Configuration:** Centralize all LSP in init-prog.el, never in language modules
+8. **LSP Configuration:** Centralize all LSP in omw-prog.el, never in language modules
 9. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
 10. **Tracking Packages:** Use `:demand t` for environment tracking (pyvenv, poetry)
 
