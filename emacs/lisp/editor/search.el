@@ -1,4 +1,4 @@
-;;; init-search.el -*- lexical-binding: t; -*-
+;;; search.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: search, consult, embark, xref
@@ -90,6 +90,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-search)
+(provide 'search)
 
-;;; init-search.el ends here
+;;; search.el ends here

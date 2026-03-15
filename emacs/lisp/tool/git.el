@@ -1,8 +1,8 @@
-;;; init-go.el -*- lexical-binding: t; -*-
+;;; git.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: go, golang
-;; Dependencies: init-prog
+;; Keywords: vc, git, diff, merge
+;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,31 +29,19 @@
 
 ;;; Commentary:
 ;;
-;; Go mode configuration with LSP support via gopls.
+;; Version control integration with Magit for powerful Git operations.
 
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-go-tools ()
-  "Ensure Go development tools (gopls, gofumpt) are installed."
-  ;; Check and install each tool if missing
-  (dolist (spec '(("gopls"   "go install golang.org/x/tools/gopls@latest")
-                  ("gofumpt" "go install mvdan.cc/gofumpt@latest")))
-    ;; spec format: (executable-name install-command)
-    (let ((exe (nth 0 spec))
-          (cmd (nth 1 spec)))
-      (unless (executable-find exe)
-        (message "Installing %s..." exe)
-        (shell-command cmd)
-        (message "%s installed successfully" exe)))))
-
-(use-package go-mode
+(use-package magit
   :ensure t
   :defer t
-  :hook (go-mode . omw/ensure-go-tools))
+  :bind (("C-c g s" . magit-status)
+         ("C-c g l" . magit-log-all)))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-go)
+(provide 'git)
 
-;;; init-go.el ends here
+;;; git.el ends here

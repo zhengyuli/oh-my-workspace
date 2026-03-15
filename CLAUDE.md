@@ -120,7 +120,9 @@ emacs --batch --eval '(progn (load-file "emacs/emacs.symlink") (message "OK"))'
 
 ## Shell Script Coding Standards
 
-### Avoid `[[ cond ]] && cmd || true` Pattern
+These conventions apply to **both bash and zsh scripts** throughout the repository.
+
+### 1. Avoid `[[ cond ]] && cmd || true` Pattern (CRITICAL)
 
 **WRONG** - This pattern is error-prone and hides potential issues:
 
@@ -153,3 +155,120 @@ fi
 # Conditional execution where false condition is expected and harmless
 [[ -n "$value" ]] && git config "$key" "$value"
 ```
+
+### 2. Use `[[ ]]` for Conditional Tests
+
+Prefer `[[ ]]` over `[ ]` or `test` for condition checks:
+
+```bash
+# ✅ CORRECT
+[[ -f "$file" ]]
+[[ "$var" == "pattern" ]]
+[[ -n "$value" ]]
+
+# ❌ AVOID
+[ -f "$file" ]
+test -f "$file"
+```
+
+**Rationale:** `[[ ]]` prevents word-splitting, supports pattern matching, and is more readable.
+
+### 3. Use `(( ))` for Arithmetic
+
+```bash
+# ✅ CORRECT
+(( count++ ))
+(( total = a + b ))
+local result=$(( a * b ))
+
+# ❌ AVOID
+let count+=1
+result=$(expr $a + $b)
+```
+
+### 4. Use `$()` for Command Substitution
+
+```bash
+# ✅ CORRECT
+local dir=$(dirname "$file")
+
+# ❌ AVOID - hard to nest, hard to read
+local dir=`dirname "$file"`
+```
+
+### 5. Quote All External Data
+
+Any value from files, environment variables, or command output must be quoted:
+
+```bash
+# ✅ CORRECT
+rm -- "${file}"
+grep -- "${pattern}" "${file}"
+source "${config_file}"
+
+# ❌ WRONG - word-splitting and glob expansion risks
+rm ${file}
+grep ${pattern} ${file}
+```
+
+### 6. Prefer `printf` Over `echo -e`
+
+```bash
+# ✅ CORRECT - portable and predictable
+printf '%s\n' "$message"
+printf 'Status: %s\n' "$status"
+
+# ❌ AVOID - behavior varies between shells
+echo -e "$message"
+```
+
+### 7. Use `set -e` with Caution
+
+```bash
+# ✅ CORRECT - scoped to specific operations
+(
+    set -e
+    cmd1
+    cmd2
+)
+
+# ❌ AVOID globally in interactive shells
+set -e  # Can cause unexpected exits
+```
+
+### 8. Security: Validate Before Sourcing
+
+```bash
+# ✅ CORRECT - check before sourcing
+if [[ -f "${file}" ]]; then
+    source "${file}"
+fi
+
+# ❌ WRONG - error if file missing
+source "${file}"
+```
+
+### 9. Security: Never `eval` Untrusted Input
+
+```bash
+# ✅ CORRECT - use allowlist
+local -a allowed=(rbenv pyenv nodenv)
+if (( ${allowed[(I)${tool}]} )); then
+    eval "$(${tool} init -)"
+fi
+
+# ❌ DANGEROUS - arbitrary code execution
+eval "${user_input}"
+```
+
+### 10. Check File Existence Before Operations
+
+```bash
+# ✅ CORRECT
+[[ -f "$file" ]] && rm -- "$file"
+
+# ❌ WRONG - error if file doesn't exist
+rm "$file"
+```
+
+For zsh-specific conventions (startup files, setopt, arrays, etc.), see [zsh/CLAUDE.md](zsh/CLAUDE.md).

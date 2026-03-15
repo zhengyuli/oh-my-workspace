@@ -1,4 +1,4 @@
-;;; init-proxy.el -*- lexical-binding: t; -*-
+;;; proxy.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: proxy, network, http
@@ -132,6 +132,6 @@ Useful for switching between proxy and direct connections."
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-proxy)
+(provide 'proxy)
 
-;;; init-proxy.el ends here
+;;; proxy.el ends here

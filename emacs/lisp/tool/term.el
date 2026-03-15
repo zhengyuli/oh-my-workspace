@@ -1,8 +1,8 @@
-;;; init-typescript.el -*- lexical-binding: t; -*-
+;;; term.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: typescript, ts
-;; Dependencies: init-prog
+;; Keywords: terminal, vterm, eshell
+;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,25 +29,42 @@
 
 ;;; Commentary:
 ;;
-;; TypeScript mode configuration with LSP support.
+;; Terminal emulation configuration with vterm for fast, native PTY support.
 
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-typescript-tools ()
-  "Ensure typescript-language-server is installed for LSP support."
-  (unless (executable-find "typescript-language-server")
-    (message "Installing typescript-language-server...")
-    (shell-command "npm install -g typescript-language-server")
-    (message "typescript-language-server installed successfully")))
+(defun omw/vterm-mode-setup ()
+  "Apply custom settings for vterm mode."
+  (setq-local truncate-lines t)
+  (hl-line-mode -1)
+  (corfu-mode -1))
 
-(use-package typescript-mode
+(use-package vterm
   :ensure t
   :defer t
-  :hook (typescript-mode . omw/ensure-typescript-tools))
+  :hook (vterm-mode . omw/vterm-mode-setup)
+  :bind (:map vterm-mode-map
+              ("M-1" . nil)
+              ("M-2" . nil)
+              ("M-3" . nil)
+              ("M-4" . nil)
+              ("M-5" . nil)
+              ("M-6" . nil)
+              ("M-7" . nil)
+              ("M-8" . nil)
+              ("M-9" . nil)
+              ("C-g" . vterm--self-insert)
+              ("M-<backspace>" . vterm-send-meta-backspace)))
+
+;; ==================================================================================
+(use-package multi-vterm
+  :ensure t
+  :defer t
+  :bind ("C-x C-t" . multi-vterm))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-typescript)
+(provide 'term)
 
-;;; init-typescript.el ends here
+;;; term.el ends here

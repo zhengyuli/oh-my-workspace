@@ -1,8 +1,8 @@
-;;; init-cc.el -*- lexical-binding: t; -*-
+;;; credential.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: c, cpp
-;; Dependencies: init-prog
+;; Keywords: auth, gpg, pass, pinentry
+;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,20 +29,34 @@
 
 ;;; Commentary:
 ;;
-;; C/C++ mode configuration with clangd LSP and Google code style.
-;; LSP server (clangd) is configured in init-prog.el.
+;; Authentication and credential management configuration.
+;; Features: GPG integration, pass password store.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package google-c-style
+(use-package epg-config
+  :ensure nil
+  :demand t
+  :config
+  ;; Use loopback mode for PIN entry (allows Emacs to prompt for GPG passphrase)
+  (setq epg-pinentry-mode 'loopback))
+
+;; ==================================================================================
+(use-package auth-source-pass
+  :ensure nil
+  :demand t
+  :config
+  ;; Enable pass (password-store.org) as auth source backend
+  (auth-source-pass-enable))
+
+;; ==================================================================================
+(use-package pass
   :ensure t
-  :defer t
-  :hook ((c-mode . google-set-c-style)
-         (c++-mode . google-set-c-style)))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-cc)
+(provide 'credential)
 
-;;; init-cc.el ends here
+;;; credential.el ends here

@@ -1,8 +1,8 @@
-;;; init-terminal.el -*- lexical-binding: t; -*-
+;;; cc.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: terminal, vterm, eshell
-;; Dependencies: (none)
+;; Keywords: c, cpp
+;; Dependencies: prog
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,42 +29,20 @@
 
 ;;; Commentary:
 ;;
-;; Terminal emulation configuration with vterm for fast, native PTY support.
+;; C/C++ mode configuration with clangd LSP and Google code style.
+;; LSP server (clangd) is configured in prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/vterm-mode-setup ()
-  "Apply custom settings for vterm mode."
-  (setq-local truncate-lines t)
-  (hl-line-mode -1)
-  (corfu-mode -1))
-
-(use-package vterm
+(use-package google-c-style
   :ensure t
   :defer t
-  :hook (vterm-mode . omw/vterm-mode-setup)
-  :bind (:map vterm-mode-map
-              ("M-1" . nil)
-              ("M-2" . nil)
-              ("M-3" . nil)
-              ("M-4" . nil)
-              ("M-5" . nil)
-              ("M-6" . nil)
-              ("M-7" . nil)
-              ("M-8" . nil)
-              ("M-9" . nil)
-              ("C-g" . vterm--self-insert)
-              ("M-<backspace>" . vterm-send-meta-backspace)))
-
-;; ==================================================================================
-(use-package multi-vterm
-  :ensure t
-  :defer t
-  :bind ("C-x C-t" . multi-vterm))
+  :hook ((c-mode . google-set-c-style)
+         (c++-mode . google-set-c-style)))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-terminal)
+(provide 'cc)
 
-;;; init-terminal.el ends here
+;;; cc.el ends here

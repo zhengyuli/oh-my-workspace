@@ -1,7 +1,7 @@
-;;; init-dired.el -*- lexical-binding: t; -*-
+;;; explorer.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: dired, dirvish, file manager
+;; Keywords: explorer, dirvish, file manager
 ;; Dependencies: dired-custom-extension
 
 ;; Copyright (C) 2026 zhengyu li
@@ -158,6 +158,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-dired)
+(provide 'explorer)
 
-;;; init-dired.el ends here
+;;; explorer.el ends here

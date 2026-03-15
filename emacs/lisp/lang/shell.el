@@ -1,8 +1,8 @@
-;;; init-dockerfile.el -*- lexical-binding: t; -*-
+;;; shell.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: dockerfile, docker
-;; Dependencies: init-prog
+;; Keywords: shell, bash, sh
+;; Dependencies: prog
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,18 +29,28 @@
 
 ;;; Commentary:
 ;;
-;; Dockerfile mode configuration with LSP support.
-;; LSP server (docker-langserver) is configured in init-prog.el.
+;; Shell script mode configuration.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package dockerfile-mode
-  :ensure t
-  :defer t)
+(defun omw/ensure-bash-tools ()
+  "Ensure bash-language-server is installed for LSP support."
+  ;; Install bash-language-server via npm if not found
+  (unless (executable-find "bash-language-server")
+    (message "Installing bash-language-server...")
+    (shell-command "npm install -g bash-language-server")
+    (message "bash-language-server installed successfully")))
+
+(use-package sh-script
+  :ensure nil
+  :defer t
+  :hook (sh-mode . omw/ensure-bash-tools)
+  :bind (:map sh-mode-map
+              ("C-c C-c" . comment-line)))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-dockerfile)
+(provide 'shell)
 
-;;; init-dockerfile.el ends here
+;;; shell.el ends here

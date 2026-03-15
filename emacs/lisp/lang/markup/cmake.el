@@ -1,8 +1,8 @@
-;;; init-cmake.el -*- lexical-binding: t; -*-
+;;; cmake.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: cmake
-;; Dependencies: init-prog
+;; Dependencies: prog
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -30,7 +30,7 @@
 ;;; Commentary:
 ;;
 ;; CMake mode configuration with LSP support.
-;; LSP server (cmake-language-server) is configured in init-prog.el.
+;; LSP server (cmake-language-server) is configured in prog.el.
 
 ;;; Code:
 
@@ -41,6 +41,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-cmake)
+(provide 'cmake)
 
-;;; init-cmake.el ends here
+;;; cmake.el ends here

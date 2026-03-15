@@ -1,7 +1,7 @@
-;;; init-pdf.el -*- lexical-binding: t; -*-
+;;; elisp.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: pdf, pdf-tools, document-viewer
+;; Keywords: elisp, emacs-lisp, lisp
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
@@ -29,46 +29,39 @@
 
 ;;; Commentary:
 ;;
-;; PDF viewing and navigation configuration using pdf-tools.
-;; Features: PDF viewing, editing, navigation, and state restoration.
+;; Emacs Lisp mode configuration with enhanced navigation and syntax highlighting.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package pdf-tools
+(use-package elisp-slime-nav
   :ensure t
-  :when (display-graphic-p)
-  :defer t)
+  :defer t
+  :hook (emacs-lisp-mode . elisp-slime-nav-mode))
 
 ;; ==================================================================================
-(use-package pdf-view
+(use-package lisp-extra-font-lock
+  :ensure t
+  :defer t
+  :hook (emacs-lisp-mode . lisp-extra-font-lock-mode))
+
+;; ==================================================================================
+(use-package rainbow-mode
+  :ensure t
+  :defer t
+  :hook (emacs-lisp-mode . rainbow-mode))
+
+;; ==================================================================================
+(defun omw/elisp-mode-setup ()
+  "Apply custom settings for Emacs Lisp mode."
+  (eldoc-mode 1))
+
+(use-package elisp-mode
   :ensure nil
-  :defer t
-  :when (display-graphic-p)
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :hook (pdf-view-mode . pdf-view-fit-height-to-window)
-  :bind (:map pdf-view-mode-map
-              ("j" . pdf-view-next-line-or-next-page)
-              ("k" . pdf-view-previous-line-or-previous-page)
-              ("+" . pdf-view-enlarge)
-              ("-" . pdf-view-shrink))
-  :config
-  (pdf-tools-install :no-query))
-
-;; ==================================================================================
-(defvar omw/pdf-view-restore-path (expand-file-name "pdf-view-restore" user-emacs-directory)
-  "Pdf view restore file path, which will be used to store pdf view state.")
-
-(use-package pdf-view-restore
-  :ensure t
-  :defer t
-  :when (display-graphic-p)
-  :hook (pdf-view-mode . pdf-view-restore-mode)
-  :config
-  (setq pdf-view-restore-filename omw/pdf-view-restore-path))
+  :hook (emacs-lisp-mode . omw/elisp-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-pdf)
+(provide 'elisp)
 
-;;; init-pdf.el ends here
+;;; elisp.el ends here

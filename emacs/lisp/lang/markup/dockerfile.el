@@ -1,8 +1,8 @@
-;;; init-elisp.el -*- lexical-binding: t; -*-
+;;; dockerfile.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: elisp, emacs-lisp, lisp
-;; Dependencies: (none)
+;; Keywords: dockerfile, docker
+;; Dependencies: prog
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,39 +29,18 @@
 
 ;;; Commentary:
 ;;
-;; Emacs Lisp mode configuration with enhanced navigation and syntax highlighting.
+;; Dockerfile mode configuration with LSP support.
+;; LSP server (docker-langserver) is configured in prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package elisp-slime-nav
+(use-package dockerfile-mode
   :ensure t
-  :defer t
-  :hook (emacs-lisp-mode . elisp-slime-nav-mode))
-
-;; ==================================================================================
-(use-package lisp-extra-font-lock
-  :ensure t
-  :defer t
-  :hook (emacs-lisp-mode . lisp-extra-font-lock-mode))
-
-;; ==================================================================================
-(use-package rainbow-mode
-  :ensure t
-  :defer t
-  :hook (emacs-lisp-mode . rainbow-mode))
-
-;; ==================================================================================
-(defun omw/elisp-mode-setup ()
-  "Apply custom settings for Emacs Lisp mode."
-  (eldoc-mode 1))
-
-(use-package elisp-mode
-  :ensure nil
-  :hook (emacs-lisp-mode . omw/elisp-mode-setup))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-elisp)
+(provide 'dockerfile)
 
-;;; init-elisp.el ends here
+;;; dockerfile.el ends here

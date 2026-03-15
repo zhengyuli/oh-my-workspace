@@ -1,4 +1,4 @@
-;;; init-python.el -*- lexical-binding: t; -*-
+;;; python.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: python, pyvenv, poetry
@@ -106,6 +106,6 @@
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-python)
+(provide 'python)
 
-;;; init-python.el ends here
+;;; python.el ends here

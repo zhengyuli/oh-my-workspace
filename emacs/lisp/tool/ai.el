@@ -1,7 +1,7 @@
-;;; init-magit.el -*- lexical-binding: t; -*-
+;;; ai.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: vc, git, diff, merge
+;; Keywords: ai, claude, coding-assistant, copilot, gptel
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
@@ -29,19 +29,26 @@
 
 ;;; Commentary:
 ;;
-;; Version control integration with Magit for powerful Git operations.
+;; AI coding assistants: Claude Code IDE integration.
+;; Future: GitHub Copilot, GPTel, Aider support.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package magit
-  :ensure t
-  :defer t
-  :bind (("C-c g s" . magit-status)
-         ("C-c g l" . magit-log-all)))
+(use-package claude-code-ide
+  ;; Install from GitHub (not yet in ELPA/MELPA)
+  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+  :defer t)
+
+;; ==================================================================================
+;; Future AI tools that can be added:
+;; - GitHub Copilot (copilot.el)
+;; - GPTel (gptel)
+;; - Aider (aider.el)
+;; - Ellama (ellama)
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-magit)
+(provide 'ai)
 
-;;; init-magit.el ends here
+;;; ai.el ends here

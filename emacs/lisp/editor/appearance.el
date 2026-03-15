@@ -1,4 +1,4 @@
-;;; init-ui.el -*- lexical-binding: t; -*-
+;;; appearance.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
 ;; Keywords: ui, theme, tabs, dashboard
@@ -141,6 +141,6 @@ Returns nil in terminal mode (uses official banner instead)."
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'init-ui)
+(provide 'appearance)
 
-;;; init-ui.el ends here
+;;; appearance.el ends here

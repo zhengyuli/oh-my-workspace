@@ -1,5 +1,7 @@
 # ZSH Configuration Coding Standard
 
+> **Note:** Shared bash/zsh conventions are documented in the root [CLAUDE.md](../CLAUDE.md). This file covers zsh-specific standards only.
+
 > **Scope**: `.zshenv`, `.zprofile`, `.zshrc`, and all module files under `conf.d/`
 > **Sources**: Google Shell Style Guide · Oh My Zsh Code Style Guide · ZSH Opinionated
 > Best Practices (ChristopherA) · zsh-users/zsh completion-style-guide · Arch Linux Zsh
@@ -38,15 +40,23 @@
 ├── .zshenv                       ← Universal env vars (all shell types)
 ├── .zprofile                     ← Login-shell bootstrap (PATH, brew, etc.)
 ├── .zshrc                        ← Interactive-shell entry point
-└── conf.d/                       ← Modules, sourced explicitly by .zshrc
-    ├── options.zsh               ← setopt declarations
-    ├── completion.zsh            ← compinit and completion styles
-    ├── prompt.zsh                ← Prompt configuration
-    ├── functions.zsh             ← User utility functions and logging helpers
-    ├── aliases.zsh               ← Aliases
-    ├── keybindings.zsh           ← bindkey declarations
-    ├── tools.zsh                 ← External tool init (nvm, rbenv, etc.)
-    └── local.zsh                 ← Machine-local overrides (gitignored)
+├── conf.d/                       ← Modules, sourced explicitly by .zshrc
+│   ├── 00-env.zsh                ← Environment variables
+│   ├── 05-path.zsh               ← PATH / FPATH / MANPATH / CDPATH
+│   ├── 10-options.zsh            ← setopt / unsetopt
+│   ├── 15-history.zsh            ← HIST* variables, history options
+│   ├── 20-aliases.zsh            ← Aliases and git aliases
+│   ├── 30-completion.zsh         ← Completion system settings
+│   ├── 40-plugins.zsh            ← Plugin manager initialization (Zinit)
+│   ├── 50-prompt.zsh             ← PROMPT / RPROMPT / theme
+│   ├── 60-keybinds.zsh           ← bindkey / custom widgets
+│   ├── 70-tools.zsh              ← Lazy-loaded tools (pyenv, fnm, bun)
+│   ├── 80-functions.zsh          ← User utility functions and logging helpers
+│   ├── 90-platform.zsh           ← OS-specific logic (macOS / Linux)
+│   └── 99-local.zsh              ← Machine-local overrides (gitignored)
+├── functions/                    ← Custom functions (autoloaded)
+├── completions/                  ← Custom completion scripts
+└── cache/                        ← zcompdump, plugin cache, zcompiled files
 ```
 
 **Rules:**
@@ -55,11 +65,29 @@
   or at the very top of `~/.zshenv` before any other file is read.
 - The three root files (`.zshenv`, `.zprofile`, `.zshrc`) live directly under
   `$ZDOTDIR`. Every other file lives under `conf.d/`.
-- Module load order is controlled by **explicit `source` statements** in
-  `.zshrc`, not by filename prefixes or glob expansion order. This makes
-  dependencies visible in code rather than implicit in filenames.
-- `local.zsh` must be listed in `.gitignore`. It holds machine-specific paths,
+- Module files use **numeric prefixes** to indicate load order category.
+  Actual load order is controlled by **explicit `source` statements** in
+  `.zshrc`, making dependencies visible in code.
+- `99-local.zsh` must be listed in `.gitignore`. It holds machine-specific paths,
   credentials, or overrides that must never be committed.
+
+### Module Prefix Reference
+
+| Prefix | Purpose |
+|--------|---------|
+| 00 | Base environment variables |
+| 05 | PATH / FPATH / MANPATH / CDPATH |
+| 10 | Shell options (setopt/unsetopt) |
+| 15 | History variables and options |
+| 20 | Aliases (user and git) |
+| 30 | Completion settings (compinit, fpath) |
+| 40 | Plugins (Zinit initialization) |
+| 50 | Prompt (themes, powerlevel10k etc.) |
+| 60 | Keybindings (bindkey, widgets) |
+| 70 | Tools (lazy-load pyenv, fnm, bun etc.) |
+| 80 | Functions (user utilities, logging helpers) |
+| 90 | Platform abstraction (macOS / Linux) |
+| 99 | Local overrides (machine-specific, gitignored) |
 
 ---
 
@@ -82,6 +110,43 @@ non-login, scripts, cron jobs, `ssh host cmd`, and editor sub-shells.
 | Variables needed by scripts and cron jobs | `setopt` that affects script behaviour |
 | Tool home dirs (`GOPATH`, `CARGO_HOME`, …) | Plugin loading, aliases, prompt |
 
+**Rules:**
+- Must remain minimal and side-effect free
+- Must not call external commands
+- Must not produce any output
+- Must not assume a TTY exists
+
+**Example `.zshenv`:**
+```zsh
+# ==============================================================================
+# File: .zshenv
+# Role: Universal environment variables (sourced for ALL zsh invocations)
+# ==============================================================================
+
+# XDG Base Directory Specification
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# ZSH configuration directory
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+# Editor and pager
+export EDITOR="${EDITOR:-nvim}"
+export VISUAL="${VISUAL:-nvim}"
+export PAGER="${PAGER:-less}"
+
+# Locale
+export LANG="${LANG:-en_US.UTF-8}"
+export LC_ALL="${LC_ALL:-en_US.UTF-8}"
+
+# Tool home directories (needed by scripts)
+export GOPATH="${GOPATH:-$HOME/go}"
+export CARGO_HOME="${CARGO_HOME:-$HOME/.cargo}"
+export PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
+```
+
 ### `.zprofile` — Login-shell bootstrap
 
 Sourced **once per login session** (new terminal, SSH login), before `.zshrc`.
@@ -93,6 +158,63 @@ Not sourced in subshells.
 | `MANPATH`, `INFOPATH`, `PKG_CONFIG_PATH` | `setopt`, prompts, completions |
 | One-time tool bootstrap: `eval "$(brew shellenv)"` | Anything that must run in every subshell |
 | Session-wide `export` statements | Interactive UI (output, colour, prompts) |
+
+**Rules:**
+- Runs only once per login session
+- Safe to run slow commands (but avoid if possible)
+- Use `typeset -U path` to prevent duplicates on re-source
+- On macOS, set PATH here (not in `.zshenv`) due to `path_helper`
+
+**Example `.zprofile`:**
+```zsh
+# ==============================================================================
+# File: .zprofile
+# Role: Login-shell initialization (PATH, one-time bootstrap)
+# ==============================================================================
+
+# Source environment and path modules
+source "${ZDOTDIR}/conf.d/00-env.zsh"
+source "${ZDOTDIR}/conf.d/05-path.zsh"
+
+# macOS Homebrew bootstrap (only if not already in PATH)
+if [[ "$OSTYPE" == darwin* ]]; then
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+fi
+```
+
+**Example `conf.d/05-path.zsh`:**
+```zsh
+# ==============================================================================
+# File: conf.d/05-path.zsh
+# Role: PATH / FPATH / MANPATH construction
+# ==============================================================================
+
+# Deduplicate PATH entries automatically
+typeset -U path fpath manpath
+
+# User binaries
+path=(
+  "${HOME}/.local/bin"
+  "${GOPATH}/bin"
+  "${CARGO_HOME}/bin"
+  "${PNPM_HOME}"
+  $path
+)
+
+# Completion function path
+fpath=(
+  "${ZDOTDIR}/completions"
+  "${ZDOTDIR}/functions"
+  $fpath
+)
+
+# Export arrays (ZSH syncs path↔PATH automatically)
+export PATH FPATH MANPATH
+```
 
 ### `.zshrc` — Interactive-shell entry point
 
@@ -106,11 +228,132 @@ order.
 | Bootstrap logging stubs | `exit` |
 | Explicit `source` calls for each `conf.d/` module | Slow top-level commands |
 
+**Rules:**
+- Must guard against non-interactive shells
+- Must not contain direct configuration (delegate to modules)
+- Must use explicit source list (not glob-based loading)
+- Must never call `exit`
+
+**Example `.zshrc`:**
+```zsh
+# ==============================================================================
+# File: .zshrc
+# Role: Interactive-shell orchestration (sources conf.d modules)
+# ==============================================================================
+
+# Guard: exit early for non-interactive shells
+[[ $- == *i* ]] || return 0
+
+# Bootstrap logging stubs (before functions module is loaded)
+typeset -i ZSH_LOG_LEVEL=${ZSH_LOG_LEVEL:-2}
+_zsh_error() { print -u2 -- "[ERROR] $*" }
+_zsh_warn()  { (( ZSH_LOG_LEVEL >= 2 )) && print -u2 -- "[WARN] $*" }
+_zsh_info()  { (( ZSH_LOG_LEVEL >= 3 )) && print -u2 -- "[INFO] $*" }
+_zsh_debug() { (( ZSH_LOG_LEVEL >= 4 )) && print -u2 -- "[DEBUG] $*" }
+
+# Configuration directory
+_zsh_conf="${ZDOTDIR}/conf.d"
+
+# ── Load modules in explicit order ─────────────────────────────────────────────
+
+# Core configuration
+source "${_zsh_conf}/10-options.zsh"
+source "${_zsh_conf}/15-history.zsh"
+source "${_zsh_conf}/30-completion.zsh"
+
+# Plugins (Zinit)
+source "${_zsh_conf}/40-plugins.zsh"
+
+# UI and interaction
+source "${_zsh_conf}/50-prompt.zsh"
+source "${_zsh_conf}/60-keybinds.zsh"
+source "${_zsh_conf}/20-aliases.zsh"
+
+# Functions and tools
+source "${_zsh_conf}/80-functions.zsh"
+source "${_zsh_conf}/70-tools.zsh"
+
+# Platform-specific (macOS / Linux)
+source "${_zsh_conf}/90-platform.zsh"
+
+# Local overrides (always last, gitignored)
+[[ -f "${_zsh_conf}/99-local.zsh" ]] && source "${_zsh_conf}/99-local.zsh"
+
+unset _zsh_conf
+```
+
 ### `conf.d/` modules — Scoped configuration units
 
 Each module owns **exactly one concern**. Modules must be safe to `source` in
 isolation — no hidden dependencies on load order beyond what the explicit
 source list in `.zshrc` documents.
+
+**Module rules:**
+- One concern per module
+- Must be safe to source in isolation
+- Must not call `exit` (use `return`)
+- Must use `local` for function-local variables
+- Must include file header documentation
+
+**Common module templates:**
+
+**`conf.d/10-options.zsh` — Shell options:**
+```zsh
+# ==============================================================================
+# File: conf.d/10-options.zsh
+# Role: Shell options (setopt / unsetopt)
+# ==============================================================================
+
+setopt AUTO_CD              # Type directory name to cd into it
+setopt AUTO_PUSHD           # Push old directory onto stack on cd
+setopt CORRECT              # Spelling correction for commands
+setopt EXTENDED_HISTORY     # Save timestamp with commands
+setopt HIST_EXPIRE_DUPS_FIRST  # Delete duplicates first when HISTSIZE reached
+setopt HIST_IGNORE_DUPS      # Don't save duplicate commands
+setopt HIST_IGNORE_SPACE     # Commands prefixed with space don't go to history
+setopt HIST_SAVE_NO_DUPS     # Don't save duplicates to history file
+setopt INTERACTIVE_COMMENTS  # Allow comments in interactive shell
+setopt NO_BEEP               # Don't beep on errors
+setopt NOTIFY                # Report background job status immediately
+setopt SHARE_HISTORY         # Share history across sessions
+```
+
+**`conf.d/15-history.zsh` — History configuration:**
+```zsh
+# ==============================================================================
+# File: conf.d/15-history.zsh
+# Role: History variables and options
+# ==============================================================================
+
+typeset -i HISTSIZE=50000           # In-memory history size
+typeset -i SAVEHIST=10000           # File history size
+
+HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
+```
+
+**`conf.d/90-platform.zsh` — Platform abstraction:**
+```zsh
+# ==============================================================================
+# File: conf.d/90-platform.zsh
+# Role: OS-specific configuration (macOS / Linux)
+# ==============================================================================
+
+case "${OSTYPE}" in
+  darwin*)
+    # macOS-specific settings
+    export HOMEBREW_NO_ANALYTICS=1
+    export HOMEBREW_NO_ENV_HINTS=1
+
+    # Use GNU coreutils (prefixed with 'g')
+    alias ls='gls --color=auto'
+    alias find='gfind'
+    ;;
+  linux*)
+    # Linux-specific settings
+    alias ls='ls --color=auto'
+    ;;
+esac
+```
 
 ---
 
@@ -182,26 +425,28 @@ ZSH_CONF_DIR="${ZDOTDIR}/conf.d"
 ### 4.3 Module files
 
 ```
-<short-kebab-description>.zsh
+<NN>-<short-kebab-description>.zsh
 ```
 
-No numeric prefix. Names describe the single concern the module owns.
-Load order is determined solely by the explicit source list in `.zshrc`.
+**Numeric prefix** indicates load order category (see Module Prefix Reference above).
+Names describe the single concern the module owns.
+Actual load order is determined by the explicit source list in `.zshrc`.
 
 ```zsh
 # In .zshrc — order is explicit, dependencies are visible in code
-_zsh_load "${_zsh_conf}/options.zsh"
-_zsh_load "${_zsh_conf}/completion.zsh"   # depends on options being set first
-_zsh_load "${_zsh_conf}/prompt.zsh"
-_zsh_load "${_zsh_conf}/functions.zsh"
-_zsh_load "${_zsh_conf}/aliases.zsh"
-_zsh_load "${_zsh_conf}/keybindings.zsh"
-_zsh_load "${_zsh_conf}/tools.zsh"
-_zsh_load "${_zsh_conf}/local.zsh"        # always last
+_zsh_load "${_zsh_conf}/10-options.zsh"
+_zsh_load "${_zsh_conf}/30-completion.zsh"   # depends on options being set first
+_zsh_load "${_zsh_conf}/50-prompt.zsh"
+_zsh_load "${_zsh_conf}/80-functions.zsh"
+_zsh_load "${_zsh_conf}/20-aliases.zsh"
+_zsh_load "${_zsh_conf}/60-keybinds.zsh"
+_zsh_load "${_zsh_conf}/70-tools.zsh"
+_zsh_load "${_zsh_conf}/99-local.zsh"        # always last
 ```
 
 Adding a new module is one line. Moving a module earlier or later is one line.
-No filenames need renaming.
+Numeric prefixes provide visual categorization; actual order is controlled by
+the explicit source list.
 
 ### 4.4 Never shadow built-ins or common commands
 
@@ -480,6 +725,8 @@ Apply the same style identically across every file.
 
 ### 8.1 Conditional tests: always `[[ ]]`
 
+> Rationale for `[[ ]]` vs `[ ]` is in the root [CLAUDE.md](../CLAUDE.md#2-use--for-conditional-tests).
+
 `[[ ]]` prevents word-splitting, supports `=~` (regex) and `==` (glob), and
 allows `&&` / `||` without spawning a subshell. Never use `[ ]`, `test`, or
 `/usr/bin/[` in ZSH config files.
@@ -496,6 +743,8 @@ allows `&&` / `||` without spawning a subshell. Never use `[ ]`, `test`, or
 
 ### 8.2 Arithmetic: always `(( ))` or `$(( ))`
 
+> Rationale is in the root [CLAUDE.md](../CLAUDE.md#3-use--for-arithmetic).
+
 ```zsh
 # ✅
 (( retry_count++ ))
@@ -508,6 +757,8 @@ elapsed=$(expr ${end_time} - ${start_time})
 ```
 
 ### 8.3 Command substitution: always `$( )`
+
+> Rationale is in the root [CLAUDE.md](../CLAUDE.md#4-use--for-command-substitution).
 
 ```zsh
 # ✅
@@ -581,14 +832,14 @@ fi
 
 ### 8.8 `setopt` rules
 
-- All `setopt` / `unsetopt` calls belong exclusively in `conf.d/options.zsh`.
+- All `setopt` / `unsetopt` calls belong exclusively in `conf.d/10-options.zsh`.
 - Every option line **must** carry an inline comment explaining its effect.
 - Never set `ERR_EXIT` globally — in a sourced file it closes the terminal on
   any non-zero return code.
 - Use `setopt LOCAL_OPTIONS` inside functions to scope option changes locally.
 
 ```zsh
-# ✅ In conf.d/options.zsh — documented and centralised
+# ✅ In conf.d/10-options.zsh — documented and centralised
 setopt HIST_IGNORE_SPACE   # Omit commands prefixed with a space from history
 setopt SHARE_HISTORY       # Sync history across all active sessions in real time
 setopt AUTO_CD             # Type a directory name alone to cd into it
@@ -611,10 +862,10 @@ setopt ERR_EXIT
 
 ```zsh
 # ==============================================================================
-# File: conf.d/functions.zsh
+# File: conf.d/80-functions.zsh
 # Role: User utility functions and logging helpers for the interactive session
 #
-# Load context : Sourced by .zshrc after prompt.zsh
+# Load context : Sourced by .zshrc after 50-prompt.zsh
 # Dependencies : None
 # Side effects : Defines the following in the global namespace:
 #                  _zsh_error  _zsh_warn  _zsh_info  _zsh_debug
@@ -703,6 +954,8 @@ Use these consistently so they are greppable across the entire config tree.
 
 ### 10.1 Never `eval` untrusted input
 
+> Rationale is in the root [CLAUDE.md](../CLAUDE.md#9-security-never-eval-untrusted-input).
+
 ```zsh
 # ❌ Executes arbitrary code from an environment variable
 eval "${USER_SUPPLIED_VAR}"
@@ -761,7 +1014,7 @@ rm "${file}"
 export AWS_SECRET_ACCESS_KEY="AKIAIOSFODNN7EXAMPLE"
 
 # ✅ Load from the gitignored local override
-_zsh_safe_source "${ZDOTDIR}/conf.d/local.zsh"
+_zsh_safe_source "${ZDOTDIR}/conf.d/99-local.zsh"
 
 # ✅ Or delegate to a secrets CLI at call time
 if has op; then
@@ -774,13 +1027,15 @@ fi
 ```zsh
 chmod 700 "${ZDOTDIR}"
 chmod 600 "${ZDOTDIR}/.zshenv"
-chmod 600 "${ZDOTDIR}/conf.d/local.zsh"
+chmod 600 "${ZDOTDIR}/conf.d/99-local.zsh"
 ```
 
 Document these permissions in the repository README and enforce them in any
 setup or bootstrap script.
 
 ### 10.6 Quote all external data
+
+> Rationale is in the root [CLAUDE.md](../CLAUDE.md#5-quote-all-external-data).
 
 Any value read from a file, environment variable, or command output is
 untrusted until validated. Always quote it.
@@ -813,7 +1068,7 @@ zprof    # Print timing report; remove both lines after use
 ### 11.1 Cache `compinit` — rebuild at most once per day
 
 ```zsh
-# In conf.d/completion.zsh
+# In conf.d/30-completion.zsh
 autoload -Uz compinit
 
 # NOTE: -C skips the security check and reuses the cached .zcompdump.
@@ -912,6 +1167,43 @@ unset _java_home_cache
 export JAVA_HOME="$(java -XshowSettings:all -version 2>&1 | awk '/java.home/{ print $NF }')"
 ```
 
+### 11.6 Plugin Management with Zinit
+
+Zinit provides turbo mode for parallel/lazy plugin loading, significantly reducing
+startup time. Configure in `conf.d/40-plugins.zsh`.
+
+```zsh
+# Bootstrap Zinit
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+
+if [[ ! -f $ZINIT_HOME/zinit.zsh ]]; then
+  mkdir -p "$(dirname $ZINIT_HOME)"
+  git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+source "$ZINIT_HOME/zinit.zsh"
+
+# Recommended plugins with turbo mode (background loading)
+zinit ice wait lucid
+zinit light zsh-users/zsh-autosuggestions
+
+zinit ice wait lucid
+zinit light zsh-users/zsh-syntax-highlighting
+
+zinit ice wait lucid
+zinit light Aloxaf/fzf-tab
+```
+
+**Key options:**
+- `wait` — Background/parallel loading for faster startup
+- `lucid` — Suppress plugin messages
+
+**Update commands:**
+```bash
+zinit self-update    # Update Zinit itself
+zinit update         # Update all plugins
+```
+
 ---
 
 ## 12. Error Handling
@@ -995,9 +1287,9 @@ _configure_tool() {
 
 ### 13.1 Logging helpers
 
-Define the full implementations in `conf.d/functions.zsh`. Place minimal
+Define the full implementations in `conf.d/80-functions.zsh`. Place minimal
 bootstrap stubs (same signatures, no timestamp) at the top of `.zshrc` so
-that module loading errors are captured before `functions.zsh` is sourced.
+that module loading errors are captured before `80-functions.zsh` is sourced.
 All output goes to **stderr** (`-u2`) to avoid polluting `$()` captures.
 
 ```zsh
@@ -1025,7 +1317,7 @@ _zsh_debug() { (( ZSH_LOG_LEVEL >= 4 )) && print -u2 -- "[DEBUG] $(date '+%T') z
 # For the current session only
 ZSH_LOG_LEVEL=4 zsh
 
-# Persistently on a specific machine — place in conf.d/local.zsh (not committed)
+# Persistently on a specific machine — place in conf.d/99-local.zsh (not committed)
 export ZSH_LOG_LEVEL=3
 ```
 
@@ -1054,17 +1346,58 @@ echo "loading module: ${module:t}"
 | `eval` on untrusted input | Arbitrary code execution | Allowlist + array expansion |
 | `setopt ERR_EXIT` globally | Closes the terminal on any non-zero return | Explicit `\|\| return` checks |
 | `setopt PIPE_FAIL` globally | Unexpected failures in sourced files | `setopt LOCAL_OPTIONS PIPE_FAIL` inside functions |
-| Numeric prefixes on module filenames | Implicit ordering; brittle on insertion | Explicit `source` list in `.zshrc` |
 | Glob-based module loading (`conf.d/*.zsh`) | Load order depends on filename sort | Explicit `source` list in `.zshrc` |
 | Top-level `$(slow_cmd)` in `.zprofile` / `.zshrc` | Forks a process on every shell open | Lazy load or file-backed cache |
 | `export PATH="...:${PATH}"` | Produces duplicate entries on re-source | `typeset -U path; path=(new $path)` |
 | Unquoted variable expansions | Word-splitting and glob expansion on values | `"${var}"` everywhere |
-| Secrets in tracked files | Exposed in version control | `conf.d/local.zsh` (gitignored) |
+| Secrets in tracked files | Exposed in version control | `conf.d/99-local.zsh` (gitignored) |
 | Commented-out dead code | Misleading; increases maintenance noise | Delete it — git history preserves it |
 | `source file` without an existence check | Error on missing optional files | `[[ -f "${f}" ]] && source "${f}"` |
 | `echo` / `print` to stdout for logging | Corrupts `$()` captures | `_zsh_warn` / `_zsh_error` helpers |
 | `setopt` without an inline comment | Option names are non-obvious | One comment per `setopt` line |
-| `setopt` outside `conf.d/options.zsh` | Scattered and hard to audit | Centralise all options in `options.zsh` |
+| `setopt` outside `conf.d/10-options.zsh` | Scattered and hard to audit | Centralise all options in `10-options.zsh` |
+
+---
+
+## Quick Reference Card
+
+### Essential Rules
+
+1. **Startup Files:** `.zshenv` (universal) → `.zprofile` (login) → `.zshrc` (interactive)
+2. **Naming:** `UPPER_SNAKE_CASE` for exports, `_lower_snake_case` for internal
+3. **Functions:** `foo() { }` syntax, always `local` for function variables
+4. **Arrays:** 1-indexed (not 0-indexed like bash)
+5. **Path Management:** `typeset -U path` for automatic deduplication
+6. **Options:** All `setopt` in `conf.d/10-options.zsh`, never `ERR_EXIT` globally
+7. **Logging:** Use `_zsh_error`, `_zsh_warn`, `_zsh_info`, `_zsh_debug` helpers
+8. **Loading:** Explicit `source` list in `.zshrc`, never glob-based
+9. **Module Prefixes:** Use numeric prefixes (00-, 10-, 20-, etc.) for module files
+10. **Plugins:** Use Zinit with turbo mode (`wait lucid`) for lazy loading
+
+### Pre-Commit Checklist
+
+- [ ] All functions use `foo() { }` syntax (no `function` keyword)
+- [ ] All function-local variables declared with `local`
+- [ ] No `exit` in sourced files (use `return`)
+- [ ] No `ERR_EXIT` globally
+- [ ] No glob-based module loading
+- [ ] All external data quoted
+- [ ] `setopt` has inline comments
+- [ ] Module files use numeric prefixes
+- [ ] Startup time < 200ms
+
+### Validation Commands
+
+```bash
+# Check startup time
+time zsh -i -c exit
+
+# Test configuration loads
+zsh -c 'source ~/.zshrc && echo "OK"'
+
+# Run setup status
+./setup.sh show-status
+```
 
 ---
 
