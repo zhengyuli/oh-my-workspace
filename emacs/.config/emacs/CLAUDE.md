@@ -20,8 +20,37 @@ emacs/
 │   ├── text/            # Text/document modes (markdown)
 │   └── tool/            # Tool integrations (git, ai, pdf, term)
 ├── site-packages/       # Custom Emacs packages (auto-added to load-path)
-└── templates/           # File templates
+└── templates/           # File templates (YASnippet + auto-insert)
 ```
+
+## File Templates
+
+自动文件头模板位于 `templates/` 目录，通过 YASnippet + auto-insert 集成。新建文件时自动插入符合规范的文件头。
+
+### 可用模板
+
+| 文件类型 | 模板文件 | 触发条件 |
+|---------|---------|---------|
+| Emacs Lisp | `template.el` | `\.el$` |
+| C | `template.c` | `\.c$` |
+| C Header | `template.h` | `\.h$` |
+| Python | `template.py` | `\.py$` |
+| Go | `template.go` | `\.go$` |
+| Shell | `template.sh` | `\.sh$` |
+
+### 使用方式
+
+- **自动**：新建匹配文件时自动触发
+- **手动**：`M-x auto-insert` 重新插入模板
+
+### 模板占位符
+
+以 `template.el` 为例，包含以下占位符：
+- `${1:keyword1, keyword2}` - 关键词
+- `${2:(none)}` - 依赖项
+- `${3:One or two sentence description...}` - 模块描述
+
+**注意**：修改模板格式时，同步更新 `templates/template.el` 文件。
 
 ## Quick Start
 
@@ -93,7 +122,7 @@ emacs --batch --eval '(progn (load-file "emacs/init.el") (message "Configuration
 
 **Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
 
-**Loading order** (lines 209-236 of init.el):
+**Loading order** (search `;; Load modules` in init.el):
 1. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
 2. **System**: omw-pass → omw-proxy
 3. **Tools**: omw-git → omw-term → omw-pdf → omw-ai
@@ -179,46 +208,18 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 
 ### File Header Format (MANDATORY)
 
-Every `.el` file must start with:
+模板文件：`templates/template.el`（通过 auto-insert 自动插入）
 
-```elisp
-;;; omw-module.el -*- lexical-binding: t; -*-
+**结构说明**：
 
-;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: keyword1, keyword2
-;; Dependencies: (none) or module-name
-
-;; Copyright (C) 2026 zhengyu li
-
-;; Licensed under the GPL License version 3.0
-
-;; This file is not part of GNU Emacs.
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; History:
-;;
-;; YYYY-MM-DD HH:MM chieftain <lizhengyu419@outlook.com> created.
-
-;;; Commentary:
-;;
-;; One or two sentence description of module purpose.
-
-;;; Code:
-
-;; ==================================================================================
-```
+| 行号 | 内容 | 说明 |
+|-----|------|------|
+| 1 | `;;; filename.el -*- lexical-binding: t; -*-` | 文件名 + 词法绑定 |
+| 3-5 | Author, Keywords, Dependencies | 元信息 |
+| 7 | Copyright | 当前年份 |
+| 9-24 | GPL License | 完整许可证文本 |
+| 26-28 | History | 创建日期 |
+| 30-32 | Commentary | 模块描述 |
 
 **Required fields checklist:**
 - ✅ `-*- lexical-binding: t; -*-` on line 1
@@ -750,19 +751,9 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 ### 4. File Header Consistency
 
-**Keep file headers consistent** - use the exact same format:
+**使用模板文件** `templates/template.el` 确保一致性。
 
-- Line 1: `;;; omw-filename.el -*- lexical-binding: t; -*-`
-- Line 3: Author with name and email
-- Line 4: Keywords (2-4 tags)
-- Line 5: Dependencies ((none) or module-name)
-- Line 7: Copyright with current year
-- Line 9: GPL license short notice
-- Lines 11-23: Full GPL license text
-- Lines 25-27: History section with creation date
-- Lines 29-31: Commentary (1-2 sentence description)
-
-**Why**: Consistency makes the codebase easier to navigate and understand.
+**Why**: 模板自动生成标准格式，避免手动编写时的不一致。
 
 ### 5. Special Cases
 
