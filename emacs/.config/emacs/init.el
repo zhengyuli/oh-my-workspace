@@ -31,6 +31,20 @@
 ;;; Code:
 
 ;; ==================================================================================
+;; XDG Base Directory Configuration for Emacs
+(let ((xdg-data-home  (or (getenv "XDG_DATA_HOME")
+                          (expand-file-name "~/.local/share/")))
+      (xdg-cache-home (or (getenv "XDG_CACHE_HOME")
+                          (expand-file-name "~/.cache/"))))
+  (setq
+   ;; Main Emacs directory (replaces ~/.emacs.d)
+   user-emacs-directory (expand-file-name "emacs/" xdg-data-home)
+   ;; Directory where ELPA packages are installed
+   package-user-dir (expand-file-name "emacs/elpa/" xdg-data-home)
+   ;; Directory for native compilation output (.eln files)
+   native-compile-target-directory (expand-file-name "emacs/eln-cache/" xdg-cache-home)))
+
+;; ==================================================================================
 (defgroup omw-emacs nil
   "Oh My Workspace configuration group."
   :group 'convenience
@@ -206,34 +220,34 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
   ;; Load all other modules
   ;; Core modules
-  (require 'font)
-  (require 'appearance)
-  (require 'edit)
-  (require 'search)
-  (require 'template)
-  (require 'completion)
-  (require 'explorer)
+  (require 'init-font)
+  (require 'init-appearance)
+  (require 'init-edit)
+  (require 'init-search)
+  (require 'init-template)
+  (require 'init-completion)
+  (require 'init-explorer)
   ;; System modules
-  (require 'credential)
-  (require 'proxy)
+  (require 'init-credential)
+  (require 'init-proxy)
   ;; Tool modules
-  (require 'git)
-  (require 'term)
-  (require 'pdf)
-  (require 'ai)
+  (require 'init-git)
+  (require 'init-term)
+  (require 'init-pdf)
+  (require 'init-ai)
   ;; Prog mode modules
-  (require 'prog)
-  (require 'cc)
-  (require 'go)
-  (require 'python)
-  (require 'javascript)
-  (require 'elisp)
-  (require 'shell)
-  (require 'cmake)
-  (require 'yaml)
-  (require 'dockerfile)
+  (require 'init-prog)
+  (require 'init-cc)
+  (require 'init-go)
+  (require 'init-python)
+  (require 'init-javascript)
+  (require 'init-elisp)
+  (require 'init-shell)
+  (require 'init-cmake)
+  (require 'init-yaml)
+  (require 'init-dockerfile)
   ;; Text mode modules
-  (require 'markdown)
+  (require 'init-markdown)
 
   ;; Load custom settings
   (when (file-readable-p custom-file)
