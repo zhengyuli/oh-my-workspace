@@ -34,4 +34,14 @@ Thumbs.db
 # Git worktrees
 .worktrees/
 docs/
-zsh/conf.d/local.zsh
+
+# Zsh local config (machine-specific, never commit)
+zsh/.config/zsh/conf.d/99-local.zsh
+
+zsh/.config/zsh/cache/
+
+# Git local config (machine-specific, never commit)
+git/.config/git/config.local
+
+# Stow internal (stow itself manages these)
+.stow-local-ignore
