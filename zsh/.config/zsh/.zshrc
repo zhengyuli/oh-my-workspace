@@ -1,137 +1,35 @@
-# zshrc.symlink -*- mode: zsh; -*-
-# Time-stamp: <2026-03-14 16:00:00 Saturday by zhengyu.li>
+# $ZDOTDIR/.zshrc
+# =============================================================================
+# Interactive Shell Orchestrator
 #
-# ==============================================================================
-# File: .zshrc
-# Role: Interactive shell entry point - sources conf.d/ modules
+# Loaded by: Interactive shells only (new terminal tab, zsh invocation)
+# Load order: After .zshenv and .zprofile
 #
-# Load context : Sourced for every interactive shell
-# Dependencies : DOTFILES (from .zshenv), XDG_* (from .zshenv)
-# Side effects : Sources all conf.d/ modules, loads plugins
-# ==============================================================================
+# Responsibilities:
+#   1. Guard against non-interactive execution
+#   2. Source all conf.d fragments in numeric order
+#
+# This file is a pure loader -- all configuration lives in conf.d/
+# One concern per file: options, aliases, completion, plugins, prompt, etc.
+#
+# Do NOT add: environment variables, PATH, direct configuration
+#             → Put env vars in 00-env.zsh
+#             → Put PATH in 05-path.zsh
+# =============================================================================
 
-# ==============================================================================
-# Setup
-# ==============================================================================
+# -----------------------------------------------------------------------------
+# Interactive Guard
+# -----------------------------------------------------------------------------
+# Exit immediately if not running interactively.
+# Prevents configuration from leaking into scripts or non-interactive shells.
+[[ $- != *i* ]] && return
 
-# Plugin directory
-ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-$XDG_DATA_HOME/zsh/plugins}"
-
-# DOTFILES is set by ~/.zshenv via symlink resolution
-# Verify it's set correctly before proceeding
-if [[ -z "$DOTFILES" ]] || [[ ! -d "$DOTFILES/zsh/conf.d" ]]; then
-    echo "ERROR: DOTFILES not set or invalid. Ensure ~/.zshenv is a symlink." >&2
-    return 1
-fi
-
-# ==============================================================================
-# Step 1: Basic Shell Configuration
-# ==============================================================================
-
-# Shell options and history configuration
-source "${DOTFILES}/zsh/conf.d/options.zsh"
-
-# Utility functions and logging helpers
-source "${DOTFILES}/zsh/conf.d/functions.zsh"
-
-# Aliases
-source "${DOTFILES}/zsh/conf.d/aliases.zsh"
-
-# ==============================================================================
-# Step 2: Completion System
-# ==============================================================================
-
-# Completion styles (must be loaded BEFORE compinit)
-source "${DOTFILES}/zsh/conf.d/completion.zsh"
-
-# Add zsh-completions to fpath before compinit
-[[ -d "$ZSH_PLUGIN_DIR/zsh-completions/src" ]] && \
-    fpath=("$ZSH_PLUGIN_DIR/zsh-completions/src" $fpath)
-
-# Completion cache directory
-ZSH_CACHE="${ZSH_CACHE:-$XDG_CACHE_HOME/zsh}"
-[[ -d "$ZSH_CACHE" ]] || mkdir -p "$ZSH_CACHE"
-
-# Initialize completion system
-autoload -Uz compinit
-
-# Check if we need to rebuild completion cache (daily)
-# This speeds up shell startup significantly
-if [[ -n "$ZSH_CACHE/zcompdump"(#qN.mh+24) ]]; then
-    compinit -d "$ZSH_CACHE/zcompdump"
-else
-    compinit -C -d "$ZSH_CACHE/zcompdump"
-fi
-
-# ==============================================================================
-# Step 3: Plugins
-# ==============================================================================
-
-# zsh-autosuggestions - Fish-like autosuggestions
-[[ -f "$ZSH_PLUGIN_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
-    source "$ZSH_PLUGIN_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-# zsh-history-substring-search - Arrow key history search
-[[ -f "$ZSH_PLUGIN_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && \
-    source "$ZSH_PLUGIN_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
-
-# ==============================================================================
-# Step 4: Key Bindings (after plugins)
-# ==============================================================================
-
-# Key bindings must be loaded after plugins because some bindings
-# depend on widgets provided by plugins (e.g., history-substring-search)
-source "${DOTFILES}/zsh/conf.d/keybindings.zsh"
-
-# ==============================================================================
-# Step 5: Tools
-# ==============================================================================
-
-# External tool initialization (Homebrew, Node.js, Python)
-source "${DOTFILES}/zsh/conf.d/tools.zsh"
-
-# fzf Configuration
-if command -v fzf &>/dev/null; then
-    # Use fd for fzf if available
-    if command -v fd &>/dev/null; then
-        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-    fi
-
-    # Cache fzf prefix to avoid duplicate brew --prefix forks
-    _fzf_prefix="${FZF_BASE:-$(brew --prefix fzf 2>/dev/null)}"
-    [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/shell/key-bindings.zsh"
-    [[ -f "$_fzf_prefix/shell/completion.zsh" ]]   && source "$_fzf_prefix/shell/completion.zsh"
-    unset _fzf_prefix
-fi
-
-# ==============================================================================
-# Step 6: Prompt
-# ==============================================================================
-
-# Prompt configuration (Starship/Pure/vcs_info)
-source "${DOTFILES}/zsh/conf.d/prompt.zsh"
-
-# ==============================================================================
-# Step 7: Local Configuration
-# ==============================================================================
-
-# Machine-specific overrides (gitignored)
-[[ -f "${DOTFILES}/zsh/conf.d/local.zsh" ]] && source "${DOTFILES}/zsh/conf.d/local.zsh"
-
-# Legacy local config locations (for backwards compatibility)
-[[ -f "$XDG_CONFIG_HOME/zsh/zshrc.local" ]] && source "$XDG_CONFIG_HOME/zsh/zshrc.local"
-[[ -f "$XDG_CONFIG_HOME/zsh/extra" ]] && source "$XDG_CONFIG_HOME/zsh/extra"
-
-# ==============================================================================
-# Step 8: zsh-syntax-highlighting (MUST be last!)
-# ==============================================================================
-
-[[ -f "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
-    source "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-
-# Validate that syntax highlighting loaded successfully
-if ! typeset -f _zsh_highlight_add_highlight > /dev/null 2>&1; then
-    _zsh_warn "zsh-syntax-highlighting failed to load"
-fi
+# -----------------------------------------------------------------------------
+# Module Loader
+# -----------------------------------------------------------------------------
+# Load all conf.d fragments in lexicographic (numeric prefix) order.
+# (N) glob qualifier: silently skip if no files match (null glob).
+for _conf in "$ZDOTDIR"/conf.d/*.zsh(N); do
+  source "$_conf"
+done
+unset _conf

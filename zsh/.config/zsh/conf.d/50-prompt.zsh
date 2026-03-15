@@ -1,50 +1,92 @@
-# ==============================================================================
-# File: conf.d/prompt.zsh
-# Role: Prompt configuration with fallbacks
+# 50-prompt.zsh
+# =============================================================================
+# Prompt Configuration
 #
-# Load context : Sourced by .zshrc after tools are loaded
-# Dependencies : ZSH_PLUGIN_DIR (for Pure plugin)
-# Side effects : Sets PROMPT, RPROMPT environment variables
-# ==============================================================================
+# Loaded by: Interactive shells (.zshrc)
+# Load order: After 40-plugins.zsh, before 60-keybinds.zsh
+#
+# Responsibilities:
+#   1. Initialize prompt theme (Starship/Pure/Powerlevel10k)
+#   2. Configure XDG-compliant paths for prompt tools
+#   3. Provide fallback vcs_info prompt when no external tools available
+#
+# Do NOT add: Aliases, functions, PATH modifications, environment variables
+#             → Aliases: 20-aliases.zsh
+#             → Functions: functions/ directory (autoloaded)
+#             → PATH: 05-path.zsh
+#             → Env vars: 00-env.zsh
+# =============================================================================
 
-# ── Option 1: Starship (recommended) ─────────────────────────────────────────
-
+# -----------------------------------------------------------------------------
+# Option A: Starship (Default)
+# -----------------------------------------------------------------------------
+# Cross-shell prompt written in Rust. Best for users who want:
+# - Consistent prompts across bash/fish/zsh/PowerShell
+# - Minimal configuration with TOML
+# - Fast startup with good performance
+#
+# Prerequisites: brew install starship
+# Config file: $XDG_CONFIG_HOME/starship.toml
+# Documentation: https://starship.rs/config/
+# -----------------------------------------------------------------------------
 if command -v starship &>/dev/null; then
+  export STARSHIP_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml"
+  export STARSHIP_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/starship"
   eval "$(starship init zsh)"
 
-# ── Option 2: Pure (fallback) ─────────────────────────────────────────────
+# -----------------------------------------------------------------------------
+# Option B: Pure (Minimal)
+# -----------------------------------------------------------------------------
+# Lightweight native Zsh prompt with async git status. Best for users who want:
+# - Minimal dependencies (no Rust required)
+# - Fast, simple, beautiful defaults
+# - Zsh-only environment
+#
+# Prerequisites: Zinit plugin manager (see 40-plugins.zsh)
+# Uncomment the block below to enable
+# -----------------------------------------------------------------------------
+# elif [[ -n "$ZINIT_HOME" ]]; then
+#   zinit ice pick'async.zsh' src'pure.zsh'
+#   zinit light sindresorhus/pure
+#   zstyle ':prompt:pure:path' color '#89b4fa'
+#   zstyle ':prompt:pure:prompt:*' color '#cba6f7'
+#   zstyle ':prompt:pure:git:branch' color '#a6e3a1'
 
-elif [[ -f "$ZSH_PLUGIN_DIR/pure/pure.zsh" ]]; then
-  # Pure requires async
-  if [[ -f "$ZSH_PLUGIN_DIR/async/async.zsh" ]]; then
-    source "$ZSH_PLUGIN_DIR/async/async.zsh"
-    source "$ZSH_PLUGIN_DIR/pure/pure.zsh"
-
-    # Pure settings
-    zstyle :prompt:pure:git:branch color yellow
-    zstyle :prompt:pure:git:action color yellow
-    zstyle :prompt:pure:git:dirty color red
-    zstyle :prompt:pure:prompt:success color green
-    zstyle :prompt:pure:prompt:error color red
-    zstyle :prompt:pure:path color cyan
-  fi
-
-# ── Option 3: vcs_info (zero-dependency fallback) ───────────────────────────
+# -----------------------------------------------------------------------------
+# Option C: Powerlevel10k (Feature-rich)
+# -----------------------------------------------------------------------------
+# Most configurable Zsh prompt with wizard. Best for users who want:
+# - Maximum customization with visual wizard
+# - Instant prompt (shows prompt before zsh finishes loading)
+# - Transient prompt (compact history in scrollback)
+# - Zsh-only environment with heavy customization needs
+#
+# Prerequisites: Zinit plugin manager (see 40-plugins.zsh)
+# Config wizard: p10k configure
+# Config file: $ZDOTDIR/.p10k.zsh
+# Uncomment the block below to enable
+# -----------------------------------------------------------------------------
+# elif [[ -n "$ZINIT_HOME" ]]; then
+#   zinit ice depth=1
+#   zinit light romkatv/powerlevel10k
+#   if [[ -f "${ZDOTDIR:-$HOME}/.p10k.zsh" ]]; then
+#     source "${ZDOTDIR:-$HOME}/.p10k.zsh"
+#   fi
 
 else
+  # ---------------------------------------------------------------------------
+  # Fallback: Native vcs_info Prompt
+  # ---------------------------------------------------------------------------
+  # Built-in Zsh prompt with git branch display. Used when no external
+  # prompt tools are installed. No configuration needed.
+  # ---------------------------------------------------------------------------
   autoload -Uz vcs_info
+  precmd() { vcs_info }
+
+  zstyle ':vcs_info:git:*' formats ' %F{green}(%b)%f'
   zstyle ':vcs_info:*' enable git
-  zstyle ':vcs_info:*' check-for-changes true
-  zstyle ':vcs_info:*' unstagedstr '%F{red}*%f'
-  zstyle ':vcs_info:*' stagedstr '%F{green}+%f'
-  zstyle ':vcs_info:git:*' formats ' %F{yellow}(%b%u%c)%f'
-  zstyle ':vcs_info:git:*' actionformats ' %F{yellow}(%b|%a%u%c)%f'
 
-  # Use precmd_functions array to avoid overwriting other plugins' hooks
-  _vcs_info_precmd() { vcs_info }
-  precmd_functions+=(_vcs_info_precmd)
-
-  # Basic prompt with git info
-  PROMPT='%F{cyan}%~%f${vcs_info_msg_0_} %F{green}❯%f '
-  RPROMPT='%F{8}%n@%m%f'  # User@host on right side
+  setopt PROMPT_SUBST
+  PROMPT='%F{blue}%~%f${vcs_info_msg_0_} %F{yellow}>%f '
+  RPROMPT='%F{240}%*%f'
 fi

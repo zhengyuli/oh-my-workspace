@@ -1,0 +1,40 @@
+# functions/bench
+# Measure Zsh cold-start time over multiple runs.
+#
+# Usage:
+#   bench      -- 10 runs (default)
+#   bench 20   -- 20 runs
+bench() {
+  local runs="${1:-10}"
+  local times=()
+  local total=0
+
+  echo "Benchmarking Zsh startup ($runs runs)..."
+
+  for _ in $(seq 1 "$runs"); do
+    local t
+    t=$({ time zsh -i -c exit } 2>&1 | grep real | awk '{print $2}')
+    local ms
+    ms=$(echo "$t" | sed 's/m//' | awk -F's' '{printf "%.0f", ($1 * 60 + $2) * 1000}')
+    times+=("$ms")
+    total=$((total + ms))
+  done
+
+  local avg=$((total / runs))
+  local min="${times[1]}"
+  local max="${times[1]}"
+
+  for t in "${times[@]}"; do
+    if (( t < min )); then
+      min=$t
+    fi
+    if (( t > max )); then
+      max=$t
+    fi
+  done
+
+  echo "Results (ms):"
+  echo "  avg: ${avg}ms"
+  echo "  min: ${min}ms"
+  echo "  max: ${max}ms"
+}
