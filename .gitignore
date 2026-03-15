@@ -1,47 +1,79 @@
-# Emacs compiled files
-*.elc
-emacs/*.elc
-emacs/lisp/*.elc
+# ==============================================================================
+# Emacs
+# ==============================================================================
 
-# Emacs lock files
+# Compiled files
+*.elc
+
+# Lock files (symlink to editing session)
 .#*
 
-# Emacs auto-save files
+# Auto-save files
 *~
 \#*\#
 
-# Test directory (not tracked by git)
+# ==============================================================================
+# IDE & Editors
+# ==============================================================================
+
+# JetBrains
+.idea/
+
+# VS Code
+.vscode/
+
+# Vim swap files
+*.swp
+*.swo
+
+# Claude Code local settings
+.claude/
+
+# ==============================================================================
+# Testing
+# ==============================================================================
+
+# Test directories
 test/
 tests/
-emacs/test/
-emacs/tests/
 
 # Test artifacts
 *.test.elc
 *-test-report-*.txt
 
-# IDE files
-.idea/
-.vscode/
-.claude/
-*.swp
-*.swo
+# ==============================================================================
+# Operating Systems
+# ==============================================================================
 
-# OS files
+# macOS
 .DS_Store
+
+# Windows
 Thumbs.db
 
-# Git worktrees
+# ==============================================================================
+# Git
+# ==============================================================================
+
+# Worktrees
 .worktrees/
+
+# ==============================================================================
+# Documentation
+# ==============================================================================
+
+# Generated documentation
 docs/
 
-# Zsh local config (machine-specific, never commit)
+# ==============================================================================
+# Local / Machine-Specific Files
+# ==============================================================================
+
+# Zsh local config (machine-specific)
 zsh/.config/zsh/conf.d/99-local.zsh
 
+# Zsh cache
 zsh/.config/zsh/cache/
 
-# Git local config (machine-specific, never commit)
+# Git local config (XDG-compliant, machine-specific)
 git/.config/git/config.local
-
-# Stow internal (stow itself manages these)
-.stow-local-ignore
