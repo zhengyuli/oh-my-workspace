@@ -196,6 +196,12 @@
     # List contributors with commit counts
     contributors = shortlog -sn
 
+    # ---- Identity ----
+    # Set user identity in config.local (usage: git set-user "Name" "email@example.com")
+    set-user = "!f() { git config --file ~/.config/git/config.local user.name \"$1\"; git config --file ~/.config/git/config.local user.email \"$2\"; }; f"
+    # Show current user identity
+    whoami = "!git config user.name && git config user.email"
+
 # ==============================================================================
 # Color Settings
 # ==============================================================================
