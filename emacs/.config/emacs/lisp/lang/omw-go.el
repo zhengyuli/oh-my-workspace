@@ -35,22 +35,15 @@
 
 ;; ==================================================================================
 (defun omw/ensure-go-tools ()
-  "Ensure Go development tools (gopls, gofumpt) are installed."
-  ;; Check and install each tool if missing
-  (dolist (spec '(("gopls"   "go install golang.org/x/tools/gopls@latest")
-                  ("gofumpt" "go install mvdan.cc/gofumpt@latest")))
-    ;; spec format: (executable-name install-command)
-    (let ((exe (nth 0 spec))
-          (cmd (nth 1 spec)))
-      (unless (executable-find exe)
-        (message "Installing %s..." exe)
-        (shell-command cmd)
-        (message "%s installed successfully" exe)))))
+  (interactive)
+  (require 'omw-utils)
+  (omw/ensure-tools-installed
+   '(("gopls"   "go install golang.org/x/tools/gopls@latest" "go")
+     ("gofumpt" "go install mvdan.cc/gofumpt@latest" "go"))))
 
 (use-package go-mode
   :ensure t
-  :defer t
-  :hook (go-mode . omw/ensure-go-tools))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features

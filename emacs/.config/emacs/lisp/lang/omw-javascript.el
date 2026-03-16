@@ -35,16 +35,15 @@
 
 ;; ==================================================================================
 (defun omw/ensure-typescript-tools ()
-  "Ensure typescript-language-server is installed via bun for LSP support."
-  (unless (executable-find "typescript-language-server")
-    (message "Installing typescript-language-server via bun...")
-    (shell-command "bun install -g typescript-language-server typescript")
-    (message "typescript-language-server installed successfully")))
+  (interactive)
+  (require 'omw-utils)
+  (omw/ensure-tool-installed "typescript-language-server"
+                             "bun install -g typescript-language-server typescript"
+                             "bun"))
 
 (use-package typescript-mode
   :ensure t
-  :defer t
-  :hook (typescript-mode . omw/ensure-typescript-tools))
+  :defer t)
 
 ;; ==================================================================================
 ;;; Provide features

@@ -7,10 +7,9 @@
 #
 # Responsibilities:
 #   1. Set XDG base directories (prerequisite for all other config)
-#   2. Set ZDOTDIR (redirect Zsh to XDG config directory)
-#   3. Redirect tools that do not natively support XDG
+# 2. Set ZDOTDIR (redirect Zsh to XDG config directory)
 #
-# Do NOT add: PATH, aliases, functions, plugins, external commands
+# Do NOT add: PATH changes, aliases, functions, plugins
 #             → Put these in .zprofile (login) or .zshrc (interactive)
 # =============================================================================
 

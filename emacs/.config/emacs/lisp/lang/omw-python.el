@@ -1,7 +1,7 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
 
 ;; Author: chieftain <lizhengyu419@outlook.com>
-;; Keywords: python, pyvenv, poetry
+;; Keywords: python, uv, ruff, pet
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
@@ -26,84 +26,92 @@
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 chieftain <lizhengyu419@outlook.com> created.
+;; 2026-03-16       drop pyvenv/poetry, adopt pet.el for uv venv detection;
+;;                  ruff format via stdin; mode-line driven by pet.
 
 ;;; Commentary:
 ;;
-;; Python mode configuration with virtual environment and Poetry support.
+;; Python mode configuration with uv and pet support.
 
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/pyvenv-mode-line-indicator ()
+(use-package pet
+  :ensure t
+  :defer t)
+
+;; ==================================================================================
+(defvar-local omw/pet-virtualenv-root nil
+  "Buffer-local venv root path detected by pet.")
+
+(defun omw/pet-mode-line-indicator ()
   "Return pyvenv indicator for Python buffers."
-  (when (and (eq major-mode 'python-mode)
-             (bound-and-true-p pyvenv-virtual-env))
-    (let* ((name (file-name-nondirectory
-                  (directory-file-name pyvenv-virtual-env)))
+  (when (and (derived-mode-p 'python-mode)
+             omw/pet-virtualenv-root)
+    (let* ((venv-dir (directory-file-name omw/pet-virtualenv-root))
+           (venv-name (file-name-nondirectory venv-dir))
+           (display-name (if (string= venv-name ".venv")
+                             (file-name-nondirectory
+                              (directory-file-name
+                               (file-name-directory venv-dir)))
+                           venv-name))
            (icon (nerd-icons-devicon "nf-dev-python"
                                      :face 'nerd-icons-blue
                                      :height 0.9
                                      :v-adjust -0.05)))
       (concat icon (propertize
-                    (format " [venv/%s] " name)
+                    (format " [venv/%s] " display-name)
                     'face 'nerd-icons-blue
-                    'help-echo (format "Python virtualenv: %s" pyvenv-virtual-env))))))
+                    'help-echo (format "Python virtualenv: %s"
+                                       omw/pet-virtualenv-root))))))
 
-(defun omw/update-pyvenv-mode-line-indicator ()
+(defvar omw/pet-mode-line-entry
+  '(:eval (omw/pet-mode-line-indicator))
+  "Mode-line entry for pet-based venv indicator.")
+
+(defun omw/update-pet-mode-line-indicator ()
   "Add mode-line indicator to current buffer."
-  (setq-local mode-line-misc-info
-              (cons '(:eval (omw/pyvenv-mode-line-indicator))
-                    (remove '(:eval (omw/pyvenv-mode-line-indicator))
-                            mode-line-misc-info))))
-
-(defun omw/remove-pyvenv-mode-line-indicator ()
-  "Remove mode-line indicator from current buffer."
-  (setq-local mode-line-misc-info
-              (remove '(:eval (omw/pyvenv-mode-line-indicator))
-                      mode-line-misc-info)))
+  (unless (member omw/pet-mode-line-entry mode-line-misc-info)
+    (setq-local mode-line-misc-info
+                (cons omw/pet-mode-line-entry mode-line-misc-info))))
 
 ;; ==================================================================================
-(use-package pyvenv
-  :ensure t
-  :demand t
-  :config
-  (add-to-list 'pyvenv-post-activate-hooks #'omw/update-pyvenv-mode-line-indicator)
-  (add-to-list 'pyvenv-post-deactivate-hooks #'omw/remove-pyvenv-mode-line-indicator)
-  (pyvenv-tracking-mode 1))
-
-;; ==================================================================================
-(use-package poetry
-  :ensure t
-  :demand t
-  :config
-  (poetry-tracking-mode 1))
+(defun omw/pet-setup ()
+  "Setup pet for current Python buffer."
+  (when-let ((venv (pet-virtualenv-root)))
+    (setq-local omw/pet-virtualenv-root venv)
+    (omw/update-pet-mode-line-indicator)
+    (setq-local python-shell-interpreter (pet-executable-find "python")
+                python-shell-interpreter-args "-i")
+    (pet-eglot-setup)))
 
 ;; ==================================================================================
 (defun omw/ensure-python-tools ()
-  "Ensure Python development tools (basedpyright, ruff) are installed via uv."
-  (dolist (spec '(("basedpyright" . "uv tool install basedpyright")
-                  ("ruff" . "uv tool install ruff")))
-    (let ((exe (car spec))
-          (cmd (cdr spec)))
-      (unless (executable-find exe)
-        (message "Installing %s via uv..." exe)
-        (shell-command cmd)
-        (message "%s installed successfully" exe)))))
+  (interactive)
+  (omw/ensure-tool-installed "ruff" "uv tool install ruff" "uv"))
 
 ;; ==================================================================================
 (defun omw/python-format-buffer ()
   "Format current Python buffer using ruff."
   (when (and (executable-find "ruff")
              (buffer-file-name))
-    (let ((temp-file (make-temp-file "ruff-format-")))
-      (write-region (point-min) (point-max) temp-file nil 'silent)
-      (call-process "ruff" nil nil nil "format" temp-file)
-      (insert-file-contents temp-file nil nil nil t)
-      (delete-file temp-file))))
+    (let* ((original (buffer-string))
+           (filename (buffer-file-name))
+           (formatted
+            (with-temp-buffer
+              (insert original)
+              (when (zerop (call-process-region
+                            (point-min) (point-max)
+                            "ruff" t t nil
+                            "format" "--stdin-filename" filename "-"))
+                (buffer-string)))))
+      (when (and formatted (not (string= original formatted)))
+        (erase-buffer)
+        (insert formatted)))))
 
 (defun omw/python-before-save ()
   "Run Python-specific actions before saving."
-  (when (eq major-mode 'python-mode)
+  (when (derived-mode-p 'python-mode)
     (omw/python-format-buffer)))
 
 (define-minor-mode omw/python-before-save-mode
@@ -118,7 +126,7 @@
 (use-package python
   :ensure nil
   :defer t
-  :hook ((python-mode . omw/ensure-python-tools)
+  :hook ((python-mode . omw/pet-setup)
          (python-mode . omw/python-before-save-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . comment-line))
