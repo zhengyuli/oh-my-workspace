@@ -165,12 +165,16 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; ==================================================================================
 (defun omw/after-init-setup ()
+  "Enable common post-initialization features.
+This includes save-place-mode, recentf-mode, column-number-mode,
+and global-auto-revert-mode."
   (save-place-mode 1)
   (recentf-mode 1)
   (column-number-mode 1)
   (global-auto-revert-mode 1))
 
 (defun omw/emacs-startup-setup ()
+  "Display startup timing and garbage collection statistics."
   (message "Emacs ready in %.2f seconds with %d garbage collections."
            (float-time (time-subtract after-init-time before-init-time))
            gcs-done))
