@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-14 16:30:00 Saturday by zhengyuli>
+# Time-stamp: <2026-03-15 23:45:00 Saturday by zhengyuli>
 #
 # ==============================================================================
 # File: setup.sh
@@ -10,16 +10,15 @@
 # Copyright (C) 2026 zhengyu li
 #
 # Load context : Called directly by user: ./setup.sh <command>
-# Dependencies : bash 4.3+, git, curl
+# Dependencies : bash 4.3+, git, curl, stow
 # Side effects :
-#   - Creates symlinks in $HOME from *.symlink files
-#   - Installs Homebrew, zsh plugins, Node.js, Python
+#   - Creates symlinks in $HOME via GNU Stow
+#   - Installs Homebrew, Node.js, Python
 #   - Modifies /etc/shells (requires sudo)
-#   - Creates ~/.dotfiles-backup for conflicting files
 #
 # Usage:
 #   ./setup.sh full-setup      # Full setup
-#   ./setup.sh create-links    # Re-link symlinks only
+#   ./setup.sh create-links    # Stow packages
 #   ./setup.sh show-status     # Check current status
 #   ./setup.sh help            # Show all commands
 # ==============================================================================
@@ -86,16 +85,11 @@ die() { log_error "$*"; exit 1; }
 # Config
 # ==============================================================================
 
-ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-${XDG_DATA_HOME}/zsh/plugins}"
 VERBOSE="${VERBOSE:-1}"
 
-# Each entry: "name|url"
-readonly -a ZSH_PLUGINS=(
-    "zsh-completions|https://github.com/zsh-users/zsh-completions"
-    "zsh-autosuggestions|https://github.com/zsh-users/zsh-autosuggestions"
-    "zsh-history-substring-search|https://github.com/zsh-users/zsh-history-substring-search"
-    "zsh-syntax-highlighting|https://github.com/zsh-users/zsh-syntax-highlighting"
-)
+# Stow packages - directories containing dotfile configurations
+# Note: homebrew and macos are NOT stow packages (they provide scripts only)
+readonly -a STOW_PACKAGES=(zsh git vim emacs)
 
 # Each entry: "name|version_flag" — used by cmd_status
 readonly -a STATUS_TOOLS=(
@@ -150,25 +144,123 @@ brew_zsh_path() {
     return 1
 }
 
-# Collect *.symlink sources into a named array (null-safe)
-# Usage: collect_symlinks sources_array_name
-# Requires bash 4.3+ (nameref). Homebrew bash satisfies this.
-collect_symlinks() {
-    if (( BASH_VERSINFO[0] < 4 || ( BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 3 ) )); then
-        die "collect_symlinks requires bash 4.3+. Run: brew install bash"
-    fi
-    local -n _out="$1"
-    _out=()
-    while IFS= read -r -d '' src; do
-        _out+=("$src")
-    done < <(find "$DOTFILES_ROOT" -name '*.symlink' -print0 | sort -z)
+# ==============================================================================
+# GNU Stow Integration
+# ==============================================================================
+
+# Get list of available stow packages that exist in the repository.
+#
+# Arguments:
+#   None
+#
+# Output:
+#   Space-separated list of package names
+#
+# Returns:
+#   0    always
+get_stow_packages() {
+    local -a available=()
+    for pkg in "${STOW_PACKAGES[@]}"; do
+        if [[ -d "$DOTFILES_ROOT/$pkg" ]]; then
+            available+=("$pkg")
+        fi
+    done
+    echo "${available[@]}"
 }
 
-# Resolve *.symlink path -> ~/.filename
-symlink_dst() {
-    local filename
-    filename="$(basename "$1")"
-    echo "$HOME/.${filename%.symlink}"
+# Stow packages to $HOME using GNU Stow.
+#
+# Arguments:
+#   $@  Package names (optional, defaults to all available)
+#
+# Returns:
+#   0    always (non-fatal)
+#
+# Side effects:
+#   Creates symlinks in $HOME for each stow package
+stow_packages() {
+    local -a packages
+    if (( $# > 0 )); then
+        packages=("$@")
+    else
+        read -ra packages <<< "$(get_stow_packages)"
+    fi
+
+    (( ${#packages[@]} > 0 )) || { log_warn "No stow packages found"; return; }
+
+    for pkg in "${packages[@]}"; do
+        if [[ -d "$DOTFILES_ROOT/$pkg" ]]; then
+            if quietly stow -d "$DOTFILES_ROOT" -t "$HOME" "$pkg"; then
+                log_ok "Stowed: $pkg"
+            else
+                log_warn "Conflict or error stowing: $pkg"
+            fi
+        else
+            log_warn "Package not found: $pkg"
+        fi
+    done
+}
+
+# Unstow (remove) packages from $HOME using GNU Stow.
+#
+# Arguments:
+#   $@  Package names (optional, defaults to all available)
+#
+# Returns:
+#   0    always (non-fatal)
+#
+# Side effects:
+#   Removes symlinks from $HOME for each stow package
+unstow_packages() {
+    local -a packages
+    if (( $# > 0 )); then
+        packages=("$@")
+    else
+        read -ra packages <<< "$(get_stow_packages)"
+    fi
+
+    (( ${#packages[@]} > 0 )) || { log_warn "No stow packages found"; return; }
+
+    for pkg in "${packages[@]}"; do
+        if [[ -d "$DOTFILES_ROOT/$pkg" ]]; then
+            if quietly stow -d "$DOTFILES_ROOT" -t "$HOME" -D "$pkg"; then
+                log_ok "Unstowed: $pkg"
+            else
+                log_warn "Error unstowing: $pkg"
+            fi
+        fi
+    done
+}
+
+# Restow (refresh) packages in $HOME using GNU Stow.
+#
+# Arguments:
+#   $@  Package names (optional, defaults to all available)
+#
+# Returns:
+#   0    always (non-fatal)
+#
+# Side effects:
+#   Removes and recreates symlinks for each stow package
+restow_packages() {
+    local -a packages
+    if (( $# > 0 )); then
+        packages=("$@")
+    else
+        read -ra packages <<< "$(get_stow_packages)"
+    fi
+
+    (( ${#packages[@]} > 0 )) || { log_warn "No stow packages found"; return; }
+
+    for pkg in "${packages[@]}"; do
+        if [[ -d "$DOTFILES_ROOT/$pkg" ]]; then
+            if quietly stow -d "$DOTFILES_ROOT" -t "$HOME" -R "$pkg"; then
+                log_ok "Restowed: $pkg"
+            else
+                log_warn "Error restowing: $pkg"
+            fi
+        fi
+    done
 }
 
 # ==============================================================================
@@ -222,91 +314,6 @@ install_brew_packages() {
         log_ok "Brewfile packages installed"
     else
         log_warn "Some Brewfile packages failed — continuing"
-    fi
-}
-
-# ==============================================================================
-# Zsh Plugins
-# ==============================================================================
-
-check_zsh() {
-    require_command zsh || return 1
-    log_ok "zsh $(zsh --version | awk '{print $2}')"
-}
-
-ensure_plugin_dir() {
-    [[ -d "$ZSH_PLUGIN_DIR" ]] && return
-    mkdir -p "$ZSH_PLUGIN_DIR"
-    log_info "Created plugin directory: $ZSH_PLUGIN_DIR"
-}
-
-_plugin_default_branch() {
-    local branch
-    branch="$(git ls-remote --symref "$1" HEAD 2>/dev/null \
-        | awk '/^ref:/ { sub("refs/heads/", "", $2); print $2; exit }')"
-
-    if [[ -z "$branch" ]]; then
-        log_warn "Could not detect default branch for $1 (network issue or repository not found)"
-    fi
-
-    echo "$branch"
-}
-
-# Install or update a zsh plugin from a git repository.
-#
-# Arguments:
-#   $1  name  Plugin directory name
-#   $2  url   Git repository URL
-#
-# Returns:
-#   0    success (installed or updated)
-#   1    installation failed (update failures are logged but not fatal)
-#
-# Side effects:
-#   Creates directory under $ZSH_PLUGIN_DIR/$name
-#   Clones with --depth=1 for faster downloads
-install_or_update_plugin() {
-    local name="$1" url="$2"
-    local plugin_path="$ZSH_PLUGIN_DIR/$name"
-
-    if [[ -d "$plugin_path" ]]; then
-        log_info "Updating $name..."
-        local current_branch
-        current_branch="$(git -C "$plugin_path" symbolic-ref --short HEAD 2>/dev/null || true)"
-
-        if [[ -z "$current_branch" ]]; then
-            log_warn "$name is in detached HEAD state — skipping update"
-        else
-            quietly git -C "$plugin_path" pull --rebase --autostash -q origin "$current_branch" \
-                || log_warn "Failed to update $name"
-        fi
-    else
-        log_info "Installing $name..."
-        local branch
-        branch="$(_plugin_default_branch "$url")"
-        quietly git clone --depth=1 ${branch:+--branch "$branch"} "$url" "$plugin_path" \
-            || { log_error "Failed to clone $name"; return 1; }
-        log_ok "Installed $name"
-    fi
-}
-
-install_all_plugins() {
-    local ok=0 fail=0
-
-    for entry in "${ZSH_PLUGINS[@]}"; do
-        local name="${entry%%|*}" url="${entry##*|}"
-        if install_or_update_plugin "$name" "$url"; then
-            ok=$(( ok + 1 ))
-        else
-            fail=$(( fail + 1 ))
-        fi
-    done
-
-    echo ""
-    log_ok "$ok plugin(s) up to date"
-    if (( fail > 0 )); then
-        log_warn "$fail plugin(s) failed"
-        return 1
     fi
 }
 
@@ -418,107 +425,6 @@ setup_virtualenvwrapper() {
     fi
 }
 
-# ==============================================================================
-# Symlinks  (*.symlink -> ~/.<name>)
-# ==============================================================================
-
-# Create symlinks from all *.symlink files to $HOME/.<name>.
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   0    always (non-fatal)
-#
-# Side effects:
-#   Creates symlinks in $HOME for each *.symlink file found
-#   Backs up conflicting regular files to ~/.dotfiles-backup/
-#   Removes existing symlinks that point to different targets
-create_symlinks() {
-    local backup_dir="$HOME/.dotfiles-backup" count=0
-    local -a sources=()
-    collect_symlinks sources
-
-    (( ${#sources[@]} > 0 )) || { log_warn "No *.symlink files found"; return; }
-
-    for src in "${sources[@]}"; do
-        local dst
-        dst="$(symlink_dst "$src")"
-
-        # Already correct
-        if [[ -L "$dst" && "$(readlink "$dst")" == "$src" ]]; then
-            log_skip "$dst"
-            continue
-        fi
-
-        # Conflict: only back up regular files (not symlinks)
-        if [[ -e "$dst" && ! -L "$dst" ]]; then
-            mkdir -p "$backup_dir"
-            mv "$dst" "$backup_dir/"
-            log_warn "Backed up: $(basename "$dst") -> $backup_dir/"
-        elif [[ -L "$dst" ]]; then
-            # Existing symlink (pointing elsewhere) — just remove it
-            rm -f "$dst"
-            log_warn "Removed old symlink: $dst"
-        fi
-
-        ln -s "$src" "$dst"
-        log_ok "Linked: $dst"
-        count=$(( count + 1 ))
-    done
-
-    echo ""
-    log_ok "Created $count new symlink(s)"
-    if [[ -d "$backup_dir" ]]; then
-        log_warn "Backups saved to: $backup_dir"
-    fi
-}
-
-# Remove all managed symlinks and restore from backups if available.
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   0    always (non-fatal)
-#
-# Side effects:
-#   Removes symlinks from $HOME that point to $DOTFILES_ROOT
-#   Restores original files from ~/.dotfiles-backup/ if present
-#   Removes backup directory if empty after restoration
-remove_symlinks() {
-    local count=0
-    local backup_dir="$HOME/.dotfiles-backup"
-    local -a sources=()
-    collect_symlinks sources
-
-    log_info "Removing managed symlinks..."
-
-    for src in "${sources[@]}"; do
-        local dst basename
-        dst="$(symlink_dst "$src")"
-        basename="$(basename "$dst")"
-        if [[ -L "$dst" && "$(readlink "$dst")" == "$src" ]]; then
-            rm -f "$dst"
-            log_ok "Removed: $dst"
-            # Restore from backup if available
-            if [[ -e "$backup_dir/$basename" ]]; then
-                mv "$backup_dir/$basename" "$dst"
-                log_ok "Restored: $dst"
-            fi
-            count=$(( count + 1 ))
-        fi
-    done
-
-    # Clean up backup directory if empty
-    if [[ -d "$backup_dir" ]]; then
-        if rmdir "$backup_dir" 2>/dev/null; then
-            log_ok "Removed empty backup directory: $backup_dir"
-        fi
-    fi
-
-    log_ok "Removed $count symlink(s)"
-}
 
 # ==============================================================================
 # Git
@@ -592,17 +498,14 @@ cmd_full_setup() {
     setup_homebrew
     install_brew_packages
 
-    print_header "Zsh Plugins"
-    check_zsh && { ensure_plugin_dir; install_all_plugins; }
-
     print_header "Node.js"
     setup_node || log_warn "Node.js setup skipped"
 
     print_header "Python"
     setup_python || log_warn "Python setup skipped"
 
-    print_header "Symlinks"
-    create_symlinks
+    print_header "Stow Packages"
+    stow_packages
 
     print_header "Git"
     setup_git
@@ -613,23 +516,28 @@ cmd_full_setup() {
     print_header "Done!"
     echo -e "  ${GREEN}Next steps:${NC}"
     echo "    1. Restart terminal or run: source ~/.zshrc"
-    echo "    2. Create ~/.zshrc.local for machine-local overrides"
+    echo "    2. Create local overrides in ~/.config/zsh/conf.d/99-local.zsh"
     echo ""
 }
 
 cmd_create_links() {
-    print_header "Dotfiles — Create Links"
-    create_symlinks
+    print_header "Dotfiles — Stow Packages"
+    stow_packages "$@"
 }
 
 cmd_remove_links() {
-    print_header "Dotfiles — Remove Links"
-    echo -e "${YELLOW}This will remove all managed symlinks from \$HOME.${NC}"
+    print_header "Dotfiles — Unstow Packages"
+    echo -e "${YELLOW}This will remove all managed stow symlinks from \$HOME.${NC}"
     echo -n "Continue? [y/N] "
     read -r confirm || { log_warn "Failed to read input — aborting."; return; }
     [[ "$confirm" =~ ^[Yy]$ ]] || { log_info "Aborted."; return; }
-    remove_symlinks
-    log_ok "Unlink complete. Homebrew packages and shell config untouched."
+    unstow_packages "$@"
+    log_ok "Unstow complete. Homebrew packages and shell config untouched."
+}
+
+cmd_restow() {
+    print_header "Dotfiles — Restow Packages"
+    restow_packages "$@"
 }
 
 # Individual step commands
@@ -643,13 +551,6 @@ cmd_install_homebrew() {
     print_header "Dotfiles — Install Homebrew"
     setup_homebrew
     install_brew_packages
-}
-
-cmd_install_plugins() {
-    print_header "Dotfiles — Install Plugins"
-    check_zsh || die "zsh is required"
-    ensure_plugin_dir
-    install_all_plugins
 }
 
 cmd_setup_node() {
@@ -672,29 +573,21 @@ cmd_switch_shell() {
     switch_shell
 }
 
-cmd_update_plugins() {
-    print_header "Zsh Plugins — Update"
-    check_zsh || die "zsh is required"
-    ensure_plugin_dir
-    install_all_plugins
-}
-
 cmd_show_status() {
     print_header "Dotfiles — Show Status"
 
-    echo -e "${BOLD}Symlinks:${NC}"
-    local -a sources=()
-    collect_symlinks sources
+    echo -e "${BOLD}Stow Packages:${NC}"
+    for pkg in "${STOW_PACKAGES[@]}"; do
+        if [[ ! -d "$DOTFILES_ROOT/$pkg" ]]; then
+            echo -e "  ${RED}✘${NC}  $pkg  ${RED}(not found)${NC}"
+            continue
+        fi
 
-    for src in "${sources[@]}"; do
-        local dst
-        dst="$(symlink_dst "$src")"
-        if [[ -L "$dst" && "$(readlink "$dst")" == "$src" ]]; then
-            echo -e "  ${GREEN}✔${NC}  $dst"
-        elif [[ -e "$dst" ]]; then
-            echo -e "  ${YELLOW}!${NC}  $dst  ${YELLOW}(conflict)${NC}"
+        # Check if package is stowed (dry-run to returns 0 if already stowed)
+        if stow -d "$DOTFILES_ROOT" -t "$HOME" -n "$pkg" &>/dev/null; then
+            echo -e "  ${GREEN}✔${NC}  $pkg"
         else
-            echo -e "  ${RED}✘${NC}  $dst  ${RED}(missing)${NC}"
+            echo -e "  ${YELLOW}!${NC}  $pkg  ${YELLOW}(unstowed or conflict)${NC}"
         fi
     done
 
@@ -739,16 +632,15 @@ show_help() {
     echo ""
     echo -e "${BOLD}Workflow:${NC}"
     echo "  full-setup      Full setup: all steps in sequence"
-    echo "  show-status     Show symlink and tool status"
-    echo "  update-plugins  Update zsh plugins"
+    echo "  show-status     Show stow package and tool status"
+    echo "  restow          Refresh all stow package symlinks"
     echo ""
-    echo -e "${BOLD}Symlinks:${NC}"
-    echo "  create-links    Create symlinks from *.symlink files"
-    echo "  remove-links    Remove all managed symlinks"
+    echo -e "${BOLD}Stow Packages:${NC}"
+    echo "  create-links    Stow packages to \$HOME (stow)"
+    echo "  remove-links    Unstow packages from \$HOME (stow -D)"
     echo ""
     echo -e "${BOLD}Individual Steps:${NC}"
     echo "  install-homebrew Install Homebrew and Brewfile packages"
-    echo "  install-plugins Install zsh plugins"
     echo "  setup-node      Setup Node.js via fnm"
     echo "  setup-python    Setup Python via pyenv"
     echo "  config-git      Configure git user.name and user.email"
@@ -758,13 +650,14 @@ show_help() {
     echo "  VERBOSE=0       Suppress command output (default: 1, verbose)"
     echo ""
     echo -e "${BOLD}Requirements:${NC}"
-    echo "  bash 4.3+       Required for nameref feature (brew install bash)"
+    echo "  bash 4.3+       Required for array features (brew install bash)"
+    echo "  stow            GNU Stow for symlink management (brew install stow)"
     echo ""
     echo -e "${BOLD}Examples:${NC}"
     echo "  ./setup.sh                    # Show this help"
     echo "  ./setup.sh full-setup         # Full setup"
-    echo "  ./setup.sh create-links       # Re-link symlinks only"
-    echo "  ./setup.sh setup-node setup-python  # Setup Node.js and Python"
+    echo "  ./setup.sh create-links       # Stow all packages"
+    echo "  ./setup.sh restow zsh git     # Restow specific packages"
     echo ""
 }
 
@@ -783,14 +676,12 @@ main() {
             cmd_create_links "$@" ;;
         remove-links)
             cmd_remove_links "$@" ;;
-        update-plugins)
-            cmd_update_plugins "$@" ;;
+        restow)
+            cmd_restow "$@" ;;
         show-status)
             cmd_show_status "$@" ;;
         install-homebrew)
             cmd_install_homebrew "$@" ;;
-        install-plugins)
-            cmd_install_plugins "$@" ;;
         setup-node)
             cmd_setup_node "$@" ;;
         setup-python)

@@ -35,40 +35,39 @@ oh-my-dotfiles/
 ## Setup Commands
 
 ```bash
-# Full setup (Homebrew, plugins, languages, symlinks, shell)
+# Full setup (Homebrew, stow packages, languages, shell)
 ./setup.sh full-setup
 
-# Re-create symlinks only
+# Stow packages to $HOME
 ./setup.sh create-links
 
-# Remove all managed symlinks
+# Unstow packages from $HOME
 ./setup.sh remove-links
 
-# Update zsh plugins
-./setup.sh update-plugins
+# Refresh stow package symlinks
+./setup.sh restow
 
-# Check symlink and tool status
+# Check stow package and tool status
 ./setup.sh show-status
 
 # Silent mode
 VERBOSE=0 ./setup.sh full-setup
 ```
 
-## Symlink System
+## Stow Package System
 
-Files named `*.symlink` are automatically linked to `$HOME`:
+GNU Stow manages symlinks from packages to `$HOME`:
 
-| Source                       | Target           |
-|------------------------------|------------------|
-| `emacs/emacs.symlink`        | `~/.emacs`       |
-| `vim/vimrc.symlink`          | `~/.vimrc`       |
-| `zsh/zshrc.symlink`          | `~/.zshrc`       |
-| `zsh/zshenv.symlink`         | `~/.zshenv`      |
-| `zsh/zprofile.symlink`       | `~/.zprofile`    |
-| `git/gitconfig.symlink`      | `~/.gitconfig`   |
-| `git/gitignore.symlink`      | `~/.gitignore`   |
+| Package  | Contents                                        |
+|----------|-------------------------------------------------|
+| `zsh/`   | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
+| `git/`   | `.config/git/` → `$HOME/.config/git/`           |
+| `vim/`   | `.config/vim/` → `$HOME/.config/vim/`           |
+| `emacs/` | `.config/emacs/` → `$HOME/.config/emacs/`       |
 
-Existing files are backed up to `~/.dotfiles-backup/` before linking (single backup, no timestamps).
+**Note:** `homebrew/` and `macos/` are NOT stow packages — they provide scripts/utilities only.
+
+Existing conflicting files are handled by stow (errors on conflict, use `restow` to refresh).
 
 ## XDG Base Directory
 
@@ -83,12 +82,7 @@ XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 ## Zsh Plugin System
 
-Zsh plugins are installed to `${XDG_DATA_HOME}/zsh/plugins/` (not Oh My Zsh dependent):
-
-- zsh-completions
-- zsh-autosuggestions
-- zsh-history-substring-search
-- zsh-syntax-highlighting
+Zsh plugins are managed by **Zinit** installed at `${XDG_DATA_HOME}/zinit/`. See `zsh/CLAUDE.md` for plugin configuration.
 
 ## Subdirectory CLAUDE.md Files
 
@@ -102,7 +96,7 @@ These files are lazy-loaded when working in their respective directories.
 
 ```bash
 # Check setup status
-./setup.sh status
+./setup.sh show-status
 
 # Test Emacs configuration
 emacs --debug-init
@@ -114,7 +108,7 @@ emacs --batch --eval '(progn (load-file "emacs/emacs.symlink") (message "OK"))'
 ## Key Conventions
 
 - **macOS-focused**: All configurations assume macOS as primary OS
-- **Symlink-based**: Config files are symlinked via `*.symlink` convention
+- **Stow-managed**: Config files are symlinked via GNU Stow
 - **Unified setup**: Single `setup.sh` handles all components
 - **Emacs prefix**: Uses `omw/` prefix (oh-my-workspace) for custom functions/variables
 
