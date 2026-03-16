@@ -102,9 +102,12 @@ zstyle ':completion:*' list-dirs-first true
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/completion-cache"
 
-# Fuzzy matching with up to 2 errors
-zstyle ':completion:*' completer _extensions _complete _approximate
-zstyle ':completion:*:approximate:*' max-errors 'reply=( $((($#PREFIX+$#SUFFIX)/3 )) numeric )'
+# Completer order: try exact extension match first, then standard completion.
+# _approximate is intentionally omitted: fzf-tab's fzf UI provides superior
+# fuzzy matching. Including _approximate alongside fzf causes double-fuzzy
+# behaviour (approximate expands candidates that fzf then re-fuzzy-matches),
+# degrading performance and producing confusing results.
+zstyle ':completion:*' completer _extensions _complete
 
 # Do not offer current directory when completing cd ../
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
