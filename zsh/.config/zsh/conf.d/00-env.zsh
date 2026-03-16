@@ -38,10 +38,18 @@ export LANG=en_US.UTF-8
 # -----------------------------------------------------------------------------
 # Zsh History
 # -----------------------------------------------------------------------------
-# History file stored in XDG cache (runtime data, not configuration).
-export HISTFILE="$XDG_CACHE_HOME/zsh/history"
+# History is STATE (persists, cannot be regenerated) → XDG_STATE_HOME.
+# Do NOT use XDG_CACHE_HOME: cache directories are cleared by OS maintenance
+# tools and "free disk space" scripts, which would silently destroy history.
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
-# Ensure cache directory exists on first run (idempotent).
+# Ensure required zsh directories exist on first run (idempotent).
+#   XDG_STATE_HOME/zsh  — history (state: persistent, not regeneratable)
+#   XDG_CACHE_HOME/zsh  — zcompdump, completion caches (regeneratable)
+# These are distinct XDG categories; do NOT consolidate them.
+if [[ ! -d "$XDG_STATE_HOME/zsh" ]]; then
+  mkdir -p "$XDG_STATE_HOME/zsh"
+fi
 if [[ ! -d "$XDG_CACHE_HOME/zsh" ]]; then
   mkdir -p "$XDG_CACHE_HOME/zsh"
 fi
@@ -107,7 +115,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 # fzf -- Fuzzy Finder Environment
 # -----------------------------------------------------------------------------
 # Must be set before fzf-tab loads (via atload in 40-plugins.zsh).
-# Doom Xcode color theme for visual consistency.
+# Doom One color theme for visual consistency.
 #
 # Note: FZF_ALT_C_COMMAND uses --type d (directories only) for Alt+C cd widget.
 export FZF_DEFAULT_OPTS="

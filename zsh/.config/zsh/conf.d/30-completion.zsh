@@ -36,13 +36,18 @@ autoload -Uz compinit
 
 _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 
-# Rebuild zcompdump at most once per day; use -C (skip security check) otherwise
-if [[ -f "$_zcompdump" && $(date +%j) == $(date -r "$_zcompdump" +%j 2>/dev/null) ]]; then
-  compinit -C -d "$_zcompdump"
+# Rebuild zcompdump if missing or older than 20 hours; use -C otherwise (fast).
+# Uses zsh glob qualifiers — no subshells, no external commands, cross-platform:
+#   N  = nullglob (empty array instead of error when no match)
+#   .  = regular file (not a directory or symlink)
+#   mh-20 = modification time < 20 hours ago  (i.e., the dump is still fresh)
+_zcompdump_fresh=( ${_zcompdump}(N.mh-20) )
+if (( ${#_zcompdump_fresh} )); then
+  compinit -C -d "$_zcompdump"   # fresh: skip security check for speed
 else
-  compinit -d "$_zcompdump"
+  compinit -d "$_zcompdump"      # stale/missing: full rebuild
 fi
-unset _zcompdump
+unset _zcompdump _zcompdump_fresh
 
 # -----------------------------------------------------------------------------
 # Completion styles
@@ -64,9 +69,10 @@ zstyle ':completion:*' matcher-list \
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Group header format
-zstyle ':completion:*:warnings'     format '%F{red}-- no matches for: %d --%f'
-zstyle ':completion:*:messages'     format '%F{purple}-- %d --%f'
-zstyle ':completion:*:corrections'  format '%F{green}-- %d (errors: %e) --%f'
+zstyle ':completion:*:warnings'  format '%F{red}-- no matches for: %d --%f'
+zstyle ':completion:*:messages'  format '%F{purple}-- %d --%f'
+# Note: ':completion:*:corrections' is intentionally omitted — it only
+# triggers with _approximate, which is not in the completer list here.
 
 # Display completions in named groups
 zstyle ':completion:*' group-name ''
@@ -97,9 +103,12 @@ zstyle ':completion:*' list-dirs-first true
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/completion-cache"
 
-# Fuzzy matching with up to 2 errors
-zstyle ':completion:*' completer _extensions _complete _approximate
-zstyle ':completion:*:approximate:*' max-errors 'reply=( $((($#PREFIX+$#SUFFIX)/3 )) numeric )'
+# Completer order: try exact extension match first, then standard completion.
+# _approximate is intentionally omitted: fzf-tab's fzf UI provides superior
+# fuzzy matching. Including _approximate alongside fzf causes double-fuzzy
+# behaviour (approximate expands candidates that fzf then re-fuzzy-matches),
+# degrading performance and producing confusing results.
+zstyle ':completion:*' completer _extensions _complete
 
 # Do not offer current directory when completing cd ../
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
@@ -110,6 +119,3 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 # bashcompinit: allows use of bash-style complete commands
 autoload -Uz bashcompinit && bashcompinit
-
-# Load color variables (used by list-colors above)
-autoload -Uz colors && colors

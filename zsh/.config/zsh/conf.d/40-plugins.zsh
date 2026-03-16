@@ -44,17 +44,58 @@ source "$ZINIT_HOME/zinit.zsh"
 ZINIT_INITIALIZED=1
 
 # -----------------------------------------------------------------------------
-# Core plugins -- turbo mode (wait: load after prompt appears; lucid: no output)
+# Plugin loading order (matches actual execution order)
+# -----------------------------------------------------------------------------
+#
+# Execution timeline:
+#   During startup (sync):
+#     1. fzf-tab        — must own ^I before any turbo plugin can override it
+#   After prompt (turbo, by wait suffix letter):
+#     2. zsh-completions  [0a] — register completions early for zicdreplay
+#     3. history-substring-search, autosuggestions, autopair  [0b]
+#     4. fast-syntax-highlighting  [0c, LAST] — wraps all ZLE widgets;
+#                                               must run after others register theirs
+#
+# Why fzf-tab is sync (no wait):
+#   fzf-tab binds ^I (Tab) to fzf-tab-complete. If loaded with turbo (wait),
+#   ^I would be unbound until after the first prompt, causing broken Tab on
+#   initial input. Sync load guarantees it owns ^I from the first prompt.
+#
+# Why FSH is last with wait"0c":
+#   FSH wraps all currently-registered ZLE widgets at load time. Loading it
+#   before autosuggestions or history-substring-search means those plugins'
+#   widgets are registered unwrapped. Using wait"0c" ensures FSH runs after
+#   all wait"0b" plugins have registered their widgets.
+#
+# Why zicompinit in FSH's atinit:
+#   zinit intercepts compdef calls during startup and records them. After all
+#   wait"0a/0b" plugins load (including zsh-completions which adds many compdef
+#   calls), FSH's atinit runs zicompinit -C (fast re-init using cache) and
+#   zicdreplay to replay the recorded compdef calls into the live system.
 # -----------------------------------------------------------------------------
 
-# Syntax highlighting -- must load before autosuggestions
-zinit ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay"
-zinit light zdharma-continuum/fast-syntax-highlighting
+# --- Sync: fzf-tab (must be first and synchronous) ---
+# Load before turbo plugins to ensure ^I ownership is established immediately.
+# fzf's completion.zsh is intentionally NOT loaded (see 70-tools.zsh comment).
+zinit light Aloxaf/fzf-tab
 
-# History substring search (enhanced Ctrl-R)
-# Keybindings set here via atload to avoid "unhandled ZLE widget" errors
-# (widgets must exist before bindkey can reference them)
-zinit ice wait lucid atload'
+# --- Turbo 0a: completions (early, before zicdreplay in FSH) ---
+# blockf: tells zinit not to add plugin to fpath (avoids triggering compinit
+# rebuild); completions are still available via zinit's own path management.
+zinit ice wait"0a" lucid blockf
+zinit light zsh-users/zsh-completions
+
+# --- Turbo 0b: interactive enhancement plugins ---
+
+# History substring search
+# Config vars must be set BEFORE activation (read at highlight time, but set
+# here for co-location with the plugin declaration — mirrors the autosuggestions
+# pattern and makes future changes less error-prone).
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+# HISTORY_SUBSTRING_SEARCH_FUZZY=1   # disabled: perf cost on large histories
+# Keybindings via atload: widgets must exist before bindkey can reference them
+zinit ice wait"0b" lucid atload'
   bindkey "^[[A" history-substring-search-up
   bindkey "^[[B" history-substring-search-down
   bindkey "^[OA" history-substring-search-up
@@ -63,53 +104,38 @@ zinit ice wait lucid atload'
 zinit light zsh-users/zsh-history-substring-search
 
 # Autosuggestions from history
-zinit ice wait lucid atload"_zsh_autosuggest_start"
+# Configuration variables must be set BEFORE this ice/light pair so they are
+# available when _zsh_autosuggest_start reads them (even in turbo, the vars
+# are already in scope because they are set synchronously below).
+# The ! prefix on atload tells zinit to redraw the prompt after activation,
+# so the first suggestion appears without requiring a keypress.
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)   # history first, then completion
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20              # no suggestion for long buffers
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'    # Doom One comment color
+zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions
 
-# fzf-tab -- replace default Tab completion menu with fzf
-# Load synchronously (no wait) to register widget immediately after compinit.
-# Async loading causes widget registration timing issues with Tab key.
-# fzf completion.zsh moved to 70-tools.zsh to avoid widget conflicts.
-zinit ice
-zinit light Aloxaf/fzf-tab
-
-# Additional completions
-# blockf: prevent compinit from rebuilding completion files on every load
-# (zsh-completions provides many extra completions that would slow down rebuild)
-zinit ice wait lucid blockf
-zinit light zsh-users/zsh-completions
-
-# -----------------------------------------------------------------------------
-# Utility plugins
-# -----------------------------------------------------------------------------
-
 # autopair -- auto-close brackets and quotes
-zinit ice wait lucid
+zinit ice wait"0b" lucid
 zinit light hlissner/zsh-autopair
+
+# --- Turbo 0c: fast-syntax-highlighting (MUST be last) ---
+# atinit runs before the plugin code:
+#   ZINIT[COMPINIT_OPTS]=-C  → use cached dump (fast, no security check)
+#   zicompinit               → re-run compinit to pick up any new completions
+#   zicdreplay               → replay compdef calls captured from turbo plugins
+zinit ice wait"0c" lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay"
+zinit light zdharma-continuum/fast-syntax-highlighting
 
 # -----------------------------------------------------------------------------
 # Plugin configuration
 # -----------------------------------------------------------------------------
 
-# zsh-autosuggestions
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)   # history first, then completion
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20              # no suggestion for long buffers
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'    # Doom Xcode comment color
-
-# zsh-history-substring-search (key bindings set via atload above)
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
-# HISTORY_SUBSTRING_SEARCH_FUZZY=1              # disabled: perf cost on large histories
-
-# fzf-tab preview and style (Doom One theme)
-# Disable default menu
+# fzf-tab -- disable default completion menu in favor of fzf popup
+# Note: do NOT use escape sequences (%F{red}...%f) in 'descriptions format'
+# (fzf-tab limitation — they appear as literal text, not ANSI color codes).
 zstyle ':completion:*' menu no
-
-# Group descriptions
 zstyle ':completion:*:descriptions' format '[%d]'
-
-# File colors
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # Git branch sorting
 zstyle ':completion:*:git-checkout:*' sort false
@@ -141,7 +167,7 @@ zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
 
 # brew: preview package info
 zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' fzf-preview \
-  'brew info $word'
+  'brew info $word 2>/dev/null'
 
 # man: preview man page
 zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview \
@@ -154,7 +180,7 @@ zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
   'git log --oneline --color=always $word'
 zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
   'git log --oneline --color=always $word 2>/dev/null \
-   || git show --color=always $word'
+   || git show --color=always $word 2>/dev/null'
 
 # Switch groups with , and .
 zstyle ':fzf-tab:*' switch-group ',' '.'
