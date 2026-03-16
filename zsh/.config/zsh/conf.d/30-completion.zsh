@@ -36,13 +36,18 @@ autoload -Uz compinit
 
 _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 
-# Rebuild zcompdump at most once per day; use -C (skip security check) otherwise
-if [[ -f "$_zcompdump" && $(date +%j) == $(date -r "$_zcompdump" +%j 2>/dev/null) ]]; then
-  compinit -C -d "$_zcompdump"
+# Rebuild zcompdump if missing or older than 20 hours; use -C otherwise (fast).
+# Uses zsh glob qualifiers — no subshells, no external commands, cross-platform:
+#   N  = nullglob (empty array instead of error when no match)
+#   .  = regular file (not a directory or symlink)
+#   mh-20 = modification time < 20 hours ago  (i.e., the dump is still fresh)
+_zcompdump_fresh=( ${_zcompdump}(N.mh-20) )
+if (( ${#_zcompdump_fresh} )); then
+  compinit -C -d "$_zcompdump"   # fresh: skip security check for speed
 else
-  compinit -d "$_zcompdump"
+  compinit -d "$_zcompdump"      # stale/missing: full rebuild
 fi
-unset _zcompdump
+unset _zcompdump _zcompdump_fresh
 
 # -----------------------------------------------------------------------------
 # Completion styles
