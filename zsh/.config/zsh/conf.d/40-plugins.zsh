@@ -17,30 +17,6 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# FZF -- Default Options (Doom Xcode Theme)
-# Must be set before fzf-tab is loaded
-# -----------------------------------------------------------------------------
-export FZF_DEFAULT_OPTS="
-  --color=bg:#292a30,bg+:#1f2024
-  --color=fg:#dfdfe0,fg+:#dfdfe0
-  --color=hl:#ff8170,hl+:#ff8170
-  --color=info:#ffa14f,prompt:#ff8170
-  --color=pointer:#ff8170,marker:#78c2b3
-  --color=spinner:#78c2b3,header:#6bdfff
-  --color=border:#3a3a3f,label:#dfdfe0
-  --color=selected-bg:#2d4a6e
-  --layout=reverse
-  --border=rounded
-  --height=50%
-  --info=inline
-  --preview-window=right:50%:wrap
-"
-
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
-
-# -----------------------------------------------------------------------------
 # Zinit bootstrap
 # Data directory follows XDG: $XDG_DATA_HOME/zinit/
 # -----------------------------------------------------------------------------
@@ -68,16 +44,6 @@ source "$ZINIT_HOME/zinit.zsh"
 ZINIT_INITIALIZED=1
 
 # -----------------------------------------------------------------------------
-# Zinit annexes (extend Zinit functionality; recommended to keep)
-# Only include annexes you actually use; unused ones add clone-check overhead
-# -----------------------------------------------------------------------------
-zinit light-mode for \
-  zdharma-continuum/zinit-annex-as-monitor \
-  zdharma-continuum/zinit-annex-bin-gem-node \
-  zdharma-continuum/zinit-annex-patch-dl \
-  zdharma-continuum/zinit-annex-rust
-
-# -----------------------------------------------------------------------------
 # Core plugins -- turbo mode (wait: load after prompt appears; lucid: no output)
 # -----------------------------------------------------------------------------
 
@@ -101,7 +67,11 @@ zinit ice wait lucid atload"_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions
 
 # fzf-tab -- replace default Tab completion menu with fzf (load after compinit)
-zinit ice wait lucid
+# Load fzf completion after fzf-tab registers its widget to avoid conflicts
+zinit ice wait lucid atload'
+  [[ -f "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh" ]] \
+    && source "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh"
+'
 zinit light Aloxaf/fzf-tab
 
 # Additional completions
@@ -125,8 +95,7 @@ zinit light hlissner/zsh-autopair
 # zsh-autosuggestions
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)   # history first, then completion
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20              # no suggestion for long buffers
-ZSH_AUTOSUGGEST_USE_ASYNC=1                     # fetch suggestions asynchronously
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#6c7086'    # suggestion text color (Catppuccin overlay0)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'    # Doom Xcode comment color
 
 # zsh-history-substring-search (key bindings set via atload above)
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'

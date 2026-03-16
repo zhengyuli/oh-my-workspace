@@ -64,7 +64,6 @@ zstyle ':completion:*' matcher-list \
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Group header format
-zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:warnings'     format '%F{red}-- no matches for: %d --%f'
 zstyle ':completion:*:messages'     format '%F{purple}-- %d --%f'
 zstyle ':completion:*:corrections'  format '%F{green}-- %d (errors: %e) --%f'

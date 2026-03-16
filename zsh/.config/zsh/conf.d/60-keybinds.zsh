@@ -102,12 +102,13 @@ zle -N sudo-command-line
 bindkey '\e\e' sudo-command-line
 
 # -----------------------------------------------------------------------------
-# Custom widget: jump to parent directory (Alt-.)
+# Custom widget: jump to parent directory (Alt-,)
 # -----------------------------------------------------------------------------
 # Goes up one level without discarding the current buffer
+# Note: Alt-. is reserved for insert-last-word (cycle through last arguments)
 cdParent() { pushd .. > /dev/null; zle reset-prompt }
 zle -N cdParent
-bindkey '^[.' cdParent
+bindkey '^[,' cdParent
 
 # -----------------------------------------------------------------------------
 # Custom widget: clear screen and scrollback buffer (Ctrl-/)
