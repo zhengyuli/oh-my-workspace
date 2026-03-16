@@ -35,10 +35,10 @@
 
 ;; ==================================================================================
 (defun omw/ensure-typescript-tools ()
-  "Ensure typescript-language-server is installed for LSP support."
+  "Ensure typescript-language-server is installed via bun for LSP support."
   (unless (executable-find "typescript-language-server")
-    (message "Installing typescript-language-server...")
-    (shell-command "npm install -g typescript-language-server")
+    (message "Installing typescript-language-server via bun...")
+    (shell-command "bun install -g typescript-language-server typescript")
     (message "typescript-language-server installed successfully")))
 
 (use-package typescript-mode

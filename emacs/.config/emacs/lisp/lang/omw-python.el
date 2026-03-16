@@ -80,17 +80,13 @@
 
 ;; ==================================================================================
 (defun omw/ensure-python-tools ()
-  "Ensure Python development tools (pylsp, black, isort, pylint) are installed."
-  ;; Check and install each tool if missing
-  (dolist (spec '(("pylsp"  "pip install 'python-lsp-server[all]'")
-                  ("black"  "pip install black black-macchiato")
-                  ("isort"  "pip install isort")
-                  ("pylint" "pip install pylint")))
-    ;; spec format: (executable-name install-command)
-    (let ((exe (nth 0 spec))
-          (cmd (nth 1 spec)))
+  "Ensure Python development tools (basedpyright, ruff) are installed via uv."
+  (dolist (spec '(("basedpyright" . "uv tool install basedpyright")
+                  ("ruff" . "uv tool install ruff")))
+    (let ((exe (car spec))
+          (cmd (cdr spec)))
       (unless (executable-find exe)
-        (message "Installing %s..." exe)
+        (message "Installing %s via uv..." exe)
         (shell-command cmd)
         (message "%s installed successfully" exe)))))
 
