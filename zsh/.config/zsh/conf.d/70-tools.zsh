@@ -85,33 +85,27 @@ fi
 # -----------------------------------------------------------------------------
 # fzf -- Fuzzy Finder
 # -----------------------------------------------------------------------------
-# Load key bindings and completion. Must load AFTER fzf-tab (40-plugins.zsh)
-# to avoid widget registration conflicts.
+# Load key bindings only. Must load AFTER fzf-tab (40-plugins.zsh).
 #
 # Prerequisites: brew install fzf
 # Key bindings: Ctrl+R (history), Ctrl+T (files), Alt+C (cd)
-# Completion: **<Tab> triggers fzf completion
+#
+# Note: fzf ships two shell integration files:
+#   key-bindings.zsh  — Ctrl-R / Ctrl-T / Alt-C widgets   ← load this
+#   completion.zsh    — **<Tab> trigger + rebinds ^I       ← do NOT load
+#
+# completion.zsh is intentionally skipped. fzf-tab (40-plugins.zsh) is a
+# superset: it replaces the entire Tab completion UI with fzf, making
+# fzf's own completion.zsh redundant. Loading it would rebind ^I to
+# fzf-completion and require a fragile bind/rebind workaround.
 #
 # Note: HOMEBREW_PREFIX is defined in 00-env.zsh
 # -----------------------------------------------------------------------------
 if command -v fzf &>/dev/null; then
   _fzf_prefix="$HOMEBREW_PREFIX/opt/fzf"
 
-  # Key bindings (Ctrl-R, Ctrl-T, Alt-C) - safe to load
   if [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]]; then
     source "$_fzf_prefix/shell/key-bindings.zsh"
-  fi
-
-  # Completion (**<Tab> trigger) - provides fuzzy completion via **<Tab>
-  # NOTE: fzf completion.zsh rebinds ^I (Tab) to its own fzf-completion widget,
-  # conflicting with fzf-tab which provides a superior completion UI.
-  # After sourcing, restore fzf-tab's Tab binding only if the widget actually
-  # exists (guards against fzf-tab load failures or widget name changes).
-  if [[ -f "$_fzf_prefix/shell/completion.zsh" ]]; then
-    source "$_fzf_prefix/shell/completion.zsh"
-    if (( ${+widgets[fzf-tab-complete]} )); then
-      bindkey '^I' fzf-tab-complete
-    fi
   fi
 
   unset _fzf_prefix
