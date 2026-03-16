@@ -66,12 +66,11 @@ zinit light zsh-users/zsh-history-substring-search
 zinit ice wait lucid atload"_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions
 
-# fzf-tab -- replace default Tab completion menu with fzf (load after compinit)
-# Load fzf completion after fzf-tab registers its widget to avoid conflicts
-zinit ice wait lucid atload'
-  [[ -f "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh" ]] \
-    && source "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh"
-'
+# fzf-tab -- replace default Tab completion menu with fzf
+# Load synchronously (no wait) to register widget immediately after compinit.
+# Async loading causes widget registration timing issues with Tab key.
+# fzf completion.zsh moved to 70-tools.zsh to avoid widget conflicts.
+zinit ice
 zinit light Aloxaf/fzf-tab
 
 # Additional completions
@@ -159,4 +158,3 @@ zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
 
 # Switch groups with , and .
 zstyle ':fzf-tab:*' switch-group ',' '.'
-zstyle ':fzf-tab:*' fzf-flags --nth=1

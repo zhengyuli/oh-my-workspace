@@ -85,24 +85,25 @@ fi
 # -----------------------------------------------------------------------------
 # fzf -- Fuzzy Finder
 # -----------------------------------------------------------------------------
-# Load key bindings (Ctrl+R, Ctrl+T) only; completion triggers (** + Tab).
-# Not lazy-loaded because key bindings must be available immediately.
+# Load key bindings and completion. Must load AFTER fzf-tab (40-plugins.zsh)
+# to avoid widget registration conflicts.
 #
 # Prerequisites: brew install fzf
 # Key bindings: Ctrl+R (history), Ctrl+T (files), Alt+C (cd)
-# Completion: **<Tab> triggers fzf completion (now loaded via fzf-tab atload)
+# Completion: **<Tab> triggers fzf completion
 #
 # Note: HOMEBREW_PREFIX is defined in 00-env.zsh
 # -----------------------------------------------------------------------------
 if command -v fzf &>/dev/null; then
-  # Use $HOMEBREW_PREFIX to avoid subprocess call
   _fzf_prefix="$HOMEBREW_PREFIX/opt/fzf"
 
   if [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]]; then
     source "$_fzf_prefix/shell/key-bindings.zsh"
   fi
-  # Note: completion.zsh is loaded via fzf-tab atload in 40-plugins.zsh
-  # to ensure proper widget registration order
+
+  if [[ -f "$_fzf_prefix/shell/completion.zsh" ]]; then
+    source "$_fzf_prefix/shell/completion.zsh"
+  fi
 
   unset _fzf_prefix
 fi
