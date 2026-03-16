@@ -38,8 +38,10 @@ if command -v starship &>/dev/null; then
   # Window Title
   # ---------------------------------------------------------------------------
   # Set terminal window title to current directory for supported terminals
+  # Use $TERM_PROGRAM for accurate detection (iTerm2/WezTerm/Ghostty)
+  # Fallback to $TERM for alacritty/kitty which don't set TERM_PROGRAM
   # ---------------------------------------------------------------------------
-  if [[ "$TERM" == (alacritty|ghostty|kitty|wezterm|xterm-256color)* ]]; then
+  if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty) || "$TERM" == alacritty* || "$TERM" == kitty* ]]; then
     precmd() {
       print -Pn "\e]0;%~\a"
     }

@@ -35,17 +35,14 @@ setopt CDABLE_VARS          # allow cd to use variable names as directories
 # -----------------------------------------------------------------------------
 setopt ALWAYS_TO_END        # move cursor to end after completion
 setopt AUTO_LIST            # automatically list choices on ambiguous completion
-setopt AUTO_MENU            # show completion menu on successive Tab presses
 setopt AUTO_PARAM_SLASH     # add trailing slash when completing directories
 setopt COMPLETE_IN_WORD     # complete from both ends of a word
-setopt MENU_COMPLETE        # insert first completion candidate immediately
 unsetopt FLOW_CONTROL       # disable Ctrl-S / Ctrl-Q flow control
 
 # -----------------------------------------------------------------------------
 # Globbing / Expansion
 # -----------------------------------------------------------------------------
 setopt EXTENDED_GLOB        # enable extended glob operators: ^, ~, #
-setopt GLOB_DOTS            # include dotfiles in glob matches without explicit .*
 setopt NULL_GLOB            # silently remove patterns with no matches
 setopt NUMERIC_GLOB_SORT    # sort glob results numerically
 

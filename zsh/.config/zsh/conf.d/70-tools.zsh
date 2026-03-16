@@ -20,12 +20,6 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Homebrew (macOS)
-# -----------------------------------------------------------------------------
-export HOMEBREW_NO_ANALYTICS=1
-export HOMEBREW_NO_AUTO_UPDATE=1
-
-# -----------------------------------------------------------------------------
 # bun -- JavaScript/TypeScript Runtime
 # -----------------------------------------------------------------------------
 # Bun is a fast native binary, no lazy loading needed.
@@ -43,14 +37,21 @@ fi
 # uv -- Python Package Manager
 # -----------------------------------------------------------------------------
 # uv is a fast native binary, no lazy loading needed.
-# Completions are generated dynamically.
+# Completions are generated dynamically and cache to file with mtime check.
 #
 # Prerequisites: brew install uv
 # Config: $UV_* variables (set in 00-env.zsh)
 # Usage: uv add requests, uv venv
 # -----------------------------------------------------------------------------
 if command -v uv &>/dev/null; then
-  eval "$(uv generate-shell-completion zsh)"
+  _uv_comp="$XDG_CACHE_HOME/zsh/uv-completion.zsh"
+
+  if [[ ! -f "$_uv_comp" ]] || [[ "$(command -v uv)" -nt "$_uv_comp" ]]; then
+    mkdir -p "${_uv_comp:h}"
+    uv generate-shell-completion zsh >! "$_uv_comp"
+  fi
+  source "$_uv_comp"
+  unset _uv_comp
 fi
 
 # -----------------------------------------------------------------------------
@@ -72,29 +73,36 @@ fi
 if command -v carapace &>/dev/null; then
   # Bridge to existing native completions when carapace has no spec for a command
   export CARAPACE_BRIDGES='zsh,fish,bash'
-  source <(carapace _carapace zsh)
+  _carapace_comp="$XDG_CACHE_HOME/zsh/carapace-completion.zsh"
+  if [[ ! -f "$_carapace_comp" ]] || [[ "$(command -v carapace)" -nt "$_carapace_comp" ]]; then
+    mkdir -p "${_carapace_comp:h}"
+    carapace _carapace zsh >! "$_carapace_comp"
+  fi
+  source "$_carapace_comp"
+  unset _carapace_comp
 fi
 
 # -----------------------------------------------------------------------------
 # fzf -- Fuzzy Finder
 # -----------------------------------------------------------------------------
-# Load key bindings (Ctrl+R, Ctrl+T) and completion triggers (** + Tab).
+# Load key bindings (Ctrl+R, Ctrl+T) only; completion triggers (** + Tab).
 # Not lazy-loaded because key bindings must be available immediately.
 #
 # Prerequisites: brew install fzf
 # Key bindings: Ctrl+R (history), Ctrl+T (files), Alt+C (cd)
-# Completion: **<Tab> triggers fzf completion
+# Completion: **<Tab> triggers fzf completion (now loaded via fzf-tab atload)
+#
+# Note: HOMEBREW_PREFIX is defined in 00-env.zsh
 # -----------------------------------------------------------------------------
 if command -v fzf &>/dev/null; then
-  # Try Homebrew path first, fallback to system path (Linux)
-  _fzf_prefix="$(brew --prefix fzf 2>/dev/null)" || _fzf_prefix="/usr/share/fzf"
+  # Use $HOMEBREW_PREFIX to avoid subprocess call
+  _fzf_prefix="$HOMEBREW_PREFIX/opt/fzf"
 
   if [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]]; then
     source "$_fzf_prefix/shell/key-bindings.zsh"
   fi
-  if [[ -f "$_fzf_prefix/shell/completion.zsh" ]]; then
-    source "$_fzf_prefix/shell/completion.zsh"
-  fi
+  # Note: completion.zsh is loaded via fzf-tab atload in 40-plugins.zsh
+  # to ensure proper widget registration order
 
   unset _fzf_prefix
 fi
