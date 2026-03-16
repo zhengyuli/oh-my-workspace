@@ -75,8 +75,11 @@ bindkey '^X^E' edit-command-line
 # -----------------------------------------------------------------------------
 # Completion
 # -----------------------------------------------------------------------------
-bindkey '^I'   complete-word          # Tab       trigger completion
-bindkey '^[[Z' reverse-menu-complete  # Shift-Tab cycle completion backwards
+# Tab (^I) is owned by fzf-tab (40-plugins.zsh) — do NOT rebind ^I here.
+# fzf-tab registers fzf-tab-complete synchronously at plugin load; any
+# subsequent bindkey '^I' would silently break fzf-tab's UI.
+# Shift-Tab key events inside fzf's popup go to fzf, not zsh's
+# reverse-menu-complete; no zsh binding needed.
 
 # -----------------------------------------------------------------------------
 # Miscellaneous
