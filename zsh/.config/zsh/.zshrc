@@ -22,7 +22,9 @@
 # -----------------------------------------------------------------------------
 # Exit immediately if not running interactively.
 # Prevents configuration from leaking into scripts or non-interactive shells.
-[[ $- != *i* ]] && return
+if [[ $- != *i* ]]; then
+  return
+fi
 
 # -----------------------------------------------------------------------------
 # Module Loader

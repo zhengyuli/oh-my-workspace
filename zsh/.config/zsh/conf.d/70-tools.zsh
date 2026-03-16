@@ -40,7 +40,7 @@ fi
 # Completions are generated dynamically and cache to file with mtime check.
 #
 # Prerequisites: brew install uv
-# Config: $UV_* variables (set in 00-env.zsh)
+# Config: uv natively supports XDG directories (no UV_* overrides needed)
 # Usage: uv add requests, uv venv
 # -----------------------------------------------------------------------------
 if command -v uv &>/dev/null; then

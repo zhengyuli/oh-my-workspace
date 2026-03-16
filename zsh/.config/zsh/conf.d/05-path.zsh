@@ -119,6 +119,11 @@ infopath=(
 # -----------------------------------------------------------------------------
 # Autoload custom functions
 # Must come after fpath is set above
-# (N) -- silently skip if no files match; :t -- strip path, keep filename only
+# (N:t) -- (N)=nullglob silently skip if no matches, (:t)=filename only
+# Guard required: 'autoload -Uz' with no arguments lists all functions to stdout
 # -----------------------------------------------------------------------------
-autoload -Uz $ZDOTDIR/functions/*(N:t)
+_func_files=($ZDOTDIR/functions/*(N:t))
+if (( ${#_func_files} )); then
+  autoload -Uz "${_func_files[@]}"
+fi
+unset _func_files

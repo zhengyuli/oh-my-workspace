@@ -303,7 +303,7 @@ eval "${user_input}"
 |---------|------|--------|
 | XDG_* variables | `.zshenv` | Needed by all shells |
 | ZDOTDIR | `.zshenv` | Must be set before other files load |
-| Tool XDG redirects | `.zshenv` | Needed even in non-interactive scripts |
+| Tool XDG redirects | `00-env.zsh` | Login shell context; sourced by .zprofile and .zshrc |
 | PATH changes | `.zprofile` / `05-path.zsh` | Only needed at login |
 | Editor/Pager | `.zprofile` / `00-env.zsh` | Only needed at login |
 | Aliases | `.zshrc` / `20-aliases.zsh` | Interactive only |
