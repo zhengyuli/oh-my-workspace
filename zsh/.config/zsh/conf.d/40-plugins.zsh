@@ -77,6 +77,8 @@ zinit ice wait lucid
 zinit light Aloxaf/fzf-tab
 
 # Additional completions
+# blockf: prevent compinit from rebuilding completion files on every load
+# (zsh-completions provides many extra completions that would slow down rebuild)
 zinit ice wait lucid blockf
 zinit light zsh-users/zsh-completions
 
@@ -103,8 +105,58 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 HISTORY_SUBSTRING_SEARCH_FUZZY=1
 
-# fzf-tab preview and style
-zstyle ':fzf-tab:complete:cd:*'     fzf-preview 'eza -1 --icons --color=always $realpath 2>/dev/null || ls -1 $realpath'
-zstyle ':fzf-tab:complete:*:*'      fzf-preview 'bat --style=numbers --color=always --line-range :50 $realpath 2>/dev/null || cat $realpath 2>/dev/null || echo $realpath'
-zstyle ':fzf-tab:*'                 fzf-flags --color=fg:#cdd6f4,bg:#1e1e2e,hl:#89b4fa
-zstyle ':fzf-tab:*'                 switch-group ',' '.'   # , . to switch completion groups
+# fzf-tab preview and style (Doom One theme)
+# Disable default menu
+zstyle ':completion:*' menu no
+
+# Group descriptions
+zstyle ':completion:*:descriptions' format '[%d]'
+
+# File colors
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+# Git branch sorting
+zstyle ':completion:*:git-checkout:*' sort false
+
+# ── Preview Configurations ──────────────────────────
+
+# cd: preview directory
+zstyle ':fzf-tab:complete:cd:*' fzf-preview \
+  'eza -1 --color=always --icons $realpath'
+
+# Files: preview content
+zstyle ':fzf-tab:complete:*:*' fzf-preview \
+  'bat --color=always --style=plain --line-range=:50 $realpath 2>/dev/null \
+   || eza -1 --color=always --icons $realpath 2>/dev/null'
+
+# Environment variables: preview value
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset):*' \
+  fzf-preview 'echo ${(P)word}'
+
+# kill: preview process info
+zstyle ':completion:*:*:*:*:processes' \
+  command "ps -u $USER -o pid,user,comm -w -w"
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
+  '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
+  fzf-flags --preview-window=down:3:wrap
+
+# brew: preview package info
+zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' fzf-preview \
+  'brew info $word'
+
+# man: preview man page
+zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview \
+  'man $word 2>/dev/null | head -50'
+
+# git: preview diff/log
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+  'git diff --color=always $word'
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
+  'git log --oneline --color=always $word'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
+  'git log --oneline --color=always $word 2>/dev/null \
+   || git show --color=always $word'
+
+# Switch groups with , and .
+zstyle ':fzf-tab:*' switch-group ',' '.'

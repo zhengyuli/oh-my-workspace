@@ -43,3 +43,27 @@ export VIMINIT="set nocp | source ${XDG_CONFIG_HOME}/vim/vimrc"
 # Emacs -- native XDG support since 29+
 # Explicit redirect ensures older versions and batch scripts find config
 export EMACS_INIT_DIRECTORY="$XDG_CONFIG_HOME/emacs"
+
+# ripgrep -- supports XDG_CONFIG_HOME but needs explicit path for config file
+# See: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
+
+# -----------------------------------------------------------------------------
+# Toolchain XDG Redirections (UV, Bun)
+# -----------------------------------------------------------------------------
+# Modern toolchain tools with configurable XDG paths.
+# These are set here to ensure they work in ALL shell contexts.
+
+# UV (Python package manager) -- https://docs.astral.sh/uv/reference/environment/
+export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
+export UV_CONFIG_FILE="$XDG_CONFIG_HOME/uv/uv.toml"
+export UV_TOOL_DIR="$XDG_DATA_HOME/uv/tools"
+export UV_TOOL_BIN_DIR="$HOME/.local/bin"
+export UV_PYTHON_INSTALL_DIR="$XDG_DATA_HOME/uv/python"
+export UV_PYTHON_CACHE_DIR="$XDG_CACHE_HOME/uv/python"
+
+# Bun (JS/TS runtime) -- https://github.com/oven-sh/bun/issues/1678
+# Note: Bun does not fully support XDG yet. Setting BUN_INSTALL redirects the
+# installation directory, but cache may still use ~/.bun/install/cache.
+# Track progress: https://github.com/oven-sh/bun/issues/1678
+export BUN_INSTALL="$XDG_DATA_HOME/bun"

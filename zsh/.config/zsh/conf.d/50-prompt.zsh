@@ -34,6 +34,17 @@ if command -v starship &>/dev/null; then
   export STARSHIP_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/starship"
   eval "$(starship init zsh)"
 
+  # ---------------------------------------------------------------------------
+  # Window Title
+  # ---------------------------------------------------------------------------
+  # Set terminal window title to current directory for supported terminals
+  # ---------------------------------------------------------------------------
+  if [[ "$TERM" == (alacritty|ghostty|kitty|wezterm|xterm-256color)* ]]; then
+    precmd() {
+      print -Pn "\e]0;%~\a"
+    }
+  fi
+
 # -----------------------------------------------------------------------------
 # Option B: Pure (Minimal)
 # -----------------------------------------------------------------------------

@@ -72,14 +72,16 @@ zstyle ':completion:*:corrections'  format '%F{green}-- %d (errors: %e) --%f'
 # Display completions in named groups
 zstyle ':completion:*' group-name ''
 
-# Ignore patterns - reduce noise
-zstyle ':completion:*' ignored-patterns '*?.o' '*?.pyc' '*?.class' '*?~'
+# Ignore patterns - reduce noise (object files, bytecode, backups, logs, temp files, deps)
+zstyle ':completion:*' ignored-patterns '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
 # Show processes from all users in process completion
 zstyle ':completion:*:processes' command 'ps -au$USER'
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
 # kill completion
+# Regex breakdown: (#b) enables backreferences, captures PID ($word[1]) and command ($word[2])
+#   =01;34=0=01 means: match=bold blue, first group=default, second group=bold
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*' force-list always

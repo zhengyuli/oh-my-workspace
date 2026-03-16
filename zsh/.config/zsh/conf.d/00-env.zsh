@@ -53,9 +53,6 @@ fi
 # These variables redirect tool data from ~/.toolname to XDG directories.
 # See: https://wiki.archlinux.org/title/XDG_Base_Directory
 
-# pyenv -- Python version manager
-export PYENV_ROOT="${PYENV_ROOT:-$XDG_DATA_HOME/pyenv}"
-
 # Cargo / Rust
 export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 
@@ -65,11 +62,10 @@ export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
 # Bun -- JavaScript runtime
 export BUN_INSTALL="${BUN_INSTALL:-$XDG_DATA_HOME/bun}"
 
-# npm -- global packages
-export NPM_CONFIG_PREFIX="${NPM_CONFIG_PREFIX:-$XDG_DATA_HOME/npm}"
-
-# fnm -- Fast Node Manager
-export FNM_DIR="${FNM_DIR:-$XDG_DATA_HOME/fnm}"
+# uv -- Python package manager
+export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
+export UV_DATA_DIR="$XDG_DATA_HOME/uv"
+export UV_CONFIG_FILE="$XDG_CONFIG_HOME/uv/uv.toml"
 
 # -----------------------------------------------------------------------------
 # Homebrew (macOS)
@@ -87,12 +83,22 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 export LESS='-R -F -X -i -M --use-color -Dd+r$Du+b'
 
 # -----------------------------------------------------------------------------
-# FZF -- Default Options
+# FZF -- Default Options (Doom One Theme)
 # -----------------------------------------------------------------------------
 export FZF_DEFAULT_OPTS="
-  --height 60%
+  --color=bg:#282c34,bg+:#21242b
+  --color=fg:#bbc2cf,fg+:#bbc2cf
+  --color=hl:#51afef,hl+:#46d9ff
+  --color=info:#ecbe7b,prompt:#c678dd
+  --color=pointer:#51afef,marker:#98be65
+  --color=spinner:#46d9ff,header:#5699af
+  --color=border:#3b3f46,label:#bbc2cf
+  --color=selected-bg:#2257a0
   --layout=reverse
   --border=rounded
+  --height=50%
+  --info=inline
+  --bind=tab:accept
   --preview-window=right:50%:wrap
 "
 

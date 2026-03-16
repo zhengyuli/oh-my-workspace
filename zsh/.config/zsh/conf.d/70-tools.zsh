@@ -1,59 +1,49 @@
 # 70-tools.zsh
 # =============================================================================
-# Lazy-Loaded Development Tools
+# Tool Shell Integrations
 #
 # Loaded by: Interactive shells (.zshrc)
 # Load order: After 60-keybinds.zsh, before 90-platform.zsh
 #
 # Responsibilities:
-#   1. Lazy-load version managers (pyenv, fnm) to improve shell startup
-#   2. Initialize shell integrations for tools (fzf, direnv)
-#   3. Configure development tooling that requires shell hooks
+#   1. Initialize shell integrations for tools (fzf, direnv)
+#   2. Configure tool completions (bun, uv)
+#   3. Set up development tooling that requires shell hooks
 #
 # Do NOT add: Environment variables, PATH changes, aliases
 #             → Environment variables: 00-env.zsh
 #             → PATH modifications: 05-path.zsh
 #             → Aliases: 20-aliases.zsh
 #
-# Performance Note:
-#   Lazy loading reduces shell startup by 300-500ms per tool. These version
-#   managers are only initialized when first called, not on every shell.
+# Note: bun and uv don't require lazy loading - they're fast native binaries.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# pyenv -- Python Version Manager
+# bun -- JavaScript/TypeScript Runtime
 # -----------------------------------------------------------------------------
-# Lazy load to avoid ~200ms startup penalty. On first call, initialize pyenv
-# and forward arguments to the real command.
+# Bun is a fast native binary, no lazy loading needed.
+# Completions are installed to $BUN_INSTALL/_bun
 #
-# Prerequisites: brew install pyenv
-# Config: $PYENV_ROOT (set in 00-env.zsh)
-# Usage: pyenv local 3.12.0
+# Prerequisites: brew install oven-sh/bun/bun
+# Config: $BUN_INSTALL (set in 00-env.zsh)
+# Usage: bun install, bun run dev
 # -----------------------------------------------------------------------------
-if [[ -x "${PYENV_ROOT:-$HOME/.pyenv}/bin/pyenv" ]] || command -v pyenv &>/dev/null; then
-  pyenv() {
-    unset -f pyenv
-    eval "$(command pyenv init -)"
-    pyenv "$@"
-  }
+if [[ -f "$BUN_INSTALL/_bun" ]]; then
+  source "$BUN_INSTALL/_bun"
 fi
 
 # -----------------------------------------------------------------------------
-# fnm -- Fast Node Manager
+# uv -- Python Package Manager
 # -----------------------------------------------------------------------------
-# Rust-based Node version manager, 40x faster than nvm. Lazy load for
-# instant shell startup while keeping .nvmrc auto-switching capability.
+# uv is a fast native binary, no lazy loading needed.
+# Completions are generated dynamically.
 #
-# Prerequisites: brew install fnm
-# Config: $FNM_DIR (set in 00-env.zsh)
-# Usage: fnm install 20 && fnm use 20
+# Prerequisites: brew install uv
+# Config: $UV_* variables (set in 00-env.zsh)
+# Usage: uv add requests, uv venv
 # -----------------------------------------------------------------------------
-if command -v fnm &>/dev/null; then
-  fnm() {
-    unset -f fnm
-    eval "$(command fnm env --use-on-cd --shell zsh)"
-    fnm "$@"
-  }
+if command -v uv &>/dev/null; then
+  eval "$(uv generate-shell-completion zsh)"
 fi
 
 # -----------------------------------------------------------------------------
@@ -92,4 +82,17 @@ fi
 # -----------------------------------------------------------------------------
 if command -v direnv &>/dev/null; then
   eval "$(direnv hook zsh)"
+fi
+
+# -----------------------------------------------------------------------------
+# zoxide -- Smart cd Command
+# -----------------------------------------------------------------------------
+# Fast directory jumping with frecency algorithm. Replaces z, autojump.
+#
+# Prerequisites: brew install zoxide
+# Usage: z <dir> (jump to directory), zi (interactive selection)
+# Documentation: https://github.com/ajeetdsouza/zoxide
+# -----------------------------------------------------------------------------
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh --cmd z)"
 fi
