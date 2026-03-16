@@ -1,0 +1,55 @@
+# uv.toml
+# =============================================================================
+# UV Package Manager Global Configuration
+#
+# Location: ~/.config/uv/uv.toml
+# XDG: Native support (no UV_* env overrides needed)
+#      - Cache: $XDG_CACHE_HOME/uv (~/.cache/uv)
+#      - Data:  $XDG_DATA_HOME/uv (~/.local/share/uv)
+#      - State: $XDG_STATE_HOME/uv (~/.local/state/uv)
+#
+# References:
+#   1. Official Docs: https://docs.astral.sh/uv/concepts/configuration-files/
+#   2. Config Options: https://docs.astral.sh/uv/reference/settings/
+#   3. Best Practices: https://docs.astral.sh/uv/guides/integration/pytorch/
+#
+# Note: Project-specific settings should go in pyproject.toml [tool.uv] section.
+# =============================================================================
+
+# ─── Package Index ────────────────────────────────────────────────────────
+[[index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+publish-url = "https://upload.pypi.org/legacy/"
+default = true
+
+# ─── Networking ───────────────────────────────────────────────────────────
+# Use system trust store (Keychain) instead of bundled webpki-roots.
+# Required for: corporate proxies, self-signed CAs, non-Mozilla certificates.
+native-tls = true
+
+# ─── Optional Settings (uncomment to enable) ──────────────────────────────
+# These are common settings users might want. Uncomment as needed.
+
+# Installation strategy options:
+# - clone: copy-on-write, most efficient on macOS/APFS
+# - symlink: traditional approach, best compatibility
+# - copy: safe but slower, works everywhere
+# - hardlink: fast but may cause issues with some tools
+# link-mode = "clone"
+
+# Compile Python bytecode for faster imports after installation.
+# compile-bytecode = true
+
+# Allow pre-release versions (useful for testing new features)
+# pre-release = "allow"
+
+# Concurrency settings (defaults are usually optimal)
+# concurrent-builds = 8
+# concurrent-installs = 8
+
+# ─── CI/CD Integration ────────────────────────────────────────────────────
+# For CI environments, set via environment variables:
+#   UV_FROZEN=true          - Fail if lockfile is outdated
+#   UV_NO_PROGRESS=true     - Disable progress bars in logs
+#   UV_CACHE_DIR=/tmp/uv    - Override cache location

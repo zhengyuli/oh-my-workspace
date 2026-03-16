@@ -3,11 +3,11 @@
 # Tool Shell Integrations
 #
 # Loaded by: Interactive shells (.zshrc)
-# Load order: After 60-keybinds.zsh, before 90-platform.zsh
+# Load order: 70 (after 60-keybinds.zsh, before 99-local.zsh)
 #
 # Responsibilities:
 #   1. Initialize shell integrations for tools (fzf, direnv)
-#   2. Configure tool completions (bun, uv)
+#   2. Configure tool completions (bun, uv, carapace)
 #   3. Set up development tooling that requires shell hooks
 #
 # Do NOT add: Environment variables, PATH changes, aliases
@@ -44,6 +44,28 @@ fi
 # -----------------------------------------------------------------------------
 if command -v uv &>/dev/null; then
   eval "$(uv generate-shell-completion zsh)"
+fi
+
+# -----------------------------------------------------------------------------
+# carapace -- Universal Shell Completion
+# -----------------------------------------------------------------------------
+# Provides fzf-compatible completions for 1600+ CLI tools automatically.
+# Replaces the need to manually write _<cmd> completion functions.
+#
+# Prerequisites: brew install carapace
+# Bridges: falls back to native zsh/bash/fish completions when available
+# Usage: any supported command + Tab (e.g. claude --<Tab>, gh <Tab>)
+# Supported commands: carapace --list
+# Documentation: https://carapace.sh
+#
+# Note: Must be sourced AFTER compinit (handled by 30-completion.zsh) and
+#       AFTER fzf-tab (handled by 40-plugins.zsh turbo wait). Loading here
+#       in 70-tools.zsh satisfies both constraints.
+# -----------------------------------------------------------------------------
+if command -v carapace &>/dev/null; then
+  # Bridge to existing native completions when carapace has no spec for a command
+  export CARAPACE_BRIDGES='zsh,fish,bash'
+  source <(carapace _carapace zsh)
 fi
 
 # -----------------------------------------------------------------------------

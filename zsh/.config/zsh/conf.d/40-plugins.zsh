@@ -3,7 +3,7 @@
 # Zinit Plugin Management
 #
 # Loaded by: Interactive shells (.zshrc)
-# Load order: After 30-completion.zsh, before 50-prompt.zsh
+# Load order: 40 (after 30-completion.zsh, before 50-prompt.zsh)
 #
 # Responsibilities:
 #   1. Bootstrap and configure Zinit plugin manager
@@ -18,7 +18,7 @@
 # -----------------------------------------------------------------------------
 # Zinit bootstrap
 # Data directory follows XDG: $XDG_DATA_HOME/zinit/
-# ----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Idempotency guard - prevent double loading
 (( ${+ZINIT_INITIALIZED} )) && return 0
 
@@ -37,12 +37,15 @@ if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
   fi
 fi
 
+# Guard against missing file even after clone (e.g. disk full)
+[[ -f "$ZINIT_HOME/zinit.zsh" ]] || return 1
 source "$ZINIT_HOME/zinit.zsh"
 ZINIT_INITIALIZED=1
 
 # -----------------------------------------------------------------------------
 # Zinit annexes (extend Zinit functionality; recommended to keep)
-# ----------------------------------------------------------------------------
+# Only include annexes you actually use; unused ones add clone-check overhead
+# -----------------------------------------------------------------------------
 zinit light-mode for \
   zdharma-continuum/zinit-annex-as-monitor \
   zdharma-continuum/zinit-annex-bin-gem-node \
@@ -51,7 +54,7 @@ zinit light-mode for \
 
 # -----------------------------------------------------------------------------
 # Core plugins -- turbo mode (wait: load after prompt appears; lucid: no output)
-# ----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Syntax highlighting -- must load before autosuggestions
 zinit ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay"
@@ -84,7 +87,7 @@ zinit light zsh-users/zsh-completions
 
 # -----------------------------------------------------------------------------
 # Utility plugins
-# ----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # autopair -- auto-close brackets and quotes
 zinit ice wait lucid
@@ -92,7 +95,7 @@ zinit light hlissner/zsh-autopair
 
 # -----------------------------------------------------------------------------
 # Plugin configuration
-# ----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # zsh-autosuggestions
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)   # history first, then completion
@@ -103,7 +106,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#6c7086'    # suggestion text color (Catppuc
 # zsh-history-substring-search (key bindings set via atload above)
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
-HISTORY_SUBSTRING_SEARCH_FUZZY=1
+# HISTORY_SUBSTRING_SEARCH_FUZZY=1              # disabled: perf cost on large histories
 
 # fzf-tab preview and style (Doom One theme)
 # Disable default menu
@@ -118,14 +121,15 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # Git branch sorting
 zstyle ':completion:*:git-checkout:*' sort false
 
-# ── Preview Configurations ──────────────────────────
+# --- fzf-tab Preview Configurations ---
 
 # cd: preview directory
 zstyle ':fzf-tab:complete:cd:*' fzf-preview \
   'eza -1 --color=always --icons $realpath'
 
-# Files: preview content
-zstyle ':fzf-tab:complete:*:*' fzf-preview \
+# Files: preview content — scoped to argument completion only to avoid
+# triggering on command names, users, hostnames, etc.
+zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
   'bat --color=always --style=plain --line-range=:50 $realpath 2>/dev/null \
    || eza -1 --color=always --icons $realpath 2>/dev/null'
 
@@ -134,10 +138,11 @@ zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset)
   fzf-preview 'echo ${(P)word}'
 
 # kill: preview process info
+# Use BSD-compatible -p flag (macOS ps does not support --pid)
 zstyle ':completion:*:*:*:*:processes' \
   command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-  '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+  '[[ $group == "[process ID]" ]] && ps -p $word -o comm= 2>/dev/null'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
   fzf-flags --preview-window=down:3:wrap
 
@@ -160,3 +165,4 @@ zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
 
 # Switch groups with , and .
 zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ':fzf-tab:*' fzf-flags --nth=1
