@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-16 19:43:32 Monday by zhengyuli>
+# defaults-dev.sh -*- mode: sh; -*-
+# Time-stamp: <2026-03-16 22:27:57 Monday by zhengyuli>
 #
 # Copyright (C) 2026 zhengyu li
 #
 # Author: zhengyuli <lizhengyu419@outlook.com>
-# Description: macOS system defaults configuration
+# Description: macOS system defaults — developer-optimized
 #
-# Inspired by:
-# - https://github.com/mathiasbynens/dotfiles/blob/main/.macos
-# - https://github.com/nicknisi/dotfiles/blob/main/install/macos
-# ==============================================================================
-
-# ==============================================================================
-# Close any open System Preferences panes
+# Based on defaults.sh with the following changes:
+#   - Finder new window defaults to $HOME instead of Desktop
+#   - Keyboard repeat can go to max (KeyRepeat=1, InitialKeyRepeat=10)
+#   - Trackpad corner right-click removed (prone to accidental triggers)
+#   - Added: window/QL animation speedup, CrashReporter silence, spring loading
+#   - App Store: kept security updates only, disabled auto-install of others
 # ==============================================================================
 
 osascript -e 'tell application "System Preferences" to quit' 2>/dev/null
@@ -25,15 +24,15 @@ osascript -e 'tell application "System Preferences" to quit' 2>/dev/null
 
 echo "Setting General UI/UX preferences..."
 
-# Set standby delay to 24 hours (default is 1 hour)
+# Set standby delay to 24 hours
 sudo pmset -a standbydelay 86400
 
-# Disable the sound effects on boot
+# Disable startup sound
 sudo nvram StartupMute=1
 
 # Remove duplicates in the "Open With" menu
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
-    -kill -r -domain local -domain system -domain user
+    -r -domain local -domain system -domain user
 
 # Set sidebar icon size to medium
 defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
@@ -55,20 +54,26 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
+# Speed up window resize animation
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+
+# Silence crash reporter dialogs
+defaults write com.apple.CrashReporter DialogType -string "none"
+
 # ==============================================================================
 # Keyboard
 # ==============================================================================
 
 echo "Setting Keyboard preferences..."
 
-# Enable full keyboard access for all controls (Tab through all UI elements)
+# Enable full keyboard access for all controls
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-# Set a fast keyboard repeat rate
-defaults write NSGlobalDomain KeyRepeat -int 2
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
+# Maximum keyboard repeat rate (faster than original KeyRepeat=2)
+defaults write NSGlobalDomain KeyRepeat -int 1
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
-# Disable press-and-hold for keys in favor of key repeat
+# Disable press-and-hold in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # ==============================================================================
@@ -77,16 +82,18 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 echo "Setting Trackpad/Mouse preferences..."
 
-# Trackpad: enable tap to click
+# Enable tap to click
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-# Trackpad: map bottom right corner to right-click
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
+# Right-click via two-finger tap (corner mapping removed — prone to accidental triggers)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
+
+# Enable spring loading for directories (drag & hover to open)
+defaults write NSGlobalDomain com.apple.springing.enabled -bool true
+defaults write NSGlobalDomain com.apple.springing.delay -float 0
 
 # ==============================================================================
 # Screen
@@ -98,7 +105,7 @@ echo "Setting Screen preferences..."
 defaults write com.apple.screensaver askForPassword -int 1
 defaults write com.apple.screensaver askForPasswordDelay -int 0
 
-# Save screenshots to the desktop in PNG format, without drop shadow
+# Save screenshots to Desktop in PNG format, without drop shadow
 defaults write com.apple.screencapture location -string "${HOME}/Desktop"
 defaults write com.apple.screencapture type -string "png"
 defaults write com.apple.screencapture disable-shadow -bool true
@@ -109,11 +116,11 @@ defaults write com.apple.screencapture disable-shadow -bool true
 
 echo "Setting Finder preferences..."
 
-# Set Desktop as the default location for new Finder windows
-defaults write com.apple.finder NewWindowTarget -string "PfDe"
-defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/Desktop/"
+# Set $HOME as default location for new Finder windows (more useful than Desktop)
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
+defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 
-# Show external drives and servers on the desktop; hide internal drive
+# Show external drives and servers on desktop; hide internal drive
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
 defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
@@ -130,7 +137,7 @@ defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
 # Keep folders on top when sorting by name
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 
-# When performing a search, search the current folder by default
+# Search the current folder by default
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
 # Avoid creating .DS_Store files on network or USB volumes
@@ -154,6 +161,9 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
          General -bool true \
          OpenWith -bool true \
          Privileges -bool true
+
+# Speed up Quick Look panel animation
+defaults write NSGlobalDomain QLPanelAnimationDuration -float 0
 
 # ==============================================================================
 # Dock
@@ -187,11 +197,11 @@ defaults write com.apple.dock show-recents -bool false
 
 echo "Setting Terminal preferences..."
 
-# Only use UTF-8 in Terminal.app
+# Only use UTF-8
 defaults write com.apple.terminal StringEncodings -array 4
 
-# Enable Secure Keyboard Entry — prevents other processes from reading
-# keystrokes while Terminal is focused
+# Enable Secure Keyboard Entry — blocks other processes from reading keystrokes
+# NOTE: may interfere with some tmux attach setups; disable if needed
 defaults write com.apple.terminal SecureKeyboardEntry -bool true
 
 # Disable line marks
@@ -203,7 +213,7 @@ defaults write com.apple.Terminal ShowLineMarks -int 0
 
 echo "Setting Time Machine preferences..."
 
-# Prevent Time Machine from prompting to use new hard drives as backup volumes
+# Don't prompt to use new disks as backup volumes
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 # ==============================================================================
@@ -212,7 +222,7 @@ defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 echo "Setting TextEdit preferences..."
 
-# Use plain text mode and UTF-8 encoding by default
+# Plain text mode + UTF-8 by default
 defaults write com.apple.TextEdit RichText -int 0
 defaults write com.apple.TextEdit PlainTextEncoding -int 4
 defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
@@ -223,12 +233,14 @@ defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 
 echo "Setting Mac App Store preferences..."
 
-# Automatic updates: daily check, background download, install security updates
+# Check for updates daily
 defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
 defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
-defaults write com.apple.SoftwareUpdate AutomaticDownload -int 1
+
+# Auto-install security/critical updates only; leave regular updates manual
+defaults write com.apple.SoftwareUpdate AutomaticDownload -int 0
 defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int 1
-defaults write com.apple.commerce AutoUpdate -bool true
+defaults write com.apple.commerce AutoUpdate -bool false
 
 # ==============================================================================
 # Photos
@@ -258,12 +270,12 @@ echo "Restarting affected applications..."
 
 for app in \
     "cfprefsd" \
-        "Dock" \
-        "Finder" \
-        "Messages" \
-        "Photos" \
-        "SystemUIServer" \
-        "Terminal"; do
+    "Dock" \
+    "Finder" \
+    "Messages" \
+    "Photos" \
+    "SystemUIServer" \
+    "Terminal"; do
     killall "${app}" &>/dev/null
 done
 
