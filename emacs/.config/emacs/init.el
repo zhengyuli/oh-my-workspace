@@ -236,6 +236,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
   ;; Prog mode modules
   (require 'omw-prog)
+  (require 'omw-utils)
   (require 'omw-cc)
   (require 'omw-go)
   (require 'omw-python)
