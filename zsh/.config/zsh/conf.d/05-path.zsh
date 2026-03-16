@@ -13,8 +13,7 @@
 #   5. Ensure idempotency via typeset -gU (unique, global)
 #
 # Prerequisites:
-#   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL,
-#     UV_DATA_DIR, XDG_* variables
+#   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL, XDG_* variables
 #
 # Do NOT add:
 #   - Tool initialization → 70-tools.zsh
@@ -79,9 +78,9 @@ fpath=(
   # Autoloaded custom functions
   "$ZDOTDIR/functions"(N-/)
 
-  # Homebrew completions (Apple Silicon)
-  /opt/homebrew/share/zsh/site-functions(N-/)
-  /opt/homebrew/share/zsh-completions(N-/)
+  # Homebrew completions (HOMEBREW_PREFIX from 00-env.zsh; Apple Silicon + Intel)
+  "$HOMEBREW_PREFIX/share/zsh/site-functions"(N-/)
+  "$HOMEBREW_PREFIX/share/zsh-completions"(N-/)
 
   # Preserve existing fpath (fallback)
   $fpath
@@ -91,8 +90,8 @@ fpath=(
 # MANPATH -- manual page search path
 # -----------------------------------------------------------------------------
 manpath=(
-  # Homebrew man pages (Apple Silicon)
-  /opt/homebrew/share/man(N-/)
+  # Homebrew man pages (HOMEBREW_PREFIX from 00-env.zsh; Apple Silicon + Intel)
+  "$HOMEBREW_PREFIX/share/man"(N-/)
 
   # System man pages
   /usr/local/share/man(N-/)
@@ -106,8 +105,8 @@ manpath=(
 # INFOPATH -- info page search path (GNU info system)
 # -----------------------------------------------------------------------------
 infopath=(
-  # Homebrew info pages (Apple Silicon)
-  /opt/homebrew/share/info(N-/)
+  # Homebrew info pages (HOMEBREW_PREFIX from 00-env.zsh; Apple Silicon + Intel)
+  "$HOMEBREW_PREFIX/share/info"(N-/)
 
   # System info pages
   /usr/local/share/info(N-/)
