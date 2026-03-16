@@ -97,12 +97,17 @@ fi
 if command -v fzf &>/dev/null; then
   _fzf_prefix="$HOMEBREW_PREFIX/opt/fzf"
 
+  # Key bindings (Ctrl-R, Ctrl-T, Alt-C) - safe to load
   if [[ -f "$_fzf_prefix/shell/key-bindings.zsh" ]]; then
     source "$_fzf_prefix/shell/key-bindings.zsh"
   fi
 
+  # Completion (**<Tab> trigger) - provides fuzzy completion via **<Tab>
+  # NOTE: fzf completion.zsh binds Tab to fzf-completion, which conflicts
+  # with fzf-tab. Restore fzf-tab binding after sourcing.
   if [[ -f "$_fzf_prefix/shell/completion.zsh" ]]; then
     source "$_fzf_prefix/shell/completion.zsh"
+    bindkey '^I' fzf-tab-complete
   fi
 
   unset _fzf_prefix
