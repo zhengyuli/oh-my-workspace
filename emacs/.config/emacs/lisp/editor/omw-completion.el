@@ -82,7 +82,7 @@
 
 (use-package corfu-terminal
   :ensure t
-  :unless (display-graphic-p)
+  :when (not (display-graphic-p))
   :after corfu
   :config
   (corfu-terminal-mode 1))
