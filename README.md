@@ -489,7 +489,7 @@ Install all dependencies with:
 
 ```shell
 # Core tools
-brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm marksman fd
+brew install git aspell pandoc ripgrep coreutils libvterm fd
 
 # Node.js LSP servers
 npm install -g yaml-language-server bash-language-server dockerfile-language-server-nodejs typescript-language-server typescript

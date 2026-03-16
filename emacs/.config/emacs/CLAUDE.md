@@ -63,14 +63,14 @@ emacs/
 # Test configuration loads without errors
 emacs --debug-init
 
-# Install all dependencies (macOS)
-brew install git aspell pandoc the_silver_searcher ripgrep coreutils libvterm fd marksman llvm
-npm install -g typescript-language-server yaml-language-server bash-language-server dockerfile-language-server-nodejs
-pip install "python-lsp-server[all]" black black-macchiato isort pylint debugpy cmake-language-server
+# Install all dependencies via Homebrew
+brew bundle --file homebrew/Brewfile
+
+# Install LSP servers (language-specific package managers)
+bun install -g typescript-language-server yaml-language-server bash-language-server dockerfile-language-server-nodejs
+uv tool install basedpyright ruff
 go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
 ```
-
-Dependencies are managed via `homebrew/Brewfile` at the repository root.
 
 ### Common Commands
 
