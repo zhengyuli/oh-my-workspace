@@ -69,7 +69,7 @@ zinit light zsh-users/zsh-autosuggestions
 # fzf-tab -- replace default Tab completion menu with fzf
 # Load synchronously (no wait) to register widget immediately after compinit.
 # Async loading causes widget registration timing issues with Tab key.
-# fzf completion.zsh moved to 70-tools.zsh to avoid widget conflicts.
+# fzf's completion.zsh is intentionally NOT loaded (see 70-tools.zsh).
 zinit ice
 zinit light Aloxaf/fzf-tab
 

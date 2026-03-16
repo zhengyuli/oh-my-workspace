@@ -42,8 +42,11 @@ export LANG=en_US.UTF-8
 export HISTFILE="$XDG_CACHE_HOME/zsh/history"
 
 # Ensure cache directory exists on first run (idempotent).
-if [[ ! -d "${HISTFILE:h}" ]]; then
-  mkdir -p "${HISTFILE:h}"
+# This directory is shared by multiple modules: history, zcompdump,
+# completion-cache, uv/carapace completion caches (see 30-completion.zsh,
+# 70-tools.zsh). Do not derive the path from HISTFILE alone.
+if [[ ! -d "$XDG_CACHE_HOME/zsh" ]]; then
+  mkdir -p "$XDG_CACHE_HOME/zsh"
 fi
 
 # -----------------------------------------------------------------------------
