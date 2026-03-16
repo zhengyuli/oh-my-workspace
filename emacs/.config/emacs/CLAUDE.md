@@ -387,20 +387,41 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 
 #### :config Rules
 
-**Simple configuration:**
+**Simple configuration (single category):**
 ```elisp
 :config
 (setq var1 value1
       var2 value2)
 ```
 
-**Complex configuration:**
+**Categorized configuration (multiple categories) - PREFERRED:**
 ```elisp
 :config
-(setq var1 value1)
-(setq var2 value2)
-(function-call arg1 arg2)
+;; Category 1
+(setq var1 value1
+      var2 value2)
+
+;; Category 2
+(setq var3 value3
+      var4 value4)
+
+;; Category 3
+(setq var5 value5)
 ```
+
+**Category naming guidelines:**
+- Use brief, descriptive names (e.g., "UI and interaction", "Backup and version control")
+- Group related settings together
+- Separate categories with blank lines
+- Each category gets its own `setq` block
+
+**Common category examples:**
+- `XDG paths` - File path configurations
+- `Startup behavior` - inhibit-startup-*, etc.
+- `UI and interaction` - use-short-answers, ring-bell-function
+- `Backup and version control` - backup-*, version-control, delete-old-versions
+- `File and buffer management` - recentf-*, uniquify-*
+- `User identity and timestamps` - user-full-name, time-stamp-format
 
 **Configuration with requires:**
 ```elisp

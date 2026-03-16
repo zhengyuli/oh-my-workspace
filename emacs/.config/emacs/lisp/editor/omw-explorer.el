@@ -101,6 +101,7 @@
                ("M-<" . dired-goto-first-line)
                ("M->" . dired-goto-last-line)
                ("M-o" . dired-omit-mode)
+
                ;; File operations
                ("v" . dired-view-file)
                ("o" . omw/dired-open-externally)
@@ -112,15 +113,18 @@
                ("D" . ediff-directories)
                ("z" . dired-do-compress)
                ("Z" . dired-do-compress)
+
                ;; Cryptography (GPG/PGP operations)
                (": e" . epa-dired-do-encrypt)
                (": d" . epa-dired-do-decrypt)
                (": s" . epa-dired-do-sign)
                (": v" . epa-dired-do-verify)
+
                ;; Copy/Cut/Paste (clipboard operations)
                ("M-w" . dired-copy-files)
                ("M-k" . dired-cut-files)
                ("C-y" . dired-paste-files)
+
                ;; File path utilities (copy to clipboard)
                ("; n" . dired-get-file-name-without-path)
                ("; N" . dired-get-file-name-with-path)
