@@ -404,24 +404,45 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 ;; Category 2
 (setq var3 value3
       var4 value4)
-
-;; Category 3
-(setq var5 value5)
 ```
 
 **Category naming guidelines:**
-- Use brief, descriptive names (e.g., "UI and interaction", "Backup and version control")
+- Use brief, descriptive names based on **functionality**, not implementation details
 - Group related settings together
-- Separate categories with blank lines
+- Separate categories with **blank lines** (one empty line between categories)
 - Each category gets its own `setq` block
+- Single-variable categories are acceptable when the variable is distinct enough
 
 **Common category examples:**
-- `XDG paths` - File path configurations
-- `Startup behavior` - inhibit-startup-*, etc.
+- `Autosave` - auto-save-list-file-prefix
+- `Native compilation` - native-compile-target-directory
+- `Backup and version control` - backup-directory-alist, backup-by-copying, version-control, delete-old-versions
+- `File and buffer management` - recentf-max-saved-items, uniquify-buffer-name-style, uniquify-separator
+- `User identity and timestamps` - user-full-name, user-mail-address, time-stamp-format
+- `Startup behavior` - inhibit-default-init, inhibit-startup-echo-area-message, inhibit-startup-screen
 - `UI and interaction` - use-short-answers, ring-bell-function
-- `Backup and version control` - backup-*, version-control, delete-old-versions
-- `File and buffer management` - recentf-*, uniquify-*
-- `User identity and timestamps` - user-full-name, time-stamp-format
+- `macOS key modifiers` - mac-command-modifier, mac-option-modifier (platform-specific)
+
+**AVOID grouping by implementation detail:**
+```elisp
+;; ❌ WRONG: Grouping by "XDG paths" (implementation detail)
+;; XDG paths
+(setq auto-save-list-file-prefix ...
+      native-compile-target-directory ...
+      backup-directory-alist ...)
+
+;; ✅ CORRECT: Grouping by functionality
+;; Autosave
+(setq auto-save-list-file-prefix ...)
+
+;; Native compilation
+(setq native-compile-target-directory ...)
+
+;; Backup and version control
+(setq backup-directory-alist ...
+      backup-by-copying t
+      version-control t)
+```
 
 **Configuration with requires:**
 ```elisp

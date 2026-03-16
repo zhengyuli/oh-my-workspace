@@ -135,28 +135,32 @@
   (require 'dired-async)
   (require 'dired-custom-extension)
 
+  ;; Navigation behavior
   (setq dired-dwim-target t
         dired-recursive-copies 'always
         dired-recursive-deletes 'always
         dired-deletion-confirmer 'y-or-n-p
-        dired-auto-revert-buffer (not (file-remote-p default-directory))
+        dired-auto-revert-buffer (not (file-remote-p default-directory)))
 
-        ;; Core omit filter rules (fixed regex with exact matching)
-        dired-omit-files (concat
+  ;; Omit filter rules
+  (setq dired-omit-files (concat
                           ;; Hide all hidden files/directories starting with . (e.g., .git, .env)
                           "^\\.\\|"
                           ;; Hide specified directories (exact name match to avoid false positives)
                           "\\(node_modules\\|__pycache__\\|.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
                           ;; Hide macOS special file (exact match)
-                          "\\.DS_Store\\'")
-        ;; Supplementary file extension filter (aligned with omit-files, redundant but as fallback)
-        dired-omit-extensions (append dired-omit-extensions '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
+                          "\\.DS_Store\\'"))
 
+  ;; Supplementary file extension filter
+  (setq dired-omit-extensions (append dired-omit-extensions '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
+
+  ;; Listing switches
   (if (executable-find "gls")
       (setq insert-directory-program "gls"
             dired-listing-switches "-alh --group-directories-first")
     (setq dired-listing-switches "-alh"))
 
+  ;; Dirvish integration
   (dirvish-override-dired-mode 1)
   (dired-async-mode 1))
 

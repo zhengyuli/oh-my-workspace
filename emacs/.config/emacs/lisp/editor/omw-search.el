@@ -72,9 +72,35 @@
          ("C-x g" . consult-ripgrep)
          ("C-x f" . consult-find))
   :config
+  ;; Async search settings
   (setq consult-async-min-input 2
         consult-async-refresh-delay 0.15
-        consult-preview-key '(:debounce 0.25 any)))
+        consult-preview-key '(:debounce 0.25 any))
+
+  ;; Ripgrep arguments - extend defaults with additional ignore patterns
+  ;; Use --no-config to ignore global ripgrep config and ensure consistent behavior
+  ;; See: https://github.com/minad/consult#consult-ripgrep
+  (setq consult-ripgrep-args
+        '("rg"
+          "--null"
+          "--line-buffered"
+          "--color=never"
+          "--max-columns=1000"
+          "--path-separator=/"
+          "--smart-case"
+          "--no-heading"
+          "--with-filename"
+          "--line-number"
+          "--search-zip"
+          "--no-config"
+          "--hidden"
+          ;; build artifacts
+          "--glob=!node_modules/"
+          "--glob=!target/"
+          "--glob=!dist/"
+          "--glob=!__pycache__/"
+          ;; generated/compiled files
+          "--glob=!*.{lock,min.js,min.css,elc,pyc}")))
 
 ;; ==================================================================================
 ;; Will be loaded by embark automatically.
