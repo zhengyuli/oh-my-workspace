@@ -14,6 +14,8 @@ oh-my-dotfiles/
 ├── emacs/                # Emacs configuration (>= 30.2)
 │   ├── CLAUDE.md         # Emacs-specific guidance (detailed)
 │   └── .config/emacs/    # Symlinked to ~/.config/emacs/
+├── ghostty/              # Ghostty terminal configuration
+│   └── .config/ghostty/  # Symlinked to ~/.config/ghostty/
 ├── vim/                  # Vim configuration
 │   └── .config/vim/      # Symlinked to ~/.config/vim/
 ├── zsh/                  # Zsh configuration
@@ -33,16 +35,16 @@ GNU Stow manages symlinks from packages to `$HOME`:
 
 ```bash
 # Stow all packages
-stow -d /path/to/oh-my-dotfiles -t "$HOME" zsh git vim emacs
+stow -d /path/to/oh-my-dotfiles -t "$HOME" zsh git vim emacs ripgrep
 
 # Stow specific packages
 stow zsh git
 
 # Unstow (remove symlinks)
-stow -D zsh git vim emacs
+stow -D zsh git vim emacs ripgrep
 
 # Restow (refresh symlinks)
-stow -R zsh git vim emacs
+stow -R zsh git vim emacs ripgrep
 
 # Dry-run to see what would happen
 stow -n zsh
@@ -50,12 +52,14 @@ stow -n zsh
 
 ## Stow Package System
 
-| Package  | Contents                                        |
-|----------|-------------------------------------------------|
-| `zsh/`   | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
-| `git/`   | `.config/git/` → `$HOME/.config/git/`           |
-| `vim/`   | `.config/vim/` → `$HOME/.config/vim/`           |
-| `emacs/` | `.config/emacs/` → `$HOME/.config/emacs/`       |
+| Package    | Contents                                        |
+|------------|-------------------------------------------------|
+| `zsh/`     | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
+| `git/`     | `.config/git/` → `$HOME/.config/git/`           |
+| `vim/`     | `.config/vim/` → `$HOME/.config/vim/`           |
+| `emacs/`   | `.config/emacs/` → `$HOME/.config/emacs/`       |
+| `ghostty/`  | `.config/ghostty/` → `$HOME/.config/ghostty/`   |
+| `ripgrep/` | `.config/ripgrep/` → `$HOME/.config/ripgrep/` |
 
 **Note:** `homebrew/` and `macos/` are NOT stow packages — they provide scripts/utilities only.
 
@@ -70,7 +74,7 @@ cd ~/oh-my-dotfiles
 brew bundle --file homebrew/Brewfile
 
 # 3. Stow configuration packages
-stow zsh git vim emacs
+stow zsh git vim emacs ghostty ripgrep
 
 # 4. Restart shell or source zshenv
 source ~/.zshenv
@@ -90,6 +94,52 @@ XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 ## Zsh Plugin System
 
 Zsh plugins are managed by **Zinit** installed at `${XDG_DATA_HOME}/zinit/`. See `zsh/CLAUDE.md` for plugin configuration.
+
+## Toolchain
+
+Modern development toolchain without traditional version managers:
+
+| Tool | Purpose | Replaces |
+|------|---------|----------|
+| **bun** | JS/TS runtime + package manager | node, npm, yarn, pnpm, fnm |
+| **uv** | Python package manager | pip, pipenv, poetry, pyenv |
+| **go** | Go programming language | (standard install) |
+
+### Installation Commands
+
+```bash
+# Global LSP Servers (bun/uv managed)
+
+# JS/TS ecosystem
+bun install -g typescript-language-server typescript
+bun install -g vscode-langservers-extracted   # html/css/json/eslint
+bun install -g bash-language-server
+bun install -g @tailwindcss/language-server
+bun install -g prettier
+
+# Python ecosystem
+uv tool install basedpyright
+uv tool install ruff
+
+# Go (standard install)
+go install golang.org/x/tools/gopls@latest
+go install golang.org/x/tools/cmd/goimports@latest
+
+# System-level (via Homebrew)
+# clangd, lua-language-server, rust-analyzer
+```
+
+## Terminal
+
+- **Ghostty**: Fast, native terminal emulator with XDG-compliant configuration
+- **Theme**: Doom One color scheme across all tools
+
+## Theme
+
+Unified **Doom One** theme across:
+- **Emacs**: `doom-one` theme via `doom-themes` package
+- **Ghostty**: Custom color palette matching Doom One
+- **fzf**: Doom One color configuration in `FZF_DEFAULT_OPTS`
 
 ## Subdirectory CLAUDE.md Files
 
@@ -119,6 +169,7 @@ emacs --debug-init
 - **Stow-managed**: Config files are symlinked via GNU Stow
 - **XDG-compliant**: Follows XDG Base Directory Specification
 - **Emacs prefix**: Uses `omw/` prefix (oh-my-workspace) for custom functions/variables
+- **Modern toolchain**: bun for JS/TS, uv for Python, no version managers needed
 
 ## Shell Script Coding Standards
 

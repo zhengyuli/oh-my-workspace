@@ -90,10 +90,36 @@
         (shell-command cmd)
         (message "%s installed successfully" exe)))))
 
+;; ==================================================================================
+(defun omw/python-format-buffer ()
+  "Format current Python buffer using ruff."
+  (when (and (executable-find "ruff")
+             (buffer-file-name))
+    (let ((temp-file (make-temp-file "ruff-format-")))
+      (write-region (point-min) (point-max) temp-file nil 'silent)
+      (call-process "ruff" nil nil nil "format" temp-file)
+      (insert-file-contents temp-file nil nil nil t)
+      (delete-file temp-file))))
+
+(defun omw/python-before-save ()
+  "Run Python-specific actions before saving."
+  (when (eq major-mode 'python-mode)
+    (omw/python-format-buffer)))
+
+(define-minor-mode omw/python-before-save-mode
+  "Minor mode for Python buffers to run custom before-save hooks."
+  :lighter " PySave"
+  :global nil
+  (if omw/python-before-save-mode
+      (add-hook 'before-save-hook #'omw/python-before-save nil t)
+    (remove-hook 'before-save-hook #'omw/python-before-save t)))
+
+;; ==================================================================================
 (use-package python
   :ensure nil
   :defer t
-  :hook (python-mode . omw/ensure-python-tools)
+  :hook ((python-mode . omw/ensure-python-tools)
+         (python-mode . omw/python-before-save-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . comment-line))
   :config

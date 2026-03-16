@@ -33,17 +33,6 @@
 ;;; Code:
 
 ;; ==================================================================================
-;; XDG Base Directory Configuration for Emacs
-(let ((xdg-data-home  (or (getenv "XDG_DATA_HOME")
-                          (expand-file-name "~/.local/share/")))
-      (xdg-cache-home (or (getenv "XDG_CACHE_HOME")
-                          (expand-file-name "~/.cache/"))))
-  (setq user-emacs-directory (expand-file-name "emacs/" xdg-data-home)
-        package-user-dir (expand-file-name "emacs/elpa/" xdg-data-home)
-        auto-save-list-file-prefix (expand-file-name "emacs/auto-save-list/.saves-" xdg-data-home)
-        native-compile-target-directory (expand-file-name "emacs/eln-cache/" xdg-cache-home)))
-
-;; ==================================================================================
 (defgroup omw-emacs nil
   "Oh My Workspace configuration group."
   :group 'convenience
@@ -95,10 +84,12 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-site-packages-path)
 
 ;; ==================================================================================
+;; HTTP Proxy Configuration
 (require 'omw-proxy)
 (omw/enable-http-proxy)
 
 ;; ==================================================================================
+;; Package Management
 (require 'use-package)
 
 ;; ==================================================================================
@@ -191,32 +182,36 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
          (emacs-startup . omw/emacs-startup-setup))
   :bind ("C-x C-b" . ibuffer)
   :config
+  ;; XDG paths (use variables from early-init.el)
+  (setq auto-save-list-file-prefix (expand-file-name "emacs/auto-save-list/.saves-" omw/xdg-data-home)
+        native-compile-target-directory (expand-file-name "emacs/eln-cache/" omw/xdg-cache-home)
+        backup-directory-alist (list (cons ".*" (expand-file-name "emacs/backup/" omw/xdg-state-home))))
+
+  ;; Startup behavior
   (setq inhibit-default-init t
         inhibit-startup-echo-area-message t
-        inhibit-startup-screen t
+        inhibit-startup-screen t)
 
-        ;; UI and interaction
-        use-short-answers t
-        ring-bell-function 'ignore
+  ;; UI and interaction
+  (setq use-short-answers t
+        ring-bell-function 'ignore)
 
-        ;; Backup and version control
-        backup-by-copying t
-        backup-directory-alist (list (cons ".*" (expand-file-name
-                                                 "backup-files" user-emacs-directory)))
+  ;; Backup and version control
+  (setq backup-by-copying t
         version-control t
-        delete-old-versions t
+        delete-old-versions t)
 
-        ;; File and buffer management
-        recentf-max-saved-items 100
+  ;; File and buffer management
+  (setq recentf-max-saved-items 100
         uniquify-buffer-name-style 'forward
-        uniquify-separator "/"
+        uniquify-separator "/")
 
-        ;; User identity and timestamps
-        time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u"
+  ;; User identity and timestamps
+  (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u"
         user-full-name omw/emacs-user-name
         user-mail-address omw/emacs-user-email)
 
-  ;; MacOS key modifiers
+  ;; macOS key modifiers
   (when (eq system-type 'darwin)
     (setq mac-command-modifier 'super
           mac-option-modifier 'meta))

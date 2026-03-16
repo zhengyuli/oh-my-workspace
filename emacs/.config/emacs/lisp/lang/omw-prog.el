@@ -109,6 +109,22 @@ If no delimiter is found, show an error message."
          (typescript-mode . eglot-ensure)
          (sh-mode . eglot-ensure))
   :config
+  ;; C/C++: clangd (LLVM's language server)
+  (add-to-list 'eglot-server-programs
+               '((c-mode c++-mode) . ("clangd")))
+  ;; Python: basedpyright (improved pyright with better type inference)
+  (add-to-list 'eglot-server-programs
+               '(python-mode . ("basedpyright-langserver" "--stdio")))
+  ;; Go: gopls (official Go language server)
+  (add-to-list 'eglot-server-programs
+               '(go-mode . ("gopls")))
+  ;; TypeScript/JavaScript: typescript-language-server
+  (add-to-list 'eglot-server-programs
+               '(typescript-mode . ("typescript-language-server" "--stdio")))
+  ;; Shell: bash-language-server
+  (add-to-list 'eglot-server-programs
+               '(sh-mode . ("bash-language-server" "start")))
+  ;; Connection settings
   (setq eglot-sync-connect nil
         eglot-autoshutdown t))
 

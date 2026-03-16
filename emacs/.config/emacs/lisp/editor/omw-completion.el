@@ -49,6 +49,7 @@
   :defer t
   :hook (after-init . vertico-mode))
 
+;; ==================================================================================
 (use-package marginalia
   :ensure t
   :defer t
