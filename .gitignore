@@ -72,10 +72,81 @@ docs/
 # Zsh local config (machine-specific)
 zsh/.config/zsh/conf.d/99-local.zsh
 
-# Zsh cache (in XDG cache_HOME)
-zsh/.config/zsh/cache/
-zsh/.config/zsh/.zcompdump
-zsh/.config/zsh/.zcompdump
+# ==============================================================================
+# XDG Fallback: Cache/State Files in .config directories
+# ==============================================================================
+# These patterns catch runtime files that SHOULD be in $XDG_CACHE_HOME or
+# $XDG_STATE_HOME, but may appear in .config/ if XDG variables aren't set.
+# This prevents accidental commits of machine-specific runtime data.
 
-# Git local config (XDG-compliant, machine-specific)
+# --- Zsh ---
+# Completion cache (should be in $XDG_CACHE_HOME/zsh/)
+zsh/.config/zsh/.zcompdump
+zsh/.config/zsh/.zcompdump.*
+# History cache directory (should be in $XDG_CACHE_HOME/zsh/)
+zsh/.config/zsh/cache/
+# History file fallback (should be $XDG_CACHE_HOME/zsh/history)
+zsh/.config/zsh/history
+zsh/.config/zsh/.zhistory
+# Zinit plugin data (should be in $XDG_DATA_HOME/zinit/)
+zsh/.config/zsh/zinit/
+# Zsh session/state files
+zsh/.config/zsh/*.zwc
+zsh/.config/zsh/**/*.zwc
+
+# --- Vim ---
+# Viminfo state file (should be in $XDG_STATE_HOME/vim/)
+vim/.config/vim/viminfo
+# Undo directory (should be in $XDG_DATA_HOME/vim/undo/)
+vim/.config/vim/undo/
+# Swap files (disabled in config, but catch if re-enabled)
+vim/.config/vim/**/*.swp
+vim/.config/vim/**/*.swo
+# Backup files
+vim/.config/vim/**/*.bak
+vim/.config/vim/**/*~
+# Session/view files
+vim/.config/vim/session/
+vim/.config/vim/view/
+
+# --- Emacs ---
+# Already covered above: *.elc, .#*, *~, \#*\#
+# Additional Emacs runtime files that may appear:
+emacs/.config/emacs/auto-save-list/
+emacs/.config/emacs/elpa/
+emacs/.config/emacs/url/
+# Emacs desktop and session files
+emacs/.config/emacs/.emacs.desktop
+emacs/.config/emacs/.emacs.desktop.lock
+emacs/.config/emacs/desktop/
+emacs/.config/emacs/.cache/
+
+# --- Git ---
+# Local config (XDG-compliant, machine-specific)
 git/.config/git/config.local
+# Git credential cache
+git/.config/git/credentials
+
+# ==============================================================================
+# General XDG Fallback Patterns
+# ==============================================================================
+# Catch any cache/state files that might appear in config directories
+# if XDG environment variables are not properly set
+
+# Common cache file extensions
+**/.cache/
+**/*.cache
+**/*.zwc        # Zsh word code
+**/*.elc        # Emacs byte-compiled
+**/*.pyc        # Python bytecode
+**/*.pyo        # Python optimized
+
+# Lock files (editor sessions, etc.)
+**/.#*
+**/#*#
+
+# Backup files
+**/*~
+**/*.bak
+**/*.backup
+**/*.orig
