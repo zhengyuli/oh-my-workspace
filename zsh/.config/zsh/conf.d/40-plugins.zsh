@@ -39,7 +39,9 @@ if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
 fi
 
 # Guard against missing file even after clone (e.g. disk full)
-[[ -f "$ZINIT_HOME/zinit.zsh" ]] || return 1
+if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
+  return 1
+fi
 source "$ZINIT_HOME/zinit.zsh"
 ZINIT_INITIALIZED=1
 
@@ -144,13 +146,13 @@ zstyle ':completion:*:git-checkout:*' sort false
 
 # cd: preview directory
 zstyle ':fzf-tab:complete:cd:*' fzf-preview \
-  'eza -1 --color=always --icons $realpath'
+  'eza -1 --color=always --icons "$realpath"'
 
 # Files: preview content — scoped to argument completion only to avoid
 # triggering on command names, users, hostnames, etc.
 zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
-  'bat --color=always --style=plain --line-range=:50 $realpath 2>/dev/null \
-   || eza -1 --color=always --icons $realpath 2>/dev/null'
+  'bat --color=always --style=plain --line-range=:50 "$realpath" 2>/dev/null \
+   || eza -1 --color=always --icons "$realpath" 2>/dev/null'
 
 # Environment variables: preview value
 zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset):*' \
