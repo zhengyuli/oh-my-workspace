@@ -4,59 +4,51 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-This is a **dotfiles repository** providing comprehensive development environment setup for macOS. It uses a unified setup script with a `*.symlink` convention for managing configuration files.
+This is a **dotfiles repository** providing comprehensive development environment setup for macOS. It uses **GNU Stow** for symlink management with XDG-compliant directory structure.
 
 ## Repository Structure
 
 ```
 oh-my-dotfiles/
-├── setup.sh              # Unified setup and maintenance utility
+├── .stow-local-ignore    # Files to ignore when stowing
 ├── emacs/                # Emacs configuration (>= 30.2)
 │   ├── CLAUDE.md         # Emacs-specific guidance (detailed)
-│   ├── emacs.symlink     # Symlinked to ~/.emacs
-│   ├── lisp/             # Core and language modules
-│   ├── templates/        # File templates (C, Python, Go, etc.)
-│   └── banners/          # Startup banners
+│   └── .config/emacs/    # Symlinked to ~/.config/emacs/
 ├── vim/                  # Vim configuration
-│   └── vimrc.symlink     # Symlinked to ~/.vimrc
+│   └── .config/vim/      # Symlinked to ~/.config/vim/
 ├── zsh/                  # Zsh configuration
-│   ├── conf.d/           # Modular zsh configs (aliases, completion, etc.)
-│   ├── zshrc.symlink     # Symlinked to ~/.zshrc
-│   ├── zshenv.symlink    # Symlinked to ~/.zshenv
-│   └── zprofile.symlink  # Symlinked to ~/.zprofile
+│   ├── CLAUDE.md         # Zsh-specific guidance
+│   ├── .zshenv           # Symlinked to ~/.zshenv (bootstrap file)
+│   └── .config/zsh/      # Symlinked to ~/.config/zsh/
 ├── git/                  # Git configuration
-│   ├── gitconfig.symlink # Symlinked to ~/.gitconfig
-│   └── gitignore.symlink # Symlinked to ~/.gitignore
+│   └── .config/git/      # Symlinked to ~/.config/git/
 ├── homebrew/
 │   └── Brewfile          # Homebrew bundle for all packages
 └── macos/                # macOS-specific settings
 ```
 
-## Setup Commands
+## Stow Commands
+
+GNU Stow manages symlinks from packages to `$HOME`:
 
 ```bash
-# Full setup (Homebrew, stow packages, languages, shell)
-./setup.sh full-setup
+# Stow all packages
+stow -d /path/to/oh-my-dotfiles -t "$HOME" zsh git vim emacs
 
-# Stow packages to $HOME
-./setup.sh create-links
+# Stow specific packages
+stow zsh git
 
-# Unstow packages from $HOME
-./setup.sh remove-links
+# Unstow (remove symlinks)
+stow -D zsh git vim emacs
 
-# Refresh stow package symlinks
-./setup.sh restow
+# Restow (refresh symlinks)
+stow -R zsh git vim emacs
 
-# Check stow package and tool status
-./setup.sh show-status
-
-# Silent mode
-VERBOSE=0 ./setup.sh full-setup
+# Dry-run to see what would happen
+stow -n zsh
 ```
 
 ## Stow Package System
-
-GNU Stow manages symlinks from packages to `$HOME`:
 
 | Package  | Contents                                        |
 |----------|-------------------------------------------------|
@@ -67,11 +59,26 @@ GNU Stow manages symlinks from packages to `$HOME`:
 
 **Note:** `homebrew/` and `macos/` are NOT stow packages — they provide scripts/utilities only.
 
-Existing conflicting files are handled by stow (errors on conflict, use `restow` to refresh).
+## Initial Setup
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/zhengyuli/oh-my-dotfiles.git ~/oh-my-dotfiles
+cd ~/oh-my-dotfiles
+
+# 2. Install Homebrew packages
+brew bundle --file homebrew/Brewfile
+
+# 3. Stow configuration packages
+stow zsh git vim emacs
+
+# 4. Restart shell or source zshenv
+source ~/.zshenv
+```
 
 ## XDG Base Directory
 
-The setup script exports XDG environment variables:
+Shell configuration exports XDG environment variables:
 
 ```bash
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -88,28 +95,29 @@ Zsh plugins are managed by **Zinit** installed at `${XDG_DATA_HOME}/zinit/`. See
 
 Each major component has its own `CLAUDE.md` with detailed guidance:
 
-- **emacs/CLAUDE.md** - Emacs coding standards, module architecture, use-package patterns, naming conventions (`omw/` prefix)
+- **zsh/CLAUDE.md** - Zsh configuration structure, startup sequence, plugin system
+- **emacs/CLAUDE.md** - Emacs coding standards, module architecture, use-package patterns
 
 These files are lazy-loaded when working in their respective directories.
 
 ## Quick Validation
 
 ```bash
-# Check setup status
-./setup.sh show-status
+# Verify stow packages are linked
+ls -la ~/.zshenv ~/.config/zsh/.zshrc ~/.config/git/config
+
+# Test Zsh configuration
+zsh -c 'echo $ZDOTDIR'
 
 # Test Emacs configuration
 emacs --debug-init
-
-# Batch test Emacs
-emacs --batch --eval '(progn (load-file "emacs/emacs.symlink") (message "OK"))'
 ```
 
 ## Key Conventions
 
 - **macOS-focused**: All configurations assume macOS as primary OS
 - **Stow-managed**: Config files are symlinked via GNU Stow
-- **Unified setup**: Single `setup.sh` handles all components
+- **XDG-compliant**: Follows XDG Base Directory Specification
 - **Emacs prefix**: Uses `omw/` prefix (oh-my-workspace) for custom functions/variables
 
 ## Shell Script Coding Standards
