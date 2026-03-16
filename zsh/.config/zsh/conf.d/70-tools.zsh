@@ -136,4 +136,10 @@ fi
 # -----------------------------------------------------------------------------
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh --cmd z)"
+  # zoxide generates zi() for interactive fzf directory selection.
+  # zinit defined 'alias zi=zinit' earlier; in zsh, alias expansion precedes
+  # function lookup, so the alias silently shadows the function, making zi
+  # unreachable. Remove the alias so zi works as the interactive directory
+  # picker. Use 'zinit' directly for zinit commands.
+  unalias zi 2>/dev/null
 fi

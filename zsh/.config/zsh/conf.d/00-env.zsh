@@ -38,13 +38,18 @@ export LANG=en_US.UTF-8
 # -----------------------------------------------------------------------------
 # Zsh History
 # -----------------------------------------------------------------------------
-# History file stored in XDG cache (runtime data, not configuration).
-export HISTFILE="$XDG_CACHE_HOME/zsh/history"
+# History is STATE (persists, cannot be regenerated) → XDG_STATE_HOME.
+# Do NOT use XDG_CACHE_HOME: cache directories are cleared by OS maintenance
+# tools and "free disk space" scripts, which would silently destroy history.
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
-# Ensure cache directory exists on first run (idempotent).
-# This directory is shared by multiple modules: history, zcompdump,
-# completion-cache, uv/carapace completion caches (see 30-completion.zsh,
-# 70-tools.zsh). Do not derive the path from HISTFILE alone.
+# Ensure required zsh directories exist on first run (idempotent).
+#   XDG_STATE_HOME/zsh  — history (state: persistent, not regeneratable)
+#   XDG_CACHE_HOME/zsh  — zcompdump, completion caches (regeneratable)
+# These are distinct XDG categories; do NOT consolidate them.
+if [[ ! -d "$XDG_STATE_HOME/zsh" ]]; then
+  mkdir -p "$XDG_STATE_HOME/zsh"
+fi
 if [[ ! -d "$XDG_CACHE_HOME/zsh" ]]; then
   mkdir -p "$XDG_CACHE_HOME/zsh"
 fi
