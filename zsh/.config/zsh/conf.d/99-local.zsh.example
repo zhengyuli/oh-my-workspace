@@ -1,0 +1,49 @@
+# conf.d/99-local.zsh.example
+# =============================================================================
+# Machine-Local Configuration Template
+#
+# Usage:
+#   cp 99-local.zsh.example 99-local.zsh
+#   Edit 99-local.zsh with machine-specific settings
+#
+# Rules:
+#   - 99-local.zsh is listed in .gitignore and must never be committed
+#   - This template file (.example) is committed to the repo as a reference
+#   - Loaded last -- can override anything defined in earlier conf.d fragments
+# =============================================================================
+
+# ----------------------------------------------------------------------------
+# Project directory shortcuts
+# ----------------------------------------------------------------------------
+# alias work='cd ~/Projects/mycompany'
+# alias proj='cd ~/Projects/myproject'
+
+# ----------------------------------------------------------------------------
+# Machine-specific PATH additions
+# ----------------------------------------------------------------------------
+# path+=("$HOME/bin/scripts")
+# path+=("/opt/custom-tool/bin")
+
+# ----------------------------------------------------------------------------
+# Secrets and API keys (local only -- never commit)
+# ----------------------------------------------------------------------------
+# export GITHUB_TOKEN=""
+# export ANTHROPIC_API_KEY=""
+# export AWS_PROFILE="default"
+
+# ----------------------------------------------------------------------------
+# Machine-specific tool configuration
+# ----------------------------------------------------------------------------
+# export JAVA_HOME="/opt/homebrew/opt/openjdk@17"
+# export ANDROID_HOME="$HOME/Library/Android/sdk"
+
+# ----------------------------------------------------------------------------
+# Corporate proxy (office network, VPN, etc.)
+# ----------------------------------------------------------------------------
+# export HTTP_PROXY="http://proxy.company.com:8080"
+# export HTTPS_PROXY="$HTTP_PROXY"
+# export NO_PROXY="localhost,127.0.0.1,.company.com"
+
+# ----------------------------------------------------------------------------
+# Experimental settings (move to the appropriate conf.d fragment once stable)
+# ----------------------------------------------------------------------------
