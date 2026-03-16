@@ -13,22 +13,20 @@
 #   5. Ensure idempotency via typeset -gU (unique, global)
 #
 # Prerequisites:
-#   - 00-env.zsh must set: PYENV_ROOT, CARGO_HOME, GOPATH, BUN_INSTALL,
-#     NPM_CONFIG_PREFIX, XDG_* variables
+#   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL,
+#     UV_DATA_DIR, XDG_* variables
 #
 # Do NOT add:
-#   - Tool initialization (pyenv init, fnm eval) → 70-tools.zsh
+#   - Tool initialization → 70-tools.zsh
 #   - Aliases → 20-aliases.zsh
 #   - Environment variables → 00-env.zsh
 #
 # PATH Priority (highest to lowest):
-#   1. User-local binaries (~/.local/bin) - explicit user choice
-#   2. Version manager shims - must intercept commands (pyenv, rbenv, etc.)
-#   3. Version manager binaries - the managers themselves
-#   4. Development tool binaries - user-installed dev tools (cargo, go, npm)
-#   5. Package manager binaries - Homebrew, system packages
-#   6. System sbin - admin commands (lower priority)
-#   7. Existing system PATH - fallback
+#   1. User-local binaries (~/.local/bin) - explicit user choice, uv tool install
+#   2. Development tool binaries - user-installed dev tools (cargo, go, bun)
+#   3. Package manager binaries - Homebrew, system packages
+#   4. System sbin - admin commands (lower priority)
+#   5. Existing system PATH - fallback
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -46,36 +44,27 @@ typeset -gU path fpath manpath infopath cdpath
 path=(
   # === Priority 1: User-local binaries (HIGHEST) ===
   # User's explicit local installations, must override everything
+  # uv tool install, pip install --user, etc.
   "$HOME/.local/bin"(N-/)
 
-  # === Priority 2: Version manager shims ===
-  # Must intercept commands before system/package manager versions
-  # pyenv shims intercepts: python, pip, python3, pip3, etc.
-  "$PYENV_ROOT/shims"(N-/)
-
-  # === Priority 3: Version manager binaries ===
-  # The version managers themselves (pyenv, rbenv commands)
-  "$PYENV_ROOT/bin"(N-/)
-
-  # === Priority 4: Development tool binaries ===
+  # === Priority 2: Development tool binaries ===
   # User-installed language/tool binaries
   "$CARGO_HOME/bin"(N-/)         # Rust crates (cargo install)
   "$GOPATH/bin"(N-/)             # Go packages (go install)
   "$BUN_INSTALL/bin"(N-/)        # Bun packages (bun install -g)
-  "$NPM_CONFIG_PREFIX/bin"(N-/)  # npm global packages (npm i -g)
 
-  # === Priority 5: Package manager binaries ===
+  # === Priority 3: Package manager binaries ===
   # Homebrew (Apple Silicon - M1/M2/M3)
   /opt/homebrew/bin(N-/)
   # Homebrew (Intel Mac / Linux)
   /usr/local/bin(N-/)
 
-  # === Priority 6: System sbin (admin commands) ===
+  # === Priority 4: System sbin (admin commands) ===
   # Lower priority - rarely needed in daily development
   /opt/homebrew/sbin(N-/)
   /usr/local/sbin(N-/)
 
-  # === Priority 7: Existing system PATH (LOWEST - fallback) ===
+  # === Priority 5: Existing system PATH (LOWEST - fallback) ===
   $path
 )
 

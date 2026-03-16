@@ -51,7 +51,8 @@ alias -- -='cd -'
 alias vim='nvim'
 
 if command -v bat &>/dev/null; then
-  alias cat='bat --paging=never'
+  alias cat='bat --style=plain --paging=never'
+  alias cats='bat --style=numbers,changes'
 fi
 
 # -----------------------------------------------------------------------------
