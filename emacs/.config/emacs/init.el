@@ -33,6 +33,17 @@
 ;;; Code:
 
 ;; ==================================================================================
+;; XDG Base Directory Configuration for Emacs
+(let ((xdg-data-home  (or (getenv "XDG_DATA_HOME")
+                          (expand-file-name "~/.local/share/")))
+      (xdg-cache-home (or (getenv "XDG_CACHE_HOME")
+                          (expand-file-name "~/.cache/"))))
+  (setq user-emacs-directory (expand-file-name "emacs/" xdg-data-home)
+        package-user-dir (expand-file-name "emacs/elpa/" xdg-data-home)
+        auto-save-list-file-prefix (expand-file-name "emacs/auto-save-list/.saves-" xdg-data-home)
+        native-compile-target-directory (expand-file-name "emacs/eln-cache/" xdg-cache-home)))
+
+;; ==================================================================================
 (defgroup omw-emacs nil
   "Oh My Workspace configuration group."
   :group 'convenience
@@ -50,16 +61,6 @@ Used for dashboard banner and setting `user-full-name'."
 Used for setting `user-mail-address'."
   :type 'string
   :group 'omw-emacs)
-
-;; ==================================================================================
-;; XDG Base Directory Configuration for Emacs
-(let ((xdg-data-home  (or (getenv "XDG_DATA_HOME")
-                          (expand-file-name "~/.local/share/")))
-      (xdg-cache-home (or (getenv "XDG_CACHE_HOME")
-                          (expand-file-name "~/.cache/"))))
-  (setq user-emacs-directory (expand-file-name "emacs/" xdg-data-home)
-        package-user-dir (expand-file-name "emacs/elpa/" xdg-data-home)
-        native-compile-target-directory (expand-file-name "emacs/eln-cache/" xdg-cache-home)))
 
 ;; ==================================================================================
 (defvar omw/emacs-custom-file-path (expand-file-name "custom.el" user-emacs-directory)
@@ -84,19 +85,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (let ((default-directory base-dir))
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
-
-;; ==================================================================================
-;; Auto-save Configuration - Use XDG cache directory
-;; Prevents auto-save files from polluting .config/emacs/
-(let ((auto-save-dir (expand-file-name
-                      (concat (or (getenv "XDG_CACHE_HOME")
-                                (concat (getenv "HOME") "/.cache"))
-                              "/emacs/auto-save-list/"))))
-  ;; Ensure directory exists
-  (unless (file-exists-p auto-save-dir)
-    (make-directory auto-save-dir))
-  ;; Set auto-save list file prefix to XDG cache directory
-  (setq auto-save-list-file-prefix auto-save-dir))
 
 ;; ==================================================================================
 ;; Set custom file early to prevent Emacs from writing customizations to init.el
