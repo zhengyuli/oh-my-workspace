@@ -72,8 +72,9 @@ docs/
 # Zsh local config (machine-specific)
 zsh/.config/zsh/conf.d/99-local.zsh
 
-# Zsh cache
+# Zsh cache (in XDG cache_HOME)
 zsh/.config/zsh/cache/
+zsh/.config/zsh/.zcompdump
 zsh/.config/zsh/.zcompdump
 
 # Git local config (XDG-compliant, machine-specific)
