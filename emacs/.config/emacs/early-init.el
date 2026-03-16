@@ -53,9 +53,11 @@
                                (expand-file-name "~/.local/state/"))
   "XDG state home directory.")
 
-;; Set Emacs directories using XDG paths
-(setq user-emacs-directory (expand-file-name "emacs/" omw/xdg-data-home)
-      package-user-dir (expand-file-name "emacs/elpa/" omw/xdg-data-home))
+;; Emacs directory configuration
+(setq user-emacs-directory (expand-file-name "emacs/" omw/xdg-data-home))
+
+;; Package installation directory
+(setq package-user-dir (expand-file-name "emacs/elpa/" omw/xdg-data-home))
 
 ;; ==================================================================================
 ;;; Provide features
