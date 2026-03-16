@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-13 16:15:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-15 23:57:42 Sunday by zhengyuli>
 #
 # Copyright (C) 2026 zhengyu li
 #
@@ -149,9 +149,9 @@ sudo chflags nohidden /Volumes
 
 # Expand "General", "Open with", and "Sharing & Permissions" in File Info
 defaults write com.apple.finder FXInfoPanesExpanded -dict \
-    General -bool true \
-    OpenWith -bool true \
-    Privileges -bool true
+         General -bool true \
+         OpenWith -bool true \
+         Privileges -bool true
 
 # ==============================================================================
 # Dock
@@ -245,8 +245,8 @@ echo "Setting Messages preferences..."
 
 # Disable smart quotes and continuous spell checking
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add \
-    "automaticQuoteSubstitutionEnabled" -bool false \
-    "continuousSpellCheckingEnabled" -bool false
+         "automaticQuoteSubstitutionEnabled" -bool false \
+         "continuousSpellCheckingEnabled" -bool false
 
 # ==============================================================================
 # Kill affected applications
@@ -256,12 +256,12 @@ echo "Restarting affected applications..."
 
 for app in \
     "cfprefsd" \
-    "Dock" \
-    "Finder" \
-    "Messages" \
-    "Photos" \
-    "SystemUIServer" \
-    "Terminal"; do
+        "Dock" \
+        "Finder" \
+        "Messages" \
+        "Photos" \
+        "SystemUIServer" \
+        "Terminal"; do
     killall "${app}" &>/dev/null
 done
 

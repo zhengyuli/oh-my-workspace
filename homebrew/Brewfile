@@ -12,6 +12,7 @@
 
 brew "zsh"                      # Shell
 brew "starship"                 # Cross-shell prompt
+brew "direnv"                   # Per-directory environment variables
 
 # ==============================================================================
 # Version Control
@@ -26,13 +27,14 @@ brew "git"                      # Version control system
 brew "pinentry"                 # GPG passphrase entry
 
 # ==============================================================================
-# File Search
+# File Search & Viewing
 # ==============================================================================
 
 brew "fzf"                      # Fuzzy finder
 brew "ripgrep"                  # Fast grep replacement (rg)
 brew "fd"                       # Fast find replacement
-brew "tree"                     # Directory tree display
+brew "eza"                      # Modern ls replacement with icons and git
+brew "bat"                     # Cat clone with syntax highlighting
 
 # ==============================================================================
 # Build Tools
@@ -101,6 +103,7 @@ brew "yq"                       # YAML processor
 brew "wget"                     # HTTP downloader
 brew "htop"                     # Process viewer
 brew "coreutils"                # GNU core utilities (gls, etc.)
+brew "stow"                     # Symlink farm manager for dotfiles
 
 # ==============================================================================
 # Language Runtimes
