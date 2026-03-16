@@ -86,6 +86,19 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (normal-top-level-add-subdirs-to-load-path)))
 
 ;; ==================================================================================
+;; Auto-save Configuration - Use XDG cache directory
+;; Prevents auto-save files from polluting .config/emacs/
+(let ((auto-save-dir (expand-file-name
+                      (concat (or (getenv "XDG_CACHE_HOME")
+                                (concat (getenv "HOME") "/.cache"))
+                              "/emacs/auto-save-list/"))))
+  ;; Ensure directory exists
+  (unless (file-exists-p auto-save-dir)
+    (make-directory auto-save-dir))
+  ;; Set auto-save list file prefix to XDG cache directory
+  (setq auto-save-list-file-prefix auto-save-dir))
+
+;; ==================================================================================
 ;; Set custom file early to prevent Emacs from writing customizations to init.el
 (setq custom-file omw/emacs-custom-file-path)
 
