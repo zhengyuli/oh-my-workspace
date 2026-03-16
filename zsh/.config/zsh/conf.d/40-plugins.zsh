@@ -88,6 +88,12 @@ zinit light zsh-users/zsh-completions
 # --- Turbo 0b: interactive enhancement plugins ---
 
 # History substring search
+# Config vars must be set BEFORE activation (read at highlight time, but set
+# here for co-location with the plugin declaration — mirrors the autosuggestions
+# pattern and makes future changes less error-prone).
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+# HISTORY_SUBSTRING_SEARCH_FUZZY=1   # disabled: perf cost on large histories
 # Keybindings via atload: widgets must exist before bindkey can reference them
 zinit ice wait"0b" lucid atload'
   bindkey "^[[A" history-substring-search-up
@@ -125,11 +131,6 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 # Plugin configuration
 # -----------------------------------------------------------------------------
 
-# zsh-history-substring-search (key bindings set via atload above)
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
-# HISTORY_SUBSTRING_SEARCH_FUZZY=1              # disabled: perf cost on large histories
-
 # fzf-tab -- disable default completion menu in favor of fzf popup
 # Note: do NOT use escape sequences (%F{red}...%f) in 'descriptions format'
 # (fzf-tab limitation — they appear as literal text, not ANSI color codes).
@@ -166,7 +167,7 @@ zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
 
 # brew: preview package info
 zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' fzf-preview \
-  'brew info $word'
+  'brew info $word 2>/dev/null'
 
 # man: preview man page
 zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview \
@@ -179,7 +180,7 @@ zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
   'git log --oneline --color=always $word'
 zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
   'git log --oneline --color=always $word 2>/dev/null \
-   || git show --color=always $word'
+   || git show --color=always $word 2>/dev/null'
 
 # Switch groups with , and .
 zstyle ':fzf-tab:*' switch-group ',' '.'

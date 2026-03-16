@@ -97,8 +97,9 @@ else
   # Built-in Zsh prompt with git branch display. Used when no external
   # prompt tools are installed. No configuration needed.
   # ---------------------------------------------------------------------------
-  autoload -Uz vcs_info
-  precmd() { vcs_info }
+  autoload -Uz vcs_info add-zsh-hook
+  _omw_vcs_info_precmd() { vcs_info }
+  add-zsh-hook precmd _omw_vcs_info_precmd
 
   zstyle ':vcs_info:git:*' formats ' %F{green}(%b)%f'
   zstyle ':vcs_info:*' enable git

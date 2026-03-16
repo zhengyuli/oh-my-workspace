@@ -69,9 +69,10 @@ zstyle ':completion:*' matcher-list \
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Group header format
-zstyle ':completion:*:warnings'     format '%F{red}-- no matches for: %d --%f'
-zstyle ':completion:*:messages'     format '%F{purple}-- %d --%f'
-zstyle ':completion:*:corrections'  format '%F{green}-- %d (errors: %e) --%f'
+zstyle ':completion:*:warnings'  format '%F{red}-- no matches for: %d --%f'
+zstyle ':completion:*:messages'  format '%F{purple}-- %d --%f'
+# Note: ':completion:*:corrections' is intentionally omitted — it only
+# triggers with _approximate, which is not in the completer list here.
 
 # Display completions in named groups
 zstyle ':completion:*' group-name ''
@@ -118,6 +119,3 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 # bashcompinit: allows use of bash-style complete commands
 autoload -Uz bashcompinit && bashcompinit
-
-# Load color variables (used by list-colors above)
-autoload -Uz colors && colors
