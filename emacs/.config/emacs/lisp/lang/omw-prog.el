@@ -56,10 +56,11 @@ If no delimiter is found, show an error message."
   :ensure nil
   :defer t
   :config
+  ;; Copyright query settings
   (setq copyright-query nil
         copyright-names-regexp
         (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
-                omw/emacs-user-name)))
+                        omw/emacs-user-name)))
 
 ;; ==================================================================================
 (use-package smartparens
