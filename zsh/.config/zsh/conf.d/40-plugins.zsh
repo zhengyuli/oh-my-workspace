@@ -94,7 +94,7 @@ zinit light hlissner/zsh-autopair
 # zsh-autosuggestions
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)   # history first, then completion
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20              # no suggestion for long buffers
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'    # Doom Xcode comment color
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'    # Doom One comment color
 
 # zsh-history-substring-search (key bindings set via atload above)
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'

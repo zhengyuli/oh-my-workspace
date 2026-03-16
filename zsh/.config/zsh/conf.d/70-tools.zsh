@@ -103,11 +103,15 @@ if command -v fzf &>/dev/null; then
   fi
 
   # Completion (**<Tab> trigger) - provides fuzzy completion via **<Tab>
-  # NOTE: fzf completion.zsh binds Tab to fzf-completion, which conflicts
-  # with fzf-tab. Restore fzf-tab binding after sourcing.
+  # NOTE: fzf completion.zsh rebinds ^I (Tab) to its own fzf-completion widget,
+  # conflicting with fzf-tab which provides a superior completion UI.
+  # After sourcing, restore fzf-tab's Tab binding only if the widget actually
+  # exists (guards against fzf-tab load failures or widget name changes).
   if [[ -f "$_fzf_prefix/shell/completion.zsh" ]]; then
     source "$_fzf_prefix/shell/completion.zsh"
-    bindkey '^I' fzf-tab-complete
+    if (( ${+widgets[fzf-tab-complete]} )); then
+      bindkey '^I' fzf-tab-complete
+    fi
   fi
 
   unset _fzf_prefix

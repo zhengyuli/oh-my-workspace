@@ -42,8 +42,8 @@ export LANG=en_US.UTF-8
 export HISTFILE="$XDG_CACHE_HOME/zsh/history"
 
 # Ensure cache directory exists on first run (idempotent).
-if [[ ! -d "$XDG_CACHE_HOME/zsh" ]]; then
-  mkdir -p "$XDG_CACHE_HOME/zsh"
+if [[ ! -d "${HISTFILE:h}" ]]; then
+  mkdir -p "${HISTFILE:h}"
 fi
 
 # -----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 # fzf -- Fuzzy Finder Environment
 # -----------------------------------------------------------------------------
 # Must be set before fzf-tab loads (via atload in 40-plugins.zsh).
-# Doom Xcode color theme for visual consistency.
+# Doom One color theme for visual consistency.
 #
 # Note: FZF_ALT_C_COMMAND uses --type d (directories only) for Alt+C cd widget.
 export FZF_DEFAULT_OPTS="

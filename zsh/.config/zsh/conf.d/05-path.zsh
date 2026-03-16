@@ -13,8 +13,7 @@
 #   5. Ensure idempotency via typeset -gU (unique, global)
 #
 # Prerequisites:
-#   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL,
-#     UV_DATA_DIR, XDG_* variables
+#   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL, XDG_* variables
 #
 # Do NOT add:
 #   - Tool initialization → 70-tools.zsh
