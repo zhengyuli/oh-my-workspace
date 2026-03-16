@@ -59,8 +59,27 @@ export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 # Go
 export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
 
-# Note: UV and Bun environment variables are set in ~/.zshenv
-# to ensure they work in ALL shell contexts (including non-interactive scripts).
+# -----------------------------------------------------------------------------
+# Interactive Tool XDG Redirections
+# -----------------------------------------------------------------------------
+# These tools are primarily used in interactive sessions.
+
+# Vim -- no native XDG support; must redirect via VIMINIT
+export VIMINIT="set nocp | source ${XDG_CONFIG_HOME}/vim/vimrc"
+
+# Emacs -- native XDG support since 29+
+# Explicit redirect ensures older versions and batch scripts find config
+export EMACS_INIT_DIRECTORY="$XDG_CONFIG_HOME/emacs"
+
+# Bun (JS/TS runtime) -- https://github.com/oven-sh/bun/issues/1678
+# Note: Bun does not fully support XDG yet. Setting BUN_INSTALL redirects the
+# installation directory, cache still uses ~/.bun/install/cache.
+# Track progress: https://github.com/oven-sh/bun/issues/1678
+export BUN_INSTALL="$XDG_DATA_HOME/bun"
+
+# ripgrep -- supports XDG_CONFIG_HOME but needs explicit path for config file
+# See: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 
 # -----------------------------------------------------------------------------
 # Homebrew (macOS)
