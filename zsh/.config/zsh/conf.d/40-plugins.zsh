@@ -6,14 +6,39 @@
 # Load order: 40 (after 30-completion.zsh, before 50-prompt.zsh)
 #
 # Responsibilities:
-#   1. Bootstrap and configure Zinit plugin manager
-#   2. Load core plugins (syntax highlighting, autosuggestions, etc.)
-#   3. Load utility plugins (z, autopair)
-#   4. Configure plugin-specific settings
+#   1. Configure plugin-specific environment variables (FZF, etc.)
+#   2. Bootstrap and configure Zinit plugin manager
+#   3. Load core plugins (syntax highlighting, autosuggestions, etc.)
+#   4. Load utility plugins (z, autopair)
+#   5. Configure plugin-specific settings
 #
 # Do NOT add: Tool initialization (pyenv, fnm, direnv, etc.)
 #             → Put these in 70-tools.zsh (separate concern)
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# FZF -- Default Options (Doom Xcode Theme)
+# Must be set before fzf-tab is loaded
+# -----------------------------------------------------------------------------
+export FZF_DEFAULT_OPTS="
+  --color=bg:#292a30,bg+:#1f2024
+  --color=fg:#dfdfe0,fg+:#dfdfe0
+  --color=hl:#ff8170,hl+:#ff8170
+  --color=info:#ffa14f,prompt:#ff8170
+  --color=pointer:#ff8170,marker:#78c2b3
+  --color=spinner:#78c2b3,header:#6bdfff
+  --color=border:#3a3a3f,label:#dfdfe0
+  --color=selected-bg:#2d4a6e
+  --layout=reverse
+  --border=rounded
+  --height=50%
+  --info=inline
+  --preview-window=right:50%:wrap
+"
+
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # -----------------------------------------------------------------------------
 # Zinit bootstrap

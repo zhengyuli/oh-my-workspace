@@ -1,4 +1,5 @@
 # gitignore.symlink -*- mode: gitignore; -*-
+# ==============================================================================
 # Time-stamp: <2026-03-15 21:00:00 Saturday by zhengyu.li>
 #
 # Global gitignore patterns
@@ -6,6 +7,7 @@
 #
 # Patterns in this file are ignored across all Git repositories.
 # Repository-specific patterns should go in the local .gitignore file.
+# ==============================================================================
 
 # ==============================================================================
 # Operating Systems

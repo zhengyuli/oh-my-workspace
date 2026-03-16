@@ -1,10 +1,12 @@
 # Brewfile -*- mode: ruby; -*-
-# Time-stamp: <2026-03-14 14:10:23 Saturday by zhengyuli>
+# ==============================================================================
+# Time-stamp: <2026-03-16 19:43:17 Monday by zhengyuli>
 #
 # Homebrew bundle file for oh-my-dotfiles
 # Run: brew bundle
 #
 # Version: 2.0.0
+# ==============================================================================
 
 # ==============================================================================
 # Shell Environment
@@ -13,6 +15,7 @@
 brew "zsh"                      # Shell
 brew "starship"                 # Cross-shell prompt
 brew "direnv"                   # Per-directory environment variables
+brew "zoxide"                   # Smart cd command with frecency
 
 # ==============================================================================
 # Version Control
@@ -67,7 +70,6 @@ brew "bzip2"                    # Burrows-Wheeler compression
 
 brew "pandoc"                   # Universal document converter
 brew "markdown"                 # Markdown parser and renderer
-brew "glow"                     # Markdown renderer for terminal
 
 # ==============================================================================
 # Spell Checking
@@ -80,7 +82,7 @@ brew "aspell"                   # Spell checker
 # ==============================================================================
 
 brew "tmux"                     # Terminal multiplexer
-cask "iterm2"                   # Terminal emulator
+cask "ghostty"                  # Fast, native terminal emulator
 
 # ==============================================================================
 # Text Editors
@@ -106,18 +108,17 @@ brew "coreutils"                # GNU core utilities (gls, etc.)
 brew "stow"                     # Symlink farm manager for dotfiles
 
 # ==============================================================================
-# Language Runtimes
+# Language Runtimes & Modern Toolchain
 # ==============================================================================
 
-# Node.js
-brew "fnm"                      # Fast Node Manager
+# Bun -- JavaScript/TypeScript runtime + package manager
+brew "oven-sh/bun/bun"
 
-# Python
-brew "pyenv"                    # Python version manager
-brew "pyenv-virtualenvwrapper"  # Virtualenv wrapper
+# uv -- Python package manager (replaces pyenv/pip)
+brew "uv"
 
-# Go
-brew "go"                       # Go programming language
+# Go -- Go runtime
+brew "go"
 
 # ==============================================================================
 # Window Management

@@ -1,0 +1,62 @@
+# config
+# =============================================================================
+# Ghostty Terminal Configuration
+#
+# Location: ~/.config/ghostty/config
+# Reference: https://ghostty.org/docs/config
+# =============================================================================
+
+# --- Font ---
+font-family = "JetBrains Mono"
+font-size = 14
+font-thicken = false
+font-feature = -liga
+
+# --- Doom One Color Scheme ---
+background = 282c34
+foreground = bbc2cf
+cursor-color = 51afef
+
+palette = 0=#1b2229
+palette = 1=#ff6c6b
+palette = 2=#98be65
+palette = 3=#ecbe7b
+palette = 4=#51afef
+palette = 5=#c678dd
+palette = 6=#46d9ff
+palette = 7=#bbc2cf
+palette = 8=#1b2229
+palette = 9=#ff6655
+palette = 10=#99bb66
+palette = 11=#ecbe7b
+palette = 12=#a9a1e1
+palette = 13=#c678dd
+palette = 14=#51afef
+palette = 15=#bfbfbf
+
+# --- Window ---
+window-padding-x = 8
+window-padding-y = 8
+window-padding-balance = true
+
+# --- Cursor ---
+cursor-style = block
+cursor-style-blink = false
+
+# --- Emacs Compatibility ---
+# Unbind keys that conflict with Emacs
+keybind = ctrl+shift+t=unbind
+keybind = ctrl+shift+w=unbind
+keybind = ctrl+shift+n=unbind
+keybind = ctrl+shift+z=unbind
+keybind = ctrl+shift+o=unbind
+
+# --- macOS: Option as Meta ---
+macos-option-as-alt = true
+
+# --- Shell Integration ---
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# --- Scrollback ---
+scrollback-limit = 10000

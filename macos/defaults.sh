@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# ==============================================================================
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-15 23:57:42 Sunday by zhengyuli>
+# Time-stamp: <2026-03-16 19:43:32 Monday by zhengyuli>
 #
 # Copyright (C) 2026 zhengyu li
 #
@@ -10,6 +11,7 @@
 # Inspired by:
 # - https://github.com/mathiasbynens/dotfiles/blob/main/.macos
 # - https://github.com/nicknisi/dotfiles/blob/main/install/macos
+# ==============================================================================
 
 # ==============================================================================
 # Close any open System Preferences panes
