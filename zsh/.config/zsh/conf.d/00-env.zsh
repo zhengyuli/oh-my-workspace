@@ -59,13 +59,8 @@ export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 # Go
 export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
 
-# Bun -- JavaScript runtime
-export BUN_INSTALL="${BUN_INSTALL:-$XDG_DATA_HOME/bun}"
-
-# uv -- Python package manager
-export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
-export UV_DATA_DIR="$XDG_DATA_HOME/uv"
-export UV_CONFIG_FILE="$XDG_CONFIG_HOME/uv/uv.toml"
+# Note: UV and Bun environment variables are set in ~/.zshenv
+# to ensure they work in ALL shell contexts (including non-interactive scripts).
 
 # -----------------------------------------------------------------------------
 # Homebrew (macOS)
