@@ -182,22 +182,15 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
          (emacs-startup . omw/emacs-startup-setup))
   :bind ("C-x C-b" . ibuffer)
   :config
-  ;; XDG paths (use variables from early-init.el)
-  (setq auto-save-list-file-prefix (expand-file-name "emacs/auto-save-list/.saves-" omw/xdg-data-home)
-        native-compile-target-directory (expand-file-name "emacs/eln-cache/" omw/xdg-cache-home)
-        backup-directory-alist (list (cons ".*" (expand-file-name "emacs/backup/" omw/xdg-state-home))))
+  ;; Autosave
+  (setq auto-save-list-file-prefix (expand-file-name "emacs/auto-save-list/.saves-" omw/xdg-data-home))
 
-  ;; Startup behavior
-  (setq inhibit-default-init t
-        inhibit-startup-echo-area-message t
-        inhibit-startup-screen t)
-
-  ;; UI and interaction
-  (setq use-short-answers t
-        ring-bell-function 'ignore)
+  ;; Native compilation
+  (setq native-compile-target-directory (expand-file-name "emacs/eln-cache/" omw/xdg-cache-home))
 
   ;; Backup and version control
-  (setq backup-by-copying t
+  (setq backup-directory-alist (list (cons ".*" (expand-file-name "emacs/backup/" omw/xdg-state-home)))
+        backup-by-copying t
         version-control t
         delete-old-versions t)
 
@@ -210,6 +203,15 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u"
         user-full-name omw/emacs-user-name
         user-mail-address omw/emacs-user-email)
+
+  ;; Startup behavior
+  (setq inhibit-default-init t
+        inhibit-startup-echo-area-message t
+        inhibit-startup-screen t)
+
+  ;; UI and interaction
+  (setq use-short-answers t
+        ring-bell-function 'ignore)
 
   ;; macOS key modifiers
   (when (eq system-type 'darwin)
@@ -224,12 +226,14 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (require 'omw-template)
   (require 'omw-completion)
   (require 'omw-explorer)
+
   ;; Tool modules
   (require 'omw-pass)
   (require 'omw-git)
   (require 'omw-term)
   (require 'omw-pdf)
   (require 'omw-ai)
+
   ;; Prog mode modules
   (require 'omw-prog)
   (require 'omw-cc)
@@ -241,6 +245,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (require 'omw-cmake)
   (require 'omw-yaml)
   (require 'omw-dockerfile)
+
   ;; Text mode modules
   (require 'omw-markdown)
 
