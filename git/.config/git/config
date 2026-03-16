@@ -10,13 +10,6 @@
 # Note: Put personal user info in ~/.config/git/config.local
 
 # ==============================================================================
-# References
-# ==============================================================================
-# - Julia Evans' Git Config Survey: https://jvns.ca/blog/2024/02/16/popular-git-config-options/
-# - Git Documentation: https://git-scm.com/docs/git-config
-# - GitHub Best Practices: https://github.com/readme/guides/configure-git-environment
-
-# ==============================================================================
 # User (override in ~/.config/git/config.local)
 # ==============================================================================
 # User identity is intentionally NOT set here to allow machine-specific config.

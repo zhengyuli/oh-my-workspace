@@ -326,6 +326,117 @@ rm "$file"
 
 For zsh-specific conventions (startup files, setopt, arrays, etc.), see [zsh/CLAUDE.md](zsh/CLAUDE.md).
 
+## Configuration Comment Standards
+
+These standards apply to **all non-emacs/non-zsh configuration files** in the repository (bun, ghostty, git, homebrew, macos, ripgrep, uv, vim). For zsh and emacs, see their respective CLAUDE.md files.
+
+### Header Structure
+
+All configuration files must start with a standardized header:
+
+```
+# <filename>[ -*- mode: <mode>; -*-][ Time-stamp: <...>]
+# =============================================================================
+# <One-line description>
+#
+# [Location: <path>]
+# [XDG: <XDG compliance info>]
+# [Loaded via: <loading mechanism>]
+# [References:]
+#   [1. <doc name>: <url>]
+#   [2. <doc name>: <url>]
+# [Note: <important caveats>]
+# =============================================================================
+```
+
+### Header Fields
+
+| Field | Required | Format | Purpose |
+|-------|----------|--------|---------|
+| `<filename>` | Yes | Filename only | e.g., `config`, `uv.toml`, `.bunfig.toml` |
+| Description | Yes | Single line | Brief summary of file purpose |
+| Location | Recommended | `~/.config/...` | Absolute path where file is symlinked |
+| XDG | If applicable | Compliance notes | XDG support status and cache/data paths |
+| Loaded via | If applicable | Loading method | How the tool discovers this config |
+| References | Recommended | Numbered list | Official documentation links |
+| Note | Optional | Free text | Important caveats or warnings |
+
+### Mode Line and Time-stamp (Level 2)
+
+For medium complexity files, add editor metadata:
+
+```
+# gitconfig -*- mode: gitconfig; -*-
+# Time-stamp: <2026-03-15 21:00:00 Saturday by zhengyu.li>
+```
+
+**Format:** `<YYYY-MM-DD HH:MM:SS Day by Author>`
+
+### Section Separators
+
+| Type | Format | Width |
+|------|--------|-------|
+| Header | `# ===...===` | 79 chars |
+| Major section | `# ---...---` | 79 chars |
+| Subsection | `# --- Name ---` | Variable |
+
+### Comment Characters by Format
+
+| Format | Character | Example |
+|--------|-----------|---------|
+| Shell, Gitconfig, TOML, Brewfile, Ghostty, Ripgrep | `#` | `# comment` |
+| Vim | `"` | `" comment` |
+
+### Subsection Style
+
+Use ASCII dashes for subsections (not Unicode em-dashes):
+
+```bash
+# --- Section Name ---
+# Brief explanation
+<configuration>
+```
+
+**Rationale:** ASCII ensures cross-editor portability and consistent rendering.
+
+### Examples
+
+**Level 1 (ghostty/config, ripgrep/rc, bun/.bunfig.toml):**
+```
+# config
+# =============================================================================
+# Ghostty Terminal Configuration
+#
+# Location: ~/.config/ghostty/config
+# Reference: https://ghostty.org/docs/config
+# =============================================================================
+```
+
+**Level 1 with XDG (uv/uv.toml, bun/.bunfig.toml):**
+```
+# uv.toml
+# =============================================================================
+# UV Package Manager Global Configuration
+#
+# Location: ~/.config/uv/uv.toml
+# XDG: Native support (no UV_* env overrides needed)
+#      - Cache: $XDG_CACHE_HOME/uv (~/.cache/uv)
+#      - Data:  $XDG_DATA_HOME/uv (~/.local/share/uv)
+#
+# References:
+#   1. Official Docs: https://docs.astral.sh/uv/concepts/config/
+# =============================================================================
+```
+
+**Level 2 with mode line (git/config):**
+```
+# gitconfig.symlink -*- mode: gitconfig; -*-
+# Time-stamp: <2026-03-15 21:00:00 Saturday by zhengyu.li>
+#
+# Git Configuration
+# =============================================================================
+```
+
 ## Cache File Detection
 
 **IMPORTANT**: Before committing, always check for runtime cache files that should not be tracked.

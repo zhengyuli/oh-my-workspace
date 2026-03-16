@@ -1,0 +1,15 @@
+# .bunfig.toml
+# =============================================================================
+# Bun Global Configuration
+#
+# Location: ~/.config/bun/.bunfig.toml
+# XDG: Native support (no BUN_* env overrides needed)
+#
+# References:
+#   - https://bun.sh/docs/runtime/bunfig
+# =============================================================================
+
+# Install cache
+[install.cache]
+# Mirror default structure: ~/.bun/install/cache → ~/.cache/bun/install/cache
+dir = "~/.cache/bun/install/cache"

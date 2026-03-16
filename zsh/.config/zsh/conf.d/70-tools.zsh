@@ -6,17 +6,24 @@
 # Load order: 70 (after 60-keybinds.zsh, before 99-local.zsh)
 #
 # Responsibilities:
-#   1. Initialize shell integrations for tools (fzf, direnv)
-#   2. Configure tool completions (bun, uv, carapace)
-#   3. Set up development tooling that requires shell hooks
+#   1. Set tool-specific environment variables (Homebrew, etc.)
+#   2. Initialize shell integrations for tools (fzf, direnv)
+#   3. Configure tool completions (bun, uv, carapace)
+#   4. Set up development tooling that requires shell hooks
 #
-# Do NOT add: Environment variables, PATH changes, aliases
-#             → Environment variables: 00-env.zsh
+# Do NOT add: Core environment variables, PATH changes, aliases
+#             → Core environment: 00-env.zsh
 #             → PATH modifications: 05-path.zsh
 #             → Aliases: 20-aliases.zsh
 #
 # Note: bun and uv don't require lazy loading - they're fast native binaries.
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# Homebrew (macOS)
+# -----------------------------------------------------------------------------
+export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_AUTO_UPDATE=1
 
 # -----------------------------------------------------------------------------
 # bun -- JavaScript/TypeScript Runtime

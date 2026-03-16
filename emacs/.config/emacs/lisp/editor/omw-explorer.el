@@ -78,27 +78,23 @@
     (dolist (file files)
       (start-process "dired-open" nil command file))))
 
-(defcustom omw/dired-global-omit t
-  "Global toggle for dired-omit-mode.
-When nil, omit mode is disabled globally across all dired buffers."
-  :type 'boolean
-  :group 'omw-emacs)
-
-(defun omw/toggle-global-omit-mode ()
-  "Toggle dired-omit-mode globally across all dired buffers."
-  (interactive)
-  (setq omw/dired-global-omit (not omw/dired-global-omit))
-  ;; Update all opened dired buffers
+(define-minor-mode omw/omit-global-mode
+  "Global minor mode to control dired-omit-mode across all dired buffers.
+When enabled, dired-omit-mode is enabled in all dired buffers."
+  :global t
+  :lighter " Omit"
+  :group 'omw-emacs
+  :init-value t
+  (setq omw/dired-global-omit omw/omit-global-mode)
   (dolist (buf (buffer-list))
     (with-current-buffer buf
       (when (derived-mode-p 'dired-mode)
-        (dired-omit-mode (if omw/dired-global-omit 1 -1)))))
-  (message "dired-omit-mode globally %s." (if omw/dired-global-omit "enabled" "disabled")))
+        (dired-omit-mode (if omw/omit-global-mode 1 -1))))))
 
 (defun omw/dired-mode-setup ()
   "Apply custom settings for dired mode."
   (require 'dired-x)
-  (dired-omit-mode (if omw/dired-global-omit 1 -1)))
+  (dired-omit-mode (if omw/omit-global-mode 1 -1)))
 
 (use-package dired
   :ensure nil

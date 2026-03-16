@@ -1,0 +1,110 @@
+# ripgrep/config
+# =============================================================================
+# Ripgrep configuration for interactive CLI use
+#
+# Loaded via: RIPGREP_CONFIG_PATH environment variable (set in .zshenv)
+#
+# Tools that bypass this config with --no-config:
+#   - consult-ripgrep (Emacs integration)
+#   - Shell scripts calling rg directly
+#   - fzf integration (if configured separately)
+#
+# IMPORTANT: Environment variables are NOT expanded in this file.
+#            All paths must be absolute. XDG expansion is done in .zshenv.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Search behavior
+# -----------------------------------------------------------------------------
+--smart-case
+--hidden
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - VCS
+# -----------------------------------------------------------------------------
+--glob=!.git/*
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - Build artifacts
+# -----------------------------------------------------------------------------
+--glob=!target/*
+--glob=!dist/*
+--glob=!build/*
+--glob=!.build/*
+--glob=!node_modules/*
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - Minified/bundled files
+# -----------------------------------------------------------------------------
+--glob=!*.min.js
+--glob=!*.min.css
+--glob=!*.bundle.js
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - Lock files
+# -----------------------------------------------------------------------------
+--glob=!package-lock.json
+--glob=!yarn.lock
+--glob=!pnpm-lock.yaml
+--glob=!Cargo.lock
+--glob=!poetry.lock
+--glob=!uv.lock
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - Compiled/binary artifacts
+# -----------------------------------------------------------------------------
+--glob=!*.elc
+--glob=!*.pyc
+--glob=!*.pyo
+--glob=!*.o
+--glob=!*.so
+--glob=!*.dylib
+--glob=!*.dll
+--glob=!*.exe
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - Python environments
+# -----------------------------------------------------------------------------
+--glob=!.venv/*
+--glob=!__pycache__/*
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - macOS system files
+# -----------------------------------------------------------------------------
+--glob=!.DS_Store
+--glob=!.Spotlight-V100/*
+--glob=!.Trashes/*
+
+# -----------------------------------------------------------------------------
+# Ignore patterns - Emacs backup/lock files
+# -----------------------------------------------------------------------------
+--glob=!*~
+--glob=!\#*\#
+
+# -----------------------------------------------------------------------------
+# Output formatting
+# -----------------------------------------------------------------------------
+--line-number
+--column
+--color=always
+
+# Line number: yellow bold
+--colors=line:fg:yellow
+--colors=line:style:bold
+
+# Path: green bold
+--colors=path:fg:green
+--colors=path:style:bold
+
+# Match highlight: ag-style black-on-yellow (official FAQ example)
+# For dark terminals, consider: --colors=match:fg:yellow --colors=match:style:bold
+--colors=match:fg:black
+--colors=match:bg:yellow
+--colors=match:style:nobold
+
+# -----------------------------------------------------------------------------
+# Performance
+# -----------------------------------------------------------------------------
+# Reduced from default 500 since minified files are filtered by globs
+--max-columns=200
+--max-columns-preview
