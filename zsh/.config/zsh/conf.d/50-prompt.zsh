@@ -3,7 +3,7 @@
 # Prompt Configuration
 #
 # Loaded by: Interactive shells (.zshrc)
-# Load order: After 40-plugins.zsh, before 60-keybinds.zsh
+# Load order: 50 (after 40-plugins.zsh, before 60-keybinds.zsh)
 #
 # Responsibilities:
 #   1. Initialize prompt theme (Starship/Pure/Powerlevel10k)

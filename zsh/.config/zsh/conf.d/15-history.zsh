@@ -3,15 +3,17 @@
 # History Configuration
 #
 # Loaded by: .zshrc (interactive shells only)
-# Load order: After 10-options.zsh, before 20-aliases.zsh
+# Load order: 15 (after 10-options.zsh, before 20-aliases.zsh)
 #
-# Prerequisite: HISTFILE is set in 00-env.zsh ($XDG_CACHE_HOME/zsh/history)
+# Prerequisites:
+#   - HISTFILE is set in 00-env.zsh ($XDG_CACHE_HOME/zsh/history)
 #
 # Responsibilities:
 #   1. Set history size limits (HISTSIZE, SAVEHIST)
 #   2. Configure history behavior options
 #
-# Do NOT add: HISTFILE path (set in 00-env.zsh)
+# Do NOT add: HISTFILE path
+#             → Put this in 00-env.zsh (environment variables)
 # =============================================================================
 
 # -----------------------------------------------------------------------------
