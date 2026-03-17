@@ -6,10 +6,10 @@
 # Load order: 40 (after 30-completion.zsh, before 50-prompt.zsh)
 #
 # Responsibilities:
-#   1. Configure plugin-specific environment variables (FZF, etc.)
+#   1. Configure plugin behavior variables (autosuggestions, history-substring-search)
 #   2. Bootstrap and configure Zinit plugin manager
 #   3. Load core plugins (syntax highlighting, autosuggestions, etc.)
-#   4. Load utility plugins (z, autopair)
+#   4. Load utility plugins (autopair)
 #   5. Configure plugin-specific settings
 #
 # Do NOT add: Tool initialization (pyenv, fnm, direnv, etc.)
@@ -21,7 +21,9 @@
 # Data directory follows XDG: $XDG_DATA_HOME/zinit/
 # -----------------------------------------------------------------------------
 # Idempotency guard - prevent double loading
-(( ${+ZINIT_INITIALIZED} )) && return 0
+if (( ${+ZINIT_INITIALIZED} )); then
+  return 0
+fi
 
 ZINIT_HOME="$XDG_DATA_HOME/zinit/zinit.git"
 

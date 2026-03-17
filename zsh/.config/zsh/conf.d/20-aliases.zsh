@@ -3,7 +3,7 @@
 # Command Aliases
 #
 # Loaded by: .zshrc (interactive shells only)
-# Load order: 20 (after history config, before completion)
+# Load order: 20 (after 15-history.zsh, before 30-completion.zsh)
 #
 # Responsibilities:
 #   1. Provide essential file/directory aliases
