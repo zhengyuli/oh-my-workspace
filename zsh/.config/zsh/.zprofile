@@ -1,9 +1,9 @@
-# $ZDOTDIR/.zprofile
+# .zprofile
 # =============================================================================
 # Login Shell Initialization
 #
 # Loaded by: Login shells only (first terminal open, SSH login)
-# Load order: After .zshenv, before .zshrc
+# Load order: Second (after .zshenv, before .zshrc)
 #
 # Responsibilities:
 #   1. Source conf.d fragments safe for non-interactive contexts

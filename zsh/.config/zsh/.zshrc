@@ -1,4 +1,4 @@
-# $ZDOTDIR/.zshrc
+# .zshrc
 # =============================================================================
 # Interactive Shell Orchestrator
 #

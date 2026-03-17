@@ -71,8 +71,6 @@ fi
 #       in 70-tools.zsh satisfies both constraints.
 # -----------------------------------------------------------------------------
 if command -v carapace &>/dev/null; then
-  # Bridge to existing native completions when carapace has no spec for a command
-  export CARAPACE_BRIDGES='zsh,fish,bash'
   _carapace_comp="$XDG_CACHE_HOME/zsh/carapace-completion.zsh"
   if [[ ! -f "$_carapace_comp" ]] || [[ "$(command -v carapace)" -nt "$_carapace_comp" ]]; then
     mkdir -p "${_carapace_comp:h}"

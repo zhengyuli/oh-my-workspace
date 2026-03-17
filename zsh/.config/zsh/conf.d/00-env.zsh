@@ -14,11 +14,11 @@
 #   3. Set Zsh history file location (HISTFILE)
 #   4. Define XDG-compliant paths for developer tools
 #
-# Do NOT add:
-#   - PATH changes → 05-path.zsh (centralized path management)
-#   - Aliases → 20-aliases.zsh (interactive only)
-#   - Functions → functions/ directory (autoloaded)
-#   - Tool initialization → 70-tools.zsh (lazy-loaded)
+# Do NOT add: PATH changes, aliases, functions, tool initialization
+#             → PATH changes in 05-path.zsh (centralized path management)
+#             → Aliases in 20-aliases.zsh (interactive only)
+#             → Functions in functions/ directory (autoloaded)
+#             → Tool initialization in 70-tools.zsh (lazy-loaded)
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -85,6 +85,10 @@ export VIMINIT="set nocp | source ${XDG_CONFIG_HOME}/vim/vimrc"
 # See: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 
+# carapace -- bridge to native shell completions when no carapace spec exists
+# Needs to be set before carapace initializes (70-tools.zsh)
+export CARAPACE_BRIDGES='zsh,fish,bash'
+
 # -----------------------------------------------------------------------------
 # Less -- Modern Configuration
 # -----------------------------------------------------------------------------
@@ -112,9 +116,22 @@ export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_AUTO_UPDATE=1
 
 # -----------------------------------------------------------------------------
+# LS_COLORS -- Colored ls and completion output
+# -----------------------------------------------------------------------------
+# macOS BSD ls uses LSCOLORS (different format); LS_COLORS is the GNU/XDG format
+# used by zsh completion (list-colors in 30-completion.zsh) and eza.
+# gdircolors is provided by coreutils (brew install coreutils, always in Brewfile).
+if command -v gdircolors &>/dev/null; then
+  eval "$(gdircolors -b)"
+else
+  # Minimal fallback: directory=bold blue, symlink=bold cyan, executable=bold green
+  export LS_COLORS='di=1;34:ln=1;36:ex=1;32:fi=0:mi=0;31'
+fi
+
+# -----------------------------------------------------------------------------
 # fzf -- Fuzzy Finder Environment
 # -----------------------------------------------------------------------------
-# Must be set before fzf-tab loads (via atload in 40-plugins.zsh).
+# Must be set before fzf-tab loads in 40-plugins.zsh.
 # Doom One color theme for visual consistency.
 #
 # Note: FZF_ALT_C_COMMAND uses --type d (directories only) for Alt+C cd widget.
