@@ -88,7 +88,8 @@
 ;; ==================================================================================
 (defun omw/ensure-python-tools ()
   (interactive)
-  (omw/ensure-tool-installed "ruff" "uv tool install ruff" "uv"))
+  (require 'omw-utils)
+  (omw/tools-install '("ruff" "uv tool install ruff" "uv")))
 
 ;; ==================================================================================
 (defun omw/python-format-buffer ()

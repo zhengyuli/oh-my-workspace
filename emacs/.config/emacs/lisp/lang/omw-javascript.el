@@ -37,9 +37,9 @@
 (defun omw/ensure-typescript-tools ()
   (interactive)
   (require 'omw-utils)
-  (omw/ensure-tool-installed "typescript-language-server"
-                             "bun install -g typescript-language-server typescript"
-                             "bun"))
+  (omw/tools-install '("typescript-language-server"
+                       "bun install -g typescript-language-server typescript"
+                       "bun")))
 
 (use-package typescript-mode
   :ensure t
