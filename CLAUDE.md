@@ -374,11 +374,13 @@ For medium complexity files, add editor metadata:
 
 ### Section Separators
 
-| Type | Format | Width |
-|------|--------|-------|
-| Header | `# ===...===` | 79 chars |
-| Major section | `# ---...---` | 79 chars |
-| Subsection | `# --- Name ---` | Variable |
+| Type | Format | Width | Usage |
+|------|--------|-------|-------|
+| Header | `# ===...===` | 79 chars | File header open/close ONLY |
+| Major section | `# ---...---` | 79 chars | Top-level content sections |
+| Subsection | `# --- Name ---` | Variable | Nested sections within major |
+
+**Rule:** `===` is reserved for file headers. All content sections use `---`.
 
 ### Comment Characters by Format
 
@@ -430,11 +432,19 @@ Use ASCII dashes for subsections (not Unicode em-dashes):
 
 **Level 2 with mode line (git/config):**
 ```
-# gitconfig.symlink -*- mode: gitconfig; -*-
+# config -*- mode: gitconfig; -*-
 # Time-stamp: <2026-03-15 21:00:00 Saturday by zhengyu.li>
-#
-# Git Configuration
 # =============================================================================
+# Git Configuration
+#
+# Location: ~/.config/git/config
+# =============================================================================
+# Note: === is for file headers only, --- for content sections:
+# -----------------------------------------------------------------------------
+# User Identity
+# -----------------------------------------------------------------------------
+[user]
+    name = Your Name
 ```
 
 ## Cache File Detection
