@@ -1,10 +1,14 @@
-# ripgrep/config
+# rc
 # =============================================================================
-# Ripgrep configuration for interactive CLI use
+# Ripgrep Configuration for Interactive CLI Use
 #
+# Location: ~/.config/ripgrep/rc
 # Loaded via: RIPGREP_CONFIG_PATH environment variable (set in .zshenv)
+# References:
+#   1. Config Guide: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+#   2. Man Page: https://manpages.org/rg
 #
-# Tools that bypass this config with --no-config:
+# Note: Tools that bypass this config with --no-config:
 #   - consult-ripgrep (Emacs integration)
 #   - Shell scripts calling rg directly
 #   - fzf integration (if configured separately)

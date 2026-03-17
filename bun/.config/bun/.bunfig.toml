@@ -6,7 +6,7 @@
 # XDG: Native support (no BUN_* env overrides needed)
 #
 # References:
-#   - https://bun.sh/docs/runtime/bunfig
+#   1. Bun Config Docs: https://bun.sh/docs/runtime/bunfig
 # =============================================================================
 
 # Install cache

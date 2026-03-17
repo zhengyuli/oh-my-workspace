@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# defaults-dev.sh -*- mode: sh; -*-
+# defaults.sh -*- mode: sh; -*-
 # Time-stamp: <2026-03-16 22:27:57 Monday by zhengyuli>
 #
 # Copyright (C) 2026 zhengyu li
@@ -17,6 +17,7 @@
 # ==============================================================================
 
 osascript -e 'tell application "System Preferences" to quit' 2>/dev/null
+osascript -e 'tell application "System Settings" to quit' 2>/dev/null
 
 # ==============================================================================
 # General UI/UX
@@ -198,11 +199,11 @@ defaults write com.apple.dock show-recents -bool false
 echo "Setting Terminal preferences..."
 
 # Only use UTF-8
-defaults write com.apple.terminal StringEncodings -array 4
+defaults write com.apple.Terminal StringEncodings -array 4
 
 # Enable Secure Keyboard Entry — blocks other processes from reading keystrokes
 # NOTE: may interfere with some tmux attach setups; disable if needed
-defaults write com.apple.terminal SecureKeyboardEntry -bool true
+defaults write com.apple.Terminal SecureKeyboardEntry -bool true
 
 # Disable line marks
 defaults write com.apple.Terminal ShowLineMarks -int 0
