@@ -361,16 +361,30 @@ All configuration files must start with a standardized header:
 | References | Recommended | Numbered list | Official documentation links |
 | Note | Optional | Free text | Important caveats or warnings |
 
-### Mode Line and Time-stamp (Level 2)
+### Time-stamp Convention
 
-For medium complexity files, add editor metadata:
+| Level | Required | Format |
+|-------|----------|--------|
+| Level 1 (simple) | No | N/A |
+| Level 2 (medium+) | Yes | `# Time-stamp: <YYYY-MM-DD HH:MM:SS Day by Author>` |
 
-```
-# gitconfig -*- mode: gitconfig; -*-
-# Time-stamp: <2026-03-15 21:00:00 Saturday by zhengyu.li>
-```
+**When to add Time-stamp:**
+- Files with mode lines (`-*- mode: ...; -*-`)
+- Files with multiple sections
+- Files that are manually edited
 
 **Format:** `<YYYY-MM-DD HH:MM:SS Day by Author>`
+- Date: ISO 8601 (YYYY-MM-DD)
+- Time: 24-hour format (HH:MM:SS)
+- Day: Full day name (Monday-Sunday)
+- Author: Git username or email prefix
+
+**Example:**
+```
+# config -*- mode: gitconfig; -*-
+# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# =============================================================================
+```
 
 ### Section Separators
 
