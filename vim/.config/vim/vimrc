@@ -4,18 +4,18 @@
 " Minimal, plugin-free Vim config
 " Theme: doom-one (ported from doom-emacs, Atom One Dark lineage)
 
-" ==============================================================================
+" =============================================================================
 " Baseline
-" ==============================================================================
+" =============================================================================
 
 set nocompatible              " Use Vim settings, not Vi
 set encoding=utf-8            " Standard encoding
 set history=500               " Command line history
 set backspace=indent,eol,start  " Sane backspace behavior
 
-" ==============================================================================
+" =============================================================================
 " XDG Paths (VIMINIT bypasses default vimrc loader, so we must do this manually)
-" ==============================================================================
+" =============================================================================
 
 " Resolve XDG dirs with fallback for non-XDG environments
 let s:cfg   = ($XDG_CONFIG_HOME  != '' ? $XDG_CONFIG_HOME  : $HOME . '/.config')
@@ -39,9 +39,9 @@ for s:dir in [s:state . '/vim', s:data . '/vim/undo']
     if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
 endfor
 
-" ==============================================================================
+" =============================================================================
 " Display
-" ==============================================================================
+" =============================================================================
 
 set number                   " Absolute line number on current line
 set relativenumber           " Relative numbers on all other lines
@@ -62,9 +62,9 @@ set wildignore+=*.o,*.obj,*.pyc,*.class,*.swp,*.bak
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/node_modules/*
 set signcolumn=yes           " Always-on sign column (no layout jitter)
 
-" ==============================================================================
+" =============================================================================
 " Search
-" ==============================================================================
+" =============================================================================
 
 set incsearch                " Highlight matches as you type
 set hlsearch                 " Keep matches highlighted
@@ -74,9 +74,9 @@ set smartcase                " … unless pattern contains uppercase
 " Clear search highlight with double-ESC
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
-" ==============================================================================
+" =============================================================================
 " Indentation
-" ==============================================================================
+" =============================================================================
 
 set expandtab                " Use spaces instead of tabs
 set tabstop=4                " Number of spaces per tab character
@@ -85,9 +85,9 @@ set shiftwidth=4             " Spaces per indentation level
 set autoindent               " Copy indent from current line
 set smartindent              " Smart auto-indenting
 
-" ==============================================================================
+" =============================================================================
 " Files & Persistence
-" ==============================================================================
+" =============================================================================
 
 set hidden                   " Allow hidden buffers
 set nobackup                 " No backup files (use version control)
@@ -97,9 +97,9 @@ set autoread                 " Auto-reload files changed externally
 " Persistent undo (directory created in XDG section above)
 set undofile
 
-" ==============================================================================
+" =============================================================================
 " Behaviour
-" ==============================================================================
+" =============================================================================
 
 set mouse=a                  " Mouse support in all modes
 set splitbelow               " Horizontal splits open below
@@ -139,9 +139,9 @@ if has('clipboard')
     set clipboard=unnamedplus  " Use system clipboard for yank/paste
 endif
 
-" ==============================================================================
+" =============================================================================
 " Auto Commands
-" ==============================================================================
+" =============================================================================
 
 augroup vimrc
     autocmd!
@@ -168,9 +168,9 @@ augroup vimrc
 
 augroup END
 
-" ==============================================================================
+" =============================================================================
 " File-type Overrides
-" ==============================================================================
+" =============================================================================
 
 augroup vimrc_ft
     autocmd!
@@ -189,9 +189,9 @@ augroup vimrc_ft
                 \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
 augroup END
 
-" ==============================================================================
+" =============================================================================
 " Status Line (built-in, no plugin)
-" ==============================================================================
+" =============================================================================
 "
 " Shows: mode | filepath [modified][readonly] | filetype | encoding | col:line %
 
@@ -211,14 +211,14 @@ set statusline+=\ %{&fileencoding?&fileencoding:&encoding}  " Encoding
 set statusline+=\ %3l:%-2c             " Line:column
 set statusline+=\ %3p%%                " Percentage
 
-" ==============================================================================
+" =============================================================================
 " Syntax Highlighting
-" ==============================================================================
+" =============================================================================
 
 syntax enable                " Enable syntax highlighting (keeps current colors)
 filetype plugin indent on    " Enable filetype detection, plugins, and indent rules
 
-" ==============================================================================
+" =============================================================================
 " Doom-One Color Theme (plugin-free, inline highlight definitions)
 "
 " Palette sourced from doomemacs/themes doom-one-theme.el
@@ -227,7 +227,7 @@ filetype plugin indent on    " Enable filetype detection, plugins, and indent ru
 "   yellow   #ECBE7B    blue     #51afef    dark-blue #2257A0
 "   magenta  #c678dd    violet   #a9a1e1    cyan     #46D9FF
 "   grey     #3B3F46    dark-grey #23272e
-" ==============================================================================
+" =============================================================================
 
 set background=dark
 
@@ -241,27 +241,27 @@ highlight clear
 if exists('syntax_on') | syntax reset | endif
 let g:colors_name = 'doom-one'
 
-" ── Core ─────────────────────────────────────────────────────────────────────
+" --- Core ---
 hi Normal         guifg=#bbc2cf guibg=#282c34 gui=NONE
 hi NormalNC       guifg=#bbc2cf guibg=#21242b gui=NONE  " inactive windows slightly darker
 
-" ── Cursor & Line ─────────────────────────────────────────────────────────────
+" --- Cursor & Line ---
 hi Cursor         guifg=#282c34 guibg=#bbc2cf gui=NONE
 hi CursorLine     guifg=NONE    guibg=#23272e gui=NONE
 hi CursorLineNr   guifg=#51afef guibg=#23272e gui=bold
 hi ColorColumn    guifg=NONE    guibg=#23272e gui=NONE
 
-" ── Line Numbers ─────────────────────────────────────────────────────────────
+" --- Line Numbers ---
 hi LineNr         guifg=#5B6268 guibg=NONE    gui=NONE
 hi SignColumn     guifg=NONE    guibg=#282c34 gui=NONE
 
-" ── Selection & Search ───────────────────────────────────────────────────────
+" --- Selection & Search ---
 hi Visual         guifg=NONE    guibg=#2257A0 gui=NONE
 hi Search         guifg=#282c34 guibg=#ECBE7B gui=bold
 hi IncSearch      guifg=#282c34 guibg=#51afef gui=bold
 hi MatchParen     guifg=#46D9FF guibg=NONE    gui=bold,underline
 
-" ── Syntax ───────────────────────────────────────────────────────────────────
+" --- Syntax ---
 hi Comment        guifg=#5B6268 guibg=NONE    gui=italic
 hi Constant       guifg=#a9a1e1 guibg=NONE    gui=NONE  " violet
 hi String         guifg=#98be65 guibg=NONE    gui=NONE  " green
@@ -297,7 +297,7 @@ hi Ignore         guifg=#5B6268 guibg=NONE    gui=NONE
 hi Error          guifg=#ff6c6b guibg=NONE    gui=bold
 hi Todo           guifg=#282c34 guibg=#ECBE7B gui=bold
 
-" ── UI Chrome ────────────────────────────────────────────────────────────────
+" --- UI Chrome ---
 hi StatusLine     guifg=#bbc2cf guibg=#3E4556 gui=NONE
 hi StatusLineNC   guifg=#5B6268 guibg=#23272e gui=NONE
 hi WildMenu       guifg=#282c34 guibg=#51afef gui=bold
@@ -316,7 +316,7 @@ hi SpecialKey     guifg=#3B3F46 guibg=NONE    gui=NONE
 hi Title          guifg=#51afef guibg=NONE    gui=bold
 hi Directory      guifg=#51afef guibg=NONE    gui=NONE
 
-" ── Diagnostics ──────────────────────────────────────────────────────────────
+" --- Diagnostics ---
 hi ErrorMsg       guifg=#ff6c6b guibg=NONE    gui=bold
 hi WarningMsg     guifg=#ECBE7B guibg=NONE    gui=NONE
 hi ModeMsg        guifg=#98be65 guibg=NONE    gui=bold
@@ -327,7 +327,7 @@ hi SpellCap       guifg=#ECBE7B guibg=NONE    gui=undercurl
 hi SpellRare      guifg=#46D9FF guibg=NONE    gui=undercurl
 hi SpellLocal     guifg=#da8548 guibg=NONE    gui=undercurl
 
-" ── Diff ─────────────────────────────────────────────────────────────────────
+" --- Diff ---
 hi DiffAdd        guifg=#98be65 guibg=#1e2b1e gui=NONE
 hi DiffChange     guifg=#ECBE7B guibg=#2b2510 gui=NONE
 hi DiffDelete     guifg=#ff6c6b guibg=#2b1010 gui=NONE
