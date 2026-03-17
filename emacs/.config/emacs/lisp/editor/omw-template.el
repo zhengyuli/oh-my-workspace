@@ -1,6 +1,6 @@
 ;;; omw-template.el -*- lexical-binding: t; -*-
 
-;; Author: chieftain <lizhengyu419@outlook.com>
+;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: template, yasnippet, autoinsert, snippet
 ;; Dependencies: (none)
 
@@ -25,7 +25,7 @@
 
 ;;; History:
 ;;
-;; 2026-03-14 19:10 chieftain <lizhengyu419@outlook.com> created.
+;; 2026-03-14 19:10 zhengyu li <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;

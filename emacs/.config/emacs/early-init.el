@@ -1,6 +1,6 @@
 ;;; early-init.el -*- lexical-binding: t; -*-
 
-;; Author: chieftain <lizhengyu419@outlook.com>
+;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
 ;; Dependencies: (none)
 
@@ -24,7 +24,7 @@
 
 ;;; History:
 ;;
-;; 2026-03-16 11:30 chieftain <lizhengyu419@outlook.com> created.
+;; 2026-03-16 11:30 zhengyu li <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;
