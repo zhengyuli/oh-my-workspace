@@ -1,0 +1,43 @@
+# config -*- mode: conf; -*-
+# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# =============================================================================
+# Ghostty Local Configuration (machine-specific overrides)
+#
+# Location: ~/.config/ghostty/local.ghostty
+# Usage:    Copy this file to local.ghostty and uncomment what you need.
+#           This file is loaded last and overrides the main config.
+#           It should NOT be tracked by version control (.gitignore it).
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Theme override
+# e.g. a work machine that prefers a lighter theme
+# -----------------------------------------------------------------------------
+# theme = rose-pine-dawn
+
+# -----------------------------------------------------------------------------
+# Font override
+# e.g. a machine where Source Code Pro is not installed
+# -----------------------------------------------------------------------------
+# font-family = "JetBrains Mono"
+# font-size   = 14
+
+# -----------------------------------------------------------------------------
+# Window size
+# e.g. an external monitor with more screen real estate
+# -----------------------------------------------------------------------------
+# window-width  = 220
+# window-height = 52
+
+# -----------------------------------------------------------------------------
+# Opacity
+# e.g. disable transparency on a low-powered machine
+# -----------------------------------------------------------------------------
+# background-opacity     = 1.0
+# background-blur-radius = 0
+
+# -----------------------------------------------------------------------------
+# Shell / command override
+# e.g. launch directly into tmux on this machine
+# -----------------------------------------------------------------------------
+# command = /bin/zsh --login -c "tmux attach || tmux"
