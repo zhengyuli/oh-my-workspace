@@ -1,8 +1,19 @@
 " vimrc -*- mode: vim; -*-
-" Time-stamp: <2026-03-13 07:15:00 Friday by zhengyu.li>
+" Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 "
 " Minimal, plugin-free Vim config
 " Theme: doom-one (ported from doom-emacs, Atom One Dark lineage)
+" =============================================================================
+"
+" Location: ~/.config/vim/vimrc
+" Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in .zshenv)
+" XDG: Manually redirected (Vim predates XDG; VIMINIT bypasses default loader)
+"      - Data:  $XDG_DATA_HOME/vim/undo  (~/.local/share/vim/undo)
+"      - State: $XDG_STATE_HOME/vim/viminfo  (~/.local/state/vim/viminfo)
+" References:
+"   1. Vim Options: https://vimdoc.sourceforge.net/htmldoc/options.html
+"   2. XDG in Vim: https://wiki.archlinux.org/title/XDG_Base_Directory#Vim
+" =============================================================================
 
 " =============================================================================
 " Baseline
@@ -20,7 +31,6 @@ set backspace=indent,eol,start  " Sane backspace behavior
 " Resolve XDG dirs with fallback for non-XDG environments
 let s:cfg   = ($XDG_CONFIG_HOME  != '' ? $XDG_CONFIG_HOME  : $HOME . '/.config')
 let s:data  = ($XDG_DATA_HOME    != '' ? $XDG_DATA_HOME    : $HOME . '/.local/share')
-let s:cache = ($XDG_CACHE_HOME   != '' ? $XDG_CACHE_HOME   : $HOME . '/.cache')  " Reserved
 let s:state = ($XDG_STATE_HOME   != '' ? $XDG_STATE_HOME   : $HOME . '/.local/state')
 
 " Redirect runtimepath (VIMINIT skips this; default still points to ~/.vim)
@@ -48,10 +58,10 @@ set relativenumber           " Relative numbers on all other lines
 set cursorline               " Highlight the current line
 set scrolloff=8              " Keep 8 lines of context above/below cursor
 set sidescrolloff=5          " Keep 5 columns of context left/right
-set wrap                     " Soft-wrap long lines …
-set linebreak                " … at word boundaries, not mid-word
+set wrap                     " Soft-wrap long lines ...
+set linebreak                " ... at word boundaries, not mid-word
 set showmatch                " Briefly jump to matching bracket on input
-set matchtime=2              " … for 0.2 s
+set matchtime=2              " ... for 0.2 s
 set laststatus=2             " Always show status line
 set showcmd                  " Show partial command bottom-right
 set ruler                    " Show line/col in status line
@@ -68,8 +78,8 @@ set signcolumn=yes           " Always-on sign column (no layout jitter)
 
 set incsearch                " Highlight matches as you type
 set hlsearch                 " Keep matches highlighted
-set ignorecase               " Case-insensitive by default …
-set smartcase                " … unless pattern contains uppercase
+set ignorecase               " Case-insensitive by default ...
+set smartcase                " ... unless pattern contains uppercase
 
 " Clear search highlight with double-ESC
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
