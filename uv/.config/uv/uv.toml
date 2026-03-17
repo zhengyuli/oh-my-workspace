@@ -11,7 +11,7 @@
 # References:
 #   1. Official Docs: https://docs.astral.sh/uv/concepts/configuration-files/
 #   2. Config Options: https://docs.astral.sh/uv/reference/settings/
-#   3. Best Practices: https://docs.astral.sh/uv/guides/integration/pytorch/
+#   3. PyTorch Integration: https://docs.astral.sh/uv/guides/integration/pytorch/
 #
 # Note: Project-specific settings should go in pyproject.toml [tool.uv] section.
 # =============================================================================
