@@ -1,12 +1,20 @@
-# ~/.config/ghostty/config
+# config
+# =============================================================================
+# Ghostty Terminal Configuration
+#
+# Location: ~/.config/ghostty/config
+# References:
+#   1. Config Docs: https://ghostty.org/docs/config
+#   2. Keybind Docs: https://ghostty.org/docs/config/keybind
+# =============================================================================
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Fonts
 #
 # font-family stacks as a fallback chain — repeated declarations are valid.
 # font-size is a single global value; per-fallback sizing is not supported.
 # Symbols Nerd Font Mono covers non-ASCII glyphs and Nerd Font icons.
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 font-family        = "Source Code Pro"
 font-family        = "Symbols Nerd Font Mono"
@@ -14,15 +22,15 @@ font-size          = 15
 font-thicken       = true
 adjust-cell-height = 10%
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Appearance
 #
 # Theme names use Title Case since Ghostty 1.2.0 (previously kebab-case).
 # background-blur accepts an integer blur radius (not background-blur-radius).
 # window-colorspace = display-p3 enables wide-gamut rendering on macOS.
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
-theme                = "Catppuccin Mocha"
+theme                = "Doom One"
 background-opacity   = 0.95
 background-blur      = 16
 window-colorspace    = display-p3
@@ -30,9 +38,9 @@ macos-titlebar-style = hidden
 cursor-style         = bar
 cursor-style-blink   = true
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Shell Integration
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 shell-integration          = detect
 shell-integration-features = cursor,sudo,title
@@ -40,30 +48,30 @@ confirm-close-surface      = false
 mouse-hide-while-typing    = true
 copy-on-select             = false
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Emacs Compatibility — Meta key
 #
-# Left Option → Meta (M-x, M-f, M-b, M-d …).
-# Right Option is kept free for macOS dead-key input (@ # € £ …).
+# Left Option → Meta (M-x, M-f, M-b, M-d ...).
+# Right Option is kept free for macOS dead-key input (@ # € £ ...).
 #
 # Ctrl+Space (set-mark) is blocked at the macOS system level before Ghostty
 # ever sees it. Fix it manually, not in config:
 #   System Settings → Keyboard → Keyboard Shortcuts →
 #   Input Sources → uncheck "Select the previous input source"
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 macos-option-as-alt = left
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Keybindings — Tabs
 #
 # super+shift+p / super+shift+n match previous/next mnemonics.
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 keybind = super+shift+p=previous_tab
 keybind = super+shift+n=next_tab
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Keybindings — Splits
 #
 # super+d       → split right (vertical divider, two side-by-side panes)
@@ -71,27 +79,27 @@ keybind = super+shift+n=next_tab
 #
 # Note: CMD+H is reserved by macOS at the system level ("Hide Window") and
 # cannot be overridden by any application.
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 keybind = super+d=new_split:right
 keybind = super+shift+d=new_split:down
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Keybindings — Split Navigation
 #
 # goto_split:next / previous cycles splits in creation order.
 # Avoids the unbind-then-rebind pattern which can trigger parse errors.
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 keybind = super+shift+j=goto_split:next
 keybind = super+shift+k=goto_split:previous
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Keybindings — Misc
 #
 # Key names follow Chromium keycode conventions (comma, equal, minus, zero).
-# Do not use raw symbols (,  =  -  0) as they cause parser InvalidFormat errors.
-# ─────────────────────────────────────────────────────────────────────────────
+# Do not use raw symbols (, = - 0) as they cause parser InvalidFormat errors.
+# -----------------------------------------------------------------------------
 
 keybind = super+shift+comma=reload_config
 keybind = super+equal=increase_font_size
