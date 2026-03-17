@@ -35,3 +35,6 @@ for _conf in "$ZDOTDIR"/conf.d/*.zsh(N); do
   source "$_conf"
 done
 unset _conf
+
+# bun completions
+[ -s "/Users/zhengyu.li/.local/share/bun/_bun" ] && source "/Users/zhengyu.li/.local/share/bun/_bun"

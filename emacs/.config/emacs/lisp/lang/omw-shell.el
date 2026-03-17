@@ -37,9 +37,9 @@
 (defun omw/ensure-bash-tools ()
   (interactive)
   (require 'omw-utils)
-  (omw/ensure-tool-installed "bash-language-server"
-                             "bun install -g bash-language-server"
-                             "bun"))
+  (omw/tools-install '("bash-language-server"
+                       "bun install -g bash-language-server"
+                       "bun")))
 
 (use-package sh-script
   :ensure nil

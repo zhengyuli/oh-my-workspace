@@ -38,7 +38,7 @@
 (defun omw/ensure-cc-tools ()
   (interactive)
   (require 'omw-utils)
-  (omw/ensure-tool-installed "clangd" "brew install llvm" "brew"))
+  (omw/tools-install '("clangd" "brew install llvm" "brew")))
 
 (use-package google-c-style
   :ensure t

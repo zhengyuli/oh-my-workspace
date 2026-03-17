@@ -37,9 +37,9 @@
 (defun omw/ensure-go-tools ()
   (interactive)
   (require 'omw-utils)
-  (omw/ensure-tools-installed
-   '(("gopls"   "go install golang.org/x/tools/gopls@latest" "go")
-     ("gofumpt" "go install mvdan.cc/gofumpt@latest" "go"))))
+  (omw/tools-install
+   '("gopls" "go install golang.org/x/tools/gopls@latest" "go")
+   '("gofumpt" "go install mvdan.cc/gofumpt@latest" "go")))
 
 (use-package go-mode
   :ensure t
