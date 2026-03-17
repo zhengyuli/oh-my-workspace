@@ -1,4 +1,5 @@
 # .zshenv
+# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
 # =============================================================================
 # Bootstrap -- the only Zsh-related file in $HOME
 #
