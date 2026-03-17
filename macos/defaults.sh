@@ -1,27 +1,35 @@
 #!/usr/bin/env bash
-# ==============================================================================
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-16 22:27:57 Monday by zhengyuli>
+# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 #
-# Copyright (C) 2026 zhengyu li
+# macOS System Defaults - developer-optimized
+# =============================================================================
 #
-# Author: zhengyuli <lizhengyu419@outlook.com>
-# Description: macOS system defaults — developer-optimized
+# Copyright (C) 2026 zhengyu.li
+# Author: zhengyu.li <lizhengyu419@outlook.com>
 #
-# Based on defaults.sh with the following changes:
+# Location: ~/oh-my-dotfiles/macos/defaults.sh  (not stowed; run directly)
+# References:
+#   1. mathiasbynens/dotfiles: https://github.com/mathiasbynens/dotfiles/blob/main/.macos
+#   2. macOS defaults list: https://macos-defaults.com
+#   3. Apple defaults(1) man page: man defaults
+# Note: Some changes require logout or restart. Run as your normal user (sudo
+#       is used only where required). Close System Settings before running.
+#
+# Customizations vs. standard mathiasbynens/dotfiles:
 #   - Finder new window defaults to $HOME instead of Desktop
 #   - Keyboard repeat can go to max (KeyRepeat=1, InitialKeyRepeat=10)
 #   - Trackpad corner right-click removed (prone to accidental triggers)
 #   - Added: window/QL animation speedup, CrashReporter silence, spring loading
 #   - App Store: kept security updates only, disabled auto-install of others
-# ==============================================================================
+# =============================================================================
 
 osascript -e 'tell application "System Preferences" to quit' 2>/dev/null
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # General UI/UX
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting General UI/UX preferences..."
 
@@ -61,9 +69,9 @@ defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
 # Silence crash reporter dialogs
 defaults write com.apple.CrashReporter DialogType -string "none"
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Keyboard
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Keyboard preferences..."
 
@@ -77,9 +85,9 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 10
 # Disable press-and-hold in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Trackpad & Mouse
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Trackpad/Mouse preferences..."
 
@@ -88,7 +96,7 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-# Right-click via two-finger tap (corner mapping removed — prone to accidental triggers)
+# Right-click via two-finger tap (corner mapping removed - prone to accidental triggers)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
 
@@ -96,9 +104,9 @@ defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryCli
 defaults write NSGlobalDomain com.apple.springing.enabled -bool true
 defaults write NSGlobalDomain com.apple.springing.delay -float 0
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Screen
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Screen preferences..."
 
@@ -111,9 +119,9 @@ defaults write com.apple.screencapture location -string "${HOME}/Desktop"
 defaults write com.apple.screencapture type -string "png"
 defaults write com.apple.screencapture disable-shadow -bool true
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Finder
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Finder preferences..."
 
@@ -166,9 +174,9 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 # Speed up Quick Look panel animation
 defaults write NSGlobalDomain QLPanelAnimationDuration -float 0
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Dock
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Dock preferences..."
 
@@ -192,34 +200,34 @@ defaults write com.apple.dock showhidden -bool true
 # Don't show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Terminal
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Terminal preferences..."
 
 # Only use UTF-8
 defaults write com.apple.Terminal StringEncodings -array 4
 
-# Enable Secure Keyboard Entry — blocks other processes from reading keystrokes
+# Enable Secure Keyboard Entry - blocks other processes from reading keystrokes
 # NOTE: may interfere with some tmux attach setups; disable if needed
 defaults write com.apple.Terminal SecureKeyboardEntry -bool true
 
 # Disable line marks
 defaults write com.apple.Terminal ShowLineMarks -int 0
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Time Machine
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Time Machine preferences..."
 
 # Don't prompt to use new disks as backup volumes
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # TextEdit
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting TextEdit preferences..."
 
@@ -228,9 +236,9 @@ defaults write com.apple.TextEdit RichText -int 0
 defaults write com.apple.TextEdit PlainTextEncoding -int 4
 defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Mac App Store
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Mac App Store preferences..."
 
@@ -243,18 +251,18 @@ defaults write com.apple.SoftwareUpdate AutomaticDownload -int 0
 defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int 1
 defaults write com.apple.commerce AutoUpdate -bool false
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Photos
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Photos preferences..."
 
 # Prevent Photos from opening automatically when devices are plugged in
 defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Messages
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Setting Messages preferences..."
 
@@ -263,9 +271,9 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
          "automaticQuoteSubstitutionEnabled" -bool false \
          "continuousSpellCheckingEnabled" -bool false
 
-# ==============================================================================
+# -----------------------------------------------------------------------------
 # Kill affected applications
-# ==============================================================================
+# -----------------------------------------------------------------------------
 
 echo "Restarting affected applications..."
 
@@ -277,7 +285,7 @@ for app in \
     "Photos" \
     "SystemUIServer" \
     "Terminal"; do
-    killall "${app}" &>/dev/null
+    killall "${app}" 2>/dev/null || true
 done
 
 echo "Done. Note that some of these changes require a logout/restart to take effect."
