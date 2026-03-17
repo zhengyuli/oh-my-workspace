@@ -6,64 +6,37 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 This is a **dotfiles repository** providing comprehensive development environment setup for macOS. It uses **GNU Stow** for symlink management with XDG-compliant directory structure.
 
-## Repository Structure
+## Directory Structure
 
 ```
 oh-my-dotfiles/
 ├── .stow-local-ignore    # Files to ignore when stowing
+├── CLAUDE.md             # This file - project-wide guidance
 ├── emacs/                # Emacs configuration (>= 30.2)
 │   ├── CLAUDE.md         # Emacs-specific guidance (detailed)
 │   └── .config/emacs/    # Symlinked to ~/.config/emacs/
 ├── ghostty/              # Ghostty terminal configuration
 │   └── .config/ghostty/  # Symlinked to ~/.config/ghostty/
-├── vim/                  # Vim configuration
-│   └── .config/vim/      # Symlinked to ~/.config/vim/
-├── zsh/                  # Zsh configuration
-│   ├── CLAUDE.md         # Zsh-specific guidance
-│   ├── .zshenv           # Symlinked to ~/.zshenv (bootstrap file)
-│   └── .config/zsh/      # Symlinked to ~/.config/zsh/
 ├── git/                  # Git configuration
 │   └── .config/git/      # Symlinked to ~/.config/git/
 ├── homebrew/
 │   └── Brewfile          # Homebrew bundle for all packages
-└── macos/                # macOS-specific settings
+├── macos/                # macOS-specific settings
+├── ripgrep/              # Ripgrep configuration
+│   └── .config/ripgrep/  # Symlinked to ~/.config/ripgrep/
+├── uv/                   # UV package manager configuration
+│   └── .config/uv/       # Symlinked to ~/.config/uv/
+├── vim/                  # Vim configuration
+│   └── .config/vim/      # Symlinked to ~/.config/vim/
+└── zsh/                  # Zsh configuration
+    ├── CLAUDE.md         # Zsh-specific guidance
+    ├── .zshenv           # Symlinked to ~/.zshenv (bootstrap file)
+    └── .config/zsh/      # Symlinked to ~/.config/zsh/
 ```
 
-## Stow Commands
+## Quick Start
 
-GNU Stow manages symlinks from packages to `$HOME`:
-
-```bash
-# Stow all packages
-stow -d /path/to/oh-my-dotfiles -t "$HOME" zsh git vim emacs ripgrep
-
-# Stow specific packages
-stow zsh git
-
-# Unstow (remove symlinks)
-stow -D zsh git vim emacs ripgrep
-
-# Restow (refresh symlinks)
-stow -R zsh git vim emacs ripgrep
-
-# Dry-run to see what would happen
-stow -n zsh
-```
-
-## Stow Package System
-
-| Package    | Contents                                        |
-|------------|-------------------------------------------------|
-| `zsh/`     | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
-| `git/`     | `.config/git/` → `$HOME/.config/git/`           |
-| `vim/`     | `.config/vim/` → `$HOME/.config/vim/`           |
-| `emacs/`   | `.config/emacs/` → `$HOME/.config/emacs/`       |
-| `ghostty/`  | `.config/ghostty/` → `$HOME/.config/ghostty/`   |
-| `ripgrep/` | `.config/ripgrep/` → `$HOME/.config/ripgrep/` |
-
-**Note:** `homebrew/` and `macos/` are NOT stow packages — they provide scripts/utilities only.
-
-## Initial Setup
+### Setup
 
 ```bash
 # 1. Clone the repository
@@ -80,77 +53,17 @@ stow zsh git vim emacs ghostty ripgrep
 source ~/.zshenv
 ```
 
-## XDG Base Directory
+### Common Commands
 
-Shell configuration exports XDG environment variables:
+| Command | Description |
+|---------|-------------|
+| `stow zsh git` | Stow specific packages |
+| `stow -D zsh git` | Unstow (remove symlinks) |
+| `stow -R zsh git` | Restow (refresh symlinks) |
+| `stow -n zsh` | Dry-run to preview changes |
+| `brew bundle --file homebrew/Brewfile` | Install all Homebrew packages |
 
-```bash
-XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-```
-
-## Zsh Plugin System
-
-Zsh plugins are managed by **Zinit** installed at `${XDG_DATA_HOME}/zinit/`. See `zsh/CLAUDE.md` for plugin configuration.
-
-## Toolchain
-
-Modern development toolchain without traditional version managers:
-
-| Tool | Purpose | Replaces |
-|------|---------|----------|
-| **bun** | JS/TS runtime + package manager | node, npm, yarn, pnpm, fnm |
-| **uv** | Python package manager | pip, pipenv, poetry, pyenv |
-| **go** | Go programming language | (standard install) |
-
-### Installation Commands
-
-```bash
-# Global LSP Servers (bun/uv managed)
-
-# JS/TS ecosystem
-bun install -g typescript-language-server typescript
-bun install -g vscode-langservers-extracted   # html/css/json/eslint
-bun install -g bash-language-server
-bun install -g @tailwindcss/language-server
-bun install -g prettier
-
-# Python ecosystem
-uv tool install basedpyright
-uv tool install ruff
-
-# Go (standard install)
-go install golang.org/x/tools/gopls@latest
-go install golang.org/x/tools/cmd/goimports@latest
-
-# System-level (via Homebrew)
-# clangd, lua-language-server, rust-analyzer
-```
-
-## Terminal
-
-- **Ghostty**: Fast, native terminal emulator with XDG-compliant configuration
-- **Theme**: Doom One color scheme across all tools
-
-## Theme
-
-Unified **Doom One** theme across:
-- **Emacs**: `doom-one` theme via `doom-themes` package
-- **Ghostty**: Custom color palette matching Doom One
-- **fzf**: Doom One color configuration in `FZF_DEFAULT_OPTS`
-
-## Subdirectory CLAUDE.md Files
-
-Each major component has its own `CLAUDE.md` with detailed guidance:
-
-- **zsh/CLAUDE.md** - Zsh configuration structure, startup sequence, plugin system
-- **emacs/CLAUDE.md** - Emacs coding standards, module architecture, use-package patterns
-
-These files are lazy-loaded when working in their respective directories.
-
-## Quick Validation
+### Quick Validation
 
 ```bash
 # Verify stow packages are linked
@@ -163,19 +76,103 @@ zsh -c 'echo $ZDOTDIR'
 emacs --debug-init
 ```
 
-## Key Conventions
+## Stow Package System
 
-- **macOS-focused**: All configurations assume macOS as primary OS
-- **Stow-managed**: Config files are symlinked via GNU Stow
-- **XDG-compliant**: Follows XDG Base Directory Specification
-- **Emacs prefix**: Uses `omw/` prefix (oh-my-workspace) for custom functions/variables
-- **Modern toolchain**: bun for JS/TS, uv for Python, no version managers needed
+| Package | Contents |
+|---------|----------|
+| `zsh/` | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
+| `git/` | `.config/git/` → `$HOME/.config/git/` |
+| `vim/` | `.config/vim/` → `$HOME/.config/vim/` |
+| `emacs/` | `.config/emacs/` → `$HOME/.config/emacs/` |
+| `ghostty/` | `.config/ghostty/` → `$HOME/.config/ghostty/` |
+| `ripgrep/` | `.config/ripgrep/` → `$HOME/.config/ripgrep/` |
 
-## Shell Script Coding Standards
+**Note:** `homebrew/` and `macos/` are NOT stow packages — they provide scripts/utilities only.
+
+## Architecture
+
+### XDG Base Directory
+
+Shell configuration exports XDG environment variables:
+
+```
+$HOME/.config/     ← XDG_CONFIG_HOME (configurations)
+$HOME/.cache/      ← XDG_CACHE_HOME (cache files)
+$HOME/.local/share/ ← XDG_DATA_HOME (data files)
+$HOME/.local/state/ ← XDG_STATE_HOME (state files)
+```
+
+```bash
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+```
+
+### Toolchain Overview
+
+| Tool | Purpose | Replaces |
+|------|---------|----------|
+| **bun** | JS/TS runtime + package manager | node, npm, yarn, pnpm, fnm |
+| **uv** | Python package manager | pip, pipenv, poetry, pyenv |
+| **go** | Go programming language | (standard install) |
+
+### Subdirectory CLAUDE.md Files
+
+Each major component has its own `CLAUDE.md` with detailed guidance:
+
+| File | Content |
+|------|---------|
+| **zsh/CLAUDE.md** | Zsh configuration structure, startup sequence, plugin system |
+| **emacs/CLAUDE.md** | Emacs coding standards, module architecture, use-package patterns |
+
+These files are lazy-loaded when working in their respective directories.
+
+## Toolchain
+
+### LSP Server Installation
+
+```bash
+# JS/TS ecosystem (bun)
+bun install -g typescript-language-server typescript
+bun install -g vscode-langservers-extracted   # html/css/json/eslint
+bun install -g bash-language-server
+bun install -g @tailwindcss/language-server
+bun install -g prettier
+
+# Python ecosystem (uv)
+uv tool install basedpyright
+uv tool install ruff
+
+# Go (standard install)
+go install golang.org/x/tools/gopls@latest
+go install golang.org/x/tools/cmd/goimports@latest
+
+# System-level (via Homebrew)
+# clangd, lua-language-server, rust-analyzer
+```
+
+## Theme
+
+Unified **Doom One** theme across:
+
+| Tool | Configuration |
+|------|---------------|
+| **Emacs** | `doom-one` theme via `doom-themes` package |
+| **Ghostty** | Custom color palette matching Doom One |
+| **fzf** | Doom One color configuration in `FZF_DEFAULT_OPTS` |
+
+## Terminal
+
+- **Ghostty**: Fast, native terminal emulator with XDG-compliant configuration
+
+## Coding Standards
+
+### Shell Script Standards
 
 These conventions apply to **both bash and zsh scripts** throughout the repository.
 
-### 1. Avoid `[[ cond ]] && cmd || true` Pattern (CRITICAL)
+#### 1. Avoid `[[ cond ]] && cmd || true` Pattern (CRITICAL)
 
 **WRONG** - This pattern is error-prone and hides potential issues:
 
@@ -209,7 +206,7 @@ fi
 [[ -n "$value" ]] && git config "$key" "$value"
 ```
 
-### 2. Use `[[ ]]` for Conditional Tests
+#### 2. Use `[[ ]]` for Conditional Tests
 
 Prefer `[[ ]]` over `[ ]` or `test` for condition checks:
 
@@ -226,7 +223,7 @@ test -f "$file"
 
 **Rationale:** `[[ ]]` prevents word-splitting, supports pattern matching, and is more readable.
 
-### 3. Use `(( ))` for Arithmetic
+#### 3. Use `(( ))` for Arithmetic
 
 ```bash
 # ✅ CORRECT
@@ -239,7 +236,7 @@ let count+=1
 result=$(expr $a + $b)
 ```
 
-### 4. Use `$()` for Command Substitution
+#### 4. Use `$()` for Command Substitution
 
 ```bash
 # ✅ CORRECT
@@ -249,7 +246,7 @@ local dir=$(dirname "$file")
 local dir=`dirname "$file"`
 ```
 
-### 5. Quote All External Data
+#### 5. Quote All External Data
 
 Any value from files, environment variables, or command output must be quoted:
 
@@ -264,7 +261,7 @@ rm ${file}
 grep ${pattern} ${file}
 ```
 
-### 6. Prefer `printf` Over `echo -e`
+#### 6. Prefer `printf` Over `echo -e`
 
 ```bash
 # ✅ CORRECT - portable and predictable
@@ -275,7 +272,7 @@ printf 'Status: %s\n' "$status"
 echo -e "$message"
 ```
 
-### 7. Use `set -e` with Caution
+#### 7. Use `set -e` with Caution
 
 ```bash
 # ✅ CORRECT - scoped to specific operations
@@ -289,7 +286,7 @@ echo -e "$message"
 set -e  # Can cause unexpected exits
 ```
 
-### 8. Security: Validate Before Sourcing
+#### 8. Security: Validate Before Sourcing
 
 ```bash
 # ✅ CORRECT - check before sourcing
@@ -301,7 +298,7 @@ fi
 source "${file}"
 ```
 
-### 9. Security: Never `eval` Untrusted Input
+#### 9. Security: Never `eval` Untrusted Input
 
 ```bash
 # ✅ CORRECT - use allowlist
@@ -314,7 +311,7 @@ fi
 eval "${user_input}"
 ```
 
-### 10. Check File Existence Before Operations
+#### 10. Check File Existence Before Operations
 
 ```bash
 # ✅ CORRECT
@@ -326,11 +323,11 @@ rm "$file"
 
 For zsh-specific conventions (startup files, setopt, arrays, etc.), see [zsh/CLAUDE.md](zsh/CLAUDE.md).
 
-## Configuration Comment Standards
+### Configuration Comment Standards
 
 These standards apply to **all non-emacs/non-zsh configuration files** in the repository (bun, ghostty, git, homebrew, macos, ripgrep, uv, vim). For zsh and emacs, see their respective CLAUDE.md files.
 
-### Header Structure
+#### Header Structure
 
 All configuration files must start with a standardized header:
 
@@ -349,7 +346,7 @@ All configuration files must start with a standardized header:
 # =============================================================================
 ```
 
-### Header Fields
+#### Header Fields
 
 | Field | Required | Format | Purpose |
 |-------|----------|--------|---------|
@@ -361,7 +358,7 @@ All configuration files must start with a standardized header:
 | References | Recommended | Numbered list | Official documentation links |
 | Note | Optional | Free text | Important caveats or warnings |
 
-### Time-stamp Convention
+#### Time-stamp Convention
 
 | Level | Required | Format |
 |-------|----------|--------|
@@ -386,7 +383,7 @@ All configuration files must start with a standardized header:
 # =============================================================================
 ```
 
-### Section Separators
+#### Section Separators
 
 | Type | Format | Width | Usage |
 |------|--------|-------|-------|
@@ -396,14 +393,14 @@ All configuration files must start with a standardized header:
 
 **Rule:** `===` is reserved for file headers. All content sections use `---`.
 
-### Comment Characters by Format
+#### Comment Characters by Format
 
 | Format | Character | Example |
 |--------|-----------|---------|
 | Shell, Gitconfig, TOML, Brewfile, Ghostty, Ripgrep | `#` | `# comment` |
 | Vim | `"` | `" comment` |
 
-### Subsection Style
+#### Subsection Style
 
 Use ASCII dashes for subsections (not Unicode em-dashes):
 
@@ -415,7 +412,7 @@ Use ASCII dashes for subsections (not Unicode em-dashes):
 
 **Rationale:** ASCII ensures cross-editor portability and consistent rendering.
 
-### Examples
+#### Header Examples
 
 **Level 1 (ghostty/config, ripgrep/rc, bun/.bunfig.toml):**
 ```
@@ -461,6 +458,138 @@ Use ASCII dashes for subsections (not Unicode em-dashes):
     name = Your Name
 ```
 
+## Code Quality
+
+### Validation Commands
+
+**Verify stow symlinks:**
+```bash
+ls -la ~/.zshenv ~/.config/zsh/.zshrc ~/.config/git/config
+```
+
+**Test shell configuration:**
+```bash
+zsh -c 'echo $ZDOTDIR'
+```
+
+**Check for cache files before committing:**
+```bash
+git status --porcelain | grep -E '\.(zcompdump|swp|swo|bak|elc|pyc)$|cache/|undo/'
+```
+
+**Validate configuration files:**
+```bash
+# Check header format compliance
+grep -L "^# ===" */.config/*/* 2>/dev/null
+
+# Check Time-stamp in files with mode lines
+grep -r "^# config.*mode:" --include="*" | while read -r line; do
+    file=$(echo "$line" | cut -d: -f1)
+    grep -q "Time-stamp:" "$file" || echo "Missing Time-stamp: $file"
+done
+```
+
+### Compliance Checklist
+
+- [ ] All stow packages properly symlinked
+- [ ] No cache files committed (`.zcompdump`, `*.swp`, etc.)
+- [ ] Configuration files have standardized headers
+- [ ] Shell scripts follow coding standards (no `[[ ]] && cmd || true`)
+- [ ] Time-stamp present in files with mode lines
+- [ ] Section separators use `---` for content, `===` for headers only
+
+### Troubleshooting
+
+**Stow conflicts:**
+```bash
+# Remove existing files and restow
+stow -D zsh
+rm ~/.zshenv
+stow zsh
+```
+
+**XDG paths not set:**
+```bash
+# Verify .zshenv is loaded first
+zsh -c 'echo $XDG_CONFIG_HOME'
+```
+
+**Cache files in wrong location:**
+```bash
+# Check if XDG_* variables are set before tool initialization
+echo $XDG_CACHE_HOME
+```
+
+## Best Practices
+
+### 1. Stow Management
+
+**Always use stow for symlink management:**
+```bash
+# ✅ CORRECT - use stow
+stow zsh git
+
+# ❌ AVOID - manual symlinks break stow tracking
+ln -s ~/oh-my-dotfiles/zsh/.zshenv ~/.zshenv
+```
+
+### 2. Cache File Prevention
+
+**Never commit runtime cache files:**
+```bash
+# Check before committing
+git status --porcelain | grep -E '\.(zcompdump|swp|swo|bak|elc)$'
+```
+
+**Why:** If XDG variables aren't set, tools may create cache files in `.config/` instead of proper locations.
+
+### 3. Configuration File Headers
+
+**Use standardized headers for all configuration files:**
+- Level 1: Simple files (ghostty, ripgrep)
+- Level 2: Complex files with mode lines (gitconfig)
+
+**Why:** Consistent headers improve discoverability and maintenance.
+
+### 4. Shell Script Patterns
+
+**Prefer explicit `if` over `&&` chains:**
+```bash
+# ✅ CORRECT
+if [[ -n "$var" ]]; then
+    cmd
+fi
+
+# ❌ AVOID
+[[ -n "$var" ]] && cmd || true
+```
+
+**Why:** Explicit conditionals are more predictable and easier to debug.
+
+### 5. Pre-Commit Verification
+
+**Always validate before committing:**
+```bash
+# 1. Check for cache files
+git status --porcelain | grep -E '\.(zcompdump|swp|elc)$'
+
+# 2. Verify stow links
+ls -la ~/.zshenv ~/.config/git/config
+
+# 3. Test shell loads without errors
+zsh -c 'source ~/.zshenv && echo OK'
+```
+
+**Why:** Catches common issues before they reach the repository.
+
+## Key Conventions
+
+- **macOS-focused**: All configurations assume macOS as primary OS
+- **Stow-managed**: Config files are symlinked via GNU Stow
+- **XDG-compliant**: Follows XDG Base Directory Specification
+- **Emacs prefix**: Uses `omw/` prefix (oh-my-workspace) for custom functions/variables
+- **Modern toolchain**: bun for JS/TS, uv for Python, no version managers needed
+
 ## Cache File Detection
 
 **IMPORTANT**: Before committing, always check for runtime cache files that should not be tracked.
@@ -490,3 +619,56 @@ git status --porcelain | grep -E '\.(zcompdump|swp|swo|bak|elc|pyc)$|cache/|undo
 ### Why This Matters
 
 If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not properly set, tools may create cache files in `.config/` directories instead of their proper locations. The `.gitignore` includes fallback patterns to catch these cases.
+
+---
+
+## Quick Reference Card
+
+### Essential Rules
+
+1. **Stow Only:** Use `stow` for symlink management, never manual `ln -s`
+2. **XDG Paths:** All tools must respect `$XDG_*` environment variables
+3. **Shell Scripts:** Use `if` statements, avoid `[[ ]] && cmd || true`
+4. **Config Headers:** Standardized format with `===` for headers, `---` for sections
+5. **Time-stamp:** Required for files with mode lines or multiple sections
+6. **Cache Files:** Never commit `.zcompdump`, `*.swp`, `*.elc`, etc.
+7. **Prefix Convention:** Emacs uses `omw/`, zsh uses no special prefix
+8. **Modern Toolchain:** bun for JS/TS, uv for Python, no version managers
+9. **Theme:** Doom One across all tools (Emacs, Ghostty, fzf)
+10. **Subdirectory CLAUDE.md:** Check zsh/CLAUDE.md and emacs/CLAUDE.md for specific guidance
+
+### Pre-Commit Checklist
+
+- [ ] No cache files: `git status | grep -E '\.(zcompdump|swp|elc)$'`
+- [ ] Stow symlinks valid: `ls -la ~/.zshenv ~/.config/git/config`
+- [ ] Shell loads: `zsh -c 'source ~/.zshenv'`
+- [ ] Config headers compliant: Standardized format with `===`/`---`
+- [ ] Time-stamp present: Files with mode lines have Time-stamp
+
+### Common Patterns
+
+```bash
+# Stow package management
+stow zsh git vim emacs ghostty ripgrep  # Install all
+stow -D zsh                             # Remove package
+stow -R zsh                             # Refresh package
+
+# XDG environment
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# Shell conditional (correct pattern)
+if [[ -n "$var" ]]; then
+    cmd
+fi
+
+# Config file header
+# filename
+# =============================================================================
+# Description
+#
+# Location: ~/.config/tool/filename
+# =============================================================================
+```

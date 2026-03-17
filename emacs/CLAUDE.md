@@ -8,9 +8,11 @@ This is an **Emacs configuration** (>= 30.2) for macOS, featuring LSP support, c
 
 ## Directory Structure
 
+The Emacs configuration is located at `.config/emacs/` within the stow package:
+
 ```
-emacs/
-├── init.el              # Main entry point (symlinked to ~/.emacs)
+emacs/.config/emacs/
+├── init.el              # Main entry point (symlinked to ~/.config/emacs/init.el)
 ├── lisp/
 │   ├── editor/          # Editor behavior (appearance, completion, edit, etc.)
 │   ├── system/          # System/environment (credential, proxy)
@@ -113,7 +115,7 @@ go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
 emacs --debug-init
 
 # Batch mode test (faster for CI/CD)
-emacs --batch --eval '(progn (load-file "emacs/init.el") (message "Configuration loaded successfully"))'
+emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message "Configuration loaded successfully"))'
 ```
 
 ## Architecture
@@ -654,7 +656,7 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 emacs --debug-init
 
 # Batch mode test (faster for CI/CD)
-emacs --batch --eval '(progn (load-file "emacs/init.el") (message "Configuration loaded successfully"))'
+emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message "Configuration loaded successfully"))'
 ```
 
 **Check naming conventions:**
@@ -779,7 +781,7 @@ Finally complete step 3."
 
 ```bash
 # 1. Syntax check
-emacs --batch --eval '(progn (load-file "emacs/init.el") (message "✅ OK"))'
+emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message "✅ OK"))'
 
 # 2. Debug check
 emacs --debug-init
@@ -837,7 +839,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 ### Pre-Commit Checklist
 
-- [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs/init.el") ...)'`
+- [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") ...)'`
 - [ ] No naming violations: All functions use `omw/` prefix
 - [ ] No variable violations: All defcustom use `:group 'omw-emacs`
 - [ ] File headers complete: Author, Copyright, Dependencies, History, Commentary, GPL
