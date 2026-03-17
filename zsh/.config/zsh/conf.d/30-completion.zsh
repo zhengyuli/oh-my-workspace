@@ -15,10 +15,10 @@
 #   - 05-path.zsh must set fpath with completion directories
 #   - XDG_CACHE_HOME must be defined (00-env.zsh)
 #
-# Do NOT add:
-#   - Custom completion functions → completions/ directory
-#   - Plugin completions → 40-plugins.zsh
-#   - Tool-specific initialization → 70-tools.zsh
+# Do NOT add: custom completion functions, plugin completions, tool initialization
+#             → Custom completion functions in completions/ directory
+#             → Plugin completions in 40-plugins.zsh
+#             → Tool-specific initialization in 70-tools.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------

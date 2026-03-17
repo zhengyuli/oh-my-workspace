@@ -3,7 +3,7 @@
 # Key Bindings
 #
 # Loaded by: .zshrc (interactive shells only)
-# Load order: 60 (after plugins, before tools)
+# Load order: 60 (after 50-prompt.zsh, before 70-tools.zsh)
 #
 # Prerequisites:
 #   - None (standalone configuration)
@@ -14,10 +14,10 @@
 #   3. Configure word/line movement key bindings
 #   4. Configure custom ZLE widgets (sudo toggle, cd parent, etc.)
 #
-# Do NOT add:
-#   - Aliases → 20-aliases.zsh
-#   - Plugin key bindings → 40-plugins.zsh (plugin-specific)
-#   - Tool initialization → 70-tools.zsh
+# Do NOT add: aliases, plugin key bindings, tool initialization
+#             → Aliases in 20-aliases.zsh
+#             → Plugin key bindings in 40-plugins.zsh (plugin-specific)
+#             → Tool initialization in 70-tools.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -92,10 +92,12 @@ bindkey ' '  magic-space              # Space   expand history substitution (!! 
 # -----------------------------------------------------------------------------
 # Press Esc twice to add or remove 'sudo' at the start of the line
 sudo-command-line() {
-  [[ -z $BUFFER ]] && zle up-history
-  if [[ $BUFFER == sudo\ * ]]; then
+  if [[ -z "$BUFFER" ]]; then
+    zle up-history
+  fi
+  if [[ "$BUFFER" == sudo\ * ]]; then
     LBUFFER="${LBUFFER#sudo }"
-  elif [[ $BUFFER == $'\x1b[200~'* ]]; then
+  elif [[ "$BUFFER" == $'\x1b[200~'* ]]; then
     LBUFFER="sudo ${LBUFFER:6}"
   else
     LBUFFER="sudo $LBUFFER"

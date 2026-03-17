@@ -3,7 +3,7 @@
 # Shell Options (setopt / unsetopt)
 #
 # Loaded by: .zshrc (interactive shells only)
-# Load order: 10 (after environment, before history)
+# Load order: 10 (after 05-path.zsh, before 15-history.zsh)
 #
 # Prerequisites:
 #   - None (standalone configuration)
@@ -15,10 +15,10 @@
 #   4. Configure input/output options (INTERACTIVE_COMMENTS, BEEP, etc.)
 #   5. Configure job control options (AUTO_RESUME, NOTIFY, etc.)
 #
-# Do NOT add:
-#   - History options → 15-history.zsh (dedicated history config)
-#   - Aliases → 20-aliases.zsh
-#   - Key bindings → 60-keybinds.zsh
+# Do NOT add: history options, aliases, key bindings
+#             → History options in 15-history.zsh (dedicated history config)
+#             → Aliases in 20-aliases.zsh
+#             → Key bindings in 60-keybinds.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------
