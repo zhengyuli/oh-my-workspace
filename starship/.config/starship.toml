@@ -8,16 +8,6 @@
 #      cache follows XDG_CACHE_HOME natively (~/.cache/starship)
 #      - Config: $STARSHIP_CONFIG (set in zsh/.config/zsh/conf.d/00-env.zsh)
 #      - Cache:  $XDG_CACHE_HOME/starship (automatic)
-# Loaded via: STARSHIP_CONFIG environment variable (set in .zshenv)
-# References:
-#   1. Config Ref:  https://starship.rs/config/
-#   2. Presets:     https://starship.rs/presets/
-#   3. Module List: https://starship.rs/config/#prompt
-#
-# Note: Requires a Nerd Font in the terminal (e.g. JetBrainsMono Nerd Font).
-#       Module detection is file-based; each runtime module only activates
-#       when its sentinel files are present in the current directory tree.
-#       Disabled modules incur zero file-system scan overhead.
 #
 # Layout: two-line prompt
 #   line 1 — [user@host] directory git-branch git-status runtimes duration
@@ -187,7 +177,6 @@ disabled = true
 disabled = true
 
 [package]
-# Version number in prompt is rarely actionable — more noise than signal
 disabled = true
 
 [java]
