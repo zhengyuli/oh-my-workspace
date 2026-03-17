@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
-#
-# macOS System Defaults - developer-optimized
+# Time-stamp: <2026-03-17 15:43:52 Tuesday by zhengyu.li>
 # =============================================================================
+# macOS System Defaults - developer-optimized
 #
 # Copyright (C) 2026 zhengyu.li
 # Author: zhengyu.li <lizhengyu419@outlook.com>
@@ -33,8 +32,9 @@ osascript -e 'tell application "System Settings" to quit' 2>/dev/null
 
 echo "Setting General UI/UX preferences..."
 
-# Set standby delay to 24 hours
-sudo pmset -a standbydelay 86400
+# Set standby delay to 24 hours (AC power only — battery power left at system
+# default to avoid disk/system sleep timing conflicts)
+sudo pmset -c standbydelay 86400
 
 # Disable startup sound
 sudo nvram StartupMute=1
