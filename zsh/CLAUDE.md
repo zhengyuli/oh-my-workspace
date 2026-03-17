@@ -50,6 +50,7 @@ All configuration files must start with a standardized header:
 
 ```zsh
 # <filename>
+# Time-stamp: <YYYY-MM-DD HH:MM:SS Day by Author>
 # =============================================================================
 # <One-line description>
 #
@@ -72,11 +73,23 @@ All configuration files must start with a standardized header:
 # =============================================================================
 ```
 
+### Time-stamp Format
+
+| Field | Format | Example |
+|-------|--------|---------|
+| Date | ISO 8601 (YYYY-MM-DD) | `2026-03-17` |
+| Time | 24-hour format (HH:MM:SS) | `15:30:00` |
+| Day | Full day name (Monday-Sunday) | `Monday` |
+| Author | Git username or email prefix | `zhengyu.li` |
+
+**Example:** `# Time-stamp: <2026-03-17 15:30:00 Monday by zhengyu.li>`
+
 ### Header Field Specifications
 
 | Field            | Required    | Format                      | Description                            |
 |------------------|-------------|-----------------------------|----------------------------------------|
 | `<filename>`     | Yes         | Filename only (no path)     | e.g., `00-env.zsh`                     |
+| Time-stamp       | Yes         | `<YYYY-MM-DD HH:MM:SS Day by Author>` | Last modification timestamp    |
 | Description      | Yes         | Single line                 | Brief summary of file purpose          |
 | Loaded by        | Yes         | Shell type(s)               | `.zshrc`, `.zprofile`, or "ALL shells" |
 | Load order       | Yes         | `<num> (after X, before Y)` | Numeric prefix with context            |
