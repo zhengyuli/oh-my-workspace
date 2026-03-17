@@ -96,7 +96,7 @@ sudo-command-line() {
   if [[ $BUFFER == sudo\ * ]]; then
     LBUFFER="${LBUFFER#sudo }"
   elif [[ $BUFFER == $'\x1b[200~'* ]]; then
-    LBUFFER="sudo ${LBUFFER:8}"
+    LBUFFER="sudo ${LBUFFER:6}"
   else
     LBUFFER="sudo $LBUFFER"
   fi

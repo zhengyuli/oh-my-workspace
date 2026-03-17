@@ -6,7 +6,7 @@
 # Load order: 15 (after 10-options.zsh, before 20-aliases.zsh)
 #
 # Prerequisites:
-#   - HISTFILE is set in 00-env.zsh ($XDG_CACHE_HOME/zsh/history)
+#   - HISTFILE is set in 00-env.zsh ($XDG_STATE_HOME/zsh/history)
 #
 # Responsibilities:
 #   1. Set history size limits (HISTSIZE, SAVEHIST)

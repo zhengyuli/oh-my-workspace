@@ -118,4 +118,5 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 # -----------------------------------------------------------------------------
 
 # bashcompinit: allows use of bash-style complete commands
-autoload -Uz bashcompinit && bashcompinit
+autoload -Uz bashcompinit
+bashcompinit
