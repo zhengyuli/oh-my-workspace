@@ -64,11 +64,11 @@ fi
 export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
 
 # Bun (JS/TS runtime) -- https://github.com/oven-sh/bun/issues/1678
-export BUN_INSTALL="$XDG_DATA_HOME/bun"
+export BUN_INSTALL="${BUN_INSTALL:-$XDG_DATA_HOME/bun}"
 
 # Rust (cargo/rustup)
-export CARGO_HOME="$XDG_DATA_HOME/cargo"
-export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
+export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
 
 # -----------------------------------------------------------------------------
 # XDG Redirections -- Editor Tools

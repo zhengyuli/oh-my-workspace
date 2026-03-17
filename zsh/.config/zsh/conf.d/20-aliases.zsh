@@ -24,9 +24,16 @@ if command -v eza &>/dev/null; then
   alias ll='eza -la --icons --group-directories-first --git'
   alias lt='eza --tree --level=2 --icons'
 else
-  alias ls='ls --color=auto'
-  alias la='ls -A'
-  alias ll='ls -lAh'
+  # macOS BSD ls uses -G for color; GNU ls (Linux) uses --color=auto
+  if [[ "$OSTYPE" == darwin* ]]; then
+    alias ls='ls -G'
+    alias la='ls -AG'
+    alias ll='ls -lAhG'
+  else
+    alias ls='ls --color=auto'
+    alias la='ls -A --color=auto'
+    alias ll='ls -lAh --color=auto'
+  fi
   alias lt='tree -L 2'
 fi
 
@@ -64,8 +71,8 @@ alias du='du -sh'
 # -----------------------------------------------------------------------------
 # Zsh Config
 # -----------------------------------------------------------------------------
-alias zrc='$EDITOR $ZDOTDIR/.zshrc'
-alias reload='source $ZDOTDIR/.zshrc && echo "reloaded"'
+alias zrc='"$EDITOR" "$ZDOTDIR/.zshrc"'
+alias reload='source "$ZDOTDIR/.zshrc" && echo "reloaded"'
 
 # -----------------------------------------------------------------------------
 # Git
