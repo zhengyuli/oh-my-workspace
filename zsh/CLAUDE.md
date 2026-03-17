@@ -34,11 +34,11 @@ zsh/
 .zshenv (always) → .zprofile (login) → .zshrc (interactive)
 ```
 
-| File | Loaded By | Purpose |
-|------|-----------|---------|
-| `.zshenv` | ALL shells | XDG paths, ZDOTDIR, tool redirects |
-| `.zprofile` | Login shells | Environment, PATH, SSH agent |
-| `.zshrc` | Interactive shells | Sources conf.d/* in order |
+| File        | Loaded By          | Purpose                            |
+|-------------|--------------------|------------------------------------|
+| `.zshenv`   | ALL shells         | XDG paths, ZDOTDIR, tool redirects |
+| `.zprofile` | Login shells       | Environment, PATH, SSH agent       |
+| `.zshrc`    | Interactive shells | Sources conf.d/* in order          |
 
 ---
 
@@ -74,16 +74,16 @@ All configuration files must start with a standardized header:
 
 ### Header Field Specifications
 
-| Field | Required | Format | Description |
-|-------|----------|--------|-------------|
-| `<filename>` | Yes | Filename only (no path) | e.g., `00-env.zsh` |
-| Description | Yes | Single line | Brief summary of file purpose |
-| Loaded by | Yes | Shell type(s) | `.zshrc`, `.zprofile`, or "ALL shells" |
-| Load order | Yes | `<num> (after X, before Y)` | Numeric prefix with context |
-| Prerequisites | Optional | Dash list | Dependencies on other files/variables |
-| Responsibilities | Yes | Numbered list | What this file manages |
-| Do NOT add | Recommended | Arrow reference format | What belongs elsewhere |
-| Note | Optional | Free text | Additional context |
+| Field            | Required    | Format                      | Description                            |
+|------------------|-------------|-----------------------------|----------------------------------------|
+| `<filename>`     | Yes         | Filename only (no path)     | e.g., `00-env.zsh`                     |
+| Description      | Yes         | Single line                 | Brief summary of file purpose          |
+| Loaded by        | Yes         | Shell type(s)               | `.zshrc`, `.zprofile`, or "ALL shells" |
+| Load order       | Yes         | `<num> (after X, before Y)` | Numeric prefix with context            |
+| Prerequisites    | Optional    | Dash list                   | Dependencies on other files/variables  |
+| Responsibilities | Yes         | Numbered list               | What this file manages                 |
+| Do NOT add       | Recommended | Arrow reference format      | What belongs elsewhere                 |
+| Note             | Optional    | Free text                   | Additional context                     |
 
 ### Section Comment Styles
 
@@ -120,11 +120,11 @@ For single-line explanations, no separator needed:
 
 ### Comment Width Standards
 
-| Element | Width | Example |
-|---------|-------|---------|
-| Header separator (`# ===...`) | 79 chars | `# =============================================================================` |
+| Element                        | Width    | Example                                                                           |
+|--------------------------------|----------|-----------------------------------------------------------------------------------|
+| Header separator (`# ===...`)  | 79 chars | `# =============================================================================` |
 | Section separator (`# ---...`) | 79 chars | `# -----------------------------------------------------------------------------` |
-| Subcategory separator | Variable | `# --- Recording ---` |
+| Subcategory separator          | Variable | `# --- Recording ---`                                                             |
 
 ### Comment Formatting Rules
 
@@ -299,18 +299,18 @@ eval "${user_input}"
 
 ## What Goes Where
 
-| Content | File | Reason |
-|---------|------|--------|
-| XDG_* variables | `.zshenv` | Needed by all shells |
-| ZDOTDIR | `.zshenv` | Must be set before other files load |
-| Tool XDG redirects | `00-env.zsh` | Login shell context; sourced by .zprofile and .zshrc |
-| PATH changes | `.zprofile` / `05-path.zsh` | Only needed at login |
-| Editor/Pager | `.zprofile` / `00-env.zsh` | Only needed at login |
-| Aliases | `.zshrc` / `20-aliases.zsh` | Interactive only |
-| Functions | `functions/` | Autoloaded, interactive only |
-| Prompt | `.zshrc` / `50-prompt.zsh` | Interactive only |
-| Plugins | `.zshrc` / `40-plugins.zsh` | Interactive only |
-| Local overrides | `99-local.zsh` | Machine-specific, not tracked |
+| Content            | File                        | Reason                                               |
+|--------------------|-----------------------------|------------------------------------------------------|
+| XDG_* variables    | `.zshenv`                   | Needed by all shells                                 |
+| ZDOTDIR            | `.zshenv`                   | Must be set before other files load                  |
+| Tool XDG redirects | `00-env.zsh`                | Login shell context; sourced by .zprofile and .zshrc |
+| PATH changes       | `.zprofile` / `05-path.zsh` | Only needed at login                                 |
+| Editor/Pager       | `.zprofile` / `00-env.zsh`  | Only needed at login                                 |
+| Aliases            | `.zshrc` / `20-aliases.zsh` | Interactive only                                     |
+| Functions          | `functions/`                | Autoloaded, interactive only                         |
+| Prompt             | `.zshrc` / `50-prompt.zsh`  | Interactive only                                     |
+| Plugins            | `.zshrc` / `40-plugins.zsh` | Interactive only                                     |
+| Local overrides    | `99-local.zsh`              | Machine-specific, not tracked                        |
 
 ---
 

@@ -90,7 +90,7 @@ zsh/.config/zsh/history
 zsh/.config/zsh/.zhistory
 # Zinit plugin data (should be in $XDG_DATA_HOME/zinit/)
 zsh/.config/zsh/zinit/
-# Zsh session/state files
+# Zsh word code files (should be in $XDG_CACHE_HOME/zsh/)
 zsh/.config/zsh/*.zwc
 zsh/.config/zsh/**/*.zwc
 
@@ -99,32 +99,35 @@ zsh/.config/zsh/**/*.zwc
 vim/.config/vim/viminfo
 # Undo directory (should be in $XDG_DATA_HOME/vim/undo/)
 vim/.config/vim/undo/
-# Swap files (disabled in config, but catch if re-enabled)
+# Swap files (should be in $XDG_CACHE_HOME/vim/; disabled in config, but catch if re-enabled)
 vim/.config/vim/**/*.swp
 vim/.config/vim/**/*.swo
-# Backup files
+# Backup files (should be in $XDG_STATE_HOME/vim/; disabled in config, but catch if re-enabled)
 vim/.config/vim/**/*.bak
 vim/.config/vim/**/*~
-# Session/view files
+# Session/view files (should be in $XDG_DATA_HOME/vim/)
 vim/.config/vim/session/
 vim/.config/vim/view/
 
 # --- Emacs ---
-# Already covered above: *.elc, .#*, *~, \#*\#
-# Additional Emacs runtime files that may appear:
+# Byte-compiled files (already covered above: *.elc, .#*, *~, \#*\#)
+# Auto-save list (should be in $XDG_STATE_HOME/emacs/auto-save-list/)
 emacs/.config/emacs/auto-save-list/
+# Package archive (should be in $XDG_DATA_HOME/emacs/elpa/)
 emacs/.config/emacs/elpa/
+# URL cache (should be in $XDG_CACHE_HOME/emacs/url/)
 emacs/.config/emacs/url/
-# Emacs desktop and session files
+# Desktop/session files (should be in $XDG_STATE_HOME/emacs/)
 emacs/.config/emacs/.emacs.desktop
 emacs/.config/emacs/.emacs.desktop.lock
 emacs/.config/emacs/desktop/
+# Emacs cache directory (should be in $XDG_CACHE_HOME/emacs/)
 emacs/.config/emacs/.cache/
 
 # --- Git ---
-# Local config (XDG-compliant, machine-specific)
+# Local config (machine-specific, should NOT be in repo)
 git/.config/git/config.local
-# Git credential cache
+# Git credential cache (should be in $XDG_CACHE_HOME/git/)
 git/.config/git/credentials
 
 # ==============================================================================
