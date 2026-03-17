@@ -16,19 +16,28 @@
 # Note: Project-specific settings should go in pyproject.toml [tool.uv] section.
 # =============================================================================
 
-# --- Package Index ---
+# -----------------------------------------------------------------------------
+# Package Index
+# -----------------------------------------------------------------------------
+
 [[index]]
 name = "pypi"
 url = "https://pypi.org/simple/"
 publish-url = "https://upload.pypi.org/legacy/"
 default = true
 
-# --- Networking ---
+# -----------------------------------------------------------------------------
+# Networking
+# -----------------------------------------------------------------------------
+
 # Use system trust store (Keychain) instead of bundled webpki-roots.
 # Required for: corporate proxies, self-signed CAs, non-Mozilla certificates.
 native-tls = true
 
-# --- Optional Settings (uncomment to enable) ---
+# -----------------------------------------------------------------------------
+# Optional Settings (uncomment to enable)
+# -----------------------------------------------------------------------------
+
 # These are common settings users might want. Uncomment as needed.
 
 # Installation strategy options:
@@ -48,7 +57,10 @@ native-tls = true
 # concurrent-builds = 8
 # concurrent-installs = 8
 
-# --- CI/CD Integration ---
+# -----------------------------------------------------------------------------
+# CI/CD Integration
+# -----------------------------------------------------------------------------
+
 # For CI environments, set via environment variables:
 #   UV_FROZEN=true          - Fail if lockfile is outdated
 #   UV_NO_PROGRESS=true     - Disable progress bars in logs

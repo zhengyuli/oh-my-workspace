@@ -24,8 +24,8 @@ Welcome to the Oh-My-Workspace repository! This project provides a comprehensive
 
 ## Quick Start
 
-| Component | Setup Script       | Description                                     |
-|-----------|--------------------|-------------------------------------------------|
+| Component | Setup Script       | Description                                    |
+|-----------|--------------------|------------------------------------------------|
 | Emacs     | `./emacs/setup.sh` | Emacs configuration with LSP, completion, etc. |
 | Vim       | `./vim/setup.sh`   | Vim configuration with modern editing features |
 

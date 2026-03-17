@@ -1,8 +1,7 @@
 # config -*- mode: conf; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
-#
-# Ghostty Terminal Configuration
 # =============================================================================
+# Ghostty Terminal Configuration
 #
 # Location: ~/.config/ghostty/config
 # XDG: Native support (reads $XDG_CONFIG_HOME/ghostty/config by default)

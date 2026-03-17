@@ -1,8 +1,7 @@
 # config -*- mode: gitconfig; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
-#
-# Git Configuration
 # =============================================================================
+# Git Configuration
 #
 # Location: ~/.config/git/config
 # XDG: Native support (GIT_CONFIG_GLOBAL or default ~/.config/git/config)

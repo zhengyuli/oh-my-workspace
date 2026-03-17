@@ -1,8 +1,7 @@
 # Brewfile -*- mode: ruby; -*-
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
-#
-# Homebrew Bundle - oh-my-dotfiles Package List
+# Time-stamp: <2026-03-17 15:30:11 Tuesday by zhengyu.li>
 # =============================================================================
+# Homebrew Bundle - oh-my-dotfiles Package List
 #
 # Location: ~/oh-my-dotfiles/homebrew/Brewfile  (not stowed; run directly)
 # References:
@@ -95,14 +94,6 @@ cask "ghostty"                  # Fast, native terminal emulator
 
 brew "neovim"                   # Hyperextensible Vim-based editor
 cask "emacs-app"                # Emacs text editor
-
-# -----------------------------------------------------------------------------
-# LSP Servers (system-level, managed by Homebrew)
-# -----------------------------------------------------------------------------
-# See CLAUDE.md for JS/TS/Python LSP servers managed by bun/uv
-
-brew "lua-language-server"      # Lua LSP server (for Neovim config, etc.)
-brew "rust-analyzer"            # Rust LSP server
 
 # -----------------------------------------------------------------------------
 # Data Processing
