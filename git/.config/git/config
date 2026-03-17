@@ -1,17 +1,21 @@
 # config -*- mode: gitconfig; -*-
-# Time-stamp: <2026-03-15 21:00:00 Saturday by zhengyu.li>
+# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 #
 # Git Configuration
-# A comprehensive git configuration following best practices from:
-# - Julia Evans' Git Config Survey (2024)
-# - Git Official Documentation
-# - GitHub Community Best Practices
+# =============================================================================
 #
-# Note: Put personal user info in ~/.config/git/config.local
+# Location: ~/.config/git/config
+# XDG: Native support (GIT_CONFIG_GLOBAL or default ~/.config/git/config)
+#      - Local override: ~/.config/git/config.local (identity, proxy, etc.)
+# References:
+#   1. Git Config Docs: https://git-scm.com/docs/git-config
+#   2. Julia Evans' Git Config Survey 2024: https://jvns.ca/blog/2024/02/16/popular-git-config-options/
+# Note: Put personal user info (name, email) in ~/.config/git/config.local
+# =============================================================================
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # User (override in ~/.config/git/config.local)
-# =============================================================================
+# -----------------------------------------------------------------------------
 # User identity is intentionally NOT set here to allow machine-specific config.
 # Store machine-specific settings (name, email, proxy, etc.) in ~/.config/git/config.local
 
@@ -24,9 +28,9 @@
 [include]
     path = ~/.config/git/config.local
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Core Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Fundamental Git behavior and preferences
 
 [core]
@@ -65,9 +69,9 @@
     # Automatically uses FSMonitor on macOS for improved 'git status' performance
     fsmonitor = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Feature Flags
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Enable experimental or optional Git features
 
 [feature]
@@ -75,9 +79,9 @@
     # Improves performance for large monorepos
     manyFiles = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Init Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configuration for repository initialization
 
 [init]
@@ -85,19 +89,19 @@
     # This follows the modern convention adopted by GitHub (2020+)
     defaultBranch = main
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Alias Definitions
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Shortcuts for common Git commands to improve workflow efficiency
 
 [alias]
-    # ---- Status ----
+    # --- Status ---
     # Short status with branch tracking info
     st = status -sb
     # Compact status output (porcelain format)
     s = status -s
 
-    # ---- Log ----
+    # --- Log ---
     # Recent commits (last 10)
     l = log --oneline -n 10
     # Log with graph (current branch)
@@ -108,7 +112,7 @@
     # Show last commit with file statistics
     last = log -1 HEAD --stat
 
-    # ---- Diff ----
+    # --- Diff ---
     d = diff
     # Show staged changes
     dc = diff --cached
@@ -119,7 +123,7 @@
     # Show diff statistics summary (useful for code reviews)
     changes = diff --stat
 
-    # ---- Commit ----
+    # --- Commit ---
     c = commit
     cm = commit -m
     # Amend last commit (opens editor)
@@ -129,7 +133,7 @@
     # Amend last commit without editing message
     amend = commit --amend --no-edit
 
-    # ---- Branch ----
+    # --- Branch ---
     b = branch
     # List all branches (local and remote)
     ba = branch -a
@@ -138,36 +142,36 @@
     # Force delete branch
     bD = branch -D
 
-    # ---- Checkout ----
+    # --- Checkout ---
     co = checkout
     # Create and switch to new branch
     cob = checkout -b
     # Quick switch to main branch
     com = checkout main
 
-    # ---- Merge ----
+    # --- Merge ---
     m = merge
     # Merge with explicit merge commit (no fast-forward)
     mnf = merge --no-ff
 
-    # ---- Rebase ----
+    # --- Rebase ---
     r = rebase
     # Interactive rebase
     ri = rebase -i
     rc = rebase --continue
     ra = rebase --abort
 
-    # ---- Remote ----
+    # --- Remote ---
     rem = remote -v
 
-    # ---- Stash ----
+    # --- Stash ---
     ss = stash
     # Apply and remove top stash
     sp = stash pop
     sl = stash list
     sd = stash drop
 
-    # ---- Reset ----
+    # --- Reset ---
     # Undo last commit, keep changes unstaged
     undo = reset HEAD~1 --mixed
     # Unstage files (keep changes in working directory)
@@ -175,29 +179,29 @@
     # Soft reset to previous commit, keep changes staged
     uncommit = reset --soft HEAD^
 
-    # ---- Interactive ----
+    # --- Interactive ---
     # Interactive patch mode (stage changes by hunk)
     ap = add -p
 
-    # ---- Cleanup ----
+    # --- Cleanup ---
     # Delete all merged branches except main/master/develop
     clean-branches = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
 
-    # ---- Workflow ----
+    # --- Workflow ---
     # Quick work-in-progress commit
     wip = "!git add -A && git commit -m 'WIP'"
     # List contributors with commit counts
     contributors = shortlog -sn
 
-    # ---- Identity ----
+    # --- Identity ---
     # Set user identity in config.local (usage: git set-user "Name" "email@example.com")
     set-user = "!f() { git config --file ~/.config/git/config.local user.name \"$1\"; git config --file ~/.config/git/config.local user.email \"$2\"; }; f"
     # Show current user identity
     whoami = "!git config user.name && git config user.email"
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Color Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Enable and customize colored output for better readability
 
 [color]
@@ -232,9 +236,9 @@
     # Untracked files
     untracked = red bold
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Push & Pull Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configure how Git handles push and pull operations
 
 [push]
@@ -252,9 +256,9 @@
     # Equivalent to: git pull --rebase
     rebase = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Fetch Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configure how Git retrieves changes from remote repositories
 
 [fetch]
@@ -266,9 +270,9 @@
     # Detects corrupted or malicious objects
     fsckobjects = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Rebase Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Enhance rebase workflow with automation
 
 [rebase]
@@ -280,9 +284,9 @@
     # Prevents 'cannot rebase: uncommitted changes' errors
     autostash = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Rerere (Reuse Recorded Resolution)
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Remember how merge conflicts were resolved and reuse them
 
 [rerere]
@@ -291,9 +295,9 @@
     # Records resolutions in .git/rr-cache/
     enabled = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Commit Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configure commit behavior
 
 [commit]
@@ -301,9 +305,9 @@
     # Helps write accurate commit messages by showing what's being committed
     verbose = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Branch Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configure branch-related behavior
 
 [branch]
@@ -311,9 +315,9 @@
     # Affects 'git branch' and 'git branch -r' output
     sort = -committerdate
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Log Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configure log output behavior
 
 [log]
@@ -321,9 +325,9 @@
     # 'short' shows only the ref name, not the full path
     decorate = short
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Diff Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configure how differences are displayed
 
 [diff]
@@ -347,9 +351,9 @@
     # Go function detection for better diff hunk headers
     xfuncname = "^func[[:space:]]+\\([^)]+\\)[[:space:]]+([^_(]+)"
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Merge Settings
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Configure merge behavior and conflict resolution
 
 [merge]
@@ -364,9 +368,9 @@
     # Don't prompt before launching merge tool
     prompt = false
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Transfer Settings (Security)
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Verify data integrity during network operations
 
 [transfer]
@@ -379,9 +383,9 @@
     # Important for repository hosts (less relevant for clients)
     fsckobjects = true
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Credential Helper (macOS)
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Use macOS Keychain for secure credential storage
 
 [credential]
@@ -389,9 +393,9 @@
     # Provides secure, persistent storage with system integration
     helper = osxkeychain
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # GPG Signing (Optional)
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Enable commit and tag signing for verification
 # Uncomment to enable GPG signing
 
@@ -404,9 +408,9 @@
 # [gpg]
 #     program = gpg
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # URL Rewrites (Optional)
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Useful for switching between HTTPS and SSH
 # Uncomment to use SSH instead of HTTPS for GitHub
 
