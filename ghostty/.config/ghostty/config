@@ -24,51 +24,50 @@ auto-update = check
 # -----------------------------------------------------------------------------
 # Fonts
 # -----------------------------------------------------------------------------
-font-family        = "Source Code Pro"
-font-family        = "Symbols Nerd Font Mono"
-font-size          = 15
-font-thicken       = true
+font-family = "SauceCodePro Nerd Font"
+font-size = 15
+font-thicken = true
 font-shaping-break = cursor
 
 # -----------------------------------------------------------------------------
 # Cursor
 # -----------------------------------------------------------------------------
-cursor-style             = bar
-cursor-style-blink       = false
-adjust-cursor-thickness  = 10
+cursor-style = bar
+cursor-style-blink = false
+adjust-cursor-thickness = 10
 
 # -----------------------------------------------------------------------------
 # Window & Appearance
 # -----------------------------------------------------------------------------
-title                     = " "
+title = " "
 
-window-padding-x          = 8
-window-padding-y          = 8
-window-padding-balance    = true
+window-padding-x = 8
+window-padding-y = 8
+window-padding-balance = true
 
-background-opacity        = 0.95
-background-blur-radius    = 20
+background-opacity = 0.95
+background-blur-radius = 20
 
-alpha-blending            = linear-corrected
-minimum-contrast          = 1.1
+alpha-blending = linear-corrected
+minimum-contrast = 1.1
 
 unfocused-split-opacity = 0.6
 
-macos-titlebar-style      = tabs
+macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
-macos-window-shadow       = true
+macos-window-shadow = true
 
 # -----------------------------------------------------------------------------
 # Shell Integration
 # -----------------------------------------------------------------------------
-shell-integration          = detect
+shell-integration = detect
 shell-integration-features = cursor,sudo,title
 
 # -----------------------------------------------------------------------------
 # Scrollback & Selection
 # -----------------------------------------------------------------------------
-scrollback-limit          = 10000
-copy-on-select            = clipboard
+scrollback-limit = 10000
+copy-on-select = clipboard
 selection-clear-on-typing = true
 
 # -----------------------------------------------------------------------------
@@ -79,10 +78,10 @@ link-url = true
 # -----------------------------------------------------------------------------
 # Clipboard
 # -----------------------------------------------------------------------------
-clipboard-read                 = allow
-clipboard-write                = allow
+clipboard-read = allow
+clipboard-write = allow
 clipboard-trim-trailing-spaces = true
-clipboard-paste-protection     = true
+clipboard-paste-protection = true
 clipboard-paste-bracketed-safe = true
 
 # -----------------------------------------------------------------------------
@@ -93,7 +92,7 @@ mouse-hide-while-typing = true
 # -----------------------------------------------------------------------------
 # Terminal Compatibility
 # -----------------------------------------------------------------------------
-term                  = xterm-ghostty
+term = xterm-ghostty
 grapheme-width-method = unicode
 
 # -----------------------------------------------------------------------------
@@ -105,14 +104,14 @@ bell-features = system
 # Multi-surface Behaviour
 # -----------------------------------------------------------------------------
 window-inherit-working-directory = true
-window-inherit-font-size         = true
-confirm-close-surface            = true
+window-inherit-font-size = true
+confirm-close-surface = true
 
 # -----------------------------------------------------------------------------
 # macOS-specific
 # -----------------------------------------------------------------------------
 macos-option-as-alt = left
-macos-icon          = chalkboard
+macos-icon = chalkboard
 
 # -----------------------------------------------------------------------------
 # Keybindings

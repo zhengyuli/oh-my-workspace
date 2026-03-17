@@ -1,5 +1,5 @@
 # Brewfile -*- mode: ruby; -*-
-# Time-stamp: <2026-03-17 15:30:11 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-17 20:12:03 Tuesday by zhengyu.li>
 # =============================================================================
 # Homebrew Bundle - oh-my-dotfiles Package List
 #
@@ -130,3 +130,9 @@ brew "go"
 # -----------------------------------------------------------------------------
 
 cask "rectangle"                # Window management
+
+# -----------------------------------------------------------------------------
+# Fonts
+# -----------------------------------------------------------------------------
+
+cask "font-sauce-code-pro-nerd-font" # Monospace font with icons
