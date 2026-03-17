@@ -81,6 +81,13 @@ docs/
 # Zsh local config (machine-specific)
 zsh/.config/zsh/conf.d/99-local.zsh
 
+# Git local config (machine-specific)
+git/.config/git/config.local
+git/.config/git/credentials
+
+# Ghostty local config (machine-specific)
+ghostty/.config/ghostty/config.local
+
 # -----------------------------------------------------------------------------
 # XDG Fallback: Cache/State Files in .config directories
 # -----------------------------------------------------------------------------
@@ -132,12 +139,6 @@ emacs/.config/emacs/.emacs.desktop.lock
 emacs/.config/emacs/desktop/
 # Emacs cache directory (should be in $XDG_CACHE_HOME/emacs/)
 emacs/.config/emacs/.cache/
-
-# --- Git ---
-# Local config (machine-specific, should NOT be in repo)
-git/.config/git/config.local
-# Git credential cache (should be in $XDG_CACHE_HOME/git/)
-git/.config/git/credentials
 
 # -----------------------------------------------------------------------------
 # General XDG Fallback Patterns
