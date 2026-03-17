@@ -1,562 +1,232 @@
-# Oh My Workspace Configurations
+# Oh My Dotfiles
 
-Welcome to the Oh-My-Workspace repository! This project provides a comprehensive workspace configuration to streamline your development workflow.
+A modern, XDG-compliant dotfiles repository for macOS using GNU Stow for symlink management.
 
-## Table of Contents
+- **Unified theme**: Doom One across Emacs, Ghostty, and fzf
+- **Modern toolchain**: bun (JS/TS), uv (Python), no version managers
+- **XDG-compliant**: Clean separation of config, cache, data, and state
+- **Interactive setup**: Single script for install, update, and uninstall
 
-- [Quick Start](#quick-start)
-- [Command Line Tools (Mac)](#command-line-tools-mac)
-- [Homebrew (Mac)](#homebrew-mac)
-- [iTerm2 (Mac)](#iterm2-mac)
-- [Zsh + Oh My Zsh](#zsh--oh-my-zsh)
-- [GnuPG](#gnupg)
-- [Pass](#pass)
-- [LLVM](#llvm)
-- [Golang](#golang)
-- [Rust](#rust)
-- [Pyenv](#pyenv)
-- [pyenv-virtualenvwrapper](#pyenv-virtualenvwrapper)
-- [Python](#python)
-- [Emacs](#emacs)
-- [Vim](#vim)
+## Directory Structure
 
----
+```
+oh-my-dotfiles/
+├── setup.sh           # Interactive setup script
+├── zsh/               # Zsh configuration
+├── git/               # Git configuration
+├── vim/               # Vim configuration
+├── emacs/             # Emacs configuration (>= 30.2)
+├── ghostty/           # Ghostty terminal
+├── ripgrep/           # Ripgrep configuration
+├── uv/                # UV package manager
+├── bun/               # Bun configuration
+├── starship/          # Starship prompt
+├── homebrew/          # Brewfile for dependencies
+└── macos/             # macOS-specific settings
+```
 
 ## Quick Start
 
-| Component | Setup Script       | Description                                    |
-|-----------|--------------------|------------------------------------------------|
-| Emacs     | `./emacs/setup.sh` | Emacs configuration with LSP, completion, etc. |
-| Vim       | `./vim/setup.sh`   | Vim configuration with modern editing features |
+### Prerequisites
 
-Each setup script will:
-
-1. Create symbolic links to the configuration files
-1. Display a comprehensive dependency installation guide
-
-### Recommended Installation Order
-
-1. Install Command Line Tools (Mac only)
-2. Install Homebrew (Mac only)
-3. Install iTerm2 (Mac only, optional)
-4. Install Zsh + Oh My Zsh
-5. Install language runtimes (Golang, Rust, Pyenv, etc.)
-6. Run editor setup scripts (`emacs/setup.sh`, `vim/setup.sh`)
-
----
-
-## Command Line Tools (Mac)
-
-The Command Line Tool package provides Mac terminal users with commonly used tools, utilities, and compilers.
+- **macOS** (Apple Silicon or Intel)
+- **Xcode Command Line Tools**: `xcode-select --install`
 
 ### Installation
 
-```shell
-xcode-select --install
+```bash
+# Clone the repository
+git clone https://github.com/zhengyuli/oh-my-dotfiles.git ~/oh-my-dotfiles
+cd ~/oh-my-dotfiles
+
+# Run interactive setup
+./setup.sh --install
+
+# Or install specific packages
+./setup.sh --install zsh git vim emacs
+
+# Apply changes
+source ~/.zshenv
 ```
 
----
+The setup script will:
+1. Install Xcode Command Line Tools (if needed)
+2. Install Homebrew (if needed)
+3. Install packages from Brewfile (including GNU Stow)
+4. Stow configuration packages via symlinks
 
-## Homebrew (Mac)
+### Update
 
-[Homebrew](https://brew.sh/) is the most popular package manager on macOS.
-
-### Installation
-
-1. Install homebrew:
-
-```shell
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```bash
+./setup.sh --update
 ```
 
-1. Add to `$PATH`:
+This pulls the latest changes and restows all currently installed packages.
 
-```shell
-echo 'export PATH="$(brew --prefix)/bin:$PATH"' >> ~/.zshrc
+### Uninstall
+
+```bash
+# Uninstall specific packages
+./setup.sh --uninstall vim emacs
+
+# View status before uninstalling
+./setup.sh --status
 ```
 
-1. Self-check and update:
+### Interactive Mode
 
-```shell
-brew doctor && brew update
+```bash
+./setup.sh --interactive
 ```
 
----
-
-## iTerm2 (Mac)
-
-[iTerm2](https://www.iterm2.com/) is a modern terminal replacement with advanced features.
-
-### Installation
-
-```shell
-brew install --cask iterm2
-```
-
-### Configuration
-
-#### Fonts
-
-1. Install fonts from:
-   - [Source Code Pro](https://www.fontsquirrel.com/fonts/source-code-pro)
-   - [Source Serif Pro](https://www.fontsquirrel.com/fonts/source-serif-pro)
-2. Select **Source Code Pro** via *iTerm2 → Preferences → Profiles → Text → Font*
-
-#### Theme
-
-1. Download Dracula theme:
-
-```shell
-git clone https://github.com/dracula/iterm.git
-```
-
-1. Import via *iTerm2 → Preferences → Profiles → Colors → Color Presets → Import*
-1. Select **Dracula** theme
-
-#### Key Bindings
-
-| Action       | Key Mapping |
-|--------------|-------------|
-| Previous Tab | ⇧⌘P         |
-| Next Tab     | ⇧⌘N         |
-
----
-
-## Zsh + Oh My Zsh
-
-[Z shell](http://zsh.sourceforge.net/) is a Unix shell built on top of bash. [Oh My Zsh](https://ohmyz.sh/) is a community-driven framework for managing zsh configuration.
-
-### Installation
-
-**Mac:**
-
-```shell
-brew install zsh
-```
-
-**Ubuntu:**
-
-```shell
-sudo apt -y install zsh
-```
-
-**Oh My Zsh:**
-
-```shell
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-chsh -s $(which zsh)
-```
-
-### Configuration
-
-See the [Oh My Zsh Wiki](https://github.com/ohmyzsh/ohmyzsh/wiki) for detailed information.
-
-#### Themes
-
-Change theme in `~/.zshrc`:
-
-```shell
-ZSH_THEME="agnoster"
-```
-
-Install [Powerlevel10k](https://github.com/romkatv/powerlevel10k):
-
-```shell
-git clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
-```
-
-```shell
-ZSH_THEME="powerlevel10k/powerlevel10k"
-```
-
-#### Plugins
-
-Standard plugins: `~/.oh-my-zsh/plugins/`
-Custom plugins: `~/.oh-my-zsh/custom/plugins/`
-
-**Install tools:**
-
-**Mac:**
-
-```shell
-brew install fzf autojump
-```
-
-**Ubuntu:**
-
-```shell
-sudo apt -y install fzf autojump
-```
-
-**Install zsh plugins:**
-
-```shell
-git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-completions.git ~/.oh-my-zsh/custom/plugins/zsh-completions
-```
-
-**Configure in `~/.zshrc`:**
-
-```shell
-plugins=(
-    brew
-    git
-    fzf
-    autojump
-    zsh-completions
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-)
-```
-
-#### Others
-
-**Mac only - Disable homebrew auto update:**
-
-```shell
-export HOMEBREW_NO_AUTO_UPDATE="true"
-```
-
----
-
-## GnuPG
-
-GnuPG (GPG) is a complete implementation of the OpenPGP standard for encrypting and signing data.
-
-### Installation
-
-**Mac:**
-
-```shell
-brew install gnupg
-```
-
-**Ubuntu:**
-
-```shell
-sudo apt -y install gnupg
-```
-
-### Configuration
-
-Generate a new GPG key:
-
-```shell
-gpg --full-generate-key
-```
-
----
-
-## Pass
-
-[Pass](https://www.passwordstore.org/) is a simple password manager following Unix philosophy.
-
-### Installation
-
-**Mac:**
-
-```shell
-brew install pass
-```
-
-**Ubuntu:**
-
-```shell
-sudo apt -y install pass
-```
-
-### Configuration
-
-Initialize with a GPG key:
-
-```shell
-gpg --list-keys
-pass init "your-gpg-id"
-```
-
----
-
-## LLVM
-
-The LLVM Project provides modular compiler and toolchain technologies.
-
-### Installation
-
-**Mac:**
-
-```shell
-brew install llvm
-```
-
-**Ubuntu:**
-
-```shell
-sudo apt -y install llvm
-```
-
-### Configuration
-
-**Mac only - Add to `~/.zshrc`:**
-
-```shell
-echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
-```
-
-> **Note:** LLVM is also listed as an optional dependency in `emacs/setup.sh` for C/C++ LSP support.
-
----
-
-## Golang
-
-[Go](https://golang.org/) is an open source programming language.
-
-### Installation
-
-Download from [golang.org/dl](https://golang.org/dl/) and install manually.
-
-### Configuration
-
-Create workspace:
-
-```shell
-mkdir -p $HOME/MyGoProjects
-```
-
-Add to `~/.zshrc`:
-
-```shell
-# Path to your go projects
-export GOPATH=$HOME/MyGoProjects
-export PATH=$GOPATH/bin:$PATH
-```
-
-Install tools:
-
-```shell
-go install golang.org/x/tools/cmd/godoc@latest
+Provides a menu-driven interface for all operations.
+
+### All Commands
+
+| Command | Description |
+|---------|-------------|
+| `./setup.sh --install [PKG...]` | Install packages (default: all) |
+| `./setup.sh --uninstall PKG...` | Uninstall specified packages |
+| `./setup.sh --update` | Update repository and restow |
+| `./setup.sh --status` | Show installation status |
+| `./setup.sh --defaults` | Apply macOS system defaults |
+| `./setup.sh --interactive` | Enter interactive menu mode |
+| `./setup.sh --help` | Show help message |
+
+## Stow Package Management
+
+Packages are managed via GNU Stow, which creates symlinks from the repository to your home directory.
+
+| Package | Symlinks |
+|---------|----------|
+| `zsh` | `~/.zshenv` → `~/oh-my-dotfiles/zsh/.zshenv` |
+| `zsh` | `~/.config/zsh/` → `~/oh-my-dotfiles/zsh/.config/zsh/` |
+| `git` | `~/.config/git/` → `~/oh-my-dotfiles/git/.config/git/` |
+| `vim` | `~/.config/vim/` → `~/oh-my-dotfiles/vim/.config/vim/` |
+| `emacs` | `~/.config/emacs/` → `~/oh-my-dotfiles/emacs/.config/emacs/` |
+| `ghostty` | `~/.config/ghostty/` → `~/oh-my-dotfiles/ghostty/.config/ghostty/` |
+| `ripgrep` | `~/.config/ripgrep/` → `~/oh-my-dotfiles/ripgrep/.config/ripgrep/` |
+| `uv` | `~/.config/uv/` → `~/oh-my-dotfiles/uv/.config/uv/` |
+| `bun` | `~/.config/bun/` → `~/oh-my-dotfiles/bun/.config/bun/` |
+| `starship` | `~/.config/starship.toml` → `~/oh-my-dotfiles/starship/.config/starship.toml` |
+
+### Manual Stow Commands
+
+| Command | Description |
+|---------|-------------|
+| `stow zsh git` | Stow specific packages |
+| `stow -D zsh` | Unstow (remove symlinks) |
+| `stow -R zsh` | Restow (refresh symlinks) |
+| `stow -n zsh` | Dry-run preview |
+
+## Toolchain
+
+Modern replacements for traditional version managers:
+
+| Tool | Purpose | Replaces |
+|------|---------|----------|
+| **bun** | JS/TS runtime + package manager | node, npm, yarn, pnpm, fnm |
+| **uv** | Python package manager | pip, pipenv, poetry, pyenv |
+| **go** | Go programming language | (standard install) |
+
+### LSP Servers
+
+```bash
+# JS/TS ecosystem (bun)
+bun install -g typescript-language-server typescript
+bun install -g vscode-langservers-extracted   # html/css/json/eslint
+bun install -g bash-language-server
+bun install -g @tailwindcss/language-server
+bun install -g prettier
+
+# Python ecosystem (uv)
+uv tool install basedpyright
+uv tool install ruff
+
+# Go (standard install)
 go install golang.org/x/tools/gopls@latest
+go install golang.org/x/tools/cmd/goimports@latest
+
+# System-level (via Homebrew)
+# clangd, lua-language-server, rust-analyzer
 ```
 
-> **Note:** `gopls` and `gofumpt` are also listed in `emacs/setup.sh` for LSP support.
+## Theme & Terminal
 
----
+Unified **Doom One** theme across all tools:
 
-## Rust
+| Tool | Configuration |
+|------|---------------|
+| Emacs | `doom-one` via `doom-themes` package |
+| Ghostty | Custom color palette matching Doom One |
+| fzf | Doom One colors in `FZF_DEFAULT_OPTS` |
+| Starship | Prompt configuration |
 
-[Rust](https://www.rust-lang.org/) is a systems programming language focused on safety and performance.
+**Terminal**: [Ghostty](https://ghostty.org/) — fast, native, XDG-compliant terminal emulator.
 
-### Installation
+## XDG Base Directory
 
-Install via [rustup](https://www.rust-lang.org/tools/install).
+This repository follows the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
 
-### Configuration
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `XDG_CONFIG_HOME` | `~/.config` | Configuration files |
+| `XDG_CACHE_HOME` | `~/.cache` | Cache files |
+| `XDG_DATA_HOME` | `~/.local/share` | Data files |
+| `XDG_STATE_HOME` | `~/.local/state` | State files |
 
-**Install rust-analyzer:**
+## Verification
 
-**Mac:**
+```bash
+# Verify symlinks
+ls -la ~/.zshenv ~/.config/zsh/.zshrc ~/.config/git/config
 
-```shell
-brew install rust-analyzer
-```
+# Test shell configuration
+zsh -c 'echo $ZDOTDIR'
 
-**Ubuntu:**
-
-```shell
-sudo apt -y install rust-analyzer
-```
-
-**Install rust source:**
-
-```shell
-rustup component add rust-src
-```
-
----
-
-## Pyenv
-
-[pyenv](https://github.com/pyenv/pyenv) lets you easily switch between multiple Python versions.
-
-### Installation
-
-```shell
-curl https://pyenv.run | bash
-```
-
-### Configuration
-
-Add to `~/.zshrc`:
-
-```shell
-# Initialize pyenv
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-```
-
----
-
-## pyenv-virtualenvwrapper
-
-[pyenv-virtualenvwrapper](https://github.com/pyenv/pyenv-virtualenvwrapper) provides virtualenvwrapper integration with pyenv.
-
-### Installation
-
-```shell
-git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
-```
-
-### Configuration
-
-Add to `~/.zshrc`:
-
-```shell
-export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
-pyenv virtualenvwrapper
-```
-
-Create `~/.virtualenvs/postmkvirtualenv` for auto-installing tools:
-
-```shell
-pip install "python-lsp-server[all]"
-pip install debugpy
-pip install black black-macchiato isort
-```
-
----
-
-## Python
-
-macOS ships with Python, but you should install your own version to avoid affecting system tools.
-
-### Installation
-
-Using pyenv:
-
-```shell
-pyenv install 3.13.1
-pyenv global 3.13.1
-pyenv rehash
-```
-
-> **Note:** Python LSP and debug tools are listed in `emacs/setup.sh` for Emacs integration.
-
----
-
-## Emacs
-
-[Emacs](https://www.gnu.org/software/emacs/) is an extensible, customizable text editor.
-
-### Requirements
-
-- **macOS**: Emacs >= 30.2 (install via Homebrew)
-- **Ubuntu**: Emacs >= 30.2 (install via snap)
-
-### Installation
-
-**Mac:**
-
-```shell
-brew install --cask emacs-app
-```
-
-**Ubuntu:**
-
-```shell
-sudo snap install emacs --classic
-```
-
-### Configuration
-
-Run the setup script:
-
-```shell
-./emacs/setup.sh
-```
-
-The setup script will:
-- Create symbolic link from `~/.emacs` to the project configuration
-- Display a comprehensive dependency installation guide including:
-  - Core tools (git, aspell, pandoc, ripgrep, etc.)
-  - LSP servers (Python, Go, C/C++, TypeScript, YAML, Bash, Dockerfile, CMake, Markdown)
-  - Code formatters and linters
-  - Debug tools
-  - Fonts for GUI mode
-
-### Dependencies
-
-Install all dependencies with:
-
-```shell
-# Core tools
-brew install git aspell pandoc ripgrep coreutils libvterm fd
-
-# Node.js LSP servers
-npm install -g yaml-language-server bash-language-server dockerfile-language-server-nodejs typescript-language-server typescript
-
-# Python tools (auto-installed when activating venv)
-pip install "python-lsp-server[all]" pylint black black-macchiato isort debugpy cmake-language-server
-
-# Go tools
-go install golang.org/x/tools/gopls@latest mvdan.cc/gofumpt@latest
-```
-
-### Verification
-
-Test that Emacs loads without errors:
-
-```shell
+# Test Emacs configuration
 emacs --debug-init
+
+# Check XDG paths
+zsh -c 'echo $XDG_CONFIG_HOME'
 ```
 
-Inside Emacs, validate all dependencies:
+## Troubleshooting
 
-```text
-M-x emacs-config-validate-all
+### Stow conflicts
+
+If stow reports conflicts with existing files:
+
+```bash
+# Remove existing files and restow
+stow -D zsh
+rm ~/.zshenv
+stow zsh
 ```
 
-Install icons fonts (GUI mode):
+The setup script automatically backs up conflicting files with `.bak.N` suffix.
 
-```text
-M-x nerd-icons-install-fonts
+### XDG paths not set
+
+Ensure `~/.zshenv` is loaded first (it should be a symlink):
+
+```bash
+ls -la ~/.zshenv
+# Should show: ~/.zshenv -> ~/oh-my-dotfiles/zsh/.zshenv
+
+# Verify
+zsh -c 'echo $XDG_CONFIG_HOME'
+# Should output: /Users/yourname/.config
 ```
 
----
+### Shell not loading configuration
 
-## Vim
+Restart your shell or source manually:
 
-[Vim](https://www.vim.org/) is a highly configurable text editor.
-
-### Installation
-
-**Mac:**
-
-```shell
-brew install vim
+```bash
+source ~/.zshenv
 ```
 
-**Ubuntu:**
+## License
 
-```shell
-sudo apt -y install vim
-```
-
-### Configuration
-
-Run the setup script:
-
-```shell
-./vim/setup.sh
-```
-
-The setup script will:
-- Create symbolic link from `~/.vimrc` to the project configuration
-- Create necessary directories (`~/.vim/undo`, `~/.vim/backup`, `~/.vim/swap`)
-- Display optional tools for enhanced experience (ripgrep, fd, vim-plug)
-
-**Neovim users:**
-
-```shell
-mkdir -p ~/.config/nvim
-ln -s ~/.vimrc ~/.config/nvim/init.vim
-```
+MIT

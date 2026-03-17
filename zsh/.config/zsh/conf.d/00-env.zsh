@@ -1,5 +1,5 @@
 # 00-env.zsh
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-17 20:36:14 Tuesday by zhengyu.li>
 # =============================================================================
 # Core Environment Variables
 #
@@ -83,12 +83,15 @@ export VIMINIT="set nocp | source ${XDG_CONFIG_HOME}/vim/vimrc"
 # -----------------------------------------------------------------------------
 
 # ripgrep -- supports XDG_CONFIG_HOME but needs explicit path for config file
-# See: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 
 # carapace -- bridge to native shell completions when no carapace spec exists
 # Needs to be set before carapace initializes (70-tools.zsh)
 export CARAPACE_BRIDGES='zsh,fish,bash'
+
+# starship -- config requires explicit path (no auto-discovery); cache follows
+# XDG_CACHE_HOME natively
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 
 # -----------------------------------------------------------------------------
 # Less -- Modern Configuration

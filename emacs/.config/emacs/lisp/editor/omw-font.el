@@ -36,7 +36,7 @@
 
 ;; ==================================================================================
 (defcustom omw/font-monospace-list
-  '("Source Code Pro" "Menlo" "Monaco" "Monospace")
+  '("SauceCodePro Nerd Font Mono" "Menlo" "Monaco" "Monospace")
   "Priority list of monospace fonts for code editing.
 First available font in the list will be used."
   :type '(repeat string)

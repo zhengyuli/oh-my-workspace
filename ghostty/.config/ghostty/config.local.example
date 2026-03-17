@@ -20,20 +20,20 @@
 # e.g. a machine where Source Code Pro is not installed
 # -----------------------------------------------------------------------------
 # font-family = "JetBrains Mono"
-# font-size   = 14
+# font-size = 14
 
 # -----------------------------------------------------------------------------
 # Window size
 # e.g. an external monitor with more screen real estate
 # -----------------------------------------------------------------------------
-# window-width  = 220
+# window-width = 220
 # window-height = 52
 
 # -----------------------------------------------------------------------------
 # Opacity
 # e.g. disable transparency on a low-powered machine
 # -----------------------------------------------------------------------------
-# background-opacity     = 1.0
+# background-opacity = 1.0
 # background-blur-radius = 0
 
 # -----------------------------------------------------------------------------
