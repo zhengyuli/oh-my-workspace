@@ -1,4 +1,4 @@
-# ~/.zshenv
+# .zshenv
 # =============================================================================
 # Bootstrap -- the only Zsh-related file in $HOME
 #

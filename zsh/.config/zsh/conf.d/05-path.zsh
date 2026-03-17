@@ -15,10 +15,10 @@
 # Prerequisites:
 #   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL, XDG_* variables
 #
-# Do NOT add:
-#   - Tool initialization → 70-tools.zsh
-#   - Aliases → 20-aliases.zsh
-#   - Environment variables → 00-env.zsh
+# Do NOT add: tool initialization, aliases, environment variables
+#             → Tool initialization in 70-tools.zsh
+#             → Aliases in 20-aliases.zsh
+#             → Environment variables in 00-env.zsh
 #
 # PATH Priority (highest to lowest):
 #   1. User-local binaries (~/.local/bin) - explicit user choice, uv tool install
