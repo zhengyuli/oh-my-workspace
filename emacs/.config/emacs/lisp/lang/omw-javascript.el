@@ -34,16 +34,28 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-typescript-tools ()
+(defvar omw/typescript-tool-specs
+  '(("typescript-language-server"
+     "bun install -g typescript-language-server typescript"
+     "bun"))
+  "Tool specs for TypeScript development.")
+
+(defun omw/install-typescript-tools ()
+  "Install TypeScript LSP tools (typescript-language-server) via bun if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("typescript-language-server"
-                       "bun install -g typescript-language-server typescript"
-                       "bun")))
+  (apply #'omw/tools-install omw/typescript-tool-specs))
+
+;; ==================================================================================
+(defun omw/typescript-mode-setup ()
+  "Apply custom settings for TypeScript mode."
+  (require 'omw-utils)
+  (apply #'omw/tools-check-and-prompt omw/typescript-tool-specs))
 
 (use-package typescript-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (typescript-mode . omw/typescript-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features

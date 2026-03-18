@@ -25,7 +25,7 @@
 
 ;;; History:
 ;;
-;; 2026-03-18 zhengyu li <lizhengyu419@outlook.com> created.
+;; 2026-03-18 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;
@@ -35,6 +35,21 @@
 ;;; Code:
 
 ;; ==================================================================================
+(defun omw/--install-tool-spec (spec)
+  "Install a single tool described by SPEC (TOOL INSTALL-CMD PACKAGE-MANAGER).
+Skips silently if TOOL is already installed; warns if PACKAGE-MANAGER is absent."
+  (let* ((tool (nth 0 spec))
+         (install-cmd (nth 1 spec))
+         (pm (nth 2 spec)))
+    (if (executable-find tool)
+        (message "%s is already installed." tool)
+      (if (executable-find pm)
+          (progn
+            (message "Installing %s via: %s" tool install-cmd)
+            (shell-command install-cmd))
+        (message "Cannot install %s: %s not found." tool pm)))))
+
+;; ==================================================================================
 (defun omw/tools-install (&rest tool-specs)
   "Install missing development tools.
 Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER) where:
@@ -42,16 +57,20 @@ Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER) where:
 - INSTALL-CMD is the shell command string to install it
 - PACKAGE-MANAGER is the installer executable that must be available"
   (dolist (spec tool-specs)
-    (let* ((tool (nth 0 spec))
-           (install-cmd (nth 1 spec))
-           (pm (nth 2 spec)))
-      (if (executable-find tool)
-          (message "%s is already installed." tool)
-        (if (executable-find pm)
-            (progn
-              (message "Installing %s via: %s" tool install-cmd)
-              (shell-command install-cmd))
-          (message "Cannot install %s: %s not found." tool pm))))))
+    (omw/--install-tool-spec spec)))
+
+;; ==================================================================================
+(defun omw/tools-check-and-prompt (&rest tool-specs)
+  "Check for missing tools and prompt user to install each one.
+Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER).
+For each missing tool, asks whether to install it now.
+No-op in batch/non-interactive mode."
+  (when (not noninteractive)
+    (dolist (spec tool-specs)
+      (let ((tool (nth 0 spec)))
+        (unless (executable-find tool)
+          (when (yes-or-no-p (format "%s not found. Install now? " tool))
+            (omw/--install-tool-spec spec)))))))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -1,8 +1,8 @@
-;;; omw-yaml.el -*- lexical-binding: t; -*-
+;;; omw-cmake.el -*- lexical-binding: t; -*-
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
-;; Keywords: yaml
-;; Dependencies: omw-prog
+;; Keywords: cmake
+;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -29,18 +29,35 @@
 
 ;;; Commentary:
 ;;
-;; YAML mode configuration with LSP support.
-;; LSP server (yaml-language-server) is configured in prog.el.
+;; CMake mode configuration with LSP support.
+;; LSP server (cmake-language-server) is configured in omw-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
-(use-package yaml-mode
+(defvar omw/cmake-tool-specs
+  '(("cmake-language-server" "uv tool install cmake-language-server" "uv"))
+  "Tool specs for CMake development.")
+
+(defun omw/install-cmake-tools ()
+  "Install CMake LSP tools (cmake-language-server) via uv if not present."
+  (interactive)
+  (require 'omw-utils)
+  (apply #'omw/tools-install omw/cmake-tool-specs))
+
+;; ==================================================================================
+(defun omw/cmake-mode-setup ()
+  "Apply custom settings for cmake mode."
+  (require 'omw-utils)
+  (apply #'omw/tools-check-and-prompt omw/cmake-tool-specs))
+
+(use-package cmake-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (cmake-mode . omw/cmake-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features
-(provide 'omw-yaml)
+(provide 'omw-cmake)
 
-;;; omw-yaml.el ends here
+;;; omw-cmake.el ends here

@@ -45,7 +45,7 @@
   "Buffer-local venv root path detected by pet.")
 
 (defun omw/pet-mode-line-indicator ()
-  "Return pyvenv indicator for Python buffers."
+  "Return pet venv indicator for Python buffers."
   (when (and (derived-mode-p 'python-mode)
              omw/pet-virtualenv-root)
     (let* ((venv-dir (directory-file-name omw/pet-virtualenv-root))
@@ -87,10 +87,21 @@
     (pet-eglot-setup)))
 
 ;; ==================================================================================
-(defun omw/ensure-python-tools ()
+(defvar omw/python-tool-specs
+  '(("ruff" "uv tool install ruff" "uv"))
+  "Tool specs for Python development.")
+
+(defun omw/install-python-tools ()
+  "Install Python development tools (ruff) via uv if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("ruff" "uv tool install ruff" "uv")))
+  (apply #'omw/tools-install omw/python-tool-specs))
+
+;; ==================================================================================
+(defun omw/python-check-tools ()
+  "Check Python development tools availability."
+  (require 'omw-utils)
+  (apply #'omw/tools-check-and-prompt omw/python-tool-specs))
 
 ;; ==================================================================================
 (defun omw/python-format-buffer ()
@@ -128,7 +139,8 @@
 (use-package python
   :ensure nil
   :defer t
-  :hook ((python-mode . omw/pet-setup)
+  :hook ((python-mode . omw/python-check-tools)
+         (python-mode . omw/pet-setup)
          (python-mode . omw/python-before-save-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . comment-line))
