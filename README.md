@@ -2,7 +2,7 @@
 
 A modern, XDG-compliant dotfiles repository for macOS using GNU Stow for symlink management.
 
-- **Unified theme**: Doom One across Emacs, Ghostty, and fzf
+- **Unified theme**: Doom One across Emacs, Ghostty, Starship, and fzf
 - **Modern toolchain**: bun (JS/TS), uv (Python), no version managers
 - **XDG-compliant**: Clean separation of config, cache, data, and state
 - **Interactive setup**: Single script for install, update, and uninstall
@@ -229,4 +229,4 @@ source ~/.zshenv
 
 ## License
 
-MIT
+[MIT](LICENSE) - Copyright (c) 2026 Zhengyu Li

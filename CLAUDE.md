@@ -10,8 +10,10 @@ This is a **dotfiles repository** providing comprehensive development environmen
 
 ```
 oh-my-dotfiles/
-├── .stow-local-ignore    # Files to ignore when stowing
 ├── CLAUDE.md             # This file - project-wide guidance
+├── setup.sh              # Interactive setup script
+├── bun/                  # Bun configuration
+│   └── .config/bun/      # Symlinked to ~/.config/bun/
 ├── emacs/                # Emacs configuration (>= 30.2)
 │   ├── CLAUDE.md         # Emacs-specific guidance (detailed)
 │   └── .config/emacs/    # Symlinked to ~/.config/emacs/
@@ -24,6 +26,8 @@ oh-my-dotfiles/
 ├── macos/                # macOS-specific settings
 ├── ripgrep/              # Ripgrep configuration
 │   └── .config/ripgrep/  # Symlinked to ~/.config/ripgrep/
+├── starship/             # Starship prompt configuration
+│   └── .config/starship.toml  # Symlinked to ~/.config/starship.toml
 ├── uv/                   # UV package manager configuration
 │   └── .config/uv/       # Symlinked to ~/.config/uv/
 ├── vim/                  # Vim configuration
@@ -47,7 +51,7 @@ cd ~/oh-my-dotfiles
 brew bundle --file homebrew/Brewfile
 
 # 3. Stow configuration packages
-stow zsh git vim emacs ghostty ripgrep
+stow bun emacs ghostty git ripgrep starship uv vim zsh
 
 # 4. Restart shell or source zshenv
 source ~/.zshenv
@@ -80,12 +84,15 @@ emacs --debug-init
 
 | Package | Contents |
 |---------|----------|
-| `zsh/` | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
-| `git/` | `.config/git/` → `$HOME/.config/git/` |
-| `vim/` | `.config/vim/` → `$HOME/.config/vim/` |
+| `bun/` | `.config/bun/` → `$HOME/.config/bun/` |
 | `emacs/` | `.config/emacs/` → `$HOME/.config/emacs/` |
 | `ghostty/` | `.config/ghostty/` → `$HOME/.config/ghostty/` |
+| `git/` | `.config/git/` → `$HOME/.config/git/` |
 | `ripgrep/` | `.config/ripgrep/` → `$HOME/.config/ripgrep/` |
+| `starship/` | `.config/starship.toml` → `$HOME/.config/starship.toml` |
+| `uv/` | `.config/uv/` → `$HOME/.config/uv/` |
+| `vim/` | `.config/vim/` → `$HOME/.config/vim/` |
+| `zsh/` | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
 
 **Note:** `homebrew/` and `macos/` are NOT stow packages — they provide scripts/utilities only.
 
@@ -160,6 +167,7 @@ Unified **Doom One** theme across:
 |------|---------------|
 | **Emacs** | `doom-one` theme via `doom-themes` package |
 | **Ghostty** | Custom color palette matching Doom One |
+| **Starship** | Prompt configuration with Doom One colors |
 | **fzf** | Doom One color configuration in `FZF_DEFAULT_OPTS` |
 
 ## Terminal
@@ -847,9 +855,9 @@ If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not proper
 
 ```bash
 # Stow package management
-stow zsh git vim emacs ghostty ripgrep  # Install all
-stow -D zsh                             # Remove package
-stow -R zsh                             # Refresh package
+stow bun emacs ghostty git ripgrep starship uv vim zsh  # Install all
+stow -D zsh                                              # Remove package
+stow -R zsh                                              # Refresh package
 
 # XDG environment
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
