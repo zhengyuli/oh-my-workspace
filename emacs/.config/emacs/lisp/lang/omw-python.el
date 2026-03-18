@@ -94,6 +94,12 @@
   (omw/tools-install '("ruff" "uv tool install ruff" "uv")))
 
 ;; ==================================================================================
+(defun omw/python-check-tools ()
+  "Check Python development tools availability."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt '("ruff" "uv tool install ruff" "uv")))
+
+;; ==================================================================================
 (defun omw/python-format-buffer ()
   "Format current Python buffer using ruff."
   (when (and (executable-find "ruff")
@@ -129,7 +135,8 @@
 (use-package python
   :ensure nil
   :defer t
-  :hook ((python-mode . omw/pet-setup)
+  :hook ((python-mode . omw/python-check-tools)
+         (python-mode . omw/pet-setup)
          (python-mode . omw/python-before-save-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . comment-line))

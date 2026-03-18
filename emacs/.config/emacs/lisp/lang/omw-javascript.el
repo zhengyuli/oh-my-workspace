@@ -42,9 +42,19 @@
                        "bun install -g typescript-language-server typescript"
                        "bun")))
 
+;; ==================================================================================
+(defun omw/typescript-mode-setup ()
+  "Apply custom settings for TypeScript mode."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt
+   '("typescript-language-server"
+     "bun install -g typescript-language-server typescript"
+     "bun")))
+
 (use-package typescript-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (typescript-mode . omw/typescript-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features

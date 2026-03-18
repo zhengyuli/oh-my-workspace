@@ -2,7 +2,7 @@
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: cmake
-;; Dependencies: omw-prog
+;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -30,14 +30,28 @@
 ;;; Commentary:
 ;;
 ;; CMake mode configuration with LSP support.
-;; LSP server (cmake-language-server) is configured in prog.el.
+;; LSP server (cmake-language-server) is configured in omw-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
+(defun omw/ensure-cmake-tools ()
+  "Install CMake LSP tools (cmake-language-server) via uv if not present."
+  (interactive)
+  (require 'omw-utils)
+  (omw/tools-install '("cmake-language-server" "uv tool install cmake-language-server" "uv")))
+
+;; ==================================================================================
+(defun omw/cmake-mode-setup ()
+  "Apply custom settings for cmake mode."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt
+   '("cmake-language-server" "uv tool install cmake-language-server" "uv")))
+
 (use-package cmake-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (cmake-mode . omw/cmake-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features

@@ -42,9 +42,17 @@
                        "bun install -g bash-language-server"
                        "bun")))
 
+;; ==================================================================================
+(defun omw/sh-mode-setup ()
+  "Apply custom settings for shell script mode."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt
+   '("bash-language-server" "bun install -g bash-language-server" "bun")))
+
 (use-package sh-script
   :ensure nil
   :defer t
+  :hook (sh-mode . omw/sh-mode-setup)
   :bind (:map sh-mode-map
               ("C-c C-c" . comment-line)))
 

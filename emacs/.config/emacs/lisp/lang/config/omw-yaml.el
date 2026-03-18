@@ -2,7 +2,7 @@
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: yaml
-;; Dependencies: omw-prog
+;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -30,14 +30,28 @@
 ;;; Commentary:
 ;;
 ;; YAML mode configuration with LSP support.
-;; LSP server (yaml-language-server) is configured in prog.el.
+;; LSP server (yaml-language-server) is configured in omw-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
+(defun omw/ensure-yaml-tools ()
+  "Install YAML LSP tools (yaml-language-server) via bun if not present."
+  (interactive)
+  (require 'omw-utils)
+  (omw/tools-install '("yaml-language-server" "bun install -g yaml-language-server" "bun")))
+
+;; ==================================================================================
+(defun omw/yaml-mode-setup ()
+  "Apply custom settings for yaml mode."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt
+   '("yaml-language-server" "bun install -g yaml-language-server" "bun")))
+
 (use-package yaml-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (yaml-mode . omw/yaml-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features

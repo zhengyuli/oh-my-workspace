@@ -2,7 +2,7 @@
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: dockerfile, docker
-;; Dependencies: omw-prog
+;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -30,14 +30,28 @@
 ;;; Commentary:
 ;;
 ;; Dockerfile mode configuration with LSP support.
-;; LSP server (docker-langserver) is configured in prog.el.
+;; LSP server (docker-langserver) is configured in omw-prog.el.
 
 ;;; Code:
 
 ;; ==================================================================================
+(defun omw/ensure-dockerfile-tools ()
+  "Install Dockerfile LSP tools (docker-langserver) via bun if not present."
+  (interactive)
+  (require 'omw-utils)
+  (omw/tools-install '("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun")))
+
+;; ==================================================================================
+(defun omw/dockerfile-mode-setup ()
+  "Apply custom settings for dockerfile mode."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt
+   '("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun")))
+
 (use-package dockerfile-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (dockerfile-mode . omw/dockerfile-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features

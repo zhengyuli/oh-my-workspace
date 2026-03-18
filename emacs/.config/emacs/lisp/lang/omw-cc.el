@@ -41,10 +41,23 @@
   (require 'omw-utils)
   (omw/tools-install '("clangd" "brew install llvm" "brew")))
 
+;; ==================================================================================
+(defun omw/cc-mode-setup ()
+  "Apply custom settings for C/C++ mode."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt '("clangd" "brew install llvm" "brew")))
+
+(use-package cc-mode
+  :ensure nil
+  :defer t
+  :hook ((c-mode   . omw/cc-mode-setup)
+         (c++-mode . omw/cc-mode-setup)))
+
+;; ==================================================================================
 (use-package google-c-style
   :ensure t
   :defer t
-  :hook ((c-mode . google-set-c-style)
+  :hook ((c-mode   . google-set-c-style)
          (c++-mode . google-set-c-style)))
 
 ;; ==================================================================================
