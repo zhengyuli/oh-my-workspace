@@ -5,6 +5,7 @@
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
+
 ;; Licensed under the GPL License version 3.0
 
 ;; This file is not part of GNU Emacs.

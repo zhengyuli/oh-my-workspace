@@ -35,11 +35,29 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-cc-tools ()
+(defvar omw/cc-tool-specs
+  '(("clangd" "brew install llvm" "brew"))
+  "Tool specs for C/C++ development.")
+
+(defun omw/install-cc-tools ()
+  "Install C/C++ development tools (clangd) via Homebrew if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("clangd" "brew install llvm" "brew")))
+  (apply #'omw/tools-install omw/cc-tool-specs))
 
+;; ==================================================================================
+(defun omw/cc-mode-setup ()
+  "Apply custom settings for C/C++ mode."
+  (require 'omw-utils)
+  (apply #'omw/tools-check-and-prompt omw/cc-tool-specs))
+
+(use-package cc-mode
+  :ensure nil
+  :defer t
+  :hook ((c-mode . omw/cc-mode-setup)
+         (c++-mode . omw/cc-mode-setup)))
+
+;; ==================================================================================
 (use-package google-c-style
   :ensure t
   :defer t

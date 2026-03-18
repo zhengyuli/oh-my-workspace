@@ -18,7 +18,7 @@ emacs/.config/emacs/
 │   ├── lib/             # Utility library (proxy, shared utils)
 │   ├── lang/            # Programming languages
 │   │   ├── *.el         # Language-specific configs (cc, python, go, etc.)
-│   │   └── markup/      # Markup/config languages (cmake, dockerfile, yaml)
+│   │   └── config/      # Config/build languages (cmake, dockerfile, yaml)
 │   ├── text/            # Text/document modes (markdown)
 │   └── tool/            # Tool integrations (git, ai, pdf, term)
 ├── site-packages/       # Custom Emacs packages (auto-added to load-path)
@@ -165,7 +165,7 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 - Characteristics: May use `:vc` for Git-based packages, platform-specific code acceptable
 - Examples: omw-git.el, omw-ai.el, omw-pdf.el, omw-term.el
 
-**Language Modules** (`lisp/lang/omw-*.el` and `lisp/lang/markup/omw-*.el`)
+**Language Modules** (`lisp/lang/omw-*.el` and `lisp/lang/config/omw-*.el`)
 - Purpose: Language-specific configuration
 - Characteristics: Should be concise and focused, MUST NOT configure LSP servers (centralized in omw-prog.el)
 - Simple `:ensure t :defer t` preferred for most cases
@@ -192,8 +192,8 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 **Function Naming Patterns:**
 - **Setup functions** (mode configuration): `omw/<mode>-setup`
   - Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`
-- **Tool installer functions** (ensure dependencies): `omw/ensure-<lang>-tools`
-  - Examples: `omw/ensure-python-tools`, `omw/ensure-go-tools`, `omw/ensure-bash-tools`
+- **Tool installer functions** (install dependencies): `omw/install-<lang>-tools`
+  - Examples: `omw/install-python-tools`, `omw/install-go-tools`, `omw/install-bash-tools`
 - **Action functions** (operations): `omw/<noun>-<verb>`
   - Examples: `omw/indent-entire-buffer`, `omw/set-http-proxy`
 - **Mode indicators** (mode-line display): `omw/<feature>-mode-line-indicator`

@@ -34,16 +34,26 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-bash-tools ()
+(defvar omw/sh-tool-specs
+  '(("bash-language-server" "bun install -g bash-language-server" "bun"))
+  "Tool specs for shell script development.")
+
+(defun omw/install-bash-tools ()
+  "Install shell script LSP tools (bash-language-server) via bun if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("bash-language-server"
-                       "bun install -g bash-language-server"
-                       "bun")))
+  (apply #'omw/tools-install omw/sh-tool-specs))
+
+;; ==================================================================================
+(defun omw/sh-mode-setup ()
+  "Apply custom settings for shell script mode."
+  (require 'omw-utils)
+  (apply #'omw/tools-check-and-prompt omw/sh-tool-specs))
 
 (use-package sh-script
   :ensure nil
   :defer t
+  :hook (sh-mode . omw/sh-mode-setup)
   :bind (:map sh-mode-map
               ("C-c C-c" . comment-line)))
 
