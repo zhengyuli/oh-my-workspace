@@ -623,6 +623,44 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 - ✅ Before "Provide features" section
 - ✅ With blank line before and after
 
+#### Alignment Spaces (CRITICAL)
+
+**Rule: Do NOT use extra spaces for visual alignment within forms.**
+
+Use exactly one space before dots in cons cells (`.`), before keywords, and
+between elements. Never add padding spaces to align items vertically.
+
+**❌ AVOID - Alignment spaces in cons cells:**
+```elisp
+'(("short"   . value1)
+  ("medium"  . value2)
+  ("long-key" . value3))
+```
+
+**✅ CORRECT - Single space before dot:**
+```elisp
+'(("short" . value1)
+  ("medium" . value2)
+  ("long-key" . value3))
+```
+
+**❌ AVOID - Alignment spaces in :hook/:bind lists:**
+```elisp
+:hook ((c-mode      . eglot-ensure)
+       (python-mode . eglot-ensure))
+```
+
+**✅ CORRECT - Single space:**
+```elisp
+:hook ((c-mode . eglot-ensure)
+       (python-mode . eglot-ensure))
+```
+
+**Rationale:**
+1. Alignment spaces create unnecessary diff noise when items change
+2. Single space is more consistent and predictable
+3. Easier to maintain without auto-formatting tools
+
 #### Code Formatting
 
 **Indentation:** 2 spaces (Emacs Lisp default)
