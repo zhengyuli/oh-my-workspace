@@ -87,17 +87,21 @@
     (pet-eglot-setup)))
 
 ;; ==================================================================================
-(defun omw/ensure-python-tools ()
+(defvar omw/python-tool-specs
+  '(("ruff" "uv tool install ruff" "uv"))
+  "Tool specs for Python development.")
+
+(defun omw/install-python-tools ()
   "Install Python development tools (ruff) via uv if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("ruff" "uv tool install ruff" "uv")))
+  (apply #'omw/tools-install omw/python-tool-specs))
 
 ;; ==================================================================================
 (defun omw/python-check-tools ()
   "Check Python development tools availability."
   (require 'omw-utils)
-  (omw/tools-check-and-prompt '("ruff" "uv tool install ruff" "uv")))
+  (apply #'omw/tools-check-and-prompt omw/python-tool-specs))
 
 ;; ==================================================================================
 (defun omw/python-format-buffer ()

@@ -192,8 +192,8 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 **Function Naming Patterns:**
 - **Setup functions** (mode configuration): `omw/<mode>-setup`
   - Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`
-- **Tool installer functions** (ensure dependencies): `omw/ensure-<lang>-tools`
-  - Examples: `omw/ensure-python-tools`, `omw/ensure-go-tools`, `omw/ensure-bash-tools`
+- **Tool installer functions** (install dependencies): `omw/install-<lang>-tools`
+  - Examples: `omw/install-python-tools`, `omw/install-go-tools`, `omw/install-bash-tools`
 - **Action functions** (operations): `omw/<noun>-<verb>`
   - Examples: `omw/indent-entire-buffer`, `omw/set-http-proxy`
 - **Mode indicators** (mode-line display): `omw/<feature>-mode-line-indicator`

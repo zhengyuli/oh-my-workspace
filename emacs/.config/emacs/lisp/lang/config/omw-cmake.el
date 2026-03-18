@@ -35,18 +35,21 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-cmake-tools ()
+(defvar omw/cmake-tool-specs
+  '(("cmake-language-server" "uv tool install cmake-language-server" "uv"))
+  "Tool specs for CMake development.")
+
+(defun omw/install-cmake-tools ()
   "Install CMake LSP tools (cmake-language-server) via uv if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("cmake-language-server" "uv tool install cmake-language-server" "uv")))
+  (apply #'omw/tools-install omw/cmake-tool-specs))
 
 ;; ==================================================================================
 (defun omw/cmake-mode-setup ()
   "Apply custom settings for cmake mode."
   (require 'omw-utils)
-  (omw/tools-check-and-prompt
-   '("cmake-language-server" "uv tool install cmake-language-server" "uv")))
+  (apply #'omw/tools-check-and-prompt omw/cmake-tool-specs))
 
 (use-package cmake-mode
   :ensure t

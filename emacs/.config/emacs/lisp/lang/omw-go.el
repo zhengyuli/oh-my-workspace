@@ -34,21 +34,22 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-go-tools ()
+(defvar omw/go-tool-specs
+  '(("gopls"   "go install golang.org/x/tools/gopls@latest" "go")
+    ("gofumpt" "go install mvdan.cc/gofumpt@latest"         "go"))
+  "Tool specs for Go development.")
+
+(defun omw/install-go-tools ()
   "Install Go development tools (gopls, gofumpt) via go install if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install
-   '("gopls" "go install golang.org/x/tools/gopls@latest" "go")
-   '("gofumpt" "go install mvdan.cc/gofumpt@latest" "go")))
+  (apply #'omw/tools-install omw/go-tool-specs))
 
 ;; ==================================================================================
 (defun omw/go-mode-setup ()
   "Apply custom settings for Go mode."
   (require 'omw-utils)
-  (omw/tools-check-and-prompt
-   '("gopls"   "go install golang.org/x/tools/gopls@latest" "go")
-   '("gofumpt" "go install mvdan.cc/gofumpt@latest"         "go")))
+  (apply #'omw/tools-check-and-prompt omw/go-tool-specs))
 
 (use-package go-mode
   :ensure t

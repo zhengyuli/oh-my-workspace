@@ -35,18 +35,21 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-dockerfile-tools ()
+(defvar omw/dockerfile-tool-specs
+  '(("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun"))
+  "Tool specs for Dockerfile development.")
+
+(defun omw/install-dockerfile-tools ()
   "Install Dockerfile LSP tools (docker-langserver) via bun if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun")))
+  (apply #'omw/tools-install omw/dockerfile-tool-specs))
 
 ;; ==================================================================================
 (defun omw/dockerfile-mode-setup ()
   "Apply custom settings for dockerfile mode."
   (require 'omw-utils)
-  (omw/tools-check-and-prompt
-   '("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun")))
+  (apply #'omw/tools-check-and-prompt omw/dockerfile-tool-specs))
 
 (use-package dockerfile-mode
   :ensure t
