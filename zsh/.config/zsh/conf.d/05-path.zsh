@@ -49,9 +49,12 @@ path=(
 
   # === Priority 2: Development tool binaries ===
   # User-installed language/tool binaries
-  "$CARGO_HOME/bin"(N-/) # Rust crates (cargo install)
-  "$GOPATH/bin"(N-/) # Go packages (go install)
-  "$BUN_INSTALL/bin"(N-/) # Bun packages (bun install -g)
+  # Rust crates (cargo install)
+  "$CARGO_HOME/bin"(N-/)
+  # Go packages (go install)
+  "$GOPATH/bin"(N-/)
+  # Bun packages (bun install -g)
+  "$BUN_INSTALL/bin"(N-/)
 
   # === Priority 3: Package manager binaries ===
   # Homebrew (Apple Silicon - M1/M2/M3)

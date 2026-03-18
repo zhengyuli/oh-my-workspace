@@ -26,11 +26,12 @@
 # -----------------------------------------------------------------------------
 # Works well in terminals even if you use Vim for editing.
 # To use vi mode: replace 'bindkey -e' with 'bindkey -v'
-bindkey -e # emacs keymap
+# emacs keymap
+bindkey -e
 
 # Vi mode (uncomment to enable; comment out 'bindkey -e' above)
 # bindkey -v
-# export KEYTIMEOUT=1 # reduce mode-switch delay to 0.1s
+# export KEYTIMEOUT=1   # reduce mode-switch delay to 0.1s
 
 # -----------------------------------------------------------------------------
 # History search
@@ -45,28 +46,42 @@ bindkey '^N' history-search-forward
 # -----------------------------------------------------------------------------
 # Word movement
 # -----------------------------------------------------------------------------
-bindkey -- '^[[1;5C' forward-word # Ctrl-Right
-bindkey -- '^[[1;5D' backward-word # Ctrl-Left
-bindkey '^[f' forward-word # Alt-f
-bindkey '^[b' backward-word # Alt-b
-bindkey '^[d' kill-word # Alt-d delete word forward
-bindkey '^H' backward-kill-word # Ctrl-Backspace delete word backward
-bindkey '^[[3;5~' kill-word # Ctrl-Delete delete word forward
+# Ctrl-Right
+bindkey -- '^[[1;5C' forward-word
+# Ctrl-Left
+bindkey -- '^[[1;5D' backward-word
+# Alt-f
+bindkey '^[f' forward-word
+# Alt-b
+bindkey '^[b' backward-word
+# Alt-d   delete word forward
+bindkey '^[d' kill-word
+# Ctrl-Backspace  delete word backward
+bindkey '^H' backward-kill-word
+# Ctrl-Delete     delete word forward
+bindkey '^[[3;5~' kill-word
 
 # -----------------------------------------------------------------------------
 # Line editing
 # -----------------------------------------------------------------------------
-bindkey '^A' beginning-of-line # Ctrl-A jump to start of line
-bindkey '^E' end-of-line # Ctrl-E jump to end of line
-bindkey '^K' kill-line # Ctrl-K delete from cursor to end
-bindkey '^U' backward-kill-line # Ctrl-U delete from cursor to start
-bindkey '^Y' yank # Ctrl-Y paste (yank killed text)
+# Ctrl-A  jump to start of line
+bindkey '^A' beginning-of-line
+# Ctrl-E  jump to end of line
+bindkey '^E' end-of-line
+# Ctrl-K  delete from cursor to end
+bindkey '^K' kill-line
+# Ctrl-U  delete from cursor to start
+bindkey '^U' backward-kill-line
+# Ctrl-Y  paste (yank killed text)
+bindkey '^Y' yank
 
 # -----------------------------------------------------------------------------
 # Editing
 # -----------------------------------------------------------------------------
-bindkey '^[[3~' delete-char # Delete key
-bindkey '^[^?' backward-kill-word # Alt-Backspace
+# Delete key
+bindkey '^[[3~' delete-char
+# Alt-Backspace
+bindkey '^[^?' backward-kill-word
 
 # Edit current command line in $EDITOR (Ctrl-X Ctrl-E)
 autoload -Uz edit-command-line
@@ -85,8 +100,10 @@ bindkey '^X^E' edit-command-line
 # -----------------------------------------------------------------------------
 # Miscellaneous
 # -----------------------------------------------------------------------------
-bindkey '^L' clear-screen # Ctrl-L clear screen
-bindkey ' ' magic-space # Space expand history substitution (!! etc.)
+# Ctrl-L  clear screen
+bindkey '^L' clear-screen
+# Space   expand history substitution (!! etc.)
+bindkey ' ' magic-space
 
 # -----------------------------------------------------------------------------
 # Custom widget: toggle sudo prefix (Esc Esc)
