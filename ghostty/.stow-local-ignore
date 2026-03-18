@@ -1,0 +1,16 @@
+# .stow-local-ignore
+# Time-stamp: <2026-03-17 21:15:00 Monday by zhengyu.li>
+# =============================================================================
+# Ghostty Package Stow Ignore Patterns
+#
+# Location: ghostty/.stow-local-ignore
+# Syntax: Perl regular expressions (one per line)
+# Note: Patterns apply ONLY to this package
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Local Overrides
+# -----------------------------------------------------------------------------
+
+# Machine-specific ghostty config (use config.local.example as template)
+^/\.config/ghostty/config\.local$

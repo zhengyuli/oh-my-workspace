@@ -52,7 +52,7 @@
   :ensure t
   :demand t
   :config
-  (load-theme 'doom-xcode t))
+  (load-theme 'doom-one t))
 
 ;; ==================================================================================
 (use-package doom-modeline

@@ -1,5 +1,5 @@
 # Brewfile -*- mode: ruby; -*-
-# Time-stamp: <2026-03-17 20:12:03 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-17 21:53:27 Tuesday by zhengyu.li>
 # =============================================================================
 # Homebrew Bundle - oh-my-dotfiles Package List
 #
@@ -9,6 +9,12 @@
 #   2. brew bundle usage: https://docs.brew.sh/Manpage#bundle-subcommand
 # Note: Run with: brew bundle --file=~/oh-my-dotfiles/homebrew/Brewfile
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# Fonts
+# -----------------------------------------------------------------------------
+
+cask "font-sauce-code-pro-nerd-font" # Monospace font with icons
 
 # -----------------------------------------------------------------------------
 # Shell Environment
@@ -25,6 +31,7 @@ brew "carapace"                 # Universal shell completion
 # -----------------------------------------------------------------------------
 
 brew "git"                      # Version control system
+brew "lazygit"                  # Simple terminal UI for git commands
 
 # -----------------------------------------------------------------------------
 # Security & Encryption
@@ -88,6 +95,12 @@ brew "aspell"                   # Spell checker
 brew "tmux"                     # Terminal multiplexer
 cask "ghostty"                  # Fast, native terminal emulator
 
+# --- File Manager (yazi) ---
+brew "yazi"                     # Blazing fast terminal file manager
+brew "ffmpegthumbnailer"        # Video thumbnails for yazi
+brew "sevenzip"                 # Archive extraction for yazi
+brew "poppler"                  # PDF preview for yazi
+
 # -----------------------------------------------------------------------------
 # Text Editors
 # -----------------------------------------------------------------------------
@@ -130,9 +143,3 @@ brew "go"
 # -----------------------------------------------------------------------------
 
 cask "rectangle"                # Window management
-
-# -----------------------------------------------------------------------------
-# Fonts
-# -----------------------------------------------------------------------------
-
-cask "font-sauce-code-pro-nerd-font" # Monospace font with icons
