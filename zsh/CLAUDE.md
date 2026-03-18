@@ -290,28 +290,9 @@ export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/rc"  # 冗
 
 ### Inline Comments (CRITICAL)
 
-**Rule: Do NOT put comments on the same line as code.**
+> **See [Root CLAUDE.md - Inline Comments](../CLAUDE.md#inline-comments-critical) for repository-wide rule.**
 
-All comments must be on the line above the code they describe.
-
-**❌ AVOID - Inline comments:**
-```zsh
-setopt AUTO_CD # type a directory name to cd
-bindkey -e    # emacs keymap
-```
-
-**✅ CORRECT - Comment above:**
-```zsh
-# type a directory name to cd
-setopt AUTO_CD
-# emacs keymap
-bindkey -e
-```
-
-**Rationale:**
-1. Improves readability with clear separation
-2. No alignment maintenance burden
-3. Easier to scan code without comment noise
+All zsh configuration files must follow the repository-wide inline comment prohibition. Comments must be on the line above code, never on the same line.
 
 ### Conditional Logic
 

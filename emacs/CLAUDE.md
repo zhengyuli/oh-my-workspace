@@ -565,25 +565,14 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 
 #### Inline Comments
 
-**Rule: Use inline comments ONLY when:**
-- Explaining "why" not "what"
-- Documenting non-obvious behavior
-- Providing context for complex logic
+> **See [Root CLAUDE.md - Inline Comments](../CLAUDE.md#inline-comments-critical) for repository-wide rule.**
 
-**Comment style guidelines:**
-- Use standalone line comments with `;;` prefix
-- Do NOT use end-of-line comments (alignment issues)
-- Comments in let bindings use `;;` prefix on same line as variable
+Emacs Lisp follows the repository-wide inline comment prohibition with one exception: let binding comments.
 
-**✅ Good inline comment (standalone):**
-```elisp
-;; Add custom attributes not in default set
-(setq dirvish-attributes
-      (append dirvish-attributes
-              '(git-msg file-modes)))
-```
+**Exception: Comments in let bindings**
 
-**✅ Good let binding comment:**
+Comments within `let`/`let*` bindings may use `;;` prefix on the same line as the variable they describe:
+
 ```elisp
 (let* (;; Normalize proxy URL: add http:// prefix if missing
        (proxy-url (if (string-match-p "\\`https?://" proxy)
@@ -594,7 +583,12 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
   ...)
 ```
 
-**❌ Avoid end-of-line comments:**
+This exception exists because:
+1. Let binding comments describe the variable being defined on that line
+2. Moving them above would break the binding structure
+3. They are scoped to the binding, not general code
+
+**❌ End-of-line comments still prohibited for regular code:**
 ```elisp
 ;; ❌ End-of-line comments cause alignment issues
 (setq tab-width 4)  ; Set tab width to 4
@@ -625,10 +619,9 @@ Format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\""
 
 #### Alignment Spaces (CRITICAL)
 
-**Rule: Do NOT use extra spaces for visual alignment within forms.**
+> **See [Root CLAUDE.md - Alignment Spaces](../CLAUDE.md#alignment-spaces-critical) for repository-wide rule.**
 
-Use exactly one space before dots in cons cells (`.`), before keywords, and
-between elements. Never add padding spaces to align items vertically.
+Emacs Lisp follows the repository-wide alignment space prohibition. Here are Emacs-specific examples:
 
 **❌ AVOID - Alignment spaces in cons cells:**
 ```elisp
@@ -655,11 +648,6 @@ between elements. Never add padding spaces to align items vertically.
 :hook ((c-mode . eglot-ensure)
        (python-mode . eglot-ensure))
 ```
-
-**Rationale:**
-1. Alignment spaces create unnecessary diff noise when items change
-2. Single space is more consistent and predictable
-3. Easier to maintain without auto-formatting tools
 
 #### Code Formatting
 

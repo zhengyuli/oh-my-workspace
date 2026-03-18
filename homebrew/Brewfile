@@ -14,115 +14,162 @@
 # Fonts
 # -----------------------------------------------------------------------------
 
-cask "font-sauce-code-pro-nerd-font" # Monospace font with icons
+# Monospace font with icons
+cask "font-sauce-code-pro-nerd-font"
 
 # -----------------------------------------------------------------------------
 # Shell Environment
 # -----------------------------------------------------------------------------
 
-brew "zsh"                      # Shell
-brew "starship"                 # Cross-shell prompt
-brew "direnv"                   # Per-directory environment variables
-brew "zoxide"                   # Smart cd command with frecency
-brew "carapace"                 # Universal shell completion
+# Shell
+brew "zsh"
+# Cross-shell prompt
+brew "starship"
+# Per-directory environment variables
+brew "direnv"
+# Smart cd command with frecency
+brew "zoxide"
+# Universal shell completion
+brew "carapace"
 
 # -----------------------------------------------------------------------------
 # Version Control
 # -----------------------------------------------------------------------------
 
-brew "git"                      # Version control system
-brew "lazygit"                  # Simple terminal UI for git commands
+# Version control system
+brew "git"
+# Simple terminal UI for git commands
+brew "lazygit"
 
 # -----------------------------------------------------------------------------
 # Security & Encryption
 # -----------------------------------------------------------------------------
 
-brew "gnupg"                    # GNU Privacy Guard (GPG)
-brew "pass"                     # Password store (pass)
-brew "pinentry"                 # GPG passphrase entry
+# GNU Privacy Guard (GPG)
+brew "gnupg"
+# Password store (pass)
+brew "pass"
+# GPG passphrase entry
+brew "pinentry"
 
 # -----------------------------------------------------------------------------
 # File Search & Viewing
 # -----------------------------------------------------------------------------
 
-brew "fzf"                      # Fuzzy finder
-brew "ripgrep"                  # Fast grep replacement (rg)
-brew "fd"                       # Fast find replacement
-brew "eza"                      # Modern ls replacement with icons and git
-brew "bat"                      # Cat clone with syntax highlighting
+# Fuzzy finder
+brew "fzf"
+# Fast grep replacement (rg)
+brew "ripgrep"
+# Fast find replacement
+brew "fd"
+# Modern ls replacement with icons and git
+brew "eza"
+# Cat clone with syntax highlighting
+brew "bat"
 
 # -----------------------------------------------------------------------------
 # Build Tools
 # -----------------------------------------------------------------------------
 
-brew "autoconf"                 # Auto configuration script generator
-brew "automake"                 # Makefile generator
-brew "cmake"                    # Cross-platform build system
-brew "pkg-config"               # Library configuration helper
-brew "libtool"                  # Generic library support script
-brew "ninja"                    # Small build system with focus on speed
+# Auto configuration script generator
+brew "autoconf"
+# Makefile generator
+brew "automake"
+# Cross-platform build system
+brew "cmake"
+# Library configuration helper
+brew "pkg-config"
+# Generic library support script
+brew "libtool"
+# Small build system with focus on speed
+brew "ninja"
 
 # -----------------------------------------------------------------------------
 # Compiler & Libraries
 # -----------------------------------------------------------------------------
 
-brew "llvm"                     # C/C++ compiler toolchain (provides clangd)
-brew "libvterm"                 # Terminal emulator library
-brew "openssl@3"                # Cryptography library (TLS/SSL)
-brew "readline"                 # Command line editing library
-brew "zlib"                     # Compression library
-brew "libffi"                   # Foreign Function Interface library
-brew "ncurses"                  # Terminal UI library
-brew "xz"                       # LZMA compression library
-brew "bzip2"                    # Burrows-Wheeler compression
+# C/C++ compiler toolchain (provides clangd)
+brew "llvm"
+# Terminal emulator library
+brew "libvterm"
+# Cryptography library (TLS/SSL)
+brew "openssl@3"
+# Command line editing library
+brew "readline"
+# Compression library
+brew "zlib"
+# Foreign Function Interface library
+brew "libffi"
+# Terminal UI library
+brew "ncurses"
+# LZMA compression library
+brew "xz"
+# Burrows-Wheeler compression
+brew "bzip2"
 
 # -----------------------------------------------------------------------------
 # Document Tools
 # -----------------------------------------------------------------------------
 
-brew "pandoc"                   # Universal document converter
+# Universal document converter
+brew "pandoc"
 
 # -----------------------------------------------------------------------------
 # Spell Checking
 # -----------------------------------------------------------------------------
 
-brew "aspell"                   # Spell checker
+# Spell checker
+brew "aspell"
 
 # -----------------------------------------------------------------------------
 # Terminal Tools
 # -----------------------------------------------------------------------------
 
-brew "tmux"                     # Terminal multiplexer
-cask "ghostty"                  # Fast, native terminal emulator
+# Terminal multiplexer
+brew "tmux"
+# Fast, native terminal emulator
+cask "ghostty"
 
 # --- File Manager (yazi) ---
-brew "yazi"                     # Blazing fast terminal file manager
-brew "ffmpegthumbnailer"        # Video thumbnails for yazi
-brew "sevenzip"                 # Archive extraction for yazi
-brew "poppler"                  # PDF preview for yazi
+# Blazing fast terminal file manager
+brew "yazi"
+# Video thumbnails for yazi
+brew "ffmpegthumbnailer"
+# Archive extraction for yazi
+brew "sevenzip"
+# PDF preview for yazi
+brew "poppler"
 
 # -----------------------------------------------------------------------------
 # Text Editors
 # -----------------------------------------------------------------------------
 
-brew "neovim"                   # Hyperextensible Vim-based editor
-cask "emacs-app"                # Emacs text editor
+# Hyperextensible Vim-based editor
+brew "neovim"
+# Emacs text editor
+cask "emacs-app"
 
 # -----------------------------------------------------------------------------
 # Data Processing
 # -----------------------------------------------------------------------------
 
-brew "jq"                       # JSON processor
-brew "yq"                       # YAML processor
+# JSON processor
+brew "jq"
+# YAML processor
+brew "yq"
 
 # -----------------------------------------------------------------------------
 # System Utilities
 # -----------------------------------------------------------------------------
 
-brew "wget"                     # HTTP downloader
-brew "htop"                     # Process viewer
-brew "coreutils"                # GNU core utilities (gls, etc.)
-brew "stow"                     # Symlink farm manager for dotfiles
+# HTTP downloader
+brew "wget"
+# Process viewer
+brew "htop"
+# GNU core utilities (gls, etc.)
+brew "coreutils"
+# Symlink farm manager for dotfiles
+brew "stow"
 
 # -----------------------------------------------------------------------------
 # Language Runtimes & Modern Toolchain
@@ -142,4 +189,5 @@ brew "go"
 # Window Management
 # -----------------------------------------------------------------------------
 
-cask "rectangle"                # Window management
+# Window management
+cask "rectangle"
