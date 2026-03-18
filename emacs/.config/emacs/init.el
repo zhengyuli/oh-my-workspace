@@ -120,7 +120,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :ensure nil
   :demand t
   :config
-  (setq package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
+  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                            ("melpa" . "https://melpa.org/packages/"))
 
