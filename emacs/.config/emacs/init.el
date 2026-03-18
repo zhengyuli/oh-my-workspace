@@ -221,43 +221,47 @@ and global-auto-revert-mode."
   ;; macOS key modifiers
   (when (eq system-type 'darwin)
     (setq mac-command-modifier 'super
-          mac-option-modifier 'meta))
+          mac-option-modifier 'meta)))
 
-  ;; Editor modules
-  (require 'omw-font)
-  (require 'omw-appearance)
-  (require 'omw-edit)
-  (require 'omw-search)
-  (require 'omw-template)
-  (require 'omw-completion)
-  (require 'omw-explorer)
+;; ==================================================================================
+;; Load modules
 
-  ;; Tool modules
-  (require 'omw-pass)
-  (require 'omw-git)
-  (require 'omw-term)
-  (require 'omw-pdf)
-  (require 'omw-ai)
+;; Editor modules
+(require 'omw-font)
+(require 'omw-appearance)
+(require 'omw-edit)
+(require 'omw-search)
+(require 'omw-template)
+(require 'omw-completion)
+(require 'omw-explorer)
 
-  ;; Prog mode modules
-  (require 'omw-prog)
-  (require 'omw-utils)
-  (require 'omw-cc)
-  (require 'omw-go)
-  (require 'omw-python)
-  (require 'omw-javascript)
-  (require 'omw-elisp)
-  (require 'omw-shell)
-  (require 'omw-cmake)
-  (require 'omw-yaml)
-  (require 'omw-dockerfile)
+;; Tool modules
+(require 'omw-pass)
+(require 'omw-git)
+(require 'omw-term)
+(require 'omw-pdf)
+(require 'omw-ai)
 
-  ;; Text mode modules
-  (require 'omw-markdown)
+;; Prog mode modules
+(require 'omw-prog)
+(require 'omw-utils)
+(require 'omw-cc)
+(require 'omw-go)
+(require 'omw-python)
+(require 'omw-javascript)
+(require 'omw-elisp)
+(require 'omw-shell)
+(require 'omw-cmake)
+(require 'omw-yaml)
+(require 'omw-dockerfile)
 
-  ;; Load custom settings
-  (when (file-readable-p custom-file)
-    (load custom-file nil 'nomessage)))
+;; Text mode modules
+(require 'omw-markdown)
+
+;; ==================================================================================
+;; Load custom settings
+(when (file-readable-p custom-file)
+  (load custom-file nil 'nomessage))
 
 ;; ==================================================================================
 ;;; Provide features
