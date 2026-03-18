@@ -6,6 +6,9 @@
 # Loaded by: Interactive shells (.zshrc)
 # Load order: 50 (after 40-plugins.zsh, before 60-keybinds.zsh)
 #
+# Prerequisites:
+#   - 40-plugins.zsh (Zinit for Pure/P10k async loading)
+#
 # Responsibilities:
 #   1. Initialize prompt theme (Starship/Pure/Powerlevel10k)
 #   2. Configure XDG-compliant paths for prompt tools
