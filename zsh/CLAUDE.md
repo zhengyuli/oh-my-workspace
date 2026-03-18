@@ -16,7 +16,6 @@ zsh/
 └── .config/zsh/
     ├── .zprofile              # Login shell initialization
     ├── .zshrc                 # Interactive shell orchestrator
-    ├── .zcompdump             # Completion cache (auto-generated)
     ├── completions/           # Custom completion scripts
     ├── conf.d/                # Modular configuration files
     │   ├── 00-env.zsh         # Core environment variables
