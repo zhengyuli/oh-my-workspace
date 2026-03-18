@@ -119,11 +119,11 @@ macos-icon = chalkboard
 # Splits
 keybind = super+shift+j=goto_split:next
 
-# # Tabs
+# Tabs
 keybind = super+shift+n=next_tab
 keybind = super+shift+p=previous_tab
 
-# # Scrollback
+# Scrollback
 keybind = ctrl+l=clear_screen
 
 # -----------------------------------------------------------------------------

@@ -184,7 +184,7 @@
 
     # --- Cleanup ---
     # Delete all merged branches except main/master/develop
-    clean-branches = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
+    clean-branches = "!git branch --merged | grep -Ev '\\*|main|master|develop' | xargs -n 1 git branch -d"
 
     # --- Workflow ---
     # Quick work-in-progress commit
