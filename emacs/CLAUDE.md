@@ -12,7 +12,9 @@ The Emacs configuration is located at `.config/emacs/` within the stow package:
 
 ```
 emacs/.config/emacs/
+├── early-init.el        # Early initialization (before package system)
 ├── init.el              # Main entry point (symlinked to ~/.config/emacs/init.el)
+├── banners/             # Dashboard banners (octopus.png, totoro.png)
 ├── lisp/
 │   ├── editor/          # Editor behavior (appearance, completion, edit, etc.)
 │   ├── lib/             # Utility library (proxy, shared utils)
@@ -220,9 +222,9 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 | 2 | `;; Time-stamp: <YYYY-MM-DD HH:MM:SS Day by Author>` | Last modification timestamp |
 | 4-6 | Author, Keywords, Dependencies | Metadata |
 | 8 | Copyright | Current year |
-| 10-25 | GPL License | Full license text |
-| 27-29 | History | Creation date |
-| 31-33 | Commentary | Module description |
+| 10-22 | MIT License | Full license text |
+| 24-26 | History | Creation date |
+| 28-30 | Commentary | Module description |
 
 **Required fields checklist:**
 - ✅ `-*- lexical-binding: t; -*-` on line 1
@@ -231,8 +233,7 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 - ✅ Keywords: 2-4 relevant tags
 - ✅ Dependencies: list if any, otherwise "(none)"
 - ✅ Copyright with current year
-- ✅ GPL license short notice
-- ✅ Full GPL license text
+- ✅ MIT license full text
 - ✅ History section with creation date
 - ✅ Commentary: Brief description (1-2 sentences)
 
@@ -736,9 +737,9 @@ grep -rn "Copyright (C) 2026" lisp --include="*.el" | wc -l
 # Verify History section
 grep -rn "^;;; History:" lisp --include="*.el" | wc -l
 
-# Verify GPL license text
+# Verify MIT license text
 for file in lisp/**/*.el lisp/*.el; do
-  grep -q "This program is free software" "$file" || echo "Missing GPL: $file"
+  grep -q "Permission is hereby granted" "$file" || echo "Missing MIT: $file"
 done
 ```
 
@@ -753,7 +754,7 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 - [ ] All custom functions use `omw/` prefix
 - [ ] All defcustom use `:group 'omw-emacs`
 - [ ] All files have Time-stamp, Author, Copyright, Dependencies, History, Commentary
-- [ ] All files have complete GPL license text
+- [ ] All files have complete MIT license text
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
 - [ ] Section separators (`;; ===========================================================================`) used correctly (79 chars)
@@ -762,7 +763,7 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 
 ### Current Status
 
-**Compliance Level:** 100% (as of 2026-03-15)
+**Compliance Level:** 100% (as of 2026-03-18)
 
 **Key metrics:**
 - Naming convention violations: 0
@@ -901,7 +902,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 - [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") ...)'`
 - [ ] No naming violations: All functions use `omw/` prefix
 - [ ] No variable violations: All defcustom use `:group 'omw-emacs`
-- [ ] File headers complete: Time-stamp, Author, Copyright, Dependencies, History, Commentary, GPL
+- [ ] File headers complete: Time-stamp, Author, Copyright, Dependencies, History, Commentary, MIT
 - [ ] Docstrings present: All setup functions have documentation
 - [ ] use-package order correct: Keywords in standard order
 - [ ] Section separators 79 chars: `;; ===========================================================================`

@@ -17,7 +17,6 @@ zsh/
     ├── .zprofile              # Login shell initialization
     ├── .zshrc                 # Interactive shell orchestrator
     ├── .zcompdump             # Completion cache (auto-generated)
-    ├── cache/                 # Runtime cache (history, etc.)
     ├── completions/           # Custom completion scripts
     ├── conf.d/                # Modular configuration files
     │   ├── 00-env.zsh         # Core environment variables
@@ -30,9 +29,12 @@ zsh/
     │   ├── 50-prompt.zsh      # Prompt configuration
     │   ├── 60-keybinds.zsh    # Key bindings
     │   ├── 70-tools.zsh       # Tool initialization (fzf, zoxide, etc.)
+    │   ├── 99-local.zsh       # Local overrides (gitignored)
     │   └── 99-local.zsh.example # Local overrides template
     └── functions/             # Autoloaded shell functions
 ```
+
+**Note:** Runtime cache files (history, etc.) are stored in `$XDG_CACHE_HOME/zsh/` per XDG spec, not in `.config/zsh/`.
 
 ## Quick Start
 
@@ -551,7 +553,7 @@ grep -rn "^# Responsibilities:" .config/zsh/conf.d --include="*.zsh" | wc -l
 
 ### Current Status
 
-**Compliance Level:** 100% (as of 2026-03-17)
+**Compliance Level:** 100% (as of 2026-03-18)
 
 **Key metrics:**
 - Naming convention violations: 0
