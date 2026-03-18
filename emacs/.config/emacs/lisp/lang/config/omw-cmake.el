@@ -49,6 +49,7 @@
 (defun omw/cmake-mode-setup ()
   "Apply custom settings for cmake mode."
   (require 'omw-utils)
+  (setq-local cmake-tab-width 2)
   (apply #'omw/tools-check-and-prompt omw/cmake-tool-specs))
 
 (use-package cmake-mode

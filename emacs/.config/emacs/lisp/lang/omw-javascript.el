@@ -50,6 +50,7 @@
 (defun omw/typescript-mode-setup ()
   "Apply custom settings for TypeScript mode."
   (require 'omw-utils)
+  (setq-local typescript-indent-level 2)
   (apply #'omw/tools-check-and-prompt omw/typescript-tool-specs))
 
 (use-package typescript-mode

@@ -49,6 +49,7 @@
 (defun omw/yaml-mode-setup ()
   "Apply custom settings for yaml mode."
   (require 'omw-utils)
+  (setq-local yaml-indent-offset 2)
   (apply #'omw/tools-check-and-prompt omw/yaml-tool-specs))
 
 (use-package yaml-mode
