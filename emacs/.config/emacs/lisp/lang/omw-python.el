@@ -78,6 +78,7 @@
 ;; ==================================================================================
 (defun omw/pet-setup ()
   "Setup pet for current Python buffer."
+  (require 'pet)
   (when-let ((venv (pet-virtualenv-root)))
     (setq-local omw/pet-virtualenv-root venv)
     (omw/update-pet-mode-line-indicator)

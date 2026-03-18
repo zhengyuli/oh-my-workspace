@@ -15,7 +15,7 @@ emacs/.config/emacs/
 ├── init.el              # Main entry point (symlinked to ~/.config/emacs/init.el)
 ├── lisp/
 │   ├── editor/          # Editor behavior (appearance, completion, edit, etc.)
-│   ├── system/          # System/environment (credential, proxy)
+│   ├── lib/             # Utility library (proxy, shared utils)
 │   ├── lang/            # Programming languages
 │   │   ├── *.el         # Language-specific configs (cc, python, go, etc.)
 │   │   └── markup/      # Markup/config languages (cmake, dockerfile, yaml)
@@ -125,10 +125,10 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 **Critical**: The `init.el` file loads modules in a specific order. Dependencies MUST be respected.
 
 **Loading order** (search `;; Load modules` in init.el):
-1. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
-2. **System**: omw-pass → omw-proxy
-3. **Tools**: omw-git → omw-term → omw-pdf → omw-ai
-4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-javascript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
+1. **Early boot** (before package init): omw-proxy
+2. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
+3. **Tools**: omw-pass → omw-git → omw-term → omw-pdf → omw-ai
+4. **Languages**: omw-prog → omw-utils → omw-cc → omw-go → omw-python → omw-javascript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
 5. **Text**: omw-markdown
 
 **When adding new modules**:
@@ -155,10 +155,10 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 - Characteristics: May use `:demand t` for critical packages, complex configurations acceptable
 - Examples: omw-appearance.el, omw-completion.el, omw-edit.el, omw-font.el
 
-**System Modules** (`lisp/system/omw-*.el`)
-- Purpose: System/environment configuration (credentials, proxy settings)
-- Characteristics: Environment-specific, may contain sensitive configuration
-- Examples: omw-pass.el, omw-proxy.el
+**Lib Modules** (`lisp/lib/omw-*.el`)
+- Purpose: Utility/library modules shared across other modules
+- Characteristics: Loaded early or on-demand; no UI, just utilities
+- Examples: omw-proxy.el, omw-utils.el
 
 **Tool Modules** (`lisp/tool/omw-*.el`)
 - Purpose: External tool integration (Git, AI, PDF, terminal)
