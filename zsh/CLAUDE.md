@@ -240,15 +240,52 @@ For single-line explanations, no separator needed:
 
 ### Variable Assignment
 
+根据变量用途选择正确的赋值模式：
+
+**规则 1: XDG 基础变量和工具路径 → 使用 `${VAR:-default}`**
+
 ```zsh
-# ✅ CORRECT - use ${VAR:-default} for overrides
-export MY_VAR="${MY_VAR:-$XDG_DATA_HOME/myapp}"
+# ✅ 正确 - 带回退，尊重用户可能的自定义
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
+```
 
-# ✅ CORRECT - direct assignment when no override needed
-export MY_VAR="$XDG_DATA_HOME/myapp"
+**规则 2: 配置文件路径（XDG 已保证存在） → 使用 `$VAR`**
 
-# ✅ CORRECT - quote all variable expansions
-local dir="$HOME/.config"
+```zsh
+# ✅ 正确 - 简洁，XDG 变量已在 .zshenv 中设置
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
+```
+
+**规则 3: 变量拼接或边界需要 → 使用 `${VAR}`**
+
+```zsh
+# ✅ 正确 - 花括号明确变量边界
+export PATH="${GOPATH}/bin:${PATH}"
+export VIMINIT="source ${XDG_CONFIG_HOME}/vim/vimrc"
+```
+
+**❌ 错误模式**
+
+```zsh
+# ❌ 避免不必要的花括号（无边界歧义时）
+export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship.toml"  # 冗余
+
+# ❌ 避免对已保证存在的变量使用回退
+export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/rc"  # 冗余
+```
+
+**决策树**:
+
+```
+需要设置变量?
+├── 用户可能已自定义? → YES → ${VAR:-default}
+│
+└── NO → XDG 变量引用?
+    ├── YES → 变量后紧跟非分隔字符? → YES → ${VAR}
+    │       └── NO → $VAR (简洁)
+    └── NO → 直接赋值
 ```
 
 ### Conditional Logic
