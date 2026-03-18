@@ -49,6 +49,7 @@
 (defun omw/dockerfile-mode-setup ()
   "Apply custom settings for dockerfile mode."
   (require 'omw-utils)
+  (setq-local dockerfile-indent-offset 2)
   (apply #'omw/tools-check-and-prompt omw/dockerfile-tool-specs))
 
 (use-package dockerfile-mode

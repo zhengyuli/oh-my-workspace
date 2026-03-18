@@ -48,6 +48,7 @@
 (defun omw/sh-mode-setup ()
   "Apply custom settings for shell script mode."
   (require 'omw-utils)
+  (setq-local sh-basic-offset 2)
   (apply #'omw/tools-check-and-prompt omw/sh-tool-specs))
 
 (use-package sh-script
