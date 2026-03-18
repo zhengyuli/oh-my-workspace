@@ -85,7 +85,6 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   :lighter " Omit"
   :group 'omw-emacs
   :init-value t
-  (setq omw/dired-global-omit omw/omit-global-mode)
   (dolist (buf (buffer-list))
     (with-current-buffer buf
       (when (derived-mode-p 'dired-mode)
