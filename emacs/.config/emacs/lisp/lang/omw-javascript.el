@@ -35,6 +35,7 @@
 
 ;; ==================================================================================
 (defun omw/ensure-typescript-tools ()
+  "Install TypeScript LSP tools (typescript-language-server) via bun if not present."
   (interactive)
   (require 'omw-utils)
   (omw/tools-install '("typescript-language-server"

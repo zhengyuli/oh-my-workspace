@@ -62,8 +62,8 @@ Includes header foreground color and code block background/foreground colors."
 ;; ==================================================================================
 (use-package valign
   :ensure t
-  :defer t
   :when (display-graphic-p)
+  :defer t
   :hook (markdown-mode . valign-mode)
   :config
   (setq valign-fancy-bar t))

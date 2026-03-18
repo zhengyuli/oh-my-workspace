@@ -37,7 +37,7 @@
 ;; ==================================================================================
 (defun omw/indent-entire-buffer ()
   "Format entire buffer.
- Indent, delete trailing whitespace, convert tabs to spaces."
+Indent, delete trailing whitespace, convert tabs to spaces."
   (interactive)
   (save-excursion
     (indent-region (point-min) (point-max) nil)
@@ -66,8 +66,7 @@
     (copy-region-as-kill (line-beginning-position) end)))
 
 (defun omw/smart-copy-region ()
-  "Copy region.
-If mark active, copy current line."
+  "Copy region if mark is active; otherwise copy current line."
   (interactive)
   (save-excursion
     (if mark-active
@@ -76,8 +75,7 @@ If mark active, copy current line."
 
 ;; ==================================================================================
 (defun omw/smart-kill-region ()
-  "Kill region.
-If mark active, kill entire line."
+  "Kill region if mark is active; otherwise kill entire line."
   (interactive)
   (if mark-active
       (call-interactively 'kill-region)

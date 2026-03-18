@@ -35,6 +35,7 @@
 
 ;; ==================================================================================
 (defun omw/ensure-bash-tools ()
+  "Install shell script LSP tools (bash-language-server) via bun if not present."
   (interactive)
   (require 'omw-utils)
   (omw/tools-install '("bash-language-server"
