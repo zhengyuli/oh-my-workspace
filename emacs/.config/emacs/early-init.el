@@ -1,4 +1,7 @@
 ;;; early-init.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+
+
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -37,7 +40,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 ;; XDG Base Directory Configuration
 ;; Must be set before package system initializes (Emacs 27+ auto-initializes packages)
 
@@ -60,7 +63,7 @@
 ;; Package installation directory
 (setq package-user-dir (expand-file-name "emacs/elpa/" omw/xdg-data-home))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'early-init)
 

@@ -1,4 +1,5 @@
 ;;; omw-completion.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: completion, corfu, vertico, cape, orderless
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package orderless
   :ensure t
   :demand t
@@ -43,19 +44,19 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package vertico
   :ensure t
   :defer t
   :hook (after-init . vertico-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package marginalia
   :ensure t
   :defer t
   :hook (after-init . marginalia-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package cape
   :ensure t
   :demand t
@@ -65,7 +66,7 @@
                                                #'cape-file
                                                #'cape-dabbrev)))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/corfu-mode-setup ()
   "Configure corfu and corfu-popupinfo."
   (require 'corfu)
@@ -87,7 +88,7 @@
   :config
   (corfu-terminal-mode 1))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-completion)
 

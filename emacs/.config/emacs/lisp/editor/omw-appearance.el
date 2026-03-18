@@ -1,4 +1,5 @@
 ;;; omw-appearance.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: ui, theme, tabs, dashboard
@@ -34,39 +35,39 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package emojify
   :ensure t
   :when (display-graphic-p)
   :defer t
   :hook (markdown-mode . emojify-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package nerd-icons
   :ensure t
   :when (display-graphic-p)
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (use-package doom-themes
   :ensure t
   :demand t
   :config
   (load-theme 'doom-one t))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package doom-modeline
   :ensure t
   :defer t
   :hook (after-init . doom-modeline-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package pulsar
   :ensure t
   :defer t
   :hook (after-init . pulsar-global-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (defface omw/centaur-tabs-base
   '((t :family "Monospace" :height 1.0))
   "Base face for centaur-tabs with fixed-pitch font."
@@ -94,7 +95,7 @@
         centaur-tabs-show-count t
         centaur-tabs-cycle-scope 'tabs))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package winum
   :ensure t
   :defer t
@@ -109,7 +110,7 @@
          ("M-8" . winum-select-window-8)
          ("M-9" . winum-select-window-9)))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/get-random-banner ()
   "Return random banner path from banners directory.
 Returns nil in terminal mode (uses official banner instead)."
@@ -139,7 +140,7 @@ Returns nil in terminal mode (uses official banner instead)."
 
   (dashboard-setup-startup-hook))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-appearance)
 

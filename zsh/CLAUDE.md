@@ -228,6 +228,34 @@ For single-line explanations, no separator needed:
 3. **Do NOT add uses arrow format**: `→ Put these in <file> (<reason>)`
 4. **List items are indented**: 2 spaces for numbered, 2 spaces + dash for prerequisites
 
+### TODO/FIXME Format
+
+Standardize comment markers for tracking work:
+
+```zsh
+# TODO(author): Description of what needs to be done
+# FIXME(author): Description of the bug or issue
+# NOTE: Important information for maintainers
+# HACK: Temporary workaround with explanation
+```
+
+**Examples:**
+```zsh
+# TODO(zhengyu.li): Add support for custom prompt themes
+# FIXME(zhengyu.li): History search fails with non-ASCII
+# NOTE: This requires zsh 5.8+
+```
+
+### Comment Language
+
+**Rule: All comments must be in English.**
+
+This includes:
+- File headers
+- Inline comments
+- TODO/FIXME markers
+- Documentation sections
+
 ## Coding Standards
 
 ### Key Conventions
@@ -240,59 +268,75 @@ For single-line explanations, no separator needed:
 
 ### Variable Assignment
 
-根据变量用途选择正确的赋值模式：
+Choose the correct assignment pattern based on variable purpose:
 
-**规则 1: XDG 基础变量和工具路径 → 使用 `${VAR:-default}`**
+**Rule 1: XDG Base Variables and Tool Paths → Use `${VAR:-default}`**
 
 ```zsh
-# ✅ 正确 - 带回退，尊重用户可能的自定义
+# ✅ CORRECT - With fallback, respects potential user customization
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
 ```
 
-**规则 2: 配置文件路径（XDG 已保证存在） → 使用 `$VAR`**
+**Rule 2: Config File Paths (XDG guaranteed) → Use `$VAR`**
 
 ```zsh
-# ✅ 正确 - 简洁，XDG 变量已在 .zshenv 中设置
+# ✅ CORRECT - Concise, XDG variables already set in .zshenv
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 ```
 
-**规则 3: 变量拼接或边界需要 → 使用 `${VAR}`**
+**Rule 3: Variable Concatenation or Boundary Needed → Use `${VAR}`**
 
 ```zsh
-# ✅ 正确 - 花括号明确变量边界
+# ✅ CORRECT - Braces clarify variable boundaries
 export PATH="${GOPATH}/bin:${PATH}"
 export VIMINIT="source ${XDG_CONFIG_HOME}/vim/vimrc"
 ```
 
-**❌ 错误模式**
+**❌ Anti-patterns**
 
 ```zsh
-# ❌ 避免不必要的花括号（无边界歧义时）
-export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship.toml"  # 冗余
+# ❌ Avoid unnecessary braces (when no boundary ambiguity)
+export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship.toml"  # Redundant
 
-# ❌ 避免对已保证存在的变量使用回退
-export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/rc"  # 冗余
+# ❌ Avoid fallback for guaranteed variables
+export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/rc"  # Redundant
 ```
 
-**决策树**:
+**Decision Tree:**
 
 ```
-需要设置变量?
-├── 用户可能已自定义? → YES → ${VAR:-default}
+Need to set variable?
+├── User may have customized? → YES → ${VAR:-default}
 │
-└── NO → XDG 变量引用?
-    ├── YES → 变量后紧跟非分隔字符? → YES → ${VAR}
-    │       └── NO → $VAR (简洁)
-    └── NO → 直接赋值
+└── NO → XDG variable reference?
+    ├── YES → Non-separator char follows? → YES → ${VAR}
+    │       └── NO → $VAR (concise)
+    └── NO → Direct assignment
 ```
 
 ### Inline Comments (CRITICAL)
 
-> **See [Root CLAUDE.md - Inline Comments](../CLAUDE.md#inline-comments-critical) for repository-wide rule.**
+**Rule: Do NOT put comments on the same line as code.**
 
-All zsh configuration files must follow the repository-wide inline comment prohibition. Comments must be on the line above code, never on the same line.
+All comments must be on the line above the code they describe.
+
+```zsh
+# ✅ CORRECT
+# Description of what this does
+setopt AUTO_CD
+
+# ❌ WRONG
+setopt AUTO_CD # type a directory name to cd
+bindkey -e    # emacs keymap
+```
+
+**Rationale:**
+1. Improves readability with clear separation
+2. No alignment maintenance burden
+3. Easier to scan code without comment noise
+4. Prevents accidental removal of code-comment spacing
 
 ### Conditional Logic
 
@@ -496,10 +540,13 @@ grep -rn "^# Responsibilities:" .config/zsh/conf.d --include="*.zsh" | wc -l
 - [ ] Prerequisites field uses plural with dash list
 - [ ] Do NOT add uses arrow reference format
 - [ ] Section separators are 79 characters
+- [ ] No inline comments (comments on line above code)
+- [ ] No alignment spaces (single space only)
 - [ ] All variables are quoted
 - [ ] Conditional logic uses explicit `if` statements
 - [ ] No `echo -e` (use `printf` or `print`)
 - [ ] No unquoted variable expansions
+- [ ] All comments in English
 - [ ] Idempotent (safe to source multiple times)
 
 ### Current Status
@@ -618,24 +665,30 @@ path=("$HOME/.local/bin" $path)
 ### Essential Rules
 
 1. **File Header:** Must include Time-stamp, Description, Loaded by, Load order, Responsibilities
-2. **Conditionals:** Use explicit `if` statements, avoid `[[ ]] && cmd`
-3. **Quoting:** Quote ALL variable expansions
-4. **Output:** Use `printf` or `print`, never `echo -e`
-5. **Tests:** Use `[[ ]]` not `[ ]`
-6. **Arithmetic:** Use `(( ))` not `let` or `expr`
-7. **Substitution:** Use `$()` not backticks
-8. **Separators:** `# ===` for headers, `# ---` for sections (79 chars)
-9. **Arrays:** Use `typeset -U` for deduplication
-10. **Globbing:** Use `(N)` qualifier to skip no-match errors
+2. **Inline Comments:** Prohibited (comments on line above code)
+3. **Alignment Spaces:** Prohibited (single space only)
+4. **Conditionals:** Use explicit `if` statements, avoid `[[ ]] && cmd`
+5. **Quoting:** Quote ALL variable expansions
+6. **Output:** Use `printf` or `print`, never `echo -e`
+7. **Tests:** Use `[[ ]]` not `[ ]`
+8. **Arithmetic:** Use `(( ))` not `let` or `expr`
+9. **Substitution:** Use `$()` not backticks
+10. **Separators:** `# ===` for headers, `# ---` for sections (79 chars)
+11. **Arrays:** Use `typeset -U` for deduplication
+12. **Globbing:** Use `(N)` qualifier to skip no-match errors
+13. **Comment Language:** English only
 
 ### Pre-Commit Checklist
 
 - [ ] Configuration loads: `zsh -c 'source ~/.zshenv && source $ZDOTDIR/.zshrc'`
 - [ ] No syntax errors: `zsh -n .config/zsh/.zshrc`
 - [ ] Headers complete: Time-stamp, Load order, Responsibilities
+- [ ] No inline comments
+- [ ] No alignment spaces
 - [ ] All variables quoted
 - [ ] No `echo -e` (use `printf`)
 - [ ] No `[[ ]] && cmd` patterns (use `if`)
+- [ ] All comments in English
 
 ### Common Patterns
 

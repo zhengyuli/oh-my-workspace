@@ -1,4 +1,5 @@
 ;;; omw-template.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: template, yasnippet, autoinsert, snippet
@@ -33,7 +34,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package yasnippet
   :ensure t
   :defer t
@@ -55,7 +56,7 @@
   :ensure t
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/define-auto-insert-custom (condition action)
   "Add or update auto-insert rule for CONDITION with ACTION.
 CONDITION is a regex matching file names.
@@ -101,7 +102,7 @@ ACTION is a template file or function to insert."
     '("\\.sh\\'" . "Shell script header")
     ["template.sh" omw/autoinsert-yas-expand]))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-template)
 

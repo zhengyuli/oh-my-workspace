@@ -57,6 +57,8 @@ unset _zcompdump _zcompdump_fresh
 # -----------------------------------------------------------------------------
 
 # Use menu selection (arrow keys / Tab navigate candidates)
+# NOTE: This is overridden by fzf-tab in 40-plugins.zsh which sets 'menu no'
+# to allow fzf-tab to handle the completion UI instead of zsh's built-in menu.
 zstyle ':completion:*' menu select
 
 # Matcher list: zsh tries each pattern in order until one matches
@@ -84,7 +86,7 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*' ignored-patterns '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
 # Show processes from all users in process completion
-zstyle ':completion:*:processes' command "ps -au$USER"
+# NOTE: The 'command' style for processes is set in 40-plugins.zsh for fzf-tab preview
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
 # kill completion

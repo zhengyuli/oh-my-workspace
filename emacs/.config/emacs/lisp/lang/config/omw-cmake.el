@@ -1,4 +1,5 @@
 ;;; omw-cmake.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: cmake
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/cmake-tool-specs
   '(("cmake-language-server" "uv tool install cmake-language-server" "uv"))
   "Tool specs for CMake development.")
@@ -45,7 +46,7 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/cmake-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/cmake-mode-setup ()
   "Apply custom settings for cmake mode."
   (require 'omw-utils)
@@ -57,7 +58,7 @@
   :defer t
   :hook (cmake-mode . omw/cmake-mode-setup))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-cmake)
 

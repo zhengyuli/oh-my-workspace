@@ -1,4 +1,5 @@
 ;;; omw-pass.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: auth, gpg, pass, pinentry
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package epg-config
   :ensure nil
   :demand t
@@ -42,7 +43,7 @@
   ;; Use loopback mode for PIN entry (allows Emacs to prompt for GPG passphrase)
   (setq epg-pinentry-mode 'loopback))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package auth-source-pass
   :ensure nil
   :demand t
@@ -50,12 +51,12 @@
   ;; Enable pass (password-store.org) as auth source backend
   (auth-source-pass-enable))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package pass
   :ensure t
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-pass)
 

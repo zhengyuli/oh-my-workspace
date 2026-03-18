@@ -1,4 +1,5 @@
 ;;; omw-term.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: terminal, vterm, eshell
@@ -33,7 +34,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/vterm-mode-setup ()
   "Apply custom settings for vterm mode."
   (setq-local truncate-lines t)
@@ -57,13 +58,13 @@
               ("C-g" . vterm--self-insert)
               ("M-<backspace>" . vterm-send-meta-backspace)))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package multi-vterm
   :ensure t
   :defer t
   :bind ("C-x C-t" . multi-vterm))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-term)
 

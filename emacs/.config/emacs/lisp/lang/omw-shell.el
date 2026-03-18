@@ -1,4 +1,5 @@
 ;;; omw-shell.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: shell, bash, sh
@@ -33,7 +34,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/sh-tool-specs
   '(("bash-language-server" "bun install -g bash-language-server" "bun"))
   "Tool specs for shell script development.")
@@ -44,7 +45,7 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/sh-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/sh-mode-setup ()
   "Apply custom settings for shell script mode."
   (require 'omw-utils)
@@ -58,7 +59,7 @@
   :bind (:map sh-mode-map
               ("C-c C-c" . comment-line)))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-shell)
 

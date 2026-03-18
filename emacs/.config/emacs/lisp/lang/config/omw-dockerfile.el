@@ -1,4 +1,5 @@
 ;;; omw-dockerfile.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: dockerfile, docker
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/dockerfile-tool-specs
   '(("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun"))
   "Tool specs for Dockerfile development.")
@@ -45,7 +46,7 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/dockerfile-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/dockerfile-mode-setup ()
   "Apply custom settings for dockerfile mode."
   (require 'omw-utils)
@@ -57,7 +58,7 @@
   :defer t
   :hook (dockerfile-mode . omw/dockerfile-mode-setup))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-dockerfile)
 

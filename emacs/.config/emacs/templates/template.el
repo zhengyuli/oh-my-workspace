@@ -1,4 +1,7 @@
-;;; `(file-name-nondirectory (buffer-file-name))` -*- lexical-binding: t; -*-
+;;; template.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+
+
 
 ;; Author: `user-full-name` <`user-mail-address`>
 ;; Keywords: ${1:keyword1, keyword2}
@@ -33,10 +36,10 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 $0
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide '`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`)
 

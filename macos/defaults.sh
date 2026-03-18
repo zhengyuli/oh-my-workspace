@@ -32,7 +32,7 @@ osascript -e 'tell application "System Settings" to quit' 2>/dev/null
 
 echo "Setting General UI/UX preferences..."
 
-# Set standby delay to 24 hours (AC power only — battery power left at system
+# Set standby delay to 24 hours (AC power only - battery power left at system
 # default to avoid disk/system sleep timing conflicts)
 sudo pmset -c standbydelay 86400
 

@@ -1,4 +1,5 @@
 ;;; omw-markdown.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: markdown, polymode
@@ -33,7 +34,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defcustom omw/markdown-colors '((header . "#46dcb0")
                                  (code-bg . "#293134")
                                  (code-fg . "#e0e2e4"))
@@ -59,7 +60,7 @@ Includes header foreground color and code block background/foreground colors."
     (face-remap-add-relative 'markdown-code-face `(:foreground ,code-fg :background ,code-bg :extend t))
     (face-remap-add-relative 'markdown-inline-code-face `(:foreground ,code-fg))))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package valign
   :ensure t
   :when (display-graphic-p)
@@ -68,25 +69,25 @@ Includes header foreground color and code block background/foreground colors."
   :config
   (setq valign-fancy-bar t))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package markdownfmt
   :ensure t
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (use-package visual-fill-column
   :ensure t
   :defer t
   :config
   (setq visual-fill-column-enable-sensible-window-split t))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package olivetti
   :ensure t
   :defer t
   :hook (markdown-mode . olivetti-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/markdown-align-all-tables ()
   "Align all markdown tables in current buffer."
   (interactive)
@@ -131,7 +132,7 @@ Includes header foreground color and code block background/foreground colors."
         markdown-indent-on-enter 'indent-and-new-item
         markdown-fontify-code-blocks-natively t))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-markdown)
 

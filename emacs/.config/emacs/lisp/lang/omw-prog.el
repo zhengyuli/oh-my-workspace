@@ -1,4 +1,5 @@
 ;;; omw-prog.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: prog, programming, hooks
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/jump-to-matched-paren ()
   "Jump to the matched parenthesis/bracket/brace for the current position.
 If cursor is on/after an opening delimiter, jump to its closing match.
@@ -51,7 +52,7 @@ If no delimiter is found, show an error message."
          (backward-sexp))
         (t (message "couldn't find matched paren"))))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package copyright
   :ensure nil
   :defer t
@@ -62,7 +63,7 @@ If no delimiter is found, show an error message."
         (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
                 omw/emacs-user-name)))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package smartparens
   :ensure t
   :defer t
@@ -70,36 +71,36 @@ If no delimiter is found, show an error message."
   :config
   (require 'smartparens-config))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package hungry-delete
   :ensure t
   :defer t
   :hook (prog-mode . hungry-delete-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package rainbow-delimiters
   :ensure t
   :defer t
   :hook (prog-mode . rainbow-delimiters-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package hl-todo
   :ensure t
   :defer t
   :hook (prog-mode . hl-todo-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package whitespace-cleanup-mode
   :ensure t
   :defer t
   :hook (prog-mode . whitespace-cleanup-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package quickrun
   :ensure t
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (use-package eglot
   :ensure nil
   :defer t
@@ -117,7 +118,7 @@ If no delimiter is found, show an error message."
   (setq eglot-sync-connect nil
         eglot-autoshutdown t))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/prog-before-save ()
   "Run pre-save hooks for programming buffers: update copyright, timestamp, untabify."
   (ignore-errors (copyright-update))
@@ -133,7 +134,7 @@ If no delimiter is found, show an error message."
       (add-hook 'before-save-hook #'omw/prog-before-save nil t)
     (remove-hook 'before-save-hook #'omw/prog-before-save t)))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/prog-mode-setup ()
   "Apply custom settings for programming modes."
   (setq-local tab-width 4
@@ -161,7 +162,7 @@ If no delimiter is found, show an error message."
               ("RET" . newline-and-indent)
               ("<return>" . newline-and-indent)))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-prog)
 

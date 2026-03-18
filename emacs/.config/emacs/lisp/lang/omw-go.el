@@ -1,4 +1,5 @@
 ;;; omw-go.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: go, golang
@@ -33,7 +34,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/go-tool-specs
   '(("gopls" "go install golang.org/x/tools/gopls@latest" "go")
     ("gofumpt" "go install mvdan.cc/gofumpt@latest" "go"))
@@ -45,7 +46,7 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/go-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/go-mode-setup ()
   "Apply custom settings for Go mode."
   (require 'omw-utils)
@@ -56,7 +57,7 @@
   :defer t
   :hook (go-mode . omw/go-mode-setup))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-go)
 

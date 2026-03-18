@@ -1,4 +1,5 @@
 ;;; omw-utils.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: utils, tools
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/--install-tool-spec (spec)
   "Install a single tool described by SPEC (TOOL INSTALL-CMD PACKAGE-MANAGER).
 Skips silently if TOOL is already installed; warns if PACKAGE-MANAGER is absent."
@@ -49,7 +50,7 @@ Skips silently if TOOL is already installed; warns if PACKAGE-MANAGER is absent.
             (shell-command install-cmd))
         (message "Cannot install %s: %s not found." tool pm)))))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/tools-install (&rest tool-specs)
   "Install missing development tools.
 Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER) where:
@@ -59,7 +60,7 @@ Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER) where:
   (dolist (spec tool-specs)
     (omw/--install-tool-spec spec)))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/tools-check-and-prompt (&rest tool-specs)
   "Check for missing tools and prompt user to install each one.
 Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER).
@@ -72,7 +73,7 @@ No-op in batch/non-interactive mode."
           (when (yes-or-no-p (format "%s not found. Install now? " tool))
             (omw/--install-tool-spec spec)))))))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-utils)
 
