@@ -36,6 +36,7 @@
 
 ;; ==================================================================================
 (defun omw/ensure-cc-tools ()
+  "Install C/C++ development tools (clangd) via Homebrew if not present."
   (interactive)
   (require 'omw-utils)
   (omw/tools-install '("clangd" "brew install llvm" "brew")))

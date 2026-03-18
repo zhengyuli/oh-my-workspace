@@ -45,7 +45,7 @@
   "Buffer-local venv root path detected by pet.")
 
 (defun omw/pet-mode-line-indicator ()
-  "Return pyvenv indicator for Python buffers."
+  "Return pet venv indicator for Python buffers."
   (when (and (derived-mode-p 'python-mode)
              omw/pet-virtualenv-root)
     (let* ((venv-dir (directory-file-name omw/pet-virtualenv-root))
@@ -88,6 +88,7 @@
 
 ;; ==================================================================================
 (defun omw/ensure-python-tools ()
+  "Install Python development tools (ruff) via uv if not present."
   (interactive)
   (require 'omw-utils)
   (omw/tools-install '("ruff" "uv tool install ruff" "uv")))

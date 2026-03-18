@@ -35,6 +35,7 @@
 
 ;; ==================================================================================
 (defun omw/ensure-go-tools ()
+  "Install Go development tools (gopls, gofumpt) via go install if not present."
   (interactive)
   (require 'omw-utils)
   (omw/tools-install

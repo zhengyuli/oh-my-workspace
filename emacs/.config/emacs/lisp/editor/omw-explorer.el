@@ -72,9 +72,8 @@
   (let* ((command (cond
                    ((eq system-type 'darwin) "open")
                    (t (error "Unsupported system"))))
-         (files (if (dired-get-marked-files)
-                    (dired-get-marked-files)
-                  (list (dired-get-file-for-visit)))))
+         (files (or (dired-get-marked-files)
+                    (list (dired-get-file-for-visit)))))
     (dolist (file files)
       (start-process "dired-open" nil command file))))
 
@@ -92,7 +91,6 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
 
 (defun omw/dired-mode-setup ()
   "Apply custom settings for dired mode."
-  (require 'dired-x)
   (dired-omit-mode (if omw/omit-global-mode 1 -1)))
 
 (use-package dired

@@ -25,7 +25,7 @@
 
 ;;; History:
 ;;
-;; 2026-03-18 zhengyu li <lizhengyu419@outlook.com> created.
+;; 2026-03-18 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;
