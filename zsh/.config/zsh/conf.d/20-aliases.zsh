@@ -6,6 +6,8 @@
 # Loaded by: .zshrc (interactive shells only)
 # Load order: 20 (after 15-history.zsh, before 30-completion.zsh)
 #
+# Prerequisites: None (standalone configuration)
+#
 # Responsibilities:
 #   1. Provide essential file/directory aliases
 #   2. Provide git shortcuts for daily workflow

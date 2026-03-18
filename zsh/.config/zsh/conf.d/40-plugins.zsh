@@ -146,6 +146,10 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:git-checkout:*' sort false
 
 # --- fzf-tab Preview Configurations ---
+# NOTE: Variable quoting here is intentional:
+#   - Double quotes (command style): $USER expands at source time ✓
+#   - Single quotes (fzf-preview style): $word/$group expand at completion time by fzf-tab ✓
+# Do NOT add extra quoting - it would break fzf-tab's internal substitution.
 
 # Global preview window size — right panel, 55% width, line-wrap enabled
 # Per-command fzf-flags below override this where needed (e.g. kill: down:3)

@@ -6,6 +6,11 @@
 # Loaded by: Interactive shells (.zshrc)
 # Load order: 70 (after 60-keybinds.zsh, before 99-local.zsh)
 #
+# Prerequisites:
+#   - 00-env.zsh (XDG paths, tool environment variables)
+#   - 30-completion.zsh (compinit for tool completions)
+#   - 40-plugins.zsh (Zinit for carapace)
+#
 # Responsibilities:
 #   1. Set tool-specific environment variables (Homebrew, etc.)
 #   2. Initialize shell integrations for tools (fzf, direnv)
