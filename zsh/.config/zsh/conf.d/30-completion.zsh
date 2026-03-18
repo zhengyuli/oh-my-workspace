@@ -44,9 +44,9 @@ _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 #   mh-20 = modification time < 20 hours ago  (i.e., the dump is still fresh)
 _zcompdump_fresh=( ${_zcompdump}(N.mh-20) )
 if (( ${#_zcompdump_fresh} )); then
-  compinit -C -d "$_zcompdump"   # fresh: skip security check for speed
+  compinit -C -d "$_zcompdump" # fresh: skip security check for speed
 else
-  compinit -d "$_zcompdump"      # stale/missing: full rebuild
+  compinit -d "$_zcompdump" # stale/missing: full rebuild
 fi
 unset _zcompdump _zcompdump_fresh
 

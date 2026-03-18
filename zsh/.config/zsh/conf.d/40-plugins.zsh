@@ -98,7 +98,7 @@ zinit light zsh-users/zsh-completions
 # pattern and makes future changes less error-prone).
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
-# HISTORY_SUBSTRING_SEARCH_FUZZY=1   # disabled: perf cost on large histories
+# HISTORY_SUBSTRING_SEARCH_FUZZY=1 # disabled: perf cost on large histories
 # Keybindings via atload: widgets must exist before bindkey can reference them
 zinit ice wait"0b" lucid atload'
   bindkey "^[[A" history-substring-search-up
@@ -114,9 +114,9 @@ zinit light zsh-users/zsh-history-substring-search
 # are already in scope because they are set synchronously below).
 # The ! prefix on atload tells zinit to redraw the prompt after activation,
 # so the first suggestion appears without requiring a keypress.
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)   # history first, then completion
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20              # no suggestion for long buffers
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'    # Doom One comment color
+ZSH_AUTOSUGGEST_STRATEGY=(history completion) # history first, then completion
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20 # no suggestion for long buffers
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98' # Doom One comment color
 zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions
 
