@@ -1,15 +1,23 @@
 # 99-local.zsh.example
+# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Machine-Local Configuration Template
+#
+# Loaded by: .zshrc (interactive shells only, loaded last)
+# Load order: 99 (after all other conf.d modules)
+#
+# Responsibilities:
+#   1. Provide a template for machine-specific overrides (99-local.zsh)
+#   2. Document common local customization patterns
 #
 # Usage:
 #   cp 99-local.zsh.example 99-local.zsh
 #   Edit 99-local.zsh with machine-specific settings
 #
-# Rules:
-#   - 99-local.zsh is listed in .gitignore and must never be committed
-#   - This template file (.example) is committed to the repo as a reference
-#   - Loaded last -- can override anything defined in earlier conf.d fragments
+# Note:
+#   99-local.zsh is listed in .gitignore and must never be committed.
+#   This template file (.example) is committed to the repo as a reference.
+#   Loaded last — can override anything defined in earlier conf.d fragments.
 # =============================================================================
 
 # -----------------------------------------------------------------------------

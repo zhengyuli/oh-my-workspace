@@ -1,5 +1,5 @@
 # 60-keybinds.zsh
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Key Bindings
 #
@@ -98,8 +98,6 @@ sudo-command-line() {
   fi
   if [[ "$BUFFER" == sudo\ * ]]; then
     LBUFFER="${LBUFFER#sudo }"
-  elif [[ "$BUFFER" == $'\x1b[200~'* ]]; then
-    LBUFFER="sudo ${LBUFFER:6}"
   else
     LBUFFER="sudo $LBUFFER"
   fi
@@ -112,9 +110,12 @@ bindkey '\e\e' sudo-command-line
 # -----------------------------------------------------------------------------
 # Goes up one level without discarding the current buffer
 # Note: Alt-. is reserved for insert-last-word (cycle through last arguments)
-cdParent() { pushd .. > /dev/null; zle reset-prompt }
-zle -N cdParent
-bindkey '^[,' cdParent
+cd-parent() {
+  pushd ..
+  zle reset-prompt
+}
+zle -N cd-parent
+bindkey '^[,' cd-parent
 
 # -----------------------------------------------------------------------------
 # Custom widget: clear screen and scrollback buffer (Ctrl-/)
