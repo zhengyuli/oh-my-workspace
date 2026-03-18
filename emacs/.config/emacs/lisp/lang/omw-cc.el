@@ -54,14 +54,14 @@
 (use-package cc-mode
   :ensure nil
   :defer t
-  :hook ((c-mode   . omw/cc-mode-setup)
+  :hook ((c-mode . omw/cc-mode-setup)
          (c++-mode . omw/cc-mode-setup)))
 
 ;; ==================================================================================
 (use-package google-c-style
   :ensure t
   :defer t
-  :hook ((c-mode   . google-set-c-style)
+  :hook ((c-mode . google-set-c-style)
          (c++-mode . google-set-c-style)))
 
 ;; ==================================================================================
