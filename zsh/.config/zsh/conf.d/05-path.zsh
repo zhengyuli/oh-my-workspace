@@ -1,5 +1,5 @@
 # 05-path.zsh
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
 # PATH / FPATH / MANPATH / INFOPATH Management
 #
@@ -42,12 +42,12 @@ typeset -gU path fpath manpath infopath cdpath
 # -----------------------------------------------------------------------------
 # Glob qualifier (N-/): N=nullglob (no error if missing), -/=<only dirs>
 path=(
-  # === Priority 1: User-local binaries (HIGHEST) ===
+  # --- Priority 1: User-local binaries (HIGHEST) ---
   # User's explicit local installations, must override everything
   # uv tool install, pip install --user, etc.
   "$HOME/.local/bin"(N-/)
 
-  # === Priority 2: Development tool binaries ===
+  # --- Priority 2: Development tool binaries ---
   # User-installed language/tool binaries
   # Rust crates (cargo install)
   "$CARGO_HOME/bin"(N-/)
@@ -56,18 +56,18 @@ path=(
   # Bun packages (bun install -g)
   "$BUN_INSTALL/bin"(N-/)
 
-  # === Priority 3: Package manager binaries ===
+  # --- Priority 3: Package manager binaries ---
   # Homebrew (Apple Silicon - M1/M2/M3)
   /opt/homebrew/bin(N-/)
   # Homebrew (Intel Mac / Linux)
   /usr/local/bin(N-/)
 
-  # === Priority 4: System sbin (admin commands) ===
+  # --- Priority 4: System sbin (admin commands) ---
   # Lower priority - rarely needed in daily development
   /opt/homebrew/sbin(N-/)
   /usr/local/sbin(N-/)
 
-  # === Priority 5: Existing system PATH (LOWEST - fallback) ===
+  # --- Priority 5: Existing system PATH (LOWEST - fallback) ---
   $path
 )
 

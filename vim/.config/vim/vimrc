@@ -1,12 +1,11 @@
 " vimrc -*- mode: vim; -*-
 " Time-stamp: <2026-03-18 21:53:25 Wednesday by zhengyu.li>
-"
+" =============================================================================
 " Minimal, plugin-free Vim config
 " Theme: doom-one (ported from doom-emacs, Atom One Dark lineage)
-" =============================================================================
 "
 " Location: ~/.config/vim/vimrc
-" Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in .zshenv)
+" Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in 00-env.zsh)
 " XDG: Manually redirected (Vim predates XDG; VIMINIT bypasses default loader)
 "      - Data:  $XDG_DATA_HOME/vim/undo  (~/.local/share/vim/undo)
 "      - State: $XDG_STATE_HOME/vim/viminfo  (~/.local/state/vim/viminfo)
