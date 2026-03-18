@@ -1,4 +1,5 @@
 ;;; omw-cc.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: c, cpp
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/cc-tool-specs
   '(("clangd" "brew install llvm" "brew"))
   "Tool specs for C/C++ development.")
@@ -45,7 +46,7 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/cc-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/cc-mode-setup ()
   "Apply custom settings for C/C++ mode."
   (require 'omw-utils)
@@ -57,14 +58,14 @@
   :hook ((c-mode . omw/cc-mode-setup)
          (c++-mode . omw/cc-mode-setup)))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package google-c-style
   :ensure t
   :defer t
   :hook ((c-mode . google-set-c-style)
          (c++-mode . google-set-c-style)))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-cc)
 

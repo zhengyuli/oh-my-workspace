@@ -1,4 +1,5 @@
 ;;; omw-search.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: search, consult, embark, xref
@@ -33,7 +34,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package wgrep
   :ensure t
   :defer t
@@ -42,13 +43,13 @@
   :config
   (setq wgrep-auto-save-buffer t))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package dumb-jump
   :ensure t
   :defer t
   :commands (dumb-jump-xref-activate))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package xref
   :ensure nil
   :defer t
@@ -58,7 +59,7 @@
         xref-show-definitions-function #'consult-xref)
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package consult
   :ensure t
   :defer t
@@ -102,7 +103,7 @@
           ;; generated/compiled files
           "--glob=!*.{lock,min.js,min.css,elc,pyc}")))
 
-;; ==================================================================================
+;; ============================================================================
 ;; Will be loaded by embark automatically.
 (use-package embark-consult
   :ensure t
@@ -114,7 +115,7 @@
   :bind (("C-." . embark-act)
          ("C-;" . embark-dwim)))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-search)
 

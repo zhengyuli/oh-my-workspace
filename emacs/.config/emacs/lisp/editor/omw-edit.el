@@ -1,4 +1,5 @@
 ;;; omw-edit.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: editing, deletion, whitespace, pairs
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/indent-entire-buffer ()
   "Format entire buffer.
 Indent, delete trailing whitespace, convert tabs to spaces."
@@ -53,7 +54,7 @@ Indent, delete trailing whitespace, convert tabs to spaces."
         (call-interactively 'indent-region)
       (call-interactively 'omw/indent-entire-buffer))))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/copy-region ()
   "Copy active region to kill ring."
   (interactive)
@@ -73,7 +74,7 @@ Indent, delete trailing whitespace, convert tabs to spaces."
         (call-interactively 'omw/copy-region)
       (call-interactively 'omw/copy-current-line))))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/smart-kill-region ()
   "Kill region if mark is active; otherwise kill entire line."
   (interactive)
@@ -81,7 +82,7 @@ Indent, delete trailing whitespace, convert tabs to spaces."
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/smart-kill-buffer ()
   "Smart buffer close.
 Prompt for file buffers with changes, kill others directly.
@@ -96,25 +97,25 @@ Otherwise kill buffer without confirmation."
         (kill-current-buffer))
     (kill-current-buffer)))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package vundo
   :ensure t
   :defer t
   :bind ("M-u" . vundo))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package expand-region
   :ensure t
   :defer t
   :bind ("M-M" . er/expand-region))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package goto-chg
   :ensure t
   :defer t
   :bind ("M-o" . goto-last-change))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package emacs
   :ensure nil
   :demand t
@@ -126,7 +127,7 @@ Otherwise kill buffer without confirmation."
          ("M-k" . omw/smart-kill-region)
          ("C-x k" . omw/smart-kill-buffer)))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-edit)
 

@@ -1,4 +1,5 @@
 ;;; omw-javascript.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: typescript, ts
@@ -33,7 +34,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/typescript-tool-specs
   '(("typescript-language-server"
      "bun install -g typescript-language-server typescript"
@@ -46,7 +47,7 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/typescript-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/typescript-mode-setup ()
   "Apply custom settings for TypeScript mode."
   (require 'omw-utils)
@@ -58,7 +59,7 @@
   :defer t
   :hook (typescript-mode . omw/typescript-mode-setup))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-javascript)
 

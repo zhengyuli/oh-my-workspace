@@ -1,4 +1,5 @@
 ;;; omw-explorer.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: explorer, dirvish, file manager
@@ -34,12 +35,12 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package dired-hacks-utils
   :ensure t
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (use-package dirvish
   :ensure t
   :defer t
@@ -65,7 +66,7 @@
                                    '(git-msg file-modes file-time file-size))
         dirvish-large-directory-threshold 20000))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/dired-open-externally ()
   "Open file (or marked files) externally."
   (interactive)
@@ -174,7 +175,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   (dirvish-override-dired-mode 1)
   (dired-async-mode 1))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-explorer)
 

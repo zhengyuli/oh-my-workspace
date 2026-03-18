@@ -1,4 +1,5 @@
 ;;; omw-ai.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: ai, claude, coding-assistant, copilot, gptel
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package claude-code-ide
   ;; Install from GitHub (not yet in ELPA/MELPA)
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
@@ -42,14 +43,14 @@
   :config
   (claude-code-ide-emacs-tools-setup))
 
-;; ==================================================================================
+;; ============================================================================
 ;; Future AI tools that can be added:
 ;; - GitHub Copilot (copilot.el)
 ;; - GPTel (gptel)
 ;; - Aider (aider.el)
 ;; - Ellama (ellama)
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-ai)
 

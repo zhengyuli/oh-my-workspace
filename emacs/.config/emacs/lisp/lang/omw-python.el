@@ -1,4 +1,5 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: python, uv, ruff, pet
@@ -35,12 +36,12 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package pet
   :ensure t
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (defvar-local omw/pet-virtualenv-root nil
   "Buffer-local venv root path detected by pet.")
 
@@ -75,7 +76,7 @@
     (setq-local mode-line-misc-info
                 (cons omw/pet-mode-line-entry mode-line-misc-info))))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/pet-setup ()
   "Setup pet for current Python buffer."
   (require 'pet)
@@ -86,7 +87,7 @@
                 python-shell-interpreter-args "-i")
     (pet-eglot-setup)))
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/python-tool-specs
   '(("ruff" "uv tool install ruff" "uv"))
   "Tool specs for Python development.")
@@ -97,13 +98,13 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/python-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/python-check-tools ()
   "Check Python development tools availability."
   (require 'omw-utils)
   (apply #'omw/tools-check-and-prompt omw/python-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/python-format-buffer ()
   "Format current Python buffer using ruff."
   (when (and (executable-find "ruff")
@@ -135,7 +136,7 @@
       (add-hook 'before-save-hook #'omw/python-before-save nil t)
     (remove-hook 'before-save-hook #'omw/python-before-save t)))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package python
   :ensure nil
   :defer t
@@ -148,7 +149,7 @@
   (setq python-indent-guess-indent-offset nil
         python-indent-guess-indent-offset-verbose nil))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-python)
 

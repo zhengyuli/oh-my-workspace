@@ -1,4 +1,5 @@
 ;;; omw-yaml.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: yaml
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/yaml-tool-specs
   '(("yaml-language-server" "bun install -g yaml-language-server" "bun"))
   "Tool specs for YAML development.")
@@ -45,7 +46,7 @@
   (require 'omw-utils)
   (apply #'omw/tools-install omw/yaml-tool-specs))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/yaml-mode-setup ()
   "Apply custom settings for yaml mode."
   (require 'omw-utils)
@@ -57,7 +58,7 @@
   :defer t
   :hook (yaml-mode . omw/yaml-mode-setup))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-yaml)
 

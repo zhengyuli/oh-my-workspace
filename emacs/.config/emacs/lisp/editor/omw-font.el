@@ -1,4 +1,5 @@
 ;;; omw-font.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: font, faces
@@ -34,7 +35,7 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defcustom omw/font-monospace-list
   '("SauceCodePro Nerd Font Mono" "Menlo" "Monaco" "Monospace")
   "Priority list of monospace fonts for code editing.
@@ -66,7 +67,7 @@ First available font in the list will be used."
   :type 'number
   :group 'omw-emacs)
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/find-available-font (font-list)
   "Return first available font from FONT-LIST."
   (cl-find-if (lambda (font)
@@ -122,7 +123,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   :demand t
   :hook (after-init . omw/setup-fonts))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package textsize
   :ensure t
   :when (display-graphic-p)
@@ -139,14 +140,14 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
         textsize-pixel-pitch-thresholds '((0 . 0) (0.12 . 0) (0.18 . 0) (0.25 . 0))))
 
 
-;; ==================================================================================
+;; ============================================================================
 (use-package mixed-pitch
   :ensure t
   :when (display-graphic-p)
   :defer t
   :hook (markdown-mode . mixed-pitch-mode))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-font)
 

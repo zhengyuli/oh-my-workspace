@@ -1,4 +1,5 @@
 ;;; omw-pdf.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: pdf, pdf-tools, document-viewer
@@ -34,13 +35,13 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package pdf-tools
   :ensure t
   :when (display-graphic-p)
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (use-package pdf-view
   :ensure nil
   :when (display-graphic-p)
@@ -55,7 +56,7 @@
   :config
   (pdf-tools-install :no-query))
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/pdf-view-restore-path (expand-file-name "pdf-view-restore" user-emacs-directory)
   "Pdf view restore file path, which will be used to store pdf view state.")
 
@@ -67,7 +68,7 @@
   :config
   (setq pdf-view-restore-filename omw/pdf-view-restore-path))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-pdf)
 

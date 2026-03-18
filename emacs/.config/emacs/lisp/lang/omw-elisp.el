@@ -1,4 +1,5 @@
 ;;; omw-elisp.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: elisp, emacs-lisp, lisp
@@ -33,25 +34,25 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package elisp-slime-nav
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . elisp-slime-nav-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package lisp-extra-font-lock
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . lisp-extra-font-lock-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package rainbow-mode
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . rainbow-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/elisp-mode-setup ()
   "Apply custom settings for Emacs Lisp mode."
   (eldoc-mode 1))
@@ -60,7 +61,7 @@
   :ensure nil
   :hook (emacs-lisp-mode . omw/elisp-mode-setup))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-elisp)
 

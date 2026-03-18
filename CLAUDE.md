@@ -321,11 +321,55 @@ eval "${user_input}"
 rm "$file"
 ```
 
-#### 11. 环境变量赋值模式
+#### 11. Environment Variable Assignment Patterns
 
-根据变量用途选择正确的赋值模式（XDG 变量、工具路径、配置路径、变量拼接）。
+Choose the correct assignment pattern based on variable purpose (XDG variables, tool paths, config paths, variable concatenation).
 
-详细规则（规则 1-3）、错误模式和决策树请参阅 [zsh/CLAUDE.md - Variable Assignment](zsh/CLAUDE.md#variable-assignment)。
+**Rule 1: XDG Base Variables and Tool Paths → Use `${VAR:-default}`**
+
+```bash
+# ✅ CORRECT - With fallback, respects potential user customization
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
+```
+
+**Rule 2: Config File Paths (XDG guaranteed) → Use `$VAR`**
+
+```bash
+# ✅ CORRECT - Concise, XDG variables already set in .zshenv
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
+```
+
+**Rule 3: Variable Concatenation or Boundary Needed → Use `${VAR}`**
+
+```bash
+# ✅ CORRECT - Braces clarify variable boundaries
+export PATH="${GOPATH}/bin:${PATH}"
+export VIMINIT="source ${XDG_CONFIG_HOME}/vim/vimrc"
+```
+
+**❌ Anti-patterns**
+
+```bash
+# ❌ Avoid unnecessary braces (when no boundary ambiguity)
+export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship.toml"  # Redundant
+
+# ❌ Avoid fallback for guaranteed variables
+export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/rc"  # Redundant
+```
+
+**Decision Tree:**
+
+```
+Need to set variable?
+├── User may have customized? → YES → ${VAR:-default}
+│
+└── NO → XDG variable reference?
+    ├── YES → Non-separator char follows? → YES → ${VAR}
+    │       └── NO → $VAR (concise)
+    └── NO → Direct assignment
+```
 
 For zsh-specific conventions (startup files, setopt, arrays, etc.), see [zsh/CLAUDE.md](zsh/CLAUDE.md).
 
@@ -366,15 +410,7 @@ All configuration files must start with a standardized header:
 
 #### Time-stamp Convention
 
-| Level | Required | Format |
-|-------|----------|--------|
-| Level 1 (simple) | No | N/A |
-| Level 2 (medium+) | Yes | `# Time-stamp: <YYYY-MM-DD HH:MM:SS Day by Author>` |
-
-**When to add Time-stamp:**
-- Files with mode lines (`-*- mode: ...; -*-`)
-- Files with multiple sections
-- Files that are manually edited
+**Required for ALL configuration files.**
 
 **Format:** `<YYYY-MM-DD HH:MM:SS Day by Author>`
 - Date: ISO 8601 (YYYY-MM-DD)
@@ -446,11 +482,11 @@ bindkey -e
 
 #### Alignment Spaces (CRITICAL)
 
-**Rule: Do NOT use extra spaces for visual alignment.**
+**Rule: Do NOT use extra spaces for visual alignment in code.**
 
-Use exactly one space between elements. Never add padding spaces to align items vertically.
+Use exactly one space between elements. Never add padding spaces to align items vertically in code.
 
-**❌ AVOID - Alignment spaces in cons cells/key-value pairs:**
+**❌ AVOID - Alignment spaces in code:**
 ```bash
 # Shell arrays
 path=(
@@ -459,9 +495,10 @@ path=(
   $path                   # System
 )
 
-# Vim highlight commands
-hi Normal         guifg=#bbc2cf guibg=#282c34 gui=NONE
-hi CursorLine     guifg=NONE    guibg=#23272e gui=NONE
+# Variable assignments
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 ```
 
 **✅ CORRECT - Single space:**
@@ -473,9 +510,10 @@ path=(
   $path
 )
 
-# Vim highlight commands
-hi Normal guifg=#bbc2cf guibg=#282c34 gui=NONE
-hi CursorLine guifg=NONE guibg=#23272e gui=NONE
+# Variable assignments
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 ```
 
 **Rationale:**
@@ -484,7 +522,83 @@ hi CursorLine guifg=NONE guibg=#23272e gui=NONE
 3. Easier to maintain without auto-formatting tools
 4. Cascading changes: one modification requires re-aligning all siblings
 
+**Exceptions (alignment spaces MAY be used):**
+
+| Context | Example | Reason |
+|---------|---------|--------|
+| Tables in comments | `#   bg    #282c34    fg    #bbc2cf` | Readability for reference tables |
+| Numbered lists | `#   1. First item` | Standard indentation hierarchy |
+| Continuation lines | `#           This continues the above...` | Show logical grouping |
+| Vim color schemes | See detailed section below | Column alignment for color tables |
+
+**Exception: Vim Color Scheme Configuration**
+
+Vim `hi` (highlight) commands in color scheme definitions MAY use alignment spaces for readability:
+
+```vim
+" ✅ ALLOWED - Color palette table in comments (readability)
+"   bg       #282c34    bg-alt   #21242b    fg       #bbc2cf
+"   red      #ff6c6b    orange   #da8548    green    #98be65
+
+" ✅ ALLOWED - Highlight commands with column alignment (color scheme only)
+hi Normal       guifg=#bbc2cf guibg=#282c34 gui=NONE
+hi CursorLine   guifg=NONE    guibg=#23272e gui=NONE
+hi Visual        guifg=NONE    guibg=#3e4454 gui=NONE
+```
+
+**Scope:** This exception applies ONLY to:
+- `vim/.config/vim/vimrc` color scheme section (lines ~286-400)
+- Any `*.vim` files defining color schemes
+
+**When uncertain:** Ask user to confirm whether alignment spaces are intentional formatting or should be removed. Do NOT auto-modify without user approval.
+
 **Note:** For Emacs Lisp alignment spaces in cons cells and hooks, see [emacs/CLAUDE.md](emacs/CLAUDE.md#alignment-spaces-critical) for Emacs-specific examples.
+
+#### Line Length Limits
+
+| Context | Limit |
+|---------|-------|
+| Code | 80 characters (soft limit) |
+| Comments | 79 characters (hard limit) |
+| URLs in comments | Exempt |
+
+**Rationale:**
+1. 79-char comments match section separator width
+2. 80-char code limit is widely adopted standard
+3. URLs are exempt to avoid broken links
+
+#### TODO/FIXME Format
+
+Standardize comment markers for tracking work:
+
+```bash
+# TODO(author): Description of what needs to be done
+# FIXME(author): Description of the bug or issue
+# NOTE: Important information for maintainers
+# HACK: Temporary workaround with explanation
+```
+
+**Examples:**
+```bash
+# TODO(zhengyu.li): Add support for Windows paths
+# FIXME(zhengyu.li): Race condition in async handler
+# NOTE: This breaks on non-ASCII characters
+```
+
+#### Comment Language
+
+**Rule: All comments must be in English.**
+
+This includes:
+- File headers
+- Inline comments
+- TODO/FIXME markers
+- Documentation sections
+
+**Rationale:**
+1. Improves accessibility for international contributors
+2. Consistent with industry standards
+3. Easier to search and reference
 
 #### Header Examples
 
@@ -570,8 +684,11 @@ done
 - [ ] Configuration files have standardized headers
 - [ ] Shell scripts follow coding standards (no `[[ ]] && cmd || true`)
 - [ ] No inline comments in config files (comments on separate lines above code)
-- [ ] Time-stamp present in files with mode lines
-- [ ] Section separators use `---` for content, `===` for headers only
+- [ ] Time-stamp present in ALL configuration files
+- [ ] Section separators use `---` for content, `===` for headers only (79 chars)
+- [ ] No alignment spaces (single space only)
+- [ ] All comments in English
+- [ ] Line length within limits (80 code, 79 comments)
 
 ### Troubleshooting
 
@@ -705,12 +822,16 @@ If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not proper
 2. **XDG Paths:** All tools must respect `$XDG_*` environment variables
 3. **Shell Scripts:** Use `if` statements, avoid `[[ ]] && cmd || true`
 4. **Config Headers:** Standardized format with `===` for headers, `---` for sections
-5. **Time-stamp:** Required for files with mode lines or multiple sections
-6. **Cache Files:** Never commit `.zcompdump`, `*.swp`, `*.elc`, etc.
-7. **Prefix Convention:** Emacs uses `omw/`, zsh uses no special prefix
-8. **Modern Toolchain:** bun for JS/TS, uv for Python, no version managers
-9. **Theme:** Doom One across all tools (Emacs, Ghostty, fzf)
-10. **Subdirectory CLAUDE.md:** Check zsh/CLAUDE.md and emacs/CLAUDE.md for specific guidance
+5. **Time-stamp:** Required for ALL configuration files
+6. **Inline Comments:** Prohibited (comments on line above code)
+7. **Alignment Spaces:** Prohibited (single space only)
+8. **Line Length:** 80 chars for code, 79 for comments
+9. **Comment Language:** English only
+10. **Cache Files:** Never commit `.zcompdump`, `*.swp`, `*.elc`, etc.
+11. **Prefix Convention:** Emacs uses `omw/`, zsh uses no special prefix
+12. **Modern Toolchain:** bun for JS/TS, uv for Python, no version managers
+13. **Theme:** Doom One across all tools (Emacs, Ghostty, fzf)
+14. **Subdirectory CLAUDE.md:** Check zsh/CLAUDE.md and emacs/CLAUDE.md for specific guidance
 
 ### Pre-Commit Checklist
 
@@ -718,7 +839,9 @@ If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not proper
 - [ ] Stow symlinks valid: `ls -la ~/.zshenv ~/.config/git/config`
 - [ ] Shell loads: `zsh -c 'source ~/.zshenv'`
 - [ ] Config headers compliant: Standardized format with `===`/`---`
-- [ ] Time-stamp present: Files with mode lines have Time-stamp
+- [ ] Time-stamp present: ALL config files have Time-stamp
+- [ ] No alignment spaces: Single space between elements
+- [ ] All comments in English
 
 ### Common Patterns
 

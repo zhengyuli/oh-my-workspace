@@ -1,4 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 21:59:50 Wednesday by zhengyu.li>
+
+
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -33,13 +36,13 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (defgroup omw-emacs nil
   "Oh My Workspace configuration group."
   :group 'convenience
   :prefix "omw/")
 
-;; ==================================================================================
+;; ============================================================================
 (defcustom omw/emacs-user-name "Zhengyu Li"
   "Emacs configuration user name.
 Used for dashboard banner and setting `user-full-name'."
@@ -52,7 +55,7 @@ Used for setting `user-mail-address'."
   :type 'string
   :group 'omw-emacs)
 
-;; ==================================================================================
+;; ============================================================================
 (defvar omw/emacs-custom-file-path (expand-file-name "custom.el" user-emacs-directory)
   "Emacs custom file path, which will be used to add extra customization.")
 
@@ -76,7 +79,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (add-to-list 'load-path base-dir)
     (normal-top-level-add-subdirs-to-load-path)))
 
-;; ==================================================================================
+;; ============================================================================
 ;; Set custom file early to prevent Emacs from writing customizations to init.el
 (setq custom-file omw/emacs-custom-file-path)
 
@@ -84,16 +87,16 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-lisp-path)
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-site-packages-path)
 
-;; ==================================================================================
+;; ============================================================================
 ;; HTTP Proxy Configuration
 (require 'omw-proxy)
 (omw/enable-http-proxy)
 
-;; ==================================================================================
+;; ============================================================================
 ;; Package Management
 (require 'use-package)
 
-;; ==================================================================================
+;; ============================================================================
 (use-package emacs
   :ensure nil
   :demand t
@@ -115,7 +118,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (setq gc-cons-threshold (* 100 1024 1024)
         gc-cons-percentage 0.6))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package package
   :ensure nil
   :demand t
@@ -131,32 +134,32 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   ;; Initialize packages
   (package-initialize))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package async
   :ensure t
   :defer t)
 
-;; ==================================================================================
+;; ============================================================================
 (use-package gcmh
   :ensure t
   :defer t
   :hook (after-init . gcmh-mode))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package exec-path-from-shell
   :ensure t
   :when (eq system-type 'darwin)
   :defer t
   :hook (after-init . exec-path-from-shell-initialize))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package auto-package-update
   :ensure t
   :defer t
   :config
   (setq auto-package-update-delete-old-versions t))
 
-;; ==================================================================================
+;; ============================================================================
 (use-package which-key
   :ensure t
   :defer t
@@ -164,7 +167,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :config
   (which-key-setup-minibuffer))
 
-;; ==================================================================================
+;; ============================================================================
 (defun omw/after-init-setup ()
   "Enable common post-initialization features.
 This includes save-place-mode, recentf-mode, column-number-mode,
@@ -188,19 +191,22 @@ and global-auto-revert-mode."
   :bind ("C-x C-b" . ibuffer)
   :config
   ;; Autosave
-  (setq auto-save-list-file-prefix (expand-file-name "emacs/auto-save-list/.saves-" omw/xdg-data-home))
+  (setq auto-save-list-file-prefix (expand-file-name
+                                    "emacs/auto-save-list/.saves-" omw/xdg-data-home))
 
   ;; Native compilation
-  (setq native-compile-target-directory (expand-file-name "emacs/eln-cache/" omw/xdg-cache-home))
+  (setq native-compile-target-directory (expand-file-name
+                                         "emacs/eln-cache/" omw/xdg-cache-home))
 
   ;; Backup and version control
-  (setq backup-directory-alist (list (cons ".*" (expand-file-name "emacs/backup/" omw/xdg-state-home)))
+  (setq backup-directory-alist (list (cons ".*" (expand-file-name
+                                                 "emacs/backup/" omw/xdg-state-home)))
         backup-by-copying t
         version-control t
         delete-old-versions t)
 
   ;; File and buffer management
-  (setq recentf-max-saved-items 100
+  (setq recentf-max-saved-items 200
         uniquify-buffer-name-style 'forward
         uniquify-separator "/")
 
@@ -223,7 +229,7 @@ and global-auto-revert-mode."
     (setq mac-command-modifier 'super
           mac-option-modifier 'meta)))
 
-;; ==================================================================================
+;; ============================================================================
 ;; Load modules
 
 ;; Editor modules
@@ -258,12 +264,12 @@ and global-auto-revert-mode."
 ;; Text mode modules
 (require 'omw-markdown)
 
-;; ==================================================================================
+;; ============================================================================
 ;; Load custom settings
 (when (file-readable-p custom-file)
   (load custom-file nil 'nomessage))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'init)
 

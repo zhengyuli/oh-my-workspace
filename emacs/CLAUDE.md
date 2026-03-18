@@ -27,11 +27,11 @@ emacs/.config/emacs/
 
 ## File Templates
 
-自动文件头模板位于 `templates/` 目录，通过 YASnippet + auto-insert 集成。新建文件时自动插入符合规范的文件头。
+Automatic file header templates are located in the `templates/` directory, integrated via YASnippet + auto-insert. New files automatically get standards-compliant headers inserted.
 
-### 可用模板
+### Available Templates
 
-| 文件类型 | 模板文件 | 触发条件 |
+| File Type | Template File | Trigger Condition |
 |---------|---------|---------|
 | Emacs Lisp | `template.el` | `\.el$` |
 | C | `template.c` | `\.c$` |
@@ -40,19 +40,19 @@ emacs/.config/emacs/
 | Go | `template.go` | `\.go$` |
 | Shell | `template.sh` | `\.sh$` |
 
-### 使用方式
+### Usage
 
-- **自动**：新建匹配文件时自动触发
-- **手动**：`M-x auto-insert` 重新插入模板
+- **Automatic**: Triggered when creating matching files
+- **Manual**: `M-x auto-insert` to re-insert template
 
-### 模板占位符
+### Template Placeholders
 
-以 `template.el` 为例，包含以下占位符：
-- `${1:keyword1, keyword2}` - 关键词
-- `${2:(none)}` - 依赖项
-- `${3:One or two sentence description...}` - 模块描述
+Using `template.el` as an example, it includes these placeholders:
+- `${1:keyword1, keyword2}` - Keywords
+- `${2:(none)}` - Dependencies
+- `${3:One or two sentence description...}` - Module description
 
-**注意**：修改模板格式时，同步更新 `templates/template.el` 文件。
+**Note**: When modifying template format, update `templates/template.el` file accordingly.
 
 ## Quick Start
 
@@ -210,21 +210,23 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 
 ### File Header Format (MANDATORY)
 
-模板文件：`templates/template.el`（通过 auto-insert 自动插入）
+Template file: `templates/template.el` (auto-inserted via auto-insert)
 
-**结构说明**：
+**Structure**:
 
-| 行号 | 内容 | 说明 |
+| Line | Content | Description |
 |-----|------|------|
-| 1 | `;;; filename.el -*- lexical-binding: t; -*-` | 文件名 + 词法绑定 |
-| 3-5 | Author, Keywords, Dependencies | 元信息 |
-| 7 | Copyright | 当前年份 |
-| 9-24 | GPL License | 完整许可证文本 |
-| 26-28 | History | 创建日期 |
-| 30-32 | Commentary | 模块描述 |
+| 1 | `;;; filename.el -*- lexical-binding: t; -*-` | Filename + lexical binding |
+| 2 | `;; Time-stamp: <YYYY-MM-DD HH:MM:SS Day by Author>` | Last modification timestamp |
+| 4-6 | Author, Keywords, Dependencies | Metadata |
+| 8 | Copyright | Current year |
+| 10-25 | GPL License | Full license text |
+| 27-29 | History | Creation date |
+| 31-33 | Commentary | Module description |
 
 **Required fields checklist:**
 - ✅ `-*- lexical-binding: t; -*-` on line 1
+- ✅ Time-stamp: `<YYYY-MM-DD HH:MM:SS Day by Author>` on line 2
 - ✅ Author line with name and email
 - ✅ Keywords: 2-4 relevant tags
 - ✅ Dependencies: list if any, otherwise "(none)"
@@ -237,7 +239,7 @@ The `omw/` prefix stands for "oh-my-workspace" and is used consistently througho
 ### File Footer (MANDATORY)
 
 ```elisp
-;; ==================================================================================
+;; ===========================================================================
 ;;; Provide features
 (provide 'omw-module)
 
@@ -604,11 +606,11 @@ This exception exists because:
 
 **Required format (with blank lines before/after):**
 ```elisp
-;; ==================================================================================
+;; ===========================================================================
 
 (use-package ...)
 
-;; ==================================================================================
+;; ===========================================================================
 ```
 
 **Usage:**
@@ -616,6 +618,7 @@ This exception exists because:
 - ✅ Before each major function definition (if file has multiple sections)
 - ✅ Before "Provide features" section
 - ✅ With blank line before and after
+- ✅ Width: 79 characters (matching repository-wide standard)
 
 #### Alignment Spaces (CRITICAL)
 
@@ -672,6 +675,34 @@ Emacs Lisp follows the repository-wide alignment space prohibition. Here are Ema
 - Use `;;` for all inline code comments
 - Use `;;;` only for file-level section headers (;; Commentary:, ;;; Code:)
 
+#### TODO/FIXME Format
+
+Standardize comment markers for tracking work:
+
+```elisp
+;; TODO(author): Description of what needs to be done
+;; FIXME(author): Description of the bug or issue
+;; NOTE: Important information for maintainers
+;; HACK: Temporary workaround with explanation
+```
+
+**Examples:**
+```elisp
+;; TODO(zhengyu.li): Add support for tree-sitter fontification
+;; FIXME(zhengyu.li): Company backends conflict with corfu
+;; NOTE: This requires Emacs 30+
+```
+
+#### Comment Language
+
+**Rule: All comments must be in English.**
+
+This includes:
+- File headers (Commentary, History)
+- Inline comments
+- TODO/FIXME markers
+- Docstrings
+
 ## Code Quality
 
 ### Validation Commands
@@ -721,12 +752,13 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 
 - [ ] All custom functions use `omw/` prefix
 - [ ] All defcustom use `:group 'omw-emacs`
-- [ ] All files have Author, Copyright, Dependencies, History, Commentary
+- [ ] All files have Time-stamp, Author, Copyright, Dependencies, History, Commentary
 - [ ] All files have complete GPL license text
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
-- [ ] Section separators (`;; ==================================================================================`) used correctly
+- [ ] Section separators (`;; ===========================================================================`) used correctly (79 chars)
 - [ ] Files end with `(provide 'omw-xxx)` and `;;; omw-xxx.el ends here`
+- [ ] All comments in English
 
 ### Current Status
 
@@ -821,9 +853,9 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 ### 4. File Header Consistency
 
-**使用模板文件** `templates/template.el` 确保一致性。
+**Use template file** `templates/template.el` to ensure consistency.
 
-**Why**: 模板自动生成标准格式，避免手动编写时的不一致。
+**Why**: Templates auto-generate standard format, avoiding inconsistencies from manual editing.
 
 ### 5. Special Cases
 
@@ -852,25 +884,28 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 ### Essential Rules
 
-1. **File Header:** Must include Author, Copyright, Dependencies, History, Commentary
+1. **File Header:** Must include Time-stamp, Author, Copyright, Dependencies, History, Commentary
 2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
 4. **Setup Functions:** Use `setq-local` for variables, mode functions for toggles; prefer built-in functions
 5. **Comments:** Minimal, only for non-obvious code
-6. **Separators:** `;; ==================================================================================`
+6. **Separators:** `;; ===========================================================================` (79 chars)
 7. **Language Modules:** Keep language-related code together, don't artificially limit lines
 8. **LSP Configuration:** Centralize all LSP in omw-prog.el, never in language modules
 9. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
 10. **Tracking Packages:** Use `:demand t` for environment tracking (pyvenv, poetry)
+11. **Comment Language:** English only
 
 ### Pre-Commit Checklist
 
 - [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") ...)'`
 - [ ] No naming violations: All functions use `omw/` prefix
 - [ ] No variable violations: All defcustom use `:group 'omw-emacs`
-- [ ] File headers complete: Author, Copyright, Dependencies, History, Commentary, GPL
+- [ ] File headers complete: Time-stamp, Author, Copyright, Dependencies, History, Commentary, GPL
 - [ ] Docstrings present: All setup functions have documentation
 - [ ] use-package order correct: Keywords in standard order
+- [ ] Section separators 79 chars: `;; ===========================================================================`
+- [ ] All comments in English
 
 ### Common Patterns
 
@@ -916,4 +951,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
   :demand t
   :config
   (pyvenv-tracking-mode 1))
+
+;; Section separator (79 chars)
+;; ===========================================================================
 ```

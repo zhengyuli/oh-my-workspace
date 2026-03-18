@@ -1,4 +1,5 @@
 ;;; omw-git.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: vc, git, diff, merge
@@ -33,14 +34,14 @@
 
 ;;; Code:
 
-;; ==================================================================================
+;; ============================================================================
 (use-package magit
   :ensure t
   :defer t
   :bind (("C-c g s" . magit-status)
          ("C-c g l" . magit-log-all)))
 
-;; ==================================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-git)
 
