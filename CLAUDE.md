@@ -418,6 +418,74 @@ Use ASCII dashes for subsections (not Unicode em-dashes):
 
 **Rationale:** ASCII ensures cross-editor portability and consistent rendering.
 
+#### Inline Comments (CRITICAL)
+
+**Rule: Do NOT put comments on the same line as code.**
+
+All comments must be on the line above the code they describe.
+
+**❌ AVOID - Inline comments:**
+```bash
+setopt AUTO_CD # type a directory name to cd
+bindkey -e    # emacs keymap
+```
+
+**✅ CORRECT - Comment above:**
+```bash
+# type a directory name to cd
+setopt AUTO_CD
+# emacs keymap
+bindkey -e
+```
+
+**Rationale:**
+1. Improves readability with clear separation
+2. No alignment maintenance burden
+3. Easier to scan code without comment noise
+4. Prevents accidental removal of code-comment spacing
+
+#### Alignment Spaces (CRITICAL)
+
+**Rule: Do NOT use extra spaces for visual alignment.**
+
+Use exactly one space between elements. Never add padding spaces to align items vertically.
+
+**❌ AVOID - Alignment spaces in cons cells/key-value pairs:**
+```bash
+# Shell arrays
+path=(
+  "$HOME/.local/bin"      # User binaries
+  /opt/homebrew/bin       # Homebrew
+  $path                   # System
+)
+
+# Vim highlight commands
+hi Normal         guifg=#bbc2cf guibg=#282c34 gui=NONE
+hi CursorLine     guifg=NONE    guibg=#23272e gui=NONE
+```
+
+**✅ CORRECT - Single space:**
+```bash
+# Shell arrays
+path=(
+  "$HOME/.local/bin"
+  /opt/homebrew/bin
+  $path
+)
+
+# Vim highlight commands
+hi Normal guifg=#bbc2cf guibg=#282c34 gui=NONE
+hi CursorLine guifg=NONE guibg=#23272e gui=NONE
+```
+
+**Rationale:**
+1. Alignment spaces create unnecessary diff noise when items change
+2. Single space is more consistent and predictable
+3. Easier to maintain without auto-formatting tools
+4. Cascading changes: one modification requires re-aligning all siblings
+
+**Note:** For Emacs Lisp alignment spaces in cons cells and hooks, see [emacs/CLAUDE.md](emacs/CLAUDE.md#alignment-spaces-critical) for Emacs-specific examples.
+
 #### Header Examples
 
 **Level 1 (ghostty/config, ripgrep/rc, bun/.bunfig.toml):**
@@ -501,6 +569,7 @@ done
 - [ ] No cache files committed (`.zcompdump`, `*.swp`, etc.)
 - [ ] Configuration files have standardized headers
 - [ ] Shell scripts follow coding standards (no `[[ ]] && cmd || true`)
+- [ ] No inline comments in config files (comments on separate lines above code)
 - [ ] Time-stamp present in files with mode lines
 - [ ] Section separators use `---` for content, `===` for headers only
 
