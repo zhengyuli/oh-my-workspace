@@ -238,30 +238,6 @@ For single-line explanations, no separator needed:
 4. **Prerequisites**: Document dependencies on other files
 5. **Cross-References**: Mention related files in comments
 
-### Alignment Spaces (CRITICAL)
-
-**Rule: Do NOT use extra spaces for visual alignment.**
-
-Use exactly one space before inline comments (`#`). Never add padding spaces
-to align comments vertically.
-
-**❌ AVOID - Alignment spaces before comments:**
-```zsh
-setopt AUTO_CD              # type a directory name to cd
-setopt AUTO_PUSHD           # cd pushes old dir onto stack
-```
-
-**✅ CORRECT - Single space:**
-```zsh
-setopt AUTO_CD # type a directory name to cd
-setopt AUTO_PUSHD # cd pushes old dir onto stack
-```
-
-**Rationale:**
-1. Alignment spaces create unnecessary diff noise
-2. Single space is more consistent and predictable
-3. Easier to maintain without formatting tools
-
 ### Variable Assignment
 
 根据变量用途选择正确的赋值模式：
@@ -311,6 +287,31 @@ export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/rc"  # 冗
     │       └── NO → $VAR (简洁)
     └── NO → 直接赋值
 ```
+
+### Inline Comments (CRITICAL)
+
+**Rule: Do NOT put comments on the same line as code.**
+
+All comments must be on the line above the code they describe.
+
+**❌ AVOID - Inline comments:**
+```zsh
+setopt AUTO_CD # type a directory name to cd
+bindkey -e    # emacs keymap
+```
+
+**✅ CORRECT - Comment above:**
+```zsh
+# type a directory name to cd
+setopt AUTO_CD
+# emacs keymap
+bindkey -e
+```
+
+**Rationale:**
+1. Improves readability with clear separation
+2. No alignment maintenance burden
+3. Easier to scan code without comment noise
 
 ### Conditional Logic
 

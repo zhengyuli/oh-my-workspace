@@ -32,19 +32,28 @@ SAVEHIST=50000
 # See: https://zsh.sourceforge.io/Doc/Release/Options.html#History
 
 # --- Recording ---
-setopt EXTENDED_HISTORY # Record timestamp and duration: `: start:elapsed;command`
-setopt HIST_IGNORE_SPACE # Commands starting with space are not recorded
-setopt HIST_REDUCE_BLANKS # Strip superfluous whitespace before saving
+# Record timestamp and duration: `: start:elapsed;command`
+setopt EXTENDED_HISTORY
+# Commands starting with space are not recorded
+setopt HIST_IGNORE_SPACE
+# Strip superfluous whitespace before saving
+setopt HIST_REDUCE_BLANKS
 
 # --- Deduplication ---
-setopt HIST_EXPIRE_DUPS_FIRST # Delete oldest duplicates when HISTSIZE is reached
-setopt HIST_IGNORE_ALL_DUPS # Delete old duplicate when new one is added
-setopt HIST_SAVE_NO_DUPS # Don't write duplicates to history file
-setopt HIST_FIND_NO_DUPS # Skip duplicates when searching with arrow keys
+# Delete oldest duplicates when HISTSIZE is reached
+setopt HIST_EXPIRE_DUPS_FIRST
+# Delete old duplicate when new one is added
+setopt HIST_IGNORE_ALL_DUPS
+# Don't write duplicates to history file
+setopt HIST_SAVE_NO_DUPS
+# Skip duplicates when searching with arrow keys
+setopt HIST_FIND_NO_DUPS
 
 # --- Sharing ---
 # SHARE_HISTORY implies immediate append, so INC_APPEND_HISTORY is redundant
-setopt SHARE_HISTORY # Share history across all running shells in real time
+# Share history across all running shells in real time
+setopt SHARE_HISTORY
 
 # --- Safety ---
-setopt HIST_VERIFY # Show expanded history substitution before executing
+# Show expanded history substitution before executing
+setopt HIST_VERIFY
