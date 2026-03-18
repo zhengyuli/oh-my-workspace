@@ -54,6 +54,19 @@ Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER) where:
           (message "Cannot install %s: %s not found." tool pm))))))
 
 ;; ==================================================================================
+(defun omw/tools-check-and-prompt (&rest tool-specs)
+  "Check for missing tools and prompt user to install each one.
+Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER).
+For each missing tool, asks whether to install it now.
+No-op in batch/non-interactive mode."
+  (when (not noninteractive)
+    (dolist (spec tool-specs)
+      (let ((tool (nth 0 spec)))
+        (unless (executable-find tool)
+          (when (yes-or-no-p (format "%s not found. Install now? " tool))
+            (omw/tools-install spec)))))))
+
+;; ==================================================================================
 ;;; Provide features
 (provide 'omw-utils)
 

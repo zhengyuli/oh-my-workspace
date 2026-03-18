@@ -42,9 +42,18 @@
    '("gopls" "go install golang.org/x/tools/gopls@latest" "go")
    '("gofumpt" "go install mvdan.cc/gofumpt@latest" "go")))
 
+;; ==================================================================================
+(defun omw/go-mode-setup ()
+  "Apply custom settings for Go mode."
+  (require 'omw-utils)
+  (omw/tools-check-and-prompt
+   '("gopls"   "go install golang.org/x/tools/gopls@latest" "go")
+   '("gofumpt" "go install mvdan.cc/gofumpt@latest"         "go")))
+
 (use-package go-mode
   :ensure t
-  :defer t)
+  :defer t
+  :hook (go-mode . omw/go-mode-setup))
 
 ;; ==================================================================================
 ;;; Provide features
