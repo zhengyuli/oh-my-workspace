@@ -35,18 +35,21 @@
 ;;; Code:
 
 ;; ==================================================================================
-(defun omw/ensure-yaml-tools ()
+(defvar omw/yaml-tool-specs
+  '(("yaml-language-server" "bun install -g yaml-language-server" "bun"))
+  "Tool specs for YAML development.")
+
+(defun omw/install-yaml-tools ()
   "Install YAML LSP tools (yaml-language-server) via bun if not present."
   (interactive)
   (require 'omw-utils)
-  (omw/tools-install '("yaml-language-server" "bun install -g yaml-language-server" "bun")))
+  (apply #'omw/tools-install omw/yaml-tool-specs))
 
 ;; ==================================================================================
 (defun omw/yaml-mode-setup ()
   "Apply custom settings for yaml mode."
   (require 'omw-utils)
-  (omw/tools-check-and-prompt
-   '("yaml-language-server" "bun install -g yaml-language-server" "bun")))
+  (apply #'omw/tools-check-and-prompt omw/yaml-tool-specs))
 
 (use-package yaml-mode
   :ensure t
