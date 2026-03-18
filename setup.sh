@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-17 21:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-17 22:00:00 Monday by zhengyu.li>
 # =============================================================================
 # oh-my-dotfiles Interactive Setup Script
 #
@@ -21,22 +21,91 @@ set -euo pipefail
 # Constants
 # =============================================================================
 
-# Colors for output
-readonly COLOR_RED='\033[0;31m'
-readonly COLOR_GREEN='\033[0;32m'
-readonly COLOR_YELLOW='\033[0;33m'
-readonly COLOR_BLUE='\033[0;34m'
-readonly COLOR_PURPLE='\033[0;35m'
-readonly COLOR_CYAN='\033[0;36m'
-readonly COLOR_WHITE='\033[0;37m'
-readonly COLOR_BOLD='\033[1m'
-readonly COLOR_RESET='\033[0m'
+# In test mode, skip readonly declarations to allow overrides
+if [[ -z "${SETUP_SH_TEST_MODE:-}" ]]; then
+    # --- Configuration Constants ---
+    readonly MAX_BACKUPS=5                    # Maximum backup files per target
+    readonly NETWORK_TIMEOUT=60               # Network request timeout (seconds)
+    readonly NETWORK_RETRIES=3                # Number of retries for network requests
 
-# Package definitions
-readonly STOW_PACKAGES=(zsh git vim emacs ghostty ripgrep uv bun starship)
-readonly ESSENTIAL_PACKAGES=(zsh git)
-readonly TOOL_PACKAGES=(ghostty ripgrep uv bun starship)
-readonly EDITOR_PACKAGES=(vim emacs)
+    # --- Menu Option Constants ---
+    readonly MENU_INSTALL=1
+    readonly MENU_UNINSTALL=2
+    readonly MENU_UPDATE=3
+    readonly MENU_DEFAULTS=4
+    readonly MENU_STATUS=5
+    readonly MENU_QUIT='q'
+
+    # --- Package Type Configuration ---
+    # Packages with single file at $HOME (e.g., .zshenv)
+    readonly PKG_TYPE_HOME_FILE="home_file"
+    # Packages with .config/pkg directory
+    readonly PKG_TYPE_CONFIG_DIR="config_dir"
+    # Packages with single .config/pkg.toml file
+    readonly PKG_TYPE_CONFIG_FILE="config_file"
+
+    # Package-to-type mapping (used by is_stowed and stow_package)
+    readonly PKG_TYPE_ZSH="${PKG_TYPE_HOME_FILE}"
+    readonly PKG_TYPE_STARSHIP="${PKG_TYPE_CONFIG_FILE}"
+    # All other packages are PKG_TYPE_CONFIG_DIR
+
+    # Colors for output
+    readonly COLOR_RED='\033[0;31m'
+    readonly COLOR_GREEN='\033[0;32m'
+    readonly COLOR_YELLOW='\033[0;33m'
+    readonly COLOR_BLUE='\033[0;34m'
+    readonly COLOR_PURPLE='\033[0;35m'
+    readonly COLOR_CYAN='\033[0;36m'
+    readonly COLOR_WHITE='\033[0;37m'
+    readonly COLOR_BOLD='\033[1m'
+    readonly COLOR_RESET='\033[0m'
+
+    # Package definitions
+    readonly STOW_PACKAGES=(zsh git vim emacs ghostty ripgrep uv bun starship)
+    readonly ESSENTIAL_PACKAGES=(zsh git)
+    readonly TOOL_PACKAGES=(ghostty ripgrep uv bun starship)
+    readonly EDITOR_PACKAGES=(vim emacs)
+else
+    # --- Configuration Constants (non-readonly in test mode) ---
+    MAX_BACKUPS=5
+    NETWORK_TIMEOUT=60
+    NETWORK_RETRIES=3
+
+    # --- Menu Option Constants (non-readonly in test mode) ---
+    MENU_INSTALL=1
+    MENU_UNINSTALL=2
+    MENU_UPDATE=3
+    MENU_DEFAULTS=4
+    MENU_STATUS=5
+    MENU_QUIT='q'
+
+    # --- Package Type Configuration (non-readonly in test mode) ---
+    PKG_TYPE_HOME_FILE="home_file"
+    PKG_TYPE_CONFIG_DIR="config_dir"
+    PKG_TYPE_CONFIG_FILE="config_file"
+
+    # Package-to-type mapping (non-readonly in test mode)
+    PKG_TYPE_ZSH="${PKG_TYPE_HOME_FILE}"
+    PKG_TYPE_STARSHIP="${PKG_TYPE_CONFIG_FILE}"
+    # All other packages are PKG_TYPE_CONFIG_DIR
+
+    # Colors for output (non-readonly in test mode)
+    COLOR_RED='\033[0;31m'
+    COLOR_GREEN='\033[0;32m'
+    COLOR_YELLOW='\033[0;33m'
+    COLOR_BLUE='\033[0;34m'
+    COLOR_PURPLE='\033[0;35m'
+    COLOR_CYAN='\033[0;36m'
+    COLOR_WHITE='\033[0;37m'
+    COLOR_BOLD='\033[1m'
+    COLOR_RESET='\033[0m'
+
+    # Package definitions (non-readonly in test mode)
+    STOW_PACKAGES=(zsh git vim emacs ghostty ripgrep uv bun starship)
+    ESSENTIAL_PACKAGES=(zsh git)
+    TOOL_PACKAGES=(ghostty ripgrep uv bun starship)
+    EDITOR_PACKAGES=(vim emacs)
+fi
 
 # Paths - compatible with both bash and zsh
 get_script_dir() {
@@ -48,9 +117,17 @@ get_script_dir() {
         cd "$(dirname "${0}")" && pwd
     fi
 }
-readonly SCRIPT_DIR="$(get_script_dir)"
-readonly BREWFILE="${SCRIPT_DIR}/homebrew/Brewfile"
-readonly DEFAULTS_SCRIPT="${SCRIPT_DIR}/macos/defaults.sh"
+
+# In test mode, allow SCRIPT_DIR to be overridden
+if [[ -z "${SETUP_SH_TEST_MODE:-}" ]]; then
+    readonly SCRIPT_DIR="$(get_script_dir)"
+    readonly BREWFILE="${SCRIPT_DIR}/homebrew/Brewfile"
+    readonly DEFAULTS_SCRIPT="${SCRIPT_DIR}/macos/defaults.sh"
+else
+    SCRIPT_DIR="${SCRIPT_DIR:-$(get_script_dir)}"
+    BREWFILE="${SCRIPT_DIR}/homebrew/Brewfile"
+    DEFAULTS_SCRIPT="${SCRIPT_DIR}/macos/defaults.sh"
+fi
 
 # =============================================================================
 # Shell Detection & Switching
@@ -61,8 +138,8 @@ is_zsh() {
     [[ -n "${ZSH_VERSION:-}" ]]
 }
 
-# Switch to zsh if not already running in zsh
-ensure_zsh() {
+# Switch to zsh if not already running in zsh (used for shell exec)
+switch_to_zsh() {
     if is_zsh; then
         return 0
     fi
@@ -89,6 +166,73 @@ ensure_zsh() {
 
     # Re-execute this script with zsh
     exec "${zsh_bin}" "$0" "$@"
+}
+
+# Check prerequisites without installing them
+# Returns 0 if all present, 1 if any missing
+check_prerequisites_only() {
+    local -a missing=()
+
+    [[ $(check_xcode_cli) != "installed" ]] && missing+=("Xcode CLI")
+    [[ $(check_homebrew) != "installed" ]] && missing+=("Homebrew")
+    [[ $(check_stow) != "installed" ]] && missing+=("GNU Stow")
+
+    if (( ${#missing[@]} > 0 )); then
+        print_error "Missing prerequisites: ${missing[*]}"
+        print_info "Run './setup.sh install-full' to install all prerequisites."
+        return 1
+    fi
+    return 0
+}
+
+# Offer to change default login shell to zsh after installation
+offer_shell_switch() {
+    # Only offer if zsh package was installed and current shell is not zsh
+    if ! is_stowed "zsh"; then
+        return 0
+    fi
+
+    if is_zsh; then
+        print_info "Already running in zsh."
+        return 0
+    fi
+
+    printf '\n'
+    if confirm "Switch default shell to zsh?" "y"; then
+        local zsh_path
+        zsh_path=$(command -v zsh)
+
+        if [[ -z "${zsh_path}" ]]; then
+            print_error "zsh not found in PATH"
+            return 1
+        fi
+
+        # Check if zsh is in /etc/shells
+        if ! grep -q "${zsh_path}" /etc/shells 2>/dev/null; then
+            print_info "Adding ${zsh_path} to /etc/shells..."
+            if ! echo "${zsh_path}" | sudo tee -a /etc/shells > /dev/null; then
+                print_error "Failed to add ${zsh_path} to /etc/shells"
+                return 1
+            fi
+            # Verify the write succeeded
+            if ! grep -q "${zsh_path}" /etc/shells 2>/dev/null; then
+                print_error "Verification failed: ${zsh_path} not found in /etc/shells"
+                return 1
+            fi
+            print_success "Added ${zsh_path} to /etc/shells"
+        fi
+
+        print_info "Changing default shell..."
+        if ! chsh -s "${zsh_path}"; then
+            print_error "Failed to change default shell"
+            return 1
+        fi
+
+        print_success "Default shell changed to zsh"
+        print_info "Run 'zsh' or open a new terminal to use zsh."
+    else
+        print_info "Skipped shell switch. Run 'chsh -s \$(which zsh)' manually later."
+    fi
 }
 
 # =============================================================================
@@ -189,6 +333,21 @@ backup_file() {
         ((backup_num++))
     done
 
+    # Cleanup old backups if exceeding MAX_BACKUPS limit
+    if (( backup_num >= MAX_BACKUPS )); then
+        local cleanup_num=0
+        local keep_start=$((backup_num - MAX_BACKUPS + 1))
+        print_info "Cleaning up old backups (keeping last ${MAX_BACKUPS})..."
+        while (( cleanup_num < keep_start )); do
+            local old_backup="${target}.bak.${cleanup_num}"
+            if [[ -e "${old_backup}" ]]; then
+                rm -f "${old_backup}"
+                print_info "Removed old backup: ${old_backup}"
+            fi
+            ((cleanup_num++))
+        done
+    fi
+
     print_warning "Backing up existing file: ${target} -> ${backup_path}"
     mv "${target}" "${backup_path}"
 }
@@ -243,50 +402,122 @@ check_stow() {
     fi
 }
 
-is_stowed() {
+# Resolve a path to its absolute form (portable for macOS/Linux)
+resolve_path() {
+    local path="${1}"
+    local base_dir="${2:-.}"
+
+    # If path is absolute, use it directly
+    if [[ "${path}" == /* ]]; then
+        if [[ -d "${path}" ]]; then
+            cd "${path}" 2>/dev/null && pwd || echo "${path}"
+        else
+            echo "${path}"
+        fi
+        return
+    fi
+
+    # Resolve relative path from base directory
+    local orig_dir="$(pwd)"
+    cd "${base_dir}" 2>/dev/null || return 1
+
+    # Handle parent directory traversals (.., ../.., etc.)
+    # These are directory-only paths, so just resolve the directory
+    if [[ "${path}" == ".." ]] || [[ "${path}" == "../"* ]]; then
+        local resolved
+        resolved=$(cd "${path}" 2>/dev/null && pwd)
+        cd "${orig_dir}" 2>/dev/null
+        echo "${resolved}"
+        return
+    fi
+
+    local dir_part="$(dirname "${path}")"
+    local base_part="$(basename "${path}")"
+
+    if [[ "${dir_part}" == "." ]]; then
+        # Path is in current directory
+        echo "$(pwd)/${base_part}"
+    else
+        # Path has directory component
+        if cd "${dir_part}" 2>/dev/null; then
+            echo "$(pwd)/${base_part}"
+        else
+            echo "${path}"
+        fi
+    fi
+
+    cd "${orig_dir}" 2>/dev/null
+}
+
+# Get package type for symlink detection
+get_package_type() {
     local pkg="${1}"
-    local target_dir
-    local stow_dir="${SCRIPT_DIR}/${pkg}"
 
     case "${pkg}" in
-        zsh)
-            # zsh has .zshenv at $HOME and .config/zsh at $HOME/.config/zsh
-            if [[ -L "${HOME}/.zshenv" ]]; then
-                local link_target
-                link_target=$(readlink "${HOME}/.zshenv")
-                if [[ "${link_target}" == "${stow_dir}/.zshenv" ]]; then
-                    return 0
-                fi
-            fi
-            return 1
+        zsh) echo "${PKG_TYPE_ZSH}" ;;
+        starship) echo "${PKG_TYPE_STARSHIP}" ;;
+        *) echo "${PKG_TYPE_CONFIG_DIR}" ;;
+    esac
+}
+
+# Resolve symlink to absolute path (helper for is_stowed)
+resolve_symlink() {
+    local link="${1}"
+    local base_dir="${2:-.}"
+
+    if [[ "${link}" == /* ]]; then
+        echo "${link}"
+    else
+        local dir_part
+        dir_part=$(cd "${base_dir}" 2>/dev/null && cd "$(dirname "${link}")" 2>/dev/null && pwd)
+        if [[ -n "${dir_part}" ]]; then
+            echo "${dir_part}/$(basename "${link}")"
+        else
+            echo "${link}"
+        fi
+    fi
+}
+
+is_stowed() {
+    local pkg="${1}"
+    local stow_dir="${SCRIPT_DIR}/${pkg}"
+    local pkg_type
+    local target
+    local expected_target
+
+    pkg_type=$(get_package_type "${pkg}")
+
+    case "${pkg_type}" in
+        "${PKG_TYPE_HOME_FILE}")
+            # Package with file at $HOME (e.g., .zshenv)
+            target="${HOME}/.${pkg}env"
+            expected_target="${stow_dir}/.${pkg}env"
             ;;
-        git|vim|emacs|ghostty|ripgrep|uv|bun)
-            target_dir="${HOME}/.config/${pkg}"
-            if [[ -L "${target_dir}" ]]; then
-                local link_target
-                link_target=$(readlink "${target_dir}")
-                if [[ "${link_target}" == "${stow_dir}/.config/${pkg}" ]]; then
-                    return 0
-                fi
-            fi
-            return 1
+        "${PKG_TYPE_CONFIG_FILE}")
+            # Package with single .config/pkg.toml file
+            target="${HOME}/.config/${pkg}.toml"
+            expected_target="${stow_dir}/.config/${pkg}.toml"
             ;;
-        starship)
-            # starship has a single file .config/starship.toml
-            local target_file="${HOME}/.config/starship.toml"
-            if [[ -L "${target_file}" ]]; then
-                local link_target
-                link_target=$(readlink "${target_file}")
-                if [[ "${link_target}" == "${stow_dir}/.config/starship.toml" ]]; then
-                    return 0
-                fi
-            fi
-            return 1
-            ;;
-        *)
-            return 1
+        "${PKG_TYPE_CONFIG_DIR}"|*)
+            # Package with .config/pkg directory (default)
+            target="${HOME}/.config/${pkg}"
+            expected_target="${stow_dir}/.config/${pkg}"
             ;;
     esac
+
+    if [[ -L "${target}" ]]; then
+        local link_target
+        local base_dir
+        base_dir=$(dirname "${target}")
+        link_target=$(readlink "${target}")
+        local resolved_target
+        resolved_target=$(resolve_symlink "${link_target}" "${base_dir}")
+
+        if [[ "${resolved_target}" == "${expected_target}" ]]; then
+            return 0
+        fi
+    fi
+    return 1
 }
 
 count_stowed_packages() {
@@ -343,7 +574,34 @@ install_homebrew() {
     print_info "Installing Homebrew..."
     print_warning "This may take a few minutes."
 
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    local install_url="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
+    local retry_count=0
+    local install_success=false
+
+    while (( retry_count < NETWORK_RETRIES )); do
+        if (( retry_count > 0 )); then
+            print_info "Retry ${retry_count}/${NETWORK_RETRIES}..."
+        fi
+
+        if curl --fail --silent --show-error \
+                --connect-timeout "${NETWORK_TIMEOUT}" \
+                --max-time "$((NETWORK_TIMEOUT * 10))" \
+                "${install_url}" | /bin/bash; then
+            install_success=true
+            break
+        fi
+
+        ((retry_count++))
+        if (( retry_count < NETWORK_RETRIES )); then
+            print_warning "Download failed, retrying in 5 seconds..."
+            sleep 5
+        fi
+    done
+
+    if [[ "${install_success}" != "true" ]]; then
+        print_error "Homebrew installation failed after ${NETWORK_RETRIES} attempts"
+        return 1
+    fi
 
     # Add Homebrew to PATH for current session (Apple Silicon Macs)
     if [[ -f /opt/homebrew/bin/brew ]]; then
@@ -356,7 +614,7 @@ install_homebrew() {
         print_success "Homebrew installed successfully"
         return 0
     else
-        print_error "Homebrew installation failed"
+        print_error "Homebrew installation verification failed"
         return 1
     fi
 }
@@ -531,34 +789,36 @@ show_help() {
 oh-my-dotfiles Setup Script
 
 Usage:
-  ./setup.sh [OPTIONS] [COMMAND] [ARGS...]
+  ./setup.sh <command> [args]
 
 Commands:
-  --install [PKG...]      Install packages (default: all)
-  --uninstall PKG...      Uninstall specified packages
-  --update                Update repository and restow packages
-  --status                Show current installation status
-  --defaults              Apply macOS system defaults
-  --interactive, -I       Enter interactive menu mode
-  --help, -h              Show this help message
+  install-full          Full install: prerequisites + all packages + shell switch
+  install all           Same as install-full
+  install <pkg>...      Install specific packages (prerequisites must exist)
+  uninstall <pkg>...    Uninstall specified packages
+  update                Update repository and restow packages
+  status                Show current installation status
+  defaults              Apply macOS system defaults
+  interactive, -I       Enter interactive menu mode
+  help, -h              Show this help message
 
 Packages:
   zsh, git, vim, emacs, ghostty, ripgrep, uv, bun, starship
 
 Examples:
-  ./setup.sh                          # Show this help
-  ./setup.sh --install                # Install all packages
-  ./setup.sh --install zsh git        # Install specific packages
-  ./setup.sh --uninstall vim          # Uninstall vim package
-  ./setup.sh --update                 # Update and restow
-  ./setup.sh --interactive            # Interactive menu mode
+  ./setup.sh                        # Show this help
+  ./setup.sh install-full           # Full installation
+  ./setup.sh install zsh git        # Install specific packages
+  ./setup.sh uninstall vim          # Uninstall vim package
+  ./setup.sh update                 # Update and restow
+  ./setup.sh status                 # View status
 
-Installation Order:
+Installation Order (install-full):
   1. Xcode Command Line Tools
   2. Homebrew
   3. Brew packages (including stow)
   4. Stow packages (zsh first for XDG env vars)
-  5. Source ~/.zshenv
+  5. Offer to switch default shell to zsh
 
 For more information, see: https://github.com/zhengyuli/oh-my-dotfiles
 EOF
@@ -848,7 +1108,7 @@ run_uninstall_packages() {
 
     if (( ${#packages[@]} == 0 )); then
         print_error "No packages specified for uninstallation."
-        print_info "Usage: ./setup.sh --uninstall <package>..."
+        print_info "Usage: ./setup.sh uninstall <package>..."
         list_valid_packages
         return 1
     fi
@@ -864,6 +1124,64 @@ run_uninstall_packages() {
     done
 }
 
+# Full installation workflow: prerequisites + all packages + shell switch
+run_full_install() {
+    # 1. Install prerequisites
+    run_install_prerequisites
+
+    # 2. Install all packages
+    run_install_packages "${STOW_PACKAGES[@]}"
+
+    # 3. Offer shell switch
+    printf '\n'
+    offer_shell_switch
+
+    printf '\n'
+    print_success "Full installation complete!"
+}
+
+# Partial installation: check prerequisites, error if missing, stow specified packages only
+run_partial_install() {
+    local -a packages=("$@")
+
+    # 1. Check prerequisites (don't install)
+    if ! check_prerequisites_only; then
+        exit 1
+    fi
+
+    # 2. Validate package names
+    local -a valid_packages=()
+    local pkg
+    for pkg in "${packages[@]}"; do
+        if is_valid_package "${pkg}"; then
+            valid_packages+=("${pkg}")
+        else
+            print_warning "Invalid package: ${pkg}"
+        fi
+    done
+
+    if (( ${#valid_packages[@]} == 0 )); then
+        print_error "No valid packages specified."
+        list_valid_packages
+        exit 1
+    fi
+
+    # 3. Stow specified packages
+    print_section "Installing Packages"
+
+    for pkg in "${valid_packages[@]}"; do
+        if is_stowed "${pkg}"; then
+            print_info "${pkg} is already stowed, skipping..."
+        else
+            stow_package "${pkg}"
+        fi
+    done
+
+    printf '\n'
+    print_success "Package installation complete!"
+    print_info "Run 'source ~/.zshenv' or restart your shell to apply changes."
+}
+
 # =============================================================================
 # CLI Mode
 # =============================================================================
@@ -874,40 +1192,24 @@ run_cli_mode() {
     local -a args=("$@")
 
     case "${mode}" in
+        install-full)
+            run_full_install
+            ;;
         install)
-            run_install_prerequisites
-
             if (( ${#args[@]} == 0 )); then
-                # No arguments = install all
-                run_install_packages "${STOW_PACKAGES[@]}"
+                # No args = show help
+                show_help
+                exit 0
             elif [[ "${args[0]}" == "all" ]]; then
-                run_install_packages "${STOW_PACKAGES[@]}"
+                run_full_install
             else
-                # Validate package names
-                local -a valid_packages=()
-                local pkg
-                for pkg in "${args[@]}"; do
-                    if is_valid_package "${pkg}"; then
-                        valid_packages+=("${pkg}")
-                    else
-                        print_warning "Invalid package: ${pkg}"
-                    fi
-                done
-
-                if (( ${#valid_packages[@]} == 0 )); then
-                    print_error "No valid packages specified."
-                    list_valid_packages
-                    exit 1
-                fi
-
-                run_install_packages "${valid_packages[@]}"
+                run_partial_install "${args[@]}"
             fi
             ;;
         uninstall)
             run_uninstall_packages "${args[@]}"
             ;;
         update)
-            run_install_prerequisites
             update_repository
             ;;
         status)
@@ -935,25 +1237,25 @@ run_cli_mode() {
 # =============================================================================
 
 main() {
-    # Switch to zsh if not already running in zsh
-    ensure_zsh "$@"
-
     local mode="help"
     local -a args=()
 
-    # Parse arguments
+    # Parse arguments (subcommand style, no -- prefix required)
     while (( $# > 0 )); do
         case "${1}" in
-            --install)
+            install-full)
+                mode="install-full"
+                shift
+                ;;
+            install)
                 mode="install"
                 shift
-                # Collect remaining arguments as package names
                 while (( $# > 0 )) && [[ ! "${1}" =~ ^- ]]; do
                     args+=("${1}")
                     shift
                 done
                 ;;
-            --uninstall)
+            uninstall)
                 mode="uninstall"
                 shift
                 while (( $# > 0 )) && [[ ! "${1}" =~ ^- ]]; do
@@ -961,30 +1263,40 @@ main() {
                     shift
                 done
                 ;;
-            --update)
+            update)
                 mode="update"
                 shift
                 ;;
-            --status)
+            status)
                 mode="status"
                 shift
                 ;;
-            --defaults)
+            defaults)
                 mode="defaults"
                 shift
                 ;;
-            --interactive|-I)
+            interactive|-I)
                 mode="interactive"
                 shift
                 ;;
-            --help|-h)
+            help|-h|--help)
                 mode="help"
                 shift
                 ;;
-            *)
+            -*)
                 print_error "Unknown option: ${1}"
+                print_info "Did you mean a subcommand? Try './setup.sh help'"
                 show_help
                 exit 1
+                ;;
+            *)
+                # Treat as subcommand
+                mode="${1}"
+                shift
+                while (( $# > 0 )) && [[ ! "${1}" =~ ^- ]]; do
+                    args+=("${1}")
+                    shift
+                done
                 ;;
         esac
     done
@@ -993,5 +1305,7 @@ main() {
     run_cli_mode "${mode}" "${args[@]}"
 }
 
-# Run main
-main "$@"
+# Run main (skip if in test mode)
+if [[ -z "${SETUP_SH_TEST_MODE:-}" ]]; then
+    main "$@"
+fi
