@@ -103,14 +103,14 @@ If no delimiter is found, show an error message."
 (use-package eglot
   :ensure nil
   :defer t
-  :hook ((c-mode          . eglot-ensure)
-         (c++-mode        . eglot-ensure)
-         (python-mode     . eglot-ensure)
-         (go-mode         . eglot-ensure)
+  :hook ((c-mode . eglot-ensure)
+         (c++-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
+         (go-mode . eglot-ensure)
          (typescript-mode . eglot-ensure)
-         (sh-mode         . eglot-ensure)
-         (cmake-mode      . eglot-ensure)
-         (yaml-mode       . eglot-ensure)
+         (sh-mode . eglot-ensure)
+         (cmake-mode . eglot-ensure)
+         (yaml-mode . eglot-ensure)
          (dockerfile-mode . eglot-ensure))
   :config
   ;; Connection settings
