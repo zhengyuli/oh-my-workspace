@@ -1,5 +1,5 @@
 # 50-prompt.zsh
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Prompt Configuration
 #
@@ -31,8 +31,6 @@
 # Documentation: https://starship.rs/config/
 # -----------------------------------------------------------------------------
 if command -v starship &>/dev/null; then
-  export STARSHIP_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml"
-  export STARSHIP_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/starship"
   eval "$(starship init zsh)"
 
   # ---------------------------------------------------------------------------

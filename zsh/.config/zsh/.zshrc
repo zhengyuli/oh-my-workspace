@@ -1,5 +1,5 @@
 # .zshrc
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Interactive Shell Orchestrator
 #
@@ -37,5 +37,3 @@ for _conf in "$ZDOTDIR"/conf.d/*.zsh(N); do
 done
 unset _conf
 
-# bun completions
-[ -s "/Users/zhengyu.li/.local/share/bun/_bun" ] && source "/Users/zhengyu.li/.local/share/bun/_bun"

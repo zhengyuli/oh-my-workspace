@@ -1,5 +1,5 @@
 # 30-completion.zsh
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Completion System
 #
@@ -82,7 +82,7 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*' ignored-patterns '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
 # Show processes from all users in process completion
-zstyle ':completion:*:processes' command 'ps -au$USER'
+zstyle ':completion:*:processes' command "ps -au$USER"
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
 # kill completion

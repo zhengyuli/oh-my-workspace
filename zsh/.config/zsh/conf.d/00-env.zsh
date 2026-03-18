@@ -1,5 +1,5 @@
 # 00-env.zsh
-# Time-stamp: <2026-03-17 20:36:14 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Core Environment Variables
 #
@@ -89,9 +89,11 @@ export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 # Needs to be set before carapace initializes (70-tools.zsh)
 export CARAPACE_BRIDGES='zsh,fish,bash'
 
-# starship -- config requires explicit path (no auto-discovery); cache follows
-# XDG_CACHE_HOME natively
+# starship -- both config and cache require explicit XDG paths
+# STARSHIP_CONFIG: no auto-discovery; must point explicitly to config file
+# STARSHIP_CACHE:  defaults to $XDG_CACHE_HOME/starship, set explicitly for clarity
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
+export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
 
 # -----------------------------------------------------------------------------
 # Less -- Modern Configuration
