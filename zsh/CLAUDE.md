@@ -238,6 +238,30 @@ For single-line explanations, no separator needed:
 4. **Prerequisites**: Document dependencies on other files
 5. **Cross-References**: Mention related files in comments
 
+### Alignment Spaces (CRITICAL)
+
+**Rule: Do NOT use extra spaces for visual alignment.**
+
+Use exactly one space before inline comments (`#`). Never add padding spaces
+to align comments vertically.
+
+**❌ AVOID - Alignment spaces before comments:**
+```zsh
+setopt AUTO_CD              # type a directory name to cd
+setopt AUTO_PUSHD           # cd pushes old dir onto stack
+```
+
+**✅ CORRECT - Single space:**
+```zsh
+setopt AUTO_CD # type a directory name to cd
+setopt AUTO_PUSHD # cd pushes old dir onto stack
+```
+
+**Rationale:**
+1. Alignment spaces create unnecessary diff noise
+2. Single space is more consistent and predictable
+3. Easier to maintain without formatting tools
+
 ### Variable Assignment
 
 根据变量用途选择正确的赋值模式：
