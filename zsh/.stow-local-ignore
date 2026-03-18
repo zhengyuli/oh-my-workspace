@@ -1,0 +1,15 @@
+# .stow-local-ignore
+# Time-stamp: <2026-03-17 21:15:00 Monday by zhengyu.li>
+# =============================================================================
+# Zsh Package Stow Ignore Patterns
+#
+# Location: zsh/.stow-local-ignore
+# Syntax: Perl regular expressions (one per line)
+# Note: Patterns apply ONLY to this package
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Documentation
+# -----------------------------------------------------------------------------
+
+^/CLAUDE\.md

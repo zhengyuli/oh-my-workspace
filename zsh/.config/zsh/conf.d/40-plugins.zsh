@@ -1,5 +1,5 @@
 # 40-plugins.zsh
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-17 22:54:59 Tuesday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management
 #
@@ -146,6 +146,10 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:git-checkout:*' sort false
 
 # --- fzf-tab Preview Configurations ---
+
+# Global preview window size — right panel, 55% width, line-wrap enabled
+# Per-command fzf-flags below override this where needed (e.g. kill: down:3)
+zstyle ':fzf-tab:*' fzf-flags --preview-window=right:55%:wrap
 
 # cd: preview directory
 zstyle ':fzf-tab:complete:cd:*' fzf-preview \
