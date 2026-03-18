@@ -1,9 +1,9 @@
 # starship.toml
-# Time-stamp: <2026-03-17 00:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
 # Starship Prompt — Cross-shell, minimal, blazing fast
 #
-# Location: $XDG_CONFIG_HOME/starship/starship.toml  (~/.config/starship/)
+# Location: ~/.config/starship.toml
 # XDG: Config requires explicit STARSHIP_CONFIG path (no auto-discovery);
 #      cache follows XDG_CACHE_HOME natively (~/.cache/starship)
 #      - Config: $STARSHIP_CONFIG (set in zsh/.config/zsh/conf.d/00-env.zsh)

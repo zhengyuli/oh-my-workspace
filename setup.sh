@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-17 22:00:00 Monday by zhengyu.li>
+# Time-stamp: <2026-03-17 22:00:00 Tuesday by zhengyu.li>
 # =============================================================================
 # oh-my-dotfiles Interactive Setup Script
 #
@@ -27,14 +27,6 @@ if [[ -z "${SETUP_SH_TEST_MODE:-}" ]]; then
     readonly MAX_BACKUPS=5                    # Maximum backup files per target
     readonly NETWORK_TIMEOUT=60               # Network request timeout (seconds)
     readonly NETWORK_RETRIES=3                # Number of retries for network requests
-
-    # --- Menu Option Constants ---
-    readonly MENU_INSTALL=1
-    readonly MENU_UNINSTALL=2
-    readonly MENU_UPDATE=3
-    readonly MENU_DEFAULTS=4
-    readonly MENU_STATUS=5
-    readonly MENU_QUIT='q'
 
     # --- Package Type Configuration ---
     # Packages with single file at $HOME (e.g., .zshenv)
@@ -70,14 +62,6 @@ else
     MAX_BACKUPS=5
     NETWORK_TIMEOUT=60
     NETWORK_RETRIES=3
-
-    # --- Menu Option Constants (non-readonly in test mode) ---
-    MENU_INSTALL=1
-    MENU_UNINSTALL=2
-    MENU_UPDATE=3
-    MENU_DEFAULTS=4
-    MENU_STATUS=5
-    MENU_QUIT='q'
 
     # --- Package Type Configuration (non-readonly in test mode) ---
     PKG_TYPE_HOME_FILE="home_file"
@@ -130,7 +114,7 @@ else
 fi
 
 # =============================================================================
-# Shell Detection & Switching
+# Shell Detection
 # =============================================================================
 
 # Check if running in zsh
@@ -138,44 +122,20 @@ is_zsh() {
     [[ -n "${ZSH_VERSION:-}" ]]
 }
 
-# Switch to zsh if not already running in zsh (used for shell exec)
-switch_to_zsh() {
-    if is_zsh; then
-        return 0
-    fi
-
-    # Find zsh binary
-    local zsh_bin=""
-    if [[ -x "/opt/homebrew/bin/zsh" ]]; then
-        zsh_bin="/opt/homebrew/bin/zsh"
-    elif [[ -x "/usr/local/bin/zsh" ]]; then
-        zsh_bin="/usr/local/bin/zsh"
-    elif [[ -x "/bin/zsh" ]]; then
-        zsh_bin="/bin/zsh"
-    elif command -v zsh &>/dev/null; then
-        zsh_bin="$(command -v zsh)"
-    fi
-
-    if [[ -z "${zsh_bin}" ]]; then
-        printf '%b[WARN]%b zsh not found. Continuing with current shell.\n' \
-               "${COLOR_YELLOW}" "${COLOR_RESET}"
-        return 1
-    fi
-
-    printf '%b[INFO]%b Switching to zsh...\n' "${COLOR_BLUE}" "${COLOR_RESET}"
-
-    # Re-execute this script with zsh
-    exec "${zsh_bin}" "$0" "$@"
-}
-
 # Check prerequisites without installing them
 # Returns 0 if all present, 1 if any missing
 check_prerequisites_only() {
     local -a missing=()
 
-    [[ $(check_xcode_cli) != "installed" ]] && missing+=("Xcode CLI")
-    [[ $(check_homebrew) != "installed" ]] && missing+=("Homebrew")
-    [[ $(check_stow) != "installed" ]] && missing+=("GNU Stow")
+    if [[ $(check_xcode_cli) != "installed" ]]; then
+        missing+=("Xcode CLI")
+    fi
+    if [[ $(check_homebrew) != "installed" ]]; then
+        missing+=("Homebrew")
+    fi
+    if [[ $(check_stow) != "installed" ]]; then
+        missing+=("GNU Stow")
+    fi
 
     if (( ${#missing[@]} > 0 )); then
         print_error "Missing prerequisites: ${missing[*]}"
