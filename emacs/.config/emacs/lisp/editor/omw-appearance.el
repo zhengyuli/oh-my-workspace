@@ -1,5 +1,5 @@
 ;;; omw-appearance.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: ui, theme, tabs, dashboard
@@ -135,7 +135,7 @@ Returns nil in terminal mode (uses official banner instead)."
         dashboard-banner-logo-title (format "Welcome to %s's Emacs" omw/emacs-user-name)
         dashboard-items '((recents . 5) (bookmarks . 5)
                           (projects . 5) (agenda . 5) (registers . 5))
-        dashboard-projects-switch-function 'projectile-switch-project
+        dashboard-projects-switch-function 'project-switch-project
         dashboard-startup-banner (or (omw/get-random-banner) 'official)
         initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
