@@ -17,9 +17,9 @@ fs() {
   else
     local arg=-sh
   fi
-  if [[ -n "$@" ]]; then
-    du $arg -- "$@"
+  if (( $# > 0 )); then
+    du "${arg}" -- "$@"
   else
-    du $arg .[^.]* ./* 2>/dev/null
+    du "${arg}" .[^.]* ./* 2>/dev/null
   fi
 }

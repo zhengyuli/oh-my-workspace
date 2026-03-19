@@ -30,6 +30,6 @@ targz() {
   fi
   print "Compressing .tar using \`${cmd}\`..."
   "${cmd}" -v "${tmpFile}" || return 1
-  [[ -f "${tmpFile}" ]] && rm "${tmpFile}"
+  [[ -f "${tmpFile}" ]] && rm -- "${tmpFile}"
   print "${tmpFile}.gz created successfully."
 }
