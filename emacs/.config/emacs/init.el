@@ -254,6 +254,7 @@ and global-auto-revert-mode."
 (require 'omw-prog)
 (require 'omw-cc)
 (require 'omw-go)
+(require 'omw-rust)
 (require 'omw-python)
 (require 'omw-typescript)
 (require 'omw-elisp)
