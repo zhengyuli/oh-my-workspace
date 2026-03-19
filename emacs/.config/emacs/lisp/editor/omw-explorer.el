@@ -1,5 +1,5 @@
 ;;; omw-explorer.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: explorer, dirvish, file manager
@@ -161,7 +161,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   ;; - dired-omit-extensions: compiled artifacts and lock files
   (setq dired-omit-files (concat
                           "^\\.\\|"
-                          "\\(node_modules\\|__pycache__\\|.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
+                          "\\(node_modules\\|__pycache__\\|\\.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
                           "\\.DS_Store\\'")
         dired-omit-extensions (append dired-omit-extensions
                                       '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
