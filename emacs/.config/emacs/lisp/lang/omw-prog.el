@@ -107,8 +107,9 @@ If no delimiter is found, show an error message."
   :defer t
   :hook ((c-mode . eglot-ensure)
          (c++-mode . eglot-ensure)
-         (python-mode . eglot-ensure)
          (go-mode . eglot-ensure)
+         (rust-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
          (typescript-mode . eglot-ensure)
          (sh-mode . eglot-ensure)
          (cmake-mode . eglot-ensure)
