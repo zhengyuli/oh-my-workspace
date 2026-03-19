@@ -162,7 +162,7 @@ Unified **Doom One** theme across all tools:
 | fzf | Doom One colors in `FZF_DEFAULT_OPTS` |
 | Starship | Prompt configuration |
 
-**Terminal**: [Ghostty](https://ghostty.org/) — fast, native, XDG-compliant terminal emulator.
+**Terminal**: [Ghostty](https://ghostty.org/) - fast, native, XDG-compliant terminal emulator.
 
 ## XDG Base Directory
 

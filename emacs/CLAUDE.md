@@ -264,28 +264,28 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 ```
 1. :ensure or :vc          # Package source
 2. :when or :if            # Conditional loading (optional)
-3. :defer or :demand       # Loading strategy — OMIT when :after is present
-4. :after                  # Dependencies (optional) — implies deferral
+3. :defer or :demand       # Loading strategy - OMIT when :after is present
+4. :after                  # Dependencies (optional) - implies deferral
 5. :hook                   # Mode hooks
 6. :bind                   # Keybindings
 7. :custom-face            # Face customization (optional)
 8. :config                 # Configuration
 ```
 
-**CRITICAL: `:after` implies deferral — never use `:defer t` together with `:after`.**
+**CRITICAL: `:after` implies deferral - never use `:defer t` together with `:after`.**
 
 `:after` waits for the dependency to load before loading this package, which
 already defers loading. Adding `:defer t` is redundant and incorrect.
 
 ```elisp
-;; ✅ CORRECT — :after provides deferral, no :defer t needed
+;; ✅ CORRECT - :after provides deferral, no :defer t needed
 (use-package corfu-terminal
   :ensure t
   :after corfu
   :config
   (corfu-terminal-mode 1))
 
-;; ❌ WRONG — :defer t and :after together
+;; ❌ WRONG - :defer t and :after together
 (use-package corfu-terminal
   :ensure t
   :defer t
@@ -697,33 +697,33 @@ Emacs Lisp follows the repository-wide alignment space prohibition. Here are Ema
 
 **setq grouping and comment rules (CRITICAL):**
 
-1. **Group related variables into a single `setq`** — variables that configure
+1. **Group related variables into a single `setq`** - variables that configure
    the same feature or concern belong together.
-2. **Put a single group-level comment above the `setq`** — describe the group as
+2. **Put a single group-level comment above the `setq`** - describe the group as
    a whole, not individual variables.
 3. **Never add per-variable inline comments inside a `setq` body.**
 
 ```elisp
-;; ✅ CORRECT — group comment above, single setq, no per-variable comments
+;; ✅ CORRECT - group comment above, single setq, no per-variable comments
 ;; Omit filter rules:
 ;; - dired-omit-files: hidden files/dirs (.), common project dirs
 ;; - dired-omit-extensions: compiled artifacts and lock files
 (setq dired-omit-files (concat "^\\.\\|" "…")
       dired-omit-extensions (append dired-omit-extensions '(".pyc" ".elc")))
 
-;; ✅ CORRECT — no comment needed when purpose is obvious
+;; ✅ CORRECT - no comment needed when purpose is obvious
 (setq var1 value1
       var2 value2
       var3 value3)
 
-;; ❌ WRONG — per-variable inline comments inside setq body
+;; ❌ WRONG - per-variable inline comments inside setq body
 (setq var1 value1
       ;; Set tab width
       var2 4
       ;; Enable this feature
       var3 t)
 
-;; ❌ WRONG — split related variables into separate setq blocks needlessly
+;; ❌ WRONG - split related variables into separate setq blocks needlessly
 (setq dired-omit-files "…")
 ;; Supplementary extension filter
 (setq dired-omit-extensions (append …))

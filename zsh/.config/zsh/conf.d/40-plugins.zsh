@@ -54,11 +54,11 @@ ZINIT_INITIALIZED=1
 #
 # Execution timeline:
 #   During startup (sync):
-#     1. fzf-tab        — must own ^I before any turbo plugin can override it
+#     1. fzf-tab        - must own ^I before any turbo plugin can override it
 #   After prompt (turbo, by wait suffix letter):
-#     2. zsh-completions  [0a] — register completions early for zicdreplay
+#     2. zsh-completions  [0a] - register completions early for zicdreplay
 #     3. history-substring-search, autosuggestions, autopair  [0b]
-#     4. fast-syntax-highlighting  [0c, LAST] — wraps all ZLE widgets;
+#     4. fast-syntax-highlighting  [0c, LAST] - wraps all ZLE widgets;
 #                                               must run after others register theirs
 #
 # Why fzf-tab is sync (no wait):
@@ -94,7 +94,7 @@ zinit light zsh-users/zsh-completions
 
 # History substring search
 # Config vars must be set BEFORE activation (read at highlight time, but set
-# here for co-location with the plugin declaration — mirrors the autosuggestions
+# here for co-location with the plugin declaration - mirrors the autosuggestions
 # pattern and makes future changes less error-prone).
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
@@ -142,7 +142,7 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 
 # fzf-tab -- disable default completion menu in favor of fzf popup
 # Note: do NOT use escape sequences (%F{red}...%f) in 'descriptions format'
-# (fzf-tab limitation — they appear as literal text, not ANSI color codes).
+# (fzf-tab limitation - they appear as literal text, not ANSI color codes).
 zstyle ':completion:*' menu no
 zstyle ':completion:*:descriptions' format '[%d]'
 
@@ -155,7 +155,7 @@ zstyle ':completion:*:git-checkout:*' sort false
 #   - Single quotes (fzf-preview style): $word/$group expand at completion time by fzf-tab ✓
 # Do NOT add extra quoting - it would break fzf-tab's internal substitution.
 
-# Global preview window size — right panel, 55% width, line-wrap enabled
+# Global preview window size - right panel, 55% width, line-wrap enabled
 # Per-command fzf-flags below override this where needed (e.g. kill: down:3)
 zstyle ':fzf-tab:*' fzf-flags --preview-window=right:55%:wrap
 
@@ -163,7 +163,7 @@ zstyle ':fzf-tab:*' fzf-flags --preview-window=right:55%:wrap
 zstyle ':fzf-tab:complete:cd:*' fzf-preview \
   'eza -1 --color=always --icons "$realpath"'
 
-# Files: preview content — scoped to argument completion only to avoid
+# Files: preview content - scoped to argument completion only to avoid
 # triggering on command names, users, hostnames, etc.
 zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
   'bat --color=always --style=plain --line-range=:50 "$realpath" 2>/dev/null \

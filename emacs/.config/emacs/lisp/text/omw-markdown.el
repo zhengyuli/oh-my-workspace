@@ -104,10 +104,13 @@ Includes header foreground color and code block background/foreground colors."
   "Apply custom settings for markdown mode."
   (require 'visual-fill-column)
 
+  ;; Visual fill column configuration
   (setq-local fill-column 150
               visual-fill-column-width fill-column
-              visual-fill-column-center-text t
-              markdown-enable-math t
+              visual-fill-column-center-text t)
+
+  ;; Markdown-specific settings
+  (setq-local markdown-enable-math t
               markdown-hide-urls t)
   ;; Enable auto fill and visual fill column modes
   (auto-fill-mode 1)

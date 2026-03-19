@@ -45,8 +45,8 @@ export LANG=en_US.UTF-8
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
 # Ensure required zsh directories exist on first run (idempotent).
-#   XDG_STATE_HOME/zsh  — history (state: persistent, not regeneratable)
-#   XDG_CACHE_HOME/zsh  — zcompdump, completion caches (regeneratable)
+#   XDG_STATE_HOME/zsh  - history (state: persistent, not regeneratable)
+#   XDG_CACHE_HOME/zsh  - zcompdump, completion caches (regeneratable)
 # These are distinct XDG categories; do NOT consolidate them.
 if [[ ! -d "$XDG_STATE_HOME/zsh" ]]; then
   mkdir -p "$XDG_STATE_HOME/zsh"
