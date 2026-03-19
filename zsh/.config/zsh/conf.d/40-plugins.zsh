@@ -1,5 +1,5 @@
 # 40-plugins.zsh
-# Time-stamp: <2026-03-19 20:30:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-19 20:45:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management
 #
@@ -93,9 +93,9 @@ zinit light zsh-users/zsh-completions
 # --- Turbo 0b: interactive enhancement plugins ---
 
 # History substring search
-# Config vars must be set BEFORE activation (read at highlight time, but set
-# here for co-location with the plugin declaration - mirrors the autosuggestions
-# pattern and makes future changes less error-prone).
+# Config vars are read at highlight render time (not at plugin load), so timing
+# is not critical. Set here for co-location with the plugin declaration -
+# mirrors the autosuggestions pattern and keeps future changes in one place.
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 # HISTORY_SUBSTRING_SEARCH_FUZZY=1
@@ -112,13 +112,13 @@ zinit light zsh-users/zsh-history-substring-search
 # Autosuggestions from history
 # Configuration variables must be set BEFORE this ice/light pair so they are
 # available when _zsh_autosuggest_start reads them (even in turbo, the vars
-# are already in scope because they are set synchronously below).
+# are already in scope because they are set synchronously above).
 # The ! prefix on atload tells zinit to redraw the prompt after activation,
 # so the first suggestion appears without requiring a keypress.
 # history first, then completion
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 # no suggestion for long buffers
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40
 # Doom One comment color
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'
 zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
