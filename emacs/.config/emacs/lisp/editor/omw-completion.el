@@ -85,7 +85,6 @@
 (use-package corfu-terminal
   :ensure t
   :when (not (display-graphic-p))
-  :defer t
   :after corfu
   :config
   (corfu-terminal-mode 1))
