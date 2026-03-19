@@ -12,5 +12,9 @@
 #   git-contributors main..develop
 # =============================================================================
 git-contributors() {
-  git shortlog -sn "$@"
+  if (( $# == 0 )); then
+    git shortlog -sn HEAD
+  else
+    git shortlog -sn "$@"
+  fi
 }
