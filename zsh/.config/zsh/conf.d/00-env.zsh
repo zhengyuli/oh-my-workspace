@@ -1,5 +1,5 @@
 # 00-env.zsh
-# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-19 23:59:00 Thursday by zhengyu.li>
 # =============================================================================
 # Core Environment Variables
 #
@@ -70,13 +70,6 @@ export BUN_INSTALL="${BUN_INSTALL:-$XDG_DATA_HOME/bun}"
 # Rust (cargo/rustup)
 export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
-
-# -----------------------------------------------------------------------------
-# XDG Redirections -- Editor Tools
-# -----------------------------------------------------------------------------
-
-# Vim -- no native XDG support, must redirect via VIMINIT
-export VIMINIT="set nocp | source $XDG_CONFIG_HOME/vim/vimrc"
 
 # -----------------------------------------------------------------------------
 # XDG Redirections -- CLI Tools
