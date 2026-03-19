@@ -1,5 +1,5 @@
 # 30-completion.zsh
-# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-19 22:30:00 Thursday by zhengyu.li>
 # =============================================================================
 # Completion System
 #
@@ -56,10 +56,9 @@ unset _zcompdump _zcompdump_fresh
 # Completion styles
 # -----------------------------------------------------------------------------
 
-# Use menu selection (arrow keys / Tab navigate candidates)
-# NOTE: This is overridden by fzf-tab in 40-plugins.zsh which sets 'menu no'
-# to allow fzf-tab to handle the completion UI instead of zsh's built-in menu.
-zstyle ':completion:*' menu select
+# Completion menu is managed entirely by fzf-tab (40-plugins.zsh sets 'menu no').
+# Do NOT set 'menu select' here - fzf-tab overrides it and the dead config
+# creates confusion about which system is in control.
 
 # Matcher list: zsh tries each pattern in order until one matches
 #   1. m:{a-z}={A-Za-z}  - case-insensitive (fo → Foo, FO, foo)
@@ -74,8 +73,8 @@ zstyle ':completion:*' matcher-list \
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Group header format
-zstyle ':completion:*:warnings'  format '%F{red}-- no matches for: %d --%f'
-zstyle ':completion:*:messages'  format '%F{purple}-- %d --%f'
+zstyle ':completion:*:warnings' format '%F{red}-- no matches for: %d --%f'
+zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
 # Note: ':completion:*:corrections' is intentionally omitted - it only
 # triggers with _approximate, which is not in the completer list here.
 

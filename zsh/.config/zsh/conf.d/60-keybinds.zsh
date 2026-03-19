@@ -1,5 +1,5 @@
 # 60-keybinds.zsh
-# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-19 22:30:00 Thursday by zhengyu.li>
 # =============================================================================
 # Key Bindings
 #
@@ -128,8 +128,9 @@ bindkey '\e\e' sudo-command-line
 # Goes up one level without discarding the current buffer
 # Note: Alt-. is reserved for insert-last-word (cycle through last arguments)
 cd-parent() {
-  pushd ..
-  zle reset-prompt
+  if pushd .. &>/dev/null; then
+    zle reset-prompt
+  fi
 }
 zle -N cd-parent
 bindkey '^[,' cd-parent

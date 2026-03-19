@@ -1,5 +1,5 @@
 # dataurl
-# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-19 22:30:00 Thursday by zhengyu.li>
 # =============================================================================
 # Create a data URL from a file
 #
@@ -18,5 +18,5 @@ dataurl() {
   if [[ "${mimeType}" == text/* ]]; then
     mimeType="${mimeType};charset=utf-8"
   fi
-  printf "data:${mimeType};base64,$(base64 < "$1")\n"
+  printf 'data:%s;base64,%s\n' "${mimeType}" "$(base64 < "$1")"
 }
