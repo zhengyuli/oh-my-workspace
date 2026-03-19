@@ -209,6 +209,9 @@ and global-auto-revert-mode."
         uniquify-buffer-name-style 'forward
         uniquify-separator "/")
 
+  ;; Project management
+  (setq project-list-file (expand-file-name "emacs/projects" omw/xdg-state-home))
+
   ;; User identity and timestamps
   (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u"
         user-full-name omw/emacs-user-name
