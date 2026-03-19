@@ -1,5 +1,5 @@
 # targz
-# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-19 22:30:00 Thursday by zhengyu.li>
 # =============================================================================
 # Create a .tar.gz archive using zopfli, pigz, or gzip
 #
@@ -19,6 +19,7 @@
 targz() {
   local tmpFile="${@%/}.tar"
   tar -cvf "${tmpFile}" --exclude=".DS_Store" "${@}" || return 1
+  local size
   size=$(stat -f"%z" "${tmpFile}" 2>/dev/null || stat -c"%s" "${tmpFile}" 2>/dev/null)
   local cmd=""
   if (( size < 52428800 )) && command -v zopfli >/dev/null 2>&1; then
