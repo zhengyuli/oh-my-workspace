@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-19 16:14:42 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-19 21:29:01 Thursday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -149,7 +149,9 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :ensure t
   :when (eq system-type 'darwin)
   :defer t
-  :hook (after-init . exec-path-from-shell-initialize))
+  :hook (after-init . exec-path-from-shell-initialize)
+  :config
+  (setq exec-path-from-shell-arguments '("-l")))
 
 ;; ============================================================================
 (use-package auto-package-update
