@@ -1,0 +1,11 @@
+#compdef targz
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Completion for targz function
+#
+# Loaded via: fpath + compinit (30-completion.zsh)
+# =============================================================================
+_targz() {
+  _arguments \
+    ':directory:_directories'
+}

@@ -1,0 +1,16 @@
+#compdef git-log-pretty
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Completion for git-log-pretty function
+#
+# Loaded via: fpath + compinit (30-completion.zsh)
+# =============================================================================
+_git-log-pretty() {
+  _arguments \
+    '-n[Limit number of commits]:number:' \
+    '--since[Show commits since date]:date:' \
+    '--until[Show commits until date]:date:' \
+    '--author[Filter by author]:author:' \
+    '--grep[Filter by commit message]:pattern:' \
+    ':branch or commit range:_git_revisions'
+}

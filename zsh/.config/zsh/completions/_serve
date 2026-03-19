@@ -1,0 +1,18 @@
+#compdef serve
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Completion for serve function
+#
+# Loaded via: fpath + compinit (30-completion.zsh)
+# =============================================================================
+_serve() {
+  local -a ports
+  ports=(
+    '8000:Default HTTP port'
+    '3000:Common dev server'
+    '5000:Flask default'
+    '8080:Alternative HTTP'
+    '8888:Jupyter default'
+  )
+  _describe 'port' ports
+}

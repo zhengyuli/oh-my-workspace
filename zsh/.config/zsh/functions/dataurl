@@ -1,0 +1,22 @@
+# dataurl
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Create a data URL from a file
+#
+# Arguments:
+#   $1 - File path
+#
+# Dependencies: file, base64
+#
+# Examples:
+#   dataurl image.png
+#   dataurl styles.css
+# =============================================================================
+dataurl() {
+  local mimeType
+  mimeType=$(file -b --mime-type "$1")
+  if [[ $mimeType == text/* ]]; then
+    mimeType="${mimeType};charset=utf-8"
+  fi
+  printf "data:${mimeType};base64,$(base64 < "$1")\n"
+}

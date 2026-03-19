@@ -78,7 +78,6 @@ alias dus='du -sh'
 # Zsh Config
 # -----------------------------------------------------------------------------
 alias zrc='"$EDITOR" "$ZDOTDIR/.zshrc"'
-alias reload='source "$ZDOTDIR/.zshrc" && echo "reloaded"'
 
 # -----------------------------------------------------------------------------
 # Git

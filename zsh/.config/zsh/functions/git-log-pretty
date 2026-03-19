@@ -1,0 +1,17 @@
+# git-log-pretty
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Pretty git log with graph and colored output
+#
+# Arguments:
+#   $@ - Additional git log arguments (optional)
+#
+# Examples:
+#   git-log-pretty
+#   git-log-pretty -n 20
+#   git-log-pretty --since="2024-01-01"
+#   git-log-pretty main..feature-branch
+# =============================================================================
+git-log-pretty() {
+  git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit "$@"
+}

@@ -1,0 +1,26 @@
+# dot-edit
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Edit dotfiles (assumes stow structure)
+#
+# Arguments:
+#   $1 - Relative path to file within dotfiles directory (optional)
+#        If omitted, changes to dotfiles directory
+#
+# Environment:
+#   DOTFILES_DIR - Path to dotfiles directory (defaults to ~/oh-my-dotfiles)
+#   EDITOR - Editor to use (defaults to nvim)
+#
+# Examples:
+#   dot-edit                    # cd to dotfiles directory
+#   dot-edit zsh/.config/zsh/.zshrc
+#   dot-edit git/.config/git/config
+# =============================================================================
+dot-edit() {
+  local dotfiles_dir="${DOTFILES_DIR:-$HOME/oh-my-dotfiles}"
+  if [[ -z "$1" ]]; then
+    cd "$dotfiles_dir"
+  else
+    ${EDITOR:-nvim} "$dotfiles_dir/$1"
+  fi
+}

@@ -1,0 +1,25 @@
+# fs
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Determine size of a file or total size of a directory
+#
+# Arguments:
+#   $@ - File or directory path(s) (optional, defaults to current directory)
+#
+# Examples:
+#   fs
+#   fs myfile.txt
+#   fs ~/Documents
+# =============================================================================
+fs() {
+  if du -b /dev/null >/dev/null 2>&1; then
+    local arg=-sbh
+  else
+    local arg=-sh
+  fi
+  if [[ -n "$@" ]]; then
+    du $arg -- "$@"
+  else
+    du $arg .[^.]* ./* 2>/dev/null
+  fi
+}

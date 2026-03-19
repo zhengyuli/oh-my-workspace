@@ -1,0 +1,22 @@
+# xmlpp
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Pretty print XML
+#
+# Arguments:
+#   $1 - File path (optional, reads from stdin if not provided)
+#
+# Dependencies: xmllint
+#
+# Examples:
+#   xmlpp data.xml
+#   cat data.xml | xmlpp
+#   curl -s https://example.com/api.xml | xmlpp
+# =============================================================================
+xmlpp() {
+  if [[ -t 0 ]]; then
+    xmllint --format "$1"
+  else
+    xmllint --format -
+  fi
+}

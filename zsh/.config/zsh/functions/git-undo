@@ -1,0 +1,13 @@
+# git-undo
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Undo last commit but keep changes staged
+#
+# Arguments: None
+#
+# Examples:
+#   git-undo
+# =============================================================================
+git-undo() {
+  git reset --soft HEAD~1
+}
