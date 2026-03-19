@@ -137,6 +137,7 @@ emacs/.config/emacs/url/
 emacs/.config/emacs/.emacs.desktop
 emacs/.config/emacs/.emacs.desktop.lock
 emacs/.config/emacs/desktop/
+emacs/.config/emacs/projects
 # Emacs cache directory (should be in $XDG_CACHE_HOME/emacs/)
 emacs/.config/emacs/.cache/
 
