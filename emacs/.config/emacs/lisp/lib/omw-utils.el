@@ -67,7 +67,7 @@ Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER) where:
 Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER).
 For each missing tool, asks whether to install it now.
 No-op in batch/non-interactive mode."
-  (when (not noninteractive)
+  (unless noninteractive
     (dolist (spec tool-specs)
       (let ((tool (nth 0 spec)))
         (unless (executable-find tool)

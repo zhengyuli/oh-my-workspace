@@ -63,8 +63,7 @@
         dirvish-header-line-format '(:left (path) :right (free-space))
         dirvish-mode-line-bar-image-width 0
         dirvish-mode-line-format '(:left (sort file-time " " file-size symlink) :right (omit yank index))
-        dirvish-attributes (append '(vc-state subtree-state nerd-icons)
-                                   '(git-msg file-modes file-time file-size))
+        dirvish-attributes '(vc-state subtree-state nerd-icons git-msg file-modes file-time file-size)
         dirvish-large-directory-threshold 20000))
 
 ;; ============================================================================
@@ -154,17 +153,15 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
         dired-deletion-confirmer 'y-or-n-p
         dired-auto-revert-buffer (not (file-remote-p default-directory)))
 
-  ;; Omit filter rules
+  ;; Omit filter rules:
+  ;; - dired-omit-files: hidden files/dirs (.), common project dirs, macOS specifics
+  ;; - dired-omit-extensions: compiled artifacts and lock files
   (setq dired-omit-files (concat
-                          ;; Hide all hidden files/directories starting with . (e.g., .git, .env)
                           "^\\.\\|"
-                          ;; Hide specified directories (exact name match to avoid false positives)
                           "\\(node_modules\\|__pycache__\\|.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
-                          ;; Hide macOS special file (exact match)
-                          "\\.DS_Store\\'"))
-
-  ;; Supplementary file extension filter
-  (setq dired-omit-extensions (append dired-omit-extensions '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
+                          "\\.DS_Store\\'")
+        dired-omit-extensions (append dired-omit-extensions
+                                      '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
 
   ;; Listing switches
   (if (executable-find "gls")

@@ -48,7 +48,6 @@
 
 (use-package yasnippet-snippets
   :ensure t
-  :defer t
   :after yasnippet
   :config
   (yasnippet-snippets-initialize))
