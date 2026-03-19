@@ -40,7 +40,9 @@
 (use-package vimrc-mode
   :ensure t
   :defer t
-  :mode ("vimrc\\'" . vimrc-mode))
+  :mode (("vimrc\\'" . vimrc-mode)
+         ("\\.vimrc\\'" . vimrc-mode)
+         ("\\.vim\\'" . vimrc-mode)))
 
 ;; ============================================================================
 ;;; Provide features
