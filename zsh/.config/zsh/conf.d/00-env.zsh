@@ -1,5 +1,5 @@
 # 00-env.zsh
-# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-19 23:59:00 Thursday by zhengyu.li>
 # =============================================================================
 # Core Environment Variables
 #
