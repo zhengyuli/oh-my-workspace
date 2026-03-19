@@ -45,7 +45,7 @@ window-padding-x = 8
 window-padding-y = 8
 window-padding-balance = true
 
-background-opacity = 0.95
+background-opacity = 0.98
 background-blur-radius = 20
 
 alpha-blending = linear-corrected
