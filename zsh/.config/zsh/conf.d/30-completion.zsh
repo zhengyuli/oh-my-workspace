@@ -38,7 +38,7 @@ autoload -Uz compinit
 _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 
 # Rebuild zcompdump if missing or older than 20 hours; use -C otherwise (fast).
-# Uses zsh glob qualifiers — no subshells, no external commands, cross-platform:
+# Uses zsh glob qualifiers - no subshells, no external commands, cross-platform:
 #   N  = nullglob (empty array instead of error when no match)
 #   .  = regular file (not a directory or symlink)
 #   mh-20 = modification time < 20 hours ago  (i.e., the dump is still fresh)
@@ -76,7 +76,7 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # Group header format
 zstyle ':completion:*:warnings'  format '%F{red}-- no matches for: %d --%f'
 zstyle ':completion:*:messages'  format '%F{purple}-- %d --%f'
-# Note: ':completion:*:corrections' is intentionally omitted — it only
+# Note: ':completion:*:corrections' is intentionally omitted - it only
 # triggers with _approximate, which is not in the completer list here.
 
 # Display completions in named groups

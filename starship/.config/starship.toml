@@ -1,7 +1,7 @@
 # starship.toml
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
-# Starship Prompt — Cross-shell, minimal, blazing fast
+# Starship Prompt - Cross-shell, minimal, blazing fast
 #
 # Location: ~/.config/starship.toml
 # XDG: Config requires explicit STARSHIP_CONFIG path (no auto-discovery);
@@ -10,15 +10,15 @@
 #      - Cache:  $XDG_CACHE_HOME/starship (automatic)
 #
 # Layout: two-line prompt
-#   line 1 — [user@host] directory git-branch git-status runtimes duration
-#   line 2 — ❯ (green = success, red = error, yellow = vi normal-mode)
+#   line 1 - [user@host] directory git-branch git-status runtimes duration
+#   line 2 - ❯ (green = success, red = error, yellow = vi normal-mode)
 # =============================================================================
 
 # ---------------------------------------------------------------------------
 # Global
 # ---------------------------------------------------------------------------
 
-# Insert a blank line before each prompt — visual separation between commands
+# Insert a blank line before each prompt - visual separation between commands
 add_newline = true
 
 # Hard per-module timeout (ms); prevents slow VCS / network modules from
@@ -26,7 +26,7 @@ add_newline = true
 command_timeout = 500
 
 # Module order for the left prompt (line 1)
-# Identity is conditional — surfaces only in SSH / root contexts
+# Identity is conditional - surfaces only in SSH / root contexts
 format = """
 $username\
 $hostname\
@@ -42,7 +42,7 @@ $line_break\
 $character"""
 
 # ---------------------------------------------------------------------------
-# Identity — username / hostname
+# Identity - username / hostname
 # ---------------------------------------------------------------------------
 
 [username]
@@ -53,7 +53,7 @@ style_root = "bold red"
 format = "[$user]($style)@"
 
 [hostname]
-# Visible over SSH only — zero noise in local development
+# Visible over SSH only - zero noise in local development
 ssh_only = true
 style = "bold yellow"
 format = "[$hostname]($style) "
@@ -82,7 +82,7 @@ truncation_symbol = "…"
 style = "bold purple"
 
 [git_status]
-# Counts on every symbol — shows exactly how many files are in each state
+# Counts on every symbol - shows exactly how many files are in each state
 # Nerd Font icons with space-separated counts for legibility
 ahead = "[ ${count}](green)"
 behind = "[ ${count}](red)"
@@ -110,7 +110,7 @@ detect_files = [
   ".python-version",
   "uv.lock",
 ]
-# Show active virtualenv name — avoids confusion when switching projects
+# Show active virtualenv name - avoids confusion when switching projects
 format = "[$symbol$version( \\($virtualenv\\))]($style) "
 style = "yellow"
 
@@ -145,7 +145,7 @@ style = "yellow dimmed"
 # ---------------------------------------------------------------------------
 
 [character]
-# Exit status is encoded in color alone — no separate $status module needed
+# Exit status is encoded in color alone - no separate $status module needed
 success_symbol = "[❯](bold green)"
 error_symbol = "[❯](bold red)"
 # Switches to ❮ in vi normal-mode (requires zsh vi-mode plugin)

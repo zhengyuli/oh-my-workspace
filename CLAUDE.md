@@ -94,7 +94,7 @@ emacs --debug-init
 | `vim/` | `.config/vim/` → `$HOME/.config/vim/` |
 | `zsh/` | `.zshenv` → `$HOME/.zshenv`, `.config/zsh/` → `$HOME/.config/zsh/` |
 
-**Note:** `homebrew/` and `macos/` are NOT stow packages — they provide scripts/utilities only.
+**Note:** `homebrew/` and `macos/` are NOT stow packages - they provide scripts/utilities only.
 
 ## Architecture
 
