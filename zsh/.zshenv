@@ -1,5 +1,5 @@
 # .zshenv
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-19 23:59:00 Thursday by zhengyu.li>
 # =============================================================================
 # Bootstrap -- the only Zsh-related file in $HOME
 #
@@ -23,6 +23,14 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# -----------------------------------------------------------------------------
+# Vim XDG Redirect
+# -----------------------------------------------------------------------------
+# Vim has no native XDG support; VIMINIT is the only hook available.
+# Must live here (not .zshrc) so it applies to ALL shell types: scripts,
+# cron, SSH non-interactive, and editor-launched terminals that skip .zshrc.
+export VIMINIT="set nocp | source $XDG_CONFIG_HOME/vim/vimrc"
 
 # -----------------------------------------------------------------------------
 # Zsh Configuration Directory
