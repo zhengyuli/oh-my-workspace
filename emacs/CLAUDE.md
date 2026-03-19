@@ -20,7 +20,7 @@ emacs/.config/emacs/
 │   ├── lib/             # Utility library (proxy, shared utils)
 │   ├── lang/            # Programming languages
 │   │   ├── *.el         # Language-specific configs (cc, python, go, etc.)
-│   │   └── config/      # Config/build languages (cmake, dockerfile, yaml)
+│   │   └── config/      # Config/build languages (cmake, dockerfile, yaml, vimrc, gitconfig)
 │   ├── text/            # Text/document modes (markdown)
 │   └── tool/            # Tool integrations (git, ai, pdf, term)
 ├── site-packages/       # Custom Emacs packages (auto-added to load-path)
@@ -130,7 +130,7 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 1. **Early boot** (before package init): omw-proxy
 2. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
 3. **Tools**: omw-pass → omw-git → omw-term → omw-pdf → omw-ai
-4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-typescript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
+4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-typescript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile → omw-vimrc → omw-gitconfig
 5. **Text**: omw-markdown
 
 **When adding new modules**:
