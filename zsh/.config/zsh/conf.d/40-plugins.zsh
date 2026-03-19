@@ -1,5 +1,5 @@
 # 40-plugins.zsh
-# Time-stamp: <2026-03-17 22:54:59 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-19 20:30:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management
 #
@@ -133,7 +133,7 @@ zinit light hlissner/zsh-autopair
 #   ZINIT[COMPINIT_OPTS]=-C  → use cached dump (fast, no security check)
 #   zicompinit               → re-run compinit to pick up any new completions
 #   zicdreplay               → replay compdef calls captured from turbo plugins
-zinit ice wait"0c" lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay"
+zinit ice wait"0c" lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit -d \"\${XDG_CACHE_HOME}/zsh/zcompdump\"; zicdreplay"
 zinit light zdharma-continuum/fast-syntax-highlighting
 
 # -----------------------------------------------------------------------------
