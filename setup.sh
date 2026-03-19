@@ -120,58 +120,27 @@ is_valid_pkg() {
     return 1
 }
 
-# Return 0 (should ignore) when a package-relative path matches stow's built-in
-# default ignore patterns or the package's own .stow-local-ignore rules.
-# Arguments:
-#   $1 - package name (e.g., "zsh")
-#   $2 - DOTFILES_DIR-relative path (e.g., "zsh/.stow-local-ignore")
-_stow_should_ignore() {
-    local pkg="$1" full_rel="$2"
-    local base; base=$(basename "$full_rel")
-    # Path relative to the package root, prefixed with / (stow's convention for patterns)
-    local pkg_rel="/${full_rel#${pkg}/}"
-
-    # Stow built-in default ignore patterns (filename-level matches)
-    case "$base" in
-        .stow*|RCS|CVS|SCCS|_darcs|.git|.gitignore|.gitmodules|.gitattributes) return 0 ;;
-        .cvsignore|.bzrignore|.hgignore|.svnignore|,*|*.elc|*.swp|*~) return 0 ;;
-    esac
-
-    # Package-specific .stow-local-ignore (Perl regex, one pattern per line)
-    # perl is available on macOS (system) and Linux; used for Perl regex matching.
-    local ignore_file="${DOTFILES_DIR}/${pkg}/.stow-local-ignore"
-    if [[ -f "$ignore_file" ]]; then
-        local pattern
-        while IFS= read -r pattern; do
-            [[ "$pattern" =~ ^[[:space:]]*# || -z "${pattern// }" ]] && continue
-            if perl -e "exit 0 if \$ARGV[0] =~ m{$pattern}; exit 1" "$pkg_rel" 2>/dev/null; then
-                return 0
-            fi
-        done < "$ignore_file"
-    fi
-
-    return 1
-}
-
 # Print the absolute $HOME paths that stow would create for pkg.
-# Walks the package directory to find all files/dirs that would be linked,
-# filtering out files that stow ignores (via .stow-local-ignore and built-in rules).
-# This works even when stow reports conflicts (where stow -n -v shows no LINK lines).
+# Delegates entirely to the stow binary so that all ignore rules (.stow-local-ignore,
+# built-in defaults), tree-folding, and edge cases are handled natively.
+# Parses two output patterns from stow -n -v:
+#   LINK: <rel> => <src>           - target stow would create (no conflict)
+#   existing target ...: <rel>     - occupied target stow cannot overwrite (conflict)
+# Both cases are targets we need to handle; covering them enables backup_file
+# to clear blockers before the real stow run.
 stow_targets() {
-    local pkg="$1" dir="${DOTFILES_DIR}/${pkg}" rel
-    [[ -d "$dir" ]] || return 1
-    # Find all non-directory entries in the package, excluding stow-ignored files
-    while IFS= read -r -d '' rel; do
-        _stow_should_ignore "$pkg" "$rel" && continue
-        # Convert package-relative path to $HOME-relative path
-        # e.g., "zsh/.zshenv" -> ".zshenv", "starship/.config/starship.toml" -> ".config/starship.toml"
-        echo "${HOME}/${rel#${pkg}/}"
-    done < <(cd "$DOTFILES_DIR" && find "$pkg" -type f -print0 2>/dev/null)
-    # Also include directories that would be folded (stow creates dir symlinks for leaf dirs)
-    while IFS= read -r -d '' rel; do
-        _stow_should_ignore "$pkg" "$rel" && continue
-        echo "${HOME}/${rel#${pkg}/}"
-    done < <(cd "$DOTFILES_DIR" && find "$pkg" -type d -empty -print0 2>/dev/null)
+    local pkg="$1"
+    [[ -d "${DOTFILES_DIR}/${pkg}" ]] || return 1
+    local link_pat='^LINK: ([^[:space:]]+)'
+    local conflict_pat='existing target [^:]+: (.+)$'
+    stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg" 2>&1 \
+        | while IFS= read -r line; do
+            if [[ "$line" =~ $link_pat ]]; then
+                echo "${HOME}/${BASH_REMATCH[1]}"
+            elif [[ "$line" =~ $conflict_pat ]]; then
+                echo "${HOME}/${BASH_REMATCH[1]}"
+            fi
+        done
 }
 
 # Returns 0 when stow reports nothing to do for pkg - meaning every symlink
