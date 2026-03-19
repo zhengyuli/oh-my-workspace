@@ -264,12 +264,34 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 ```
 1. :ensure or :vc          # Package source
 2. :when or :if            # Conditional loading (optional)
-3. :defer or :demand       # Loading strategy
-4. :after                  # Dependencies (optional)
+3. :defer or :demand       # Loading strategy — OMIT when :after is present
+4. :after                  # Dependencies (optional) — implies deferral
 5. :hook                   # Mode hooks
 6. :bind                   # Keybindings
 7. :custom-face            # Face customization (optional)
 8. :config                 # Configuration
+```
+
+**CRITICAL: `:after` implies deferral — never use `:defer t` together with `:after`.**
+
+`:after` waits for the dependency to load before loading this package, which
+already defers loading. Adding `:defer t` is redundant and incorrect.
+
+```elisp
+;; ✅ CORRECT — :after provides deferral, no :defer t needed
+(use-package corfu-terminal
+  :ensure t
+  :after corfu
+  :config
+  (corfu-terminal-mode 1))
+
+;; ❌ WRONG — :defer t and :after together
+(use-package corfu-terminal
+  :ensure t
+  :defer t
+  :after corfu
+  :config
+  (corfu-terminal-mode 1))
 ```
 
 #### :ensure/:vc Rules
@@ -921,7 +943,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 ### Essential Rules
 
 1. **File Header:** Must include Time-stamp, Author, Copyright, Dependencies, History, Commentary
-2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
+2. **use-package Order:** `:ensure → :when → :defer/:demand → :after → :hook → :bind → :custom-face → :config`; never use `:defer t` with `:after`
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
 4. **Setup Functions:** Use `setq-local` for variables, mode functions for toggles; prefer built-in functions
 5. **Comments:** Minimal, only for non-obvious code
