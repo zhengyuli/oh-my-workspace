@@ -130,7 +130,7 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 1. **Early boot** (before package init): omw-proxy
 2. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
 3. **Tools**: omw-pass → omw-git → omw-term → omw-pdf → omw-ai
-4. **Languages**: omw-prog → omw-utils → omw-cc → omw-go → omw-python → omw-javascript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
+4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-typescript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
 5. **Text**: omw-markdown
 
 **When adding new modules**:
@@ -191,6 +191,15 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 
 The `omw/` prefix stands for "oh-my-workspace" and is used consistently throughout the codebase.
 
+**Exception: `site-packages/` directory**
+
+The `site-packages/` directory holds custom packages maintained as if they were
+external packages (potential future MELPA candidates). Functions in this
+directory follow Emacs ecosystem naming conventions for their respective
+subsystem (e.g., `dired-` prefix for dired-ecosystem extensions) rather than
+the `omw/` prefix. This exception is intentional to preserve compatibility with
+external package conventions.
+
 **Function Naming Patterns:**
 - **Setup functions** (mode configuration): `omw/<mode>-setup`
   - Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`
@@ -240,7 +249,7 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 ### File Footer (MANDATORY)
 
 ```elisp
-;; ===========================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-module)
 
@@ -255,12 +264,34 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 ```
 1. :ensure or :vc          # Package source
 2. :when or :if            # Conditional loading (optional)
-3. :defer or :demand       # Loading strategy
-4. :after                  # Dependencies (optional)
+3. :defer or :demand       # Loading strategy — OMIT when :after is present
+4. :after                  # Dependencies (optional) — implies deferral
 5. :hook                   # Mode hooks
 6. :bind                   # Keybindings
 7. :custom-face            # Face customization (optional)
 8. :config                 # Configuration
+```
+
+**CRITICAL: `:after` implies deferral — never use `:defer t` together with `:after`.**
+
+`:after` waits for the dependency to load before loading this package, which
+already defers loading. Adding `:defer t` is redundant and incorrect.
+
+```elisp
+;; ✅ CORRECT — :after provides deferral, no :defer t needed
+(use-package corfu-terminal
+  :ensure t
+  :after corfu
+  :config
+  (corfu-terminal-mode 1))
+
+;; ❌ WRONG — :defer t and :after together
+(use-package corfu-terminal
+  :ensure t
+  :defer t
+  :after corfu
+  :config
+  (corfu-terminal-mode 1))
 ```
 
 #### :ensure/:vc Rules
@@ -607,11 +638,11 @@ This exception exists because:
 
 **Required format (with blank lines before/after):**
 ```elisp
-;; ===========================================================================
+;; ============================================================================
 
 (use-package ...)
 
-;; ===========================================================================
+;; ============================================================================
 ```
 
 **Usage:**
@@ -664,12 +695,38 @@ Emacs Lisp follows the repository-wide alignment space prohibition. Here are Ema
       var3 value3)
 ```
 
-**Multi-line setq with comments (use standalone comments above):**
+**setq grouping and comment rules (CRITICAL):**
+
+1. **Group related variables into a single `setq`** — variables that configure
+   the same feature or concern belong together.
+2. **Put a single group-level comment above the `setq`** — describe the group as
+   a whole, not individual variables.
+3. **Never add per-variable inline comments inside a `setq` body.**
+
 ```elisp
-;; Configure variables for feature X
+;; ✅ CORRECT — group comment above, single setq, no per-variable comments
+;; Omit filter rules:
+;; - dired-omit-files: hidden files/dirs (.), common project dirs
+;; - dired-omit-extensions: compiled artifacts and lock files
+(setq dired-omit-files (concat "^\\.\\|" "…")
+      dired-omit-extensions (append dired-omit-extensions '(".pyc" ".elc")))
+
+;; ✅ CORRECT — no comment needed when purpose is obvious
 (setq var1 value1
       var2 value2
       var3 value3)
+
+;; ❌ WRONG — per-variable inline comments inside setq body
+(setq var1 value1
+      ;; Set tab width
+      var2 4
+      ;; Enable this feature
+      var3 t)
+
+;; ❌ WRONG — split related variables into separate setq blocks needlessly
+(setq dired-omit-files "…")
+;; Supplementary extension filter
+(setq dired-omit-extensions (append …))
 ```
 
 **Comment prefix rules:**
@@ -757,7 +814,7 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 - [ ] All files have complete MIT license text
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
-- [ ] Section separators (`;; ===========================================================================`) used correctly (79 chars)
+- [ ] Section separators (`;; ============================================================================`) used correctly (79 chars)
 - [ ] Files end with `(provide 'omw-xxx)` and `;;; omw-xxx.el ends here`
 - [ ] All comments in English
 
@@ -886,11 +943,11 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 ### Essential Rules
 
 1. **File Header:** Must include Time-stamp, Author, Copyright, Dependencies, History, Commentary
-2. **use-package Order:** `:ensure → :when → :defer → :after → :hook → :bind → :custom-face → :config`
+2. **use-package Order:** `:ensure → :when → :defer/:demand → :after → :hook → :bind → :custom-face → :config`; never use `:defer t` with `:after`
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
 4. **Setup Functions:** Use `setq-local` for variables, mode functions for toggles; prefer built-in functions
 5. **Comments:** Minimal, only for non-obvious code
-6. **Separators:** `;; ===========================================================================` (79 chars)
+6. **Separators:** `;; ============================================================================` (79 chars)
 7. **Language Modules:** Keep language-related code together, don't artificially limit lines
 8. **LSP Configuration:** Centralize all LSP in omw-prog.el, never in language modules
 9. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
@@ -905,7 +962,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 - [ ] File headers complete: Time-stamp, Author, Copyright, Dependencies, History, Commentary, MIT
 - [ ] Docstrings present: All setup functions have documentation
 - [ ] use-package order correct: Keywords in standard order
-- [ ] Section separators 79 chars: `;; ===========================================================================`
+- [ ] Section separators 79 chars: `;; ============================================================================`
 - [ ] All comments in English
 
 ### Common Patterns
@@ -954,5 +1011,5 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
   (pyvenv-tracking-mode 1))
 
 ;; Section separator (79 chars)
-;; ===========================================================================
+;; ============================================================================
 ```
