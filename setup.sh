@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 00:45:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-19 23:59:00 Thursday by zhengyu.li>
 # =============================================================================
 # oh-my-dotfiles Setup Script
 #
@@ -121,21 +121,26 @@ is_valid_pkg() {
 }
 
 # Print the absolute $HOME paths that stow would create for pkg.
-# Walks the package directory to find all files/dirs that would be linked.
-# This works even when stow reports conflicts (where stow -n -v shows no LINK lines).
+# Delegates entirely to the stow binary so that all ignore rules (.stow-local-ignore,
+# built-in defaults), tree-folding, and edge cases are handled natively.
+# Parses two output patterns from stow -n -v:
+#   LINK: <rel> => <src>           - target stow would create (no conflict)
+#   existing target ...: <rel>     - occupied target stow cannot overwrite (conflict)
+# Both cases are targets we need to handle; covering them enables backup_file
+# to clear blockers before the real stow run.
 stow_targets() {
-    local pkg="$1" dir="${DOTFILES_DIR}/${pkg}" rel
-    [[ -d "$dir" ]] || return 1
-    # Find all non-directory entries in the package
-    while IFS= read -r -d '' rel; do
-        # Convert package-relative path to $HOME-relative path
-        # e.g., "zsh/.zshenv" -> ".zshenv", "starship/.config/starship.toml" -> ".config/starship.toml"
-        echo "${HOME}/${rel#${pkg}/}"
-    done < <(cd "$DOTFILES_DIR" && find "$pkg" -type f -print0 2>/dev/null)
-    # Also include directories that would be folded (stow creates dir symlinks for leaf dirs)
-    while IFS= read -r -d '' rel; do
-        echo "${HOME}/${rel#${pkg}/}"
-    done < <(cd "$DOTFILES_DIR" && find "$pkg" -type d -empty -print0 2>/dev/null)
+    local pkg="$1"
+    [[ -d "${DOTFILES_DIR}/${pkg}" ]] || return 1
+    local link_pat='^LINK: ([^[:space:]]+)'
+    local conflict_pat='existing target [^:]+: (.+)$'
+    stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg" 2>&1 \
+        | while IFS= read -r line; do
+            if [[ "$line" =~ $link_pat ]]; then
+                echo "${HOME}/${BASH_REMATCH[1]}"
+            elif [[ "$line" =~ $conflict_pat ]]; then
+                echo "${HOME}/${BASH_REMATCH[1]}"
+            fi
+        done
 }
 
 # Returns 0 when stow reports nothing to do for pkg - meaning every symlink
@@ -171,7 +176,11 @@ validate_pkgs() {
     _valid_pkgs=()
     local p
     for p in "$@"; do
-        is_valid_pkg "$p" && _valid_pkgs+=("$p") || log_warn "Unknown package: ${p}"
+        if is_valid_pkg "$p"; then
+            _valid_pkgs+=("$p")
+        else
+            log_warn "Unknown package: ${p}"
+        fi
     done
     (( ${#_valid_pkgs[@]} > 0 ))
 }
@@ -190,6 +199,22 @@ collect_stowed() {
 # mv acts on symlinks themselves (not their destinations), so a foreign symlink
 # and a regular file are handled identically. Restore is always lossless.
 
+# Set _backup_max_n to the highest backup number N found in dir for base.bak.N,
+# or -1 if no backups exist. Uses find to handle non-sequential numbering after
+# old backups are purged (sequential probing would miss high-numbered survivors).
+_find_max_backup_n() {
+    local dir="$1" base="$2"
+    _backup_max_n=-1
+    [[ -d "$dir" ]] || return
+    local f n
+    while IFS= read -r f; do
+        n="${f##*.bak.}"
+        if [[ "$n" =~ ^[0-9]+$ ]] && (( n > _backup_max_n )); then
+            _backup_max_n=$n
+        fi
+    done < <(find "$dir" -maxdepth 1 -name "${base}.bak.*" 2>/dev/null)
+}
+
 backup_file() {
     local target="$1" pkg="$2"
     [[ -e "$target" || -L "$target" ]] || return 0
@@ -199,22 +224,25 @@ backup_file() {
 
     run mkdir -p "$dir"
 
-    local n=0
-    while [[ -e "${dir}/${base}.bak.${n}" || -L "${dir}/${base}.bak.${n}" ]]; do
-        (( n++ ))
-    done
+    # New backup always appends after the highest existing number so that
+    # purging old backups never creates a gap that resets the slot counter.
+    _find_max_backup_n "$dir" "$base"
+    local new_n=$(( _backup_max_n + 1 ))
 
-    if (( n >= MAX_BACKUPS )); then
-        local i
-        for (( i = 0; i <= n - MAX_BACKUPS; i++ )); do
-            { [[ -e "${dir}/${base}.bak.${i}" ]] \
-                || [[ -L "${dir}/${base}.bak.${i}" ]]; } \
-                && run rm -f "${dir}/${base}.bak.${i}" || true
-        done
+    # Purge backups older than the retention window before creating the new one.
+    if (( new_n >= MAX_BACKUPS )); then
+        local cutoff=$(( new_n - MAX_BACKUPS ))
+        local f n
+        while IFS= read -r f; do
+            n="${f##*.bak.}"
+            if [[ "$n" =~ ^[0-9]+$ ]] && (( n <= cutoff )); then
+                run rm -f "$f"
+            fi
+        done < <(find "$dir" -maxdepth 1 -name "${base}.bak.*" 2>/dev/null)
     fi
 
-    log_warn "Backing up: ${target} -> ${dir}/${base}.bak.${n}"
-    run mv "$target" "${dir}/${base}.bak.${n}"
+    log_warn "Backing up: ${target} -> ${dir}/${base}.bak.${new_n}"
+    run mv "$target" "${dir}/${base}.bak.${new_n}"
 }
 
 restore_file() {
@@ -222,18 +250,15 @@ restore_file() {
     local dir="${BACKUP_DIR}/${pkg}"
     local base; base=$(basename "$target")
 
-    local n=0 max=-1
-    while [[ -e "${dir}/${base}.bak.${n}" || -L "${dir}/${base}.bak.${n}" ]]; do
-        max=$n; (( n++ ))
-    done
+    _find_max_backup_n "$dir" "$base"
 
-    (( max >= 0 )) || {
+    (( _backup_max_n >= 0 )) || {
         log_err "No backup found for $(basename "$target") in ${dir}"
         return 1
     }
 
-    log_info "Restoring: ${dir}/${base}.bak.${max} -> ${target}"
-    run mv "${dir}/${base}.bak.${max}" "$target"
+    log_info "Restoring: ${dir}/${base}.bak.${_backup_max_n} -> ${target}"
+    run mv "${dir}/${base}.bak.${_backup_max_n}" "$target"
 }
 
 # -----------------------------------------------------------------------------
@@ -385,9 +410,11 @@ do_uninstall_pkgs() {
 do_update_pkgs() {
     local pkg
     for pkg in "$@"; do
-        is_stowed "$pkg" \
-            && restow_package "$pkg" \
-            || log_warn "${pkg}: not stowed, skipping"
+        if is_stowed "$pkg"; then
+            restow_package "$pkg"
+        else
+            log_warn "${pkg}: not stowed, skipping"
+        fi
     done
 }
 
@@ -452,6 +479,7 @@ do_offer_shell_switch() {
 cmd_install() {
     local do_all=false
     local -a pkgs=()
+    local arg
 
     for arg in "$@"; do
         case "$arg" in
@@ -481,6 +509,7 @@ cmd_install() {
 cmd_uninstall() {
     local do_all=false
     local -a pkgs=()
+    local arg
 
     for arg in "$@"; do
         case "$arg" in
@@ -513,6 +542,7 @@ cmd_uninstall() {
 cmd_update() {
     local do_all=false do_pkgs=false
     local -a pkgs=()
+    local arg
 
     for arg in "$@"; do
         case "$arg" in
@@ -564,9 +594,11 @@ cmd_restore() {
     }
     local p
     for p in "$@"; do
-        is_valid_pkg "$p" \
-            && do_restore_pkg "$p" \
-            || log_warn "Unknown package: ${p}"
+        if is_valid_pkg "$p"; then
+            do_restore_pkg "$p"
+        else
+            log_warn "Unknown package: ${p}"
+        fi
     done
 }
 
