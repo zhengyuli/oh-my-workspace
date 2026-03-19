@@ -1,9 +1,9 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: python, uv, ruff, pet
-;; Dependencies: (none)
+;; Dependencies: pet
 
 ;; Copyright (C) 2026 zhengyu li
 

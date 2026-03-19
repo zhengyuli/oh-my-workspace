@@ -124,10 +124,10 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :config
   (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                           ("melpa" . "https://melpa.org/packages/"))
+                           ("melpa" . "https://melpa.org/packages/")))
 
-        ;; Set priorities: melpa < nongnu < gnu
-        package-archive-priorities '(("melpa" . 0)
+  ;; Priorities: gnu > nongnu > melpa (higher value = higher priority)
+  (setq package-archive-priorities '(("melpa" . 0)
                                      ("nongnu" . 5)
                                      ("gnu" . 10)))
   ;; Initialize packages

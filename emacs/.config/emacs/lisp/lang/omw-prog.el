@@ -1,5 +1,5 @@
 ;;; omw-prog.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: prog, programming, hooks
@@ -62,7 +62,7 @@ If no delimiter is found, show an error message."
   (setq copyright-query nil
         copyright-names-regexp
         (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
-                omw/emacs-user-name)))
+                (regexp-quote omw/emacs-user-name))))
 
 ;; ============================================================================
 (use-package smartparens
@@ -158,7 +158,7 @@ If no delimiter is found, show an error message."
               ("C-c C-c" . comment-line)
               ;; Xref
               ("M-." . xref-find-definitions)
-              ("M-," . xref-pop-marker-stack)
+              ("M-," . xref-go-back)
               ("M-r" . xref-find-references)
               ;; Newline + indent
               ("RET" . newline-and-indent)
