@@ -1,0 +1,22 @@
+# jsonpp
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Pretty print JSON with syntax highlighting
+#
+# Arguments:
+#   $@ - File path(s) (optional, reads from stdin if not provided)
+#
+# Dependencies: python3, bat
+#
+# Examples:
+#   jsonpp data.json
+#   cat data.json | jsonpp
+#   curl -s https://api.example.com | jsonpp
+# =============================================================================
+jsonpp() {
+  if [[ -t 0 ]]; then
+    python3 -m json.tool "$@" | bat --language json --style plain
+  else
+    python3 -m json.tool | bat --language json --style plain
+  fi
+}

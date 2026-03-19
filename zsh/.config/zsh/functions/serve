@@ -1,0 +1,20 @@
+# serve
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Start an HTTP server from a directory
+#
+# Arguments:
+#   $1 - Port number (optional, defaults to 8000)
+#
+# Dependencies: python3
+#
+# Examples:
+#   serve
+#   serve 3000
+#   serve 8080
+# =============================================================================
+serve() {
+  local port="${1:-8000}"
+  sleep 1 && open "http://localhost:${port}/" &
+  python3 -m http.server "$port"
+}

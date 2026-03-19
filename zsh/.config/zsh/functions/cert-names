@@ -1,0 +1,35 @@
+# cert-names
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Show all names (CNs and SANs) in SSL certificate for a domain
+#
+# Arguments:
+#   $1 - Domain name
+#
+# Dependencies: openssl
+#
+# Examples:
+#   cert-names example.com
+#   cert-names github.com
+# =============================================================================
+cert-names() {
+  if [[ -z "${1}" ]]; then
+    print "ERROR: No domain specified."
+    return 1
+  fi
+  local domain="${1}"
+  print "Testing ${domain}..."
+  local tmp
+  tmp=$(echo -e "GET / HTTP/1.0\nEOT" | openssl s_client -connect "${domain}:443" -servername "${domain}" 2>&1)
+  if [[ "${tmp}" = *"-----BEGIN CERTIFICATE-----"* ]]; then
+    local certText
+    certText=$(printf '%s' "${tmp}" | openssl x509 -text -certopt "no_aux, no_header, no_issuer, no_pubkey, no_serial, no_sigdump, no_signame, no_validity, no_version")
+    print "Common Name:"
+    printf '%s' "${certText}" | grep "Subject:" | sed -e "s/^.*CN=//" -e "s/\/emailAddress=.*//"
+    print "\nSubject Alternative Names:"
+    printf '%s' "${certText}" | grep -A1 "Subject Alternative Name:" | sed -e "2s/DNS://g" -e "s/ //g" | tr "," "\n" | tail -n +2
+  else
+    print "ERROR: Certificate not found."
+    return 1
+  fi
+}

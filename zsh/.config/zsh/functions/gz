@@ -1,0 +1,24 @@
+# gz
+# Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Compare original and gzipped file size
+#
+# Arguments:
+#   $1 - File path
+#
+# Dependencies: gzip, bc
+#
+# Examples:
+#   gz myfile.js
+#   gz styles.css
+# =============================================================================
+gz() {
+  local origsize
+  local gzipsize
+  local ratio
+  origsize=$(wc -c < "$1")
+  gzipsize=$(gzip -c "$1" | wc -c)
+  ratio=$(printf '%s' "$gzipsize * 100 / $origsize" | bc -l)
+  printf 'orig: %d bytes\n' "$origsize"
+  printf 'gzip: %d bytes (%2.2f%%)\n' "$gzipsize" "$ratio"
+}
