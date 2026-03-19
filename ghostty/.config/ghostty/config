@@ -53,7 +53,7 @@ minimum-contrast = 1.1
 
 unfocused-split-opacity = 0.6
 
-macos-titlebar-style = hidden
+macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
 macos-window-shadow = true
 
