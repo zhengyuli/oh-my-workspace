@@ -57,10 +57,11 @@
                               (directory-file-name
                                (file-name-directory venv-dir)))
                            venv-name))
-           (icon (nerd-icons-devicon "nf-dev-python"
-                                     :face 'nerd-icons-blue
-                                     :height 0.9
-                                     :v-adjust -0.05)))
+           (icon (when (fboundp 'nerd-icons-devicon)
+                   (nerd-icons-devicon "nf-dev-python"
+                                       :face 'nerd-icons-blue
+                                       :height 0.9
+                                       :v-adjust -0.05))))
       (concat icon (propertize
                     (format " [venv/%s] " display-name)
                     'face 'nerd-icons-blue

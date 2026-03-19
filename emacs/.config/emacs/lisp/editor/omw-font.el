@@ -72,9 +72,9 @@ First available font in the list will be used."
 (defun omw/find-available-font (font-list)
   "Return first available font from FONT-LIST."
   (cl-find-if (lambda (font)
-                 (and font
-                      (x-list-fonts font)))
-               font-list))
+                (and font
+                     (x-list-fonts font)))
+              font-list))
 
 (defun omw/setup-fonts ()
   "Configure all font faces based on available fonts.
@@ -131,12 +131,12 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   :hook ((after-init . textsize-mode)
          (move-frame-functions . textsize-fix-frame))
   :config
+  ;; An offset will be selected from the monitor's pixel pitch in mm
+  ;; pitch < 0.12: high-end Retina display
+  ;; pitch < 0.18: MacBook Retina baseline
+  ;; pitch < 0.25: 2K 27-inch monitor
+  ;; pitch >= 0.25: 1080p large screen
   (setq textsize-monitor-size-thresholds nil
-        ;; An offset will be selected from the monitor's pixel pitch in mm
-        ;; pitch < 0.12: high-end Retina display
-        ;; pitch < 0.18: MacBook Retina baseline
-        ;; pitch < 0.25: 2K 27-inch monitor
-        ;; pitch >= 0.25: 1080p large screen
         textsize-pixel-pitch-thresholds '((0 . 0) (0.12 . 0) (0.18 . 0) (0.25 . 0))))
 
 ;; ============================================================================

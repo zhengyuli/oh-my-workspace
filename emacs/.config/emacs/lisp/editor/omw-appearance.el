@@ -81,8 +81,8 @@
   :bind (:map centaur-tabs-mode-map
               ("M-p" . centaur-tabs-backward)
               ("M-n" . centaur-tabs-forward)
-              ("M-P" . centaur-tabs-switch-group)
-              ("M-N" . centaur-tabs-switch-group))
+              ("M-P" . centaur-tabs-backward-group)
+              ("M-N" . centaur-tabs-forward-group))
   :custom-face
   (centaur-tabs-selected ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#28cd41" :height 1.0))))
   (centaur-tabs-selected-modified ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#ff9300" :height 1.0))))
@@ -127,9 +127,9 @@ Returns nil in terminal mode (uses official banner instead)."
   :hook (after-init . dashboard-open)
   :config
   ;; Dashboard configuration for startup screen
+  ;; Show icons only in GUI mode
   (setq dashboard-center-content t
         dashboard-set-navigator t
-        ;; Show icons only in GUI mode
         dashboard-set-heading-icons (display-graphic-p)
         dashboard-set-file-icons (display-graphic-p)
         dashboard-banner-logo-title (format "Welcome to %s's Emacs" omw/emacs-user-name)

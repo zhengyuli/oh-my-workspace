@@ -249,11 +249,10 @@ and global-auto-revert-mode."
 
 ;; Prog mode modules
 (require 'omw-prog)
-(require 'omw-utils)
 (require 'omw-cc)
 (require 'omw-go)
 (require 'omw-python)
-(require 'omw-javascript)
+(require 'omw-typescript)
 (require 'omw-elisp)
 (require 'omw-shell)
 (require 'omw-cmake)
