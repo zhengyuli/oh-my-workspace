@@ -673,12 +673,38 @@ Emacs Lisp follows the repository-wide alignment space prohibition. Here are Ema
       var3 value3)
 ```
 
-**Multi-line setq with comments (use standalone comments above):**
+**setq grouping and comment rules (CRITICAL):**
+
+1. **Group related variables into a single `setq`** — variables that configure
+   the same feature or concern belong together.
+2. **Put a single group-level comment above the `setq`** — describe the group as
+   a whole, not individual variables.
+3. **Never add per-variable inline comments inside a `setq` body.**
+
 ```elisp
-;; Configure variables for feature X
+;; ✅ CORRECT — group comment above, single setq, no per-variable comments
+;; Omit filter rules:
+;; - dired-omit-files: hidden files/dirs (.), common project dirs
+;; - dired-omit-extensions: compiled artifacts and lock files
+(setq dired-omit-files (concat "^\\.\\|" "…")
+      dired-omit-extensions (append dired-omit-extensions '(".pyc" ".elc")))
+
+;; ✅ CORRECT — no comment needed when purpose is obvious
 (setq var1 value1
       var2 value2
       var3 value3)
+
+;; ❌ WRONG — per-variable inline comments inside setq body
+(setq var1 value1
+      ;; Set tab width
+      var2 4
+      ;; Enable this feature
+      var3 t)
+
+;; ❌ WRONG — split related variables into separate setq blocks needlessly
+(setq dired-omit-files "…")
+;; Supplementary extension filter
+(setq dired-omit-extensions (append …))
 ```
 
 **Comment prefix rules:**

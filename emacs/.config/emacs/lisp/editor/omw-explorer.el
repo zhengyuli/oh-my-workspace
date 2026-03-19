@@ -154,17 +154,14 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
         dired-auto-revert-buffer (not (file-remote-p default-directory)))
 
   ;; Omit filter rules:
-  ;; - Hidden files/directories starting with . (e.g., .git, .env)
-  ;; - Specified directories (exact name match to avoid false positives)
-  ;; - macOS special file (exact match)
+  ;; - dired-omit-files: hidden files/dirs (.), common project dirs, macOS specifics
+  ;; - dired-omit-extensions: compiled artifacts and lock files
   (setq dired-omit-files (concat
                           "^\\.\\|"
                           "\\(node_modules\\|__pycache__\\|.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
-                          "\\.DS_Store\\'"))
-
-  ;; Supplementary file extension filter
-  (setq dired-omit-extensions
-        (append dired-omit-extensions '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
+                          "\\.DS_Store\\'")
+        dired-omit-extensions (append dired-omit-extensions
+                                      '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
 
   ;; Listing switches
   (if (executable-find "gls")
