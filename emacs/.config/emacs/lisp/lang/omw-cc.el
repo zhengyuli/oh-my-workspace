@@ -49,7 +49,7 @@
 
 ;; ============================================================================
 (defun omw/cc-mode-setup ()
-  "Apply custom settings for C/C++ mode."
+  "Check required C/C++ development tools and prompt to install if missing."
   (require 'omw-utils)
   (apply #'omw/tools-check-and-prompt omw/cc-tool-specs))
 

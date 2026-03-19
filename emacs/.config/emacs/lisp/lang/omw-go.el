@@ -49,7 +49,7 @@
 
 ;; ============================================================================
 (defun omw/go-mode-setup ()
-  "Apply custom settings for Go mode."
+  "Check required Go development tools and prompt to install if missing."
   (require 'omw-utils)
   (apply #'omw/tools-check-and-prompt omw/go-tool-specs))
 

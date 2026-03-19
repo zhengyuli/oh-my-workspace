@@ -1,5 +1,5 @@
-;;; omw-javascript.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;;; omw-typescript.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: typescript, ts
@@ -28,6 +28,7 @@
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
+;; 2026-03-19       renamed from omw-javascript.el to omw-typescript.el.
 
 ;;; Commentary:
 ;;
@@ -62,6 +63,6 @@
 
 ;; ============================================================================
 ;;; Provide features
-(provide 'omw-javascript)
+(provide 'omw-typescript)
 
-;;; omw-javascript.el ends here
+;;; omw-typescript.el ends here

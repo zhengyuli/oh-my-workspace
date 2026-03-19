@@ -130,7 +130,7 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 1. **Early boot** (before package init): omw-proxy
 2. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
 3. **Tools**: omw-pass → omw-git → omw-term → omw-pdf → omw-ai
-4. **Languages**: omw-prog → omw-utils → omw-cc → omw-go → omw-python → omw-javascript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
+4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-typescript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile
 5. **Text**: omw-markdown
 
 **When adding new modules**:
@@ -191,6 +191,15 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 
 The `omw/` prefix stands for "oh-my-workspace" and is used consistently throughout the codebase.
 
+**Exception: `site-packages/` directory**
+
+The `site-packages/` directory holds custom packages maintained as if they were
+external packages (potential future MELPA candidates). Functions in this
+directory follow Emacs ecosystem naming conventions for their respective
+subsystem (e.g., `dired-` prefix for dired-ecosystem extensions) rather than
+the `omw/` prefix. This exception is intentional to preserve compatibility with
+external package conventions.
+
 **Function Naming Patterns:**
 - **Setup functions** (mode configuration): `omw/<mode>-setup`
   - Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`
@@ -240,7 +249,7 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 ### File Footer (MANDATORY)
 
 ```elisp
-;; ===========================================================================
+;; ============================================================================
 ;;; Provide features
 (provide 'omw-module)
 
@@ -607,11 +616,11 @@ This exception exists because:
 
 **Required format (with blank lines before/after):**
 ```elisp
-;; ===========================================================================
+;; ============================================================================
 
 (use-package ...)
 
-;; ===========================================================================
+;; ============================================================================
 ```
 
 **Usage:**
@@ -757,7 +766,7 @@ grep -A10 "use-package" lisp --include="*.el" | grep -E ":hook|:bind" | head -20
 - [ ] All files have complete MIT license text
 - [ ] All setup functions have docstrings
 - [ ] use-package keywords follow correct order
-- [ ] Section separators (`;; ===========================================================================`) used correctly (79 chars)
+- [ ] Section separators (`;; ============================================================================`) used correctly (79 chars)
 - [ ] Files end with `(provide 'omw-xxx)` and `;;; omw-xxx.el ends here`
 - [ ] All comments in English
 
@@ -890,7 +899,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 3. **Naming Prefix:** Always `omw/` for custom functions/variables
 4. **Setup Functions:** Use `setq-local` for variables, mode functions for toggles; prefer built-in functions
 5. **Comments:** Minimal, only for non-obvious code
-6. **Separators:** `;; ===========================================================================` (79 chars)
+6. **Separators:** `;; ============================================================================` (79 chars)
 7. **Language Modules:** Keep language-related code together, don't artificially limit lines
 8. **LSP Configuration:** Centralize all LSP in omw-prog.el, never in language modules
 9. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
@@ -905,7 +914,7 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 - [ ] File headers complete: Time-stamp, Author, Copyright, Dependencies, History, Commentary, MIT
 - [ ] Docstrings present: All setup functions have documentation
 - [ ] use-package order correct: Keywords in standard order
-- [ ] Section separators 79 chars: `;; ===========================================================================`
+- [ ] Section separators 79 chars: `;; ============================================================================`
 - [ ] All comments in English
 
 ### Common Patterns
@@ -954,5 +963,5 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
   (pyvenv-tracking-mode 1))
 
 ;; Section separator (79 chars)
-;; ===========================================================================
+;; ============================================================================
 ```

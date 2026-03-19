@@ -147,7 +147,7 @@ If no delimiter is found, show an error message."
 (use-package prog-mode
   :ensure nil
   :demand t
-  :hook ((prog-mode . omw/prog-mode-setup))
+  :hook (prog-mode . omw/prog-mode-setup)
   :bind (:map prog-mode-map
               ;; Navigation
               ("C-c M-a" . beginning-of-defun)
