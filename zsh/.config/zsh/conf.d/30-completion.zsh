@@ -24,15 +24,15 @@
 
 # -----------------------------------------------------------------------------
 # Load completion modules
+# -----------------------------------------------------------------------------
 # Must load complist before compinit for menu-select to work
 # -i: suppress error if module already loaded
-# -----------------------------------------------------------------------------
 zmodload -i zsh/complist
 
 # -----------------------------------------------------------------------------
 # compinit -- initialize the completion system
-# Stores zcompdump in XDG cache directory
 # -----------------------------------------------------------------------------
+# Stores zcompdump in XDG cache directory
 autoload -Uz compinit
 
 _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"

@@ -193,6 +193,42 @@ Use full-width separator for top-level logical sections:
 # -----------------------------------------------------------------------------
 # <Brief explanation of what this section does and why>
 # <Any prerequisites or cross-references>
+<code>
+```
+
+**Rules (CRITICAL):**
+1. **No sandwiching**: description always goes AFTER the closing separator, never
+   between opening and closing separators
+2. **No double separators**: exactly ONE opening + ONE closing `---` separator per
+   section; metadata (Prerequisites, Config, Usage) goes after the single closing
+   separator, not wrapped in an extra `---` pair
+3. **Description is optional**: omit if the section name is self-explanatory
+
+**✅ CORRECT:**
+```zsh
+# -----------------------------------------------------------------------------
+# bun -- JavaScript/TypeScript Runtime
+# -----------------------------------------------------------------------------
+# Prerequisites: brew install oven-sh/bun/bun
+# Usage: bun install, bun run dev
+if [[ -f "$BUN_INSTALL/_bun" ]]; then
+```
+
+**❌ WRONG — sandwiched description:**
+```zsh
+# -----------------------------------------------------------------------------
+# Zinit bootstrap
+# Data directory follows XDG: $XDG_DATA_HOME/zinit/   ← sandwiched
+# -----------------------------------------------------------------------------
+```
+
+**❌ WRONG — double separator:**
+```zsh
+# -----------------------------------------------------------------------------
+# bun -- JavaScript/TypeScript Runtime
+# -----------------------------------------------------------------------------
+# Description...                                        ← sandwiched
+# -----------------------------------------------------------------------------   ← extra separator
 ```
 
 #### Subcategories (inline format)
@@ -203,6 +239,34 @@ Use short separator for subcategories within a major section:
 # --- <Category Name> ---
 # <Brief explanation>
 <code>
+```
+
+**Rules (CRITICAL):**
+1. **No blank line** between the `# --- ---` header and the following
+   description/code
+2. **Always at column 0**: never indent `# --- ---` headers, even when inside
+   `if/else` or other blocks
+
+**✅ CORRECT:**
+```zsh
+# --- Recording ---
+# Record timestamp and duration
+setopt EXTENDED_HISTORY
+```
+
+**❌ WRONG — blank line after header:**
+```zsh
+# --- Sync: fzf-tab ---
+
+# Load before turbo plugins...   ← blank line
+```
+
+**❌ WRONG — indented header:**
+```zsh
+if command -v starship &>/dev/null; then
+  # ---------------------------------------------------------------------------
+  # Window Title                       ← indented full-width separator
+  # ---------------------------------------------------------------------------
 ```
 
 #### Inline Comments

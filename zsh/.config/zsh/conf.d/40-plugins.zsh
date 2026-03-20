@@ -19,8 +19,8 @@
 
 # -----------------------------------------------------------------------------
 # Zinit bootstrap
-# Data directory follows XDG: $XDG_DATA_HOME/zinit/
 # -----------------------------------------------------------------------------
+# Data directory follows XDG: $XDG_DATA_HOME/zinit/
 # Idempotency guard - prevent double loading
 if (( ${+ZINIT_INITIALIZED} )); then
   return 0
@@ -52,7 +52,6 @@ ZINIT_INITIALIZED=1
 # -----------------------------------------------------------------------------
 # Plugin loading order (matches actual execution order)
 # -----------------------------------------------------------------------------
-#
 # Execution timeline:
 #   During startup (sync):
 #     1. fzf-tab - must own ^I before any turbo plugin can override it
@@ -60,23 +59,19 @@ ZINIT_INITIALIZED=1
 #     2. zsh-completions  [0a] - register completions early for zicdreplay
 #     3. history-substring-search, autosuggestions, autopair  [0b]
 #     4. fast-syntax-highlighting  [0c, LAST] - wraps all ZLE widgets;
-# -----------------------------------------------------------------------------
 
 # --- Sync: fzf-tab (must be first and synchronous) ---
-
 # Load before turbo plugins to ensure ^I ownership is established immediately.
 # fzf's completion.zsh is intentionally NOT loaded (see 70-tools.zsh comment).
 zinit light Aloxaf/fzf-tab
 
 # --- Turbo 0a: completions (early, before zicdreplay in FSH) ---
-
 # blockf: tells zinit not to add plugin to fpath (avoids triggering compinit
 # rebuild); completions are still available via zinit's own path management.
 zinit ice wait"0a" lucid blockf
 zinit light zsh-users/zsh-completions
 
 # --- Turbo 0b: interactive enhancement plugins ---
-
 # History substring search
 # Config vars are read at highlight render time (not at plugin load), so timing
 # is not critical. Set here for co-location with the plugin declaration -
@@ -115,7 +110,6 @@ zinit ice wait"0b" lucid
 zinit light hlissner/zsh-autopair
 
 # --- Turbo 0c: fast-syntax-highlighting (MUST be last) ---
-
 # atinit runs before the plugin code:
 #   ZINIT[COMPINIT_OPTS]=-C → use cached dump (fast, no security check)
 #   ZINIT[ZCOMPDUMP_PATH] → set XDG-compliant zcompdump path
