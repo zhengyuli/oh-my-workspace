@@ -31,7 +31,7 @@
 
 ;;; Commentary:
 ;;
-;; Search and navigation enhancements with consult, embark, wgrep, and xref integration.
+;; Search and navigation with consult, embark, wgrep, and xref integration.
 
 ;;; Code:
 

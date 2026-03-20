@@ -31,7 +31,7 @@
 
 ;;; Commentary:
 ;;
-;; Template system using yasnippet and autoinsert for automatic file header generation.
+;; Template system using yasnippet and autoinsert for file header generation.
 
 ;;; Code:
 

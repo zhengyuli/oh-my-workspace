@@ -31,7 +31,7 @@
 
 ;;; Commentary:
 ;;
-;; Emacs Lisp mode configuration with enhanced navigation and syntax highlighting.
+;; Emacs Lisp mode with enhanced navigation and syntax highlighting.
 
 ;;; Code:
 

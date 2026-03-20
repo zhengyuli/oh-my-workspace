@@ -116,7 +116,7 @@ If no delimiter is found, show an error message."
          (yaml-mode . eglot-ensure)
          (dockerfile-mode . eglot-ensure))
   :config
-  ;; Connection settings
+  ;; Async connection and auto-shutdown for better performance
   (setq eglot-sync-connect nil
         eglot-autoshutdown t))
 
