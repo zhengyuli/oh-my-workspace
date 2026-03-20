@@ -16,7 +16,7 @@
 #   - 05-path.zsh must set fpath with completion directories
 #   - XDG_CACHE_HOME must be defined (00-env.zsh)
 #
-# Do NOT add: custom completion functions, plugin completions, tool initialization
+# Do NOT add: custom completion functions, plugin completions, tool init
 #             → Custom completion functions in completions/ directory
 #             → Plugin completions in 40-plugins.zsh
 #             → Tool-specific initialization in 70-tools.zsh
@@ -37,7 +37,7 @@ autoload -Uz compinit
 
 _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 
-# Rebuild zcompdump if missing or older than 20 hours; use -C otherwise (fast).
+# Rebuild zcompdump if missing or older than 20 hours; use -C otherwise.
 # Uses zsh glob qualifiers - no subshells, no external commands, cross-platform:
 #   N  = nullglob (empty array instead of error when no match)
 #   .  = regular file (not a directory or symlink)
@@ -56,13 +56,13 @@ unset _zcompdump _zcompdump_fresh
 # Completion styles
 # -----------------------------------------------------------------------------
 
-# Completion menu is managed entirely by fzf-tab (40-plugins.zsh sets 'menu no').
+# Completion menu is managed entirely by fzf-tab (40-plugins.zsh sets menu no).
 # Do NOT set 'menu select' here - fzf-tab overrides it and the dead config
 # creates confusion about which system is in control.
 
 # Matcher list: zsh tries each pattern in order until one matches
 #   1. m:{a-z}={A-Za-z}  - case-insensitive (fo → Foo, FO, foo)
-#   2. r:|[._-]=* r:|=*  - partial-word after separators (f_b → foo_bar, f-b → foo-bar)
+#   2. r:|[._-]=* r:|=*  - partial-word after separators (f_b → foo_bar)
 #   3. l:|=* r:|=*       - substring anywhere (bar → foo_bar, oob → foo_bar)
 zstyle ':completion:*' matcher-list \
   'm:{a-z}={A-Za-z}' \
@@ -81,15 +81,15 @@ zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
 # Display completions in named groups
 zstyle ':completion:*' group-name ''
 
-# Ignore patterns - reduce noise (object files, bytecode, backups, logs, temp files, deps)
+# Ignore patterns - reduce noise (object files, bytecode, backups, logs, deps)
 zstyle ':completion:*' ignored-patterns '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
 # Show processes from all users in process completion
-# NOTE: The 'command' style for processes is set in 40-plugins.zsh for fzf-tab preview
+# NOTE: The 'command' style for processes is set in 40-plugins.zsh for fzf-tab
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
 # kill completion
-# Regex breakdown: (#b) enables backreferences, captures PID ($word[1]) and command ($word[2])
+# Regex: (#b) enables backreferences, captures PID ($word[1]) and cmd ($word[2])
 #   =01;34=0=01 means: match=bold blue, first group=default, second group=bold
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 zstyle ':completion:*:*:kill:*' menu yes select

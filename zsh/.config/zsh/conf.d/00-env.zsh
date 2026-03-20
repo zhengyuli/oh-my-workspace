@@ -32,7 +32,7 @@ export PAGER=less
 # -----------------------------------------------------------------------------
 # Locale
 # -----------------------------------------------------------------------------
-# Use LANG only; avoid LC_ALL as it overrides all LC_* settings indiscriminately.
+# Use LANG only; avoid LC_ALL as it overrides all LC_* settings.
 # Set specific LC_* variables if needed (e.g., LC_TIME for date format).
 export LANG=en_US.UTF-8
 
@@ -91,7 +91,7 @@ export CARAPACE_BRIDGES='zsh,fish,bash'
 
 # starship -- both config and cache require explicit XDG paths
 # STARSHIP_CONFIG: no auto-discovery; must point explicitly to config file
-# STARSHIP_CACHE:  defaults to $XDG_CACHE_HOME/starship, set explicitly for clarity
+# STARSHIP_CACHE: defaults to $XDG_CACHE_HOME/starship, set explicitly for clarity
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
 
@@ -124,9 +124,9 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 # -----------------------------------------------------------------------------
 # LS_COLORS -- Colored ls and completion output
 # -----------------------------------------------------------------------------
-# macOS BSD ls uses LSCOLORS (different format); LS_COLORS is the GNU/XDG format
-# used by zsh completion (list-colors in 30-completion.zsh) and eza.
-# gdircolors is provided by coreutils (brew install coreutils, always in Brewfile).
+# macOS BSD ls uses LSCOLORS (different format); LS_COLORS is the GNU/XDG
+# format used by zsh completion (list-colors in 30-completion.zsh) and eza.
+# gdircolors is provided by coreutils (brew install coreutils, in Brewfile).
 if command -v gdircolors &>/dev/null; then
   eval "$(gdircolors -b)"
 else
