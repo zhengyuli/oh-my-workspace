@@ -1,9 +1,9 @@
-;;; omw-cmake.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;;; omw-gitconfig.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-20 11:10:00 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
-;; Keywords: cmake
-;; Dependencies: omw-prog, omw-utils
+;; Keywords: git, gitconfig, gitignore, configuration
+;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -27,40 +27,30 @@
 
 ;;; History:
 ;;
-;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
+;; 2026-03-19 16:30 zhengyu li <lizhengyu419@outlook.com> created.
 
 ;;; Commentary:
 ;;
-;; CMake mode configuration with LSP support.
-;; LSP server (cmake-language-server) is configured in omw-prog.el.
+;; Git configuration file modes setup.
+;; Covers: gitconfig, gitignore, and related files.
 
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/cmake-tool-specs
-  '(("cmake-language-server" "uv tool install cmake-language-server" "uv"))
-  "Tool specs for CMake development.")
-
-(defun omw/install-cmake-tools ()
-  "Install CMake LSP tools (cmake-language-server) via uv if not present."
-  (interactive)
-  (require 'omw-utils)
-  (apply #'omw/tools-install omw/cmake-tool-specs))
-
-;; ============================================================================
-(defun omw/cmake-mode-setup ()
-  "Apply custom settings for cmake mode."
-  (require 'omw-utils)
-  (setq-local cmake-tab-width 2)
-  (apply #'omw/tools-check-and-prompt omw/cmake-tool-specs))
-
-(use-package cmake-mode
+(use-package git-modes
   :ensure t
   :defer t
-  :hook (cmake-mode . omw/cmake-mode-setup))
+  :mode (("/git/config\\'" . gitconfig-mode)
+         ("/git/config\\.local\\'" . gitconfig-mode)
+         ("/git/config\\.local\\.example\\'" . gitconfig-mode)
+         ("/git/ignore\\'" . gitignore-mode)
+         ("\\.gitignore_global\\'" . gitignore-mode)
+         ("\\.npmignore\\'" . gitignore-mode)
+         ("\\.dockerignore\\'" . gitignore-mode)
+         ("\\.stow-local-ignore\\'" . gitignore-mode)))
 
 ;; ============================================================================
 ;;; Provide features
-(provide 'omw-cmake)
+(provide 'omw-gitconfig)
 
-;;; omw-cmake.el ends here
+;;; omw-gitconfig.el ends here

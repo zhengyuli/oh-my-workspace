@@ -1,5 +1,5 @@
 ;;; omw-rust.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-19 17:00:00 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-20 10:32:39 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: rust, rust-analyzer
@@ -44,13 +44,11 @@
 (defun omw/install-rust-tools ()
   "Install Rust development tools via rustup if not present."
   (interactive)
-  (require 'omw-utils)
   (apply #'omw/tools-install omw/rust-tool-specs))
 
 ;; ============================================================================
 (defun omw/rust-mode-setup ()
   "Check required Rust development tools and prompt to install if missing."
-  (require 'omw-utils)
   (apply #'omw/tools-check-and-prompt omw/rust-tool-specs))
 
 (use-package rust-mode

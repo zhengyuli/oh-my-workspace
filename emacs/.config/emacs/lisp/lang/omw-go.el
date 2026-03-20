@@ -1,5 +1,5 @@
 ;;; omw-go.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-20 10:20:51 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: go, golang
@@ -44,13 +44,11 @@
 (defun omw/install-go-tools ()
   "Install Go development tools (gopls, gofumpt) via go install if not present."
   (interactive)
-  (require 'omw-utils)
   (apply #'omw/tools-install omw/go-tool-specs))
 
 ;; ============================================================================
 (defun omw/go-mode-setup ()
   "Check required Go development tools and prompt to install if missing."
-  (require 'omw-utils)
   (apply #'omw/tools-check-and-prompt omw/go-tool-specs))
 
 (use-package go-mode
