@@ -1,5 +1,5 @@
 # 50-prompt.zsh
-# Time-stamp: <2026-03-20 16:41:12 Friday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Prompt Configuration
 #
@@ -33,7 +33,7 @@ if command -v starship &>/dev/null; then
   # ---------------------------------------------------------------------------
   # Window Title
   # Set terminal title to current directory for supported terminals.
-  # Use add-zsh-hook (NOT precmd() directly) to avoid replacing starship's hook.
+  # Use add-zsh-hook (NOT precmd() directly) to keep starship's hook.
   # ---------------------------------------------------------------------------
   if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty) ]] || \
      [[ "$TERM" == alacritty* ]] || \
