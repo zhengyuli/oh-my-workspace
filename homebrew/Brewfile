@@ -1,5 +1,5 @@
 # Brewfile -*- mode: ruby; -*-
-# Time-stamp: <2026-03-17 21:53:27 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-20 10:37:36 Friday by zhengyu.li>
 # =============================================================================
 # Homebrew Bundle - oh-my-dotfiles Package List
 #
@@ -185,8 +185,8 @@ brew "uv"
 # Go -- Go runtime
 brew "go"
 
-# Rust -- Rust toolchain (cargo, rustup)
-brew "rust"
+# Rustup -- Rust toolchain installer and version manager
+brew "rustup"
 
 # -----------------------------------------------------------------------------
 # Window Management
