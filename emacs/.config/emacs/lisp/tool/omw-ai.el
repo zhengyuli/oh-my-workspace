@@ -37,8 +37,8 @@
 ;;; Code:
 
 ;; ============================================================================
+;; Install from GitHub (not yet in ELPA/MELPA)
 (use-package claude-code-ide
-  ;; Install from GitHub (not yet in ELPA/MELPA)
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
   :defer t
   :bind ("C-c C-'" . claude-code-ide-menu)

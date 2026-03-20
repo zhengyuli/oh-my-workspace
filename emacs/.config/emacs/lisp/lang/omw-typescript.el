@@ -43,7 +43,8 @@
   "Tool specs for TypeScript development.")
 
 (defun omw/install-typescript-tools ()
-  "Install TypeScript LSP tools (typescript-language-server) via bun if not present."
+  "Install TypeScript LSP tools (typescript-language-server) via bun
+if not present."
   (interactive)
   (apply #'omw/tools-install omw/typescript-tool-specs))
 

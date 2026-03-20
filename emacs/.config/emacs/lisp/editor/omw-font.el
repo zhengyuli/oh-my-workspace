@@ -97,8 +97,9 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
       (when var-font
         (set-face-attribute 'variable-pitch nil
                             :family var-font
-                            :height (round (* omw/font-size-default
-                                              omw/font-size-variable-multiplier))))
+                            :height (round
+                                     (* omw/font-size-default
+                                        omw/font-size-variable-multiplier))))
 
       ;; Configure Chinese font fallback for CJK character ranges
       (when cjk-font
@@ -112,10 +113,11 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
         (set-fontset-font t '(#x3000 . #x303f) cjk-font nil 'prepend))
 
       ;; Log font configuration for debugging
-      (message "Fonts configured: mono=%s, var=%s, cjk=%s"
-               (or mono-font "N/A")
-               (or var-font "N/A")
-               (or cjk-font "N/A")))))
+      (when init-file-debug
+        (message "Fonts configured: mono=%s, var=%s, cjk=%s"
+                 (or mono-font "N/A")
+                 (or var-font "N/A")
+                 (or cjk-font "N/A"))))))
 
 (use-package emacs
   :ensure nil
@@ -137,7 +139,8 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   ;; pitch < 0.25: 2K 27-inch monitor
   ;; pitch >= 0.25: 1080p large screen
   (setq textsize-monitor-size-thresholds nil
-        textsize-pixel-pitch-thresholds '((0 . 0) (0.12 . 0) (0.18 . 0) (0.25 . 0))))
+        textsize-pixel-pitch-thresholds
+        '((0 . 0) (0.12 . 0) (0.18 . 0) (0.25 . 0))))
 
 ;; ============================================================================
 (use-package mixed-pitch

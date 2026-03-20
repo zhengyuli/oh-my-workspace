@@ -61,8 +61,9 @@ If no delimiter is found, show an error message."
   ;; Copyright query settings
   (setq copyright-query nil
         copyright-names-regexp
-        (format "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
-                (regexp-quote omw/emacs-user-name))))
+        (format
+         "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
+         (regexp-quote omw/emacs-user-name))))
 
 ;; ============================================================================
 (use-package smartparens
@@ -122,7 +123,8 @@ If no delimiter is found, show an error message."
 
 ;; ============================================================================
 (defun omw/prog-before-save ()
-  "Run pre-save hooks for programming buffers: update copyright, timestamp, untabify."
+  "Run pre-save hooks for programming buffers.
+Updates copyright, timestamp, and untabifies."
   (ignore-errors (copyright-update))
   (ignore-errors (time-stamp))
   (untabify (point-min) (point-max))
