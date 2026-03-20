@@ -58,7 +58,8 @@
   (pdf-tools-install :no-query))
 
 ;; ============================================================================
-(defvar omw/pdf-view-restore-path (expand-file-name "pdf-view-restore" user-emacs-directory)
+(defvar omw/pdf-view-restore-path
+  (expand-file-name "pdf-view-restore" user-emacs-directory)
   "Pdf view restore file path, which will be used to store pdf view state.")
 
 (use-package pdf-view-restore

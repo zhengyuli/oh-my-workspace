@@ -60,6 +60,7 @@
 
 (use-package elisp-mode
   :ensure nil
+  :defer t
   :hook (emacs-lisp-mode . omw/elisp-mode-setup))
 
 ;; ============================================================================

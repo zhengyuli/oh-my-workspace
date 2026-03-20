@@ -50,16 +50,25 @@ Includes header foreground color and code block background/foreground colors."
          (code-bg (cdr (assq 'code-bg omw/markdown-colors)))
          (code-fg (cdr (assq 'code-fg omw/markdown-colors))))
     ;; Header faces - progressive size reduction for hierarchy
-    (face-remap-add-relative 'markdown-header-face-1 `(:foreground ,header-color :weight bold :height 1.30))
-    (face-remap-add-relative 'markdown-header-face-2 `(:foreground ,header-color :weight bold :height 1.20))
-    (face-remap-add-relative 'markdown-header-face-3 `(:foreground ,header-color :weight bold :height 1.15))
-    (face-remap-add-relative 'markdown-header-face-4 `(:foreground ,header-color :weight bold :height 1.1))
-    (face-remap-add-relative 'markdown-header-face-5 `(:foreground ,header-color :weight bold :height 1.05))
-    (face-remap-add-relative 'markdown-header-face-6 `(:foreground ,header-color :weight bold :height 1.0))
+    (face-remap-add-relative 'markdown-header-face-1
+     `(:foreground ,header-color :weight bold :height 1.30))
+    (face-remap-add-relative 'markdown-header-face-2
+     `(:foreground ,header-color :weight bold :height 1.20))
+    (face-remap-add-relative 'markdown-header-face-3
+     `(:foreground ,header-color :weight bold :height 1.15))
+    (face-remap-add-relative 'markdown-header-face-4
+     `(:foreground ,header-color :weight bold :height 1.1))
+    (face-remap-add-relative 'markdown-header-face-5
+     `(:foreground ,header-color :weight bold :height 1.05))
+    (face-remap-add-relative 'markdown-header-face-6
+     `(:foreground ,header-color :weight bold :height 1.0))
     ;; Code block faces - custom background and foreground
-    (face-remap-add-relative 'markdown-pre-face `(:foreground ,code-fg :background ,code-bg :extend t))
-    (face-remap-add-relative 'markdown-code-face `(:foreground ,code-fg :background ,code-bg :extend t))
-    (face-remap-add-relative 'markdown-inline-code-face `(:foreground ,code-fg))))
+    (face-remap-add-relative 'markdown-pre-face
+     `(:foreground ,code-fg :background ,code-bg :extend t))
+    (face-remap-add-relative 'markdown-code-face
+     `(:foreground ,code-fg :background ,code-bg :extend t))
+    (face-remap-add-relative 'markdown-inline-code-face
+     `(:foreground ,code-fg))))
 
 ;; ============================================================================
 (use-package valign

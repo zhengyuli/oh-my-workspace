@@ -58,10 +58,9 @@ This affects package installation, HTTP requests, and Git operations."
 (defun omw/set-http-proxy (proxy)
   "Configure HTTP/HTTPS proxy for Emacs and subprocess environment.
 
-Sets proxy for:
-1. Emacs internal URL library (url-proxy-services)
-2. Environment variables (http_proxy, https_proxy, all_proxy)
-3. Subprocesses (Git, curl, wget, etc.)
+Sets Emacs internal URL library (url-proxy-services), environment
+variables (http_proxy, https_proxy, all_proxy), and subprocesses
+(Git, curl, wget, etc.).
 
 PROXY format: \"127.0.0.1:7890\" or \"http://127.0.0.1:7890\"
 Also supports: \"socks5://127.0.0.1:1080\" or \"http://user:pass@host:port\"
@@ -90,7 +89,8 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
           (setenv var proxy-url))
         ;; Configure Emacs internal proxy with bypass rules
         (setq url-proxy-services
-              `(("no_proxy" . "^\\(127\\.0\\.0\\.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
+              `(("no_proxy" .
+                 "^\\(127\\.0\\.0\\.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
                 ("http" . ,(format "%s:%d" host port))
                 ("https" . ,(format "%s:%d" host port))))
         (omw/show-http-proxy))
@@ -101,16 +101,10 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
 (defun omw/enable-http-proxy ()
   "Enable HTTP proxy for Emacs.
 
-Proxy source priority:
-  1. Environment variables:
-       HTTP_PROXY / http_proxy
-       HTTPS_PROXY / https_proxy
-       ALL_PROXY / all_proxy
-  2. The variable `omw/http-proxy`.
-
-If a proxy environment variable is found, it overrides
-`omw/http-proxy`.  The selected proxy value is passed to
-`omw/set-http-proxy`.
+Checks environment variables (HTTP_PROXY, http_proxy, HTTPS_PROXY,
+https_proxy, ALL_PROXY, all_proxy) first, then falls back to
+`omw/http-proxy'.  If an environment variable is found, it overrides
+`omw/http-proxy'.  The selected value is passed to `omw/set-http-proxy'.
 
 If neither source is configured, a warning is displayed."
   (interactive)
@@ -127,7 +121,8 @@ If neither source is configured, a warning is displayed."
           ;; Keep variable in sync with the effective proxy
           (setq omw/http-proxy proxy)
           (omw/set-http-proxy proxy))
-      (message "No HTTP proxy configured. Set HTTP_PROXY environment variable or `omw/http-proxy`."))))
+      (message
+       "No HTTP proxy configured. Set HTTP_PROXY environment variable or `omw/http-proxy`."))))
 
 ;; ============================================================================
 (defun omw/unset-http-proxy ()
@@ -145,7 +140,7 @@ Useful for switching between proxy and direct connections."
   (setq url-proxy-services nil)
   (omw/show-http-proxy))
 
-;; Alias for convenience: M-x disable-http-proxy
+;; Alias for convenience: M-x omw/disable-http-proxy
 (defalias 'omw/disable-http-proxy 'omw/unset-http-proxy)
 
 ;; ============================================================================

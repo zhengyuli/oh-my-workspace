@@ -39,7 +39,8 @@
 ;; ============================================================================
 (defun omw/--install-tool-spec (spec)
   "Install a single tool described by SPEC (TOOL INSTALL-CMD PACKAGE-MANAGER).
-Skips silently if TOOL is already installed; warns if PACKAGE-MANAGER is absent."
+Skips silently if TOOL is already installed; warns if
+PACKAGE-MANAGER is absent."
   (let* ((tool (nth 0 spec))
          (install-cmd (nth 1 spec))
          (pm (nth 2 spec)))
@@ -54,10 +55,10 @@ Skips silently if TOOL is already installed; warns if PACKAGE-MANAGER is absent.
 ;; ============================================================================
 (defun omw/tools-install (&rest tool-specs)
   "Install missing development tools.
-Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER) where:
-- TOOL is the executable name checked via `executable-find'
-- INSTALL-CMD is the shell command string to install it
-- PACKAGE-MANAGER is the installer executable that must be available"
+Each element of TOOL-SPECS is a list (TOOL INSTALL-CMD PACKAGE-MANAGER).
+TOOL is the executable name checked via `executable-find', INSTALL-CMD is
+the shell command to install it, and PACKAGE-MANAGER is the installer
+executable that must be available."
   (dolist (spec tool-specs)
     (omw/--install-tool-spec spec)))
 
