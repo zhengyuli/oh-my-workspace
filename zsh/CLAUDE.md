@@ -419,7 +419,7 @@ fi
 
 # ✅ CORRECT - explicit if for validation
 if [[ -z "$1" ]]; then
-    echo "Usage: cmd <arg>"
+    printf '%s\n' "Usage: cmd <arg>"
     return 1
 fi
 
@@ -487,7 +487,8 @@ printf 'Status: %s\n' "$status"
 print -l $path  # Print each path element on its own line
 print -P '%F{green}Success%f'  # With prompt expansion for colors
 
-# ❌ AVOID - echo -e has inconsistent behavior across shells
+# ❌ AVOID - echo has inconsistent behavior across shells
+echo "$message"
 echo -e "$message"
 ```
 
@@ -506,7 +507,7 @@ typeset -U path fpath manpath
 
 # Array iteration
 for item in "${array[@]}"; do
-  echo "$item"
+  printf '%s\n' "$item"
 done
 ```
 
@@ -581,8 +582,8 @@ grep -rn '\$[A-Za-z_][A-Za-z0-9_]*[^}]' .config/zsh/conf.d --include="*.zsh" | g
 # Find [[ ]] && patterns that should be if statements
 grep -rn '\[\[.*\]\] &&' .config/zsh/conf.d --include="*.zsh"
 
-# Check for echo -e (should use printf)
-grep -rn 'echo -e' .config/zsh/conf.d --include="*.zsh"
+# Check for echo (should use printf or print)
+grep -rn '\becho\b' .config/zsh/conf.d --include="*.zsh"
 ```
 
 **Check file header completeness:**
@@ -609,7 +610,7 @@ grep -rn "^# Responsibilities:" .config/zsh/conf.d --include="*.zsh" | wc -l
 - [ ] No alignment spaces (single space only)
 - [ ] All variables are quoted
 - [ ] Conditional logic uses explicit `if` statements
-- [ ] No `echo -e` (use `printf` or `print`)
+- [ ] No `echo` (use `printf` or `print`)
 - [ ] No unquoted variable expansions
 - [ ] All comments in English
 - [ ] Idempotent (safe to source multiple times)
@@ -687,7 +688,7 @@ zsh -n .config/zsh/.zshrc
 zsh -c 'source ~/.zshenv && source $ZDOTDIR/.zshrc && echo "✅ OK"'
 
 # 3. Check for common issues
-grep -rn 'echo -e' .config/zsh/conf.d --include="*.zsh"
+grep -rn '\becho\b' .config/zsh/conf.d --include="*.zsh"
 grep -rn '\[\[.*\]\] &&' .config/zsh/conf.d --include="*.zsh"
 ```
 
@@ -734,7 +735,7 @@ path=("$HOME/.local/bin" $path)
 3. **Alignment Spaces:** Prohibited (single space only)
 4. **Conditionals:** Use explicit `if` statements, avoid `[[ ]] && cmd`
 5. **Quoting:** Quote ALL variable expansions
-6. **Output:** Use `printf` or `print`, never `echo -e`
+6. **Output:** Use `printf` or `print`, never `echo`
 7. **Tests:** Use `[[ ]]` not `[ ]`
 8. **Arithmetic:** Use `(( ))` not `let` or `expr`
 9. **Substitution:** Use `$()` not backticks
@@ -751,7 +752,7 @@ path=("$HOME/.local/bin" $path)
 - [ ] No inline comments
 - [ ] No alignment spaces
 - [ ] All variables quoted
-- [ ] No `echo -e` (use `printf`)
+- [ ] No `echo` (use `printf` or `print`)
 - [ ] No `[[ ]] && cmd` patterns (use `if`)
 - [ ] All comments in English
 

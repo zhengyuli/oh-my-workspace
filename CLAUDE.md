@@ -269,14 +269,15 @@ rm ${file}
 grep ${pattern} ${file}
 ```
 
-#### 6. Prefer `printf` Over `echo -e`
+#### 6. Use `printf`, Never `echo`
 
 ```bash
 # ✅ CORRECT - portable and predictable
 printf '%s\n' "$message"
 printf 'Status: %s\n' "$status"
 
-# ❌ AVOID - behavior varies between shells
+# ❌ AVOID - behavior varies between shells and implementations
+echo "$message"
 echo -e "$message"
 ```
 
@@ -774,6 +775,7 @@ done
 - [ ] No cache files committed (`.zcompdump`, `*.swp`, etc.)
 - [ ] Configuration files have standardized headers
 - [ ] Shell scripts follow coding standards (no `[[ ]] && cmd || true`)
+- [ ] No `echo` in scripts (use `printf`)
 - [ ] No inline comments in config files (comments on separate lines above code)
 - [ ] Time-stamp present in ALL configuration files
 - [ ] Section separators use `---` for content, `===` for headers only (79 chars)
@@ -912,17 +914,18 @@ If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not proper
 1. **Stow Only:** Use `stow` for symlink management, never manual `ln -s`
 2. **XDG Paths:** All tools must respect `$XDG_*` environment variables
 3. **Shell Scripts:** Use `if` statements, avoid `[[ ]] && cmd || true`
-4. **Config Headers:** Standardized format with `===` for headers, `---` for sections
-5. **Time-stamp:** Required for ALL configuration files
-6. **Inline Comments:** Prohibited (comments on line above code)
-7. **Alignment Spaces:** Prohibited (single space only)
-8. **Line Length:** 80 chars for code, 79 for comments
-9. **Comment Language:** English only
-10. **Cache Files:** Never commit `.zcompdump`, `*.swp`, `*.elc`, etc.
-11. **Prefix Convention:** Emacs uses `omw/`, zsh uses no special prefix
-12. **Modern Toolchain:** bun for JS/TS, uv for Python, no version managers
-13. **Theme:** Doom One across all tools (Emacs, Ghostty, fzf)
-14. **Subdirectory CLAUDE.md:** Check zsh/CLAUDE.md and emacs/CLAUDE.md for specific guidance
+4. **Output:** Use `printf`, never `echo`
+5. **Config Headers:** Standardized format with `===` for headers, `---` for sections
+6. **Time-stamp:** Required for ALL configuration files
+7. **Inline Comments:** Prohibited (comments on line above code)
+8. **Alignment Spaces:** Prohibited (single space only)
+9. **Line Length:** 80 chars for code, 79 for comments
+10. **Comment Language:** English only
+11. **Cache Files:** Never commit `.zcompdump`, `*.swp`, `*.elc`, etc.
+12. **Prefix Convention:** Emacs uses `omw/`, zsh uses no special prefix
+13. **Modern Toolchain:** bun for JS/TS, uv for Python, no version managers
+14. **Theme:** Doom One across all tools (Emacs, Ghostty, fzf)
+15. **Subdirectory CLAUDE.md:** Check zsh/CLAUDE.md and emacs/CLAUDE.md for specific guidance
 
 ### Pre-Commit Checklist
 
@@ -932,6 +935,7 @@ If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not proper
 - [ ] Config headers compliant: Standardized format with `===`/`---`
 - [ ] Time-stamp present: ALL config files have Time-stamp
 - [ ] No alignment spaces: Single space between elements
+- [ ] No `echo`: all output via `printf`
 - [ ] All comments in English
 
 ### Common Patterns
