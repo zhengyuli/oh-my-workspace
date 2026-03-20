@@ -1,5 +1,5 @@
 # uv.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # UV Package Manager Global Configuration
 #
@@ -20,7 +20,6 @@
 # -----------------------------------------------------------------------------
 # Package Index
 # -----------------------------------------------------------------------------
-
 [[index]]
 name = "pypi"
 url = "https://pypi.org/simple/"
@@ -30,7 +29,6 @@ default = true
 # -----------------------------------------------------------------------------
 # Networking
 # -----------------------------------------------------------------------------
-
 # Use system trust store (Keychain) instead of bundled webpki-roots.
 # Required for: corporate proxies, self-signed CAs, non-Mozilla certificates.
 native-tls = true
@@ -38,7 +36,6 @@ native-tls = true
 # -----------------------------------------------------------------------------
 # Optional Settings (uncomment to enable)
 # -----------------------------------------------------------------------------
-
 # These are common settings users might want. Uncomment as needed.
 
 # Installation strategy options:
@@ -61,7 +58,6 @@ native-tls = true
 # -----------------------------------------------------------------------------
 # CI/CD Integration
 # -----------------------------------------------------------------------------
-
 # For CI environments, set via environment variables:
 #   UV_FROZEN=true          - Fail if lockfile is outdated
 #   UV_NO_PROGRESS=true     - Disable progress bars in logs

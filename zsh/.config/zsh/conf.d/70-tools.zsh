@@ -1,5 +1,5 @@
 # 70-tools.zsh
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Tool Shell Integrations
 #
@@ -34,7 +34,6 @@
 # Prerequisites: brew install oven-sh/bun/bun
 # Config: $BUN_INSTALL (set in 00-env.zsh)
 # Usage: bun install, bun run dev
-# -----------------------------------------------------------------------------
 if [[ -f "$BUN_INSTALL/_bun" ]]; then
   source "$BUN_INSTALL/_bun"
 fi
@@ -48,7 +47,6 @@ fi
 # Prerequisites: brew install uv
 # Config: uv natively supports XDG directories (no UV_* overrides needed)
 # Usage: uv add requests, uv venv
-# -----------------------------------------------------------------------------
 if command -v uv &>/dev/null; then
   _uv_comp="$XDG_CACHE_HOME/zsh/uv-completion.zsh"
 
@@ -75,7 +73,6 @@ fi
 # Note: Must be sourced AFTER compinit (handled by 30-completion.zsh) and
 #       AFTER fzf-tab (handled by 40-plugins.zsh turbo wait). Loading here
 #       in 70-tools.zsh satisfies both constraints.
-# -----------------------------------------------------------------------------
 if command -v carapace &>/dev/null; then
   _carapace_comp="$XDG_CACHE_HOME/zsh/carapace-completion.zsh"
   if [[ ! -f "$_carapace_comp" ]] || \
@@ -105,7 +102,6 @@ fi
 # fzf-completion and require a fragile bind/rebind workaround.
 #
 # Note: HOMEBREW_PREFIX is defined in 00-env.zsh
-# -----------------------------------------------------------------------------
 if command -v fzf &>/dev/null; then
   _fzf_prefix="$HOMEBREW_PREFIX/opt/fzf"
 
@@ -125,7 +121,6 @@ fi
 # Prerequisites: brew install direnv
 # Usage: echo 'export API_KEY=xxx' > .envrc && direnv allow
 # Documentation: https://direnv.net/
-# -----------------------------------------------------------------------------
 if command -v direnv &>/dev/null; then
   eval "$(direnv hook zsh)"
 fi
@@ -138,7 +133,6 @@ fi
 # Prerequisites: brew install zoxide
 # Usage: z <dir> (jump to directory), zi (interactive selection)
 # Documentation: https://github.com/ajeetdsouza/zoxide
-# -----------------------------------------------------------------------------
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh --cmd z)"
   # zoxide generates zi() for interactive fzf directory selection.

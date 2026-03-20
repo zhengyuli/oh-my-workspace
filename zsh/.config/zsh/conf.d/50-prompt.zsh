@@ -23,18 +23,16 @@
 
 # -----------------------------------------------------------------------------
 # Option A: Starship (Default)
+# -----------------------------------------------------------------------------
 # Cross-shell prompt written in Rust.
 # Prerequisites: brew install starship
 # Config: $XDG_CONFIG_HOME/starship.toml
-# -----------------------------------------------------------------------------
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 
-  # ---------------------------------------------------------------------------
-  # Window Title
-  # Set terminal title to current directory for supported terminals.
-  # Use add-zsh-hook (NOT precmd() directly) to keep starship's hook.
-  # ---------------------------------------------------------------------------
+# --- Window Title ---
+# Set terminal title to current directory for supported terminals.
+# Use add-zsh-hook (NOT precmd() directly) to keep starship's hook.
   if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty) ]] || \
      [[ "$TERM" == alacritty* ]] || \
      [[ "$TERM" == kitty* ]]; then
@@ -43,12 +41,9 @@ if command -v starship &>/dev/null; then
     add-zsh-hook precmd _omw_set_window_title
   fi
 else
-  # ---------------------------------------------------------------------------
-  # Fallback: Native vcs_info Prompt
-  # ---------------------------------------------------------------------------
-  # Built-in Zsh prompt with git branch display. Used when no external
-  # prompt tools are installed. No configuration needed.
-  # ---------------------------------------------------------------------------
+# --- Fallback: Native vcs_info Prompt ---
+# Built-in Zsh prompt with git branch display. Used when no external
+# prompt tools are installed. No configuration needed.
   autoload -Uz vcs_info add-zsh-hook
   _omw_vcs_info_precmd() { vcs_info }
   add-zsh-hook precmd _omw_vcs_info_precmd
