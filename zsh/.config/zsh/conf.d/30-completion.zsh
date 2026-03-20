@@ -1,5 +1,5 @@
 # 30-completion.zsh
-# Time-stamp: <2026-03-20 16:30:42 Friday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Completion System
 #
@@ -38,7 +38,7 @@ autoload -Uz compinit
 _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 
 # Rebuild zcompdump if missing or older than 20 hours; use -C otherwise.
-# Uses zsh glob qualifiers - no subshells, no external commands, cross-platform:
+# Uses zsh glob qualifiers (no subshells, no external commands, portable):
 #   N  = nullglob (empty array instead of error when no match)
 #   .  = regular file (not a directory or symlink)
 #   mh-20 = modification time < 20 hours ago  (i.e., the dump is still fresh)
@@ -61,9 +61,9 @@ unset _zcompdump _zcompdump_fresh
 # creates confusion about which system is in control.
 
 # Matcher list: zsh tries each pattern in order until one matches
-#   1. m:{a-z}={A-Za-z}  - case-insensitive (fo → Foo, FO, foo)
-#   2. r:|[._-]=* r:|=*  - partial-word after separators (f_b → foo_bar)
-#   3. l:|=* r:|=*       - substring anywhere (bar → foo_bar, oob → foo_bar)
+#   1. m:{a-z}={A-Za-z} - case-insensitive (fo → Foo, FO, foo)
+#   2. r:|[._-]=* r:|=* - partial-word after separators (f_b → foo_bar)
+#   3. l:|=* r:|=* - substring anywhere (bar → foo_bar, oob → foo_bar)
 zstyle ':completion:*' matcher-list \
   'm:{a-z}={A-Za-z}' \
   'r:|[._-]=* r:|=*' \
@@ -88,7 +88,7 @@ zstyle ':completion:*' ignored-patterns \
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
 # kill completion
-# Regex: (#b) enables backreferences, captures PID ($word[1]) and cmd ($word[2])
+# Regex: (#b) backreferences; captures PID ($word[1]) and cmd ($word[2])
 #   =01;34=0=01 means: match=bold blue, first group=default, second group=bold
 zstyle ':completion:*:*:kill:*:processes' list-colors \
   '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'

@@ -1,5 +1,5 @@
 # 05-path.zsh
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # PATH / FPATH / MANPATH / INFOPATH Management
 #
@@ -22,7 +22,7 @@
 #             → Environment variables in 00-env.zsh
 #
 # PATH Priority (highest to lowest):
-#   1. User-local binaries (~/.local/bin) - explicit user choice, uv tool install
+#   1. User-local binaries (~/.local/bin) - explicit user choice; uv installs
 #   2. Development tool binaries - user-installed dev tools (cargo, go, bun)
 #   3. Package manager binaries - Homebrew, system packages
 #   4. System sbin - admin commands (lower priority)
@@ -82,7 +82,7 @@ fpath=(
   # Autoloaded custom functions
   "$ZDOTDIR/functions"(N-/)
 
-  # Homebrew completions (HOMEBREW_PREFIX from 00-env.zsh; Apple Silicon + Intel)
+  # Homebrew completions (HOMEBREW_PREFIX from 00-env.zsh; both architectures)
   "$HOMEBREW_PREFIX/share/zsh/site-functions"(N-/)
   "$HOMEBREW_PREFIX/share/zsh-completions"(N-/)
 
@@ -109,7 +109,7 @@ manpath=(
 # INFOPATH -- info page search path (GNU info system)
 # -----------------------------------------------------------------------------
 infopath=(
-  # Homebrew info pages (HOMEBREW_PREFIX from 00-env.zsh; Apple Silicon + Intel)
+  # Homebrew info pages (HOMEBREW_PREFIX from 00-env.zsh; both architectures)
   "$HOMEBREW_PREFIX/share/info"(N-/)
 
   # System info pages

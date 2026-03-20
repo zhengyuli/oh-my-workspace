@@ -1,5 +1,5 @@
 # 99-local.zsh.example
-# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Machine-Local Configuration Template
 #
@@ -48,16 +48,16 @@
 # -----------------------------------------------------------------------------
 # Corporate proxy (office network, VPN, etc.)
 # -----------------------------------------------------------------------------
-# set_proxy () {
-#     export HTTP_PROXY="http://company.com:8080"
-#     export HTTPS_PROXY="$HTTP_PROXY"
-#     export NO_PROXY="localhost,127.0.0.1,.company.com"
+# set_proxy() {
+#   export HTTP_PROXY="http://company.com:8080"
+#   export HTTPS_PROXY="$HTTP_PROXY"
+#   export NO_PROXY="localhost,127.0.0.1,.company.com"
 # }
 
-# unset_proxy () {
-#     unset HTTP_PROXY
-#     unset HTTPS_PROXY
-#     unset NO_PROXY
+# unset_proxy() {
+#   unset HTTP_PROXY
+#   unset HTTPS_PROXY
+#   unset NO_PROXY
 # }
 
 # set_proxy
