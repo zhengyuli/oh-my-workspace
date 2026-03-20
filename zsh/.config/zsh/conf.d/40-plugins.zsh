@@ -1,5 +1,5 @@
 # 40-plugins.zsh
-# Time-stamp: <2026-03-19 22:07:04 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-20 16:12:40 Friday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management
 #
@@ -7,7 +7,7 @@
 # Load order: 40 (after 30-completion.zsh, before 50-prompt.zsh)
 #
 # Responsibilities:
-#   1. Configure plugin behavior variables (autosuggestions, history-substring-search)
+#   1. Configure plugin behavior variables (autosuggestions, history-search)
 #   2. Bootstrap and configure Zinit plugin manager
 #   3. Load core plugins (syntax highlighting, autosuggestions, etc.)
 #   4. Load utility plugins (autopair)
@@ -54,29 +54,11 @@ ZINIT_INITIALIZED=1
 #
 # Execution timeline:
 #   During startup (sync):
-#     1. fzf-tab        - must own ^I before any turbo plugin can override it
+#     1. fzf-tab - must own ^I before any turbo plugin can override it
 #   After prompt (turbo, by wait suffix letter):
 #     2. zsh-completions  [0a] - register completions early for zicdreplay
 #     3. history-substring-search, autosuggestions, autopair  [0b]
 #     4. fast-syntax-highlighting  [0c, LAST] - wraps all ZLE widgets;
-#                                               must run after others register theirs
-#
-# Why fzf-tab is sync (no wait):
-#   fzf-tab binds ^I (Tab) to fzf-tab-complete. If loaded with turbo (wait),
-#   ^I would be unbound until after the first prompt, causing broken Tab on
-#   initial input. Sync load guarantees it owns ^I from the first prompt.
-#
-# Why FSH is last with wait"0c":
-#   FSH wraps all currently-registered ZLE widgets at load time. Loading it
-#   before autosuggestions or history-substring-search means those plugins'
-#   widgets are registered unwrapped. Using wait"0c" ensures FSH runs after
-#   all wait"0b" plugins have registered their widgets.
-#
-# Why zicompinit in FSH's atinit:
-#   zinit intercepts compdef calls during startup and records them. After all
-#   wait"0a/0b" plugins load (including zsh-completions which adds many compdef
-#   calls), FSH's atinit runs zicompinit -C (fast re-init using cache) and
-#   zicdreplay to replay the recorded compdef calls into the live system.
 # -----------------------------------------------------------------------------
 
 # --- Sync: fzf-tab (must be first and synchronous) ---
@@ -130,10 +112,10 @@ zinit light hlissner/zsh-autopair
 
 # --- Turbo 0c: fast-syntax-highlighting (MUST be last) ---
 # atinit runs before the plugin code:
-#   ZINIT[COMPINIT_OPTS]=-C  → use cached dump (fast, no security check)
-#   ZINIT[ZCOMPDUMP_PATH]    → set XDG-compliant zcompdump path (zicompinit ignores -d flag)
-#   zicompinit               → re-run compinit to pick up any new completions
-#   zicdreplay               → replay compdef calls captured from turbo plugins
+#   ZINIT[COMPINIT_OPTS]=-C → use cached dump (fast, no security check)
+#   ZINIT[ZCOMPDUMP_PATH] → set XDG-compliant zcompdump path
+#   zicompinit → re-run compinit to pick up any new completions
+#   zicdreplay → replay compdef calls captured from turbo plugins
 zinit ice wait"0c" lucid atinit"ZINIT[COMPINIT_OPTS]=-C; ZINIT[ZCOMPDUMP_PATH]=\"\${XDG_CACHE_HOME}/zsh/zcompdump\"; zicompinit; zicdreplay"
 zinit light zdharma-continuum/fast-syntax-highlighting
 
@@ -152,8 +134,8 @@ zstyle ':completion:*:git-checkout:*' sort false
 
 # --- fzf-tab Preview Configurations ---
 # NOTE: Variable quoting here is intentional:
-#   - Double quotes (command style): $USER expands at source time ✓
-#   - Single quotes (fzf-preview style): $word/$group expand at completion time by fzf-tab ✓
+#   - Double quotes (command style): $USER expands at source time
+#   - Single quotes (fzf-preview style): $word/$group expand at completion time
 # Do NOT add extra quoting - it would break fzf-tab's internal substitution.
 
 # Global preview window size - right panel, 55% width, line-wrap enabled
