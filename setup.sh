@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-19 23:59:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # oh-my-dotfiles Setup Script
 #
@@ -75,11 +75,11 @@ fi
 readonly _R='\033[0;31m' _G='\033[0;32m' _Y='\033[0;33m'
 readonly _B='\033[0;34m' _W='\033[1m' _0='\033[0m'
 
-die()      { printf "  ${_R}[error]${_0} %s\n" "$*" >&2; exit 1; }
-log_ok()   { printf "  ${_G}[ok]${_0}    %s\n" "$*"; }
-log_err()  { printf "  ${_R}[error]${_0} %s\n" "$*" >&2; }
-log_warn() { printf "  ${_Y}[warn]${_0}  %s\n" "$*"; }
-log_info() { printf "  ${_B}[info]${_0}  %s\n" "$*"; }
+die() { printf "  ${_R}[error]${_0} %s\n" "$*" >&2; exit 1; }
+log_ok() { printf "  ${_G}[ok]${_0} %s\n" "$*"; }
+log_err() { printf "  ${_R}[error]${_0} %s\n" "$*" >&2; }
+log_warn() { printf "  ${_Y}[warn]${_0} %s\n" "$*"; }
+log_info() { printf "  ${_B}[info]${_0} %s\n" "$*"; }
 
 print_header() {
     printf '\n%b' "${_W}"
@@ -153,7 +153,13 @@ stow_targets() {
 is_stowed() {
     local output
     output=$(stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$1" 2>&1) || true
-    ! grep -q "^LINK:" <<< "$output" && ! grep -q "conflicts\|cannot stow" <<< "$output"
+    if grep -q "^LINK:" <<< "$output"; then
+        return 1
+    fi
+    if grep -q "conflicts\|cannot stow" <<< "$output"; then
+        return 1
+    fi
+    return 0
 }
 
 # Count backup files for pkg under BACKUP_DIR/<pkg>/.
@@ -179,8 +185,8 @@ stowed_count() {
 }
 
 has_xcode_cli() { xcode-select -p &>/dev/null; }
-has_homebrew()  { command -v brew &>/dev/null; }
-has_stow()      { command -v stow &>/dev/null; }
+has_homebrew() { command -v brew &>/dev/null; }
+has_stow() { command -v stow &>/dev/null; }
 
 # Validate package names from "$@"; set _valid_pkgs to the valid subset.
 # Warns about unknown names. Returns 1 if no valid packages remain.
@@ -308,7 +314,11 @@ stow_package() {
     run mkdir -p "${HOME}/.config"
 
     if run stow -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
-        log_ok "${pkg}: stowed"
+        if [[ "$DRY_RUN" == true ]]; then
+            log_info "${pkg}: would be stowed"
+        else
+            log_ok "${pkg}: stowed"
+        fi
     else
         log_err "${pkg}: stow failed"
         return 1
@@ -317,8 +327,28 @@ stow_package() {
 
 restow_package() {
     local pkg="$1"
+
+    # Back up conflicts before restowing. stow -R removes existing links then
+    # re-stows; if new package files clash with real files in $HOME, stow fails
+    # AFTER removing old links, leaving the package partially stowed.
+    # stow_targets reports conflict lines for new clashing files even when the
+    # package is currently stowed, so we can resolve them proactively.
+    local target
+    while IFS= read -r target; do
+        if [[ -L "$target" ]]; then
+            log_warn "Foreign symlink: ${target} -> $(readlink "$target")"
+            backup_file "$target" "$pkg"
+        elif [[ -e "$target" ]]; then
+            backup_file "$target" "$pkg"
+        fi
+    done < <(stow_targets "$pkg")
+
     if run stow -R -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
-        log_ok "${pkg}: restowed"
+        if [[ "$DRY_RUN" == true ]]; then
+            log_info "${pkg}: would be restowed"
+        else
+            log_ok "${pkg}: restowed"
+        fi
     else
         log_err "${pkg}: restow failed"
         return 1
@@ -332,7 +362,11 @@ unstow_package() {
         return 0
     fi
     if run stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
-        log_ok "${pkg}: unstowed"
+        if [[ "$DRY_RUN" == true ]]; then
+            log_info "${pkg}: would be unstowed"
+        else
+            log_ok "${pkg}: unstowed"
+        fi
     else
         log_err "${pkg}: unstow failed"
         return 1
@@ -374,11 +408,13 @@ install_homebrew() {
             log_warn "Retry ${i}/${NETWORK_RETRIES}..."
             sleep 5
         fi
-        # curl | bash: with pipefail, exits non-zero if either side fails.
-        # && break exits the retry loop on success.
-        curl --fail --silent --show-error \
-             --connect-timeout "$NETWORK_TIMEOUT" \
-             "$url" | /bin/bash && break
+        # Wrap in if so set -e does not exit the script on pipeline failure;
+        # the if condition context is exempt from set -e termination.
+        if curl --fail --silent --show-error \
+                --connect-timeout "$NETWORK_TIMEOUT" \
+                "$url" | /bin/bash; then
+            break
+        fi
         if (( i == NETWORK_RETRIES )); then
             log_err "Homebrew installation failed after ${NETWORK_RETRIES} attempts"
             return 1
@@ -398,6 +434,20 @@ install_homebrew() {
     log_ok "Homebrew: installed"
 }
 
+install_stow() {
+    if has_stow; then
+        log_ok "GNU Stow: already installed"
+        return 0
+    fi
+    log_info "Installing GNU Stow..."
+    if run brew install stow; then
+        log_ok "GNU Stow: installed"
+    else
+        log_err "GNU Stow installation failed"
+        return 1
+    fi
+}
+
 run_brew_bundle() {
     [[ -f "$BREWFILE" ]] || die "Brewfile not found: $BREWFILE"
     log_info "Running brew bundle..."
@@ -412,37 +462,42 @@ run_brew_bundle() {
 
 # mode=install  install anything missing
 # mode=check    report missing and return 1
+#
+# Each step short-circuits: a failure at one layer stops subsequent steps
+# (e.g. homebrew cannot be installed without Xcode CLI).
+# install_stow uses "brew install stow" directly so that run_brew_bundle is
+# never called here - it runs exactly once in cmd_install --all / cmd_update
+# --all, avoiding the double-bundle problem when stow was absent.
 ensure_prerequisites() {
-    local mode="${1:-check}" ok=true
+    local mode="${1:-check}"
 
     if ! has_xcode_cli; then
         if [[ "$mode" == install ]]; then
-            install_xcode_cli || ok=false
+            install_xcode_cli || return 1
         else
             log_err "Xcode CLI missing - run: ./setup.sh install --all"
-            ok=false
-        fi
-    fi
-    if ! has_homebrew; then
-        if [[ "$mode" == install ]]; then
-            install_homebrew || ok=false
-        else
-            log_err "Homebrew missing - run: ./setup.sh install --all"
-            ok=false
-        fi
-    fi
-    if ! has_stow; then
-        if [[ "$mode" == install ]]; then
-            run_brew_bundle || ok=false
-        else
-            log_err "GNU Stow missing - run: ./setup.sh install --all"
-            ok=false
+            return 1
         fi
     fi
 
-    if [[ "$ok" == false ]]; then
-        return 1
+    if ! has_homebrew; then
+        if [[ "$mode" == install ]]; then
+            install_homebrew || return 1
+        else
+            log_err "Homebrew missing - run: ./setup.sh install --all"
+            return 1
+        fi
     fi
+
+    if ! has_stow; then
+        if [[ "$mode" == install ]]; then
+            install_stow || return 1
+        else
+            log_err "GNU Stow missing - run: ./setup.sh install --all"
+            return 1
+        fi
+    fi
+
     has_stow || die "GNU Stow unavailable after installation"
 }
 
@@ -546,10 +601,10 @@ cmd_install() {
 
     for arg in "$@"; do
         case "$arg" in
-            --all)     do_all=true ;;
+            --all) do_all=true ;;
             --dry-run) DRY_RUN=true ;;
-            -*)        die "Unknown flag: $arg" ;;
-            *)         pkgs+=("$arg") ;;
+            -*) die "Unknown flag: $arg" ;;
+            *) pkgs+=("$arg") ;;
         esac
     done
 
@@ -579,10 +634,10 @@ cmd_uninstall() {
 
     for arg in "$@"; do
         case "$arg" in
-            --all)     do_all=true ;;
+            --all) do_all=true ;;
             --dry-run) DRY_RUN=true ;;
-            -*)        die "Unknown flag: $arg" ;;
-            *)         pkgs+=("$arg") ;;
+            -*) die "Unknown flag: $arg" ;;
+            *) pkgs+=("$arg") ;;
         esac
     done
 
@@ -617,11 +672,11 @@ cmd_update() {
 
     for arg in "$@"; do
         case "$arg" in
-            --all)     do_all=true ;;
-            --pkgs)    do_pkgs=true ;;
+            --all) do_all=true ;;
+            --pkgs) do_pkgs=true ;;
             --dry-run) DRY_RUN=true ;;
-            -*)        die "Unknown flag: $arg" ;;
-            *)         pkgs+=("$arg") ;;
+            -*) die "Unknown flag: $arg" ;;
+            *) pkgs+=("$arg") ;;
         esac
     done
 
@@ -807,12 +862,12 @@ main() {
     fi
     local cmd="$1"; shift
     case "$cmd" in
-        install)        cmd_install   "$@" ;;
-        uninstall)      cmd_uninstall "$@" ;;
-        update)         cmd_update    "$@" ;;
-        restore)        cmd_restore   "$@" ;;
-        status)         cmd_status    "$@" ;;
-        defaults)       cmd_defaults ;;
+        install) cmd_install "$@" ;;
+        uninstall) cmd_uninstall "$@" ;;
+        update) cmd_update "$@" ;;
+        restore) cmd_restore "$@" ;;
+        status) cmd_status "$@" ;;
+        defaults) cmd_defaults ;;
         help|-h|--help) show_help ;;
         *) log_err "Unknown command: ${cmd}"; printf '\n'; show_help; exit 1 ;;
     esac
