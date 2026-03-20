@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 12:15:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-20 14:00:00 Friday by zhengyu.li>
 # =============================================================================
 # oh-my-dotfiles Setup Script
 #
@@ -99,7 +99,7 @@ stow_targets() {
     stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg" 2>&1 \
         | while IFS= read -r line; do
             if [[ "$line" =~ $link_pat || "$line" =~ $conflict_pat ]]; then
-                echo "${HOME}/${BASH_REMATCH[1]}"
+                printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
             fi
         done
 }
@@ -124,7 +124,7 @@ is_stowed() {
 backup_count() {
     local dir="${BACKUP_DIR}/${1}"
     if [[ ! -d "$dir" ]]; then
-        echo 0
+        printf '0\n'
         return
     fi
     find "$dir" -maxdepth 1 -name '*.bak.*' | wc -l | tr -d ' '
@@ -139,7 +139,7 @@ stowed_count() {
             (( ++n ))
         fi
     done
-    echo "$n"
+    printf '%s\n' "$n"
 }
 
 has_xcode_cli() { xcode-select -p &>/dev/null; }
