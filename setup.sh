@@ -96,25 +96,27 @@ stow_targets() {
     [[ -d "${DOTFILES_DIR}/${pkg}" ]] || return 1
     local link_pat='^LINK: ([^[:space:]]+)'
     local conflict_pat='existing target [^:]+: (.+)$'
-    stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg" 2>&1 \
-        | while IFS= read -r line; do
-            if [[ "$line" =~ $link_pat || "$line" =~ $conflict_pat ]]; then
-                printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
-            fi
-        done
+    local output line
+    # Capture output (including when stow exits non-zero for conflicts) so the
+    # while loop runs in the current shell rather than a subshell, consistent
+    # with the is_stowed() pattern.
+    output=$(stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg" 2>&1) || true
+    while IFS= read -r line; do
+        if [[ "$line" =~ $link_pat || "$line" =~ $conflict_pat ]]; then
+            printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
+        fi
+    done <<< "$output"
 }
 
 # Returns 0 when stow reports nothing to do for pkg - meaning every symlink
 # stow would create already exists and points to the right place.
-# Must also check for conflicts - stow outputs no LINK lines in both cases.
+# Returns 1 when stow is absent, LINK lines exist, or conflicts are reported.
 # || true prevents set -e from aborting on stow non-zero exit (e.g. conflicts).
 is_stowed() {
+    has_stow || return 1
     local output
     output=$(stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$1" 2>&1) || true
-    if grep -q "^LINK:" <<< "$output"; then
-        return 1
-    fi
-    if grep -q "conflicts\|cannot stow" <<< "$output"; then
+    if grep -qE "^LINK:|conflicts|cannot stow" <<< "$output"; then
         return 1
     fi
     return 0
@@ -128,18 +130,6 @@ backup_count() {
         return
     fi
     find "$dir" -maxdepth 1 -name '*.bak.*' | wc -l | tr -d ' '
-}
-
-stowed_count() {
-    local n=0 p
-    for p in "${PKG_ALL[@]}"; do
-        if is_stowed "$p"; then
-            # Use prefix increment: (( ++n )) always evaluates non-zero,
-            # avoiding the set -e trap that (( n++ )) hits when n is 0.
-            (( ++n ))
-        fi
-    done
-    printf '%s\n' "$n"
 }
 
 has_xcode_cli() { xcode-select -p &>/dev/null; }
@@ -489,7 +479,7 @@ do_restore_pkg() {
 
     if is_stowed "$pkg"; then
         log_info "${pkg}: unstowing before restore..."
-        stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"
+        stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg" || return 1
     fi
 
     # After unstow, stow -n -v shows what would be linked - i.e. the original
@@ -611,6 +601,7 @@ cmd_uninstall() {
         return 1
     fi
     validate_pkgs "${pkgs[@]}" || return 1
+    ensure_prerequisites check || return 1
     do_uninstall_pkgs "${_valid_pkgs[@]}"
 }
 
@@ -678,6 +669,7 @@ cmd_restore() {
         log_info "Usage: ./setup.sh restore <pkg>..."
         return 1
     fi
+    ensure_prerequisites check || return 1
     local p
     for p in "$@"; do
         if is_valid_pkg "$p"; then
@@ -718,17 +710,26 @@ cmd_status() {
         printf "  ${_R}--${_0}  GNU Stow\n"
     fi
 
-    local stowed total
-    stowed=$(stowed_count)
-    total=${#PKG_ALL[@]}
+    # Single pass over all packages to determine stow status, so each package
+    # runs stow -n -v exactly once (avoids a second pass in the display loop).
+    local -A _pkg_stowed=()
+    local pkg stowed=0
+    for pkg in "${PKG_ALL[@]}"; do
+        if is_stowed "$pkg"; then
+            _pkg_stowed[$pkg]=1
+            (( ++stowed ))
+        else
+            _pkg_stowed[$pkg]=0
+        fi
+    done
+    local total=${#PKG_ALL[@]}
     printf '\n  Packages  (%d / %d stowed)\n\n' "$stowed" "$total"
     printf '  %-12s  %s  %s\n' "package" "stow" "backups"
     printf '  %-12s  %s  %s\n' "-------" "----" "-------"
 
-    local pkg
     for pkg in "${pkgs[@]}"; do
         printf '  %-12s  ' "$pkg"
-        if is_stowed "$pkg"; then
+        if (( _pkg_stowed[$pkg] )); then
             printf "${_G}ok${_0}"
         else
             printf "${_Y}--${_0}"
