@@ -29,6 +29,11 @@ font-size = 15
 font-thicken = true
 font-shaping-break = cursor
 
+# Enable common OpenType features: contextual alternates, ligatures, stylistic set 13
+font-feature = calt
+font-feature = liga
+font-feature = ss13
+
 # -----------------------------------------------------------------------------
 # Cursor
 # -----------------------------------------------------------------------------
@@ -44,9 +49,13 @@ title = " "
 window-padding-x = 8
 window-padding-y = 8
 window-padding-balance = true
+window-vsync = true
 
 background-opacity = 0.98
+background-blur = true
 background-blur-radius = 20
+
+bold-is-bright = true
 
 alpha-blending = linear-corrected
 minimum-contrast = 1.1
@@ -74,6 +83,7 @@ selection-clear-on-typing = true
 # URL Handling
 # -----------------------------------------------------------------------------
 link-url = true
+link-previews = true
 
 # -----------------------------------------------------------------------------
 # Clipboard
