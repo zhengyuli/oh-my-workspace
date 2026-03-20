@@ -1,5 +1,5 @@
 # .zprofile
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Login Shell Initialization
 #
@@ -20,7 +20,7 @@
 # These modules are safe for non-interactive contexts and should be available
 # to all login shells (including scripts run via 'ssh host command').
 
-# Environment variables (EDITOR, PAGER, tool XDG paths, Homebrew settings, etc.)
+# Environment variables (EDITOR, PAGER, XDG paths, Homebrew settings, etc.)
 source "$ZDOTDIR/conf.d/00-env.zsh"
 
 # PATH / FPATH / manpath management
@@ -47,7 +47,7 @@ if [[ "$OSTYPE" == darwin* ]] && [[ -d ~/.ssh ]]; then
     eval "$(ssh-agent -s)"
   fi
 
-  # Add keys from Keychain (silently skip if key doesn't exist or already added)
+  # Add keys from Keychain (silently skip missing or already-added keys)
   for key in ~/.ssh/id_*(N); do
     case "$key" in
       *.pub) continue ;;

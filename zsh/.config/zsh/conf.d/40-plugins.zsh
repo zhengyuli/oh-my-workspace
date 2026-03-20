@@ -1,5 +1,5 @@
 # 40-plugins.zsh
-# Time-stamp: <2026-03-20 16:32:42 Friday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management
 #
@@ -84,8 +84,8 @@ zinit light zsh-users/zsh-completions
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 
-# HISTORY_SUBSTRING_SEARCH_FUZZY=1
 # disabled: perf cost on large histories
+# HISTORY_SUBSTRING_SEARCH_FUZZY=1
 # Keybindings via atload: widgets must exist before bindkey can reference them
 zinit ice wait"0b" lucid atload'
   bindkey "^[[A" history-substring-search-up
@@ -143,7 +143,7 @@ zstyle ':completion:*:git-checkout:*' sort false
 # --- fzf-tab Preview Configurations ---
 # NOTE: Variable quoting here is intentional:
 #         - Double quotes (command style): $USER expands at source time
-#         - Single quotes (fzf-preview style): $word/$group expand at completion time
+#         - Single quotes (preview): $word/$group expand at completion time
 # Do NOT add extra quoting - it would break fzf-tab's internal substitution.
 
 # Global preview window size - right panel, 55% width, line-wrap enabled
