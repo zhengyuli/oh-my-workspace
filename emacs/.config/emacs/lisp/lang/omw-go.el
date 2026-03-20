@@ -3,7 +3,7 @@
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: go, golang
-;; Dependencies: omw-prog
+;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
 
