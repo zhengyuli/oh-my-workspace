@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-17 15:43:52 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # macOS System Defaults - developer-optimized
 #
@@ -29,7 +29,6 @@ osascript -e 'tell application "System Settings" to quit' 2>/dev/null
 # -----------------------------------------------------------------------------
 # General UI/UX
 # -----------------------------------------------------------------------------
-
 echo "Setting General UI/UX preferences..."
 
 # Set standby delay to 24 hours (AC power only - battery power left at system
@@ -72,7 +71,6 @@ defaults write com.apple.CrashReporter DialogType -string "none"
 # -----------------------------------------------------------------------------
 # Keyboard
 # -----------------------------------------------------------------------------
-
 echo "Setting Keyboard preferences..."
 
 # Enable full keyboard access for all controls
@@ -88,7 +86,6 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 # -----------------------------------------------------------------------------
 # Trackpad & Mouse
 # -----------------------------------------------------------------------------
-
 echo "Setting Trackpad/Mouse preferences..."
 
 # Enable tap to click
@@ -107,7 +104,6 @@ defaults write NSGlobalDomain com.apple.springing.delay -float 0
 # -----------------------------------------------------------------------------
 # Screen
 # -----------------------------------------------------------------------------
-
 echo "Setting Screen preferences..."
 
 # Require password immediately after sleep or screen saver begins
@@ -122,7 +118,6 @@ defaults write com.apple.screencapture disable-shadow -bool true
 # -----------------------------------------------------------------------------
 # Finder
 # -----------------------------------------------------------------------------
-
 echo "Setting Finder preferences..."
 
 # Set $HOME as default for new Finder windows (more useful than Desktop)
@@ -177,7 +172,6 @@ defaults write NSGlobalDomain QLPanelAnimationDuration -float 0
 # -----------------------------------------------------------------------------
 # Dock
 # -----------------------------------------------------------------------------
-
 echo "Setting Dock preferences..."
 
 # Minimize windows into their application's icon
@@ -203,7 +197,6 @@ defaults write com.apple.dock show-recents -bool false
 # -----------------------------------------------------------------------------
 # Terminal
 # -----------------------------------------------------------------------------
-
 echo "Setting Terminal preferences..."
 
 # Only use UTF-8
@@ -219,7 +212,6 @@ defaults write com.apple.Terminal ShowLineMarks -int 0
 # -----------------------------------------------------------------------------
 # Time Machine
 # -----------------------------------------------------------------------------
-
 echo "Setting Time Machine preferences..."
 
 # Don't prompt to use new disks as backup volumes
@@ -228,7 +220,6 @@ defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 # -----------------------------------------------------------------------------
 # TextEdit
 # -----------------------------------------------------------------------------
-
 echo "Setting TextEdit preferences..."
 
 # Plain text mode + UTF-8 by default
@@ -239,7 +230,6 @@ defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 # -----------------------------------------------------------------------------
 # Mac App Store
 # -----------------------------------------------------------------------------
-
 echo "Setting Mac App Store preferences..."
 
 # Check for updates daily
@@ -254,7 +244,6 @@ defaults write com.apple.commerce AutoUpdate -bool false
 # -----------------------------------------------------------------------------
 # Photos
 # -----------------------------------------------------------------------------
-
 echo "Setting Photos preferences..."
 
 # Prevent Photos from opening automatically when devices are plugged in
@@ -263,7 +252,6 @@ defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 # -----------------------------------------------------------------------------
 # Messages
 # -----------------------------------------------------------------------------
-
 echo "Setting Messages preferences..."
 
 # Disable smart quotes and continuous spell checking
@@ -274,7 +262,6 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 # -----------------------------------------------------------------------------
 # Kill affected applications
 # -----------------------------------------------------------------------------
-
 echo "Restarting affected applications..."
 
 for app in \
