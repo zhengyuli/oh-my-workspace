@@ -41,7 +41,7 @@
 
 ;; ============================================================================
 ;; XDG Base Directory Configuration
-;; Must be set before package system initializes (Emacs 27+ auto-initializes packages)
+;; Must be set before package system initializes (Emacs 27+ auto-initializes)
 
 ;; Define XDG directories as global variables for use in init.el
 (defvar omw/xdg-data-home (or (getenv "XDG_DATA_HOME")

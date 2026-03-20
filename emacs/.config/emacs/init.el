@@ -100,7 +100,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   :ensure nil
   :demand t
   :config
-  ;; Basic check
+  ;; Version check - Emacs 30.2+ required for modern features
   (unless (version<= "30.2" emacs-version)
     (error "The Emacs version must be >= 30.2 (current: %s)" emacs-version))
 
