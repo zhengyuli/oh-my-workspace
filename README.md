@@ -39,11 +39,11 @@ oh-my-dotfiles/
 git clone https://github.com/zhengyuli/oh-my-dotfiles.git ~/oh-my-dotfiles
 cd ~/oh-my-dotfiles
 
-# Run interactive setup
-./setup.sh --install
+# Run full installation (prerequisites + brew bundle + all packages)
+./setup.sh install --all
 
-# Or install specific packages
-./setup.sh --install zsh git vim emacs
+# Or install specific packages (prerequisites must be present)
+./setup.sh install zsh git vim emacs
 
 # Apply changes
 source ~/.zshenv
@@ -58,40 +58,62 @@ The setup script will:
 ### Update
 
 ```bash
-./setup.sh --update
-```
+# Update everything (prerequisites + brew bundle + restow stowed packages)
+./setup.sh update --all
 
-This pulls the latest changes and restows all currently installed packages.
+# Or restow only currently stowed packages (skip prerequisites/brew)
+./setup.sh update --pkgs
+```
 
 ### Uninstall
 
 ```bash
-# Uninstall specific packages
-./setup.sh --uninstall vim emacs
+# Uninstall all stowed packages (prompts for confirmation)
+./setup.sh uninstall --all
 
-# View status before uninstalling
-./setup.sh --status
+# Or uninstall specific packages
+./setup.sh uninstall vim emacs
 ```
 
-### Interactive Mode
+### Status
 
 ```bash
-./setup.sh --interactive
+# View installation status for all packages
+./setup.sh status
+
+# Or check specific packages
+./setup.sh status zsh git
 ```
 
-Provides a menu-driven interface for all operations.
+### Restore
+
+```bash
+# Restore backed-up files for a package (unstows first if needed)
+./setup.sh restore vim
+```
+
+### macOS Defaults
+
+```bash
+# Apply macOS system preferences (prompts for confirmation)
+./setup.sh defaults
+```
 
 ### All Commands
 
 | Command | Description |
 |---------|-------------|
-| `./setup.sh --install [PKG...]` | Install packages (default: all) |
-| `./setup.sh --uninstall PKG...` | Uninstall specified packages |
-| `./setup.sh --update` | Update repository and restow |
-| `./setup.sh --status` | Show installation status |
-| `./setup.sh --defaults` | Apply macOS system defaults |
-| `./setup.sh --interactive` | Enter interactive menu mode |
-| `./setup.sh --help` | Show help message |
+| `./setup.sh install --all` | Full install: prerequisites + brew + all packages |
+| `./setup.sh install <pkg>...` | Install specific packages |
+| `./setup.sh uninstall --all` | Uninstall all stowed packages |
+| `./setup.sh uninstall <pkg>...` | Uninstall specific packages |
+| `./setup.sh update --all` | Update prerequisites + brew + restow all |
+| `./setup.sh update --pkgs` | Restow stowed packages only |
+| `./setup.sh update <pkg>...` | Restow specific packages |
+| `./setup.sh restore <pkg>...` | Restore backups for packages |
+| `./setup.sh status [<pkg>...]` | Show installation status |
+| `./setup.sh defaults` | Apply macOS system defaults |
+| `./setup.sh help` | Show help message |
 
 ## Stow Package Management
 
