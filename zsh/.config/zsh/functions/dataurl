@@ -1,5 +1,5 @@
 # dataurl
-# Time-stamp: <2026-03-19 22:30:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-19 23:59:00 Thursday by zhengyu.li>
 # =============================================================================
 # Create a data URL from a file
 #
@@ -13,6 +13,14 @@
 #   dataurl styles.css
 # =============================================================================
 dataurl() {
+  if [[ -z "$1" ]]; then
+    print "ERROR: No file specified."
+    return 1
+  fi
+  if [[ ! -f "$1" ]]; then
+    print "ERROR: File not found: $1"
+    return 1
+  fi
   local mimeType
   mimeType=$(file -b --mime-type "$1")
   if [[ "${mimeType}" == text/* ]]; then
