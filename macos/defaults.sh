@@ -96,7 +96,7 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-# Right-click via two-finger tap (corner mapping removed - prone to accidental triggers)
+# Right-click via two-finger tap (corner mapping removed - avoids accidents)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
 
@@ -125,7 +125,7 @@ defaults write com.apple.screencapture disable-shadow -bool true
 
 echo "Setting Finder preferences..."
 
-# Set $HOME as default location for new Finder windows (more useful than Desktop)
+# Set $HOME as default for new Finder windows (more useful than Desktop)
 defaults write com.apple.finder NewWindowTarget -string "PfHm"
 defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 

@@ -16,7 +16,7 @@
 # User (override in ~/.config/git/config.local)
 # -----------------------------------------------------------------------------
 # User identity is intentionally NOT set here to allow machine-specific config.
-# Store machine-specific settings (name, email, proxy, etc.) in ~/.config/git/config.local
+# Store machine-specific settings in ~/.config/git/config.local
 
 # [user]
 #     name = Your Name
