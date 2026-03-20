@@ -479,7 +479,10 @@ do_restore_pkg() {
 
     if is_stowed "$pkg"; then
         log_info "${pkg}: unstowing before restore..."
-        stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg" || return 1
+        if ! stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+            log_err "${pkg}: unstow failed"
+            return 1
+        fi
     fi
 
     # After unstow, stow -n -v shows what would be linked - i.e. the original
@@ -601,7 +604,7 @@ cmd_uninstall() {
         return 1
     fi
     validate_pkgs "${pkgs[@]}" || return 1
-    ensure_prerequisites check || return 1
+    ensure_prerequisites check
     do_uninstall_pkgs "${_valid_pkgs[@]}"
 }
 
@@ -669,7 +672,7 @@ cmd_restore() {
         log_info "Usage: ./setup.sh restore <pkg>..."
         return 1
     fi
-    ensure_prerequisites check || return 1
+    ensure_prerequisites check
     local p
     for p in "$@"; do
         if is_valid_pkg "$p"; then
