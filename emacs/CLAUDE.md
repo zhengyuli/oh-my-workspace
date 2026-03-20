@@ -130,8 +130,9 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 1. **Early boot** (before package init): omw-proxy
 2. **Editor**: omw-font → omw-appearance → omw-edit → omw-search → omw-template → omw-completion → omw-explorer
 3. **Tools**: omw-pass → omw-git → omw-term → omw-pdf → omw-ai
-4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-typescript → omw-elisp → omw-shell → omw-cmake → omw-yaml → omw-dockerfile → omw-vimrc → omw-gitconfig
-5. **Text**: omw-markdown
+4. **Languages**: omw-prog → omw-cc → omw-go → omw-python → omw-typescript → omw-elisp → omw-shell
+5. **Config/build languages**: omw-cmake → omw-yaml → omw-dockerfile → omw-vimrc → omw-gitconfig
+6. **Text**: omw-markdown
 
 **When adding new modules**:
 - Add `(provide 'omw-xxx)` at end of file (where xxx is the module name)
@@ -173,6 +174,42 @@ emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message 
 - Simple `:ensure t :defer t` preferred for most cases
 - Use setup functions only for language-specific buffer-local settings
 - Keep language-related code together for module cohesion
+
+### Tool Installation Convention
+
+Development tools are installed via two mechanisms. The rule is based on which
+package manager owns the tool.
+
+**Brewfile** (`homebrew/Brewfile`) installs:
+- Language runtimes: `go`, `rust` (rustup), `bun`, `uv`
+- System-level tools with no language-ecosystem alternative: `llvm` (→
+  clangd), `aspell`, `pandoc`
+- Fonts: `font-sauce-code-pro-nerd-font`
+- Emacs itself: `emacs-app` (cask)
+
+**Emacs `omw/install-<lang>-tools`** (in each lang module) installs:
+- Ecosystem-managed LSP servers: `gopls`, `gofumpt` (go), `basedpyright`,
+  `ruff` (uv), `typescript-language-server` (bun), `bash-language-server`
+  (bun), `yaml-language-server` (bun), `cmake-language-server` (uv),
+  `docker-langserver` (bun)
+- Rustup components: `rust-analyzer`, `rustfmt`
+
+**Decision tree:**
+```
+Does the tool need to exist BEFORE Emacs loads?
+  YES → Brewfile
+
+Does Homebrew own/provide it (no language ecosystem alternative)?
+  YES → Brewfile
+
+Is it managed by a language ecosystem PM (go/uv/bun/rustup)?
+  YES → Emacs omw/install-<lang>-tools in the appropriate lang module
+```
+
+**C/C++ special case:** `clangd` is provided by Homebrew `llvm` (Brewfile).
+The `omw/cc-tool-specs` exists only for the diagnostic check in
+`omw/cc-mode-setup`; there is intentionally no `omw/install-cc-tools`
+function. Run `brew install llvm` if clangd is missing.
 
 ## Coding Standards
 
@@ -854,7 +891,7 @@ M-x package-refresh-contents  ; Refresh package list
 - **Symlink-based**: Config files are symlinked, not copied
 - **Emacs minimum version**: 30.2 (hard check in init.el)
 - **Prefix correction**: Code uses `omw/` prefix, not `my/`
-- **Quality assurance**: Codebase maintains 98%+ compliance with documented standards through regular audits
+- **Quality assurance**: Codebase maintains 100% compliance with documented standards through regular audits
 
 ## Best Practices
 
