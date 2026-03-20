@@ -1,5 +1,5 @@
 ;;; omw-shell.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-20 10:38:18 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: shell, bash, sh
@@ -43,13 +43,11 @@
 (defun omw/install-bash-tools ()
   "Install shell script LSP tools (bash-language-server) via bun if not present."
   (interactive)
-  (require 'omw-utils)
   (apply #'omw/tools-install omw/sh-tool-specs))
 
 ;; ============================================================================
 (defun omw/sh-mode-setup ()
   "Apply custom settings for shell script mode."
-  (require 'omw-utils)
   (setq-local sh-basic-offset 2)
   (apply #'omw/tools-check-and-prompt omw/sh-tool-specs))
 

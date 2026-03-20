@@ -1,8 +1,8 @@
-;;; omw-yaml.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;;; omw-dockerfile.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-20 10:19:40 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
-;; Keywords: yaml
+;; Keywords: dockerfile, docker
 ;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
@@ -31,36 +31,34 @@
 
 ;;; Commentary:
 ;;
-;; YAML mode configuration with LSP support.
-;; LSP server (yaml-language-server) is configured in omw-prog.el.
+;; Dockerfile mode configuration with LSP support.
+;; LSP server (docker-langserver) is configured in omw-prog.el.
 
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/yaml-tool-specs
-  '(("yaml-language-server" "bun install -g yaml-language-server" "bun"))
-  "Tool specs for YAML development.")
+(defvar omw/dockerfile-tool-specs
+  '(("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun"))
+  "Tool specs for Dockerfile development.")
 
-(defun omw/install-yaml-tools ()
-  "Install YAML LSP tools (yaml-language-server) via bun if not present."
+(defun omw/install-dockerfile-tools ()
+  "Install Dockerfile LSP tools (docker-langserver) via bun if not present."
   (interactive)
-  (require 'omw-utils)
-  (apply #'omw/tools-install omw/yaml-tool-specs))
+  (apply #'omw/tools-install omw/dockerfile-tool-specs))
 
 ;; ============================================================================
-(defun omw/yaml-mode-setup ()
-  "Apply custom settings for yaml mode."
-  (require 'omw-utils)
-  (setq-local yaml-indent-offset 2)
-  (apply #'omw/tools-check-and-prompt omw/yaml-tool-specs))
+(defun omw/dockerfile-mode-setup ()
+  "Apply custom settings for dockerfile mode."
+  (setq-local dockerfile-indent-offset 2)
+  (apply #'omw/tools-check-and-prompt omw/dockerfile-tool-specs))
 
-(use-package yaml-mode
+(use-package dockerfile-mode
   :ensure t
   :defer t
-  :hook (yaml-mode . omw/yaml-mode-setup))
+  :hook (dockerfile-mode . omw/dockerfile-mode-setup))
 
 ;; ============================================================================
 ;;; Provide features
-(provide 'omw-yaml)
+(provide 'omw-dockerfile)
 
-;;; omw-yaml.el ends here
+;;; omw-dockerfile.el ends here

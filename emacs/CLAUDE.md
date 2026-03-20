@@ -18,9 +18,7 @@ emacs/.config/emacs/
 ├── lisp/
 │   ├── editor/          # Editor behavior (appearance, completion, edit, etc.)
 │   ├── lib/             # Utility library (proxy, shared utils)
-│   ├── lang/            # Programming languages
-│   │   ├── *.el         # Language-specific configs (cc, python, go, etc.)
-│   │   └── config/      # Config/build languages (cmake, dockerfile, yaml, vimrc, gitconfig)
+│   ├── lang/            # Language-specific configs (cc, python, go, cmake, yaml, etc.)
 │   ├── text/            # Text/document modes (markdown)
 │   └── tool/            # Tool integrations (git, ai, pdf, term)
 ├── site-packages/       # Custom Emacs packages (auto-added to load-path)

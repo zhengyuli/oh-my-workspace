@@ -1,5 +1,5 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-20 12:00:00 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-20 10:32:09 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: python, uv, ruff, pet
@@ -81,33 +81,12 @@
 ;; ============================================================================
 (defun omw/pet-setup ()
   "Setup pet for current Python buffer."
-  (require 'pet)
   (when-let ((venv (pet-virtualenv-root)))
     (setq-local omw/pet-virtualenv-root venv)
     (omw/update-pet-mode-line-indicator)
     (setq-local python-shell-interpreter (pet-executable-find "python")
                 python-shell-interpreter-args "-i")
     (pet-eglot-setup)))
-
-;; ============================================================================
-(defvar omw/python-tool-specs
-  '(("basedpyright" "uv tool install basedpyright" "uv")
-    ("ruff" "uv tool install ruff" "uv"))
-  "Tool specs for Python development.")
-
-(defun omw/install-python-tools ()
-  "Install Python development tools (basedpyright, ruff) via uv if not present."
-  (interactive)
-  (require 'omw-utils)
-  (apply #'omw/tools-install omw/python-tool-specs))
-
-;; ============================================================================
-(defun omw/python-mode-setup ()
-  "Apply custom settings for Python mode."
-  (require 'omw-utils)
-  (apply #'omw/tools-check-and-prompt omw/python-tool-specs)
-  (omw/pet-setup)
-  (omw/python-before-save-mode 1))
 
 ;; ============================================================================
 (defun omw/python-format-buffer ()
@@ -142,6 +121,23 @@
     (remove-hook 'before-save-hook #'omw/python-before-save t)))
 
 ;; ============================================================================
+(defvar omw/python-tool-specs
+  '(("basedpyright" "uv tool install basedpyright" "uv")
+    ("ruff" "uv tool install ruff" "uv"))
+  "Tool specs for Python development.")
+
+(defun omw/install-python-tools ()
+  "Install Python development tools (basedpyright, ruff) via uv if not present."
+  (interactive)
+  (apply #'omw/tools-install omw/python-tool-specs))
+
+;; ============================================================================
+(defun omw/python-mode-setup ()
+  "Apply custom settings for Python mode."
+  (omw/pet-setup)
+  (omw/python-before-save-mode 1)
+  (apply #'omw/tools-check-and-prompt omw/python-tool-specs))
+
 (use-package python
   :ensure nil
   :defer t

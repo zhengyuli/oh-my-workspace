@@ -1,5 +1,5 @@
 ;;; omw-cc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-20 10:25:23 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: c, cpp
@@ -37,6 +37,13 @@
 ;;; Code:
 
 ;; ============================================================================
+(use-package google-c-style
+  :ensure t
+  :defer t
+  :hook ((c-mode . google-set-c-style)
+         (c++-mode . google-set-c-style)))
+
+;; ============================================================================
 (defvar omw/cc-tool-specs
   '(("clangd" "brew install llvm" "brew"))
   "Tool specs for C/C++ development.
@@ -46,7 +53,6 @@ Run `brew install llvm' if clangd is missing.")
 ;; ============================================================================
 (defun omw/cc-mode-setup ()
   "Check required C/C++ development tools and prompt to install if missing."
-  (require 'omw-utils)
   (apply #'omw/tools-check-and-prompt omw/cc-tool-specs))
 
 (use-package cc-mode
@@ -54,13 +60,6 @@ Run `brew install llvm' if clangd is missing.")
   :defer t
   :hook ((c-mode . omw/cc-mode-setup)
          (c++-mode . omw/cc-mode-setup)))
-
-;; ============================================================================
-(use-package google-c-style
-  :ensure t
-  :defer t
-  :hook ((c-mode . google-set-c-style)
-         (c++-mode . google-set-c-style)))
 
 ;; ============================================================================
 ;;; Provide features

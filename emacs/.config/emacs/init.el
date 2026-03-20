@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-20 10:42:10 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -236,6 +236,9 @@ and global-auto-revert-mode."
 ;; ============================================================================
 ;; Load modules
 
+;; Core libraries
+(require 'omw-utils)
+
 ;; Editor modules
 (require 'omw-font)
 (require 'omw-appearance)
@@ -252,7 +255,7 @@ and global-auto-revert-mode."
 (require 'omw-pdf)
 (require 'omw-ai)
 
-;; Language modules
+;; Programming language modules
 (require 'omw-prog)
 (require 'omw-cc)
 (require 'omw-go)
@@ -269,7 +272,7 @@ and global-auto-revert-mode."
 (require 'omw-vimrc)
 (require 'omw-gitconfig)
 
-;; Text mode modules
+;; Text derived modules
 (require 'omw-markdown)
 
 ;; ============================================================================

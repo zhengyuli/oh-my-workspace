@@ -1,5 +1,5 @@
 ;;; omw-typescript.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-20 10:39:02 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: typescript, ts
@@ -39,20 +39,17 @@
 ;; ============================================================================
 (defvar omw/typescript-tool-specs
   '(("typescript-language-server"
-     "bun install -g typescript-language-server typescript"
-     "bun"))
+     "bun install -g typescript-language-server typescript" "bun"))
   "Tool specs for TypeScript development.")
 
 (defun omw/install-typescript-tools ()
   "Install TypeScript LSP tools (typescript-language-server) via bun if not present."
   (interactive)
-  (require 'omw-utils)
   (apply #'omw/tools-install omw/typescript-tool-specs))
 
 ;; ============================================================================
 (defun omw/typescript-mode-setup ()
   "Apply custom settings for TypeScript mode."
-  (require 'omw-utils)
   (setq-local typescript-indent-level 2)
   (apply #'omw/tools-check-and-prompt omw/typescript-tool-specs))
 
