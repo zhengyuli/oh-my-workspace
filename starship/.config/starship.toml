@@ -1,5 +1,5 @@
 # starship.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Starship Prompt - Cross-shell, minimal, blazing fast
 #
@@ -14,10 +14,9 @@
 #   line 2 - ❯ (green = success, red = error, yellow = vi normal-mode)
 # =============================================================================
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Global
-# ---------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
 # Insert a blank line before each prompt - visual separation between commands
 add_newline = true
 
@@ -41,10 +40,9 @@ $cmd_duration\
 $line_break\
 $character"""
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Identity - username / hostname
-# ---------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
 [username]
 # Hidden in normal local sessions; shown automatically for root or over SSH
 show_always = false
@@ -58,10 +56,9 @@ ssh_only = true
 style = "bold yellow"
 format = "[$hostname]($style) "
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Directory
-# ---------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
 [directory]
 # Cap display at 4 path segments; inside a repo, anchor to repo root
 truncation_length = 4
@@ -70,10 +67,9 @@ style = "bold cyan"
 read_only = " 󰌾"
 read_only_style = "red"
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Git
-# ---------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
 [git_branch]
 symbol = " "
 # Truncate long branch names before they push the prompt off-screen
@@ -94,9 +90,9 @@ stashed = "[ ${count}](cyan)"
 conflicted = "[ ${count}](bold red)"
 deleted = "[ ${count}](red)"
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Language runtimes
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Each module is file-triggered: it only activates when the listed sentinel
 # files exist in (or above) the current directory.  Unrelated directories
 # remain clean.
@@ -129,10 +125,9 @@ symbol = " "
 detect_files = ["go.mod"]
 style = "bold cyan"
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Command duration
-# ---------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
 [cmd_duration]
 # Surface only for commands that visibly took time; 2 s is the right threshold
 min_time = 2000
@@ -140,10 +135,9 @@ show_milliseconds = false
 format = "[ $duration]($style) "
 style = "yellow dimmed"
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Prompt character
-# ---------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
 [character]
 # Exit status is encoded in color alone - no separate $status module needed
 success_symbol = "[❯](bold green)"
@@ -151,9 +145,9 @@ error_symbol = "[❯](bold red)"
 # Switches to ❮ in vi normal-mode (requires zsh vi-mode plugin)
 vimcmd_symbol = "[❮](bold yellow)"
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Disabled modules
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Explicit disables prevent file-system scans for tools not in the stack.
 # Cost of an enabled-but-inactive module ≈ one stat() call per directory
 # traversal; at scale this is measurable.

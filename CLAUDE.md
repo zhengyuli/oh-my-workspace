@@ -441,7 +441,90 @@ All configuration files must start with a standardized header:
 | Major section | `# ---...---` | 79 chars | Top-level content sections |
 | Subsection | `# --- Name ---` | Variable | Nested sections within major |
 
-**Rule:** `===` is reserved for file headers. All content sections use `---`.
+**Rules:**
+
+1. **`===` is reserved for file headers.** All content sections use `---`.
+
+2. **No sandwiching.** Description text always goes AFTER the closing separator,
+   never between the opening and closing separator.
+
+   **❌ WRONG — description sandwiched between separators:**
+   ```
+   # -----------------------------------------------------------------------------
+   # Section Name
+   # Description of the section     ← sandwiched
+   # -----------------------------------------------------------------------------
+   <code>
+   ```
+
+   **✅ CORRECT — description after closing separator:**
+   ```
+   # -----------------------------------------------------------------------------
+   # Section Name
+   # -----------------------------------------------------------------------------
+   # Description of the section
+   <code>
+   ```
+
+3. **No double separators.** Each section uses exactly one opening + one closing
+   `---` separator. Never add an extra `---` line to wrap metadata.
+
+   **❌ WRONG — extra closing separator:**
+   ```
+   # -----------------------------------------------------------------------------
+   # Tool Name
+   # -----------------------------------------------------------------------------
+   # Prerequisites: ...
+   # -----------------------------------------------------------------------------   ← extra
+   <code>
+   ```
+
+   **✅ CORRECT — single open + single close:**
+   ```
+   # -----------------------------------------------------------------------------
+   # Tool Name
+   # -----------------------------------------------------------------------------
+   # Prerequisites: ...
+   <code>
+   ```
+
+4. **No blank line after closing separator.** The first line of content
+   (description comment or code) follows the closing `---` immediately.
+
+   **❌ WRONG — blank line after closing separator:**
+   ```
+   # -----------------------------------------------------------------------------
+   # Section Name
+   # -----------------------------------------------------------------------------
+                                    ← blank line
+   <code>
+   ```
+
+   **✅ CORRECT — content immediately after closing separator:**
+   ```
+   # -----------------------------------------------------------------------------
+   # Section Name
+   # -----------------------------------------------------------------------------
+   <code>
+   ```
+
+5. **Subsection headers always at column 0.** `# --- Name ---` is never indented,
+   even when it appears inside an `if/else` block.
+
+6. **No blank line after `# --- Name ---`.** Content follows immediately.
+
+   **❌ WRONG:**
+   ```
+   # --- Subsection ---
+                        ← blank line
+   <code>
+   ```
+
+   **✅ CORRECT:**
+   ```
+   # --- Subsection ---
+   <code>
+   ```
 
 #### Comment Characters by Format
 
