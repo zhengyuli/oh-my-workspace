@@ -1,5 +1,5 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-20 12:00:00 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: python, uv, ruff, pet
@@ -103,9 +103,11 @@
 
 ;; ============================================================================
 (defun omw/python-mode-setup ()
-  "Check Python development tools availability."
+  "Apply custom settings for Python mode."
   (require 'omw-utils)
-  (apply #'omw/tools-check-and-prompt omw/python-tool-specs))
+  (apply #'omw/tools-check-and-prompt omw/python-tool-specs)
+  (omw/pet-setup)
+  (omw/python-before-save-mode 1))
 
 ;; ============================================================================
 (defun omw/python-format-buffer ()
@@ -143,9 +145,7 @@
 (use-package python
   :ensure nil
   :defer t
-  :hook ((python-mode . omw/python-mode-setup)
-         (python-mode . omw/pet-setup)
-         (python-mode . omw/python-before-save-mode))
+  :hook (python-mode . omw/python-mode-setup)
   :bind (:map python-mode-map
               ("C-c C-c" . comment-line))
   :config
