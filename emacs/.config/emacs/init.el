@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-19 21:29:01 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -252,7 +252,7 @@ and global-auto-revert-mode."
 (require 'omw-pdf)
 (require 'omw-ai)
 
-;; Prog mode modules
+;; Language modules
 (require 'omw-prog)
 (require 'omw-cc)
 (require 'omw-go)
@@ -261,6 +261,8 @@ and global-auto-revert-mode."
 (require 'omw-typescript)
 (require 'omw-elisp)
 (require 'omw-shell)
+
+;; Config/build language modules
 (require 'omw-cmake)
 (require 'omw-yaml)
 (require 'omw-dockerfile)

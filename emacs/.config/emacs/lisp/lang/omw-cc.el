@@ -1,9 +1,9 @@
 ;;; omw-cc.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: c, cpp
-;; Dependencies: omw-prog
+;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -39,13 +39,9 @@
 ;; ============================================================================
 (defvar omw/cc-tool-specs
   '(("clangd" "brew install llvm" "brew"))
-  "Tool specs for C/C++ development.")
-
-(defun omw/install-cc-tools ()
-  "Install C/C++ development tools (clangd) via Homebrew if not present."
-  (interactive)
-  (require 'omw-utils)
-  (apply #'omw/tools-install omw/cc-tool-specs))
+  "Tool specs for C/C++ development.
+clangd is provided by Homebrew llvm (in Brewfile).
+Run `brew install llvm' if clangd is missing.")
 
 ;; ============================================================================
 (defun omw/cc-mode-setup ()

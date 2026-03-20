@@ -1,9 +1,9 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: python, uv, ruff, pet
-;; Dependencies: pet
+;; Dependencies: pet, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -91,17 +91,18 @@
 
 ;; ============================================================================
 (defvar omw/python-tool-specs
-  '(("ruff" "uv tool install ruff" "uv"))
+  '(("basedpyright" "uv tool install basedpyright" "uv")
+    ("ruff" "uv tool install ruff" "uv"))
   "Tool specs for Python development.")
 
 (defun omw/install-python-tools ()
-  "Install Python development tools (ruff) via uv if not present."
+  "Install Python development tools (basedpyright, ruff) via uv if not present."
   (interactive)
   (require 'omw-utils)
   (apply #'omw/tools-install omw/python-tool-specs))
 
 ;; ============================================================================
-(defun omw/python-check-tools ()
+(defun omw/python-mode-setup ()
   "Check Python development tools availability."
   (require 'omw-utils)
   (apply #'omw/tools-check-and-prompt omw/python-tool-specs))
@@ -142,7 +143,7 @@
 (use-package python
   :ensure nil
   :defer t
-  :hook ((python-mode . omw/python-check-tools)
+  :hook ((python-mode . omw/python-mode-setup)
          (python-mode . omw/pet-setup)
          (python-mode . omw/python-before-save-mode))
   :bind (:map python-mode-map
