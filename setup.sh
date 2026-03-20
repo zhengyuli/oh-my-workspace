@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-20 12:15:00 Friday by zhengyu.li>
 # =============================================================================
 # oh-my-dotfiles Setup Script
 #
@@ -687,6 +687,10 @@ cmd_update() {
             *) pkgs+=("$arg") ;;
         esac
     done
+
+    if "$do_all" && "$do_pkgs"; then
+        die "--all and --pkgs are mutually exclusive"
+    fi
 
     if "$do_all"; then
         if (( ${#pkgs[@]} != 0 )); then
