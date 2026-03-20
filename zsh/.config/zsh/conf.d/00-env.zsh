@@ -1,5 +1,5 @@
 # 00-env.zsh
-# Time-stamp: <2026-03-19 23:59:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Core Environment Variables
 #
@@ -91,7 +91,7 @@ export CARAPACE_BRIDGES='zsh,fish,bash'
 
 # starship -- both config and cache require explicit XDG paths
 # STARSHIP_CONFIG: no auto-discovery; must point explicitly to config file
-# STARSHIP_CACHE: defaults to $XDG_CACHE_HOME/starship, set explicitly for clarity
+# STARSHIP_CACHE: set explicitly (defaults to $XDG_CACHE_HOME/starship)
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
 
@@ -109,7 +109,7 @@ export LESS='-R -F -X -i -M --use-color -Dd+r$Du+b'
 # preserve existing value.
 if [[ -z "$HOMEBREW_PREFIX" ]]; then
   # arm64 (Apple Silicon): /opt/homebrew
-  # x86_64 (Intel):        /usr/local
+  # x86_64 (Intel): /usr/local
   for _brew_prefix in /opt/homebrew /usr/local; do
     if [[ -x "$_brew_prefix/bin/brew" ]]; then
       export HOMEBREW_PREFIX="$_brew_prefix"
@@ -130,7 +130,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 if command -v gdircolors &>/dev/null; then
   eval "$(gdircolors -b)"
 else
-  # Minimal fallback: directory=bold blue, symlink=bold cyan, executable=bold green
+  # Minimal fallback: dir=bold blue, symlink=bold cyan, exec=bold green
   export LS_COLORS='di=1;34:ln=1;36:ex=1;32:fi=0:mi=0;31'
 fi
 

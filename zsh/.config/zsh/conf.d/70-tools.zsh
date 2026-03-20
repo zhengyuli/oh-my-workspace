@@ -96,8 +96,8 @@ fi
 # Key bindings: Ctrl+R (history), Ctrl+T (files), Alt+C (cd)
 #
 # Note: fzf ships two shell integration files:
-#   key-bindings.zsh  - Ctrl-R / Ctrl-T / Alt-C widgets   ← load this
-#   completion.zsh    - **<Tab> trigger + rebinds ^I       ← do NOT load
+#   key-bindings.zsh - Ctrl-R / Ctrl-T / Alt-C widgets ← load this
+#   completion.zsh - **<Tab> trigger + rebinds ^I ← do NOT load
 #
 # completion.zsh is intentionally skipped. fzf-tab (40-plugins.zsh) is a
 # superset: it replaces the entire Tab completion UI with fzf, making
