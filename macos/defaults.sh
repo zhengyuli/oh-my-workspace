@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-20 14:00:00 Friday by zhengyu.li>
 # =============================================================================
 # macOS System Defaults - developer-optimized
 #
@@ -29,7 +29,7 @@ osascript -e 'tell application "System Settings" to quit' 2>/dev/null
 # -----------------------------------------------------------------------------
 # General UI/UX
 # -----------------------------------------------------------------------------
-echo "Setting General UI/UX preferences..."
+printf 'Setting General UI/UX preferences...\n'
 
 # Set standby delay to 24 hours (AC power only - battery power left at system
 # default to avoid disk/system sleep timing conflicts)
@@ -71,7 +71,7 @@ defaults write com.apple.CrashReporter DialogType -string "none"
 # -----------------------------------------------------------------------------
 # Keyboard
 # -----------------------------------------------------------------------------
-echo "Setting Keyboard preferences..."
+printf 'Setting Keyboard preferences...\n'
 
 # Enable full keyboard access for all controls
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
@@ -86,7 +86,7 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 # -----------------------------------------------------------------------------
 # Trackpad & Mouse
 # -----------------------------------------------------------------------------
-echo "Setting Trackpad/Mouse preferences..."
+printf 'Setting Trackpad/Mouse preferences...\n'
 
 # Enable tap to click
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
@@ -104,7 +104,7 @@ defaults write NSGlobalDomain com.apple.springing.delay -float 0
 # -----------------------------------------------------------------------------
 # Screen
 # -----------------------------------------------------------------------------
-echo "Setting Screen preferences..."
+printf 'Setting Screen preferences...\n'
 
 # Require password immediately after sleep or screen saver begins
 defaults write com.apple.screensaver askForPassword -int 1
@@ -118,7 +118,7 @@ defaults write com.apple.screencapture disable-shadow -bool true
 # -----------------------------------------------------------------------------
 # Finder
 # -----------------------------------------------------------------------------
-echo "Setting Finder preferences..."
+printf 'Setting Finder preferences...\n'
 
 # Set $HOME as default for new Finder windows (more useful than Desktop)
 defaults write com.apple.finder NewWindowTarget -string "PfHm"
@@ -172,7 +172,7 @@ defaults write NSGlobalDomain QLPanelAnimationDuration -float 0
 # -----------------------------------------------------------------------------
 # Dock
 # -----------------------------------------------------------------------------
-echo "Setting Dock preferences..."
+printf 'Setting Dock preferences...\n'
 
 # Minimize windows into their application's icon
 defaults write com.apple.dock minimize-to-application -bool true
@@ -197,7 +197,7 @@ defaults write com.apple.dock show-recents -bool false
 # -----------------------------------------------------------------------------
 # Terminal
 # -----------------------------------------------------------------------------
-echo "Setting Terminal preferences..."
+printf 'Setting Terminal preferences...\n'
 
 # Only use UTF-8
 defaults write com.apple.Terminal StringEncodings -array 4
@@ -212,7 +212,7 @@ defaults write com.apple.Terminal ShowLineMarks -int 0
 # -----------------------------------------------------------------------------
 # Time Machine
 # -----------------------------------------------------------------------------
-echo "Setting Time Machine preferences..."
+printf 'Setting Time Machine preferences...\n'
 
 # Don't prompt to use new disks as backup volumes
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
@@ -220,7 +220,7 @@ defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 # -----------------------------------------------------------------------------
 # TextEdit
 # -----------------------------------------------------------------------------
-echo "Setting TextEdit preferences..."
+printf 'Setting TextEdit preferences...\n'
 
 # Plain text mode + UTF-8 by default
 defaults write com.apple.TextEdit RichText -int 0
@@ -230,7 +230,7 @@ defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 # -----------------------------------------------------------------------------
 # Mac App Store
 # -----------------------------------------------------------------------------
-echo "Setting Mac App Store preferences..."
+printf 'Setting Mac App Store preferences...\n'
 
 # Check for updates daily
 defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
@@ -244,7 +244,7 @@ defaults write com.apple.commerce AutoUpdate -bool false
 # -----------------------------------------------------------------------------
 # Photos
 # -----------------------------------------------------------------------------
-echo "Setting Photos preferences..."
+printf 'Setting Photos preferences...\n'
 
 # Prevent Photos from opening automatically when devices are plugged in
 defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
@@ -252,7 +252,7 @@ defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 # -----------------------------------------------------------------------------
 # Messages
 # -----------------------------------------------------------------------------
-echo "Setting Messages preferences..."
+printf 'Setting Messages preferences...\n'
 
 # Disable smart quotes and continuous spell checking
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add \
@@ -262,7 +262,7 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 # -----------------------------------------------------------------------------
 # Kill affected applications
 # -----------------------------------------------------------------------------
-echo "Restarting affected applications..."
+printf 'Restarting affected applications...\n'
 
 for app in \
     "cfprefsd" \
@@ -275,4 +275,4 @@ for app in \
     killall "${app}" 2>/dev/null || true
 done
 
-echo "Done. Note that some of these changes require a logout/restart to take effect."
+printf 'Done. Note that some of these changes require a logout/restart to take effect.\n'
