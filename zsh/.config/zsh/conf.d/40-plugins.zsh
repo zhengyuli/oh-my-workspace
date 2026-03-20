@@ -1,5 +1,5 @@
 # 40-plugins.zsh
-# Time-stamp: <2026-03-20 16:12:40 Friday by zhengyu.li>
+# Time-stamp: <2026-03-20 16:32:42 Friday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management
 #
@@ -31,7 +31,8 @@ ZINIT_HOME="$XDG_DATA_HOME/zinit/zinit.git"
 if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
   print -P "%F{cyan}Installing Zinit...%f"
   if mkdir -p "$(dirname "$ZINIT_HOME")"; then
-    if ! git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"; then
+    if ! git clone \
+      https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"; then
       print -P "%F{red}Failed to clone Zinit%f"
       return 1
     fi
@@ -62,11 +63,13 @@ ZINIT_INITIALIZED=1
 # -----------------------------------------------------------------------------
 
 # --- Sync: fzf-tab (must be first and synchronous) ---
+
 # Load before turbo plugins to ensure ^I ownership is established immediately.
 # fzf's completion.zsh is intentionally NOT loaded (see 70-tools.zsh comment).
 zinit light Aloxaf/fzf-tab
 
 # --- Turbo 0a: completions (early, before zicdreplay in FSH) ---
+
 # blockf: tells zinit not to add plugin to fpath (avoids triggering compinit
 # rebuild); completions are still available via zinit's own path management.
 zinit ice wait"0a" lucid blockf
@@ -80,6 +83,7 @@ zinit light zsh-users/zsh-completions
 # mirrors the autosuggestions pattern and keeps future changes in one place.
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+
 # HISTORY_SUBSTRING_SEARCH_FUZZY=1
 # disabled: perf cost on large histories
 # Keybindings via atload: widgets must exist before bindkey can reference them
@@ -111,12 +115,16 @@ zinit ice wait"0b" lucid
 zinit light hlissner/zsh-autopair
 
 # --- Turbo 0c: fast-syntax-highlighting (MUST be last) ---
+
 # atinit runs before the plugin code:
 #   ZINIT[COMPINIT_OPTS]=-C → use cached dump (fast, no security check)
 #   ZINIT[ZCOMPDUMP_PATH] → set XDG-compliant zcompdump path
 #   zicompinit → re-run compinit to pick up any new completions
 #   zicdreplay → replay compdef calls captured from turbo plugins
-zinit ice wait"0c" lucid atinit"ZINIT[COMPINIT_OPTS]=-C; ZINIT[ZCOMPDUMP_PATH]=\"\${XDG_CACHE_HOME}/zsh/zcompdump\"; zicompinit; zicdreplay"
+zinit ice wait"0c" lucid atinit'\
+  ZINIT[COMPINIT_OPTS]=-C;\
+  ZINIT[ZCOMPDUMP_PATH]="${XDG_CACHE_HOME}/zsh/zcompdump";\
+  zicompinit; zicdreplay'
 zinit light zdharma-continuum/fast-syntax-highlighting
 
 # -----------------------------------------------------------------------------
@@ -134,8 +142,8 @@ zstyle ':completion:*:git-checkout:*' sort false
 
 # --- fzf-tab Preview Configurations ---
 # NOTE: Variable quoting here is intentional:
-#   - Double quotes (command style): $USER expands at source time
-#   - Single quotes (fzf-preview style): $word/$group expand at completion time
+#         - Double quotes (command style): $USER expands at source time
+#         - Single quotes (fzf-preview style): $word/$group expand at completion time
 # Do NOT add extra quoting - it would break fzf-tab's internal substitution.
 
 # Global preview window size - right panel, 55% width, line-wrap enabled
@@ -153,8 +161,10 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
    || eza -1 --color=always --icons "$realpath" 2>/dev/null'
 
 # Environment variables: preview value
-zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset):*' \
-  fzf-preview 'echo ${(P)word}'
+# Match: -command-, -parameter-, -brace-parameter-, export, unset
+typeset -g _ev='(-command-|-parameter-|-brace-parameter-|export|unset)'
+zstyle ":fzf-tab:complete:${_ev}:*" fzf-preview 'echo ${(P)word}'
+unset _ev
 
 # kill: preview process info
 # Use BSD-compatible -p flag (macOS ps does not support --pid)

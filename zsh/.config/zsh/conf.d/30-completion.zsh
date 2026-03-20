@@ -1,5 +1,5 @@
 # 30-completion.zsh
-# Time-stamp: <2026-03-19 22:30:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-20 16:30:42 Friday by zhengyu.li>
 # =============================================================================
 # Completion System
 #
@@ -75,14 +75,13 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # Group header format
 zstyle ':completion:*:warnings' format '%F{red}-- no matches for: %d --%f'
 zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
-# Note: ':completion:*:corrections' is intentionally omitted - it only
-# triggers with _approximate, which is not in the completer list here.
 
 # Display completions in named groups
 zstyle ':completion:*' group-name ''
 
 # Ignore patterns - reduce noise (object files, bytecode, backups, logs, deps)
-zstyle ':completion:*' ignored-patterns '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
+zstyle ':completion:*' ignored-patterns \
+  '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
 # Show processes from all users in process completion
 # NOTE: The 'command' style for processes is set in 40-plugins.zsh for fzf-tab
@@ -91,14 +90,17 @@ zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 # kill completion
 # Regex: (#b) enables backreferences, captures PID ($word[1]) and cmd ($word[2])
 #   =01;34=0=01 means: match=bold blue, first group=default, second group=bold
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+zstyle ':completion:*:*:kill:*:processes' list-colors \
+  '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*' force-list always
 zstyle ':completion:*:*:kill:*' insert-ids single
 
 # ssh / scp / rsync host completion (from known_hosts)
-zstyle ':completion:*:(ssh|scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
-zstyle ':completion:*:(ssh|scp|rsync):*' group-order users hosts-domain hosts-host users hosts-ipaddr
+zstyle ':completion:*:(ssh|scp|rsync):*' tag-order \
+  'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:(ssh|scp|rsync):*' group-order \
+  users hosts-domain hosts-host users hosts-ipaddr
 
 # List directories before files
 zstyle ':completion:*' list-dirs-first true
