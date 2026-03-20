@@ -70,9 +70,6 @@
 ;; ============================================================================
 (defun omw/corfu-mode-setup ()
   "Configure corfu and corfu-popupinfo."
-  (require 'corfu)
-  (require 'corfu-popupinfo)
-
   (setq corfu-auto t)
   (global-corfu-mode 1)
   (corfu-popupinfo-mode 1))
