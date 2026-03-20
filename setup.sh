@@ -91,10 +91,13 @@ print_header() {
 
 confirm() {
     local prompt="$1" default="${2:-n}" reply
-    [[ "$default" == y ]] \
-        && printf '\n  %s [Y/n]: ' "$prompt" \
-        || printf '\n  %s [y/N]: ' "$prompt"
-    read -r reply
+    if [[ "$default" == y ]]; then
+        printf '\n  %s [Y/n]: ' "$prompt"
+    else
+        printf '\n  %s [y/N]: ' "$prompt"
+    fi
+    # Guard against EOF (non-interactive stdin) treating it as the default.
+    read -r reply || reply=""
     [[ "${reply:-$default}" =~ ^[Yy]$ ]]
 }
 
@@ -146,23 +149,32 @@ stow_targets() {
 # Returns 0 when stow reports nothing to do for pkg - meaning every symlink
 # stow would create already exists and points to the right place.
 # Must also check for conflicts - stow outputs no LINK lines in both cases.
+# || true prevents set -e from aborting on stow non-zero exit (e.g. conflicts).
 is_stowed() {
     local output
-    output=$(stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$1" 2>&1)
-    # No LINK lines AND no conflict warnings
+    output=$(stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$1" 2>&1) || true
     ! grep -q "^LINK:" <<< "$output" && ! grep -q "conflicts\|cannot stow" <<< "$output"
 }
 
 # Count backup files for pkg under BACKUP_DIR/<pkg>/.
 backup_count() {
     local dir="${BACKUP_DIR}/${1}"
-    [[ -d "$dir" ]] || { echo 0; return; }
+    if [[ ! -d "$dir" ]]; then
+        echo 0
+        return
+    fi
     find "$dir" -maxdepth 1 -name '*.bak.*' | wc -l | tr -d ' '
 }
 
 stowed_count() {
     local n=0 p
-    for p in "${PKG_ALL[@]}"; do is_stowed "$p" && (( n++ )) || true; done
+    for p in "${PKG_ALL[@]}"; do
+        if is_stowed "$p"; then
+            # Use prefix increment: (( ++n )) always evaluates non-zero,
+            # avoiding the set -e trap that (( n++ )) hits when n is 0.
+            (( ++n ))
+        fi
+    done
     echo "$n"
 }
 
@@ -189,7 +201,11 @@ validate_pkgs() {
 collect_stowed() {
     _stowed=()
     local p
-    for p in "${PKG_ALL[@]}"; do is_stowed "$p" && _stowed+=("$p") || true; done
+    for p in "${PKG_ALL[@]}"; do
+        if is_stowed "$p"; then
+            _stowed+=("$p")
+        fi
+    done
 }
 
 # -----------------------------------------------------------------------------
@@ -252,10 +268,10 @@ restore_file() {
 
     _find_max_backup_n "$dir" "$base"
 
-    (( _backup_max_n >= 0 )) || {
+    if (( _backup_max_n < 0 )); then
         log_err "No backup found for $(basename "$target") in ${dir}"
         return 1
-    }
+    fi
 
     log_info "Restoring: ${dir}/${base}.bak.${_backup_max_n} -> ${target}"
     run mv "${dir}/${base}.bak.${_backup_max_n}" "$target"
@@ -268,10 +284,15 @@ restore_file() {
 stow_package() {
     local pkg="$1"
 
-    [[ -d "${DOTFILES_DIR}/${pkg}" ]] \
-        || { log_err "Package directory not found: ${DOTFILES_DIR}/${pkg}"; return 1; }
+    if [[ ! -d "${DOTFILES_DIR}/${pkg}" ]]; then
+        log_err "Package directory not found: ${DOTFILES_DIR}/${pkg}"
+        return 1
+    fi
 
-    is_stowed "$pkg" && { log_info "${pkg}: already stowed, skipping"; return 0; }
+    if is_stowed "$pkg"; then
+        log_info "${pkg}: already stowed, skipping"
+        return 0
+    fi
 
     # Use stow's own dry-run to enumerate targets; back up anything blocking.
     local target
@@ -323,42 +344,65 @@ unstow_package() {
 # -----------------------------------------------------------------------------
 
 install_xcode_cli() {
-    has_xcode_cli && { log_ok "Xcode CLI: already installed"; return 0; }
+    if has_xcode_cli; then
+        log_ok "Xcode CLI: already installed"
+        return 0
+    fi
     log_info "Installing Xcode Command Line Tools..."
     log_warn "A dialog will appear - complete it, then press any key here."
     xcode-select --install
-    read -r -n 1 -s
-    has_xcode_cli || { log_err "Xcode CLI installation failed"; return 1; }
+    # read -n 1 waits for the user to confirm the GUI dialog completed;
+    # || true guards against non-interactive stdin returning EOF.
+    read -r -n 1 -s || true
+    if ! has_xcode_cli; then
+        log_err "Xcode CLI installation failed"
+        return 1
+    fi
     log_ok "Xcode CLI: installed"
 }
 
 install_homebrew() {
-    has_homebrew && { log_ok "Homebrew: already installed"; return 0; }
+    if has_homebrew; then
+        log_ok "Homebrew: already installed"
+        return 0
+    fi
     log_info "Installing Homebrew..."
     local url="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
     local i
     for (( i = 1; i <= NETWORK_RETRIES; i++ )); do
-        (( i > 1 )) && { log_warn "Retry ${i}/${NETWORK_RETRIES}..."; sleep 5; }
+        if (( i > 1 )); then
+            log_warn "Retry ${i}/${NETWORK_RETRIES}..."
+            sleep 5
+        fi
+        # curl | bash: with pipefail, exits non-zero if either side fails.
+        # && break exits the retry loop on success.
         curl --fail --silent --show-error \
              --connect-timeout "$NETWORK_TIMEOUT" \
              "$url" | /bin/bash && break
-        (( i == NETWORK_RETRIES )) && {
+        if (( i == NETWORK_RETRIES )); then
             log_err "Homebrew installation failed after ${NETWORK_RETRIES} attempts"
             return 1
-        }
+        fi
     done
     local b
     for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
-        [[ -x "$b" ]] && eval "$("$b" shellenv)" && break
+        if [[ -x "$b" ]]; then
+            eval "$("$b" shellenv)"
+            break
+        fi
     done
-    has_homebrew || { log_err "Homebrew not found after installation"; return 1; }
+    if ! has_homebrew; then
+        log_err "Homebrew not found after installation"
+        return 1
+    fi
     log_ok "Homebrew: installed"
 }
 
 run_brew_bundle() {
     [[ -f "$BREWFILE" ]] || die "Brewfile not found: $BREWFILE"
     log_info "Running brew bundle..."
-    if run brew bundle --file="$BREWFILE"; then
+    # --verbose shows each package as it is installed or verified.
+    if run brew bundle --verbose --file="$BREWFILE"; then
         log_ok "brew bundle: complete"
     else
         log_err "brew bundle: some packages failed"
@@ -372,22 +416,33 @@ ensure_prerequisites() {
     local mode="${1:-check}" ok=true
 
     if ! has_xcode_cli; then
-        [[ "$mode" == install ]] \
-            && { install_xcode_cli || ok=false; } \
-            || { log_err "Xcode CLI missing - run: ./setup.sh install --all"; ok=false; }
+        if [[ "$mode" == install ]]; then
+            install_xcode_cli || ok=false
+        else
+            log_err "Xcode CLI missing - run: ./setup.sh install --all"
+            ok=false
+        fi
     fi
     if ! has_homebrew; then
-        [[ "$mode" == install ]] \
-            && { install_homebrew || ok=false; } \
-            || { log_err "Homebrew missing - run: ./setup.sh install --all"; ok=false; }
+        if [[ "$mode" == install ]]; then
+            install_homebrew || ok=false
+        else
+            log_err "Homebrew missing - run: ./setup.sh install --all"
+            ok=false
+        fi
     fi
     if ! has_stow; then
-        [[ "$mode" == install ]] \
-            && { run_brew_bundle || ok=false; } \
-            || { log_err "GNU Stow missing - run: ./setup.sh install --all"; ok=false; }
+        if [[ "$mode" == install ]]; then
+            run_brew_bundle || ok=false
+        else
+            log_err "GNU Stow missing - run: ./setup.sh install --all"
+            ok=false
+        fi
     fi
 
-    "$ok" || return 1
+    if [[ "$ok" == false ]]; then
+        return 1
+    fi
     has_stow || die "GNU Stow unavailable after installation"
 }
 
@@ -423,10 +478,10 @@ do_update_pkgs() {
 do_restore_pkg() {
     local pkg="$1"
 
-    is_stowed "$pkg" && {
+    if is_stowed "$pkg"; then
         log_info "${pkg}: unstowing before restore..."
         run stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"
-    }
+    fi
 
     # After unstow, stow -n -v shows what would be linked - i.e. the original
     # target paths - which is exactly what we need to restore backups to.
@@ -443,24 +498,32 @@ do_restore_pkg() {
 }
 
 do_offer_shell_switch() {
-    is_stowed zsh               || return 0
-    [[ -z "${ZSH_VERSION:-}" ]] || { log_info "Already running zsh"; return 0; }
+    is_stowed zsh || return 0
+    if [[ -n "${ZSH_VERSION:-}" ]]; then
+        log_info "Already running zsh"
+        return 0
+    fi
 
-    confirm "Switch default shell to zsh?" y || {
+    if ! confirm "Switch default shell to zsh?" y; then
         log_info "Skipped - run 'chsh -s \$(which zsh)' manually later."
         return 0
-    }
+    fi
 
     local zsh_path
-    zsh_path=$(command -v zsh) || { log_err "zsh not found in PATH"; return 1; }
+    if ! zsh_path=$(command -v zsh 2>/dev/null); then
+        log_err "zsh not found in PATH"
+        return 1
+    fi
 
     if ! grep -qF "$zsh_path" /etc/shells 2>/dev/null; then
         log_info "Adding ${zsh_path} to /etc/shells..."
         if [[ "$DRY_RUN" == true ]]; then
             log_info "[dry-run] echo ${zsh_path} | sudo tee -a /etc/shells"
         else
-            echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null \
-                || { log_err "Failed to write /etc/shells"; return 1; }
+            if ! echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null; then
+                log_err "Failed to write /etc/shells"
+                return 1
+            fi
         fi
     fi
 
@@ -500,7 +563,10 @@ cmd_install() {
         return
     fi
 
-    (( ${#pkgs[@]} > 0 )) || { show_help; return 0; }
+    if (( ${#pkgs[@]} == 0 )); then
+        show_help
+        return 0
+    fi
     validate_pkgs "${pkgs[@]}" || die "No valid packages specified"
     ensure_prerequisites check
     do_install_pkgs "${_valid_pkgs[@]}"
@@ -523,18 +589,23 @@ cmd_uninstall() {
     if "$do_all"; then
         (( ${#pkgs[@]} == 0 )) || die "--all and package names are mutually exclusive"
         collect_stowed
-        (( ${#_stowed[@]} > 0 )) || { log_info "No packages are currently stowed"; return 0; }
-        confirm "Uninstall all ${#_stowed[@]} stowed packages?" n \
-            || { log_info "Cancelled"; return 0; }
+        if (( ${#_stowed[@]} == 0 )); then
+            log_info "No packages are currently stowed"
+            return 0
+        fi
+        if ! confirm "Uninstall all ${#_stowed[@]} stowed packages?" n; then
+            log_info "Cancelled"
+            return 0
+        fi
         do_uninstall_pkgs "${_stowed[@]}"
         return
     fi
 
-    (( ${#pkgs[@]} > 0 )) || {
+    if (( ${#pkgs[@]} == 0 )); then
         log_err "No packages specified"
         log_info "Usage: ./setup.sh uninstall [--all | <pkg>...] [--dry-run]"
         return 1
-    }
+    fi
     validate_pkgs "${pkgs[@]}" || return 1
     do_uninstall_pkgs "${_valid_pkgs[@]}"
 }
@@ -559,9 +630,11 @@ cmd_update() {
         ensure_prerequisites install
         run_brew_bundle
         collect_stowed
-        (( ${#_stowed[@]} > 0 )) \
-            && do_update_pkgs "${_stowed[@]}" \
-            || log_info "No packages are currently stowed"
+        if (( ${#_stowed[@]} > 0 )); then
+            do_update_pkgs "${_stowed[@]}"
+        else
+            log_info "No packages are currently stowed"
+        fi
         log_ok "Update complete"
         return
     fi
@@ -570,28 +643,30 @@ cmd_update() {
         (( ${#pkgs[@]} == 0 )) || die "--pkgs and package names are mutually exclusive"
         ensure_prerequisites check
         collect_stowed
-        (( ${#_stowed[@]} > 0 )) \
-            && do_update_pkgs "${_stowed[@]}" \
-            || log_info "No packages are currently stowed"
+        if (( ${#_stowed[@]} > 0 )); then
+            do_update_pkgs "${_stowed[@]}"
+        else
+            log_info "No packages are currently stowed"
+        fi
         return
     fi
 
-    (( ${#pkgs[@]} > 0 )) || {
+    if (( ${#pkgs[@]} == 0 )); then
         log_err "No target specified"
         log_info "Usage: ./setup.sh update [--all | --pkgs | <pkg>...] [--dry-run]"
         return 1
-    }
+    fi
     validate_pkgs "${pkgs[@]}" || return 1
     ensure_prerequisites check
     do_update_pkgs "${_valid_pkgs[@]}"
 }
 
 cmd_restore() {
-    (( $# > 0 )) || {
+    if (( $# == 0 )); then
         log_err "No packages specified"
         log_info "Usage: ./setup.sh restore <pkg>..."
         return 1
-    }
+    fi
     local p
     for p in "$@"; do
         if is_valid_pkg "$p"; then
@@ -603,23 +678,34 @@ cmd_restore() {
 }
 
 cmd_status() {
-    local -a pkgs=("${PKG_ALL[@]}")
-    (( $# > 0 )) && pkgs=("$@")
+    local -a pkgs
+    if (( $# > 0 )); then
+        validate_pkgs "$@" || return 1
+        pkgs=("${_valid_pkgs[@]}")
+    else
+        pkgs=("${PKG_ALL[@]}")
+    fi
 
     print_header "oh-my-dotfiles status"
 
     printf '  Prerequisites\n\n'
-    has_xcode_cli \
-        && printf "  ${_G}ok${_0}  Xcode CLI\n" \
-        || printf "  ${_R}--${_0}  Xcode CLI\n"
-    has_homebrew \
-        && printf "  ${_G}ok${_0}  Homebrew   %s\n" \
-               "$(brew --version 2>/dev/null | head -1 | awk '{print $2}')" \
-        || printf "  ${_R}--${_0}  Homebrew\n"
-    has_stow \
-        && printf "  ${_G}ok${_0}  GNU Stow   %s\n" \
-               "$(stow --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')" \
-        || printf "  ${_R}--${_0}  GNU Stow\n"
+    if has_xcode_cli; then
+        printf "  ${_G}ok${_0}  Xcode CLI\n"
+    else
+        printf "  ${_R}--${_0}  Xcode CLI\n"
+    fi
+    if has_homebrew; then
+        printf "  ${_G}ok${_0}  Homebrew   %s\n" \
+            "$(brew --version 2>/dev/null | head -1 | awk '{print $2}')"
+    else
+        printf "  ${_R}--${_0}  Homebrew\n"
+    fi
+    if has_stow; then
+        printf "  ${_G}ok${_0}  GNU Stow   %s\n" \
+            "$(stow --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+    else
+        printf "  ${_R}--${_0}  GNU Stow\n"
+    fi
 
     printf '\n  Packages  (%d / %d stowed)\n\n' "$(stowed_count)" "${#PKG_ALL[@]}"
     printf '  %-12s  %s  %s\n' "package" "stow" "backups"
@@ -628,19 +714,31 @@ cmd_status() {
     local pkg
     for pkg in "${pkgs[@]}"; do
         printf '  %-12s  ' "$pkg"
-        is_stowed "$pkg" \
-            && printf "${_G}ok${_0}" \
-            || printf "${_Y}--${_0}"
+        if is_stowed "$pkg"; then
+            printf "${_G}ok${_0}"
+        else
+            printf "${_Y}--${_0}"
+        fi
         printf '  %d\n' "$(backup_count "$pkg")"
     done
 }
 
 cmd_defaults() {
-    [[ -f "$DEFAULTS_SCRIPT" ]] \
-        || { log_err "defaults.sh not found: $DEFAULTS_SCRIPT"; return 1; }
+    if [[ ! -f "$DEFAULTS_SCRIPT" ]]; then
+        log_err "defaults.sh not found: $DEFAULTS_SCRIPT"
+        return 1
+    fi
     log_warn "This will modify system preferences. Some changes require logout or restart."
-    confirm "Apply macOS defaults?" n || { log_info "Skipped"; return 0; }
-    bash "$DEFAULTS_SCRIPT" && log_ok "macOS defaults applied"
+    if ! confirm "Apply macOS defaults?" n; then
+        log_info "Skipped"
+        return 0
+    fi
+    if bash "$DEFAULTS_SCRIPT"; then
+        log_ok "macOS defaults applied"
+    else
+        log_err "macOS defaults script failed"
+        return 1
+    fi
 }
 
 # -----------------------------------------------------------------------------
@@ -703,7 +801,10 @@ EOF
 # -----------------------------------------------------------------------------
 
 main() {
-    [[ $# -eq 0 ]] && { show_help; exit 0; }
+    if [[ $# -eq 0 ]]; then
+        show_help
+        exit 0
+    fi
     local cmd="$1"; shift
     case "$cmd" in
         install)        cmd_install   "$@" ;;
