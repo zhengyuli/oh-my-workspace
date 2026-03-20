@@ -40,7 +40,7 @@ $RECYCLE.BIN/
 # -----------------------------------------------------------------------------
 
 # Vim - Swap, backup, and session files
-# Note: *.swp already covers dotfile swaps (e.g., .file.swp); no need for .*.swp
+# Note: *.swp covers dotfile swaps (e.g., .file.swp); no need for .*.swp
 *.swp
 *.swo
 *.un~

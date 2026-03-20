@@ -102,7 +102,7 @@
 --colors=path:style:bold
 
 # Match highlight: ag-style black-on-yellow (official FAQ example)
-# For dark terminals, consider: --colors=match:fg:yellow --colors=match:style:bold
+# Dark terminals: --colors=match:fg:yellow --colors=match:style:bold
 --colors=match:fg:black
 --colors=match:bg:yellow
 --colors=match:style:nobold
