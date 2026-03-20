@@ -78,7 +78,8 @@ fi
 # -----------------------------------------------------------------------------
 if command -v carapace &>/dev/null; then
   _carapace_comp="$XDG_CACHE_HOME/zsh/carapace-completion.zsh"
-  if [[ ! -f "$_carapace_comp" ]] || [[ "$(command -v carapace)" -nt "$_carapace_comp" ]]; then
+  if [[ ! -f "$_carapace_comp" ]] || \
+     [[ "$(command -v carapace)" -nt "$_carapace_comp" ]]; then
     mkdir -p "${_carapace_comp:h}"
     carapace _carapace zsh >! "$_carapace_comp"
   fi

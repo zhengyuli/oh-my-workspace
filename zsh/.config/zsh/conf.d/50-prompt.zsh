@@ -1,5 +1,5 @@
 # 50-prompt.zsh
-# Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-20 16:41:12 Friday by zhengyu.li>
 # =============================================================================
 # Prompt Configuration
 #
@@ -23,75 +23,25 @@
 
 # -----------------------------------------------------------------------------
 # Option A: Starship (Default)
-# -----------------------------------------------------------------------------
-# Cross-shell prompt written in Rust. Best for users who want:
-# - Consistent prompts across bash/fish/zsh/PowerShell
-# - Minimal configuration with TOML
-# - Fast startup with good performance
-#
+# Cross-shell prompt written in Rust.
 # Prerequisites: brew install starship
-# Config file: $XDG_CONFIG_HOME/starship.toml
-# Documentation: https://starship.rs/config/
+# Config: $XDG_CONFIG_HOME/starship.toml
 # -----------------------------------------------------------------------------
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 
   # ---------------------------------------------------------------------------
   # Window Title
+  # Set terminal title to current directory for supported terminals.
+  # Use add-zsh-hook (NOT precmd() directly) to avoid replacing starship's hook.
   # ---------------------------------------------------------------------------
-  # Set terminal window title to current directory for supported terminals
-  # Use $TERM_PROGRAM for accurate detection (iTerm2/WezTerm/Ghostty)
-  # Fallback to $TERM for alacritty/kitty which don't set TERM_PROGRAM
-  #
-  # IMPORTANT: use add-zsh-hook, NOT precmd() directly.
-  # starship init zsh registers its own hook via add-zsh-hook precmd; defining
-  # precmd() directly would replace the hook dispatcher and break starship.
-  # ---------------------------------------------------------------------------
-  if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty) || "$TERM" == alacritty* || "$TERM" == kitty* ]]; then
+  if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty) ]] || \
+     [[ "$TERM" == alacritty* ]] || \
+     [[ "$TERM" == kitty* ]]; then
     autoload -Uz add-zsh-hook
     _omw_set_window_title() { print -Pn "\e]0;%~\a" }
     add-zsh-hook precmd _omw_set_window_title
   fi
-
-# -----------------------------------------------------------------------------
-# Option B: Pure (Minimal)
-# -----------------------------------------------------------------------------
-# Lightweight native Zsh prompt with async git status. Best for users who want:
-# - Minimal dependencies (no Rust required)
-# - Fast, simple, beautiful defaults
-# - Zsh-only environment
-#
-# Prerequisites: Zinit plugin manager (see 40-plugins.zsh)
-# Uncomment the block below to enable
-# -----------------------------------------------------------------------------
-# elif [[ -n "$ZINIT_HOME" ]]; then
-#   zinit ice pick'async.zsh' src'pure.zsh'
-#   zinit light sindresorhus/pure
-#   zstyle ':prompt:pure:path' color '#89b4fa'
-#   zstyle ':prompt:pure:prompt:*' color '#cba6f7'
-#   zstyle ':prompt:pure:git:branch' color '#a6e3a1'
-
-# -----------------------------------------------------------------------------
-# Option C: Powerlevel10k (Feature-rich)
-# -----------------------------------------------------------------------------
-# Most configurable Zsh prompt with wizard. Best for users who want:
-# - Maximum customization with visual wizard
-# - Instant prompt (shows prompt before zsh finishes loading)
-# - Transient prompt (compact history in scrollback)
-# - Zsh-only environment with heavy customization needs
-#
-# Prerequisites: Zinit plugin manager (see 40-plugins.zsh)
-# Config wizard: p10k configure
-# Config file: $ZDOTDIR/.p10k.zsh
-# Uncomment the block below to enable
-# -----------------------------------------------------------------------------
-# elif [[ -n "$ZINIT_HOME" ]]; then
-#   zinit ice depth=1
-#   zinit light romkatv/powerlevel10k
-#   if [[ -f "${ZDOTDIR:-$HOME}/.p10k.zsh" ]]; then
-#     source "${ZDOTDIR:-$HOME}/.p10k.zsh"
-#   fi
-
 else
   # ---------------------------------------------------------------------------
   # Fallback: Native vcs_info Prompt
