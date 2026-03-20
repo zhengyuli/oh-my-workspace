@@ -42,7 +42,8 @@
   "Tool specs for Go development.")
 
 (defun omw/install-go-tools ()
-  "Install Go development tools (gopls, gofumpt) via go install if not present."
+  "Install Go development tools (gopls, gofumpt) via go install
+if not present."
   (interactive)
   (apply #'omw/tools-install omw/go-tool-specs))
 

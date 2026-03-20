@@ -127,7 +127,8 @@
   "Tool specs for Python development.")
 
 (defun omw/install-python-tools ()
-  "Install Python development tools (basedpyright, ruff) via uv if not present."
+  "Install Python development tools (basedpyright, ruff) via uv
+if not present."
   (interactive)
   (apply #'omw/tools-install omw/python-tool-specs))
 
