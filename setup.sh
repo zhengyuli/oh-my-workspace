@@ -123,14 +123,15 @@ is_valid_pkg() {
     return 1
 }
 
-# Print the absolute $HOME paths that stow would create for pkg.
-# Delegates entirely to the stow binary so that all ignore rules (.stow-local-ignore,
-# built-in defaults), tree-folding, and edge cases are handled natively.
+# Print the absolute $HOME paths stow would link or that block linking for pkg.
+# Delegates entirely to the stow binary so that all ignore rules
+# (.stow-local-ignore, built-in defaults), tree-folding, and edge cases
+# are handled natively.
 # Parses two output patterns from stow -n -v:
-#   LINK: <rel> => <src>           - target stow would create (no conflict)
-#   existing target ...: <rel>     - occupied target stow cannot overwrite (conflict)
-# Both cases are targets we need to handle; covering them enables backup_file
-# to clear blockers before the real stow run.
+#   LINK: <rel> => <src>       - new symlink stow would create
+#   existing target ...: <rel> - occupied path stow cannot overwrite
+# Both patterns must be handled: backup_file clears blockers before the
+# real stow run.
 stow_targets() {
     local pkg="$1"
     [[ -d "${DOTFILES_DIR}/${pkg}" ]] || return 1
@@ -138,9 +139,7 @@ stow_targets() {
     local conflict_pat='existing target [^:]+: (.+)$'
     stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg" 2>&1 \
         | while IFS= read -r line; do
-            if [[ "$line" =~ $link_pat ]]; then
-                echo "${HOME}/${BASH_REMATCH[1]}"
-            elif [[ "$line" =~ $conflict_pat ]]; then
+            if [[ "$line" =~ $link_pat || "$line" =~ $conflict_pat ]]; then
                 echo "${HOME}/${BASH_REMATCH[1]}"
             fi
         done
@@ -223,7 +222,7 @@ collect_stowed() {
 
 # Set _backup_max_n to the highest backup number N found in dir for base.bak.N,
 # or -1 if no backups exist. Uses find to handle non-sequential numbering after
-# old backups are purged (sequential probing would miss high-numbered survivors).
+# old backups are purged (sequential probing would miss high-numbered ones).
 _find_max_backup_n() {
     local dir="$1" base="$2"
     _backup_max_n=-1
@@ -251,7 +250,7 @@ backup_file() {
     _find_max_backup_n "$dir" "$base"
     local new_n=$(( _backup_max_n + 1 ))
 
-    # Purge backups older than the retention window before creating the new one.
+    # Purge backups beyond the retention limit before creating the new one.
     if (( new_n >= MAX_BACKUPS )); then
         local cutoff=$(( new_n - MAX_BACKUPS ))
         local f n
@@ -287,6 +286,21 @@ restore_file() {
 # Operations: stow
 # -----------------------------------------------------------------------------
 
+# Back up any paths that would block stow from linking pkg. Covers both
+# LINK targets already occupied by a foreign symlink or real file, and
+# conflict paths stow explicitly cannot overwrite.
+backup_stow_conflicts() {
+    local pkg="$1" target
+    while IFS= read -r target; do
+        if [[ -L "$target" ]]; then
+            log_warn "Foreign symlink: ${target} -> $(readlink "$target")"
+            backup_file "$target" "$pkg"
+        elif [[ -e "$target" ]]; then
+            backup_file "$target" "$pkg"
+        fi
+    done < <(stow_targets "$pkg")
+}
+
 stow_package() {
     local pkg="$1"
 
@@ -301,16 +315,10 @@ stow_package() {
     fi
 
     # Use stow's own dry-run to enumerate targets; back up anything blocking.
-    local target
-    while IFS= read -r target; do
-        if [[ -L "$target" ]]; then
-            log_warn "Foreign symlink: ${target} -> $(readlink "$target")"
-            backup_file "$target" "$pkg"
-        elif [[ -e "$target" ]]; then
-            backup_file "$target" "$pkg"
-        fi
-    done < <(stow_targets "$pkg")
+    backup_stow_conflicts "$pkg"
 
+    # Pre-create ~/.config so stow links individual items inside it rather
+    # than folding the whole directory into a single symlink.
     run mkdir -p "${HOME}/.config"
 
     if run stow -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
@@ -329,19 +337,11 @@ restow_package() {
     local pkg="$1"
 
     # Back up conflicts before restowing. stow -R removes existing links then
-    # re-stows; if new package files clash with real files in $HOME, stow fails
-    # AFTER removing old links, leaving the package partially stowed.
-    # stow_targets reports conflict lines for new clashing files even when the
-    # package is currently stowed, so we can resolve them proactively.
-    local target
-    while IFS= read -r target; do
-        if [[ -L "$target" ]]; then
-            log_warn "Foreign symlink: ${target} -> $(readlink "$target")"
-            backup_file "$target" "$pkg"
-        elif [[ -e "$target" ]]; then
-            backup_file "$target" "$pkg"
-        fi
-    done < <(stow_targets "$pkg")
+    # re-stows; if new package files clash with real files in $HOME, stow
+    # fails AFTER removing old links, leaving the package partially stowed.
+    # stow_targets reports conflict lines for new clashing files even when
+    # the package is currently stowed, so we can resolve them proactively.
+    backup_stow_conflicts "$pkg"
 
     if run stow -R -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
         if [[ "$DRY_RUN" == true ]]; then
@@ -416,7 +416,8 @@ install_homebrew() {
             break
         fi
         if (( i == NETWORK_RETRIES )); then
-            log_err "Homebrew installation failed after ${NETWORK_RETRIES} attempts"
+            log_err "Homebrew installation failed after" \
+                "${NETWORK_RETRIES} attempts"
             return 1
         fi
     done
@@ -509,7 +510,7 @@ do_install_pkgs() {
     local pkg
     for pkg in "$@"; do stow_package "$pkg"; done
     printf '\n'
-    log_ok "Done - run 'source ~/.zshenv' or open a new terminal to apply changes."
+    log_ok "Done. Source ~/.zshenv or open a new terminal to apply changes."
 }
 
 do_uninstall_pkgs() {
@@ -543,7 +544,7 @@ do_restore_pkg() {
     local target
     while IFS= read -r target; do
         if [[ -e "$target" || -L "$target" ]]; then
-            log_err "${target} is occupied - remove it manually before restoring"
+            log_err "${target}: occupied, remove it manually before restoring"
             return 1
         fi
         restore_file "$target" "$pkg" || return 1
@@ -554,7 +555,9 @@ do_restore_pkg() {
 
 do_offer_shell_switch() {
     is_stowed zsh || return 0
-    if [[ -n "${ZSH_VERSION:-}" ]]; then
+    # ZSH_VERSION is set when running inside zsh; SHELL reflects the user's
+    # default shell (may differ if the script is invoked via bash setup.sh).
+    if [[ -n "${ZSH_VERSION:-}" || "${SHELL##*/}" == "zsh" ]]; then
         log_info "Already running zsh"
         return 0
     fi
@@ -609,12 +612,15 @@ cmd_install() {
     done
 
     if "$do_all"; then
-        (( ${#pkgs[@]} == 0 )) || die "--all and package names are mutually exclusive"
+        if (( ${#pkgs[@]} != 0 )); then
+            die "--all and package names are mutually exclusive"
+        fi
         ensure_prerequisites install
         run_brew_bundle
         do_install_pkgs "${PKG_ALL[@]}"
         do_offer_shell_switch
-        printf '\n'; log_ok "Full installation complete"
+        printf '\n'
+        log_ok "Full installation complete"
         return
     fi
 
@@ -642,7 +648,9 @@ cmd_uninstall() {
     done
 
     if "$do_all"; then
-        (( ${#pkgs[@]} == 0 )) || die "--all and package names are mutually exclusive"
+        if (( ${#pkgs[@]} != 0 )); then
+            die "--all and package names are mutually exclusive"
+        fi
         collect_stowed
         if (( ${#_stowed[@]} == 0 )); then
             log_info "No packages are currently stowed"
@@ -681,7 +689,9 @@ cmd_update() {
     done
 
     if "$do_all"; then
-        (( ${#pkgs[@]} == 0 )) || die "--all and package names are mutually exclusive"
+        if (( ${#pkgs[@]} != 0 )); then
+            die "--all and package names are mutually exclusive"
+        fi
         ensure_prerequisites install
         run_brew_bundle
         collect_stowed
@@ -695,7 +705,9 @@ cmd_update() {
     fi
 
     if "$do_pkgs"; then
-        (( ${#pkgs[@]} == 0 )) || die "--pkgs and package names are mutually exclusive"
+        if (( ${#pkgs[@]} != 0 )); then
+            die "--pkgs and package names are mutually exclusive"
+        fi
         ensure_prerequisites check
         collect_stowed
         if (( ${#_stowed[@]} > 0 )); then
@@ -708,7 +720,8 @@ cmd_update() {
 
     if (( ${#pkgs[@]} == 0 )); then
         log_err "No target specified"
-        log_info "Usage: ./setup.sh update [--all | --pkgs | <pkg>...] [--dry-run]"
+        log_info "Usage: ./setup.sh update" \
+            "[--all | --pkgs | <pkg>...] [--dry-run]"
         return 1
     fi
     validate_pkgs "${pkgs[@]}" || return 1
@@ -757,12 +770,15 @@ cmd_status() {
     fi
     if has_stow; then
         printf "  ${_G}ok${_0}  GNU Stow   %s\n" \
-            "$(stow --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+            "$(stow --version 2>/dev/null | head -1 | awk '{print $NF}')"
     else
         printf "  ${_R}--${_0}  GNU Stow\n"
     fi
 
-    printf '\n  Packages  (%d / %d stowed)\n\n' "$(stowed_count)" "${#PKG_ALL[@]}"
+    local stowed total
+    stowed=$(stowed_count)
+    total=${#PKG_ALL[@]}
+    printf '\n  Packages  (%d / %d stowed)\n\n' "$stowed" "$total"
     printf '  %-12s  %s  %s\n' "package" "stow" "backups"
     printf '  %-12s  %s  %s\n' "-------" "----" "-------"
 
@@ -783,7 +799,8 @@ cmd_defaults() {
         log_err "defaults.sh not found: $DEFAULTS_SCRIPT"
         return 1
     fi
-    log_warn "This will modify system preferences. Some changes require logout or restart."
+    log_warn "This will modify system preferences."
+    log_warn "Some changes require logout or restart."
     if ! confirm "Apply macOS defaults?" n; then
         log_info "Skipped"
         return 0
