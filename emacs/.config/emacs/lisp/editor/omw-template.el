@@ -61,7 +61,6 @@
   "Add or update auto-insert rule for CONDITION with ACTION.
 CONDITION is a regex matching file names.
 ACTION is a template file or function to insert."
-  (require 'autoinsert)
   ;; Check if rule exists and update, otherwise add new rule
   (let ((elt (assoc condition auto-insert-alist)))
     (if elt
