@@ -4,42 +4,15 @@
 # =============================================================================
 # oh-my-dotfiles Setup Script
 #
-# Copyright (C) 2026 zhengyu.li
-# Author: zhengyu.li <lizhengyu419@outlook.com>
+# Location: $DOTFILES_DIR/setup.sh (run directly, not stowed)
+# Usage: ./setup.sh help
 #
-# Location: ~/oh-my-dotfiles/setup.sh  (not stowed; run directly)
 # References:
 #   1. GNU Stow Manual: https://www.gnu.org/software/stow/manual/
 #   2. Homebrew Bundle: https://github.com/Homebrew/homebrew-bundle
 #
-# Usage:
-#   install   [--all | <pkg>...]  [--dry-run]
-#   uninstall [--all | <pkg>...] [--dry-run]
-#   update    [--all | --pkgs | <pkg>...] [--dry-run]
-#   restore   <pkg>...
-#   status    [<pkg>...]
-#   defaults
-#
-# Design layers (each layer only calls layers below it):
-#   cmd_*       one function per CLI subcommand
-#   do_*        workflow helpers; orchestrate operations
-#   operations  stow / backup / restore / prerequisites  (side effects)
-#   queries     is_stowed, stow_targets, has_*  (pure)
-#   data        PKG_ALL, paths, constants
-#
-# stow -n -v is used throughout to simulate what stow would do, so all
-# ignore rules, folding logic, and edge cases are handled by stow itself
-# rather than reimplemented here.
-#
-# Conflict policy (install / update):
-#   target absent             -> stow directly
-#   target is our symlink     -> skip (install) or restow (update)
-#   target is foreign symlink -> mv to .backups/<pkg>/
-#   target is real file/dir   -> mv to .backups/<pkg>/
-#   mv acts on the link itself, so backup and restore are fully symmetric.
-#
-# Backup layout:   .backups/<pkg>/<basename>.bak.0  .bak.1  ...
-# Restore policy:  mv the highest-numbered backup back to its original path.
+# Note: Uses stow -n -v to simulate operations, delegating all ignore rules,
+# tree-folding logic, and edge cases to stow itself.
 # =============================================================================
 
 set -euo pipefail
@@ -47,8 +20,6 @@ set -euo pipefail
 # -----------------------------------------------------------------------------
 # Constants
 # -----------------------------------------------------------------------------
-
-DRY_RUN=false
 
 MAX_BACKUPS=5
 NETWORK_RETRIES=3
@@ -99,18 +70,6 @@ confirm() {
     # Guard against EOF (non-interactive stdin) treating it as the default.
     read -r reply || reply=""
     [[ "${reply:-$default}" =~ ^[Yy]$ ]]
-}
-
-# -----------------------------------------------------------------------------
-# Dry-run wrapper
-# -----------------------------------------------------------------------------
-
-run() {
-    if [[ "$DRY_RUN" == true ]]; then
-        log_info "[dry-run] $*"
-        return 0
-    fi
-    "$@"
 }
 
 # -----------------------------------------------------------------------------
@@ -243,7 +202,7 @@ backup_file() {
     local dir="${BACKUP_DIR}/${pkg}"
     local base; base=$(basename "$target")
 
-    run mkdir -p "$dir"
+    mkdir -p "$dir"
 
     # New backup always appends after the highest existing number so that
     # purging old backups never creates a gap that resets the slot counter.
@@ -257,13 +216,13 @@ backup_file() {
         while IFS= read -r f; do
             n="${f##*.bak.}"
             if [[ "$n" =~ ^[0-9]+$ ]] && (( n <= cutoff )); then
-                run rm -f "$f"
+                rm -f "$f"
             fi
         done < <(find "$dir" -maxdepth 1 -name "${base}.bak.*" 2>/dev/null)
     fi
 
     log_warn "Backing up: ${target} -> ${dir}/${base}.bak.${new_n}"
-    run mv "$target" "${dir}/${base}.bak.${new_n}"
+    mv "$target" "${dir}/${base}.bak.${new_n}"
 }
 
 restore_file() {
@@ -279,7 +238,7 @@ restore_file() {
     fi
 
     log_info "Restoring: ${dir}/${base}.bak.${_backup_max_n} -> ${target}"
-    run mv "${dir}/${base}.bak.${_backup_max_n}" "$target"
+    mv "${dir}/${base}.bak.${_backup_max_n}" "$target"
 }
 
 # -----------------------------------------------------------------------------
@@ -319,14 +278,10 @@ stow_package() {
 
     # Pre-create ~/.config so stow links individual items inside it rather
     # than folding the whole directory into a single symlink.
-    run mkdir -p "${HOME}/.config"
+    mkdir -p "${HOME}/.config"
 
-    if run stow -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
-        if [[ "$DRY_RUN" == true ]]; then
-            log_info "${pkg}: would be stowed"
-        else
-            log_ok "${pkg}: stowed"
-        fi
+    if stow -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+        log_ok "${pkg}: stowed"
     else
         log_err "${pkg}: stow failed"
         return 1
@@ -343,12 +298,8 @@ restow_package() {
     # the package is currently stowed, so we can resolve them proactively.
     backup_stow_conflicts "$pkg"
 
-    if run stow -R -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
-        if [[ "$DRY_RUN" == true ]]; then
-            log_info "${pkg}: would be restowed"
-        else
-            log_ok "${pkg}: restowed"
-        fi
+    if stow -R -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+        log_ok "${pkg}: restowed"
     else
         log_err "${pkg}: restow failed"
         return 1
@@ -361,12 +312,8 @@ unstow_package() {
         log_warn "${pkg}: not stowed, skipping"
         return 0
     fi
-    if run stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
-        if [[ "$DRY_RUN" == true ]]; then
-            log_info "${pkg}: would be unstowed"
-        else
-            log_ok "${pkg}: unstowed"
-        fi
+    if stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+        log_ok "${pkg}: unstowed"
     else
         log_err "${pkg}: unstow failed"
         return 1
@@ -401,6 +348,9 @@ install_homebrew() {
         return 0
     fi
     log_info "Installing Homebrew..."
+    # Note: curl | bash is the official Homebrew installation method.
+    # Security: URL is hardcoded (not user input), uses HTTPS with SSL
+    # verification, and points to Homebrew's official GitHub repository.
     local url="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
     local i
     for (( i = 1; i <= NETWORK_RETRIES; i++ )); do
@@ -421,6 +371,9 @@ install_homebrew() {
             return 1
         fi
     done
+    # Note: eval is required here per Homebrew's official installation guide.
+    # Security: Paths are hardcoded to official Homebrew locations
+    # (/opt/homebrew for Apple Silicon, /usr/local for Intel), so this is safe.
     local b
     for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
         if [[ -x "$b" ]]; then
@@ -441,7 +394,7 @@ install_stow() {
         return 0
     fi
     log_info "Installing GNU Stow..."
-    if run brew install stow; then
+    if brew install stow; then
         log_ok "GNU Stow: installed"
     else
         log_err "GNU Stow installation failed"
@@ -453,7 +406,7 @@ run_brew_bundle() {
     [[ -f "$BREWFILE" ]] || die "Brewfile not found: $BREWFILE"
     log_info "Running brew bundle..."
     # --verbose shows each package as it is installed or verified.
-    if run brew bundle --verbose --file="$BREWFILE"; then
+    if brew bundle --verbose --file="$BREWFILE"; then
         log_ok "brew bundle: complete"
     else
         log_err "brew bundle: some packages failed"
@@ -536,7 +489,7 @@ do_restore_pkg() {
 
     if is_stowed "$pkg"; then
         log_info "${pkg}: unstowing before restore..."
-        run stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"
+        stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"
     fi
 
     # After unstow, stow -n -v shows what would be linked - i.e. the original
@@ -573,23 +526,13 @@ do_offer_shell_switch() {
         return 1
     fi
 
-    if ! grep -qF "$zsh_path" /etc/shells 2>/dev/null; then
-        log_info "Adding ${zsh_path} to /etc/shells..."
-        if [[ "$DRY_RUN" == true ]]; then
-            log_info "[dry-run] echo ${zsh_path} | sudo tee -a /etc/shells"
-        else
-            if ! echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null; then
-                log_err "Failed to write /etc/shells"
-                return 1
-            fi
-        fi
-    fi
-
-    if run chsh -s "$zsh_path"; then
-        log_ok "Default shell changed to zsh - open a new terminal to use it."
+    if chsh -s "$zsh_path" 2>/dev/null; then
+        log_ok "Default shell changed to zsh"
+        log_info "Open a new terminal to use it."
     else
-        log_err "chsh failed"
-        return 1
+        log_warn "chsh failed - zsh may not be in /etc/shells"
+        log_info "Run: echo '$zsh_path' | sudo tee -a /etc/shells"
+        log_info "Then: chsh -s '$zsh_path'"
     fi
 }
 
@@ -605,7 +548,6 @@ cmd_install() {
     for arg in "$@"; do
         case "$arg" in
             --all) do_all=true ;;
-            --dry-run) DRY_RUN=true ;;
             -*) die "Unknown flag: $arg" ;;
             *) pkgs+=("$arg") ;;
         esac
@@ -641,7 +583,6 @@ cmd_uninstall() {
     for arg in "$@"; do
         case "$arg" in
             --all) do_all=true ;;
-            --dry-run) DRY_RUN=true ;;
             -*) die "Unknown flag: $arg" ;;
             *) pkgs+=("$arg") ;;
         esac
@@ -666,7 +607,7 @@ cmd_uninstall() {
 
     if (( ${#pkgs[@]} == 0 )); then
         log_err "No packages specified"
-        log_info "Usage: ./setup.sh uninstall [--all | <pkg>...] [--dry-run]"
+        log_info "Usage: ./setup.sh uninstall [--all | <pkg>...]"
         return 1
     fi
     validate_pkgs "${pkgs[@]}" || return 1
@@ -682,7 +623,6 @@ cmd_update() {
         case "$arg" in
             --all) do_all=true ;;
             --pkgs) do_pkgs=true ;;
-            --dry-run) DRY_RUN=true ;;
             -*) die "Unknown flag: $arg" ;;
             *) pkgs+=("$arg") ;;
         esac
@@ -724,8 +664,7 @@ cmd_update() {
 
     if (( ${#pkgs[@]} == 0 )); then
         log_err "No target specified"
-        log_info "Usage: ./setup.sh update" \
-            "[--all | --pkgs | <pkg>...] [--dry-run]"
+        log_info "Usage: ./setup.sh update [--all | --pkgs | <pkg>...]"
         return 1
     fi
     validate_pkgs "${pkgs[@]}" || return 1
@@ -826,47 +765,43 @@ show_help() {
 oh-my-dotfiles setup
 
 Usage:
-  ./setup.sh <command> [options]
+  ./setup.sh <command> [arguments]
 
 Commands:
-  install   [--all | <pkg>...]  [--dry-run]
-  uninstall [--all | <pkg>...] [--dry-run]
-  update    [--all | --pkgs | <pkg>...] [--dry-run]
-  restore   <pkg>...
-  status    [<pkg>...]
-  defaults
-  help, -h
+  install   <pkg>... [--all]    Install packages
+  uninstall <pkg>... [--all]    Uninstall packages
+  update    <pkg>... [--all|--pkgs]  Update packages
+  restore   <pkg>...            Restore from backups
+  status    [<pkg>...]          Show status
+  defaults                      Apply macOS defaults
+  help                          Show this help
 
-install:
-  --all      Prerequisites + brew bundle + all packages + offer shell switch.
-  <pkg>...   Stow specific packages. Prerequisites must already be present.
+Arguments:
+  <pkg>...  One or more packages: zsh, git, vim, emacs,
+            ghostty, ripgrep, uv, bun, starship
+  --all     Apply to all packages (install/uninstall/update)
+  --pkgs    Update only stowed packages, skip brew (update only)
 
-uninstall:
-  --all      Unstow all currently stowed packages (prompts for confirmation).
-  <pkg>...   Unstow specific packages.
+Examples:
+  ./setup.sh install --all          Full setup
+  ./setup.sh install zsh git        Install specific packages
+  ./setup.sh update --all           Update everything
+  ./setup.sh restore zsh            Restore zsh backups
 
-update:
-  --all      ensure prerequisites + brew bundle + restow all stowed packages.
-  --pkgs     Restow all currently stowed packages; skip prerequisites/brew.
-  <pkg>...   Restow specific packages.
+Details:
+  install --all:
+    Installs Xcode CLI, Homebrew, GNU Stow, runs brew bundle,
+    stows all packages, offers to switch default shell to zsh.
 
-restore:
-  <pkg>...   Unstow pkg if stowed, then restore the most recent backup from
-             .backups/<pkg>/. Refuses if the target path is already occupied.
+  update --all:
+    Ensures prerequisites, runs brew bundle, restows all packages.
 
-status:
-  [<pkg>...] Show prerequisite versions and stow/backup status per package.
-             Defaults to all packages.
+  update --pkgs:
+    Restows currently stowed packages without touching brew.
 
-defaults:
-  Apply macOS system preferences from macos/defaults.sh (prompts first).
-
-Options:
-  --dry-run  Print what would be done without executing anything.
-             Supported by: install, uninstall, update.
-
-Packages:
-  zsh  git  vim  emacs  ghostty  ripgrep  uv  bun  starship
+  restore:
+    Unstows package if stowed, then restores the most recent
+    backup from .backups/<pkg>/.
 
 For more information: https://github.com/zhengyuli/oh-my-dotfiles
 EOF
