@@ -80,7 +80,8 @@
         consult-preview-key '(:debounce 0.25 any))
 
   ;; Ripgrep arguments - extend defaults with additional ignore patterns
-  ;; Use --no-config to ignore global ripgrep config and ensure consistent behavior
+  ;; Use --no-config to ignore global ripgrep config
+  ;; and ensure consistent behavior
   ;; See: https://github.com/minad/consult#consult-ripgrep
   (setq consult-ripgrep-args
         '("rg"

@@ -41,7 +41,8 @@
   "Tool specs for shell script development.")
 
 (defun omw/install-bash-tools ()
-  "Install shell script LSP tools (bash-language-server) via bun if not present."
+  "Install shell script LSP tools (bash-language-server) via bun
+if not present."
   (interactive)
   (apply #'omw/tools-install omw/sh-tool-specs))
 

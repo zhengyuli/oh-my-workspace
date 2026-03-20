@@ -33,7 +33,8 @@
 ;;
 ;; Early initialization file for Emacs 27+.
 ;; This file is loaded before the package system is initialized,
-;; making it the correct place to set package-user-dir and user-emacs-directory.
+;; making it the correct place to set package-user-dir
+;; and user-emacs-directory.
 ;;
 ;; XDG variables defined here can be used directly in init.el.
 

@@ -69,8 +69,7 @@
 
 ;; ============================================================================
 (defun omw/corfu-mode-setup ()
-  "Enable corfu auto-completion with documentation popup.
-Enables global corfu mode with auto-completion and popup info display."
+  "Enable corfu auto-completion with documentation popup."
   (setq corfu-auto t)
   (global-corfu-mode 1)
   (corfu-popupinfo-mode 1))

@@ -63,10 +63,13 @@
   (setq dirvish-use-header-line 'global
         dirvish-header-line-format '(:left (path) :right (free-space))
         dirvish-mode-line-bar-image-width 0
-        dirvish-mode-line-format '(:left (sort file-time " " file-size symlink) :right (omit yank index)))
+        dirvish-mode-line-format
+        '(:left (sort file-time " " file-size symlink)
+          :right (omit yank index)))
 
   ;; Display attributes and performance
-  (setq dirvish-attributes '(vc-state subtree-state nerd-icons git-msg file-modes file-time file-size)
+  (setq dirvish-attributes
+        '(vc-state subtree-state nerd-icons git-msg file-modes file-time file-size)
         dirvish-large-directory-threshold 20000))
 
 ;; ============================================================================
@@ -97,6 +100,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   "Apply custom settings for dired mode."
   (dired-omit-mode (if omw/omit-global-mode 1 -1)))
 
+;; ============================================================================
 (use-package dired
   :ensure nil
   :defer t
@@ -157,14 +161,17 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
         dired-auto-revert-buffer (not (file-remote-p default-directory)))
 
   ;; Omit filter rules:
-  ;; - dired-omit-files: hidden files/dirs (.), common project dirs, macOS specifics
+  ;; - dired-omit-files: hidden files/dirs (.), common project dirs,
+  ;;   macOS specifics
   ;; - dired-omit-extensions: compiled artifacts and lock files
   (setq dired-omit-files (concat
                           "^\\.\\|"
-                          "\\(node_modules\\|__pycache__\\|\\.venv\\|venv\\|dist\\|build\\|target\\)\\'\\|"
+                          "\\(node_modules\\|__pycache__\\|\\.venv\\|"
+                          "venv\\|dist\\|build\\|target\\)\\'\\|"
                           "\\.DS_Store\\'")
         dired-omit-extensions (append dired-omit-extensions
-                                      '(".pyc" ".elc" ".o" ".class" ".jar" ".log" ".lock")))
+                                      '(".pyc" ".elc" ".o"
+                                        ".class" ".jar" ".log" ".lock")))
 
   ;; Listing switches
   (if (executable-find "gls")

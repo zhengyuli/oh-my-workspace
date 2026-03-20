@@ -64,7 +64,7 @@ Indent, delete trailing whitespace, convert tabs to spaces."
 (defun omw/copy-current-line ()
   "Copy current line to kill ring."
   (interactive)
-  (let ((end (min (point-max) (line-end-position))))
+  (let ((end (line-end-position)))
     (copy-region-as-kill (line-beginning-position) end)))
 
 (defun omw/smart-copy-region ()
@@ -92,8 +92,9 @@ Otherwise kill buffer without confirmation."
   (interactive)
   ;; Only prompt for save if buffer has unsaved changes and is visiting a file
   (if (and buffer-file-name (buffer-modified-p))
-      (if (yes-or-no-p (format "Buffer %s has unsaved changes. Save before killing? "
-                               (buffer-name)))
+      (if (yes-or-no-p
+           (format "Buffer %s has unsaved changes. Save before killing? "
+                   (buffer-name)))
           (progn (save-buffer) (kill-current-buffer))
         (kill-current-buffer))
     (kill-current-buffer)))

@@ -55,20 +55,24 @@ Used for setting `user-mail-address'."
   :group 'omw-emacs)
 
 ;; ============================================================================
-(defvar omw/emacs-custom-file-path (expand-file-name "custom.el" user-emacs-directory)
+(defvar omw/emacs-custom-file-path
+  (expand-file-name "custom.el" user-emacs-directory)
   "Emacs custom file path, which will be used to add extra customization.")
 
-(defvar omw/emacs-config-root-path (let ((config-file (or load-file-name buffer-file-name)))
-                                     (if config-file
-                                         (file-name-directory (file-chase-links config-file))
-                                       default-directory))
+(defvar omw/emacs-config-root-path
+  (let ((config-file (or load-file-name buffer-file-name)))
+    (if config-file
+        (file-name-directory (file-chase-links config-file))
+      default-directory))
   "Emacs configuration root path.
 Automatically resolves symlinks to find the actual configuration directory.")
 
-(defvar omw/emacs-config-lisp-path (expand-file-name "lisp/" omw/emacs-config-root-path)
-  "Emacs configuration custom settings path.")
+(defvar omw/emacs-config-lisp-path
+  (expand-file-name "lisp/" omw/emacs-config-root-path)
+  "Emacs configuration lisp modules path.")
 
-(defvar omw/emacs-config-site-packages-path (expand-file-name "site-packages/" omw/emacs-config-root-path)
+(defvar omw/emacs-config-site-packages-path
+  (expand-file-name "site-packages/" omw/emacs-config-root-path)
   "Emacs configuration custom site packages path.")
 
 (defun omw/emacs-add-subdirs-to-load-path (base-dir)
@@ -79,7 +83,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (normal-top-level-add-subdirs-to-load-path)))
 
 ;; ============================================================================
-;; Set custom file early to prevent Emacs from writing customizations to init.el
+;; Set custom file early to prevent Emacs from writing
+;; customizations to init.el
 (setq custom-file omw/emacs-custom-file-path)
 
 ;; Recursively add emacs configuration custom path to load path
@@ -130,7 +135,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (setq package-archive-priorities '(("melpa" . 0)
                                      ("nongnu" . 5)
                                      ("gnu" . 10)))
-  ;; Initialize packages
   (package-initialize))
 
 ;; ============================================================================
@@ -192,16 +196,16 @@ and global-auto-revert-mode."
   :bind ("C-x C-b" . ibuffer)
   :config
   ;; Autosave
-  (setq auto-save-list-file-prefix (expand-file-name
-                                    "emacs/auto-save-list/.saves-" omw/xdg-data-home))
+  (setq auto-save-list-file-prefix
+        (expand-file-name "emacs/auto-save-list/.saves-" omw/xdg-data-home))
 
   ;; Native compilation
-  (setq native-compile-target-directory (expand-file-name
-                                         "emacs/eln-cache/" omw/xdg-cache-home))
+  (setq native-compile-target-directory
+        (expand-file-name "emacs/eln-cache/" omw/xdg-cache-home))
 
   ;; Backup and version control
-  (setq backup-directory-alist (list (cons ".*" (expand-file-name
-                                                 "emacs/backup/" omw/xdg-state-home)))
+  (setq backup-directory-alist
+        (list (cons ".*" (expand-file-name "emacs/backup/" omw/xdg-state-home)))
         backup-by-copying t
         version-control t
         delete-old-versions t)
@@ -212,7 +216,8 @@ and global-auto-revert-mode."
         uniquify-separator "/")
 
   ;; Project management
-  (setq project-list-file (expand-file-name "emacs/projects" omw/xdg-state-home))
+  (setq project-list-file
+        (expand-file-name "emacs/projects" omw/xdg-state-home))
 
   ;; User identity and timestamps
   (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u"
