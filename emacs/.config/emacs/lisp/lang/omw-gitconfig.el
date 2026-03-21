@@ -1,5 +1,5 @@
 ;;; omw-gitconfig.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-20 11:10:00 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-21 15:39:57 Saturday by zhengyuli>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: git, gitconfig, gitignore, configuration
@@ -45,7 +45,6 @@
          ("/git/config\\.local\\.example\\'" . gitconfig-mode)
          ("/git/ignore\\'" . gitignore-mode)
          ("\\.gitignore_global\\'" . gitignore-mode)
-         ("\\.npmignore\\'" . gitignore-mode)
          ("\\.dockerignore\\'" . gitignore-mode)
          ("\\.stow-local-ignore\\'" . gitignore-mode)))
 
