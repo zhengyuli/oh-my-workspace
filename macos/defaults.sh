@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 14:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-21 17:02:24 Saturday by zhengyuli>
 # =============================================================================
 # macOS System Defaults - developer-optimized
 #
@@ -193,6 +193,23 @@ defaults write com.apple.dock showhidden -bool true
 
 # Don't show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
+
+# -----------------------------------------------------------------------------
+# Mission Control & Spaces
+# -----------------------------------------------------------------------------
+printf 'Setting Mission Control & Spaces preferences...\n'
+
+# Don't auto-rearrange Spaces based on most recent use - keeps Space order
+# stable and prevents fullscreen Spaces from being reshuffled after exit
+defaults write com.apple.dock mru-spaces -bool false
+
+# Each display has its own Space set (required for per-display fullscreen
+# Spaces to be isolated; prevents cross-display Space leakage)
+defaults write com.apple.spaces spans-displays -bool false
+
+# Group windows by application in Mission Control - makes it easier to spot
+# and close orphaned Spaces left behind by exited fullscreen windows
+defaults write com.apple.dock expose-group-apps -bool true
 
 # -----------------------------------------------------------------------------
 # Terminal
