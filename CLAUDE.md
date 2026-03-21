@@ -13,6 +13,7 @@ oh-my-dotfiles/
 ├── CLAUDE.md             # This file - project-wide guidance
 ├── setup.sh              # Interactive setup script
 ├── bun/                  # Bun configuration
+│   ├── CLAUDE.md         # Bun-specific guidance
 │   └── .config/bun/      # Symlinked to ~/.config/bun/
 ├── emacs/                # Emacs configuration (>= 30.2)
 │   ├── CLAUDE.md         # Emacs-specific guidance (detailed)
@@ -31,6 +32,7 @@ oh-my-dotfiles/
 ├── uv/                   # UV package manager configuration
 │   └── .config/uv/       # Symlinked to ~/.config/uv/
 ├── vim/                  # Vim configuration
+│   ├── CLAUDE.md         # Vim-specific guidance
 │   └── .config/vim/      # Symlinked to ~/.config/vim/
 └── zsh/                  # Zsh configuration
     ├── CLAUDE.md         # Zsh-specific guidance
@@ -132,6 +134,8 @@ Each major component has its own `CLAUDE.md` with detailed guidance:
 |------|---------|
 | **zsh/CLAUDE.md** | Zsh configuration structure, startup sequence, plugin system |
 | **emacs/CLAUDE.md** | Emacs coding standards, module architecture, use-package patterns |
+| **vim/CLAUDE.md** | Vim configuration, XDG paths, alignment exception |
+| **bun/CLAUDE.md** | Bun configuration, tool installation |
 
 These files are lazy-loaded when working in their respective directories.
 
@@ -174,213 +178,77 @@ Unified **Doom One** theme across:
 
 - **Ghostty**: Fast, native terminal emulator with XDG-compliant configuration
 
+## Setup Scripts
+
+### setup.sh
+
+The main setup script provides interactive package management for stow operations.
+
+**Key patterns:**
+
+```bash
+# Pure query functions (no side effects)
+is_stowed()    # Check if package is stowed
+has_stow()     # Check if stow is available
+has_homebrew() # Check if homebrew is installed
+
+# Operation functions (have side effects)
+stow_package()   # Stow a single package
+backup_file()    # Backup existing file
+restore_file()   # Restore from backup
+```
+
+**Error handling:**
+- Use explicit `if` statements (not `[[ ]] && cmd`)
+- Use `set -euo pipefail` at script start
+- All output via `printf` with helper functions: `log_ok`, `log_err`, `log_warn`
+
+**Function structure:**
+```bash
+# Pure query - returns 0/1, no output
+is_stowed() {
+    local pkg="$1"
+    [[ -d "$STOW_DIR/$pkg" ]] && stow -n -d "$STOW_DIR" -t "$HOME" "$pkg" &>/dev/null
+}
+
+# Operation - may output, may modify state
+stow_package() {
+    local pkg="$1"
+    if is_stowed "$pkg"; then
+        log_warn "Already stowed: $pkg"
+        return 0
+    fi
+    stow -d "$STOW_DIR" -t "$HOME" "$pkg"
+    log_ok "Stowed: $pkg"
+}
+```
+
+### defaults.sh
+
+macOS defaults configuration script for system preferences.
+
+**Key patterns:**
+
+```bash
+# Domain grouping - organize by domain
+# NSGlobalDomain, com.apple.finder, com.apple.dock, etc.
+
+# Document customizations in header comments
+# Note which settings require logout/restart
+```
+
 ## Coding Standards
 
 ### Shell Script Standards
 
-These conventions apply to **both bash and zsh scripts** throughout the repository.
+For shell script coding standards (conditionals, quoting, output, security), see [zsh/CLAUDE.md - Coding Standards](zsh/CLAUDE.md#coding-standards).
 
-#### 1. Avoid `[[ cond ]] && cmd || true` Pattern (CRITICAL)
-
-**WRONG** - This pattern is error-prone and hides potential issues:
-
-```bash
-# Problem 1: Non-zero exit code from condition causes function to fail under set -e
-[[ -n "$var" ]] && log_warn "message"
-
-# Problem 2: Adding || true masks errors and is hard to read
-[[ -n "$var" ]] && log_warn "message" || true
-```
-
-**CORRECT** - Use explicit `if` statements:
-
-```bash
-if [[ -n "$var" ]]; then
-    log_warn "message"
-fi
-```
-
-**Rationale:**
-1. With `set -e`, a false condition (`[[ -n "$var" ]]` when var is empty) returns exit code 1, causing unexpected script termination
-2. Adding `|| true` masks potential errors in the command itself
-3. `if` statements are explicit, readable, and behave predictably
-
-**Acceptable uses of `&&`:**
-```bash
-# Early return pattern (function continues if condition is false)
-[[ -d "$dir" ]] && return
-
-# Conditional execution where false condition is expected and harmless
-[[ -n "$value" ]] && git config "$key" "$value"
-```
-
-#### 2. Use `[[ ]]` for Conditional Tests
-
-Prefer `[[ ]]` over `[ ]` or `test` for condition checks:
-
-```bash
-# ✅ CORRECT
-[[ -f "$file" ]]
-[[ "$var" == "pattern" ]]
-[[ -n "$value" ]]
-
-# ❌ AVOID
-[ -f "$file" ]
-test -f "$file"
-```
-
-**Rationale:** `[[ ]]` prevents word-splitting, supports pattern matching, and is more readable.
-
-#### 3. Use `(( ))` for Arithmetic
-
-```bash
-# ✅ CORRECT
-(( count++ ))
-(( total = a + b ))
-local result=$(( a * b ))
-
-# ❌ AVOID
-let count+=1
-result=$(expr $a + $b)
-```
-
-#### 4. Use `$()` for Command Substitution
-
-```bash
-# ✅ CORRECT
-local dir=$(dirname "$file")
-
-# ❌ AVOID - hard to nest, hard to read
-local dir=`dirname "$file"`
-```
-
-#### 5. Quote All External Data
-
-Any value from files, environment variables, or command output must be quoted:
-
-```bash
-# ✅ CORRECT
-rm -- "${file}"
-grep -- "${pattern}" "${file}"
-source "${config_file}"
-
-# ❌ WRONG - word-splitting and glob expansion risks
-rm ${file}
-grep ${pattern} ${file}
-```
-
-#### 6. Use `printf`, Never `echo`
-
-```bash
-# ✅ CORRECT - portable and predictable
-printf '%s\n' "$message"
-printf 'Status: %s\n' "$status"
-
-# ❌ AVOID - behavior varies between shells and implementations
-echo "$message"
-echo -e "$message"
-```
-
-#### 7. Use `set -e` with Caution
-
-```bash
-# ✅ CORRECT - scoped to specific operations
-(
-    set -e
-    cmd1
-    cmd2
-)
-
-# ❌ AVOID globally in interactive shells
-set -e  # Can cause unexpected exits
-```
-
-#### 8. Security: Validate Before Sourcing
-
-```bash
-# ✅ CORRECT - check before sourcing
-if [[ -f "${file}" ]]; then
-    source "${file}"
-fi
-
-# ❌ WRONG - error if file missing
-source "${file}"
-```
-
-#### 9. Security: Never `eval` Untrusted Input
-
-```bash
-# ✅ CORRECT - use allowlist
-local -a allowed=(rbenv pyenv nodenv)
-if (( ${allowed[(I)${tool}]} )); then
-    eval "$(${tool} init -)"
-fi
-
-# ❌ DANGEROUS - arbitrary code execution
-eval "${user_input}"
-```
-
-#### 10. Check File Existence Before Operations
-
-```bash
-# ✅ CORRECT
-[[ -f "$file" ]] && rm -- "$file"
-
-# ❌ WRONG - error if file doesn't exist
-rm "$file"
-```
-
-#### 11. Environment Variable Assignment Patterns
-
-Choose the correct assignment pattern based on variable purpose (XDG variables, tool paths, config paths, variable concatenation).
-
-**Rule 1: XDG Base Variables and Tool Paths → Use `${VAR:-default}`**
-
-```bash
-# ✅ CORRECT - With fallback, respects potential user customization
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
-```
-
-**Rule 2: Config File Paths (XDG guaranteed) → Use `$VAR`**
-
-```bash
-# ✅ CORRECT - Concise, XDG variables already set in .zshenv
-export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
-export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
-```
-
-**Rule 3: Variable Concatenation or Boundary Needed → Use `${VAR}`**
-
-```bash
-# ✅ CORRECT - Braces clarify variable boundaries
-export PATH="${GOPATH}/bin:${PATH}"
-export VIMINIT="source ${XDG_CONFIG_HOME}/vim/vimrc"
-```
-
-**❌ Anti-patterns**
-
-```bash
-# ❌ Avoid unnecessary braces (when no boundary ambiguity)
-export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship.toml"  # Redundant
-
-# ❌ Avoid fallback for guaranteed variables
-export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/rc"  # Redundant
-```
-
-**Decision Tree:**
-
-```
-Need to set variable?
-├── User may have customized? → YES → ${VAR:-default}
-│
-└── NO → XDG variable reference?
-    ├── YES → Non-separator char follows? → YES → ${VAR}
-    │       └── NO → $VAR (concise)
-    └── NO → Direct assignment
-```
-
-For zsh-specific conventions (startup files, setopt, arrays, etc.), see [zsh/CLAUDE.md](zsh/CLAUDE.md).
+Key points:
+- Use explicit `if` statements, avoid `[[ ]] && cmd || true`
+- Use `[[ ]]` for tests, `(( ))` for arithmetic
+- Quote all external data
+- Use `printf` or `print`, never `echo`
+- For environment variable assignment patterns, see [zsh/CLAUDE.md - Variable Assignment](zsh/CLAUDE.md#variable-assignment)
 
 ### Configuration Comment Standards
 
@@ -548,29 +416,11 @@ Use ASCII dashes for subsections (not Unicode em-dashes):
 
 #### Inline Comments (CRITICAL)
 
-**Rule: Do NOT put comments on the same line as code.**
+**Rule: Do NOT put comments on the same line as code.** All comments must be on the line above the code they describe.
 
-All comments must be on the line above the code they describe.
-
-**❌ AVOID - Inline comments:**
-```bash
-setopt AUTO_CD # type a directory name to cd
-bindkey -e    # emacs keymap
-```
-
-**✅ CORRECT - Comment above:**
-```bash
-# type a directory name to cd
-setopt AUTO_CD
-# emacs keymap
-bindkey -e
-```
-
-**Rationale:**
-1. Improves readability with clear separation
-2. No alignment maintenance burden
-3. Easier to scan code without comment noise
-4. Prevents accidental removal of code-comment spacing
+For detailed examples and rationale, see:
+- [zsh/CLAUDE.md - Inline Comments](zsh/CLAUDE.md#inline-comments-critical)
+- [emacs/CLAUDE.md - Inline Comments](emacs/CLAUDE.md#inline-comments)
 
 #### Alignment Spaces (CRITICAL)
 

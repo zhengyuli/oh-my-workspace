@@ -1,0 +1,67 @@
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "REPLACE_ME_WITH_YOUR_BIGMODEL_API_KEY",
+    "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5"
+  },
+  "model": "opus",
+  "permissions": {
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(rm -fr *)",
+      "Bash(sudo *)",
+      "Bash(git push --force*)",
+      "Bash(git push *--force*)",
+      "Bash(git reset --hard *)",
+      "Bash(dd *)",
+      "Bash(mkfs *)",
+      "Edit(~/.config/zsh/**)",
+      "Read(~/.config/zsh/**)",
+      "Edit(~/.zshenv)",
+      "Read(~/.zshenv)",
+      "Edit(~/.ssh/**)",
+      "Read(~/.ssh/**)",
+      "Edit(**/.env)",
+      "Read(**/.env)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh stop"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh notification"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh clear"
+          }
+        ]
+      }
+    ]
+  },
+  "enableAllProjectMcpServers": false,
+  "alwaysThinkingEnabled": true,
+  "cleanupPeriodDays": 365
+}
