@@ -1,10 +1,10 @@
 # CLAUDE.md - Vim Configuration
 
-This file provides guidance to Claude Code when working with the Vim configuration in this directory.
+This file provides guidance to Claude Code when working with the Vim configuration.
 
 ## Project Overview
 
-This is a **minimal, plugin-free Vim configuration** with Doom One theme for basic editing needs. For advanced editing, use Emacs.
+**Minimal, plugin-free Vim configuration** with Doom One theme for basic editing. For advanced editing, use Emacs.
 
 ## Directory Structure
 
@@ -14,33 +14,18 @@ vim/.config/vim/
 └── undo/        # Persistent undo history (gitignored, created at runtime)
 ```
 
-## Quick Start
-
-### Setup
+## Setup
 
 ```bash
-# Stow the vim package
 stow vim
-
-# Test configuration loads
-vim -c 'echo "Vim loaded successfully"'
-```
-
-### Quick Validation
-
-```bash
-# Verify vimrc is linked
-ls -la ~/.config/vim/vimrc
-
-# Test configuration
-vim -c 'echo &undodir'
+vim -c 'echo &undodir'   # Verify XDG undo path
 ```
 
 ## Architecture
 
 ### XDG Paths
 
-Vim is configured via the `VIMINIT` environment variable set in `zsh/.config/zsh/conf.d/00-env.zsh`:
+Vim is loaded via `VIMINIT` set in `zsh/.config/zsh/conf.d/00-env.zsh`:
 
 ```bash
 export VIMINIT="source ${XDG_CONFIG_HOME}/vim/vimrc"
@@ -52,81 +37,20 @@ export VIMINIT="source ${XDG_CONFIG_HOME}/vim/vimrc"
 | `$XDG_DATA_HOME/vim/undo` | Persistent undo history |
 | `$XDG_STATE_HOME/vim/viminfo` | Vim state file |
 
-## Coding Standards
-
-See `.claude/rules/dotfiles/vim.md` for vim-specific rules.
-
-### Header Format
-
-Vim configuration follows the [Root CLAUDE.md - Configuration Comment Standards](../CLAUDE.md#configuration-comment-standards).
-
-Header example:
-```vim
-" vimrc
-" =============================================================================
-" Vim Configuration - Minimal, Plugin-Free Setup
-"
-" Location: ~/.config/vim/vimrc
-" XDG: Loaded via VIMINIT environment variable
-" =============================================================================
-```
-
-### Comment Character
-
-Vim uses `"` for comments:
-```vim
-" This is a comment
-set number  " This is also a comment
-```
-
-### Alignment Spaces Exception
-
-Vim color scheme configuration MAY use alignment spaces for readability. This is an exception to the repository-wide alignment space prohibition.
-
-**Scope:** This exception applies ONLY to:
-- `vim/.config/vim/vimrc` color scheme section (lines ~286-400)
-- Any `*.vim` files defining color schemes
-
-**When uncertain:** Ask user to confirm whether alignment spaces are intentional formatting or should be removed.
-
 ## Key Patterns
 
-1. **No plugins**: This configuration is intentionally minimal
-2. **Doom One theme**: Custom color scheme matching the repository theme
-3. **XDG compliance**: All state/data stored in XDG paths
-4. **Sensible defaults**: Modern editing preferences without external dependencies
+1. **No plugins**: intentionally minimal
+2. **Doom One theme**: custom color scheme
+3. **XDG compliance**: all state/data in XDG paths
 
-## Code Quality
+## Coding Standards
 
-### Validation Commands
+See `.claude/rules/common/coding-style.md` for: header format (use `"` for comments), section separators, timestamps. The color scheme section of `vimrc` may use alignment spaces for `hi` commands (exception documented in coding-style.md).
+
+## Validation
 
 ```bash
-# Check vimrc syntax
-vim -c 'source ~/.config/vim/vimrc' -c 'q'
-
-# Verify XDG paths are used
-vim -c 'echo &undodir'
+vim -c 'source ~/.config/vim/vimrc' -c 'q'   # Syntax check
+vim -c 'echo &undodir'                         # Verify XDG undo path
+ls -la ~/.config/vim/vimrc                     # Verify symlink
 ```
-
-### Compliance Checklist
-
-- [ ] Header follows configuration comment standards
-- [ ] Time-stamp present if file has mode line
-- [ ] Comments use `"` prefix
-- [ ] Color scheme section may use alignment spaces (exception)
-
-## Quick Reference Card
-
-### Essential Rules
-
-1. **No plugins**: Keep configuration minimal
-2. **XDG paths**: Use `$XDG_CONFIG_HOME`, `$XDG_DATA_HOME`, `$XDG_STATE_HOME`
-3. **Comment character**: Use `"` for comments
-4. **Alignment spaces**: Allowed in color scheme section only
-5. **Theme**: Doom One colors
-
-### Pre-Commit Checklist
-
-- [ ] Configuration loads: `vim -c 'q'`
-- [ ] Header compliant with comment standards
-- [ ] XDG paths used for all state/data

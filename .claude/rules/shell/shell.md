@@ -5,9 +5,9 @@ paths:
   - "**/conf.d/*"
 ---
 
-# Shell Script Standards
+# Shell Scripting Patterns
 
-> This file extends [~/.claude/rules/common/coding-style.md](file://...) with dotfiles-specific shell script patterns.
+> This file extends [../common/coding-style.md](../common/coding-style.md) with shell-specific patterns. For zsh config file structure, see [zsh.md](./zsh.md).
 
 ## Variable Assignment
 
@@ -59,7 +59,7 @@ Need to set variable?
 
 ## Conditional Logic
 
-> **See [~/.claude/rules/common/coding-style.md](file://...) for base shell patterns (explicit if statements).**
+> **See [../common/coding-style.md](../common/coding-style.md) for base patterns (inline comments, alignment, line length).**
 
 ```zsh
 # CORRECT - explicit if statements
