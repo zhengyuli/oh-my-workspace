@@ -576,18 +576,26 @@ bindkey -e
 
 **Rule: Do NOT use extra spaces for visual alignment in code.**
 
-Use exactly one space between elements. Never add padding spaces to align items vertically in code.
+Use exactly one space between elements. Never add padding spaces to align items vertically in code. This includes:
+
+1. **Assignment operators (`=`, `+=`, etc.)** - One space on each side only
+2. **Array elements** - No padding to align values
+3. **Variable declarations** - No padding to align names or values
 
 **❌ AVOID - Alignment spaces in code:**
 ```bash
-# Shell arrays
+# Assignment operators with extra padding
+name    = "value"
+counter += 1
+
+# Shell arrays with aligned comments
 path=(
   "$HOME/.local/bin"      # User binaries
   /opt/homebrew/bin       # Homebrew
   $path                   # System
 )
 
-# Variable assignments
+# Variable assignments with aligned equals
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
@@ -595,14 +603,18 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 **✅ CORRECT - Single space:**
 ```bash
-# Shell arrays
+# Assignment operators with single space
+name = "value"
+counter += 1
+
+# Shell arrays without alignment
 path=(
   "$HOME/.local/bin"
   /opt/homebrew/bin
   $path
 )
 
-# Variable assignments
+# Variable assignments without aligned equals
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
@@ -616,12 +628,21 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 **Exceptions (alignment spaces MAY be used):**
 
-| Context | Example | Reason |
-|---------|---------|--------|
-| Tables in comments | `#   bg    #282c34    fg    #bbc2cf` | Readability for reference tables |
-| Numbered lists | `#   1. First item` | Standard indentation hierarchy |
-| Continuation lines | `#           This continues the above...` | Show logical grouping |
-| Vim color schemes | See detailed section below | Column alignment for color tables |
+| Context | Scope | Example | Reason |
+|---------|-------|---------|--------|
+| Tables in comments | All files | `#   bg    #282c34    fg    #bbc2cf` | Readability for reference tables |
+| Numbered lists | All files | `#   1. First item` | Standard indentation hierarchy |
+| Continuation lines | All files | `#           This continues the above...` | Show logical grouping |
+| Vim `hi` commands | `vimrc` color section, `*.vim` | Column alignment for color tables |
+| Emacs let binding comments | `*.el` files | `(let* (;; Comment here` | Scoped to binding-level comments |
+
+**Scope:** This exception applies ONLY to:
+- `vim/.config/vim/vimrc` color scheme section (lines ~286-400)
+- Any `*.vim` files defining color schemes
+
+**When uncertain:** Ask user to confirm whether alignment spaces are intentional formatting or should be removed. Do NOT auto-modify without user approval.
+
+
 
 **Exception: Vim Color Scheme Configuration**
 
@@ -918,7 +939,7 @@ If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not proper
 5. **Config Headers:** Standardized format with `===` for headers, `---` for sections
 6. **Time-stamp:** Required for ALL configuration files
 7. **Inline Comments:** Prohibited (comments on line above code)
-8. **Alignment Spaces:** Prohibited (single space only)
+8. **Alignment Spaces:** Prohibited (single space only, including around `=`)
 9. **Line Length:** 80 chars for code, 79 for comments
 10. **Comment Language:** English only
 11. **Cache Files:** Never commit `.zcompdump`, `*.swp`, `*.elc`, etc.
@@ -934,7 +955,7 @@ If XDG environment variables (`XDG_CACHE_HOME`, `XDG_STATE_HOME`) are not proper
 - [ ] Shell loads: `zsh -c 'source ~/.zshenv'`
 - [ ] Config headers compliant: Standardized format with `===`/`---`
 - [ ] Time-stamp present: ALL config files have Time-stamp
-- [ ] No alignment spaces: Single space between elements
+- [ ] No alignment spaces: Single space between elements (including around `=`)
 - [ ] No `echo`: all output via `printf`
 - [ ] All comments in English
 

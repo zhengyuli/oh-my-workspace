@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 14:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-21 08:00:00 Saturday by zhengyu.li>
 # =============================================================================
 # oh-my-dotfiles Setup Script
 #
@@ -82,15 +82,9 @@ is_valid_pkg() {
     return 1
 }
 
-# Print the absolute $HOME paths stow would link or that block linking for pkg.
-# Delegates entirely to the stow binary so that all ignore rules
-# (.stow-local-ignore, built-in defaults), tree-folding, and edge cases
-# are handled natively.
-# Parses two output patterns from stow -n -v:
-#   LINK: <rel> => <src>       - new symlink stow would create
-#   existing target ...: <rel> - occupied path stow cannot overwrite
-# Both patterns must be handled: backup_file clears blockers before the
-# real stow run.
+# Print paths stow would link or that block linking for pkg.
+# Parses stow -n -v output for LINK and conflict patterns.
+# Returns absolute $HOME paths for backup_file to clear before real stow run.
 stow_targets() {
     local pkg="$1"
     [[ -d "${DOTFILES_DIR}/${pkg}" ]] || return 1
@@ -108,10 +102,8 @@ stow_targets() {
     done <<< "$output"
 }
 
-# Returns 0 when stow reports nothing to do for pkg - meaning every symlink
-# stow would create already exists and points to the right place.
-# Returns 1 when stow is absent, LINK lines exist, or conflicts are reported.
-# || true prevents set -e from aborting on stow non-zero exit (e.g. conflicts).
+# Returns 0 if pkg is fully stowed (stow -n -v reports nothing to do).
+# Returns 1 if stow is absent, LINK lines exist, or conflicts are reported.
 is_stowed() {
     has_stow || return 1
     local output
@@ -165,10 +157,10 @@ collect_stowed() {
 # -----------------------------------------------------------------------------
 # Operations: backup and restore
 # -----------------------------------------------------------------------------
-#
+
 # mv acts on symlinks themselves (not their destinations), so a foreign symlink
 # and a regular file are handled identically. Restore is always lossless.
-
+#
 # Set _backup_max_n to the highest backup number N found in dir for base.bak.N,
 # or -1 if no backups exist. Uses find to handle non-sequential numbering after
 # old backups are purged (sequential probing would miss high-numbered ones).
@@ -185,6 +177,8 @@ _find_max_backup_n() {
     done < <(find "$dir" -maxdepth 1 -name "${base}.bak.*" 2>/dev/null)
 }
 
+# Back up target file to BACKUP_DIR/<pkg>/ with auto-incrementing number.
+# Purges oldest backups when MAX_BACKUPS limit is reached.
 backup_file() {
     local target="$1" pkg="$2"
     [[ -e "$target" || -L "$target" ]] || return 0
@@ -192,7 +186,10 @@ backup_file() {
     local dir="${BACKUP_DIR}/${pkg}"
     local base; base=$(basename "$target")
 
-    mkdir -p "$dir"
+    if ! mkdir -p "$dir"; then
+        log_err "Failed to create backup directory: ${dir}"
+        return 1
+    fi
 
     # New backup always appends after the highest existing number so that
     # purging old backups never creates a gap that resets the slot counter.
@@ -212,9 +209,16 @@ backup_file() {
     fi
 
     log_warn "Backing up: ${target} -> ${dir}/${base}.bak.${new_n}"
-    mv "$target" "${dir}/${base}.bak.${new_n}"
+    # Re-check before mv to mitigate TOCTOU race (file could disappear
+    # between initial check at line 190 and this operation).
+    if [[ -e "$target" || -L "$target" ]]; then
+        mv "$target" "${dir}/${base}.bak.${new_n}"
+    else
+        log_warn "Target disappeared: ${target}"
+    fi
 }
 
+# Restore the most recent backup for target from BACKUP_DIR/<pkg>/.
 restore_file() {
     local target="$1" pkg="$2"
     local dir="${BACKUP_DIR}/${pkg}"
@@ -250,6 +254,7 @@ backup_stow_conflicts() {
     done < <(stow_targets "$pkg")
 }
 
+# Stow a single package, backing up any conflicting files first.
 stow_package() {
     local pkg="$1"
 
@@ -278,6 +283,7 @@ stow_package() {
     fi
 }
 
+# Restow a package (remove and re-link), backing up any new conflicts.
 restow_package() {
     local pkg="$1"
 
@@ -296,6 +302,7 @@ restow_package() {
     fi
 }
 
+# Remove stow symlinks for a package.
 unstow_package() {
     local pkg="$1"
     if ! is_stowed "$pkg"; then
@@ -314,6 +321,7 @@ unstow_package() {
 # Operations: prerequisites
 # -----------------------------------------------------------------------------
 
+# Install Xcode Command Line Tools if not present.
 install_xcode_cli() {
     if has_xcode_cli; then
         log_ok "Xcode CLI: already installed"
@@ -332,6 +340,7 @@ install_xcode_cli() {
     log_ok "Xcode CLI: installed"
 }
 
+# Install Homebrew package manager if not present.
 install_homebrew() {
     if has_homebrew; then
         log_ok "Homebrew: already installed"
@@ -378,6 +387,7 @@ install_homebrew() {
     log_ok "Homebrew: installed"
 }
 
+# Install GNU Stow via Homebrew if not present.
 install_stow() {
     if has_stow; then
         log_ok "GNU Stow: already installed"
@@ -392,6 +402,7 @@ install_stow() {
     fi
 }
 
+# Run brew bundle to install/upgrade all packages from Brewfile.
 run_brew_bundle() {
     [[ -f "$BREWFILE" ]] || die "Brewfile not found: $BREWFILE"
     log_info "Running brew bundle..."
@@ -404,14 +415,10 @@ run_brew_bundle() {
     fi
 }
 
-# mode=install  install anything missing
-# mode=check    report missing and return 1
-#
-# Each step short-circuits: a failure at one layer stops subsequent steps
-# (e.g. homebrew cannot be installed without Xcode CLI).
-# install_stow uses "brew install stow" directly so that run_brew_bundle is
-# never called here - it runs exactly once in cmd_install --all / cmd_update
-# --all, avoiding the double-bundle problem when stow was absent.
+# Ensure Xcode CLI, Homebrew, and GNU Stow are installed.
+# mode=install: install missing prerequisites; mode=check: report only.
+# Steps short-circuit on failure; install_stow uses brew directly to avoid
+# double-bundle when stow was absent.
 ensure_prerequisites() {
     local mode="${1:-check}"
 
@@ -449,6 +456,7 @@ ensure_prerequisites() {
 # Workflow helpers (do_*)
 # -----------------------------------------------------------------------------
 
+# Install multiple packages in sequence.
 do_install_pkgs() {
     local pkg
     for pkg in "$@"; do stow_package "$pkg"; done
@@ -456,11 +464,13 @@ do_install_pkgs() {
     log_ok "Done. Source ~/.zshenv or open a new terminal to apply changes."
 }
 
+# Uninstall multiple packages in sequence.
 do_uninstall_pkgs() {
     local pkg
     for pkg in "$@"; do unstow_package "$pkg"; done
 }
 
+# Restow multiple packages in sequence.
 do_update_pkgs() {
     local pkg
     for pkg in "$@"; do
@@ -499,6 +509,7 @@ do_restore_pkg() {
     log_ok "${pkg}: restored"
 }
 
+# Offer to switch default shell to zsh after successful installation.
 do_offer_shell_switch() {
     is_stowed zsh || return 0
     # ZSH_VERSION is set when running inside zsh; SHELL reflects the user's
@@ -533,6 +544,7 @@ do_offer_shell_switch() {
 # Commands (cmd_*)
 # -----------------------------------------------------------------------------
 
+# Handle 'install' command.
 cmd_install() {
     local do_all=false
     local -a pkgs=()
@@ -568,6 +580,7 @@ cmd_install() {
     do_install_pkgs "${_valid_pkgs[@]}"
 }
 
+# Handle 'uninstall' command.
 cmd_uninstall() {
     local do_all=false
     local -a pkgs=()
@@ -608,6 +621,7 @@ cmd_uninstall() {
     do_uninstall_pkgs "${_valid_pkgs[@]}"
 }
 
+# Handle 'update' command.
 cmd_update() {
     local do_all=false do_pkgs=false
     local -a pkgs=()
@@ -666,6 +680,7 @@ cmd_update() {
     do_update_pkgs "${_valid_pkgs[@]}"
 }
 
+# Handle 'restore' command.
 cmd_restore() {
     if (( $# == 0 )); then
         log_err "No packages specified"
@@ -683,6 +698,7 @@ cmd_restore() {
     done
 }
 
+# Handle 'status' command.
 cmd_status() {
     local -a pkgs
     if (( $# > 0 )); then
@@ -741,6 +757,7 @@ cmd_status() {
     done
 }
 
+# Handle 'defaults' command.
 cmd_defaults() {
     if [[ ! -f "$DEFAULTS_SCRIPT" ]]; then
         log_err "defaults.sh not found: $DEFAULTS_SCRIPT"
@@ -764,6 +781,7 @@ cmd_defaults() {
 # Help
 # -----------------------------------------------------------------------------
 
+# Display usage information and available commands.
 show_help() {
     cat <<'EOF'
 oh-my-dotfiles setup
@@ -815,6 +833,7 @@ EOF
 # Entry point
 # -----------------------------------------------------------------------------
 
+# Entry point - dispatch to appropriate command handler.
 main() {
     if [[ $# -eq 0 ]]; then
         show_help

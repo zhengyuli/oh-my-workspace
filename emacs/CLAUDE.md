@@ -944,6 +944,36 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 
 **Why**: Catches common issues before they reach the repository.
 
+### 4. Pre-Commit Constraint Check (CRITICAL)
+
+Before ANY commit to Emacs configuration, ALL changes MUST pass constraint validation:
+
+1. **Run applicable checks:**
+   ```bash
+   # Syntax/load check
+   emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") (message "OK"))'
+
+   # Byte-compile modified files (optional but recommended)
+   emacs --batch -f batch-byte-compile lisp/**/*.el
+   ```
+
+2. **Constraint checklist before commit:**
+   - [ ] All custom functions use `omw/` prefix
+   - [ ] All defcustom use `:group 'omw-emacs`
+   - [ ] File headers complete (Time-stamp, Author, Copyright, MIT license)
+   - [ ] use-package keywords in correct order
+   - [ ] No alignment spaces in code
+   - [ ] All comments in English
+
+3. **If uncertain about any constraint:**
+   - STOP and ask user to confirm
+   - Do NOT assume compliance without verification
+   - Better to ask than to commit non-compliant code
+
+4. **Commit only when:**
+   - ALL constraints pass, OR
+   - User explicitly confirms to proceed despite warnings
+
 ### 4. File Header Consistency
 
 **Use template file** `templates/template.el` to ensure consistency.
@@ -987,9 +1017,12 @@ grep -rn "defcustom.*:group" lisp --include="*.el" | grep -v "omw-emacs"
 8. **LSP Configuration:** Centralize all LSP in omw-prog.el, never in language modules
 9. **Face Customization:** Use `:custom-face` with `fixed-pitch` inheritance to avoid buffer-local remapping
 10. **Tracking Packages:** Use `:demand t` for environment tracking (pyvenv, poetry)
-11. **Comment Language:** English only
+11. **Alignment Spaces:** Prohibited (single space only); exception: let binding comments in *.el files
+12. **Comment Language:** English only
 
 ### Pre-Commit Checklist
+
+> **See [Pre-Commit Constraint Check](#4-pre-commit-constraint-check-critical) for CRITICAL requirements.**
 
 - [ ] Configuration loads: `emacs --batch --eval '(progn (load-file "emacs/.config/emacs/init.el") ...)'`
 - [ ] No naming violations: All functions use `omw/` prefix
