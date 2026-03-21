@@ -770,21 +770,7 @@ Emacs Lisp follows the repository-wide alignment space prohibition. Here are Ema
 
 #### TODO/FIXME Format
 
-Standardize comment markers for tracking work:
-
-```elisp
-;; TODO(author): Description of what needs to be done
-;; FIXME(author): Description of the bug or issue
-;; NOTE: Important information for maintainers
-;; HACK: Temporary workaround with explanation
-```
-
-**Examples:**
-```elisp
-;; TODO(zhengyu.li): Add support for tree-sitter fontification
-;; FIXME(zhengyu.li): Company backends conflict with corfu
-;; NOTE: This requires Emacs 30+
-```
+For TODO/FIXME format, see [Root CLAUDE.md - TODO/FIXME Format](../CLAUDE.md#todofixme-format).
 
 #### Comment Language
 

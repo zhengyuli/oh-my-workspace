@@ -295,21 +295,7 @@ For single-line explanations, no separator needed:
 
 ### TODO/FIXME Format
 
-Standardize comment markers for tracking work:
-
-```zsh
-# TODO(author): Description of what needs to be done
-# FIXME(author): Description of the bug or issue
-# NOTE: Important information for maintainers
-# HACK: Temporary workaround with explanation
-```
-
-**Examples:**
-```zsh
-# TODO(zhengyu.li): Add support for custom prompt themes
-# FIXME(zhengyu.li): History search fails with non-ASCII
-# NOTE: This requires zsh 5.8+
-```
+For TODO/FIXME format, see [Root CLAUDE.md - TODO/FIXME Format](../CLAUDE.md#todofixme-format).
 
 ### Comment Language
 
@@ -519,6 +505,22 @@ for file in "$dir"/*.zsh(N); do
   source "$file"
 done
 ```
+
+### Error Handling
+
+```zsh
+# ✅ CORRECT - scoped to specific operations
+(
+    set -e
+    cmd1
+    cmd2
+)
+
+# ❌ AVOID globally in interactive shells
+set -e  # Can cause unexpected exits
+```
+
+**Rationale:** `set -e` causes scripts to exit on any command failure, which can be unpredictable in interactive shells or complex scripts.
 
 ### Security Practices
 
