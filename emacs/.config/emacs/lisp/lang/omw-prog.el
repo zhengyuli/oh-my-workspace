@@ -115,6 +115,7 @@ If no delimiter is found, show an error message."
          (sh-mode . eglot-ensure)
          (cmake-mode . eglot-ensure)
          (yaml-mode . eglot-ensure)
+         (json-mode . eglot-ensure)
          (dockerfile-mode . eglot-ensure))
   :config
   ;; Async connection and auto-shutdown for better performance

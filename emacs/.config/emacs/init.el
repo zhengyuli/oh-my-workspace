@@ -273,6 +273,7 @@ and global-auto-revert-mode."
 ;; Config/build language modules
 (require 'omw-cmake)
 (require 'omw-yaml)
+(require 'omw-json)
 (require 'omw-dockerfile)
 (require 'omw-vimrc)
 (require 'omw-gitconfig)
