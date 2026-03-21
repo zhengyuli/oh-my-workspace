@@ -1,10 +1,10 @@
 # CLAUDE.md - Vim Configuration
 
-This file provides guidance for Claude Code when working with the Vim configuration in this directory.
+This file provides guidance to Claude Code when working with the Vim configuration in this directory.
 
 ## Project Overview
 
-This is a **minimal, plugin-free Vim configuration** with Doom One theme for basic editing needs.
+This is a **minimal, plugin-free Vim configuration** with Doom One theme for basic editing needs. For advanced editing, use Emacs.
 
 ## Directory Structure
 
@@ -23,7 +23,7 @@ vim/.config/vim/
 stow vim
 
 # Test configuration loads
-vim -c 'echo "OK"'
+vim -c 'echo "Vim loaded successfully"'
 ```
 
 ### Quick Validation
@@ -33,7 +33,7 @@ vim -c 'echo "OK"'
 ls -la ~/.config/vim/vimrc
 
 # Test configuration
-vim -c 'echo "Vim loaded successfully"'
+vim -c 'echo &undodir'
 ```
 
 ## Architecture
@@ -53,6 +53,8 @@ export VIMINIT="source ${XDG_CONFIG_HOME}/vim/vimrc"
 | `$XDG_STATE_HOME/vim/viminfo` | Vim state file |
 
 ## Coding Standards
+
+See `.claude/rules/dotfiles/vim.md` for vim-specific rules.
 
 ### Header Format
 
@@ -85,9 +87,9 @@ Vim color scheme configuration MAY use alignment spaces for readability. This is
 - `vim/.config/vim/vimrc` color scheme section (lines ~286-400)
 - Any `*.vim` files defining color schemes
 
-See [Root CLAUDE.md - Alignment Spaces](../CLAUDE.md#alignment-spaces-critical) for details.
+**When uncertain:** Ask user to confirm whether alignment spaces are intentional formatting or should be removed.
 
-### Key Patterns
+## Key Patterns
 
 1. **No plugins**: This configuration is intentionally minimal
 2. **Doom One theme**: Custom color scheme matching the repository theme
@@ -112,27 +114,6 @@ vim -c 'echo &undodir'
 - [ ] Time-stamp present if file has mode line
 - [ ] Comments use `"` prefix
 - [ ] Color scheme section may use alignment spaces (exception)
-
-## Best Practices
-
-### 1. Keep It Minimal
-
-This configuration intentionally avoids plugins. For advanced editing, use Emacs.
-
-### 2. XDG Compliance
-
-Always use XDG paths for any new settings:
-```vim
-" ✅ CORRECT
-set undodir=$XDG_DATA_HOME/vim/undo
-
-" ❌ AVOID
-set undodir=~/.vim/undo
-```
-
-### 3. Theme Consistency
-
-Any color changes should align with the Doom One theme used across the repository.
 
 ## Quick Reference Card
 

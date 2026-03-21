@@ -1,6 +1,6 @@
 # CLAUDE.md - Bun Configuration
 
-This file provides guidance for Claude Code when working with the Bun configuration in this directory.
+This file provides guidance to Claude Code when working with the Bun configuration in this directory.
 
 ## Project Overview
 
@@ -10,7 +10,7 @@ Bun is the **JavaScript/TypeScript runtime and package manager** used in this re
 
 ```
 bun/.config/bun/
-└── .bunfig.toml    # Global Bun configuration (symlinked to ~/.config/bun/.bunfig.toml)
+└── .bunfig.toml        # Global Bun configuration (symlinked to ~/.config/bun/.bunfig.toml)
 ```
 
 ## Quick Start
@@ -54,13 +54,15 @@ Bun is installed via Homebrew (see `homebrew/Brewfile`). LSP servers and develop
 ```bash
 # JS/TS ecosystem
 bun install -g typescript-language-server typescript
-bun install -g vscode-langservers-extracted
+bun install -g vscode-langservers-extracted   # html/css/json/eslint
 bun install -g bash-language-server
 bun install -g @tailwindcss/language-server
 bun install -g prettier
 ```
 
 ## Coding Standards
+
+See `.claude/rules/dotfiles/coding-style.md` for TOML header format.
 
 ### Configuration File Standards
 
@@ -102,6 +104,7 @@ bun --version
 - [ ] Header follows configuration comment standards
 - [ ] Time-stamp present
 - [ ] Comments use `#` prefix
+- [ ] TOML syntax valid
 
 ## Best Practices
 
@@ -110,11 +113,11 @@ bun --version
 Prefer `bun` over `npm`, `yarn`, or `pnpm`:
 
 ```bash
-# ✅ CORRECT
+# CORRECT
 bun install
 bun run dev
 
-# ❌ AVOID
+# AVOID
 npm install
 yarn dev
 ```

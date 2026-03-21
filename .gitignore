@@ -35,8 +35,10 @@
 *.swp
 *.swo
 
-# Claude Code local settings
-.claude/
+# Claude Code local settings (track rules/skills/commands, ignore local config)
+.claude/settings.json
+.claude/settings.local.json
+.claude/*.local.json
 
 # -----------------------------------------------------------------------------
 # Testing
