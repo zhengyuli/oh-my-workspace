@@ -55,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notify.sh clear"
+            "command": "bash ~/.claude/hooks/notify.sh prompt"
           }
         ]
       }
@@ -63,5 +63,8 @@
   },
   "enableAllProjectMcpServers": false,
   "alwaysThinkingEnabled": true,
-  "cleanupPeriodDays": 365
+  "cleanupPeriodDays": 365,
+  "experimental": {
+    "autoWorktree": true
+  }
 }

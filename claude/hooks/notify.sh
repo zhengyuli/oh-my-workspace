@@ -4,7 +4,7 @@
 # Claude Code Hook - Desktop Notifications
 #
 # Location: ~/.claude/hooks/notify.sh
-# Triggered by: Claude Code hook system (stop, notification, clear events)
+# Triggered by: Claude Code hook system (Stop, Notification, UserPromptSubmit events)
 # Dependencies: terminal-notifier (brew install terminal-notifier)
 #
 # References:
@@ -57,36 +57,25 @@ ring_bell() {
 }
 
 # --- Notification Functions ---
-detect_terminal_bundle_id() {
-    # Each terminal injects $TERM_PROGRAM into the shell environment;
-    # Claude Code inherits it from the shell that launched it
-    case "${TERM_PROGRAM:-}" in
-        ghostty)      printf 'com.mitchellh.ghostty' ;;
-        iTerm.app)    printf 'com.googlecode.iterm2' ;;
-        WarpTerminal) printf 'dev.warp.Warp-Stable' ;;
-        *)            printf 'com.apple.Terminal' ;;
-    esac
-}
-
 send_notification() {
     local title="$1"
     local body="$2"
-    local bundle_id
-    bundle_id=$(detect_terminal_bundle_id)
-    # -sender:   controls which app icon appears on the notification
-    # -activate: controls which app is focused when the notification is clicked
+    # Note: -sender is intentionally omitted — it causes terminal-notifier to
+    # block indefinitely on some macOS versions
+    # Run in background so the hook returns immediately
+    # -group with a unique ID prevents macOS from collapsing repeated notifications
     terminal-notifier \
         -title "$title" \
         -message "$body" \
-        -sender "$bundle_id" \
-        2>/dev/null || true
+        -group "claude-code-$$-$RANDOM" \
+        2>/dev/null &
 }
 
 # --- Main Logic ---
 validate_event_type() {
     local event="$1"
     case "$event" in
-        stop|notification|clear)
+        stop|notification|prompt)
             return 0
             ;;
         *)
@@ -101,8 +90,8 @@ main() {
         exit 1
     fi
 
-    # clear event needs no stdin; handle early to avoid spurious read failures
-    if [[ "$EVENT_TYPE" == "clear" ]]; then
+    # prompt event needs no stdin; handle early to avoid spurious read failures
+    if [[ "$EVENT_TYPE" == "prompt" ]]; then
         set_tab_title "$PROJECT"
         return 0
     fi
