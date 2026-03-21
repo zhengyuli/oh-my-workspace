@@ -6,13 +6,13 @@ paths:
   - "**/*.rc"
   - "**/Brewfile"
   - "**/.bunfig.toml"
+  - "**/*.vim"
+  - "**/vimrc"
 ---
 
 # Configuration Comment Standards
 
-> This file extends [~/.claude/rules/common/coding-style.md](file://...) with dotfiles-specific configuration file standards.
-
-These standards apply to **all non-emacs/non-zsh configuration files** in the repository (bun, ghostty, git, homebrew, macos, ripgrep, uv, vim). For zsh and see [zsh.md](./zsh.md). For emacs, see [emacs.md](./emacs.md).
+These standards apply to **all non-emacs/non-zsh configuration files** in the repository (bun, ghostty, git, homebrew, macos, ripgrep, uv, vim). For zsh see [../shell/zsh.md](../shell/zsh.md). For emacs, see [../elisp/emacs.md](../elisp/emacs.md).
 
 ## Header Structure
 
@@ -325,4 +325,15 @@ This includes:
 # -----------------------------------------------------------------------------
 [user]
     name = Your Name
+```
+
+**Vim (vimrc, *.vim) - uses `"` for comments:**
+```vim
+" vimrc
+" =============================================================================
+" Vim Configuration - Minimal, Plugin-Free Setup
+"
+" Location: ~/.config/vim/vimrc
+" XDG: Loaded via VIMINIT environment variable
+" =============================================================================
 ```

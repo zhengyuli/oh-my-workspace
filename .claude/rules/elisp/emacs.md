@@ -6,8 +6,8 @@ paths:
 
 # Emacs Lisp Coding Standards
 
-> This file extends [~/.claude/rules/common/coding-style.md](file://...) with Emacs-specific standards.
-> For shell script patterns, see [shell-standards.md](./shell-standards.md).
+> This file extends [../common/coding-style.md](../common/coding-style.md) with Emacs-specific standards.
+> For shell script patterns, see [../shell/shell.md](../shell/shell.md).
 
 ## Naming Convention (CRITICAL)
 
@@ -146,7 +146,7 @@ already defers loading. Adding `:defer t` is redundant and incorrect.
 
 ## Alignment Spaces (CRITICAL)
 
-> See [../coding-style.md#alignment-spaces-critical) for repository-wide rule.
+> See [../common/coding-style.md](../common/coding-style.md) for the repository-wide alignment rule.
 
 Emacs Lisp follows the repository-wide alignment space prohibition. Here are Emacs-specific examples:
 
