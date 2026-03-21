@@ -1,5 +1,5 @@
 # config -*- mode: conf; -*-
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-21 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Ghostty Terminal Configuration
 #
@@ -14,12 +14,7 @@
 # -----------------------------------------------------------------------------
 # Theme
 # -----------------------------------------------------------------------------
-theme = catppuccin mocha
-
-# -----------------------------------------------------------------------------
-# Auto-update
-# -----------------------------------------------------------------------------
-auto-update = check
+theme = doom one
 
 # -----------------------------------------------------------------------------
 # Fonts
@@ -27,12 +22,15 @@ auto-update = check
 font-family = "SauceCodePro Nerd Font"
 font-size = 15
 font-thicken = true
-font-shaping-break = cursor
 
-# Enable common OpenType features: contextual alternates, ligatures, stylistic set 13
+# OpenType features: contextual alternates, ligatures, stylistic set 13
 font-feature = calt
 font-feature = liga
 font-feature = ss13
+
+# Shaping & weight rendering
+font-shaping-break = cursor
+bold-is-bright = true
 
 # -----------------------------------------------------------------------------
 # Cursor
@@ -44,27 +42,28 @@ adjust-cursor-thickness = 10
 # -----------------------------------------------------------------------------
 # Window & Appearance
 # -----------------------------------------------------------------------------
-title = " "
-
 window-padding-x = 8
 window-padding-y = 8
 window-padding-balance = true
-window-vsync = true
 
 background-opacity = 0.98
 background-blur = true
 background-blur-radius = 20
 
-bold-is-bright = true
-
-alpha-blending = linear-corrected
-minimum-contrast = 1.1
-
-unfocused-split-opacity = 0.6
-
+# "tabs" integrates the tab bar directly into the titlebar — more compact than
+# "transparent" which stacks a separate native tab bar on top of the titlebar.
+# Multiple related macOS bugs were fixed in Ghostty 1.2.3; now stable.
 macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
 macos-window-shadow = true
+
+# -----------------------------------------------------------------------------
+# Rendering
+# -----------------------------------------------------------------------------
+window-vsync = true
+alpha-blending = linear-corrected
+minimum-contrast = 1.1
+window-colorspace = display-p3
 
 # -----------------------------------------------------------------------------
 # Shell Integration
@@ -73,9 +72,21 @@ shell-integration = detect
 shell-integration-features = cursor,sudo,title
 
 # -----------------------------------------------------------------------------
+# Notifications
+# -----------------------------------------------------------------------------
+# Requires shell integration (OSC 133) — already enabled above.
+# Covers long-running shell commands (builds, tests, etc.) when Ghostty is
+# unfocused. 
+desktop-notifications = true
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = no-bell,notify
+notify-on-command-finish-after = 30s
+
+# -----------------------------------------------------------------------------
 # Scrollback & Selection
 # -----------------------------------------------------------------------------
-scrollback-limit = 10000
+# Increased from 10000: Claude Code sessions generate substantial output.
+scrollback-limit = 50000
 copy-on-select = clipboard
 selection-clear-on-typing = true
 
@@ -100,38 +111,46 @@ clipboard-paste-bracketed-safe = true
 mouse-hide-while-typing = true
 
 # -----------------------------------------------------------------------------
-# Terminal Compatibility
+# Terminal
 # -----------------------------------------------------------------------------
 term = xterm-ghostty
 grapheme-width-method = unicode
-
-# -----------------------------------------------------------------------------
-# Bell
-# -----------------------------------------------------------------------------
 bell-features = system
 
 # -----------------------------------------------------------------------------
-# Multi-surface Behaviour
+# Multi-surface Behavior
 # -----------------------------------------------------------------------------
 window-inherit-working-directory = true
 window-inherit-font-size = true
+window-new-tab-position = current
+window-save-state = always
 confirm-close-surface = true
+unfocused-split-opacity = 0.6
 
 # -----------------------------------------------------------------------------
-# macOS-specific
+# macOS
 # -----------------------------------------------------------------------------
 macos-option-as-alt = left
 macos-icon = chalkboard
+auto-update = check
 
 # -----------------------------------------------------------------------------
 # Keybindings
 # -----------------------------------------------------------------------------
+# Config
+keybind = super+shift+comma=reload_config
+
 # Splits
 keybind = super+shift+j=goto_split:next
 
-# Tabs
+# Tabs — create & cycle
+keybind = super+t=new_tab
 keybind = super+shift+n=next_tab
 keybind = super+shift+p=previous_tab
+
+# Tabs — reorder
+keybind = super+shift+left=move_tab:-1
+keybind = super+shift+right=move_tab:1
 
 # Scrollback
 keybind = ctrl+l=clear_screen

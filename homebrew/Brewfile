@@ -157,6 +157,8 @@ brew "htop"
 brew "coreutils"
 # Symlink farm manager for dotfiles
 brew "stow"
+# macOS desktop notifications from terminal
+brew "terminal-notifier"
 
 # -----------------------------------------------------------------------------
 # Language Runtimes & Modern Toolchain
