@@ -7,7 +7,7 @@ paths:
 
 # Zsh Configuration Standards
 
-> This file extends [shell-standards.md](./shell-standards.md) with zsh-specific standards.
+> This file extends [shell.md](./shell.md) with zsh-specific standards.
 
 ## File Header Template
 
