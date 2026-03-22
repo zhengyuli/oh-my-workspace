@@ -38,7 +38,6 @@
 # Claude Code local settings (track rules/skills/commands, ignore local config)
 .claude/settings.json
 .claude/settings.local.json
-.claude/*.local.json
 
 # -----------------------------------------------------------------------------
 # Testing
@@ -68,6 +67,7 @@ Thumbs.db
 
 # Worktrees
 .worktrees/
+.claude/worktrees/
 
 # -----------------------------------------------------------------------------
 # Documentation
