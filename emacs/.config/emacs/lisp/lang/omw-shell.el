@@ -1,5 +1,5 @@
 ;;; omw-shell.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-20 10:38:18 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-21 21:54:21 Saturday by zhengyuli>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: shell, bash, sh
@@ -49,7 +49,9 @@ if not present."
 ;; ============================================================================
 (defun omw/sh-mode-setup ()
   "Apply custom settings for shell script mode."
-  (setq-local sh-basic-offset 2)
+  (when (and buffer-file-name
+             (string-match-p "\\.zsh\\'" buffer-file-name))
+    (setq-local sh-basic-offset 2))
   (apply #'omw/tools-check-and-prompt omw/sh-tool-specs))
 
 (use-package sh-script
