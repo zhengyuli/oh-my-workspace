@@ -1,5 +1,5 @@
 " vimrc -*- mode: vim; -*-
-" Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+" Time-stamp: <2026-03-22 14:21:32 Sunday by zhengyuli>
 " =============================================================================
 " Minimal, plugin-free Vim config
 " Theme: doom-one (ported from doom-emacs, Atom One Dark lineage)
@@ -291,98 +291,98 @@ endif
 " Clear existing highlights before applying theme
 highlight clear
 if exists('syntax_on') | syntax reset | endif
-let g:colors_name = 'doom-one'
+let g:colors_name = 'Dracula'
 
 " --- Core ---
-hi Normal          guifg=#bbc2cf  guibg=#282c34  gui=NONE
+hi Normal          guifg=#f8f8f2  guibg=#282a36  gui=NONE
 " Inactive windows slightly darker
-hi NormalNC        guifg=#bbc2cf  guibg=#21242b  gui=NONE
+hi NormalNC        guifg=#f8f8f2  guibg=#21222c  gui=NONE
 " --- Cursor & Line ---
-hi Cursor          guifg=#282c34  guibg=#bbc2cf  gui=NONE
-hi CursorLine      guifg=NONE     guibg=#23272e  gui=NONE
-hi CursorLineNr    guifg=#51afef  guibg=#23272e  gui=bold
-hi ColorColumn     guifg=NONE     guibg=#23272e  gui=NONE
+hi Cursor          guifg=#282a36  guibg=#f8f8f2  gui=NONE
+hi CursorLine      guifg=NONE     guibg=#44475a  gui=NONE
+hi CursorLineNr    guifg=#bd93f9  guibg=#44475a  gui=bold
+hi ColorColumn     guifg=NONE     guibg=#44475a  gui=NONE
 " --- Line Numbers ---
-hi LineNr          guifg=#5B6268  guibg=NONE     gui=NONE
-hi SignColumn      guifg=NONE     guibg=#282c34  gui=NONE
+hi LineNr          guifg=#6272a4  guibg=NONE     gui=NONE
+hi SignColumn      guifg=NONE     guibg=#282a36  gui=NONE
 " --- Selection & Search ---
-hi Visual          guifg=NONE     guibg=#2257A0  gui=NONE
-hi Search          guifg=#282c34  guibg=#ECBE7B  gui=bold
-hi IncSearch       guifg=#282c34  guibg=#51afef  gui=bold
-hi MatchParen      guifg=#46D9FF  guibg=NONE     gui=bold,underline
+hi Visual          guifg=NONE     guibg=#44475a  gui=NONE
+hi Search          guifg=#282a36  guibg=#f1fa8c  gui=bold
+hi IncSearch       guifg=#282a36  guibg=#8be9fd  gui=bold
+hi MatchParen      guifg=#ff79c6  guibg=NONE     gui=bold,underline
 " --- Syntax ---
-hi Comment         guifg=#5B6268  guibg=NONE     gui=italic
-" Violet
-hi Constant        guifg=#a9a1e1  guibg=NONE     gui=NONE
+hi Comment         guifg=#6272a4  guibg=NONE     gui=italic
+" Purple
+hi Constant        guifg=#bd93f9  guibg=NONE     gui=NONE
 " Green
-hi String          guifg=#98be65  guibg=NONE     gui=NONE
-hi Character       guifg=#98be65  guibg=NONE     gui=NONE
+hi String          guifg=#50fa7b  guibg=NONE     gui=NONE
+hi Character       guifg=#50fa7b  guibg=NONE     gui=NONE
 " Orange
-hi Number          guifg=#da8548  guibg=NONE     gui=NONE
-hi Boolean         guifg=#da8548  guibg=NONE     gui=NONE
-hi Float           guifg=#da8548  guibg=NONE     gui=NONE
-hi Identifier      guifg=#bbc2cf  guibg=NONE     gui=NONE
-" Magenta
-hi Function        guifg=#c678dd  guibg=NONE     gui=NONE
-" Blue (keywords)
-hi Statement       guifg=#51afef  guibg=NONE     gui=NONE
-hi Conditional     guifg=#51afef  guibg=NONE     gui=NONE
-hi Repeat          guifg=#51afef  guibg=NONE     gui=NONE
-hi Label           guifg=#51afef  guibg=NONE     gui=NONE
-hi Operator        guifg=#51afef  guibg=NONE     gui=NONE
-hi Keyword         guifg=#51afef  guibg=NONE     gui=NONE
-hi Exception       guifg=#51afef  guibg=NONE     gui=NONE
-" Magenta
-hi PreProc         guifg=#c678dd  guibg=NONE     gui=NONE
-hi Include         guifg=#c678dd  guibg=NONE     gui=NONE
-hi Define          guifg=#c678dd  guibg=NONE     gui=NONE
-hi Macro           guifg=#c678dd  guibg=NONE     gui=NONE
+hi Number          guifg=#ffb86c  guibg=NONE     gui=NONE
+hi Boolean         guifg=#ffb86c  guibg=NONE     gui=NONE
+hi Float           guifg=#ffb86c  guibg=NONE     gui=NONE
+hi Identifier      guifg=#f8f8f2  guibg=NONE     gui=NONE
+" Pink
+hi Function        guifg=#ff79c6  guibg=NONE     gui=NONE
+" Cyan (keywords)
+hi Statement       guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Conditional     guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Repeat          guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Label           guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Operator        guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Keyword         guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Exception       guifg=#8be9fd  guibg=NONE     gui=NONE
+" Pink
+hi PreProc         guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Include         guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Define          guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Macro           guifg=#ff79c6  guibg=NONE     gui=NONE
 " Yellow
-hi Type            guifg=#ECBE7B  guibg=NONE     gui=NONE
-hi StorageClass    guifg=#ECBE7B  guibg=NONE     gui=NONE
-hi Structure       guifg=#ECBE7B  guibg=NONE     gui=NONE
-hi Typedef         guifg=#ECBE7B  guibg=NONE     gui=NONE
+hi Type            guifg=#f1fa8c  guibg=NONE     gui=NONE
+hi StorageClass    guifg=#f1fa8c  guibg=NONE     gui=NONE
+hi Structure       guifg=#f1fa8c  guibg=NONE     gui=NONE
+hi Typedef         guifg=#f1fa8c  guibg=NONE     gui=NONE
 " Cyan
-hi Special         guifg=#46D9FF  guibg=NONE     gui=NONE
-hi SpecialChar     guifg=#46D9FF  guibg=NONE     gui=NONE
-hi Tag             guifg=#51afef  guibg=NONE     gui=NONE
-hi Delimiter       guifg=#bbc2cf  guibg=NONE     gui=NONE
-hi SpecialComment  guifg=#5B6268  guibg=NONE     gui=italic
-hi Debug           guifg=#ff6c6b  guibg=NONE     gui=NONE
-hi Underlined      guifg=#51afef  guibg=NONE     gui=underline
-hi Ignore          guifg=#5B6268  guibg=NONE     gui=NONE
-hi Error           guifg=#ff6c6b  guibg=NONE     gui=bold
-hi Todo            guifg=#282c34  guibg=#ECBE7B  gui=bold
+hi Special         guifg=#8be9fd  guibg=NONE     gui=NONE
+hi SpecialChar     guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Tag             guifg=#bd93f9  guibg=NONE     gui=NONE
+hi Delimiter       guifg=#f8f8f2  guibg=NONE     gui=NONE
+hi SpecialComment  guifg=#6272a4  guibg=NONE     gui=italic
+hi Debug           guifg=#ff5555  guibg=NONE     gui=NONE
+hi Underlined      guifg=#8be9fd  guibg=NONE     gui=underline
+hi Ignore          guifg=#6272a4  guibg=NONE     gui=NONE
+hi Error           guifg=#ff5555  guibg=NONE     gui=bold
+hi Todo            guifg=#282a36  guibg=#f1fa8c  gui=bold
 " --- UI Chrome ---
-hi StatusLine      guifg=#bbc2cf  guibg=#3E4556  gui=NONE
-hi StatusLineNC    guifg=#5B6268  guibg=#23272e  gui=NONE
-hi WildMenu        guifg=#282c34  guibg=#51afef  gui=bold
-hi Pmenu           guifg=#bbc2cf  guibg=#3E4556  gui=NONE
-hi PmenuSel        guifg=#282c34  guibg=#51afef  gui=bold
-hi PmenuSbar       guifg=NONE     guibg=#3B3F46  gui=NONE
-hi PmenuThumb      guifg=NONE     guibg=#51afef  gui=NONE
-hi TabLine         guifg=#5B6268  guibg=#23272e  gui=NONE
-hi TabLineSel      guifg=#bbc2cf  guibg=#282c34  gui=bold
-hi TabLineFill     guifg=NONE     guibg=#21242b  gui=NONE
-hi VertSplit       guifg=#3B3F46  guibg=#3B3F46  gui=NONE
-hi Folded          guifg=#5B6268  guibg=#23272e  gui=italic
-hi FoldColumn      guifg=#5B6268  guibg=#282c34  gui=NONE
-hi NonText         guifg=#3B3F46  guibg=NONE     gui=NONE
-hi SpecialKey      guifg=#3B3F46  guibg=NONE     gui=NONE
-hi Title           guifg=#51afef  guibg=NONE     gui=bold
-hi Directory       guifg=#51afef  guibg=NONE     gui=NONE
+hi StatusLine      guifg=#f8f8f2  guibg=#44475a  gui=NONE
+hi StatusLineNC    guifg=#6272a4  guibg=#21222c  gui=NONE
+hi WildMenu        guifg=#282a36  guibg=#bd93f9  gui=bold
+hi Pmenu           guifg=#f8f8f2  guibg=#44475a  gui=NONE
+hi PmenuSel        guifg=#282a36  guibg=#bd93f9  gui=bold
+hi PmenuSbar       guifg=NONE     guibg=#44475a  gui=NONE
+hi PmenuThumb      guifg=NONE     guibg=#bd93f9  gui=NONE
+hi TabLine         guifg=#6272a4  guibg=#21222c  gui=NONE
+hi TabLineSel      guifg=#f8f8f2  guibg=#282a36  gui=bold
+hi TabLineFill     guifg=NONE     guibg=#21222c  gui=NONE
+hi VertSplit       guifg=#44475a  guibg=#44475a  gui=NONE
+hi Folded          guifg=#6272a4  guibg=#44475a  gui=italic
+hi FoldColumn      guifg=#6272a4  guibg=#282a36  gui=NONE
+hi NonText         guifg=#44475a  guibg=NONE     gui=NONE
+hi SpecialKey      guifg=#44475a  guibg=NONE     gui=NONE
+hi Title           guifg=#bd93f9  guibg=NONE     gui=bold
+hi Directory       guifg=#8be9fd  guibg=NONE     gui=NONE
 " --- Diagnostics ---
-hi ErrorMsg        guifg=#ff6c6b  guibg=NONE     gui=bold
-hi WarningMsg      guifg=#ECBE7B  guibg=NONE     gui=NONE
-hi ModeMsg         guifg=#98be65  guibg=NONE     gui=bold
-hi MoreMsg         guifg=#98be65  guibg=NONE     gui=bold
-hi Question        guifg=#98be65  guibg=NONE     gui=NONE
-hi SpellBad        guifg=#ff6c6b  guibg=NONE     gui=undercurl
-hi SpellCap        guifg=#ECBE7B  guibg=NONE     gui=undercurl
-hi SpellRare       guifg=#46D9FF  guibg=NONE     gui=undercurl
-hi SpellLocal      guifg=#da8548  guibg=NONE     gui=undercurl
+hi ErrorMsg        guifg=#ff5555  guibg=NONE     gui=bold
+hi WarningMsg      guifg=#ffb86c  guibg=NONE     gui=NONE
+hi ModeMsg         guifg=#50fa7b  guibg=NONE     gui=bold
+hi MoreMsg         guifg=#50fa7b  guibg=NONE     gui=bold
+hi Question        guifg=#50fa7b  guibg=NONE     gui=NONE
+hi SpellBad        guifg=#ff5555  guibg=NONE     gui=undercurl
+hi SpellCap        guifg=#ffb86c  guibg=NONE     gui=undercurl
+hi SpellRare       guifg=#8be9fd  guibg=NONE     gui=undercurl
+hi SpellLocal      guifg=#ffb86c  guibg=NONE     gui=undercurl
 " --- Diff ---
-hi DiffAdd         guifg=#98be65  guibg=#1e2b1e  gui=NONE
-hi DiffChange      guifg=#ECBE7B  guibg=#2b2510  gui=NONE
-hi DiffDelete      guifg=#ff6c6b  guibg=#2b1010  gui=NONE
-hi DiffText        guifg=#ECBE7B  guibg=#3b3000  gui=bold
+hi DiffAdd         guifg=#50fa7b  guibg=#1e3626  gui=NONE
+hi DiffChange      guifg=#f1fa8c  guibg=#2b2900  gui=NONE
+hi DiffDelete      guifg=#ff5555  guibg=#2d1212  gui=NONE
+hi DiffText        guifg=#f1fa8c  guibg=#3b3600  gui=bold
