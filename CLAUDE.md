@@ -1,3 +1,8 @@
+---
+lastUpdated: 2026-03-22
+maintainer: zhengyu.li
+---
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code when working with code in this repository.
@@ -106,7 +111,13 @@ See `.claude/rules/` for all standards:
 | `rules/shell/` | Shell scripting patterns, Zsh-specific rules |
 | `rules/elisp/` | Emacs Lisp standards (omw/ prefix, use-package, etc.) |
 
-Commands: `/validate-config`, `/pre-commit-check`, `/stow-management`
+## Custom Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/validate-config` | Validate configuration headers and format |
+| `/pre-commit-check` | Run pre-commit verification checks |
+| `/stow-management` | Manage stow package symlinks |
 
 ## setup.sh
 

@@ -1,3 +1,8 @@
+---
+lastUpdated: 2026-03-22
+maintainer: zhengyu.li
+---
+
 # CLAUDE.md - Vim Configuration
 
 This file provides guidance to Claude Code when working with the Vim configuration.
