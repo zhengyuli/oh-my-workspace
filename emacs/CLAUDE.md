@@ -1,3 +1,8 @@
+---
+lastUpdated: 2026-03-22
+maintainer: zhengyu.li
+---
+
 # CLAUDE.md - Emacs Configuration
 
 This file provides guidance to Claude Code when working with the Emacs configuration.
@@ -87,7 +92,7 @@ When adding modules: add `(provide 'omw-xxx)` at end of file, add `(require 'omw
 
 ## Coding Standards
 
-See `.claude/rules/elisp/emacs.md` for: `omw/` prefix convention, use-package keyword order, setq grouping, docstring style, section separators, alignment rules.
+See `.claude/rules/elisp/coding-style.md` for: `omw/` prefix convention, use-package keyword order, setq grouping, docstring style, section separators, alignment rules.
 
 ## Validation
 

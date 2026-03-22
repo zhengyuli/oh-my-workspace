@@ -1,3 +1,8 @@
+---
+lastUpdated: 2026-03-22
+maintainer: zhengyu.li
+---
+
 # CLAUDE.md - Zsh Configuration
 
 This file provides guidance to Claude Code when working with the Zsh configuration.
@@ -99,7 +104,7 @@ Installed at `$XDG_DATA_HOME/zinit/` via turbo mode in `40-plugins.zsh`:
 
 ## Coding Standards
 
-See `.claude/rules/shell/` for: `shell.md` (scripting patterns), `zsh.md` (file headers, section styles, idempotency).
+See `.claude/rules/shell/coding-style.md` for shell scripting patterns, idempotency, and file header standards.
 
 ## Validation
 
