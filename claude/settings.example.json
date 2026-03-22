@@ -9,33 +9,34 @@
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5"
   },
   "model": "opus",
-  "permissions": {
-    "deny": [
-      "Bash(rm -rf *)",
-      "Bash(rm -fr *)",
-      "Bash(sudo *)",
-      "Bash(git push --force*)",
-      "Bash(git push *--force*)",
-      "Bash(git reset --hard *)",
-      "Bash(dd *)",
-      "Bash(mkfs *)",
-      "Edit(~/.config/zsh/**)",
-      "Read(~/.config/zsh/**)",
-      "Edit(~/.zshenv)",
-      "Read(~/.zshenv)",
-      "Edit(~/.ssh/**)",
-      "Read(~/.ssh/**)",
-      "Edit(**/.env)",
-      "Read(**/.env)"
-    ]
-  },
+  "permissions": {},
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/notify.sh sessionstart"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/notify.sh pretooluse"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notify.sh stop"
+            "command": "bash ~/.claude/hooks/notify.sh stop"
           }
         ]
       }
@@ -45,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notify.sh notification"
+            "command": "bash ~/.claude/hooks/notify.sh notification"
           }
         ]
       }
@@ -56,6 +57,16 @@
           {
             "type": "command",
             "command": "bash ~/.claude/hooks/notify.sh prompt"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/notify.sh sessionend"
           }
         ]
       }
