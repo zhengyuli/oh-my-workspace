@@ -1,6 +1,15 @@
 ---
 name: stow-management
 description: Manage stow packages for symlink operations
+argument-hint: "<action> [packages...] - actions: install|remove|refresh|status|validate"
+allowed-tools:
+  - Read
+  - Write
+  - Grep
+  - Glob
+  - Bash
+  - TodoWrite
+  - AskUserQuestion
 invocable: true
 ---
 

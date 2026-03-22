@@ -1,6 +1,15 @@
 ---
 name: pre-commit-check
 description: Run pre-commit verification checks for dotfiles repository
+argument-hint: "[--fix] attempt to fix issues automatically"
+allowed-tools:
+  - Read
+  - Write
+  - Grep
+  - Glob
+  - Bash
+  - TodoWrite
+  - AskUserQuestion
 invocable: true
 ---
 
