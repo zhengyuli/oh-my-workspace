@@ -1,5 +1,5 @@
 # 99-local.zsh.example
-# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-22 21:42:42 Sunday by zhengyu.li>
 # =============================================================================
 # Machine-Local Configuration Template
 #
@@ -48,16 +48,29 @@
 # -----------------------------------------------------------------------------
 # Corporate proxy (office network, VPN, etc.)
 # -----------------------------------------------------------------------------
+# _PROXY_URL="http://proxy.company.com:8080"
+# _NO_PROXY_LIST="localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.company.com,company.com"
+
 # set_proxy() {
-#   export HTTP_PROXY="http://company.com:8080"
-#   export HTTPS_PROXY="$HTTP_PROXY"
-#   export NO_PROXY="localhost,127.0.0.1,.company.com"
+#   # Uppercase — Go, npm, bun, Java, etc.
+#   export HTTP_PROXY="$_PROXY_URL"
+#   export HTTPS_PROXY="$_PROXY_URL"
+#   export NO_PROXY="$_NO_PROXY_LIST"
+#   # Lowercase — curl, wget, Python requests, etc.
+#   export http_proxy="$_PROXY_URL"
+#   export https_proxy="$_PROXY_URL"
+#   export no_proxy="$_NO_PROXY_LIST"
+#   # Catch-all for tools that only read ALL_PROXY
+#   export ALL_PROXY="$_PROXY_URL"
+#   export all_proxy="$_PROXY_URL"
+#   echo "Proxy set: $_PROXY_URL"
 # }
 
 # unset_proxy() {
-#   unset HTTP_PROXY
-#   unset HTTPS_PROXY
-#   unset NO_PROXY
+#   unset HTTP_PROXY HTTPS_PROXY NO_PROXY
+#   unset http_proxy https_proxy no_proxy
+#   unset ALL_PROXY all_proxy
+#   echo "Proxy unset"
 # }
 
 # set_proxy
