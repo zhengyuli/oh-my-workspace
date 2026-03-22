@@ -1,5 +1,5 @@
 # Brewfile -*- mode: ruby; -*-
-# Time-stamp: <2026-03-20 10:37:36 Friday by zhengyu.li>
+# Time-stamp: <2026-03-22 10:25:04 Sunday by zhengyuli>
 # =============================================================================
 # Homebrew Bundle - oh-my-dotfiles Package List
 #
@@ -157,8 +157,6 @@ brew "htop"
 brew "coreutils"
 # Symlink farm manager for dotfiles
 brew "stow"
-# macOS desktop notifications from terminal
-brew "terminal-notifier"
 
 # -----------------------------------------------------------------------------
 # Language Runtimes & Modern Toolchain
