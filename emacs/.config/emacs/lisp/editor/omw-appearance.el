@@ -1,5 +1,5 @@
 ;;; omw-appearance.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-22 10:40:32 Sunday by zhengyuli>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: ui, theme, tabs, dashboard
@@ -54,7 +54,7 @@
   :ensure t
   :demand t
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'doom-dracula t))
 
 ;; ============================================================================
 (use-package doom-modeline
