@@ -271,3 +271,5 @@ _site/
 *.tmp
 *.temp
 *.temp.*
+
+**/.claude/settings.local.json
