@@ -4,10 +4,9 @@ paths:
   - "**/emacs/**"
 ---
 
-# Emacs Lisp Coding Standards
+# Emacs Lisp Coding Style
 
-> This file extends [../common/coding-style.md](../common/coding-style.md) with Emacs-specific standards.
-> For shell script patterns, see [../shell/shell.md](../shell/shell.md).
+> This file extends [../common/coding-style.md](../common/coding-style.md) with Emacs Lisp specifics.
 
 ## Naming Convention (CRITICAL)
 
@@ -24,30 +23,27 @@ paths:
 
 The `omw/` prefix stands for "oh-my-workspace" and is used consistently throughout the codebase.
 
-**Exception: `site-packages/` directory**
+### Exception: `site-packages/` Directory
 
-The `site-packages/` directory holds custom packages maintained as if they were
-external packages (potential future MELPA candidates). Functions in this
-directory follow Emacs ecosystem naming conventions for their respective subsystem (e.g., `dired-` prefix for dired-ecosystem extensions) rather than the `omw/` prefix.
+The `site-packages/` directory holds custom packages maintained as if they were external packages (potential future MELPA candidates). Functions in this directory follow Emacs ecosystem naming conventions for their respective subsystem (e.g., `dired-` prefix for dired-ecosystem extensions) rather than the `omw/` prefix.
 
- This exception is intentional to preserve compatibility with external package conventions.
+### Function Naming Patterns
 
-**Function Naming Patterns:**
-- **Setup functions** (mode configuration): `omw/<mode>-setup`
-  - Examples: `omw/prog-mode-setup`, `omw/markdown-mode-setup`
-- **Tool installer functions** (install dependencies): `omw/install-<lang>-tools`
-  - Examples: `omw/install-python-tools`, `omw/install-go-tools`, `omw/install-bash-tools`
-- **Action functions** (operations): `omw/<noun>-<verb>`
-  - Examples: `omw/indent-entire-buffer`, `omw/set-http-proxy`
-- **Mode indicators** (mode-line display): `omw/<feature>-mode-line-indicator`
-  - Examples: `omw/pyvenv-mode-line-indicator`
+| Pattern | Format | Examples |
+|---------|--------|----------|
+| Setup functions | `omw/<mode>-setup` | `omw/prog-mode-setup`, `omw/markdown-mode-setup` |
+| Tool installers | `omw/install-<lang>-tools` | `omw/install-python-tools`, `omw/install-go-tools` |
+| Action functions | `omw/<noun>-<verb>` | `omw/indent-entire-buffer`, `omw/set-http-proxy` |
+| Mode indicators | `omw/<feature>-mode-line-indicator` | `omw/pyvenv-mode-line-indicator` |
 
-**Variable Naming Patterns:**
+### Variable Naming Patterns
+
 - Format: `omw/<category>-<item>`
 - Examples: `omw/font-monospace-list`, `omw/font-size-default`, `omw/http-proxy`
 - Must use `defcustom` with `:group 'omw-emacs`
 
-**Minor Mode Naming:**
+### Minor Mode Naming
+
 - Format: `omw/<feature>-mode`
 - Examples: `omw/prog-before-save-mode`
 
@@ -88,43 +84,6 @@ Template file: `templates/template.el` (auto-inserted via auto-insert)
 ;;; omw-module.el ends here
 ```
 
-## use-package Patterns (MANDATORY)
-
-**Keywords MUST appear in this exact order:**
-
-```
-1. :ensure or :vc          # Package source
-2. :when or :if            # Conditional loading (optional)
-3. :defer or :demand       # Loading strategy - OMIT when :after is present
-4. :after                  # Dependencies (optional) - implies deferral
-5. :hook                   # Mode hooks
-6. :bind                   # Keybindings
-7. :custom-face            # Face customization (optional)
-8. :config                 # Configuration
-```
-
-**CRITICAL: `:after` implies deferral - never use `:defer t` together with `:after`.**
-
-`:after` waits for the dependency to load before loading this package, which
-already defers loading. Adding `:defer t` is redundant and incorrect.
-
-```elisp
-;; CORRECT - :after provides deferral, no :defer t needed
-(use-package corfu-terminal
-  :ensure t
-  :after corfu
-  :config
-  (corfu-terminal-mode 1))
-
-;; WRONG - :defer t and :after together
-(use-package corfu-terminal
-  :ensure t
-  :defer t
-  :after corfu
-  :config
-  (corfu-terminal-mode 1))
-```
-
 ## Section Separators
 
 **Required format (with blank lines before/after):**
@@ -148,7 +107,7 @@ already defers loading. Adding `:defer t` is redundant and incorrect.
 
 > See [../common/coding-style.md](../common/coding-style.md) for the repository-wide alignment rule.
 
-Emacs Lisp follows the repository-wide alignment space prohibition. Here are Emacs-specific examples:
+Emacs Lisp follows the repository-wide alignment space prohibition.
 
 **AVOID - Alignment spaces in cons cells:**
 ```elisp
@@ -176,7 +135,7 @@ Emacs Lisp follows the repository-wide alignment space prohibition. Here are Ema
        (python-mode . eglot-ensure))
 ```
 
-**Exception: Comments in let bindings**
+### Exception: Comments in let bindings
 
 Comments within `let`/`let*` bindings may use `;;` prefix on the same line as the variable they describe:
 
@@ -190,11 +149,6 @@ Comments within `let`/`let*` bindings may use `;;` prefix on the same line as th
   ...)
 ```
 
-This exception exists because:
-1. Let binding comments describe the variable being defined on that line
-2. Moving them above would break the binding structure
-3. They are scoped to the binding, not general code
-
 ## Code Formatting
 
 **Indentation:** 2 spaces (Emacs Lisp default)
@@ -206,12 +160,10 @@ This exception exists because:
       var3 value3)
 ```
 
-**setq grouping and comment rules (CRITICAL):**
+### setq grouping and comment rules (CRITICAL)
 
-1. **Group related variables into a single `setq`** - variables that configure
-   the same feature or concern belong together.
-2. **Put a single group-level comment above the `setq`** - describe the group as
-   a whole, not individual variables.
+1. **Group related variables into a single `setq`** - variables that configure the same feature or concern belong together.
+2. **Put a single group-level comment above the `setq`** - describe the group as a whole, not individual variables.
 3. **Never add per-variable inline comments inside a `setq` body.**
 
 ```elisp

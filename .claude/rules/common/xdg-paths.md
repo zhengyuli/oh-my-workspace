@@ -5,6 +5,13 @@ paths:
 
 # XDG Base Directory Conventions
 
+**Related files:**
+- For coding style, see [coding-style.md](./coding-style.md)
+- For git workflow, see [git-workflow.md](./git-workflow.md)
+- For security, see [security.md](./security.md)
+- For patterns, see [patterns.md](./patterns.md)
+- For testing, see [testing.md](./testing.md)
+
 ## Environment Variables
 
 Shell configuration exports XDG environment variables:

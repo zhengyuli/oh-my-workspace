@@ -12,7 +12,16 @@ paths:
 
 # Configuration Comment Standards
 
-These standards apply to **all non-emacs/non-zsh configuration files** in the repository (bun, ghostty, git, homebrew, macos, ripgrep, uv, vim). For zsh see [../shell/zsh.md](../shell/zsh.md). For emacs, see [../elisp/emacs.md](../elisp/emacs.md).
+These standards apply to **all non-emacs/non-zsh configuration files** in the repository (bun, ghostty, git, homebrew, macos, ripgrep, uv, vim).
+
+**Related files:**
+- For zsh, see [../shell/coding-style.md](../shell/coding-style.md)
+- For emacs, see [../elisp/coding-style.md](../elisp/coding-style.md)
+- For XDG conventions, see [xdg-paths.md](./xdg-paths.md)
+- For git workflow, see [git-workflow.md](./git-workflow.md)
+- For security, see [security.md](./security.md)
+- For patterns, see [patterns.md](./patterns.md)
+- For testing, see [testing.md](./testing.md)
 
 ## Header Structure
 

@@ -1,6 +1,15 @@
 ---
 name: validate-config
 description: Validate configuration files for compliance with dotfiles standards
+argument-hint: "[--tool=<zsh|emacs|vim|all>] specify which tool to validate"
+allowed-tools:
+  - Read
+  - Write
+  - Grep
+  - Glob
+  - Bash
+  - TodoWrite
+  - AskUserQuestion
 invocable: true
 ---
 
