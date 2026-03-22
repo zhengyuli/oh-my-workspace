@@ -128,10 +128,17 @@ confirm-close-surface = true
 unfocused-split-opacity = 0.6
 
 # -----------------------------------------------------------------------------
+# Quick Terminal
+# -----------------------------------------------------------------------------
+quick-terminal-position = top
+quick-terminal-screen = main
+quick-terminal-animation-duration = 0.2
+
+# -----------------------------------------------------------------------------
 # macOS
 # -----------------------------------------------------------------------------
 macos-option-as-alt = left
-macos-icon = chalkboard
+macos-icon = retro
 auto-update = check
 
 # -----------------------------------------------------------------------------
@@ -152,8 +159,11 @@ keybind = super+shift+p=previous_tab
 keybind = super+shift+left=move_tab:-1
 keybind = super+shift+right=move_tab:1
 
-# Scrollback
-keybind = ctrl+l=clear_screen
+# Quick Terminal
+keybind = super+shift+l=toggle_quick_terminal
+
+# Passthrough — let zsh handle these directly
+keybind = ctrl+l=unbind
 
 # -----------------------------------------------------------------------------
 # Local overrides  (optional, not tracked by version control)
