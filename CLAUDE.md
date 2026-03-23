@@ -1,5 +1,5 @@
 ---
-lastUpdated: 2026-03-22
+lastUpdated: 2026-03-23
 maintainer: zhengyu.li
 ---
 
@@ -13,50 +13,85 @@ This is a **workspace repository** providing comprehensive development environme
 
 ## Directory Structure
 
+Directories are organized by category for better organization and cross-platform extensibility:
+
 ```
 oh-my-workspace/
-├── bun/          # Bun JS/TS runtime configuration
-├── emacs/        # Emacs >= 30.2 — see emacs/CLAUDE.md
-├── ghostty/      # Ghostty terminal configuration
-├── git/          # Git configuration
-├── homebrew/     # Brewfile (NOT a stow package)
-├── macos/        # macOS settings (NOT a stow package)
-├── ripgrep/      # Ripgrep configuration
-├── starship/     # Starship prompt configuration
-├── uv/           # UV package manager configuration
-├── vim/          # Vim configuration — see vim/CLAUDE.md
-└── zsh/          # Zsh configuration — see zsh/CLAUDE.md
+├── editor/              # Editor configurations
+│   ├── emacs/          # Emacs >= 30.2
+│   └── vim/            # Vim
+├── shell/              # Shell configurations
+│   ├── zsh/            # Zsh
+│   └── starship/       # Starship prompt
+├── runtime/            # Language runtimes and package managers
+│   ├── bun/            # Bun JS/TS runtime
+│   └── uv/             # UV Python package manager
+├── terminal/           # Terminal emulator configurations
+│   └── ghostty/        # Ghostty terminal
+├── vcs/                # Version control systems
+│   └── git/            # Git
+├── tools/              # General CLI tools
+│   └── ripgrep/        # Ripgrep
+├── packages/           # System package managers
+│   └── homebrew/       # Homebrew Brewfile (NOT stowed)
+└── platform/           # Operating system configurations
+    └── macos/          # macOS settings (NOT stowed)
 ```
+
+### Category Definitions
+
+| Category | Purpose | Future Extensions |
+|----------|---------|-------------------|
+| `editor/` | Text editors | neovim, helix |
+| `shell/` | Shell and prompt | fish, nushell |
+| `runtime/` | Language runtimes | go, rust, deno |
+| `terminal/` | Terminal emulators | alacritty, kitty, wezterm |
+| `vcs/` | Version control | mercurial |
+| `tools/` | CLI utilities | fd, bat, eza |
+| `packages/` | System packages | apt, pacman, dnf (Linux) |
+| `platform/` | OS configurations | linux |
 
 ## Setup
 
 ```bash
 git clone https://github.com/zhengyuli/oh-my-workspace.git ~/oh-my-workspace
-brew bundle --file homebrew/Brewfile
-stow bun emacs ghostty git ripgrep starship uv vim zsh
+cd ~/oh-my-workspace
+./setup.sh install --all
+source ~/.zshenv
+```
+
+Or manually with stow:
+```bash
+brew bundle --file package-manager/homebrew/Brewfile
+stow -d editor -t $HOME emacs vim
+stow -d shell -t $HOME zsh starship
+stow -d runtime -t $HOME bun uv
+stow -d terminal -t $HOME ghostty
+stow -d vcs -t $HOME git
+stow -d tools -t $HOME ripgrep
 source ~/.zshenv
 ```
 
 | Command | Description |
 |---------|-------------|
-| `stow zsh git` | Stow specific packages |
+| `stow -d shell zsh` | Stow zsh from shell category |
 | `stow -D zsh` | Unstow (remove symlinks) |
 | `stow -R zsh` | Restow (refresh symlinks) |
 | `stow -n zsh` | Dry-run preview |
 
 ## Stow Packages
 
-| Package | Symlink Target |
-|---------|----------------|
-| `bun/` | `$HOME/.config/bun/` |
-| `emacs/` | `$HOME/.config/emacs/` |
-| `ghostty/` | `$HOME/.config/ghostty/` |
-| `git/` | `$HOME/.config/git/` |
-| `ripgrep/` | `$HOME/.config/ripgrep/` |
-| `starship/` | `$HOME/.config/starship.toml` |
-| `uv/` | `$HOME/.config/uv/` |
-| `vim/` | `$HOME/.config/vim/` |
-| `zsh/` | `$HOME/.zshenv`, `$HOME/.config/zsh/` |
+| Package | Category | Symlink Target |
+|---------|----------|----------------|
+| `emacs` | editor | `$HOME/.config/emacs/` |
+| `vim` | editor | `$HOME/.config/vim/` |
+| `zsh` | shell | `$HOME/.zshenv`, `$HOME/.config/zsh/` |
+| `starship` | shell | `$HOME/.config/starship.toml` |
+| `bun` | runtime | `$HOME/.config/bun/` |
+| `uv` | runtime | `$HOME/.config/uv/` |
+| `ghostty` | terminal | `$HOME/.config/ghostty/` |
+| `git` | vcs | `$HOME/.config/git/` |
+| `ripgrep` | tools | `$HOME/.config/ripgrep/` |
 
 `homebrew/` and `macos/` are NOT stow packages.
 

@@ -26,11 +26,12 @@ NETWORK_RETRIES=3
 NETWORK_TIMEOUT=60
 
 # zsh must come first - subsequent packages rely on XDG env vars it sets.
-PKG_ALL=(zsh git vim emacs ghostty ripgrep uv bun starship)
+# Format: <category>/<package> - category directories organize configs by type
+PKG_ALL=(shell/zsh vcs/git editor/vim editor/emacs terminal/ghostty tools/ripgrep runtime/uv runtime/bun shell/starship)
 
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-BREWFILE="${WORKSPACE_DIR}/homebrew/Brewfile"
-DEFAULTS_SCRIPT="${WORKSPACE_DIR}/macos/defaults.sh"
+BREWFILE="${WORKSPACE_DIR}/packages/homebrew/Brewfile"
+DEFAULTS_SCRIPT="${WORKSPACE_DIR}/platform/macos/defaults.sh"
 BACKUP_DIR="${WORKSPACE_DIR}/.backups"
 
 if [[ -z "${SETUP_SH_TEST_MODE:-}" ]]; then
@@ -76,6 +77,15 @@ confirm() {
 # Queries  (pure - no side effects)
 # -----------------------------------------------------------------------------
 
+# Get category directory from full package path (e.g., "shell/zsh" -> "shell")
+pkg_category() { printf '%s' "${1%/*}"; }
+
+# Get package name from full package path (e.g., "shell/zsh" -> "zsh")
+pkg_name() { printf '%s' "${1##*/}"; }
+
+# Get stow directory for a package (e.g., "shell/zsh" -> "$WORKSPACE_DIR/shell")
+pkg_stow_dir() { printf '%s/%s' "$WORKSPACE_DIR" "$(pkg_category "$1")"; }
+
 is_valid_pkg() {
     local p
     for p in "${PKG_ALL[@]}"; do [[ "$1" == "$p" ]] && return 0; done
@@ -87,14 +97,16 @@ is_valid_pkg() {
 # Returns absolute $HOME paths for backup_file to clear before real stow run.
 stow_targets() {
     local pkg="$1"
-    [[ -d "${WORKSPACE_DIR}/${pkg}" ]] || return 1
+    local stow_dir; stow_dir=$(pkg_stow_dir "$pkg")
+    local pkg_base; pkg_base=$(pkg_name "$pkg")
+    [[ -d "${stow_dir}/${pkg_base}" ]] || return 1
     local link_pat='^LINK: ([^[:space:]]+)'
     local conflict_pat='existing target [^:]+: (.+)$'
     local output line
     # Capture output (including when stow exits non-zero for conflicts) so the
     # while loop runs in the current shell rather than a subshell, consistent
     # with the is_stowed() pattern.
-    output=$(stow -n -v -d "$WORKSPACE_DIR" -t "$HOME" "$pkg" 2>&1) || true
+    output=$(stow -n -v -d "$stow_dir" -t "$HOME" "$pkg_base" 2>&1) || true
     while IFS= read -r line; do
         if [[ "$line" =~ $link_pat || "$line" =~ $conflict_pat ]]; then
             printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
@@ -106,17 +118,20 @@ stow_targets() {
 # Returns 1 if stow is absent, LINK lines exist, or conflicts are reported.
 is_stowed() {
     has_stow || return 1
+    local stow_dir; stow_dir=$(pkg_stow_dir "$1")
+    local pkg_base; pkg_base=$(pkg_name "$1")
     local output
-    output=$(stow -n -v -d "$WORKSPACE_DIR" -t "$HOME" "$1" 2>&1) || true
+    output=$(stow -n -v -d "$stow_dir" -t "$HOME" "$pkg_base" 2>&1) || true
     if grep -qE "^LINK:|conflicts|cannot stow" <<< "$output"; then
         return 1
     fi
     return 0
 }
 
-# Count backup files for pkg under BACKUP_DIR/<pkg>/.
+# Count backup files for pkg under BACKUP_DIR/<pkg-name>/.
 backup_count() {
-    local dir="${BACKUP_DIR}/${1}"
+    local pkg_base; pkg_base=$(pkg_name "$1")
+    local dir="${BACKUP_DIR}/${pkg_base}"
     if [[ ! -d "$dir" ]]; then
         printf '0\n'
         return
@@ -129,14 +144,27 @@ has_homebrew() { command -v brew &>/dev/null; }
 has_stow() { command -v stow &>/dev/null; }
 
 # Validate package names from "$@"; set _valid_pkgs to the valid subset.
+# Accepts both "category/package" and "package" format (auto-resolves).
 # Warns about unknown names. Returns 1 if no valid packages remain.
 validate_pkgs() {
     _valid_pkgs=()
-    local p
+    local p found
     for p in "$@"; do
+        found=""
+        # Try exact match first (category/package format)
         if is_valid_pkg "$p"; then
             _valid_pkgs+=("$p")
-        else
+            continue
+        fi
+        # Try to find by package name (resolve category/package)
+        for pkg in "${PKG_ALL[@]}"; do
+            if [[ "$(pkg_name "$pkg")" == "$p" ]]; then
+                _valid_pkgs+=("$pkg")
+                found="yes"
+                break
+            fi
+        done
+        if [[ -z "$found" ]]; then
             log_warn "Unknown package: ${p}"
         fi
     done
@@ -177,13 +205,14 @@ _find_max_backup_n() {
     done < <(find "$dir" -maxdepth 1 -name "${base}.bak.*" 2>/dev/null)
 }
 
-# Back up target file to BACKUP_DIR/<pkg>/ with auto-incrementing number.
+# Back up target file to BACKUP_DIR/<pkg-name>/ with auto-incrementing number.
 # Purges oldest backups when MAX_BACKUPS limit is reached.
 backup_file() {
     local target="$1" pkg="$2"
+    local pkg_base; pkg_base=$(pkg_name "$pkg")
     [[ -e "$target" || -L "$target" ]] || return 0
 
-    local dir="${BACKUP_DIR}/${pkg}"
+    local dir="${BACKUP_DIR}/${pkg_base}"
     local base; base=$(basename "$target")
 
     if ! mkdir -p "$dir"; then
@@ -218,10 +247,11 @@ backup_file() {
     fi
 }
 
-# Restore the most recent backup for target from BACKUP_DIR/<pkg>/.
+# Restore the most recent backup for target from BACKUP_DIR/<pkg-name>/.
 restore_file() {
     local target="$1" pkg="$2"
-    local dir="${BACKUP_DIR}/${pkg}"
+    local pkg_base; pkg_base=$(pkg_name "$pkg")
+    local dir="${BACKUP_DIR}/${pkg_base}"
     local base; base=$(basename "$target")
 
     _find_max_backup_n "$dir" "$base"
@@ -257,14 +287,16 @@ backup_stow_conflicts() {
 # Stow a single package, backing up any conflicting files first.
 stow_package() {
     local pkg="$1"
+    local stow_dir; stow_dir=$(pkg_stow_dir "$pkg")
+    local pkg_base; pkg_base=$(pkg_name "$pkg")
 
-    if [[ ! -d "${WORKSPACE_DIR}/${pkg}" ]]; then
-        log_err "Package directory not found: ${WORKSPACE_DIR}/${pkg}"
+    if [[ ! -d "${stow_dir}/${pkg_base}" ]]; then
+        log_err "Package directory not found: ${stow_dir}/${pkg_base}"
         return 1
     fi
 
     if is_stowed "$pkg"; then
-        log_info "${pkg}: already stowed, skipping"
+        log_info "${pkg_base}: already stowed, skipping"
         return 0
     fi
 
@@ -275,10 +307,10 @@ stow_package() {
     # than folding the whole directory into a single symlink.
     mkdir -p "${HOME}/.config"
 
-    if stow -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
-        log_ok "${pkg}: stowed"
+    if stow -d "$stow_dir" -t "$HOME" "$pkg_base"; then
+        log_ok "${pkg_base}: stowed"
     else
-        log_err "${pkg}: stow failed"
+        log_err "${pkg_base}: stow failed"
         return 1
     fi
 }
@@ -286,6 +318,8 @@ stow_package() {
 # Restow a package (remove and re-link), backing up any new conflicts.
 restow_package() {
     local pkg="$1"
+    local stow_dir; stow_dir=$(pkg_stow_dir "$pkg")
+    local pkg_base; pkg_base=$(pkg_name "$pkg")
 
     # Back up conflicts before restowing. stow -R removes existing links then
     # re-stows; if new package files clash with real files in $HOME, stow
@@ -294,10 +328,10 @@ restow_package() {
     # the package is currently stowed, so we can resolve them proactively.
     backup_stow_conflicts "$pkg"
 
-    if stow -R -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
-        log_ok "${pkg}: restowed"
+    if stow -R -d "$stow_dir" -t "$HOME" "$pkg_base"; then
+        log_ok "${pkg_base}: restowed"
     else
-        log_err "${pkg}: restow failed"
+        log_err "${pkg_base}: restow failed"
         return 1
     fi
 }
@@ -305,14 +339,16 @@ restow_package() {
 # Remove stow symlinks for a package.
 unstow_package() {
     local pkg="$1"
+    local stow_dir; stow_dir=$(pkg_stow_dir "$pkg")
+    local pkg_base; pkg_base=$(pkg_name "$pkg")
     if ! is_stowed "$pkg"; then
-        log_warn "${pkg}: not stowed, skipping"
+        log_warn "${pkg_base}: not stowed, skipping"
         return 0
     fi
-    if stow -D -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
-        log_ok "${pkg}: unstowed"
+    if stow -D -d "$stow_dir" -t "$HOME" "$pkg_base"; then
+        log_ok "${pkg_base}: unstowed"
     else
-        log_err "${pkg}: unstow failed"
+        log_err "${pkg_base}: unstow failed"
         return 1
     fi
 }
@@ -486,11 +522,13 @@ do_update_pkgs() {
 # target. restore_file returns 1 with an error if no backup exists.
 do_restore_pkg() {
     local pkg="$1"
+    local stow_dir; stow_dir=$(pkg_stow_dir "$pkg")
+    local pkg_base; pkg_base=$(pkg_name "$pkg")
 
     if is_stowed "$pkg"; then
-        log_info "${pkg}: unstowing before restore..."
-        if ! stow -D -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
-            log_err "${pkg}: unstow failed"
+        log_info "${pkg_base}: unstowing before restore..."
+        if ! stow -D -d "$stow_dir" -t "$HOME" "$pkg_base"; then
+            log_err "${pkg_base}: unstow failed"
             return 1
         fi
     fi
@@ -506,12 +544,12 @@ do_restore_pkg() {
         restore_file "$target" "$pkg" || return 1
     done < <(stow_targets "$pkg")
 
-    log_ok "${pkg}: restored"
+    log_ok "${pkg_base}: restored"
 }
 
 # Offer to switch default shell to zsh after successful installation.
 do_offer_shell_switch() {
-    is_stowed zsh || return 0
+    is_stowed shell/zsh || return 0
     # ZSH_VERSION is set when running inside zsh; SHELL reflects the user's
     # default shell (may differ if the script is invoked via bash setup.sh).
     if [[ -n "${ZSH_VERSION:-}" || "${SHELL##*/}" == "zsh" ]]; then
@@ -746,8 +784,10 @@ cmd_status() {
     printf '  %-12s  %s  %s\n' "package" "stow" "backups"
     printf '  %-12s  %s  %s\n' "-------" "----" "-------"
 
+    local pkg_base
     for pkg in "${pkgs[@]}"; do
-        printf '  %-12s  ' "$pkg"
+        pkg_base=$(pkg_name "$pkg")
+        printf '  %-12s  ' "$pkg_base"
         if (( _pkg_stowed[$pkg] )); then
             printf "${_G}ok${_0}"
         else
@@ -799,8 +839,8 @@ Commands:
   help                          Show this help
 
 Arguments:
-  <pkg>...  One or more packages: zsh, git, vim, emacs,
-            ghostty, ripgrep, uv, bun, starship
+  <pkg>...  One or more packages (use base name):
+            zsh, git, vim, emacs, ghostty, ripgrep, uv, bun, starship
   --all     Apply to all packages (install/uninstall/update)
   --pkgs    Update only stowed packages, skip brew (update only)
 

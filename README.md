@@ -6,24 +6,48 @@ A comprehensive macOS development environment configuration repository featuring
 - **Modern toolchain**: bun (JS/TS), uv (Python), no version managers
 - **XDG-compliant**: Clean separation of config, cache, data, and state
 - **Interactive setup**: Single script for install, update, and uninstall
+- **Category-organized**: Directories organized by type for easy extension
 
 ## Directory Structure
+
+Directories are organized by category for better organization and cross-platform extensibility:
 
 ```
 oh-my-workspace/
 ├── setup.sh           # Interactive setup script
-├── zsh/               # Zsh configuration
-├── git/               # Git configuration
-├── vim/               # Vim configuration
-├── emacs/             # Emacs configuration (>= 30.2)
-├── ghostty/           # Ghostty terminal
-├── ripgrep/           # Ripgrep configuration
-├── uv/                # UV package manager
-├── bun/               # Bun configuration
-├── starship/          # Starship prompt
-├── homebrew/          # Brewfile for dependencies
-└── macos/             # macOS-specific settings
+├── editor/            # Editor configurations
+│   ├── emacs/         # Emacs (>= 30.2)
+│   └── vim/           # Vim
+├── shell/             # Shell configurations
+│   ├── zsh/           # Zsh
+│   └── starship/      # Starship prompt
+├── runtime/           # Language runtimes
+│   ├── bun/           # Bun JS/TS runtime
+│   └── uv/            # UV Python package manager
+├── terminal/          # Terminal emulators
+│   └── ghostty/       # Ghostty terminal
+├── vcs/               # Version control
+│   └── git/           # Git
+├── tools/             # CLI tools
+│   └── ripgrep/       # Ripgrep
+├── packages/          # System package managers
+│   └── homebrew/      # Brewfile (NOT stowed)
+└── platform/          # OS configurations
+    └── macos/         # macOS settings (NOT stowed)
 ```
+
+### Category Definitions
+
+| Category | Purpose | Future Extensions |
+|----------|---------|-------------------|
+| `editor/` | Text editors | neovim, helix |
+| `shell/` | Shell and prompt | fish, nushell |
+| `runtime/` | Language runtimes | go, rust, deno |
+| `terminal/` | Terminal emulators | alacritty, kitty, wezterm |
+| `vcs/` | Version control | mercurial |
+| `tools/` | CLI utilities | fd, bat, eza |
+| `packages/` | System packages | apt, pacman, dnf (Linux) |
+| `platform/` | OS configurations | linux |
 
 ## Quick Start
 
@@ -119,27 +143,36 @@ The setup script will:
 
 Packages are managed via GNU Stow, which creates symlinks from the repository to your home directory.
 
-| Package | Symlinks |
-|---------|----------|
-| `zsh` | `~/.zshenv` → `~/oh-my-workspace/zsh/.zshenv` |
-| `zsh` | `~/.config/zsh/` → `~/oh-my-workspace/zsh/.config/zsh/` |
-| `git` | `~/.config/git/` → `~/oh-my-workspace/git/.config/git/` |
-| `vim` | `~/.config/vim/` → `~/oh-my-workspace/vim/.config/vim/` |
-| `emacs` | `~/.config/emacs/` → `~/oh-my-workspace/emacs/.config/emacs/` |
-| `ghostty` | `~/.config/ghostty/` → `~/oh-my-workspace/ghostty/.config/ghostty/` |
-| `ripgrep` | `~/.config/ripgrep/` → `~/oh-my-workspace/ripgrep/.config/ripgrep/` |
-| `uv` | `~/.config/uv/` → `~/oh-my-workspace/uv/.config/uv/` |
-| `bun` | `~/.config/bun/` → `~/oh-my-workspace/bun/.config/bun/` |
-| `starship` | `~/.config/starship.toml` → `~/oh-my-workspace/starship/.config/starship.toml` |
+| Package | Category | Symlinks |
+|---------|----------|----------|
+| `zsh` | shell | `~/.zshenv` → `~/oh-my-workspace/shell/zsh/.zshenv` |
+| `zsh` | shell | `~/.config/zsh/` → `~/oh-my-workspace/shell/zsh/.config/zsh/` |
+| `starship` | shell | `~/.config/starship.toml` → `~/oh-my-workspace/shell/starship/.config/starship.toml` |
+| `git` | vcs | `~/.config/git/` → `~/oh-my-workspace/vcs/git/.config/git/` |
+| `vim` | editor | `~/.config/vim/` → `~/oh-my-workspace/editor/vim/.config/vim/` |
+| `emacs` | editor | `~/.config/emacs/` → `~/oh-my-workspace/editor/emacs/.config/emacs/` |
+| `ghostty` | terminal | `~/.config/ghostty/` → `~/oh-my-workspace/terminal/ghostty/.config/ghostty/` |
+| `ripgrep` | tools | `~/.config/ripgrep/` → `~/oh-my-workspace/tools/ripgrep/.config/ripgrep/` |
+| `uv` | runtime | `~/.config/uv/` → `~/oh-my-workspace/runtime/uv/.config/uv/` |
+| `bun` | runtime | `~/.config/bun/` → `~/oh-my-workspace/runtime/bun/.config/bun/` |
 
 ### Manual Stow Commands
 
+With the category-organized structure, use `-d` to specify the category directory:
+
 | Command | Description |
 |---------|-------------|
-| `stow zsh git` | Stow specific packages |
+| `stow -d shell zsh` | Stow zsh from shell category |
+| `stow -d editor emacs vim` | Stow multiple packages from editor category |
 | `stow -D zsh` | Unstow (remove symlinks) |
 | `stow -R zsh` | Restow (refresh symlinks) |
 | `stow -n zsh` | Dry-run preview |
+
+Or use the setup script which handles the category paths automatically:
+
+```bash
+./setup.sh install zsh git vim  # Works with just package names
+```
 
 ## Toolchain
 
@@ -223,7 +256,7 @@ If stow reports conflicts with existing files:
 # Remove existing files and restow
 stow -D zsh
 rm ~/.zshenv
-stow zsh
+stow -d shell zsh
 ```
 
 The setup script automatically backs up conflicting files with `.bak.N` suffix.
@@ -234,7 +267,7 @@ Ensure `~/.zshenv` is loaded first (it should be a symlink):
 
 ```bash
 ls -la ~/.zshenv
-# Should show: ~/.zshenv -> ~/oh-my-workspace/zsh/.zshenv
+# Should show: ~/.zshenv -> ~/oh-my-workspace/shell/zsh/.zshenv
 
 # Verify
 zsh -c 'echo $XDG_CONFIG_HOME'
