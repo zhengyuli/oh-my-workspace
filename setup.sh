@@ -2,9 +2,9 @@
 # setup.sh -*- mode: sh; -*-
 # Time-stamp: <2026-03-21 08:00:00 Saturday by zhengyu.li>
 # =============================================================================
-# oh-my-dotfiles Setup Script
+# oh-my-workspace Setup Script
 #
-# Location: $DOTFILES_DIR/setup.sh (run directly, not stowed)
+# Location: $WORKSPACE_DIR/setup.sh (run directly, not stowed)
 # Usage: ./setup.sh help
 #
 # References:
@@ -28,15 +28,15 @@ NETWORK_TIMEOUT=60
 # zsh must come first - subsequent packages rely on XDG env vars it sets.
 PKG_ALL=(zsh git vim emacs ghostty ripgrep uv bun starship)
 
-DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-BREWFILE="${DOTFILES_DIR}/homebrew/Brewfile"
-DEFAULTS_SCRIPT="${DOTFILES_DIR}/macos/defaults.sh"
-BACKUP_DIR="${DOTFILES_DIR}/.backups"
+WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+BREWFILE="${WORKSPACE_DIR}/homebrew/Brewfile"
+DEFAULTS_SCRIPT="${WORKSPACE_DIR}/macos/defaults.sh"
+BACKUP_DIR="${WORKSPACE_DIR}/.backups"
 
 if [[ -z "${SETUP_SH_TEST_MODE:-}" ]]; then
     readonly MAX_BACKUPS NETWORK_RETRIES NETWORK_TIMEOUT
     readonly PKG_ALL
-    readonly DOTFILES_DIR BREWFILE DEFAULTS_SCRIPT BACKUP_DIR
+    readonly WORKSPACE_DIR BREWFILE DEFAULTS_SCRIPT BACKUP_DIR
 fi
 
 # -----------------------------------------------------------------------------
@@ -87,14 +87,14 @@ is_valid_pkg() {
 # Returns absolute $HOME paths for backup_file to clear before real stow run.
 stow_targets() {
     local pkg="$1"
-    [[ -d "${DOTFILES_DIR}/${pkg}" ]] || return 1
+    [[ -d "${WORKSPACE_DIR}/${pkg}" ]] || return 1
     local link_pat='^LINK: ([^[:space:]]+)'
     local conflict_pat='existing target [^:]+: (.+)$'
     local output line
     # Capture output (including when stow exits non-zero for conflicts) so the
     # while loop runs in the current shell rather than a subshell, consistent
     # with the is_stowed() pattern.
-    output=$(stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$pkg" 2>&1) || true
+    output=$(stow -n -v -d "$WORKSPACE_DIR" -t "$HOME" "$pkg" 2>&1) || true
     while IFS= read -r line; do
         if [[ "$line" =~ $link_pat || "$line" =~ $conflict_pat ]]; then
             printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
@@ -107,7 +107,7 @@ stow_targets() {
 is_stowed() {
     has_stow || return 1
     local output
-    output=$(stow -n -v -d "$DOTFILES_DIR" -t "$HOME" "$1" 2>&1) || true
+    output=$(stow -n -v -d "$WORKSPACE_DIR" -t "$HOME" "$1" 2>&1) || true
     if grep -qE "^LINK:|conflicts|cannot stow" <<< "$output"; then
         return 1
     fi
@@ -258,8 +258,8 @@ backup_stow_conflicts() {
 stow_package() {
     local pkg="$1"
 
-    if [[ ! -d "${DOTFILES_DIR}/${pkg}" ]]; then
-        log_err "Package directory not found: ${DOTFILES_DIR}/${pkg}"
+    if [[ ! -d "${WORKSPACE_DIR}/${pkg}" ]]; then
+        log_err "Package directory not found: ${WORKSPACE_DIR}/${pkg}"
         return 1
     fi
 
@@ -275,7 +275,7 @@ stow_package() {
     # than folding the whole directory into a single symlink.
     mkdir -p "${HOME}/.config"
 
-    if stow -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+    if stow -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
         log_ok "${pkg}: stowed"
     else
         log_err "${pkg}: stow failed"
@@ -294,7 +294,7 @@ restow_package() {
     # the package is currently stowed, so we can resolve them proactively.
     backup_stow_conflicts "$pkg"
 
-    if stow -R -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+    if stow -R -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
         log_ok "${pkg}: restowed"
     else
         log_err "${pkg}: restow failed"
@@ -309,7 +309,7 @@ unstow_package() {
         log_warn "${pkg}: not stowed, skipping"
         return 0
     fi
-    if stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+    if stow -D -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
         log_ok "${pkg}: unstowed"
     else
         log_err "${pkg}: unstow failed"
@@ -489,7 +489,7 @@ do_restore_pkg() {
 
     if is_stowed "$pkg"; then
         log_info "${pkg}: unstowing before restore..."
-        if ! stow -D -d "$DOTFILES_DIR" -t "$HOME" "$pkg"; then
+        if ! stow -D -d "$WORKSPACE_DIR" -t "$HOME" "$pkg"; then
             log_err "${pkg}: unstow failed"
             return 1
         fi
@@ -708,7 +708,7 @@ cmd_status() {
         pkgs=("${PKG_ALL[@]}")
     fi
 
-    print_header "oh-my-dotfiles status"
+    print_header "oh-my-workspace status"
 
     printf '  Prerequisites\n\n'
     if has_xcode_cli; then
@@ -784,7 +784,7 @@ cmd_defaults() {
 # Display usage information and available commands.
 show_help() {
     cat <<'EOF'
-oh-my-dotfiles setup
+oh-my-workspace setup
 
 Usage:
   ./setup.sh <command> [arguments]
@@ -825,7 +825,7 @@ Details:
     Unstows package if stowed, then restores the most recent
     backup from .backups/<pkg>/.
 
-For more information: https://github.com/zhengyuli/oh-my-dotfiles
+For more information: https://github.com/zhengyuli/oh-my-workspace
 EOF
 }
 

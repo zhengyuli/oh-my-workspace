@@ -5,7 +5,7 @@ paths:
 
 # Common Patterns
 
-> This file documents design patterns and conventions used throughout the dotfiles repository.
+> This file documents design patterns and conventions used throughout the workspace repository.
 
 ## Directory Structure Pattern
 

@@ -1,5 +1,5 @@
 # 20-aliases.zsh
-# Time-stamp: <2026-03-19 17:50:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-23 14:44:10 Monday by zhengyu.li>
 # =============================================================================
 # Command Aliases
 #
@@ -75,34 +75,16 @@ alias du='du -h'
 alias dus='du -sh'
 
 # -----------------------------------------------------------------------------
-# Zsh Config
-# -----------------------------------------------------------------------------
-alias zrc='"$EDITOR" "$ZDOTDIR/.zshrc"'
-
-# -----------------------------------------------------------------------------
-# Git
-# -----------------------------------------------------------------------------
-alias g='git'
-alias gst='git status -sb'
-alias ga='git add'
-alias gaa='git add -A'
-alias gb='git branch'
-alias gc='git commit'
-alias gcm='git commit -m'
-alias gco='git checkout'
-alias gd='git diff'
-alias gds='git diff --staged'
-alias gf='git fetch'
-alias gl='git log --oneline --graph --decorate'
-alias gp='git push'
-alias gpl='git pull'
-alias gstsh='git stash'
-alias gstshp='git stash pop'
-alias gsw='git switch'
-alias gswc='git switch -c'
-
-# -----------------------------------------------------------------------------
 # Utility
 # -----------------------------------------------------------------------------
 alias path='printf "%s\n" "${(s/:/)PATH}"'
 alias tmp='cd "$(mktemp -d)"'
+
+# -----------------------------------------------------------------------------
+# Git
+# -----------------------------------------------------------------------------
+alias gst='git status -sb'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gl='git log --oneline --graph --decorate'
+alias grst='git reset --soft HEAD~1'

@@ -5,11 +5,11 @@ paths:
 
 # Testing Requirements
 
-> This file establishes testing standards for dotfiles validation scripts.
+> This file establishes testing standards for workspace validation scripts.
 
 ## Testing Philosophy
 
-Dotfiles testing focuses on:
+Workspace testing focuses on:
 
 1. **Configuration validation** - configs load without errors
 2. **Syntax verification** - no syntax errors in scripts

@@ -10,6 +10,4 @@
 # Examples:
 #   brew-cask-upgrade
 # =============================================================================
-brew-cask-upgrade() {
-  brew update && brew upgrade --cask && brew cleanup
-}
+brew update && brew upgrade --cask && brew cleanup

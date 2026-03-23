@@ -1,6 +1,6 @@
 ---
 name: pre-commit-check
-description: Run pre-commit verification checks for dotfiles repository
+description: Run pre-commit verification checks for workspace repository
 argument-hint: "[--fix] attempt to fix issues automatically"
 allowed-tools:
   - Read
