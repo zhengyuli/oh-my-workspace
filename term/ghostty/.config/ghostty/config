@@ -37,7 +37,9 @@ bold-is-bright = true
 # -----------------------------------------------------------------------------
 cursor-style = bar
 cursor-style-blink = false
-adjust-cursor-thickness = 10
+cursor-color = #00BFFF
+cursor-opacity = 0.4
+adjust-cursor-thickness = 12
 
 # -----------------------------------------------------------------------------
 # Window & Appearance
