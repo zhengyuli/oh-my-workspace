@@ -167,3 +167,6 @@ emacs/.config/emacs/.cache/
 **/*.bak
 **/*.backup
 **/*.orig
+
+# Stow backup directory (created by setup.sh)
+.backups/

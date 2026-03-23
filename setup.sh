@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-21 08:00:00 Saturday by zhengyu.li>
+# Time-stamp: <2026-03-23 16:27:13 Monday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -25,13 +25,20 @@ MAX_BACKUPS=5
 NETWORK_RETRIES=3
 NETWORK_TIMEOUT=60
 
-# zsh must come first - subsequent packages rely on XDG env vars it sets.
 # Format: <category>/<package> - category directories organize configs by type
-PKG_ALL=(shell/zsh vcs/git editor/vim editor/emacs terminal/ghostty tools/ripgrep runtime/uv runtime/bun shell/starship)
+PKG_ALL=(shell/zsh
+         shell/starship
+         editor/vim
+         editor/emacs
+         term/ghostty
+         vcs/git
+         tool/ripgrep
+         dev/uv
+         dev/bun)
 
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-BREWFILE="${WORKSPACE_DIR}/packages/homebrew/Brewfile"
-DEFAULTS_SCRIPT="${WORKSPACE_DIR}/platform/macos/defaults.sh"
+BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
+DEFAULTS_SCRIPT="${WORKSPACE_DIR}/os/macos/defaults.sh"
 BACKUP_DIR="${WORKSPACE_DIR}/.backups"
 
 if [[ -z "${SETUP_SH_TEST_MODE:-}" ]]; then
