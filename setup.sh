@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-23 20:25:41 Monday by zhengyu.li>
+# Time-stamp: <2026-03-23 21:40:56 Monday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -55,10 +55,10 @@ readonly -a PKG_ALL=(
   editor/vim
   editor/emacs
   term/ghostty
-  vcs/git
+  tool/git
   tool/ripgrep
-  dev/uv
-  dev/bun
+  lang/python/uv
+  lang/typescript/bun
 )
 
 # Google style: declaration and assignment must be separate when the value comes
@@ -88,9 +88,6 @@ readonly _BLUE='\033[0;34m'
 readonly _BOLD='\033[1m'
 readonly _RESET='\033[0m'
 
-# Prints the location of an unexpected command failure.
-# Fires automatically on any unhandled non-zero exit in the main shell.
-# Not invoked by explicit die() calls or handled return 1 paths.
 _err_handler() {
   local -r code=$?
   printf "  ${_RED}[error]${_RESET} unexpected failure in %s() at line %d (exit %d)\n" \
@@ -102,24 +99,16 @@ trap '_err_handler' ERR
 # Logging
 # -----------------------------------------------------------------------------
 
-# Exits the script with a formatted error message.
-# Arguments: error message
 die() { printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2; exit 1; }
 
-# Logs a success message to stdout.
 log_ok() { printf "  ${_GREEN}[ok]${_RESET} %s\n" "$*"; }
 
-# Logs an error message to stderr without exiting.
 log_err() { printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2; }
 
-# Logs a warning message to stdout.
 log_warn() { printf "  ${_YELLOW}[warn]${_RESET} %s\n" "$*"; }
 
-# Logs an informational message to stdout.
 log_info() { printf "  ${_BLUE}[info]${_RESET} %s\n" "$*"; }
 
-# Prints a bold section header.
-# Arguments: $1 - header text
 print_header() {
   printf '\n%b' "${_BOLD}"
   printf '=%.0s' {1..79}
@@ -214,23 +203,11 @@ validate_pkgs() {
 # Stow state queries  (pure - no side effects)
 # -----------------------------------------------------------------------------
 
-# Returns 0 if pkg is fully stowed (stow -n -v reports nothing to do).
-# Returns 1 if stow is absent, package dir missing, or links/conflicts exist.
-# Arguments: $1 - full package path
+# Returns 0 if pkg is fully stowed (stow -n reports nothing to do).
+# Returns 1 if stow is absent or links/conflicts exist.
 is_stowed() {
-  if ! _has_stow; then
-    return 1
-  fi
-  local stow_dir
-  stow_dir=$(pkg_stow_dir "$1")
-  local pkg_base
-  pkg_base=$(pkg_name "$1")
-  if [[ ! -d "${stow_dir}/${pkg_base}" ]]; then
-    return 1
-  fi
-  local output
-  output=$(stow -n -v -d "${stow_dir}" -t "${HOME}" "${pkg_base}" 2>&1) || true
-  ! grep -qE '^LINK:|conflicts|cannot stow' <<< "${output}"
+  _has_stow || return 1
+  stow -n -d "$(pkg_stow_dir "$1")" -t "${HOME}" "$(pkg_name "$1")" &>/dev/null
 }
 
 # Prints $HOME-absolute paths that stow would touch when linking pkg.
@@ -249,11 +226,6 @@ stow_targets() {
   stow_dir=$(pkg_stow_dir "${pkg}")
   local pkg_base
   pkg_base=$(pkg_name "${pkg}")
-
-  if [[ ! -d "${stow_dir}/${pkg_base}" ]]; then
-    return 1
-  fi
-
   local -a flags=(-n -v -d "${stow_dir}" -t "${HOME}")
   if [[ "${mode}" == restow ]]; then
     flags+=(-R)
@@ -285,11 +257,6 @@ stow_links() {
   local pkg_base
   pkg_base=$(pkg_name "${pkg}")
   local pkg_dir="${stow_dir}/${pkg_base}"
-
-  if [[ ! -d "${pkg_dir}" ]]; then
-    return 1
-  fi
-
   local -A shown=()
   local src rel check
 
@@ -299,7 +266,7 @@ stow_links() {
     while [[ "${check}" != "${HOME}" ]]; do
       if [[ -L "${check}" && -z "${shown[${check}]+set}" ]]; then
         shown[${check}]=1
-        printf '      %s\n           -> %s\n' \
+        printf '      %s -> %s\n' \
           "${check#${HOME}/}" "$(readlink "${check}")"
         break
       fi
@@ -778,10 +745,10 @@ cmd_status() {
     pkg_base=$(pkg_name "${pkg}")
     printf '\n'
     if (( pkg_stowed[${pkg}] )); then
-      printf "  ${_GREEN}[stowed]${_RESET}  %s\n" "${pkg_base}"
+      printf "  %s ${_GREEN}[stowed]${_RESET}:\n" "${pkg_base}"
       stow_links "${pkg}"
     else
-      printf "  ${_YELLOW}[------]${_RESET}  %s\n" "${pkg_base}"
+      printf "  %s ${_YELLOW}[------]${_RESET}:\n" "${pkg_base}"
     fi
   done
   printf '\n'
