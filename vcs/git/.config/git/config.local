@@ -1,0 +1,70 @@
+# config.local.example -*- mode: gitconfig; -*-
+# Time-stamp: <2026-03-17 21:00:00 Tuesday by zhengyu.li>
+# =============================================================================
+# Git Local Configuration (Example)
+#
+# Machine-specific settings that should NOT be committed to version control.
+#
+# Location: ~/.config/git/config.local (XDG-compliant path)
+# Usage: Copy this file to ~/.config/git/config.local and customize
+# Note: This file is automatically included by ~/.config/git/config
+#       via the [include] directive.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# User Identity (REQUIRED)
+# -----------------------------------------------------------------------------
+# Your name and email for commit authorship
+# This is required for Git to work properly
+
+[user]
+    name = zhengyu.li
+    email = lizhengyu419@outlook.com
+
+    # Optional: Set signing key for GPG-signed commits
+    # signingkey = ABC123DEF456
+
+# -----------------------------------------------------------------------------
+# HTTP Proxy (Optional)
+# -----------------------------------------------------------------------------
+# Configure proxy for Git HTTP operations (clone, fetch, push)
+# Uncomment and adjust if you need to use a proxy
+
+# [http]
+     proxy = http://proxy.nioint.com:8080
+#
+# [https]
+     proxy = http://proxy.nioint.com:8080
+
+# -----------------------------------------------------------------------------
+# GPG Signing (Optional)
+# -----------------------------------------------------------------------------
+# Enable GPG signing for commits and tags
+# Requires GPG key to be set up
+
+# [commit]
+#     gpgsign = true
+#
+# [tag]
+#     gpgsign = true
+#
+# [gpg]
+#     program = gpg
+
+# -----------------------------------------------------------------------------
+# URL Rewrites (Optional)
+# -----------------------------------------------------------------------------
+# Useful for switching between HTTPS and SSH
+# Example: Use SSH instead of HTTPS for GitHub
+
+# [url "git@github.com:"]
+#     insteadOf = https://github.com/
+
+# -----------------------------------------------------------------------------
+# Work-Specific Settings (Optional)
+# -----------------------------------------------------------------------------
+# Override settings for work repositories
+# Example: Use different email for work projects
+
+# [includeIf "gitdir:~/work/"]
+#     path = ~/.config/git/config.work
