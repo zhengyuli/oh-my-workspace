@@ -1,287 +1,393 @@
-# Oh My Workspace
+# oh-my-workspace
 
-A comprehensive macOS development environment configuration repository featuring XDG-compliant dotfiles, Homebrew package management, shell/editor/IDE configurations, and system preferences automation.
+> A curated macOS development environment with Zsh, Neovim/Emacs, and modern CLI tools.
 
-- **Unified theme**: Doom One across Emacs, Ghostty, Starship, and fzf
-- **Modern toolchain**: bun (JS/TS), uv (Python), no version managers
-- **XDG-compliant**: Clean separation of config, cache, data, and state
-- **Interactive setup**: Single script for install, update, and uninstall
-- **Category-organized**: Directories organized by type for easy extension
-
-## Directory Structure
-
-Directories are organized by category for better organization and cross-platform extensibility:
-
-```
-oh-my-workspace/
-├── setup.sh           # Interactive setup script
-├── editor/            # Editor configurations
-│   ├── emacs/         # Emacs (>= 30.2)
-│   └── vim/           # Vim
-├── shell/             # Shell configurations
-│   ├── zsh/           # Zsh
-│   └── starship/      # Starship prompt
-├── runtime/           # Language runtimes
-│   ├── bun/           # Bun JS/TS runtime
-│   └── uv/            # UV Python package manager
-├── terminal/          # Terminal emulators
-│   └── ghostty/       # Ghostty terminal
-├── vcs/               # Version control
-│   └── git/           # Git
-├── tools/             # CLI tools
-│   └── ripgrep/       # Ripgrep
-├── packages/          # System package managers
-│   └── homebrew/      # Brewfile (NOT stowed)
-└── platform/          # OS configurations
-    └── macos/         # macOS settings (NOT stowed)
-```
-
-### Category Definitions
-
-| Category | Purpose | Future Extensions |
-|----------|---------|-------------------|
-| `editor/` | Text editors | neovim, helix |
-| `shell/` | Shell and prompt | fish, nushell |
-| `runtime/` | Language runtimes | go, rust, deno |
-| `terminal/` | Terminal emulators | alacritty, kitty, wezterm |
-| `vcs/` | Version control | mercurial |
-| `tools/` | CLI utilities | fd, bat, eza |
-| `packages/` | System packages | apt, pacman, dnf (Linux) |
-| `platform/` | OS configurations | linux |
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
+[![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
-
-### Prerequisites
-
-- **macOS** (Apple Silicon or Intel)
-- **Xcode Command Line Tools**: `xcode-select --install`
-
-### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/zhengyuli/oh-my-workspace.git ~/oh-my-workspace
 cd ~/oh-my-workspace
 
-# Run full installation (prerequisites + brew bundle + all packages)
+# Install everything (prerequisites + packages + symlinks)
 ./setup.sh install --all
 
-# Or install specific packages (prerequisites must be present)
-./setup.sh install zsh git vim emacs
-
-# Apply changes
+# Open a new terminal or source zshenv
 source ~/.zshenv
 ```
 
-The setup script will:
-1. Install Xcode Command Line Tools (if needed)
-2. Install Homebrew (if needed)
-3. Install packages from Brewfile (including GNU Stow)
-4. Stow configuration packages via symlinks
+That's it. Your development environment is ready.
 
-### Update
+**What this does:**
+- Installs Xcode CLI, Homebrew, and GNU Stow
+- Installs all packages from `Brewfile` (see [Package Reference](#package-reference))
+- Creates symlinks for all dotfiles using GNU Stow
+- Offers to switch your default shell to Zsh
+
+## Features
+
+- **🐚 Modern Shell** — Zsh with Starship prompt, zoxide (smart cd), direnv, and carapace completions
+- **📝 Dual Editor Setup** — Neovim and Emacs configurations included
+- **⚡ Fast Terminal** — Ghostty with optimized settings
+- **🔍 Powerful Search** — ripgrep, fd, fzf, and eza for file operations
+- **🐍 Language Runtimes** — Pre-configured for Python (uv), TypeScript (bun), Go, and Rust
+- **🔧 Git Workflow** — git + lazygit + GPG signing support
+- **📦 One-Command Setup** — `./setup.sh install --all` handles everything
+- **🔗 Clean Symlinks** — GNU Stow manages dotfiles without cluttering `$HOME`
+
+## Installation
+
+### Prerequisites
+
+| Requirement | How to Check | Auto-Installed? |
+|-------------|--------------|-----------------|
+| macOS | `uname -s` | — |
+| Bash 4.3+ | `bash --version` | — |
+| Xcode CLI | `xcode-select -p` | ✅ |
+| Homebrew | `brew --version` | ✅ |
+| GNU Stow | `stow --version` | ✅ |
+
+### Full Installation
 
 ```bash
-# Update everything (prerequisites + brew bundle + restow stowed packages)
-./setup.sh update --all
-
-# Or restow only currently stowed packages (skip prerequisites/brew)
-./setup.sh update --pkgs
+./setup.sh install --all
 ```
 
-### Uninstall
+This command:
+1. Installs Xcode Command Line Tools (prompts for confirmation)
+2. Installs Homebrew (if not present)
+3. Installs GNU Stow via Homebrew
+4. Runs `brew bundle` to install all packages from `Brewfile`
+5. Stows all dotfile packages using GNU Stow
+6. Offers to switch your default shell to Zsh
+
+### Partial Installation
+
+Install specific packages only:
 
 ```bash
-# Uninstall all stowed packages (prompts for confirmation)
+# Install prerequisites only (no brew bundle, no stow)
+./setup.sh install
+
+# Stow specific packages (requires prerequisites)
+./setup.sh install zsh git vim
+
+# Preview changes without modifying files
+./setup.sh install --dry-run zsh
+```
+
+### Updating
+
+After adding new dotfiles to a package:
+
+```bash
+# Restow a specific package to pick up changes
+./setup.sh install --force zsh
+
+# Restow everything
+./setup.sh install --force --all
+```
+
+### Uninstalling
+
+```bash
+# Remove all symlinks
 ./setup.sh uninstall --all
 
-# Or uninstall specific packages
-./setup.sh uninstall vim emacs
+# Remove specific packages
+./setup.sh uninstall zsh git
 ```
 
-### Status
+### Checking Status
 
 ```bash
-# View installation status for all packages
 ./setup.sh status
-
-# Or check specific packages
-./setup.sh status zsh git
 ```
 
-### Restore
+Output shows:
+- Prerequisites status (installed/missing)
+- Which packages are stowed
+- Symlink paths for each stowed package
+
+## Directory Structure
+
+```
+~/oh-my-workspace/
+├── setup.sh              # Main setup script
+├── Brewfile              # Homebrew package list
+├── LICENSE
+├── README.md
+│
+├── shell/                # Shell configuration
+│   ├── zsh/              # ~/.config/zsh/, ~/.zshenv
+│   └── starship/         # ~/.config/starship.toml
+│
+├── editor/               # Text editors
+│   ├── vim/              # ~/.config/vim/
+│   └── emacs/            # ~/.config/emacs/
+│
+├── term/                 # Terminal emulators
+│   └── ghostty/          # ~/.config/ghostty/
+│
+├── tool/                 # CLI tools
+│   ├── git/              # ~/.config/git/
+│   └── ripgrep/          # ~/.config/ripgrep/
+│
+├── lang/                 # Language runtimes
+│   ├── python/uv/        # ~/.config/uv/
+│   └── typescript/bun/   # ~/.config/bun/
+│
+├── os/                   # OS-specific configs
+│   └── macos/            # macOS preferences
+│
+└── pkg/                  # Package management
+    └── homebrew/         # Brewfile location
+```
+
+Each package directory follows the [GNU Stow](https://www.gnu.org/software/stow/manual/) convention: files are placed as they would appear in `$HOME`.
+
+## Customization
+
+### Fork and Adapt
+
+1. **Fork this repository** on GitHub
+2. **Clone your fork:**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/oh-my-workspace.git ~/oh-my-workspace
+   ```
+3. **Remove packages you don't need** — delete directories from `PKG_ALL` in `setup.sh`
+4. **Add your own dotfiles** — create new package directories following the structure
+5. **Customize the Brewfile** — edit `pkg/homebrew/Brewfile` to add/remove packages
+
+### Adding a New Package
 
 ```bash
-# Restore backed-up files for a package (unstows first if needed)
-./setup.sh restore vim
+# Create package directory structure
+mkdir -p tool/mytool/.config/mytool
+
+# Add your config files
+echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
+
+# Register in setup.sh
+# Add "tool/mytool" to PKG_ALL array
+
+# Stow the new package
+./setup.sh install mytool
 ```
 
-### macOS Defaults
+### Package Naming Convention
+
+| Category | Purpose | Examples |
+|----------|---------|----------|
+| `shell/` | Shell and prompt | zsh, starship |
+| `editor/` | Text editors | vim, emacs |
+| `term/` | Terminal emulators | ghostty |
+| `tool/` | CLI utilities | git, ripgrep |
+| `lang/` | Language runtimes | python/uv, typescript/bun |
+| `os/` | OS-specific | macos |
+
+### Overriding Defaults
+
+To override a specific config without modifying the stowed file:
 
 ```bash
-# Apply macOS system preferences (prompts for confirmation)
-./setup.sh defaults
+# Create a local override (not tracked by git)
+mkdir -p ~/.config/zsh/local
+echo "alias mycmd='echo hello'" > ~/.config/zsh/local/aliases.zsh
 ```
 
-### All Commands
+## Package Reference
 
-| Command | Description |
+### Shell Environment
+
+| Package | Description |
 |---------|-------------|
-| `./setup.sh install --all` | Full install: prerequisites + brew + all packages |
-| `./setup.sh install <pkg>...` | Install specific packages |
-| `./setup.sh uninstall --all` | Uninstall all stowed packages |
-| `./setup.sh uninstall <pkg>...` | Uninstall specific packages |
-| `./setup.sh update --all` | Update prerequisites + brew + restow all |
-| `./setup.sh update --pkgs` | Restow stowed packages only |
-| `./setup.sh update <pkg>...` | Restow specific packages |
-| `./setup.sh restore <pkg>...` | Restore backups for packages |
-| `./setup.sh status [<pkg>...]` | Show installation status |
-| `./setup.sh defaults` | Apply macOS system defaults |
-| `./setup.sh help` | Show help message |
+| [zsh](https://www.zsh.org/) | Powerful shell with advanced completion and scripting |
+| [starship](https://starship.rs/) | Fast, customizable cross-shell prompt |
+| [direnv](https://direnv.net/) | Automatically load/unload environment variables per directory |
+| [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart `cd` command with frecency tracking |
+| [carapace](https://carapace.sh/) | Multi-shell completion system |
 
-## Stow Package Management
+### Editors
 
-Packages are managed via GNU Stow, which creates symlinks from the repository to your home directory.
-
-| Package | Category | Symlinks |
-|---------|----------|----------|
-| `zsh` | shell | `~/.zshenv` → `~/oh-my-workspace/shell/zsh/.zshenv` |
-| `zsh` | shell | `~/.config/zsh/` → `~/oh-my-workspace/shell/zsh/.config/zsh/` |
-| `starship` | shell | `~/.config/starship.toml` → `~/oh-my-workspace/shell/starship/.config/starship.toml` |
-| `git` | vcs | `~/.config/git/` → `~/oh-my-workspace/vcs/git/.config/git/` |
-| `vim` | editor | `~/.config/vim/` → `~/oh-my-workspace/editor/vim/.config/vim/` |
-| `emacs` | editor | `~/.config/emacs/` → `~/oh-my-workspace/editor/emacs/.config/emacs/` |
-| `ghostty` | terminal | `~/.config/ghostty/` → `~/oh-my-workspace/terminal/ghostty/.config/ghostty/` |
-| `ripgrep` | tools | `~/.config/ripgrep/` → `~/oh-my-workspace/tools/ripgrep/.config/ripgrep/` |
-| `uv` | runtime | `~/.config/uv/` → `~/oh-my-workspace/runtime/uv/.config/uv/` |
-| `bun` | runtime | `~/.config/bun/` → `~/oh-my-workspace/runtime/bun/.config/bun/` |
-
-### Manual Stow Commands
-
-With the category-organized structure, use `-d` to specify the category directory:
-
-| Command | Description |
+| Package | Description |
 |---------|-------------|
-| `stow -d shell zsh` | Stow zsh from shell category |
-| `stow -d editor emacs vim` | Stow multiple packages from editor category |
-| `stow -D zsh` | Unstow (remove symlinks) |
-| `stow -R zsh` | Restow (refresh symlinks) |
-| `stow -n zsh` | Dry-run preview |
+| [neovim](https://neovim.io/) | Hyperextensible Vim-based editor |
+| [emacs](https://www.gnu.org/software/emacs/) | Extensible, customizable text editor |
 
-Or use the setup script which handles the category paths automatically:
+### Terminal
+
+| Package | Description |
+|---------|-------------|
+| [ghostty](https://ghostty.org/) | Fast, native terminal emulator |
+| [tmux](https://github.com/tmux/tmux) | Terminal multiplexer |
+
+### File Operations
+
+| Package | Description |
+|---------|-------------|
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | Fast recursive grep (`rg`) |
+| [fd](https://github.com/sharkdp/fd) | Fast, user-friendly `find` alternative |
+| [fzf](https://github.com/junegunn/fzf) | Command-line fuzzy finder |
+| [eza](https://github.com/eza-community/eza) | Modern `ls` with icons and git status |
+| [bat](https://github.com/sharkdp/bat) | `cat` clone with syntax highlighting |
+| [yazi](https://yazi-rs.github.io/) | Terminal file manager |
+
+### Development Tools
+
+| Package | Description |
+|---------|-------------|
+| [git](https://git-scm.com/) | Distributed version control |
+| [lazygit](https://github.com/jesseduffield/lazygit) | Simple terminal UI for git |
+| [gnupg](https://www.gnupg.org/) | GNU Privacy Guard for commit signing |
+
+### Language Runtimes
+
+| Package | Description |
+|---------|-------------|
+| [uv](https://docs.astral.sh/uv/) | Fast Python package manager (replaces pip/pipenv) |
+| [bun](https://bun.sh/) | JavaScript/TypeScript runtime and package manager |
+| [go](https://go.dev/) | Go programming language |
+| [rustup](https://rustup.rs/) | Rust toolchain installer |
+
+### Utilities
+
+| Package | Description |
+|---------|-------------|
+| [jq](https://stedolan.github.io/jq/) | Command-line JSON processor |
+| [yq](https://github.com/mikefarah/yq) | Command-line YAML processor |
+| [wget](https://www.gnu.org/software/wget/) | Network downloader |
+| [htop](https://htop.dev/) | Interactive process viewer |
+| [pandoc](https://pandoc.org/) | Universal document converter |
+
+## Migration Notes
+
+### Switching from Other Dotfiles
+
+If you're migrating from another dotfiles setup:
+
+1. **Backup existing configs:**
+   ```bash
+   # Create backup directory
+   mkdir -p ~/.config/backup
+
+   # Move conflicting files
+   mv ~/.config/zsh ~/.config/backup/
+   mv ~/.config/git ~/.config/backup/
+   ```
+
+2. **Run the installer:**
+   ```bash
+   ./setup.sh install --all
+   ```
+
+3. **Compare and merge:** Review backed-up configs and copy any personal customizations to the new setup.
+
+### Adopting Specific Packages Only
+
+You don't have to use everything. Install only what you need:
 
 ```bash
-./setup.sh install zsh git vim  # Works with just package names
+# Just the shell setup
+./setup.sh install zsh starship
+
+# Just git configuration
+./setup.sh install git
+
+# Preview before applying
+./setup.sh install --dry-run zsh
 ```
 
-## Toolchain
+### Preserving Existing Homebrew Packages
 
-Modern replacements for traditional version managers:
+The installer runs `brew bundle`, which:
+- Installs missing packages
+- Skips already-installed packages
+- Does NOT remove packages not in the Brewfile
 
-| Tool | Purpose | Replaces |
-|------|---------|----------|
-| **bun** | JS/TS runtime + package manager | node, npm, yarn, pnpm, fnm |
-| **uv** | Python package manager | pip, pipenv, poetry, pyenv |
-| **go** | Go programming language | (standard install) |
+Your existing Homebrew packages are safe.
 
-### LSP Servers
+### Manual Symlink Management
 
-```bash
-# JS/TS ecosystem (bun)
-bun install -g typescript-language-server typescript
-bun install -g vscode-langservers-extracted   # html/css/json/eslint
-bun install -g bash-language-server
-bun install -g @tailwindcss/language-server
-bun install -g prettier
-
-# Python ecosystem (uv)
-uv tool install basedpyright
-uv tool install ruff
-
-# Go (standard install)
-go install golang.org/x/tools/gopls@latest
-go install golang.org/x/tools/cmd/goimports@latest
-
-# System-level (via Homebrew)
-# clangd, lua-language-server, rust-analyzer
-```
-
-## Theme & Terminal
-
-Unified **Doom One** theme across all tools:
-
-| Tool | Configuration |
-|------|---------------|
-| Emacs | `doom-one` via `doom-themes` package |
-| Ghostty | Custom color palette matching Doom One |
-| fzf | Doom One colors in `FZF_DEFAULT_OPTS` |
-| Starship | Prompt configuration |
-
-**Terminal**: [Ghostty](https://ghostty.org/) - fast, native, XDG-compliant terminal emulator.
-
-## XDG Base Directory
-
-This repository follows the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `XDG_CONFIG_HOME` | `~/.config` | Configuration files |
-| `XDG_CACHE_HOME` | `~/.cache` | Cache files |
-| `XDG_DATA_HOME` | `~/.local/share` | Data files |
-| `XDG_STATE_HOME` | `~/.local/state` | State files |
-
-## Verification
+If you prefer manual control over symlinks:
 
 ```bash
-# Verify symlinks
-ls -la ~/.zshenv ~/.config/zsh/.zshrc ~/.config/git/config
+# Check what a package would link
+stow -n -v -d ~/oh-my-workspace/shell -t ~ zsh
 
-# Test shell configuration
-zsh -c 'echo $ZDOTDIR'
+# Stow manually
+stow -v -d ~/oh-my-workspace/shell -t ~ zsh
 
-# Test Emacs configuration
-emacs --debug-init
-
-# Check XDG paths
-zsh -c 'echo $XDG_CONFIG_HOME'
+# Unstow manually
+stow -D -v -d ~/oh-my-workspace/shell -t ~ zsh
 ```
 
 ## Troubleshooting
 
-### Stow conflicts
+### Common Issues
 
-If stow reports conflicts with existing files:
-
+**"Xcode CLI installation failed"**
 ```bash
-# Remove existing files and restow
-stow -D zsh
-rm ~/.zshenv
-stow -d shell zsh
+# Manual installation
+xcode-select --install
 ```
 
-The setup script automatically backs up conflicting files with `.bak.N` suffix.
-
-### XDG paths not set
-
-Ensure `~/.zshenv` is loaded first (it should be a symlink):
-
+**"Homebrew not found after installation"**
 ```bash
-ls -la ~/.zshenv
-# Should show: ~/.zshenv -> ~/oh-my-workspace/shell/zsh/.zshenv
-
-# Verify
-zsh -c 'echo $XDG_CONFIG_HOME'
-# Should output: /Users/yourname/.config
+# Add Homebrew to PATH (Apple Silicon)
+eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-### Shell not loading configuration
-
-Restart your shell or source manually:
-
+**"Stow conflict: existing file"**
 ```bash
+# Option 1: Preview what would be removed
+./setup.sh install --dry-run zsh
+
+# Option 2: Force restow (removes conflicting files)
+./setup.sh install --force zsh
+```
+
+**"Changes not appearing in new terminal"**
+```bash
+# Source zshenv manually
 source ~/.zshenv
+
+# Or verify symlinks exist
+./setup.sh status
 ```
+
+### Getting Help
+
+```bash
+# Check status of all packages
+./setup.sh status
+
+# View available commands
+./setup.sh help
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-[MIT](LICENSE) - Copyright (c) 2026 Zhengyu Li
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+Inspired by:
+- [mathiasbynens/dotfiles](https://github.com/mathiasbynens/dotfiles)
+- [holman/dotfiles](https://github.com/holman/dotfiles)
+- [thoughtbot/dotfiles](https://github.com/thoughtbot/dotfiles)
