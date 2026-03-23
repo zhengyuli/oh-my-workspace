@@ -5,7 +5,7 @@ paths:
 
 # Security Guidelines
 
-> This file establishes repository-wide security practices for dotfiles.
+> This file establishes repository-wide security practices for workspace.
 
 ## Secrets Management
 

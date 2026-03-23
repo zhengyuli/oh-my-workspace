@@ -9,12 +9,12 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-This is a **dotfiles repository** providing comprehensive development environment setup for macOS. It uses **GNU Stow** for symlink management with XDG-compliant directory structure.
+This is a **workspace repository** providing comprehensive development environment setup for macOS. It uses **GNU Stow** for symlink management with XDG-compliant directory structure.
 
 ## Directory Structure
 
 ```
-oh-my-dotfiles/
+oh-my-workspace/
 ├── bun/          # Bun JS/TS runtime configuration
 ├── emacs/        # Emacs >= 30.2 — see emacs/CLAUDE.md
 ├── ghostty/      # Ghostty terminal configuration
@@ -31,7 +31,7 @@ oh-my-dotfiles/
 ## Setup
 
 ```bash
-git clone https://github.com/zhengyuli/oh-my-dotfiles.git ~/oh-my-dotfiles
+git clone https://github.com/zhengyuli/oh-my-workspace.git ~/oh-my-workspace
 brew bundle --file homebrew/Brewfile
 stow bun emacs ghostty git ripgrep starship uv vim zsh
 source ~/.zshenv

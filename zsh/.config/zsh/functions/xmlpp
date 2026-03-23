@@ -13,14 +13,12 @@
 #   cat data.xml | xmlpp
 #   curl -s https://example.com/api.xml | xmlpp
 # =============================================================================
-xmlpp() {
-  if [[ -t 0 ]]; then
-    if [[ -z "$1" ]]; then
-      print "ERROR: No file specified."
-      return 1
-    fi
-    xmllint --format "$1"
-  else
-    xmllint --format -
+if [[ -t 0 ]]; then
+  if [[ -z "$1" ]]; then
+    print "ERROR: No file specified."
+    return 1
   fi
-}
+  xmllint --format "$1"
+else
+  xmllint --format -
+fi

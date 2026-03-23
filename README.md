@@ -1,6 +1,6 @@
-# Oh My Dotfiles
+# Oh My Workspace
 
-A modern, XDG-compliant dotfiles repository for macOS using GNU Stow for symlink management.
+A comprehensive macOS development environment configuration repository featuring XDG-compliant dotfiles, Homebrew package management, shell/editor/IDE configurations, and system preferences automation.
 
 - **Unified theme**: Doom One across Emacs, Ghostty, Starship, and fzf
 - **Modern toolchain**: bun (JS/TS), uv (Python), no version managers
@@ -10,7 +10,7 @@ A modern, XDG-compliant dotfiles repository for macOS using GNU Stow for symlink
 ## Directory Structure
 
 ```
-oh-my-dotfiles/
+oh-my-workspace/
 ├── setup.sh           # Interactive setup script
 ├── zsh/               # Zsh configuration
 ├── git/               # Git configuration
@@ -36,8 +36,8 @@ oh-my-dotfiles/
 
 ```bash
 # Clone the repository
-git clone https://github.com/zhengyuli/oh-my-dotfiles.git ~/oh-my-dotfiles
-cd ~/oh-my-dotfiles
+git clone https://github.com/zhengyuli/oh-my-workspace.git ~/oh-my-workspace
+cd ~/oh-my-workspace
 
 # Run full installation (prerequisites + brew bundle + all packages)
 ./setup.sh install --all
@@ -121,16 +121,16 @@ Packages are managed via GNU Stow, which creates symlinks from the repository to
 
 | Package | Symlinks |
 |---------|----------|
-| `zsh` | `~/.zshenv` → `~/oh-my-dotfiles/zsh/.zshenv` |
-| `zsh` | `~/.config/zsh/` → `~/oh-my-dotfiles/zsh/.config/zsh/` |
-| `git` | `~/.config/git/` → `~/oh-my-dotfiles/git/.config/git/` |
-| `vim` | `~/.config/vim/` → `~/oh-my-dotfiles/vim/.config/vim/` |
-| `emacs` | `~/.config/emacs/` → `~/oh-my-dotfiles/emacs/.config/emacs/` |
-| `ghostty` | `~/.config/ghostty/` → `~/oh-my-dotfiles/ghostty/.config/ghostty/` |
-| `ripgrep` | `~/.config/ripgrep/` → `~/oh-my-dotfiles/ripgrep/.config/ripgrep/` |
-| `uv` | `~/.config/uv/` → `~/oh-my-dotfiles/uv/.config/uv/` |
-| `bun` | `~/.config/bun/` → `~/oh-my-dotfiles/bun/.config/bun/` |
-| `starship` | `~/.config/starship.toml` → `~/oh-my-dotfiles/starship/.config/starship.toml` |
+| `zsh` | `~/.zshenv` → `~/oh-my-workspace/zsh/.zshenv` |
+| `zsh` | `~/.config/zsh/` → `~/oh-my-workspace/zsh/.config/zsh/` |
+| `git` | `~/.config/git/` → `~/oh-my-workspace/git/.config/git/` |
+| `vim` | `~/.config/vim/` → `~/oh-my-workspace/vim/.config/vim/` |
+| `emacs` | `~/.config/emacs/` → `~/oh-my-workspace/emacs/.config/emacs/` |
+| `ghostty` | `~/.config/ghostty/` → `~/oh-my-workspace/ghostty/.config/ghostty/` |
+| `ripgrep` | `~/.config/ripgrep/` → `~/oh-my-workspace/ripgrep/.config/ripgrep/` |
+| `uv` | `~/.config/uv/` → `~/oh-my-workspace/uv/.config/uv/` |
+| `bun` | `~/.config/bun/` → `~/oh-my-workspace/bun/.config/bun/` |
+| `starship` | `~/.config/starship.toml` → `~/oh-my-workspace/starship/.config/starship.toml` |
 
 ### Manual Stow Commands
 
@@ -234,7 +234,7 @@ Ensure `~/.zshenv` is loaded first (it should be a symlink):
 
 ```bash
 ls -la ~/.zshenv
-# Should show: ~/.zshenv -> ~/oh-my-dotfiles/zsh/.zshenv
+# Should show: ~/.zshenv -> ~/oh-my-workspace/zsh/.zshenv
 
 # Verify
 zsh -c 'echo $XDG_CONFIG_HOME'

@@ -1,0 +1,17 @@
+# edit-zsh
+# Time-stamp: <2026-03-23 14:30:00 Sunday by zhengyu.li>
+# =============================================================================
+# Edit zsh local configuration
+#
+# Opens the local overrides file in $EDITOR
+#
+# Arguments: None
+#
+# Environment:
+#   EDITOR - Editor to use (defaults to nvim)
+#   ZDOTDIR - Zsh configuration directory
+#
+# Examples:
+#   edit-zsh
+# =============================================================================
+${EDITOR:-nvim} "${ZDOTDIR:-$HOME/.config/zsh}/conf.d/99-local.zsh"

@@ -13,10 +13,8 @@
 #   cat data.json | jsonpp
 #   curl -s https://api.example.com | jsonpp
 # =============================================================================
-jsonpp() {
-  if [[ -t 0 ]]; then
-    python3 -m json.tool "$@" | bat --language json --style plain
-  else
-    python3 -m json.tool | bat --language json --style plain
-  fi
-}
+if [[ -t 0 ]]; then
+  python3 -m json.tool "$@" | bat --language json --style plain
+else
+  python3 -m json.tool | bat --language json --style plain
+fi

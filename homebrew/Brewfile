@@ -1,13 +1,13 @@
 # Brewfile -*- mode: ruby; -*-
 # Time-stamp: <2026-03-22 10:25:04 Sunday by zhengyuli>
 # =============================================================================
-# Homebrew Bundle - oh-my-dotfiles Package List
+# Homebrew Bundle - oh-my-workspace Package List
 #
-# Location: ~/oh-my-dotfiles/homebrew/Brewfile  (not stowed; run directly)
+# Location: ~/oh-my-workspace/homebrew/Brewfile  (not stowed; run directly)
 # References:
 #   1. Homebrew Bundle Docs: https://github.com/Homebrew/homebrew-bundle
 #   2. brew bundle usage: https://docs.brew.sh/Manpage#bundle-subcommand
-# Note: Run with: brew bundle --file=~/oh-my-dotfiles/homebrew/Brewfile
+# Note: Run with: brew bundle --file=~/oh-my-workspace/homebrew/Brewfile
 # =============================================================================
 
 # -----------------------------------------------------------------------------
