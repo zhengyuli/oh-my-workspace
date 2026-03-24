@@ -136,6 +136,7 @@ Output shows:
 │
 ├── tool/                 # CLI tools
 │   ├── git/              # ~/.config/git/
+│   ├── lazygit/          # ~/.config/lazygit/
 │   └── ripgrep/          # ~/.config/ripgrep/
 │
 ├── lang/                 # Language runtimes

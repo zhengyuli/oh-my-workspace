@@ -56,6 +56,7 @@ readonly -a PKG_ALL=(
   editor/emacs
   term/ghostty
   tool/git
+  tool/lazygit
   tool/ripgrep
   lang/python/uv
   lang/typescript/bun
@@ -232,7 +233,7 @@ stow_targets() {
   fi
 
   local -r link_pat='^LINK: ([^[:space:]]+)'
-  local -r conflict_pat='existing target [^:]+: (.+)$'
+  local -r conflict_pat='existing target ([^[:space:]]+)'
   local output line
   output=$(stow "${flags[@]}" "${pkg_base}" 2>&1) || true
   while IFS= read -r line; do
@@ -809,7 +810,7 @@ Flags:
   --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked
 
 Packages (base name or full category/name):
-  zsh  starship  vim  emacs  ghostty  git  ripgrep  uv  bun
+  zsh  starship  vim  emacs  ghostty  git  lazygit  ripgrep  uv  bun
 
 Examples:
   ./setup.sh install --all                    Bootstrap: prereqs + brew + stow all

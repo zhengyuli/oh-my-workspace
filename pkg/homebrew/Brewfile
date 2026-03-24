@@ -37,6 +37,8 @@ brew "carapace"
 brew "git"
 # Simple terminal UI for git commands
 brew "lazygit"
+# Syntax-highlighting pager for git diff
+brew "git-delta"
 
 # -----------------------------------------------------------------------------
 # Security & Encryption

@@ -1,0 +1,67 @@
+# config.yml -*- mode: yaml; -*-
+# Time-stamp: <2026-03-24 10:30:00 Mon by zhengyu.li>
+# =============================================================================
+# Lazygit - Simple terminal UI for git commands
+#
+# Location: ~/.config/lazygit/config.yml
+# XDG: Follows XDG_CONFIG_HOME, uses ~/.config/lazygit/ on Linux
+# References:
+#   1. https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+#   2. https://github.com/jesseduffield/lazygit/blob/master/schema/config.json
+# =============================================================================
+
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+
+# -----------------------------------------------------------------------------
+# GUI
+# -----------------------------------------------------------------------------
+
+gui:
+  nerdFontsVersion: "3"
+  showFileTree: true
+  showRandomTip: false
+  showCommandLog: false
+  border: rounded
+  theme:
+    activeBorderColor: ["#bd93f9", "bold"]
+    inactiveBorderColor: ["#6272a4"]
+    optionsTextColor: ["#bd93f9"]
+    selectedLineBgColor: ["#44475a"]
+    cherryPickedCommitBgColor: ["#6272a4"]
+    cherryPickedCommitFgColor: ["#bd93f9"]
+    unstagedChangesColor: ["#ff5555"]
+    searchingActiveBorderColor: ["#f1fa8c"]
+    defaultFgColor: ["#f8f8f2"]
+
+# -----------------------------------------------------------------------------
+# Git
+# -----------------------------------------------------------------------------
+
+git:
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
+  log:
+    showGraph: when-maximised
+
+# -----------------------------------------------------------------------------
+# OS
+# -----------------------------------------------------------------------------
+
+os:
+  editPreset: vim
+
+notARepository: prompt
+
+# -----------------------------------------------------------------------------
+# Keybindings
+# -----------------------------------------------------------------------------
+
+keybinding:
+  universal:
+    # tab switching within a panel
+    prevTab: '['
+    nextTab: ']'
+    # cross-panel focus jump (Shift+p/n)
+    prevBlock: <c-p>
+    nextBlock: <c-n>
