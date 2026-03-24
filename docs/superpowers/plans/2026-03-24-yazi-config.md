@@ -160,11 +160,11 @@ Append to file:
 # -----------------------------------------------------------------------------
 
 [open]
-# Note: "enter" is a yazi built-in command for directory navigation
-# "edit" and "open" are defined in the [opener] section above
+# Note: Directory navigation is handled by keymap commands (e.g., 'enter'),
+# not by the opener system. No opener rule needed for directories.
+# "edit" and "open" are defined in the [opener] section above.
 prepend_rules = [
   { mime = "text/*", use = "edit" },
-  { name = "*/", use = "enter" },
 ]
 
 append_rules = [

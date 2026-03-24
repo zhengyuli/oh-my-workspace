@@ -73,9 +73,9 @@ tool/yazi/
 - `extract`: Extract archives with yazi
 
 **Open Rules:**
-- Directories (`*/`): Use `enter` command (internal navigation)
 - Text files (`text/*`): Use `$EDITOR`
 - Everything else: Use system default
+- Note: Directory navigation is handled by keymap commands, not the opener system
 
 #### keymap.toml - Keybindings
 
