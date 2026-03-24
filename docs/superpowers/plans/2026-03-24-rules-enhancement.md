@@ -988,7 +988,7 @@ Expected: File content displayed
 
 - [ ] **Step 2: Add immutability principle after "Universal Rules" section**
 
-Insert after line 70 (after "## Language-Specific Extensions"):
+Insert after the "## Language-Specific Extensions" section header:
 
 ```markdown
 
@@ -1134,7 +1134,7 @@ Expected: File content displayed
 
 - [ ] **Step 2: Add configuration code standards section after "Dotfiles-Specific Rules"**
 
-Insert after line 131 (after "## Quality Checklist"):
+Insert after the "## Quality Checklist" section:
 
 ```markdown
 
