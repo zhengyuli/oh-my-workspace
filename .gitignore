@@ -8,22 +8,22 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Emacs
+# Editor / IDE Files
 # -----------------------------------------------------------------------------
 
-# Compiled files
+# Emacs
 *.elc
-
-# Lock files (symlink to editing session)
 .#*
-
-# Auto-save files
 *~
 \#*\#
-
-# -----------------------------------------------------------------------------
-# IDE & Editors
-# -----------------------------------------------------------------------------
+emacs/.config/emacs/auto-save-list/
+emacs/.config/emacs/elpa/
+emacs/.config/emacs/url/
+emacs/.config/emacs/.emacs.desktop
+emacs/.config/emacs/.emacs.desktop.lock
+emacs/.config/emacs/desktop/
+emacs/.config/emacs/projects
+emacs/.config/emacs/.cache/
 
 # JetBrains
 .idea/
@@ -31,11 +31,15 @@
 # VS Code
 .vscode/
 
-# Vim swap files
+# Vim
 *.swp
 *.swo
+vim/.config/vim/viminfo
+vim/.config/vim/undo/
+vim/.config/vim/session/
+vim/.config/vim/view/
 
-# Claude Code local settings (track rules/skills/commands, ignore local config)
+# Claude Code (track rules, ignore local settings)
 .claude/settings.json
 .claude/settings.local.json
 
@@ -43,11 +47,8 @@
 # Testing
 # -----------------------------------------------------------------------------
 
-# Test directories
 test/
 tests/
-
-# Test artifacts
 *.test.elc
 *-test-report-*.txt
 
@@ -65,100 +66,51 @@ Thumbs.db
 # Git
 # -----------------------------------------------------------------------------
 
-# Worktrees
 .worktrees/
 .claude/worktrees/
-
-# -----------------------------------------------------------------------------
-# Documentation
-# -----------------------------------------------------------------------------
-
-# Generated documentation
-docs/
 
 # -----------------------------------------------------------------------------
 # Local / Machine-Specific Files
 # -----------------------------------------------------------------------------
 
-# Zsh local config (machine-specific)
+# Zsh
 zsh/.config/zsh/conf.d/99-local.zsh
-
-# Git local config (machine-specific)
-git/.config/git/config.local
-git/.config/git/credentials
-
-# Ghostty local config (machine-specific)
-ghostty/.config/ghostty/config.local
-
-# -----------------------------------------------------------------------------
-# XDG Fallback: Cache/State Files in .config directories
-# -----------------------------------------------------------------------------
-# These patterns catch runtime files that SHOULD be in $XDG_CACHE_HOME or
-# $XDG_STATE_HOME, but may appear in .config/ if XDG variables aren't set.
-# This prevents accidental commits of machine-specific runtime data.
-
-# --- Zsh ---
-# Completion cache (should be in $XDG_CACHE_HOME/zsh/)
 zsh/.config/zsh/.zcompdump
 zsh/.config/zsh/.zcompdump.*
-# History cache directory (should be in $XDG_CACHE_HOME/zsh/)
 zsh/.config/zsh/cache/
-# History file fallback (should be $XDG_CACHE_HOME/zsh/history)
 zsh/.config/zsh/history
 zsh/.config/zsh/.zhistory
-# Zinit plugin data (should be in $XDG_DATA_HOME/zinit/)
 zsh/.config/zsh/zinit/
-# Zsh word code files (should be in $XDG_CACHE_HOME/zsh/)
 zsh/.config/zsh/*.zwc
 zsh/.config/zsh/**/*.zwc
 
-# --- Vim ---
-# Viminfo state file (should be in $XDG_STATE_HOME/vim/)
-vim/.config/vim/viminfo
-# Undo directory (should be in $XDG_DATA_HOME/vim/undo/)
-vim/.config/vim/undo/
-# Swap files (should be in $XDG_CACHE_HOME/vim/; disabled in config, but catch if re-enabled)
+# Git
+git/.config/git/config.local
+git/.config/git/credentials
+
+# Ghostty
+ghostty/.config/ghostty/config.local
+
+# Vim (machine-specific)
 vim/.config/vim/**/*.swp
 vim/.config/vim/**/*.swo
-# Backup files (should be in $XDG_STATE_HOME/vim/; disabled in config, but catch if re-enabled)
 vim/.config/vim/**/*.bak
 vim/.config/vim/**/*~
-# Session/view files (should be in $XDG_DATA_HOME/vim/)
-vim/.config/vim/session/
-vim/.config/vim/view/
-
-# --- Emacs ---
-# Byte-compiled files (already covered above: *.elc, .#*, *~, \#*\#)
-# Auto-save list (should be in $XDG_STATE_HOME/emacs/auto-save-list/)
-emacs/.config/emacs/auto-save-list/
-# Package archive (should be in $XDG_DATA_HOME/emacs/elpa/)
-emacs/.config/emacs/elpa/
-# URL cache (should be in $XDG_CACHE_HOME/emacs/url/)
-emacs/.config/emacs/url/
-# Desktop/session files (should be in $XDG_STATE_HOME/emacs/)
-emacs/.config/emacs/.emacs.desktop
-emacs/.config/emacs/.emacs.desktop.lock
-emacs/.config/emacs/desktop/
-# Project list (should be in $XDG_STATE_HOME/emacs/)
-emacs/.config/emacs/projects
-# Emacs cache directory (should be in $XDG_CACHE_HOME/emacs/)
-emacs/.config/emacs/.cache/
 
 # -----------------------------------------------------------------------------
-# General XDG Fallback Patterns
+# General Patterns
 # -----------------------------------------------------------------------------
-# Catch any cache/state files that might appear in config directories
-# if XDG environment variables are not properly set
+# Catch-all patterns for cache, backup, and temporary files
 
-# Common cache file extensions
+# Cache directories and files
 **/.cache/
 **/*.cache
-**/*.zwc        # Zsh word code
-**/*.elc        # Emacs byte-compiled
-**/*.pyc        # Python bytecode
-**/*.pyo        # Python optimized
+**/*.zwc
+**/*.elc
+**/*.pyc
+**/*.pyo
 
-# Lock files (editor sessions, etc.)
+# Lock files
 **/.#*
 **/#*#
 
