@@ -160,6 +160,8 @@ Append to file:
 # -----------------------------------------------------------------------------
 
 [open]
+# Note: "enter" is a yazi built-in command for directory navigation
+# "edit" and "open" are defined in the [opener] section above
 prepend_rules = [
   { mime = "text/*", use = "edit" },
   { name = "*/", use = "enter" },
@@ -421,7 +423,40 @@ Expected: Symlink targets point to oh-my-workspace files
 
 ---
 
-## Task 6: Manual Verification
+## Task 6: Verify Yazi Installation
+
+**Files:**
+- Test: Yazi binary and dependencies
+
+- [ ] **Step 1: Check yazi is installed**
+
+Run: `which yazi`
+
+Expected output:
+```
+/opt/homebrew/bin/yazi
+```
+
+- [ ] **Step 2: Check yazi version**
+
+Run: `yazi --version`
+
+Expected: Version number displayed (e.g., `yazi 0.4.2`)
+
+- [ ] **Step 3: Verify optional dependencies (optional)**
+
+Run:
+```bash
+which ffmpegthumbnailer  # Video thumbnails
+which 7z                 # Archive extraction
+which pdftoppm          # PDF preview
+```
+
+Expected: Paths displayed if installed, or command not found if not installed (acceptable)
+
+---
+
+## Task 7: Manual Verification
 
 **Files:**
 - Test: Yazi configuration behavior
@@ -487,7 +522,7 @@ Expected: Yazi exits cleanly
 
 ---
 
-## Task 7: Final Commit and Push
+## Task 8: Final Commit and Push
 
 **Files:**
 - Commit: All changes
