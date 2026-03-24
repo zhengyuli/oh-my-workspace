@@ -62,6 +62,3 @@ keybinding:
     # tab switching within a panel
     prevTab: '['
     nextTab: ']'
-    # cross-panel focus jump (Shift+p/n)
-    prevBlock: <c-p>
-    nextBlock: <c-n>
