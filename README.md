@@ -117,7 +117,7 @@ Output shows:
 ## Directory Structure
 
 ```
-~/oh-my-workspace/
+$WORKSPACE_DIR/
 ├── setup.sh              # Main setup script
 ├── Brewfile              # Homebrew package list
 ├── LICENSE
@@ -319,13 +319,13 @@ If you prefer manual control over symlinks:
 
 ```bash
 # Check what a package would link
-stow -n -v -d ~/oh-my-workspace/shell -t ~ zsh
+stow -n -v -d $WORKSPACE_DIR/shell -t ~ zsh
 
 # Stow manually
-stow -v -d ~/oh-my-workspace/shell -t ~ zsh
+stow -v -d $WORKSPACE_DIR/shell -t ~ zsh
 
 # Unstow manually
-stow -D -v -d ~/oh-my-workspace/shell -t ~ zsh
+stow -D -v -d $WORKSPACE_DIR/shell -t ~ zsh
 ```
 
 ## Troubleshooting

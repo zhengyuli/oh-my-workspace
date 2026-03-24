@@ -3,11 +3,11 @@
 # =============================================================================
 # Homebrew Bundle - oh-my-workspace Package List
 #
-# Location: ~/oh-my-workspace/homebrew/Brewfile  (not stowed; run directly)
+# Location: $WORKSPACE_DIR/homebrew/Brewfile  (not stowed; run directly)
 # References:
 #   1. Homebrew Bundle Docs: https://github.com/Homebrew/homebrew-bundle
 #   2. brew bundle usage: https://docs.brew.sh/Manpage#bundle-subcommand
-# Note: Run with: brew bundle --file=~/oh-my-workspace/homebrew/Brewfile
+# Note: Run with: brew bundle --file=$WORKSPACE_DIR/homebrew/Brewfile
 # =============================================================================
 
 # -----------------------------------------------------------------------------
