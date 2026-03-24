@@ -1,216 +1,264 @@
 # starship.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-03-24 21:30:00 Mon by zhengyu.li>
 # =============================================================================
-# Starship Prompt - Cross-shell, minimal, blazing fast
+# Starship - Cross-shell prompt customization
 #
-# Location: ~/.config/starship.toml
-# XDG: Config requires explicit STARSHIP_CONFIG path (no auto-discovery);
-#      cache follows XDG_CACHE_HOME natively (~/.cache/starship)
-#      - Config: $STARSHIP_CONFIG (set in zsh/.config/zsh/conf.d/00-env.zsh)
-#      - Cache:  $XDG_CACHE_HOME/starship (automatic)
-#
-# Layout: two-line prompt
-#   line 1 - [user@host] directory git-branch git-status runtimes duration
-#   line 2 - ❯ (green = success, red = error, yellow = vi normal-mode)
+# Location: $WORKSPACE_DIR/shell/starship/.config/starship.toml
+# References:
+#   1. Starship Docs: https://starship.rs/config/
+#   2. Nerd Fonts: https://www.nerdfonts.com/
 # =============================================================================
 
-# -----------------------------------------------------------------------------
-# Global
-# -----------------------------------------------------------------------------
-# Insert a blank line before each prompt - visual separation between commands
-add_newline = true
-
-# Hard per-module timeout (ms); prevents slow VCS / network modules from
-# blocking the entire prompt render
-command_timeout = 500
-
-# Module order for the left prompt (line 1)
-# Identity is conditional - surfaces only in SSH / root contexts
-format = """
-$username\
-$hostname\
-$directory\
-$git_branch\
-$git_status\
-$python\
-$nodejs\
-$rust\
-$golang\
-$cmd_duration\
-$line_break\
-$character"""
+"$schema" = 'https://starship.rs/config-schema.json'
 
 # -----------------------------------------------------------------------------
-# Identity - username / hostname
+# Cloud Services
 # -----------------------------------------------------------------------------
-[username]
-# Hidden in normal local sessions; shown automatically for root or over SSH
-show_always = false
-style_user = "white"
-style_root = "bold red"
-format = "[$user]($style)@"
-
-[hostname]
-# Visible over SSH only - zero noise in local development
-ssh_only = true
-style = "bold yellow"
-format = "[$hostname]($style) "
-
-# -----------------------------------------------------------------------------
-# Directory
-# -----------------------------------------------------------------------------
-[directory]
-# Cap display at 4 path segments; inside a repo, anchor to repo root
-truncation_length = 4
-truncate_to_repo = true
-style = "bold cyan"
-read_only = " 󰌾"
-read_only_style = "red"
-
-# -----------------------------------------------------------------------------
-# Git
-# -----------------------------------------------------------------------------
-[git_branch]
-symbol = " "
-# Truncate long branch names before they push the prompt off-screen
-truncation_length = 28
-truncation_symbol = "…"
-style = "bold purple"
-
-[git_status]
-# Counts on every symbol - shows exactly how many files are in each state
-# Nerd Font icons with space-separated counts for legibility
-ahead = "[ ${count}](green)"
-behind = "[ ${count}](red)"
-diverged = "[ ${ahead_count} ${behind_count}](yellow)"
-staged = "[ ${count}](green)"
-modified = "[ ${count}](yellow)"
-untracked = "[ ${count}](dimmed white)"
-stashed = "[ ${count}](cyan)"
-conflicted = "[ ${count}](bold red)"
-deleted = "[ ${count}](red)"
-
-# -----------------------------------------------------------------------------
-# Language runtimes
-# -----------------------------------------------------------------------------
-# Each module is file-triggered: it only activates when the listed sentinel
-# files exist in (or above) the current directory.  Unrelated directories
-# remain clean.
-
-[python]
-symbol = " "
-# uv projects use pyproject.toml + uv.lock; both are listed as sentinels
-detect_files = [
-  "pyproject.toml",
-  "requirements.txt",
-  ".python-version",
-  "uv.lock",
-]
-# Show active virtualenv name - avoids confusion when switching projects
-format = "[$symbol$version( \\($virtualenv\\))]($style) "
-style = "yellow"
-
-[nodejs]
-symbol = " "
-detect_files = ["package.json", ".nvmrc", ".node-version"]
-style = "green"
-
-[rust]
-symbol = " "
-detect_files = ["Cargo.toml"]
-style = "bold orange"
-
-[golang]
-symbol = " "
-detect_files = ["go.mod"]
-style = "bold cyan"
-
-# -----------------------------------------------------------------------------
-# Command duration
-# -----------------------------------------------------------------------------
-[cmd_duration]
-# Surface only for commands that visibly took time; 2 s is the right threshold
-min_time = 2000
-show_milliseconds = false
-format = "[ $duration]($style) "
-style = "yellow dimmed"
-
-# -----------------------------------------------------------------------------
-# Prompt character
-# -----------------------------------------------------------------------------
-[character]
-# Exit status is encoded in color alone - no separate $status module needed
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
-# Switches to ❮ in vi normal-mode (requires zsh vi-mode plugin)
-vimcmd_symbol = "[❮](bold yellow)"
-
-# -----------------------------------------------------------------------------
-# Disabled modules
-# -----------------------------------------------------------------------------
-# Explicit disables prevent file-system scans for tools not in the stack.
-# Cost of an enabled-but-inactive module ≈ one stat() call per directory
-# traversal; at scale this is measurable.
 
 [aws]
-disabled = true
+symbol = " "
 
-[gcloud]
-disabled = true
+# -----------------------------------------------------------------------------
+# Build Tools & Package Managers
+# -----------------------------------------------------------------------------
 
-[azure]
-disabled = true
+[buf]
+symbol = " "
 
-[terraform]
-disabled = true
+[bun]
+symbol = " "
 
-[kubernetes]
-disabled = true
+[cmake]
+symbol = " "
 
-[docker_context]
-disabled = true
+[conda]
+symbol = " "
+
+[deno]
+symbol = " "
+
+[gradle]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[meson]
+symbol = "󰔷 "
+
+[nix_shell]
+symbol = " "
 
 [package]
-disabled = true
+symbol = "󰏗 "
+
+[pixi]
+symbol = "󰏗 "
+
+[xmake]
+symbol = " "
+
+# -----------------------------------------------------------------------------
+# Languages - C/C++
+# -----------------------------------------------------------------------------
+
+[c]
+symbol = " "
+
+[cpp]
+symbol = " "
+
+# -----------------------------------------------------------------------------
+# Languages - JVM
+# -----------------------------------------------------------------------------
 
 [java]
-disabled = true
-
-[ruby]
-disabled = true
-
-[php]
-disabled = true
-
-[swift]
-disabled = true
+symbol = " "
 
 [kotlin]
-disabled = true
+symbol = " "
 
 [scala]
-disabled = true
+symbol = " "
 
-[lua]
-disabled = true
+# -----------------------------------------------------------------------------
+# Languages - Functional
+# -----------------------------------------------------------------------------
 
-[perl]
-disabled = true
-
-[dart]
-disabled = true
+[crystal]
+symbol = " "
 
 [elixir]
-disabled = true
+symbol = " "
 
 [elm]
-disabled = true
+symbol = " "
+
+[fennel]
+symbol = " "
 
 [haskell]
-disabled = true
+symbol = " "
 
 [ocaml]
-disabled = true
+symbol = " "
+
+# -----------------------------------------------------------------------------
+# Languages - Systems
+# -----------------------------------------------------------------------------
+
+[fortran]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[nim]
+symbol = "󰆥 "
+
+[rust]
+symbol = "󱘗 "
 
 [zig]
-disabled = true
+symbol = " "
+
+# -----------------------------------------------------------------------------
+# Languages - Scripting
+# -----------------------------------------------------------------------------
+
+[dart]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+
+[python]
+symbol = " "
+
+[ruby]
+symbol = " "
+
+[swift]
+symbol = " "
+
+# -----------------------------------------------------------------------------
+# Languages - Data Science
+# -----------------------------------------------------------------------------
+
+[rlang]
+symbol = "󰟔 "
+
+# -----------------------------------------------------------------------------
+# General Settings
+# -----------------------------------------------------------------------------
+
+[directory]
+read_only = " 󰌾"
+
+[hostname]
+ssh_symbol = "󰣇 "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[status]
+symbol = "✕ "
+
+# -----------------------------------------------------------------------------
+# Version Control
+# -----------------------------------------------------------------------------
+
+[fossil_branch]
+symbol = " "
+
+[git_branch]
+symbol = " "
+
+[git_commit]
+tag_symbol = '  '
+
+[hg_branch]
+symbol = " "
+
+[pijul_channel]
+symbol = " "
+
+# -----------------------------------------------------------------------------
+# Containerization
+# -----------------------------------------------------------------------------
+
+[docker_context]
+symbol = " "
+
+[gcloud]
+symbol = "󰱽 "
+
+# -----------------------------------------------------------------------------
+# OS Symbols
+# -----------------------------------------------------------------------------
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+AOSC = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Elementary = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Ios = "󰀷 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
+Zorin = " "
