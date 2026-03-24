@@ -58,6 +58,7 @@ readonly -a PKG_ALL=(
   tool/git
   tool/lazygit
   tool/ripgrep
+  tool/yazi
   lang/python/uv
   lang/typescript/bun
 )
