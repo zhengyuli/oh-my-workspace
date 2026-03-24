@@ -88,6 +88,9 @@ git/.config/git/credentials
 # Ghostty
 ghostty/.config/ghostty/config.local
 
+# Yazi
+tool/yazi/.config/yazi/plugins/
+
 # Vim (machine-specific)
 vim/.config/vim/**/*.swp
 vim/.config/vim/**/*.swo
