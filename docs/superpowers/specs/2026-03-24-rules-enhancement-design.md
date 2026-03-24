@@ -54,7 +54,18 @@ oh-my-workspace is a mixed project containing:
 ├── development-workflow.md (NEW)
 ├── hooks.md (NEW)
 └── lang/ (unchanged)
+    ├── shell.md
+    ├── bash.md
+    ├── zsh.md
+    ├── elisp.md
+    └── python.md
 ```
+
+**Rule Interaction:**
+- New common rules (patterns.md, development-workflow.md, hooks.md) apply to ALL configuration code
+- Language-specific rules in `lang/` extend (not replace) common rules
+- If conflicts occur: `lang/*` rules take precedence for that language (specific overrides general)
+- Example: `lang/python.md` may specify different file size limits for Python utilities vs. Python configs
 
 ### New Files
 
