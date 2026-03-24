@@ -3,7 +3,7 @@
 # =============================================================================
 # Git Ignore Patterns - oh-my-workspace
 #
-# Location: ~/oh-my-workspace/.gitignore (repository root)
+# Location: $WORKSPACE_DIR/.gitignore (repository root)
 # Note: Patterns follow gitignore(5) specification
 # =============================================================================
 
@@ -24,9 +24,6 @@ emacs/.config/emacs/.emacs.desktop.lock
 emacs/.config/emacs/desktop/
 emacs/.config/emacs/projects
 emacs/.config/emacs/.cache/
-
-# JetBrains
-.idea/
 
 # VS Code
 .vscode/
@@ -119,6 +116,3 @@ vim/.config/vim/**/*~
 **/*.bak
 **/*.backup
 **/*.orig
-
-# Stow backup directory (created by setup.sh)
-.backups/
