@@ -89,6 +89,15 @@
     defaultBranch = main
 
 # -----------------------------------------------------------------------------
+# Advice Settings
+# -----------------------------------------------------------------------------
+# Control Git's hint and suggestion messages
+
+[advice]
+    # Silence warning when attempting to add files matching .gitignore patterns
+    addIgnoredFile = false
+
+# -----------------------------------------------------------------------------
 # Alias Definitions
 # -----------------------------------------------------------------------------
 # Shortcuts for common Git commands to improve workflow efficiency
