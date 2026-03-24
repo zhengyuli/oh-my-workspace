@@ -32,7 +32,7 @@
 
 **Purpose:** Define design patterns and principles for maintainable configuration code
 
-- [ ] **Step 1: Create file header and immutability section**
+- [x] **Step 1: Create file header and immutability section**
 
 Create `.claude/rules/patterns.md`:
 
@@ -72,7 +72,7 @@ sed 's/old/new/' ~/.zshrc.bak > ~/.zshrc
 - Maintains history of changes
 ```
 
-- [ ] **Step 2: Add file organization section**
+- [x] **Step 2: Add file organization section**
 
 Append to `.claude/rules/patterns.md`:
 
@@ -111,7 +111,7 @@ Append to `.claude/rules/patterns.md`:
 - Improves readability
 ```
 
-- [ ] **Step 3: Add safe defaults section**
+- [x] **Step 3: Add safe defaults section**
 
 Append to `.claude/rules/patterns.md`:
 
@@ -139,7 +139,7 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 ```
 ```
 
-- [ ] **Step 4: Add modular configuration section**
+- [x] **Step 4: Add modular configuration section**
 
 Append to `.claude/rules/patterns.md`:
 
@@ -193,7 +193,7 @@ Append to `.claude/rules/patterns.md`:
 ```
 ```
 
-- [ ] **Step 5: Add design patterns section**
+- [x] **Step 5: Add design patterns section**
 
 Append to `.claude/rules/patterns.md`:
 
@@ -247,7 +247,7 @@ fi
 ```
 ```
 
-- [ ] **Step 6: Add anti-patterns section**
+- [x] **Step 6: Add anti-patterns section**
 
 Append to `.claude/rules/patterns.md`:
 
@@ -328,7 +328,7 @@ source "$ZDOTDIR/completion.zsh"
 ```
 ```
 
-- [ ] **Step 7: Verify file completeness**
+- [x] **Step 7: Verify file completeness**
 
 Check that `.claude/rules/patterns.md`:
 - Has all 6 main sections
@@ -336,7 +336,7 @@ Check that `.claude/rules/patterns.md`:
 - Examples use correct syntax highlighting
 - Total length is ~150 lines
 
-- [ ] **Step 8: Commit patterns.md**
+- [x] **Step 8: Commit patterns.md**
 
 ```bash
 git add .claude/rules/patterns.md
