@@ -68,6 +68,84 @@ _validate_package() {
 - **Single responsibility** - Each function does one thing well
 - **DRY** - Don't repeat yourself; extract common logic
 - **YAGNI** - Don't add features you don't need yet
+- **KISS** - Keep it simple, avoid over-engineering
+- **Composition over inheritance** - Prefer composing behavior
+
+## Immutability Principle
+
+### Prefer Immutability
+
+Immutable data is easier to reason about and test.
+
+#### Shell Variables
+
+```bash
+# Good - readonly prevents accidental modification
+local -r config_path="$HOME/.config"
+readonly -a REQUIRED_PACKAGES=(zsh git emacs)
+
+# Avoid - mutable without reason
+local config_path="$HOME/.config"
+```
+
+#### Python Variables
+
+```python
+# Good - use tuples for immutable sequences
+REQUIRED_PACKAGES: tuple[str, ...] = ("zsh", "git", "emacs")
+
+# Avoid - lists can be modified
+required_packages: list[str] = ["zsh", "git", "emacs"]
+```
+
+### When to Use Immutability
+
+**Use immutable structures for:**
+- Configuration values
+- Constants
+- Function arguments that shouldn't change
+- Default values
+
+**Use mutable structures for:**
+- Accumulators
+- State that must change
+- Performance-critical hot paths (with justification)
+
+## File Organization
+
+### File Size Targets
+
+Keep files focused and manageable:
+
+| File Type | Target Lines | Max Lines |
+|-----------|-------------|-----------|
+| Shell scripts | 100-300 | 500 |
+| Python modules | 150-400 | 600 |
+| Emacs Lisp | 100-300 | 500 |
+
+### When to Split Files
+
+**Split a file when:**
+- Exceeds maximum line count
+- Contains multiple unrelated concerns
+- Has deeply nested conditionals (>3 levels)
+- Functions have high cognitive complexity
+
+**Splitting strategy:**
+1. Identify cohesive groups of functions
+2. Extract to new file with descriptive name
+3. Maintain single responsibility per file
+4. Update imports/requires in dependent files
+
+### File Structure Template
+
+```bash
+# 1. Header (purpose, usage, author)
+# 2. Constants and configuration
+# 3. Utility functions (private)
+# 4. Core functions (public)
+# 5. Main entry point (if executable)
+```
 
 ## Language-Specific Extensions
 
@@ -77,3 +155,17 @@ For language-specific rules, see:
 - `lang/zsh.md` - Zsh-specific features
 - `lang/elisp.md` - Emacs Lisp conventions
 - `lang/python.md` - Python conventions
+
+## Code Quality Checklist
+
+Before completing any task, verify:
+
+- [ ] All functions documented
+- [ ] Complex logic explained
+- [ ] No hardcoded secrets
+- [ ] Input validation present
+- [ ] Safe file operations
+- [ ] Follows project conventions
+- [ ] Commit message follows Conventional Commits
+- [ ] Immutable structures used where appropriate
+- [ ] File size within target limits
