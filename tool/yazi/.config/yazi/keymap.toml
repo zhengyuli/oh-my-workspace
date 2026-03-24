@@ -1,7 +1,6 @@
 # keymap.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-24 17:00:00 Mon by zhengyu.li>
 # =============================================================================
-# Yazi Keybindings - Vim navigation with smart enter
+# Yazi Keybindings - Vim-style navigation (no plugin dependencies)
 #
 # Location: ~/.config/yazi/keymap.toml
 # References:
@@ -10,58 +9,63 @@
 
 # -----------------------------------------------------------------------------
 # Manager - Navigation
+#
+# Use built-in commands only:
+#   leave  - Go back to parent directory
+#   enter  - Enter the hovered directory
+#   open   - Open file(s) with default opener
 # -----------------------------------------------------------------------------
 
 [[manager.prepend_keymap]]
-on = [ "h" ]
-run = "escape"
-desc = "Exit or go back to parent directory"
+on  = [ "h" ]
+run = "leave"
+desc = "Go back to the parent directory"
 
 [[manager.prepend_keymap]]
-on = [ "l" ]
-run = "plugin --sync smart-enter"
-desc = "Enter directory or open file with smart behavior"
+on  = [ "l" ]
+run = "enter"
+desc = "Enter the hovered directory"
 
 [[manager.prepend_keymap]]
-on = [ "<Enter>" ]
-run = "plugin --sync smart-enter"
-desc = "Enter directory or open file with smart behavior"
+on  = [ "<Enter>" ]
+run = "open"
+desc = "Open file(s) with the default opener"
 
 # -----------------------------------------------------------------------------
 # Manager - Tab Management
 # -----------------------------------------------------------------------------
 
 [[manager.prepend_keymap]]
-on = [ "T" ]
+on  = [ "T" ]
 run = "tab_create --current"
-desc = "Create new tab at current path"
+desc = "Create a new tab at the current path"
 
 [[manager.prepend_keymap]]
-on = [ "t" ]
+on  = [ "t" ]
 run = "tab_create"
-desc = "Create new tab"
+desc = "Create a new tab"
 
 [[manager.prepend_keymap]]
-on = [ "1" ]
+on  = [ "1" ]
 run = "tab_switch 0"
 desc = "Switch to tab 1"
 
 [[manager.prepend_keymap]]
-on = [ "2" ]
+on  = [ "2" ]
 run = "tab_switch 1"
 desc = "Switch to tab 2"
 
 [[manager.prepend_keymap]]
-on = [ "3" ]
+on  = [ "3" ]
 run = "tab_switch 2"
 desc = "Switch to tab 3"
 
 [[manager.prepend_keymap]]
-on = [ "4" ]
+on  = [ "4" ]
 run = "tab_switch 3"
 desc = "Switch to tab 4"
 
 [[manager.prepend_keymap]]
-on = [ "5" ]
+on  = [ "5" ]
 run = "tab_switch 4"
 desc = "Switch to tab 5"
