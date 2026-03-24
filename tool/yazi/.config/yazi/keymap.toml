@@ -19,13 +19,13 @@ desc = "Exit or go back to parent directory"
 
 [[manager.prepend_keymap]]
 on = [ "l" ]
-run = "plugin --sync smart-enter"
-desc = "Enter directory or open file with smart behavior"
+run = "enter"
+desc = "Enter directory or open file with default opener"
 
 [[manager.prepend_keymap]]
 on = [ "<Enter>" ]
-run = "plugin --sync smart-enter"
-desc = "Enter directory or open file with smart behavior"
+run = "enter"
+desc = "Enter directory or open file with default opener"
 
 # -----------------------------------------------------------------------------
 # Manager - Tab Management
