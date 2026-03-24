@@ -1,0 +1,18 @@
+# theme.toml -*- mode: toml; -*-
+# Time-stamp: <2026-03-25 00:00:00 Tue by zhengyu.li>
+# =============================================================================
+# Yazi Theme Configuration
+#
+# Location: ~/.config/yazi/theme.toml
+# References:
+#   1. https://yazi-rs.github.io/docs/configuration/theme/
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Flavor (Theme)
+# -----------------------------------------------------------------------------
+
+# Use neon theme (Tokyo Night palette)
+# Install with: ya pkg add tomer-ben-david/neon
+[flavor]
+use = "neon"
