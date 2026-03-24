@@ -143,8 +143,8 @@ Output shows:
 │   ├── python/uv/        # ~/.config/uv/
 │   └── typescript/bun/   # ~/.config/bun/
 │
-├── os/                   # OS-specific configs
-│   └── macos/            # macOS preferences
+├── platform/            # Platform-specific configs
+│   └── darwin/           # Darwin/macOS preferences
 │
 └── pkg/                  # Package management
     └── homebrew/         # Brewfile location
@@ -190,7 +190,7 @@ echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
 | `term/` | Terminal emulators | ghostty |
 | `tool/` | CLI utilities | git, ripgrep |
 | `lang/` | Language runtimes | python/uv, typescript/bun |
-| `os/` | OS-specific | macos |
+| `platform/` | Platform-specific | darwin |
 
 ### Overriding Defaults
 
