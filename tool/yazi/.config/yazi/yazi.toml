@@ -47,31 +47,3 @@ macro_workers = 25
 image_alloc = 536870912
 image_bound = [0, 0]
 suppress_preload = false
-
-# -----------------------------------------------------------------------------
-# Opener
-# -----------------------------------------------------------------------------
-
-[opener]
-edit = [
-  { run = '$EDITOR "$@"', block = true, desc = "Edit with $EDITOR" }
-]
-
-open = [
-  { run = 'open "$@"', desc = "Open with system default", for = "macos" }
-]
-
-extract = [
-  { run = 'ya pub extract --list "$@"', desc = "Extract with yazi" }
-]
-
-# -----------------------------------------------------------------------------
-# Open Rules
-# -----------------------------------------------------------------------------
-
-[open]
-# Enter on directory = navigate, enter on file = system open (like dired)
-# No prepend_rules - let yazi's default behavior work naturally
-append_rules = [
-  { name = "*", use = "open" }
-]
