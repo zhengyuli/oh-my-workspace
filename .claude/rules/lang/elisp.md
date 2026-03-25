@@ -1,3 +1,6 @@
+---
+globs: ["**/*.el", "emacs/**"]
+---
 # Emacs Lisp Conventions
 
 Coding standards for Emacs Lisp in oh-my-workspace.
@@ -216,4 +219,110 @@ For modern Common Lisp features:
     (error
      (message "Failed to load %s: %s" file err)
      nil)))
+```
+
+### Byte Compilation
+
+Always ensure modules byte-compile cleanly:
+
+```bash
+# Compile a single file
+emacs --batch -f batch-byte-compile omw-shell.el
+
+# Compile all files in a directory
+emacs --batch --eval \
+  "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
+```
+
+A clean compile produces no warnings. Treat warnings as errors in CI.
+
+### Stale .elc Files — Critical Pitfall
+
+**Emacs always prefers `foo.elc` over `foo.el`** when both exist in the
+same directory. Editing `foo.el` without removing the stale `foo.elc`
+means Emacs silently loads the *old* compiled version — the most common
+cause of "my change has no effect" confusion.
+
+#### Rules
+
+1. **Never commit `.elc` files.** They are in `.gitignore`. If
+   `git status` shows any `.elc`, run the cleanup below before
+   staging anything.
+2. **Clean stale `.elc` before committing any `emacs/` change.** The
+   pre-commit hook (see `hooks.md`) blocks commits that stage `.elc`
+   files.
+3. **Clean the stow target too.** `.gitignore` only covers the repo;
+   stale `.elc` files living in `~/.config/emacs/` are equally
+   dangerous and are not tracked by git.
+
+#### Cleanup Commands
+
+```bash
+# Remove all .elc from the repo working tree
+find emacs/ -name '*.elc' -delete
+
+# Remove all .elc from the stow target (live Emacs config)
+find ~/.config/emacs/ -name '*.elc' -delete
+
+# Verify none remain in either location
+find emacs/ ~/.config/emacs/ -name '*.elc'
+```
+
+After cleaning, restart Emacs (or `M-x load-file`) to confirm the
+`.el` source is being loaded.
+
+### Lazy Loading with use-package
+
+Defer loading until the feature is actually needed:
+
+```elisp
+;; Defer loading until first use of the command
+(use-package magit
+  :defer t
+  :bind ("C-c g" . magit-status))
+
+;; Load only when opening a matching file
+(use-package python
+  :ensure nil
+  :mode ("\\.py\\'" . python-mode))
+
+;; Load after another package is loaded
+(use-package company-jedi
+  :after (company python))
+```
+
+Prefer `:defer t` for packages not needed at startup to reduce
+Emacs startup time.
+
+### Testing with ERT
+
+Use the built-in Emacs Lisp Regression Testing framework:
+
+```elisp
+;;; omw-shell-test.el --- Tests for omw-shell -*- lexical-binding: t; -*-
+
+;;; Code:
+
+(require 'ert)
+(require 'omw-shell)
+
+(ert-deftest omw-shell-buffer-empty-p-test ()
+  "Test omw-buffer-empty-p returns t for empty buffer."
+  (with-temp-buffer
+    (should (omw-buffer-empty-p))))
+
+(ert-deftest omw-safe-load-missing-file-test ()
+  "Test omw-safe-load returns nil for missing file."
+  (should-not (omw-safe-load "/nonexistent/path.el")))
+
+(provide 'omw-shell-test)
+;;; omw-shell-test.el ends here
+```
+
+Run tests from the command line:
+
+```bash
+# Run all tests matching a pattern
+emacs --batch -l omw-shell.el -l omw-shell-test.el \
+  -f ert-run-tests-batch-and-exit
 ```

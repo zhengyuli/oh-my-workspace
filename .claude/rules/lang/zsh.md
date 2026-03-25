@@ -1,3 +1,6 @@
+---
+globs: ["**/*.zsh", "zsh/**"]
+---
 # Zsh-Specific Conventions
 
 Zsh-specific features extending the common shell practices.
@@ -187,3 +190,40 @@ For scripts that should work in both:
 # Emulate sh/ksh
 emulate -L sh
 ```
+
+## Error Handling
+
+Zsh supports the same strict mode as Bash (see `shell.md`):
+
+```zsh
+set -euo pipefail
+```
+
+For interactive `.zshrc` files **do not** use `set -e` — it causes
+unexpected exits on failed commands (e.g. `grep` finding no match).
+Reserve strict mode for non-interactive scripts with a `#!/usr/bin/env zsh`
+shebang.
+
+ERR trap in Zsh:
+
+```zsh
+_err_handler() {
+  printf '[error] %s: line %d: exit %d\n' \
+    "${funcstack[2]:-main}" "${funcfiletrace[1]##*:}" "$?" >&2
+}
+trap '_err_handler' ERR
+```
+
+## When to Use Zsh vs Bash vs sh
+
+| Situation | Recommended shell |
+|-----------|------------------|
+| Interactive config (`.zshrc`) | Zsh — full feature set |
+| Dotfiles installer / setup script | Bash — wider availability |
+| Portable one-off script | sh (POSIX) — broadest compat |
+| Plugin / function autoloaded by Zsh | Zsh |
+| Script run by CI (unknown env) | Bash or sh |
+
+Use Zsh when you need its extended globbing, associative arrays, or
+`zparseopts`. Use Bash when the script may run on systems where Zsh
+is not guaranteed to be installed.

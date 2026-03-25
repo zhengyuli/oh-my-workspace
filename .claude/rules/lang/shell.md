@@ -1,3 +1,6 @@
+---
+globs: ["**/*.sh", "**/*.bash", "shell/**"]
+---
 # Shell Best Practices
 
 Universal shell conventions shared by Bash and Zsh.
@@ -22,9 +25,19 @@ set -euo pipefail
 
 ### ERR Trap
 
-Implement error handler for cleanup:
+Implement error handler for cleanup. Use a POSIX-compatible form here;
+for Bash-specific enhancements (function name, line number) see `bash.md`:
+
+```sh
+# POSIX-compatible error handler
+_err_handler() {
+  printf '[error] command failed with exit %d\n' "$?" >&2
+}
+trap '_err_handler' ERR
+```
 
 ```bash
+# Bash-specific — richer context (see lang/bash.md)
 _err_handler() {
   local -r code=$?
   printf '[error] %s() line %d: exit %d\n' \
