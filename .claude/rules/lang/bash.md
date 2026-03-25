@@ -1,3 +1,6 @@
+---
+globs: ["**/*.sh", "**/*.bash"]
+---
 # Bash-Specific Conventions
 
 Bash-specific features extending the common shell practices.

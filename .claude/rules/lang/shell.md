@@ -1,3 +1,6 @@
+---
+globs: ["**/*.sh", "**/*.bash", "shell/**"]
+---
 # Shell Best Practices
 
 Universal shell conventions shared by Bash and Zsh.

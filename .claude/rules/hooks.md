@@ -1,3 +1,6 @@
+---
+globs: [".claude/**", ".git/hooks/**"]
+---
 # Claude Code Hooks Integration
 
 Hook-based automation for configuration management workflows.
@@ -256,6 +259,8 @@ git log -1 --pretty=%B | grep -qE '^(feat|fix|docs|refactor)(\(.+\))?: .+' ||
 3. **User hooks:** Stop for final session checks
 
 ### Interaction with Existing Rules
+- This file is **conditionally loaded** (path-scoped to `.claude/**` and
+  `.git/hooks/**`) — it is injected into context only when working on those paths
 - Language-specific rules in `lang/` extend (not replace) these hooks
 - Specific overrides general: `lang/python.md` takes precedence for Python files
 - Safety first: stricter validation wins in conflicts

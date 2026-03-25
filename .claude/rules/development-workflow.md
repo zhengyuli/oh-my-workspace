@@ -230,3 +230,11 @@ stow -v -t "$HOME" shell/zsh
 4. Resolve conflicts carefully
 5. Test affected configurations
 6. Commit merge with clear message
+
+## See Also
+
+- `hooks.md` — Hook-based automation (conditionally loaded for
+  `.claude/**` and `.git/hooks/**`)
+- `git-workflow.md` — Commit message conventions
+- `coding-style.md` — Code formatting standards
+- `lang/elisp.md` — Emacs Lisp byte-compile and `.elc` cleanup
