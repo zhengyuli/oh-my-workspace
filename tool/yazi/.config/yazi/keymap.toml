@@ -20,6 +20,16 @@ run  = "plugin smart-enter"
 desc = "Enter directory or open file"
 
 [[mgr.prepend_keymap]]
+on   = "<Enter>"
+run  = "plugin smart-enter"
+desc = "Enter directory or open file"
+
+[[mgr.prepend_keymap]]
+on   = "o"
+run  = "plugin smart-enter"
+desc = "Enter directory or open file"
+
+[[mgr.prepend_keymap]]
 on   = "F"
 run  = "plugin smart-filter"
 desc = "Smart filter"
@@ -38,3 +48,8 @@ desc = "Zoom in preview"
 on   = "-"
 run  = "plugin zoom -1"
 desc = "Zoom out preview"
+
+[[mgr.prepend_keymap]]
+on   = "?"
+run  = "help"
+desc = "Open help"
