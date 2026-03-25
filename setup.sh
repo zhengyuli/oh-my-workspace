@@ -31,8 +31,22 @@ set -euo pipefail
 # Require bash 4.3+ for local -n (nameref) and associative arrays.
 if (( BASH_VERSINFO[0] < 4 ||
       ( BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 3 ) )); then
-  printf 'error: bash 4.3 or later required (found %s)\n' \
-    "${BASH_VERSION}" >&2
+  sed "s/BASH_VERSION_PLACEHOLDER/${BASH_VERSION}/" >&2 <<'EOF'
+error: bash 4.3 or later required
+
+  Current version: BASH_VERSION_PLACEHOLDER
+
+  Why upgrade?
+    • Security: bash 3.2 (macOS default) is from 2007 with known vulnerabilities
+    • Features: nameref, associative arrays, better glob patterns
+    • Performance: bash 5.x is significantly faster
+    • Compatibility: bash 5.x runs virtually all bash 3.2 scripts
+
+  Install modern bash via Homebrew:
+    brew install bash
+
+  Then re-run this script in a new terminal.
+EOF
   exit 1
 fi
 

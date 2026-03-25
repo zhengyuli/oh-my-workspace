@@ -1,5 +1,5 @@
 # config -*- mode: gitconfig; -*-
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-25 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Git Configuration
 #
@@ -36,8 +36,9 @@
     # Use vim as the default editor for commit messages, rebase, etc.
     editor = vim
 
-    # Pager settings: -R = raw control chars, -F = quit if one screen, -X = no clear
-    pager = less -R -F -X
+    # Pager: use delta for syntax-highlighted, line-numbered diff output
+    # Falls back to less if delta is not installed
+    pager = delta
 
     # Line ending handling: convert CRLF to LF on commit (Unix-style)
     autocrlf = input
@@ -67,6 +68,35 @@
     # Use macOS file system watcher for faster status commands (requires Git 2.46+)
     # Automatically uses FSMonitor on macOS for improved 'git status' performance
     fsmonitor = true
+
+# -----------------------------------------------------------------------------
+# Interactive Settings
+# -----------------------------------------------------------------------------
+# Configure interactive Git commands (e.g., git add -p)
+
+[interactive]
+    # Pipe interactive diff output through delta for consistent rendering
+    # Ensures 'git add -p' (and similar) uses the same delta highlighting
+    diffFilter = delta --color-only
+
+# -----------------------------------------------------------------------------
+# Delta Settings
+# -----------------------------------------------------------------------------
+# Configure delta: a syntax-highlighting pager for git diff/log/show
+# https://github.com/dandavison/delta
+
+[delta]
+    # Enable n/N keybindings to navigate between diff hunks
+    navigate = true
+
+    # Use dark theme (set to true if using a light terminal background)
+    light = false
+
+    # Show line numbers in the left gutter
+    line-numbers = true
+
+    # Show diff in side-by-side layout (set to true to enable)
+    side-by-side = false
 
 # -----------------------------------------------------------------------------
 # Feature Flags
@@ -182,7 +212,7 @@
     # --- Reset ---
     # Undo last commit, keep changes unstaged
     undo = reset HEAD~1 --mixed
-    # Unstage files (keep changes in working directory)
+    # Unstage files (keep working directory changes)
     unstage = reset HEAD --
     # Soft reset to previous commit, keep changes staged
     uncommit = reset --soft HEAD^
@@ -227,8 +257,8 @@
 [color "diff"]
     # Diff header metadata
     meta = yellow bold
-    # Hunk headers (@@ lines) - blue to match Catppuccin Mocha Blue theme
-    frag = cyan bold
+    # Hunk headers (@@ lines)
+    frag = magenta bold
     # Removed lines in red
     old = red bold
     # Added lines in green
