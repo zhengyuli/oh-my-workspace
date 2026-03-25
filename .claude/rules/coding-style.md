@@ -149,12 +149,17 @@ Keep files focused and manageable:
 
 ## Language-Specific Extensions
 
-For language-specific rules, see:
-- `lang/shell.md` - Common shell practices
-- `lang/bash.md` - Bash-specific features
-- `lang/zsh.md` - Zsh-specific features
-- `lang/elisp.md` - Emacs Lisp conventions
-- `lang/python.md` - Python conventions
+The following rule files are **conditionally loaded** (path-scoped via
+`globs`) and injected into context only when working on matching files.
+They extend — never replace — this file.
+
+| Rule file | Loaded when working on |
+|-----------|------------------------|
+| `lang/shell.md` | `**/*.sh`, `**/*.bash`, `shell/**` |
+| `lang/bash.md` | `**/*.sh`, `**/*.bash` |
+| `lang/zsh.md` | `**/*.zsh`, `zsh/**` |
+| `lang/elisp.md` | `**/*.el`, `emacs/**` |
+| `lang/python.md` | `**/*.py` |
 
 ## Code Quality Checklist
 

@@ -1,3 +1,6 @@
+---
+globs: ["**/*.zsh", "zsh/**"]
+---
 # Zsh-Specific Conventions
 
 Zsh-specific features extending the common shell practices.

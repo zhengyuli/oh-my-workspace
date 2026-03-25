@@ -1,3 +1,6 @@
+---
+globs: ["**/*.el", "emacs/**"]
+---
 # Emacs Lisp Conventions
 
 Coding standards for Emacs Lisp in oh-my-workspace.

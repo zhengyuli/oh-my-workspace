@@ -1,3 +1,6 @@
+---
+globs: ["**/*.py"]
+---
 # Python Conventions
 
 Python coding standards for oh-my-workspace.
