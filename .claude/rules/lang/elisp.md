@@ -233,6 +233,41 @@ emacs --batch --eval \
 
 A clean compile produces no warnings. Treat warnings as errors in CI.
 
+### Stale .elc Files — Critical Pitfall
+
+**Emacs always prefers `foo.elc` over `foo.el`** when both exist in the
+same directory. Editing `foo.el` without removing the stale `foo.elc`
+means Emacs silently loads the *old* compiled version — the most common
+cause of "my change has no effect" confusion.
+
+#### Rules
+
+1. **Never commit `.elc` files.** They are in `.gitignore`. If
+   `git status` shows any `.elc`, run the cleanup below before
+   staging anything.
+2. **Clean stale `.elc` before committing any `emacs/` change.** The
+   pre-commit hook (see `hooks.md`) blocks commits that stage `.elc`
+   files.
+3. **Clean the stow target too.** `.gitignore` only covers the repo;
+   stale `.elc` files living in `~/.config/emacs/` are equally
+   dangerous and are not tracked by git.
+
+#### Cleanup Commands
+
+```bash
+# Remove all .elc from the repo working tree
+find emacs/ -name '*.elc' -delete
+
+# Remove all .elc from the stow target (live Emacs config)
+find ~/.config/emacs/ -name '*.elc' -delete
+
+# Verify none remain in either location
+find emacs/ ~/.config/emacs/ -name '*.elc'
+```
+
+After cleaning, restart Emacs (or `M-x load-file`) to confirm the
+`.el` source is being loaded.
+
 ### Lazy Loading with use-package
 
 Defer loading until the feature is actually needed:

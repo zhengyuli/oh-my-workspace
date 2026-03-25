@@ -164,6 +164,40 @@ Ensure all config files have standard headers (see `ai-generation.md`).
 ### Syntax Checking
 Validate all modified configs before commit (see `lang/shell.md`, `lang/elisp.md`).
 
+### Stale .elc Detection
+
+Block commits that accidentally stage byte-compiled Emacs Lisp files,
+and warn when an `emacs/` change is committed while stale `.elc` files
+remain in the stow target (`~/.config/emacs/`).
+
+Wire this check into your git pre-commit hook
+(`.git/hooks/pre-commit`) or call it from a pre-commit framework:
+
+```bash
+# .git/hooks/pre-commit  (excerpt — stale .elc guard)
+
+# 1. Block staged .elc files (should never be committed)
+if git diff --cached --name-only | grep -q '\.elc$'; then
+  printf 'error: staged .elc files detected — remove before committing\n' >&2
+  printf '  fix: find emacs/ -name "*.elc" -delete\n' >&2
+  exit 1
+fi
+
+# 2. Warn when emacs/ .el files are staged but stale .elc exist in
+#    the stow target — Emacs will load the old .elc, not your edit.
+if git diff --cached --name-only | grep -q '^emacs/.*\.el$'; then
+  stale=$(find "${HOME}/.config/emacs" -name '*.elc' 2>/dev/null)
+  if [[ -n "$stale" ]]; then
+    printf 'warning: stale .elc files found in ~/.config/emacs/\n' >&2
+    printf '  Emacs will load the compiled version, not your new .el\n' >&2
+    printf '  fix: find ~/.config/emacs/ -name "*.elc" -delete\n' >&2
+    # Non-fatal: warn but do not block the commit
+  fi
+fi
+```
+
+See `lang/elisp.md` for the full cleanup procedure.
+
 ### Secrets Detection
 Check for hardcoded secrets (see `security.md`):
 ```bash
@@ -175,8 +209,9 @@ fi
 
 ### Integration with git-workflow.md
 1. Pre-commit hooks validate syntax and check for secrets
-2. Follow Conventional Commits format during commit (see `git-workflow.md`)
-3. PostToolUse hooks verify commit was created correctly
+2. Pre-commit hooks guard against stale `.elc` files (see above)
+3. Follow Conventional Commits format during commit (see `git-workflow.md`)
+4. PostToolUse hooks verify commit was created correctly
 
 ## Session End Verification
 
