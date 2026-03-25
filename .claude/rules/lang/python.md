@@ -66,44 +66,22 @@ from .config import Config
 
 ### Always Use Type Hints
 
-```python
-from typing import Optional, List
+This project requires Python 3.10+. Use built-in generics and `|` union
+syntax; do not import `List`, `Dict`, `Optional` from `typing`.
 
+```python
 def install_packages(
-    packages: List[str],
+    packages: list[str],
     dry_run: bool = False,
 ) -> bool:
     """Install packages using stow."""
     ...
 
-def get_config(key: str) -> Optional[str]:
+def get_config(key: str) -> str | None:
     """Get config value or None if not found."""
     ...
-```
 
-### Modern Syntax (Python 3.9+)
-
-```python
-# Good - modern
 def process(items: list[str]) -> dict[str, int]:
-    ...
-
-# Avoid - old style
-from typing import List, Dict
-def process(items: List[str]) -> Dict[str, int]:
-    ...
-```
-
-### Union Types (Python 3.10+)
-
-```python
-# Good - modern
-def get_value(key: str) -> str | None:
-    ...
-
-# Avoid - old style
-from typing import Optional
-def get_value(key: str) -> Optional[str]:
     ...
 ```
 

@@ -76,6 +76,61 @@ refactor/stow-logic
 - Keep it short and descriptive
 - Delete branches after merge
 
+## Tags
+
+Use annotated tags for releases:
+
+```bash
+# Create annotated tag
+git tag -a v1.2.0 -m "feat: add ghostty terminal config"
+
+# List tags
+git tag -l
+
+# Push tags
+git push origin --tags
+```
+
+Tag naming: `vMAJOR.MINOR.PATCH` following
+[Semantic Versioning](https://semver.org/).
+
+## Merge Strategy
+
+- **Feature branches → main:** squash merge to keep history clean
+- **Hotfix branches → main:** fast-forward merge to preserve fix commit
+- **Never force-push to main**
+
+```bash
+# Squash merge (preferred for features)
+git merge --squash feature/add-tmux-config
+git commit -m "feat(tmux): add tmux configuration"
+
+# Fast-forward merge (hotfixes)
+git merge --ff-only hotfix/fix-zsh-startup
+```
+
+## Hotfix Workflow
+
+For urgent fixes that must bypass the normal branch flow:
+
+```bash
+# 1. Branch from main (not a feature branch)
+git checkout -b hotfix/fix-zsh-path main
+
+# 2. Commit with fix type
+git commit -m "fix(zsh): correct PATH ordering for homebrew"
+
+# 3. Merge back to main immediately
+git checkout main
+git merge --ff-only hotfix/fix-zsh-path
+
+# 4. Tag if it warrants a release
+git tag -a v1.0.1 -m "fix(zsh): correct PATH ordering"
+
+# 5. Delete hotfix branch
+git branch -d hotfix/fix-zsh-path
+```
+
 ## Pull Requests
 
 - **One logical change** per PR

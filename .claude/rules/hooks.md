@@ -16,6 +16,116 @@ Hook-based automation for configuration management workflows.
 **When:** Session end
 **Use:** Final verification, cleanup, commit verification
 
+## Configuration Examples
+
+Configure hooks in `.claude/settings.json` (project-level) or
+`~/.claude/settings.json` (user-level).
+
+### Environment Variables Available in Hook Scripts
+
+| Variable | Description |
+|----------|-------------|
+| `CLAUDE_FILE_PATH` | Absolute path of the file being operated on |
+| `CLAUDE_TOOL_NAME` | Name of the tool being invoked (e.g. `Write`, `Edit`) |
+| `CLAUDE_TOOL_INPUT` | JSON-encoded tool input parameters |
+
+### Example: PostToolUse Syntax Validation
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/validate-syntax.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Hook script (`.claude/hooks/validate-syntax.sh`):
+
+```bash
+#!/usr/bin/env bash
+# validate-syntax.sh --- PostToolUse syntax validation hook
+#
+# Location: .claude/hooks/validate-syntax.sh
+# Usage:    Invoked automatically by Claude Code after Write/Edit
+
+set -euo pipefail
+
+file="${CLAUDE_FILE_PATH:-}"
+[[ -z "$file" || ! -f "$file" ]] && exit 0
+
+case "$file" in
+  *.sh)  bash -n "$file" ;;
+  *.zsh) zsh -n "$file" ;;
+  *.el)  emacs --batch -f batch-byte-compile "$file" 2>/dev/null ;;
+  *.py)  python3 -m py_compile "$file" ;;
+esac
+```
+
+### Example: Stop Hook - Uncommitted File Reminder
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-end-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Hook script (`.claude/hooks/session-end-check.sh`):
+
+```bash
+#!/usr/bin/env bash
+# session-end-check.sh --- Stop hook for session-end verification
+
+set -euo pipefail
+
+# Warn about uncommitted config changes
+if git status --porcelain | grep -qE '\.(sh|zsh|el|py)$'; then
+  printf 'Reminder: uncommitted config changes detected\n' >&2
+fi
+
+# Verify last commit follows Conventional Commits
+if ! git log -1 --pretty=%B 2>/dev/null \
+    | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+'; then
+  printf 'Warning: last commit message may not follow Conventional Commits\n' >&2
+fi
+```
+
+### Hook Script Conventions
+
+- Store hook scripts under `.claude/hooks/` (committed to repo)
+- Make scripts executable: `chmod 755 .claude/hooks/*.sh`
+- Hook scripts must exit `0` to allow the operation to proceed;
+  non-zero exit **blocks** the tool call (PreToolUse) or is ignored
+  (PostToolUse/Stop)
+- Keep hooks fast — slow hooks degrade the interactive experience
+
+### Troubleshooting Hooks Not Triggering
+
+1. Verify `settings.json` is valid JSON (`python3 -m json.tool settings.json`)
+2. Check the `matcher` regex matches the tool name exactly
+3. Confirm hook script is executable (`ls -la .claude/hooks/`)
+4. Test the script manually: `CLAUDE_FILE_PATH=path/to/file .claude/hooks/validate-syntax.sh`
+
 ## TodoWrite Best Practices
 
 Use TodoWrite for tracking complex configuration changes spanning multiple files.
@@ -41,7 +151,10 @@ Use TodoWrite for tracking complex configuration changes spanning multiple files
 - **Python:** `python -m py_compile "$CLAUDE_FILE_PATH"`
 
 ### File Size Checks
-Warn when files exceed 800 lines (see `patterns.md` for size limits).
+Warn when files exceed size limits (see `coding-style.md` for authoritative limits):
+- Shell scripts: warn at 500 lines
+- Python modules: warn at 600 lines
+- Emacs Lisp: warn at 500 lines
 
 ### Header Verification
 Ensure all config files have standard headers (see `ai-generation.md`).

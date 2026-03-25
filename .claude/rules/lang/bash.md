@@ -77,6 +77,37 @@ readonly -a PKG_ALL=(
 )
 ```
 
+### Reading Lines into Arrays with mapfile
+
+Use `mapfile` (alias `readarray`) instead of a `while read` loop when
+capturing multi-line command output into an array:
+
+```bash
+# Good — mapfile is safe with filenames containing spaces/newlines
+mapfile -t files < <(find . -name '*.sh' -type f)
+
+for f in "${files[@]}"; do
+  bash -n "$f"
+done
+
+# Also good — read from a file directly
+mapfile -t lines < /etc/hosts
+
+# Avoid — word-splitting breaks filenames with spaces
+files=($(find . -name '*.sh'))  # WRONG
+```
+
+Key flags:
+
+| Flag | Meaning |
+|------|---------|
+| `-t` | Strip the trailing newline from each element (almost always wanted) |
+| `-n N` | Read at most N lines |
+| `-s N` | Skip the first N lines |
+| `-d DELIM` | Use DELIM as the line terminator instead of newline |
+
+`mapfile` requires Bash 4.0+.
+
 ## Bash-Specific Syntax
 
 ### Parameter Expansion

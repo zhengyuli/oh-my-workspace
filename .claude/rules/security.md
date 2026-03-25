@@ -99,9 +99,16 @@ esac
 # Verify script is executable
 [[ -x "$script" ]] || chmod 755 "$script"
 
-# Verify secret file permissions
-[[ $(stat -f %Lp "$secret_file") == "600" ]]
+# Verify secret file permissions (cross-platform)
+# find returns output only if permissions match; empty = wrong perms
+if [[ -z "$(find "$secret_file" -maxdepth 0 -perm 0600 2>/dev/null)" ]]; then
+  printf 'error: %s must be 600\n' "$secret_file" >&2
+  chmod 600 "$secret_file"
+fi
 ```
+
+> **Note:** Avoid `stat -f` (macOS-only) and `stat -c` (Linux-only).
+> Use `find -perm` for portable permission checks across both platforms.
 
 ## Dotfiles-Specific Security
 
@@ -133,6 +140,8 @@ export HISTCONTROL=ignorespace  # bash
 If secrets are accidentally committed:
 
 1. **Rotate immediately** - Generate new credentials
-2. **Remove from history** - Use `git filter-branch` or BFG Repo-Cleaner
+2. **Remove from history** - Use
+   [`git filter-repo`](https://github.com/newren/git-filter-repo)
+   (preferred over deprecated `git filter-branch`) or BFG Repo-Cleaner
 3. **Force push** - Only if necessary and coordinated with team
 4. **Audit** - Check for unauthorized access

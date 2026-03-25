@@ -36,10 +36,15 @@ sed 's/old/new/' ~/.zshrc.bak > ~/.zshrc
 
 **MANY SMALL FILES > FEW LARGE FILES:**
 
-- **Target size:** 200-400 lines per file
-- **Maximum size:** 800 lines (split if approaching)
 - **Organization:** By feature/domain, not by type
 - **Cohesion:** High within files, low between files
+- **Size targets by file type** (see `coding-style.md` for authoritative limits):
+
+| File Type | Target Lines | Max Lines |
+|-----------|-------------|-----------|
+| Shell scripts | 100-300 | 500 |
+| Python modules | 150-400 | 600 |
+| Emacs Lisp | 100-300 | 500 |
 
 **When to split configuration files:**
 
@@ -118,21 +123,21 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 **Module template:**
 
 ```elisp
-;;; init-<feature>.el --- Brief description -*- lexical-binding: t; -*-
+;;; omw-<feature>.el --- Brief description -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2026 Your Name
 
 ;;; Commentary:
 
 ;; Full description of what this module configures.
-;; Dependencies: init-base.el, package-X
+;; Dependencies: omw-base.el, package-X
 
 ;;; Code:
 
-;; Configuration here
+;; Configuration here — prefix all symbols with omw-
 
-(provide 'init-<feature>)
-;;; init-<feature>.el ends here
+(provide 'omw-<feature>)
+;;; omw-<feature>.el ends here
 ```
 
 ## Design Patterns
