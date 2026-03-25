@@ -200,7 +200,7 @@ Follow these principles when writing configuration code:
    - Avoid magic numbers - use named constants
 
 3. **Version control friendly**
-   - Keep files under 800 lines (split if approaching)
+   - Keep files under per-type max lines (see `coding-style.md`)
    - Minimize generated content in tracked files
    - Use comments to separate logical sections
 
@@ -211,25 +211,15 @@ Follow these principles when writing configuration code:
 
 ## Quality Checklist
 
-Before completing any task, verify:
+Before completing any task, verify the universal checklist in
+`coding-style.md`. Additional AI-generation-specific checks:
 
-### Code Quality
+### AI Generation Extra Checks
 
-- [ ] All functions documented
-- [ ] Complex logic explained
-- [ ] No hardcoded secrets
-- [ ] Input validation present
-- [ ] Safe file operations
-- [ ] Follows project conventions
-- [ ] Commit message follows Conventional Commits
-
-### Configuration Code Quality
-
-- [ ] Standard file header present (location and usage)
-- [ ] Comments explain WHY, not WHAT
-- [ ] Dependencies documented
-- [ ] Non-obvious choices explained with references
-- [ ] File size under 800 lines (split if approaching)
-- [ ] Modular structure (single responsibility per module)
-- [ ] No hardcoded machine-specific paths
-- [ ] Backup created before modification
+- [ ] Standard file header present (location and usage) — see header
+  format above
+- [ ] Comments explain WHY, not WHAT — no "print the message" comments
+- [ ] Dependencies documented in file header
+- [ ] Non-obvious choices include references/URLs
+- [ ] No hardcoded machine-specific paths (use `$HOME`, `$XDG_*`)
+- [ ] Backup created before any in-place modification (`cp file file.bak`)

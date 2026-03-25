@@ -86,9 +86,26 @@ python -m py_compile script.py  # Python
 ### Functional Testing
 
 1. Shell changes: Open new terminal, test commands
-2. Emacs changes: Restart Emacs, test functions
+2. Emacs changes: **clean stale `.elc` first**, then restart Emacs to
+   confirm the new `.el` source is loaded (see `lang/elisp.md`)
 3. Symlink changes: Verify symlinks point correctly
 4. Stow changes: Check stow status and target files
+
+#### Emacs .elc Cleanup Checklist (required before every `emacs/` commit)
+
+```bash
+# Remove compiled files from the repo tree
+find emacs/ -name '*.elc' -delete
+
+# Remove compiled files from the live stow target
+find ~/.config/emacs/ -name '*.elc' -delete
+
+# Confirm nothing remains
+find emacs/ ~/.config/emacs/ -name '*.elc'
+```
+
+Skipping this step causes Emacs to silently load the old compiled
+version instead of your edited `.el` file.
 
 ### Documentation Check
 
@@ -119,14 +136,79 @@ git checkout HEAD~1 -- path/to/file
 ln -sf config.v1 config  # Switch back to previous version
 ```
 
+## GNU Stow Operations
+
+### Key Flags
+
+| Flag | Meaning |
+|------|---------|
+| `-n` / `--no` | Dry-run — simulate without making changes |
+| `-v` / `--verbose` | Show each symlink created/removed |
+| `-R` / `--restow` | Unstow then re-stow (useful after moving files) |
+| `-D` / `--delete` | Remove symlinks for a package |
+| `-t DIR` | Override target directory (default: parent of stow dir) |
+
+### Workflow: New Package
+
+```bash
+# 1. Create directory tree mirroring target location
+mkdir -p shell/zsh/.config/zsh
+
+# 2. Add files with standard headers
+# 3. Dry-run to check for conflicts
+stow -n -v -t "$HOME" shell/zsh
+
+# 4. Install
+stow -v -t "$HOME" shell/zsh
+
+# 5. Verify symlinks
+ls -la "$HOME/.config/zsh"
+
+# 6. Update PKG_ALL in setup.sh
+```
+
+### Workflow: Remove Package
+
+```bash
+# Dry-run first
+stow -n -D -v -t "$HOME" shell/zsh
+
+# Remove symlinks
+stow -D -v -t "$HOME" shell/zsh
+```
+
+### Workflow: Restow After Moving Files
+
+```bash
+# After restructuring a package directory
+stow -R -v -t "$HOME" shell/zsh
+```
+
+### Resolving Conflicts
+
+Stow refuses to create a symlink if the target already exists as a
+real file (not a symlink). Resolve before stowing:
+
+```bash
+# Inspect conflict
+ls -la "$HOME/.zshrc"
+
+# Back up and remove the blocking file
+cp "$HOME/.zshrc" "$HOME/.zshrc.bak"
+rm "$HOME/.zshrc"
+
+# Now stow succeeds
+stow -v -t "$HOME" shell/zsh
+```
+
 ## Config-Specific Workflows
 
 ### Adding New Package
 
 1. Create package directory: `mkdir -p category/package`
 2. Add configuration files with headers
-3. Test: `stow -n -v category/package` (dry-run)
-4. Install: `stow category/package`
+3. Test: `stow -n -v -t "$HOME" category/package` (dry-run)
+4. Install: `stow -v -t "$HOME" category/package`
 5. Verify symlinks in target directory
 6. Update PKG_ALL array in setup.sh
 
@@ -148,3 +230,11 @@ ln -sf config.v1 config  # Switch back to previous version
 4. Resolve conflicts carefully
 5. Test affected configurations
 6. Commit merge with clear message
+
+## See Also
+
+- `hooks.md` — Hook-based automation (conditionally loaded for
+  `.claude/**` and `.git/hooks/**`)
+- `git-workflow.md` — Commit message conventions
+- `coding-style.md` — Code formatting standards
+- `lang/elisp.md` — Emacs Lisp byte-compile and `.elc` cleanup
