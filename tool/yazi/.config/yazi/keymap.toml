@@ -1,0 +1,40 @@
+# keymap.toml -*- mode: toml; -*-
+# Time-stamp: <2026-03-25 00:00:00 Tue by zhengyu.li>
+# =============================================================================
+# Yazi - Keymap Configuration
+#
+# Location: ~/.config/yazi/keymap.toml
+# Usage:    Customize keyboard shortcuts
+#
+# References:
+#   1. https://yazi-rs.github.io/docs/configuration/keymap/
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Manager - Plugin Keybindings
+# -----------------------------------------------------------------------------
+
+[[mgr.prepend_keymap]]
+on   = "l"
+run  = "plugin smart-enter"
+desc = "Enter directory or open file"
+
+[[mgr.prepend_keymap]]
+on   = "F"
+run  = "plugin smart-filter"
+desc = "Smart filter"
+
+[[mgr.prepend_keymap]]
+on   = "T"
+run  = "plugin toggle-pane max-preview"
+desc = "Maximize or restore preview pane"
+
+[[mgr.prepend_keymap]]
+on   = "+"
+run  = "plugin zoom 1"
+desc = "Zoom in preview"
+
+[[mgr.prepend_keymap]]
+on   = "-"
+run  = "plugin zoom -1"
+desc = "Zoom out preview"

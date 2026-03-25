@@ -20,7 +20,7 @@ sort_by = "natural"
 sort_sensitive = false
 sort_reverse = false
 sort_dir_first = true
-linemode = "size"
+linemode = "none"
 show_hidden = false
 show_symlink = true
 scrolloff = 5
@@ -47,3 +47,19 @@ macro_workers = 25
 image_alloc = 536870912
 image_bound = [0, 0]
 suppress_preload = false
+
+# -----------------------------------------------------------------------------
+# Plugins - Fetchers
+# -----------------------------------------------------------------------------
+
+# Git status fetcher for files
+[[plugin.prepend_fetchers]]
+id  = "git"
+url = "*"
+run = "git"
+
+# Git status fetcher for directories
+[[plugin.prepend_fetchers]]
+id  = "git"
+url = "*/"
+run = "git"
