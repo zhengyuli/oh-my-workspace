@@ -90,6 +90,7 @@ ghostty/.config/ghostty/config.local
 
 # Yazi
 tool/yazi/.config/yazi/plugins/
+tool/yazi/.config/yazi/flavors/
 
 # Vim (machine-specific)
 vim/.config/vim/**/*.swp

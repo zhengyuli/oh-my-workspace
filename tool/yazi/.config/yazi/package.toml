@@ -1,22 +1,3 @@
-# package.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-25 00:00:00 Tue by zhengyu.li>
-# =============================================================================
-# Yazi Plugin Dependencies
-#
-# Location: ~/.config/yazi/package.toml
-#
-# Usage:
-#   ya pkg install    - Install all plugins
-#   ya pkg upgrade    - Upgrade all plugins
-#
-# References:
-#   1. https://yazi-rs.github.io/docs/cli/#package-manager
-# =============================================================================
-
-# -----------------------------------------------------------------------------
-# Navigation
-# -----------------------------------------------------------------------------
-
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
 rev = "1962818"
@@ -26,10 +7,6 @@ hash = "187cc58ba7ac3befd49c342129e6f1b6"
 use = "yazi-rs/plugins:smart-filter"
 rev = "1962818"
 hash = "c887903a63a2ff520081b6d90a4b3392"
-
-# -----------------------------------------------------------------------------
-# UI Enhancement
-# -----------------------------------------------------------------------------
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
@@ -46,11 +23,12 @@ use = "yazi-rs/plugins:zoom"
 rev = "1962818"
 hash = "fa268cb59989a87780605fdcfb8d99a9"
 
-# -----------------------------------------------------------------------------
-# Version Control
-# -----------------------------------------------------------------------------
-
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
 rev = "1962818"
 hash = "26db011a778f261d730d4f5f8bf24b3f"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "9511cb0"
+hash = "7dfe41c9c3d9be76da8a844263d0bbed"
