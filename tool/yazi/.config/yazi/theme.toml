@@ -16,3 +16,19 @@
 
 [flavor]
 dark = "catppuccin-mocha"
+
+# Override mgr border style
+[mgr]
+border_style = { fg = "#45475a" }
+
+# Override indicator to remove preview pane indicator
+[indicator]
+preview = { fg = "#89b4fa" }
+
+# Style status bar permissions to be less prominent
+[status]
+perm_type = { fg = "#45475a" }
+perm_read = { fg = "#45475a" }
+perm_write = { fg = "#45475a" }
+perm_exec = { fg = "#45475a" }
+perm_sep = { fg = "#45475a" }

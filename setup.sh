@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-23 21:40:56 Monday by zhengyu.li>
+# Time-stamp: <2026-03-25 15:21:05 Wednesday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -17,11 +17,6 @@
 # tree-folding logic, and edge cases to stow itself.
 # =============================================================================
 
-# -E (errtrace) is intentionally omitted: with -E the ERR trap is inherited by
-# command substitutions. stow -n -v legitimately exits non-zero when it finds
-# conflicts, so every output=$(stow ...) call would spuriously fire _err_handler
-# inside its subshell. Without -E the trap still fires for unhandled failures in
-# the main shell and in functions, which is sufficient for this script.
 set -euo pipefail
 
 # -----------------------------------------------------------------------------
