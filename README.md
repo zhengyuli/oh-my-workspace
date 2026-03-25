@@ -137,7 +137,8 @@ $WORKSPACE_DIR/
 ├── tool/                 # CLI tools
 │   ├── git/              # ~/.config/git/
 │   ├── lazygit/          # ~/.config/lazygit/
-│   └── ripgrep/          # ~/.config/ripgrep/
+│   ├── ripgrep/          # ~/.config/ripgrep/
+│   └── yazi/             # ~/.config/yazi/
 │
 ├── lang/                 # Language runtimes
 │   ├── python/uv/        # ~/.config/uv/
@@ -188,7 +189,7 @@ echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
 | `shell/` | Shell and prompt | zsh, starship |
 | `editor/` | Text editors | vim, emacs |
 | `term/` | Terminal emulators | ghostty |
-| `tool/` | CLI utilities | git, ripgrep |
+| `tool/` | CLI utilities | git, ripgrep, yazi |
 | `lang/` | Language runtimes | python/uv, typescript/bun |
 | `platform/` | Platform-specific | darwin |
 
