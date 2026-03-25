@@ -24,20 +24,20 @@ overall = { bg = "#1e1e2e" }
 [mgr]
 cwd = { fg = "#94e2d5" }
 
-find_keyword  = { fg = "#f9e2af", italic = true }
+find_keyword = { fg = "#f9e2af", italic = true }
 find_position = { fg = "#f5c2e7", bg = "reset", italic = true }
 
-marker_copied   = { fg = "#a6e3a1", bg = "#a6e3a1" }
-marker_cut      = { fg = "#f38ba8", bg = "#f38ba8" }
-marker_marked   = { fg = "#94e2d5", bg = "#94e2d5" }
+marker_copied = { fg = "#a6e3a1", bg = "#a6e3a1" }
+marker_cut = { fg = "#f38ba8", bg = "#f38ba8" }
+marker_marked = { fg = "#94e2d5", bg = "#94e2d5" }
 marker_selected = { fg = "#89b4fa", bg = "#89b4fa" }
 
-count_copied   = { fg = "#1e1e2e", bg = "#a6e3a1" }
-count_cut      = { fg = "#1e1e2e", bg = "#f38ba8" }
+count_copied = { fg = "#1e1e2e", bg = "#a6e3a1" }
+count_cut = { fg = "#1e1e2e", bg = "#f38ba8" }
 count_selected = { fg = "#1e1e2e", bg = "#89b4fa" }
 
 border_symbol = "│"
-border_style  = { fg = "#7f849c" }
+border_style = { fg = "#7f849c" }
 
 syntect_theme = "~/.config/yazi/Catppuccin-mocha.tmTheme"
 
@@ -46,7 +46,7 @@ syntect_theme = "~/.config/yazi/Catppuccin-mocha.tmTheme"
 # -----------------------------------------------------------------------------
 
 [tabs]
-active   = { fg = "#1e1e2e", bg = "#cdd6f4", bold = true }
+active = { fg = "#1e1e2e", bg = "#cdd6f4", bold = true }
 inactive = { fg = "#cdd6f4", bg = "#45475a" }
 
 # -----------------------------------------------------------------------------
@@ -55,13 +55,13 @@ inactive = { fg = "#cdd6f4", bg = "#45475a" }
 
 [mode]
 normal_main = { fg = "#1e1e2e", bg = "#89b4fa", bold = true }
-normal_alt  = { fg = "#89b4fa", bg = "#313244"}
+normal_alt = { fg = "#89b4fa", bg = "#313244"}
 
 select_main = { fg = "#1e1e2e", bg = "#a6e3a1", bold = true }
-select_alt  = { fg = "#a6e3a1", bg = "#313244"}
+select_alt = { fg = "#a6e3a1", bg = "#313244"}
 
-unset_main  = { fg = "#1e1e2e", bg = "#f2cdcd", bold = true }
-unset_alt   = { fg = "#f2cdcd", bg = "#313244"}
+unset_main = { fg = "#1e1e2e", bg = "#f2cdcd", bold = true }
+unset_alt = { fg = "#f2cdcd", bg = "#313244"}
 
 # -----------------------------------------------------------------------------
 # Indicator (Parent/Current/Preview)
@@ -77,27 +77,27 @@ preview = { fg = "#1e1e2e", bg = "#cdd6f4" }
 # -----------------------------------------------------------------------------
 
 [status]
-sep_left  = { open = "", close = "" }
+sep_left = { open = "", close = "" }
 sep_right = { open = "", close = "" }
 
-progress_label  = { fg = "#ffffff", bold = true }
+progress_label = { fg = "#ffffff", bold = true }
 progress_normal = { fg = "#a6e3a1", bg = "#45475a" }
-progress_error  = { fg = "#f9e2af", bg = "#f38ba8" }
+progress_error = { fg = "#f9e2af", bg = "#f38ba8" }
 
-perm_type  = { fg = "#89b4fa" }
-perm_read  = { fg = "#f9e2af" }
+perm_type = { fg = "#89b4fa" }
+perm_read = { fg = "#f9e2af" }
 perm_write = { fg = "#f38ba8" }
-perm_exec  = { fg = "#a6e3a1" }
-perm_sep   = { fg = "#7f849c" }
+perm_exec = { fg = "#a6e3a1" }
+perm_sep = { fg = "#7f849c" }
 
 # -----------------------------------------------------------------------------
 # Input Dialog
 # -----------------------------------------------------------------------------
 
 [input]
-border   = { fg = "#89b4fa" }
-title    = {}
-value    = {}
+border = { fg = "#89b4fa" }
+title = {}
+value = {}
 selected = { reversed = true }
 
 # -----------------------------------------------------------------------------
@@ -105,8 +105,8 @@ selected = { reversed = true }
 # -----------------------------------------------------------------------------
 
 [pick]
-border   = { fg = "#89b4fa" }
-active   = { fg = "#f5c2e7" }
+border = { fg = "#89b4fa" }
+active = { fg = "#f5c2e7" }
 inactive = {}
 
 # -----------------------------------------------------------------------------
@@ -114,12 +114,12 @@ inactive = {}
 # -----------------------------------------------------------------------------
 
 [confirm]
-border     = { fg = "#89b4fa" }
-title      = { fg = "#89b4fa" }
-body       = {}
-list       = {}
-btn_yes    = { reversed = true }
-btn_no     = {}
+border = { fg = "#89b4fa" }
+title = { fg = "#89b4fa" }
+body = {}
+list = {}
+btn_yes = { reversed = true }
+btn_no = {}
 
 # -----------------------------------------------------------------------------
 # Completion Menu
@@ -133,8 +133,8 @@ border = { fg = "#89b4fa" }
 # -----------------------------------------------------------------------------
 
 [tasks]
-border  = { fg = "#89b4fa" }
-title   = {}
+border = { fg = "#89b4fa" }
+title = {}
 hovered = { fg = "#f5c2e7", bold = true }
 
 # -----------------------------------------------------------------------------
@@ -142,11 +142,11 @@ hovered = { fg = "#f5c2e7", bold = true }
 # -----------------------------------------------------------------------------
 
 [which]
-mask            = { bg = "#313244" }
-cand            = { fg = "#94e2d5" }
-rest            = { fg = "#9399b2" }
-desc            = { fg = "#f5c2e7" }
-separator       = "  "
+mask = { bg = "#313244" }
+cand = { fg = "#94e2d5" }
+rest = { fg = "#9399b2" }
+desc = { fg = "#f5c2e7" }
+separator = "  "
 separator_style = { fg = "#585b70" }
 
 # -----------------------------------------------------------------------------
@@ -154,19 +154,19 @@ separator_style = { fg = "#585b70" }
 # -----------------------------------------------------------------------------
 
 [help]
-on      = { fg = "#94e2d5" }
-run     = { fg = "#f5c2e7" }
-desc    = { fg = "#9399b2" }
+on = { fg = "#94e2d5" }
+run = { fg = "#f5c2e7" }
+desc = { fg = "#9399b2" }
 hovered = { bg = "#585b70", bold = true }
-footer  = { fg = "#cdd6f4", bg = "#45475a" }
+footer = { fg = "#cdd6f4", bg = "#45475a" }
 
 # -----------------------------------------------------------------------------
 # Notifications
 # -----------------------------------------------------------------------------
 
 [notify]
-title_info  = { fg = "#94e2d5" }
-title_warn  = { fg = "#f9e2af" }
+title_info = { fg = "#94e2d5" }
+title_warn = { fg = "#f9e2af" }
 title_error = { fg = "#f38ba8" }
 
 # -----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ rules = [
 
 	# Special file
 	{ url = "*", is = "orphan", bg = "#f38ba8" },
-	{ url = "*", is = "exec"  , fg = "#a6e3a1" },
+	{ url = "*", is = "exec", fg = "#a6e3a1" },
 
 	# Dummy file
 	{ url = "*", is = "dummy", bg = "#f38ba8" },
@@ -207,7 +207,7 @@ rules = [
 
 [spot]
 border = { fg = "#89b4fa" }
-title  = { fg = "#89b4fa" }
+title = { fg = "#89b4fa" }
 tbl_cell = { fg = "#89b4fa", reversed = true }
 tbl_col = { bold = true }
 
