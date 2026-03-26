@@ -15,7 +15,7 @@ This directory contains modular rules for Claude Code assistance in the oh-my-wo
 These rules define core standards that apply across all file types:
 
 - **`coding-style.md`** - Universal coding standards including line length (80 chars), file headers, documentation requirements, and code quality principles
-- **`ai-generation.md`** - AI-specific constraints for generated code including mandatory file headers, configuration comments, and quality checklists
+- **`quality.md`** - AI-specific constraints for generated code including mandatory file headers, configuration comments, and quality checklists
 - **`patterns.md`** - Design patterns and anti-patterns including immutability principle, file organization, modular configuration patterns
 - **`security.md`** - Security best practices for secrets management, input validation, file permissions, and incident response
 
@@ -23,7 +23,7 @@ These rules define core standards that apply across all file types:
 
 These rules define development processes and conventions:
 
-- **`development-workflow.md`** - Research-first development methodology with planning, implementation, verification, and rollback strategies
+- **`dev-workflow.md`** - Research-first development methodology with planning, implementation, verification, and rollback strategies
 - **`git-workflow.md`** - Git conventions including Conventional Commits format, branch naming, merge strategies, and hotfix workflows
 - **`hooks.md`** - Claude Code hooks integration for automated syntax validation, pre-commit checks, and session-end verification
 
