@@ -28,6 +28,8 @@ Files follow GNU Stow convention: placed as they appear in `$HOME`.
 
 ```
 oh-my-workspace/
+├── claude/             # Claude Code environment
+│   └── setup.md        # Setup guide for Claude Code
 ├── shell/              # Shell configurations
 │   ├── starship/      # Starship prompt config
 │   └── zsh/           # Zsh config (.zshrc, .zshenv)
