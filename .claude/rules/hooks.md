@@ -1,3 +1,8 @@
+---
+version: "1.0.0"
+last-updated: "2026-03-26"
+maintainer: "zhengyu.li"
+---
 # Claude Code Hooks Integration
 
 This project uses Claude Code hooks for automated validation and verification.

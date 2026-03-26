@@ -1,3 +1,8 @@
+---
+version: "1.0.0"
+last-updated: "2026-03-26"
+maintainer: "zhengyu.li"
+---
 # Common Patterns
 
 Design patterns and principles for oh-my-workspace configuration code.

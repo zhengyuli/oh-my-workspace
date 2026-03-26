@@ -44,13 +44,13 @@ That's it. Your development environment is ready.
 
 ### Prerequisites
 
-| Requirement | How to Check | Auto-Installed? |
-|-------------|--------------|-----------------|
-| macOS | `uname -s` | — |
-| Bash 4.3+ | `bash --version` | — |
-| Xcode CLI | `xcode-select -p` | ✅ |
-| Homebrew | `brew --version` | ✅ |
-| GNU Stow | `stow --version` | ✅ |
+| Requirement | How to Check      | Auto-Installed? |
+|-------------|-------------------|-----------------|
+| macOS       | `uname -s`        | —               |
+| Bash 4.3+   | `bash --version`  | —               |
+| Xcode CLI   | `xcode-select -p` | ✅              |
+| Homebrew    | `brew --version`  | ✅              |
+| GNU Stow    | `stow --version`  | ✅              |
 
 ### Full Installation
 
@@ -184,14 +184,14 @@ echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
 
 ### Package Naming Convention
 
-| Category | Purpose | Examples |
-|----------|---------|----------|
-| `shell/` | Shell and prompt | zsh, starship |
-| `editor/` | Text editors | vim, emacs |
-| `term/` | Terminal emulators | ghostty |
-| `tool/` | CLI utilities | git, ripgrep, yazi |
-| `lang/` | Language runtimes | python/uv, typescript/bun |
-| `platform/` | Platform-specific | darwin |
+| Category    | Purpose            | Examples                  |
+|-------------|--------------------|---------------------------|
+| `shell/`    | Shell and prompt   | zsh, starship             |
+| `editor/`   | Text editors       | vim, emacs                |
+| `term/`     | Terminal emulators | ghostty                   |
+| `tool/`     | CLI utilities      | git, ripgrep, yazi        |
+| `lang/`     | Language runtimes  | python/uv, typescript/bun |
+| `platform/` | Platform-specific  | darwin                    |
 
 ### Overriding Defaults
 
@@ -207,65 +207,65 @@ echo "alias mycmd='echo hello'" > ~/.config/zsh/local/aliases.zsh
 
 ### Shell Environment
 
-| Package | Description |
-|---------|-------------|
-| [zsh](https://www.zsh.org/) | Powerful shell with advanced completion and scripting |
-| [starship](https://starship.rs/) | Fast, customizable cross-shell prompt |
-| [direnv](https://direnv.net/) | Automatically load/unload environment variables per directory |
-| [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart `cd` command with frecency tracking |
-| [carapace](https://carapace.sh/) | Multi-shell completion system |
+| Package                                         | Description                                                   |
+|-------------------------------------------------|---------------------------------------------------------------|
+| [zsh](https://www.zsh.org/)                     | Powerful shell with advanced completion and scripting         |
+| [starship](https://starship.rs/)                | Fast, customizable cross-shell prompt                         |
+| [direnv](https://direnv.net/)                   | Automatically load/unload environment variables per directory |
+| [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart `cd` command with frecency tracking                     |
+| [carapace](https://carapace.sh/)                | Multi-shell completion system                                 |
 
 ### Editors
 
-| Package | Description |
-|---------|-------------|
-| [neovim](https://neovim.io/) | Hyperextensible Vim-based editor |
+| Package                                      | Description                          |
+|----------------------------------------------|--------------------------------------|
+| [neovim](https://neovim.io/)                 | Hyperextensible Vim-based editor     |
 | [emacs](https://www.gnu.org/software/emacs/) | Extensible, customizable text editor |
 
 ### Terminal
 
-| Package | Description |
-|---------|-------------|
-| [ghostty](https://ghostty.org/) | Fast, native terminal emulator |
-| [tmux](https://github.com/tmux/tmux) | Terminal multiplexer |
+| Package                              | Description                    |
+|--------------------------------------|--------------------------------|
+| [ghostty](https://ghostty.org/)      | Fast, native terminal emulator |
+| [tmux](https://github.com/tmux/tmux) | Terminal multiplexer           |
 
 ### File Operations
 
-| Package | Description |
-|---------|-------------|
-| [ripgrep](https://github.com/BurntSushi/ripgrep) | Fast recursive grep (`rg`) |
-| [fd](https://github.com/sharkdp/fd) | Fast, user-friendly `find` alternative |
-| [fzf](https://github.com/junegunn/fzf) | Command-line fuzzy finder |
-| [eza](https://github.com/eza-community/eza) | Modern `ls` with icons and git status |
-| [bat](https://github.com/sharkdp/bat) | `cat` clone with syntax highlighting |
-| [yazi](https://yazi-rs.github.io/) | Terminal file manager |
+| Package                                          | Description                            |
+|--------------------------------------------------|----------------------------------------|
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | Fast recursive grep (`rg`)             |
+| [fd](https://github.com/sharkdp/fd)              | Fast, user-friendly `find` alternative |
+| [fzf](https://github.com/junegunn/fzf)           | Command-line fuzzy finder              |
+| [eza](https://github.com/eza-community/eza)      | Modern `ls` with icons and git status  |
+| [bat](https://github.com/sharkdp/bat)            | `cat` clone with syntax highlighting   |
+| [yazi](https://yazi-rs.github.io/)               | Terminal file manager                  |
 
 ### Development Tools
 
-| Package | Description |
-|---------|-------------|
-| [git](https://git-scm.com/) | Distributed version control |
-| [lazygit](https://github.com/jesseduffield/lazygit) | Simple terminal UI for git |
-| [gnupg](https://www.gnupg.org/) | GNU Privacy Guard for commit signing |
+| Package                                             | Description                          |
+|-----------------------------------------------------|--------------------------------------|
+| [git](https://git-scm.com/)                         | Distributed version control          |
+| [lazygit](https://github.com/jesseduffield/lazygit) | Simple terminal UI for git           |
+| [gnupg](https://www.gnupg.org/)                     | GNU Privacy Guard for commit signing |
 
 ### Language Runtimes
 
-| Package | Description |
-|---------|-------------|
+| Package                          | Description                                       |
+|----------------------------------|---------------------------------------------------|
 | [uv](https://docs.astral.sh/uv/) | Fast Python package manager (replaces pip/pipenv) |
-| [bun](https://bun.sh/) | JavaScript/TypeScript runtime and package manager |
-| [go](https://go.dev/) | Go programming language |
-| [rustup](https://rustup.rs/) | Rust toolchain installer |
+| [bun](https://bun.sh/)           | JavaScript/TypeScript runtime and package manager |
+| [go](https://go.dev/)            | Go programming language                           |
+| [rustup](https://rustup.rs/)     | Rust toolchain installer                          |
 
 ### Utilities
 
-| Package | Description |
-|---------|-------------|
-| [jq](https://stedolan.github.io/jq/) | Command-line JSON processor |
-| [yq](https://github.com/mikefarah/yq) | Command-line YAML processor |
-| [wget](https://www.gnu.org/software/wget/) | Network downloader |
-| [htop](https://htop.dev/) | Interactive process viewer |
-| [pandoc](https://pandoc.org/) | Universal document converter |
+| Package                                    | Description                  |
+|--------------------------------------------|------------------------------|
+| [jq](https://stedolan.github.io/jq/)       | Command-line JSON processor  |
+| [yq](https://github.com/mikefarah/yq)      | Command-line YAML processor  |
+| [wget](https://www.gnu.org/software/wget/) | Network downloader           |
+| [htop](https://htop.dev/)                  | Interactive process viewer   |
+| [pandoc](https://pandoc.org/)              | Universal document converter |
 
 ## Migration Notes
 

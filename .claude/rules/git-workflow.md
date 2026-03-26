@@ -1,3 +1,8 @@
+---
+version: "1.0.0"
+last-updated: "2026-03-26"
+maintainer: "zhengyu.li"
+---
 # Git Workflow
 
 Git conventions based on industry best practices.
