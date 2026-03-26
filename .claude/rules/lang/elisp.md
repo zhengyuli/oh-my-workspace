@@ -1,5 +1,5 @@
 ---
-globs: ["**/*.el", "emacs/**"]
+globs: ["**/*.el"]
 ---
 # Emacs Lisp Conventions
 

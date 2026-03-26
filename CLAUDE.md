@@ -1,100 +1,95 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+macOS dotfiles repository using GNU Stow for XDG-compliant configuration management.
 
-## Overview
+## Tech Stack
 
-oh-my-workspace is a dotfiles repository for macOS that uses GNU Stow to manage configuration files. It follows an XDG Base Directory Specification-compliant structure.
-
-## Key Commands
-
-```bash
-# Full setup (prerequisites + brew bundle + stow all)
-./setup.sh install --all
-
-# Stow specific packages
-./setup.sh install zsh git vim
-
-# Restow to pick up new dotfiles (removes old symlinks, recreates)
-./setup.sh install --force zsh
-
-# Preview changes without modifying files
-./setup.sh install --dry-run --all
-
-# Unstow all packages
-./setup.sh uninstall --all
-
-# Check stow status and symlinks
-./setup.sh status
-```
+- **Shell**: Zsh + Starship prompt, zoxide, direnv, carapace
+- **Editors**: Neovim, Emacs (modular configurations)
+- **Languages**: Python (uv), TypeScript (bun), Go, Rust
+- **Tools**: git, lazygit, ripgrep, fd, fzf, eza, bat, yazi
+- **Terminal**: Ghostty
 
 ## Architecture
 
-### Package System
+### Package Structure
 
-Packages are organized by category in the repository root:
-- `shell/` — Shell and prompt configs (zsh, starship)
+Organized by category in repository root:
+- `shell/` — Shell configs (zsh, starship)
 - `editor/` — Text editors (vim, emacs)
 - `term/` — Terminal emulators (ghostty)
 - `tool/` — CLI utilities (git, lazygit, ripgrep, yazi)
 - `lang/` — Language runtimes (python/uv, typescript/bun)
 - `platform/` — Platform-specific configs (darwin)
 
-Each package directory follows GNU Stow convention: files are placed as they would appear in `$HOME`. For example, `shell/zsh/.config/zsh/.zshrc` becomes `~/.config/zsh/.zshrc` after stowing.
+Files follow GNU Stow convention: placed as they appear in `$HOME`.
 
-### Zsh Configuration
+### Key Components
 
-Uses XDG-compliant two-stage loading:
-1. `~/.zshenv` — Bootstrap only: sets XDG paths and `ZDOTDIR`
-2. `$ZDOTDIR/conf.d/*.zsh` — Numbered modules loaded in order (00-env, 05-path, ..., 99-local)
+**Zsh**: XDG-compliant two-stage loading (`~/.zshenv` → `$ZDOTDIR/conf.d/*.zsh`)
 
-The numbered prefix ensures load order. Local overrides go in `99-local.zsh` (not tracked by git).
+**Emacs**: Modular structure (`init.el` → `lisp/{editor,lang,tool,lib}/`)
 
-### Emacs Configuration
+**Stow**: Automatic conflict resolution via `_remove_stow_conflicts()` in setup.sh
 
-Modular structure under `editor/emacs/.config/emacs/`:
-- `init.el` — Entry point, sets up load paths
-- `early-init.el` — Early initialization
-- `lisp/editor/` — Editor features (completion, appearance, etc.)
-- `lisp/lang/` — Language-specific modes (python, go, rust, etc.)
-- `lisp/tool/` — Tool integrations (git, term, pass, etc.)
-- `lisp/lib/` — Shared utilities
-- `site-packages/` — Vendored packages
+## Development Workflow
 
-### Stow Workflow
+```bash
+# Full setup (prerequisites + packages + symlinks)
+./setup.sh install --all
 
-When adding new dotfiles:
-1. Create files in the appropriate package directory
-2. Test with `./setup.sh install --dry-run <package>`
-3. Apply with `./setup.sh install --force <package>`
+# Stow specific packages
+./setup.sh install zsh git vim
 
-Conflicts (existing files at target paths) are automatically removed by `_remove_stow_conflicts()` in setup.sh.
+# Restow after changes
+./setup.sh install --force zsh
 
-## Package Registry
+# Preview changes
+./setup.sh install --dry-run --all
 
-All packages are registered in `PKG_ALL` array in `setup.sh`:
-```
-shell/zsh shell/starship editor/vim editor/emacs
-term/ghostty tool/git tool/lazygit tool/ripgrep tool/yazi
-lang/python/uv lang/typescript/bun
+# Check status
+./setup.sh status
 ```
 
-## Homebrew Dependencies
+**Package Registry**: See `PKG_ALL` array in `setup.sh`
 
-Managed via `pkg/homebrew/Brewfile`. Run `brew bundle` separately or let `./setup.sh install --all` handle it.
+**Dependencies**: Managed via `pkg/homebrew/Brewfile`
 
-## Configuration Rules
+## Coding Conventions
 
-Project-specific coding standards are in `.claude/rules/`:
-- `coding-style.md` — Line length, documentation, immutability
-- `git-workflow.md` — Conventional Commits format
-- `development-workflow.md` — Research-first approach, stow workflows
-- `patterns.md` — Design patterns and anti-patterns
-- `lang/shell.md`, `lang/bash.md`, `lang/zsh.md` — Shell conventions
-- `lang/elisp.md` — Emacs Lisp conventions
-- `lang/python.md` — Python conventions
-- `testing.md` — Syntax validation and testing strategy
-- `hooks.md` — Claude Code hook integration
-- `security.md` — Secrets management
+Detailed conventions in `.claude/rules/`:
 
-These rules are conditionally loaded based on file paths being edited.
+### Universal Standards
+- `coding-style.md` — Line length (80 chars), file headers, documentation
+- `ai-generation.md` — AI-specific constraints and quality checklists
+- `patterns.md` — Design patterns, immutability principle
+- `security.md` — Secrets management, input validation
+
+### Workflow & Process
+- `development-workflow.md` — Research-first approach, verification phases
+- `git-workflow.md` — Conventional Commits, branch naming
+- `hooks.md` — Claude Code automation hooks
+
+### Language-Specific (conditionally loaded)
+- `lang/shell.md` — Universal shell practices (base)
+- `lang/bash.md` — Bash-specific features (namerefs, associative arrays)
+- `lang/zsh.md` — Zsh-specific features (globbing, hooks)
+- `lang/elisp.md` — Emacs Lisp conventions (lexical binding, ERT testing)
+- `lang/python.md` — Python standards (type hints, pytest)
+
+**See `.claude/rules/README.md` for complete rule documentation.**
+
+## Quick Reference
+
+| Task | Command |
+|------|---------|
+| Full setup | `./setup.sh install --all` |
+| Stow package | `./setup.sh install <package>` |
+| Restow | `./setup.sh install --force <package>` |
+| Preview | `./setup.sh install --dry-run <package>` |
+| Status | `./setup.sh status` |
+| Unstow | `./setup.sh uninstall <package>` |
+
+---
+
+For detailed coding standards and workflows, see `.claude/rules/` directory.

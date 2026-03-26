@@ -1,5 +1,5 @@
 ---
-globs: ["**/*.zsh", "zsh/**"]
+globs: ["**/*.zsh", "**/.zsh*", "**/zshrc", "**/zprofile", "**/zshenv", "**/zlogin"]
 ---
 # Zsh-Specific Conventions
 

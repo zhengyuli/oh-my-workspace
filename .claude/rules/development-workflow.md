@@ -86,26 +86,9 @@ python -m py_compile script.py  # Python
 ### Functional Testing
 
 1. Shell changes: Open new terminal, test commands
-2. Emacs changes: **clean stale `.elc` first**, then restart Emacs to
-   confirm the new `.el` source is loaded (see `lang/elisp.md`)
+2. Emacs changes: **clean stale `.elc` first** (see `lang/elisp.md` for procedure)
 3. Symlink changes: Verify symlinks point correctly
 4. Stow changes: Check stow status and target files
-
-#### Emacs .elc Cleanup Checklist (required before every `emacs/` commit)
-
-```bash
-# Remove compiled files from the repo tree
-find emacs/ -name '*.elc' -delete
-
-# Remove compiled files from the live stow target
-find ~/.config/emacs/ -name '*.elc' -delete
-
-# Confirm nothing remains
-find emacs/ ~/.config/emacs/ -name '*.elc'
-```
-
-Skipping this step causes Emacs to silently load the old compiled
-version instead of your edited `.el` file.
 
 ### Documentation Check
 
@@ -233,8 +216,7 @@ stow -v -t "$HOME" shell/zsh
 
 ## See Also
 
-- `hooks.md` — Hook-based automation (conditionally loaded for
-  `.claude/**` and `.git/hooks/**`)
+- `hooks.md` — Claude Code hooks integration for automated validation
 - `git-workflow.md` — Commit message conventions
 - `coding-style.md` — Code formatting standards
 - `lang/elisp.md` — Emacs Lisp byte-compile and `.elc` cleanup
