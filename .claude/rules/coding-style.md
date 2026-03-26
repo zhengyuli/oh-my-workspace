@@ -1,3 +1,8 @@
+---
+version: "1.0.0"
+last-updated: "2026-03-26"
+maintainer: "zhengyu.li"
+---
 # Coding Style
 
 Universal coding standards for the oh-my-workspace repository.
@@ -117,11 +122,11 @@ required_packages: list[str] = ["zsh", "git", "emacs"]
 
 Keep files focused and manageable:
 
-| File Type | Target Lines | Max Lines |
-|-----------|-------------|-----------|
-| Shell scripts | 100-300 | 500 |
-| Python modules | 150-400 | 600 |
-| Emacs Lisp | 100-300 | 500 |
+| File Type      | Target Lines | Max Lines |
+|----------------|--------------|-----------|
+| Shell scripts  | 100-300      | 500       |
+| Python modules | 150-400      | 600       |
+| Emacs Lisp     | 100-300      | 500       |
 
 ### When to Split Files
 
@@ -152,13 +157,13 @@ Keep files focused and manageable:
 The following language-specific rule files are **conditionally loaded**
 via `globs` frontmatter. They extend — never replace — this file.
 
-| Rule file | Globs |
-|-----------|-------|
-| `lang/shell.md` | `**/*.sh`, `**/*.bash` |
-| `lang/bash.md` | `**/*.sh`, `**/*.bash` |
-| `lang/zsh.md` | `**/*.zsh`, `**/.zsh*`, `**/zshrc`, `**/zprofile`, `**/zshenv`, `**/zlogin` |
-| `lang/elisp.md` | `**/*.el` |
-| `lang/python.md` | `**/*.py` |
+| Rule file        | Globs                                                                       |
+|------------------|-----------------------------------------------------------------------------|
+| `lang/shell.md`  | `**/*.sh`, `**/*.bash`                                                      |
+| `lang/bash.md`   | `**/*.sh`, `**/*.bash`                                                      |
+| `lang/zsh.md`    | `**/*.zsh`, `**/.zsh*`, `**/zshrc`, `**/zprofile`, `**/zshenv`, `**/zlogin` |
+| `lang/elisp.md`  | `**/*.el`                                                                   |
+| `lang/python.md` | `**/*.py`                                                                   |
 
 ## Code Quality Checklist
 

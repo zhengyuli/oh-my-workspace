@@ -1,5 +1,8 @@
 ---
 globs: ["**/*.sh", "**/*.bash"]
+version: "1.0.0"
+last-updated: "2026-03-26"
+maintainer: "zhengyu.li"
 ---
 # Shell Best Practices
 
