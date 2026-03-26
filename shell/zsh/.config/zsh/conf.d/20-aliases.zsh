@@ -1,5 +1,5 @@
 # 20-aliases.zsh
-# Time-stamp: <2026-03-23 15:15:02 Monday by zhengyu.li>
+# Time-stamp: <2026-03-26 16:23:50 Thursday by zhengyu.li>
 # =============================================================================
 # Command Aliases
 #
@@ -58,9 +58,14 @@ alias -- -='cd -'
 # -----------------------------------------------------------------------------
 # Editor & Viewing
 # -----------------------------------------------------------------------------
+# Vim
+alias v='nvim'
 alias vi='nvim'
 alias vim='nvim'
 alias vimdiff='nvim -d'
+
+# Emacs
+alias e='emacs -nw'
 
 if command -v bat &>/dev/null; then
   alias cat='bat --style=plain --paging=never'
