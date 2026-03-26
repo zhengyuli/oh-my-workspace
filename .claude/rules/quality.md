@@ -3,9 +3,9 @@ version: "1.0.0"
 last-updated: "2026-03-26"
 maintainer: "zhengyu.li"
 ---
-# AI Generation Constraints
+# Quality Standards
 
-Rules for AI-assisted development (Claude-specific).
+Quality standards for AI-assisted development code generation.
 
 ## Documentation Requirements
 
@@ -217,9 +217,9 @@ Follow these principles when writing configuration code:
 ## Quality Checklist
 
 Before completing any task, verify the universal checklist in
-`coding-style.md`. Additional AI-generation-specific checks:
+`coding-style.md`. Additional quality-specific checks:
 
-### AI Generation Extra Checks
+### Quality Extra Checks
 
 - [ ] Standard file header present (location and usage) — see header
   format above
