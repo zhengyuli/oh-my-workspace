@@ -10,11 +10,7 @@ macOS dotfiles repository using GNU Stow for XDG-compliant configuration managem
 
 ## Tech Stack
 
-- **Shell**: Zsh + Starship prompt, zoxide, direnv, carapace
-- **Editors**: Neovim, Emacs (modular configurations)
-- **Languages**: Python (uv), TypeScript (bun), Go, Rust
-- **Tools**: git, lazygit, ripgrep, fd, fzf, eza, bat, yazi
-- **Terminal**: Ghostty
+@.claude/shared/tech-stack.md
 
 ## Architecture
 
