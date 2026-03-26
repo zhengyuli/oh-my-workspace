@@ -1,3 +1,8 @@
+---
+version: "1.0.0"
+last-updated: "2026-03-26"
+maintainer: "zhengyu.li"
+---
 # Development Workflow
 
 Research-first approach for configuration changes in oh-my-workspace.

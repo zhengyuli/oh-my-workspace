@@ -24,6 +24,32 @@ Organized by category in repository root:
 
 Files follow GNU Stow convention: placed as they appear in `$HOME`.
 
+### Directory Structure
+
+```
+oh-my-workspace/
+├── shell/              # Shell configurations
+│   ├── starship/      # Starship prompt config
+│   └── zsh/           # Zsh config (.zshrc, .zshenv)
+├── editor/            # Text editors
+│   ├── emacs/         # Emacs modular config
+│   └── vim/           # Neovim config
+├── lang/              # Language runtimes
+│   ├── python/        # Python (uv) config
+│   │   └── uv/       # uv package manager
+│   └── typescript/    # TypeScript (bun) config
+│       └── bun/      # bun runtime
+├── tool/              # CLI utilities
+│   ├── git/           # Git config
+│   ├── lazygit/       # Lazygit config
+│   ├── ripgrep/       # Ripgrep config
+│   └── yazi/          # Yazi file manager
+├── term/              # Terminal emulators
+│   └── ghostty/       # Ghostty config
+└── platform/          # Platform-specific
+    └── darwin/        # macOS scripts
+```
+
 ### Key Components
 
 **Zsh**: XDG-compliant two-stage loading (`~/.zshenv` → `$ZDOTDIR/conf.d/*.zsh`)
@@ -61,12 +87,12 @@ Detailed conventions in `.claude/rules/`:
 
 ### Universal Standards
 - `coding-style.md` — Line length (80 chars), file headers, documentation
-- `ai-generation.md` — AI-specific constraints and quality checklists
+- `quality.md` — AI-specific constraints and quality checklists
 - `patterns.md` — Design patterns, immutability principle
 - `security.md` — Secrets management, input validation
 
 ### Workflow & Process
-- `development-workflow.md` — Research-first approach, verification phases
+- `dev-workflow.md` — Research-first approach, verification phases
 - `git-workflow.md` — Conventional Commits, branch naming
 - `hooks.md` — Claude Code automation hooks
 
