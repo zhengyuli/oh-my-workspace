@@ -1,0 +1,5 @@
+- **Shell**: Zsh + Starship prompt, zoxide, direnv, carapace
+- **Editors**: Neovim, Emacs (modular configurations)
+- **Languages**: Python (uv), TypeScript (bun), Go, Rust
+- **Tools**: git, lazygit, ripgrep, fd, fzf, eza, bat, yazi
+- **Terminal**: Ghostty

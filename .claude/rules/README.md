@@ -26,6 +26,7 @@ These rules define development processes and conventions:
 - **`dev-workflow.md`** - Research-first development methodology with planning, implementation, verification, and rollback strategies
 - **`git-workflow.md`** - Git conventions including Conventional Commits format, branch naming, merge strategies, and hotfix workflows
 - **`hooks.md`** - Claude Code hooks integration for automated syntax validation, pre-commit checks, and session-end verification
+- **`testing.md`** - Universal testing principles for configuration changes, including syntax validation, functional testing, and integration testing workflows
 
 ### Language-Specific Rules (conditionally loaded)
 
@@ -83,6 +84,69 @@ globs:
 ### Editing Zsh Files
 **Auto-loaded:** All 7 universal + workflow rules
 **Conditionally loaded:** `lang/shell.md`, `lang/zsh.md`
+
+## Rule Dependencies
+
+The following diagram shows how rules reference and depend on each other:
+
+```mermaid
+graph TD
+    CLAUDE[CLAUDE.md] --> Universal[Universal Rules]
+    CLAUDE --> Workflow[Workflow Rules]
+    CLAUDE --> Language[Language Rules]
+
+    Universal --> CS[coding-style.md]
+    Universal --> QL[quality.md]
+    Universal --> PT[patterns.md]
+    Universal --> SC[security.md]
+
+    Workflow --> DW[dev-workflow.md]
+    Workflow --> GW[git-workflow.md]
+    Workflow --> HK[hooks.md]
+    Workflow --> TS[testing.md]
+
+    Language --> SH[lang/shell.md]
+    Language --> BA[lang/bash.md]
+    Language --> ZH[lang/zsh.md]
+    Language --> EL[lang/elisp.md]
+    Language --> PY[lang/python.md]
+
+    %% Dependencies
+    SH -.->|extends| BA
+    SH -.->|extends| ZH
+
+    CS -.->|references| QL
+    CS -.->|references| PT
+    QL -.->|references| SC
+
+    DW -.->|references| HK
+    DW -.->|references| GW
+    DW -.->|references| CS
+
+    HK -.->|references| GW
+    HK -.->|references| SC
+    HK -.->|references| EL
+
+    TS -.->|references| HK
+    TS -.->|references| DW
+    TS -.->|cross-references| PY
+    TS -.->|cross-references| EL
+    TS -.->|cross-references| BA
+    TS -.->|cross-references| ZH
+
+    GW -.->|references| SC
+```
+
+**Legend:**
+- **Solid arrows**: Direct categorization (CLAUDE.md → rule categories)
+- **Dotted arrows**: References and dependencies (rule → rule)
+
+**Key Dependencies:**
+- `lang/bash.md` and `lang/zsh.md` both extend `lang/shell.md`
+- `quality.md` references `coding-style.md` and `security.md`
+- `dev-workflow.md` references `hooks.md`, `git-workflow.md`, and `coding-style.md`
+- `hooks.md` references `git-workflow.md`, `security.md`, and `lang/elisp.md`
+- `testing.md` provides universal testing principles with cross-references to language-specific testing
 
 ## Adding New Rules
 
