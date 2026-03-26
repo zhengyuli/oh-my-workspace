@@ -12,6 +12,50 @@ macOS dotfiles repository using GNU Stow for XDG-compliant configuration managem
 
 @.claude/shared/tech-stack.md
 
+## Prerequisites
+
+Before using this repository, ensure you have:
+
+- **GNU Stow** - For symlink management
+  ```bash
+  brew install stow
+  ```
+- **Git** - Version control (usually pre-installed on macOS)
+- **Zsh** - Default shell (macOS default since Catalina)
+- **Emacs** - For Emacs configuration (optional, `brew install emacs`)
+
+Additional tools are documented in the Tech Stack section above.
+
+## Getting Started
+
+For new users setting up the dotfiles repository:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/zhengyu-li/oh-my-workspace.git
+   cd oh-my-workspace
+   ```
+
+2. **Install prerequisites:**
+   ```bash
+   brew install stow
+   ```
+
+3. **Preview changes (recommended):**
+   ```bash
+   ./setup.sh install --dry-run --all
+   ```
+
+4. **Run full setup:**
+   ```bash
+   ./setup.sh install --all
+   ```
+
+5. **Verify installation:**
+   ```bash
+   ./setup.sh status
+   ```
+
 ## Architecture
 
 ### Package Structure
@@ -85,6 +129,18 @@ oh-my-workspace/
 
 **Dependencies**: Managed via `pkg/homebrew/Brewfile`
 
+## Automated Hooks
+
+This project uses Claude Code hooks for automated validation and verification:
+
+- **PostToolUse**: Syntax validation after file edits (shell, elisp, python)
+- **Stop**: Session end verification (uncommitted changes, commit format)
+- **Pre-commit**: Blocks `.elc` files, warns on potential issues
+
+Hook scripts are stored in `.claude/hooks/` and committed to the repository.
+
+See `hooks.md` for detailed documentation of hook behavior and configuration.
+
 ## Coding Conventions
 
 Detailed conventions in `.claude/rules/`:
@@ -113,6 +169,8 @@ Detailed conventions in `.claude/rules/`:
 
 | Task              | Command                                  |
 |-------------------|------------------------------------------|
+| First-time setup  | See Getting Started section above        |
+| Prerequisites     | `brew install stow`                      |
 | Claude Code setup | See `claude/setup.md`                    |
 | Full setup        | `./setup.sh install --all`               |
 | Stow package      | `./setup.sh install <package>`           |
@@ -120,6 +178,7 @@ Detailed conventions in `.claude/rules/`:
 | Preview           | `./setup.sh install --dry-run <package>` |
 | Status            | `./setup.sh status`                      |
 | Unstow            | `./setup.sh uninstall <package>`         |
+| Hook validation   | Automatic (see Automated Hooks section)  |
 
 ## Troubleshooting
 
