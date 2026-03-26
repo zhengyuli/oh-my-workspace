@@ -109,6 +109,7 @@ Detailed conventions in `.claude/rules/`:
 
 | Task | Command |
 |------|---------|
+| Claude Code setup | See `claude/setup.md` |
 | Full setup | `./setup.sh install --all` |
 | Stow package | `./setup.sh install <package>` |
 | Restow | `./setup.sh install --force <package>` |

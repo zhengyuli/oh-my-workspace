@@ -123,6 +123,9 @@ $WORKSPACE_DIR/
 ├── LICENSE
 ├── README.md
 │
+├── claude/               # Claude Code environment
+│   └── setup.md          # Setup guide for Claude Code
+│
 ├── shell/                # Shell configuration
 │   ├── zsh/              # ~/.config/zsh/, ~/.zshenv
 │   └── starship/         # ~/.config/starship.toml
