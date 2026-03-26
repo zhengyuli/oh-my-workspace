@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-20 10:42:10 Friday by zhengyu.li>
+;; Time-stamp: <2026-03-26 17:02:48 Thursday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -176,11 +176,12 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (defun omw/after-init-setup ()
   "Enable common post-initialization features.
 This includes save-place-mode, recentf-mode, column-number-mode,
-and global-auto-revert-mode."
+global-auto-revert-mode and midnight-mode."
   (save-place-mode 1)
   (recentf-mode 1)
   (column-number-mode 1)
-  (global-auto-revert-mode 1))
+  (global-auto-revert-mode 1)
+  (midnight-mode 1))
 
 (defun omw/emacs-startup-setup ()
   "Display startup timing and garbage collection statistics."
