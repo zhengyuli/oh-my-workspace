@@ -1,3 +1,9 @@
+---
+version: "1.0.0"
+last-updated: "2026-03-27"
+maintainer: "zhengyu.li"
+---
+
 # CLAUDE.md
 
 macOS dotfiles repository using GNU Stow for XDG-compliant configuration management.
@@ -109,15 +115,86 @@ Detailed conventions in `.claude/rules/`:
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Claude Code setup | See `claude/setup.md` |
-| Full setup | `./setup.sh install --all` |
-| Stow package | `./setup.sh install <package>` |
-| Restow | `./setup.sh install --force <package>` |
-| Preview | `./setup.sh install --dry-run <package>` |
-| Status | `./setup.sh status` |
-| Unstow | `./setup.sh uninstall <package>` |
+| Task              | Command                                  |
+|-------------------|------------------------------------------|
+| Claude Code setup | See `claude/setup.md`                    |
+| Full setup        | `./setup.sh install --all`               |
+| Stow package      | `./setup.sh install <package>`           |
+| Restow            | `./setup.sh install --force <package>`   |
+| Preview           | `./setup.sh install --dry-run <package>` |
+| Status            | `./setup.sh status`                      |
+| Unstow            | `./setup.sh uninstall <package>`         |
+
+## Troubleshooting
+
+### Common Issues
+
+**Stow conflict: file already exists**
+
+GNU Stow refuses to create a symlink if the target already exists as a real file.
+
+```bash
+# Backup and remove conflicting file
+cp ~/.zshrc ~/.zshrc.bak
+rm ~/.zshrc
+
+# Now stow succeeds
+./setup.sh install zsh
+```
+
+**Emacs not loading changes**
+
+Emacs always prefers `.elc` files over `.el` files when both exist. Editing `.el` files without removing stale `.elc` files means Emacs loads the old compiled version.
+
+```bash
+# Clean stale .elc files (see lang/elisp.md for details)
+find ~/.config/emacs/ -name '*.elc' -delete
+
+# Restart Emacs to load the .el source files
+```
+
+**Symlink points to wrong location**
+
+If a symlink is broken or points to the wrong location, restow the package.
+
+```bash
+# Remove broken symlink
+rm ~/.config/zsh/conf.d/aliases.zsh
+
+# Restow package to recreate symlink
+./setup.sh install --force zsh
+```
+
+**Git hooks not running**
+
+Git hooks must be executable and in the correct location.
+
+```bash
+# Verify hook is executable
+ls -la .git/hooks/pre-commit
+
+# Make executable if needed
+chmod +x .git/hooks/pre-commit
+```
+
+**Setup script fails with permission error**
+
+Some operations require elevated permissions or correct file ownership.
+
+```bash
+# Check current permissions
+ls -la ~/ | grep -E "^\."
+
+# Fix ownership if needed
+sudo chown -R $(whoami) ~/.config ~/.local
+```
+
+### Getting Help
+
+- **Rule documentation**: Check `.claude/rules/` directory for detailed standards
+- **Setup help**: Run `./setup.sh help` for command reference
+- **Project README**: See `README.md` for project overview and setup guide
+- **Claude Code setup**: See `claude/setup.md` for Claude Code environment setup
 
 ---
 
