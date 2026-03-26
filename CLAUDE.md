@@ -87,7 +87,7 @@ Detailed conventions in `.claude/rules/`:
 
 ### Universal Standards
 - `coding-style.md` — Line length (80 chars), file headers, documentation
-- `quality.md` — AI-specific constraints and quality checklists
+- `quality.md` — Quality standards for AI-assisted code generation
 - `patterns.md` — Design patterns, immutability principle
 - `security.md` — Secrets management, input validation
 
