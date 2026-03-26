@@ -1,294 +1,63 @@
----
-globs: [".claude/**", ".git/hooks/**"]
----
 # Claude Code Hooks Integration
 
-Hook-based automation for configuration management workflows.
+This project uses Claude Code hooks for automated validation and verification.
 
-## Hook Types
+## Active Hooks
 
-### PreToolUse
-**When:** Before tool execution
-**Use:** Parameter validation, input sanitization, auto-formatting prep
+### PostToolUse: Syntax Validation
 
-### PostToolUse
-**When:** After tool execution
-**Use:** Auto-formatting, syntax validation, verification
+After editing source files, syntax is automatically validated:
 
-### Stop
-**When:** Session end
-**Use:** Final verification, cleanup, commit verification
+| File Type | Command |
+|-----------|---------|
+| `.sh` | `bash -n` |
+| `.zsh` | `zsh -n` |
+| `.el` | `emacs --batch -f batch-byte-compile` |
+| `.py` | `python3 -m py_compile` |
 
-## Configuration Examples
+### Stop: Session End Check
 
-Configure hooks in `.claude/settings.json` (project-level) or
-`~/.claude/settings.json` (user-level).
-
-### Environment Variables Available in Hook Scripts
-
-| Variable | Description |
-|----------|-------------|
-| `CLAUDE_FILE_PATH` | Absolute path of the file being operated on |
-| `CLAUDE_TOOL_NAME` | Name of the tool being invoked (e.g. `Write`, `Edit`) |
-| `CLAUDE_TOOL_INPUT` | JSON-encoded tool input parameters |
-
-### Example: PostToolUse Syntax Validation
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/validate-syntax.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Hook script (`.claude/hooks/validate-syntax.sh`):
-
-```bash
-#!/usr/bin/env bash
-# validate-syntax.sh --- PostToolUse syntax validation hook
-#
-# Location: .claude/hooks/validate-syntax.sh
-# Usage:    Invoked automatically by Claude Code after Write/Edit
-
-set -euo pipefail
-
-file="${CLAUDE_FILE_PATH:-}"
-[[ -z "$file" || ! -f "$file" ]] && exit 0
-
-case "$file" in
-  *.sh)  bash -n "$file" ;;
-  *.zsh) zsh -n "$file" ;;
-  *.el)  emacs --batch -f batch-byte-compile "$file" 2>/dev/null ;;
-  *.py)  python3 -m py_compile "$file" ;;
-esac
-```
-
-### Example: Stop Hook - Uncommitted File Reminder
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/session-end-check.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Hook script (`.claude/hooks/session-end-check.sh`):
-
-```bash
-#!/usr/bin/env bash
-# session-end-check.sh --- Stop hook for session-end verification
-
-set -euo pipefail
-
-# Warn about uncommitted config changes
-if git status --porcelain | grep -qE '\.(sh|zsh|el|py)$'; then
-  printf 'Reminder: uncommitted config changes detected\n' >&2
-fi
-
-# Verify last commit follows Conventional Commits
-if ! git log -1 --pretty=%B 2>/dev/null \
-    | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+'; then
-  printf 'Warning: last commit message may not follow Conventional Commits\n' >&2
-fi
-```
-
-### Hook Script Conventions
-
-- Store hook scripts under `.claude/hooks/` (committed to repo)
-- Make scripts executable: `chmod 755 .claude/hooks/*.sh`
-- Hook scripts must exit `0` to allow the operation to proceed;
-  non-zero exit **blocks** the tool call (PreToolUse) or is ignored
-  (PostToolUse/Stop)
-- Keep hooks fast — slow hooks degrade the interactive experience
-
-### Troubleshooting Hooks Not Triggering
-
-1. Verify `settings.json` is valid JSON (`python3 -m json.tool settings.json`)
-2. Check the `matcher` regex matches the tool name exactly
-3. Confirm hook script is executable (`ls -la .claude/hooks/`)
-4. Test the script manually: `CLAUDE_FILE_PATH=path/to/file .claude/hooks/validate-syntax.sh`
-
-## TodoWrite Best Practices
-
-Use TodoWrite for tracking complex configuration changes spanning multiple files.
-
-### When to Use
-- Multi-file updates (3+ files)
-- Complex installs with dependencies
-- Breaking changes to configs
-- Large-scale refactoring
-
-### Benefits
-- Reveals out-of-order steps
-- Identifies missing dependencies
-- Ensures correct granularity
-- Provides rollback roadmap
-
-## Auto-Formatting Hooks
-
-### Syntax Validation by Language
-- **Shell (Bash):** `bash -n "$CLAUDE_FILE_PATH"`
-- **Shell (Zsh):** `zsh -n "$CLAUDE_FILE_PATH"`
-- **Emacs Lisp:** `emacs --batch -f batch-byte-compile "$CLAUDE_FILE_PATH"`
-- **Python:** `python -m py_compile "$CLAUDE_FILE_PATH"`
-
-### File Size Checks
-Warn when files exceed size limits (see `coding-style.md` for authoritative limits):
-- Shell scripts: warn at 500 lines
-- Python modules: warn at 600 lines
-- Emacs Lisp: warn at 500 lines
-
-### Header Verification
-Ensure all config files have standard headers (see `ai-generation.md`).
+At session end, verifies:
+- No uncommitted config changes
+- Last commit follows Conventional Commits
 
 ## Pre-Commit Hooks
 
-### Syntax Checking
-Validate all modified configs before commit (see `lang/shell.md`, `lang/elisp.md`).
-
 ### Stale .elc Detection
 
-Block commits that accidentally stage byte-compiled Emacs Lisp files,
-and warn when an `emacs/` change is committed while stale `.elc` files
-remain in the stow target (`~/.config/emacs/`).
-
-Wire this check into your git pre-commit hook
-(`.git/hooks/pre-commit`) or call it from a pre-commit framework:
+Block commits with staged `.elc` files. Warn when `emacs/` changes are
+committed while stale `.elc` files exist in `~/.config/emacs/`.
 
 ```bash
-# .git/hooks/pre-commit  (excerpt — stale .elc guard)
+# .git/hooks/pre-commit (excerpt)
 
-# 1. Block staged .elc files (should never be committed)
+# Block staged .elc files
 if git diff --cached --name-only | grep -q '\.elc$'; then
-  printf 'error: staged .elc files detected — remove before committing\n' >&2
-  printf '  fix: find emacs/ -name "*.elc" -delete\n' >&2
+  printf 'error: staged .elc files detected\n' >&2
   exit 1
 fi
 
-# 2. Warn when emacs/ .el files are staged but stale .elc exist in
-#    the stow target — Emacs will load the old .elc, not your edit.
+# Warn on stale .elc in stow target
 if git diff --cached --name-only | grep -q '^emacs/.*\.el$'; then
   stale=$(find "${HOME}/.config/emacs" -name '*.elc' 2>/dev/null)
   if [[ -n "$stale" ]]; then
-    printf 'warning: stale .elc files found in ~/.config/emacs/\n' >&2
-    printf '  Emacs will load the compiled version, not your new .el\n' >&2
-    printf '  fix: find ~/.config/emacs/ -name "*.elc" -delete\n' >&2
-    # Non-fatal: warn but do not block the commit
+    printf 'warning: stale .elc files in ~/.config/emacs/\n' >&2
   fi
 fi
 ```
 
-See `lang/elisp.md` for the full cleanup procedure.
+See `lang/elisp.md` for cleanup procedure.
 
 ### Secrets Detection
-Check for hardcoded secrets (see `security.md`):
-```bash
-if git diff --cached | grep -E '(password|secret|api_key|token).*=.*["\']'; then
-  echo "Error: Potential secrets detected"
-  exit 1
-fi
-```
 
-### Integration with git-workflow.md
-1. Pre-commit hooks validate syntax and check for secrets
-2. Pre-commit hooks guard against stale `.elc` files (see above)
-3. Follow Conventional Commits format during commit (see `git-workflow.md`)
-4. PostToolUse hooks verify commit was created correctly
+Check for hardcoded secrets before commit (see `security.md`).
 
-## Session End Verification
+## Hook Script Location
 
-### Final Checks
-- Verify all modified configs tested
-- Check for uncommitted critical files
-- Ensure README updated if needed
-- Verify commit messages follow Conventional Commits (see `git-workflow.md`)
-
-### Example Verification Script
-```bash
-# Check for uncommitted config changes
-git status --porcelain | grep -E '\.(sh|zsh|el|py)$' &&
-  echo "Reminder: Test and commit modified configs"
-
-# Verify commit message format
-git log -1 --pretty=%B | grep -qE '^(feat|fix|docs|refactor)(\(.+\))?: .+' ||
-  echo "Warning: Non-standard commit message"
-```
-
-## Permission Management
-
-### Auto-Accept Guidelines
-
-**Safe to auto-accept:**
-- Read operations (Read, Glob, Grep)
-- Syntax validation commands
-- Git status/log commands
-- Backup operations (cp, mv with .bak)
-
-**Require confirmation:**
-- Write operations (Edit, Write)
-- Delete operations (rm, unlink)
-- System modifications (install, uninstall)
-- Network operations
-
-## Hook Integration
-
-### Multi-Level Validation
-1. **Claude Code hooks:** PreToolUse/PostToolUse for immediate feedback
-2. **Git hooks:** Pre-commit for repository-level validation
-3. **User hooks:** Stop for final session checks
-
-### Interaction with Existing Rules
-- This file is **conditionally loaded** (path-scoped to `.claude/**` and
-  `.git/hooks/**`) — it is injected into context only when working on those paths
-- Language-specific rules in `lang/` extend (not replace) these hooks
-- Specific overrides general: `lang/python.md` takes precedence for Python files
-- Safety first: stricter validation wins in conflicts
-
-### Common Issues
-- **Hook not triggering:** Verify configuration syntax and matcher patterns
-- **TodoWrite not working:** Check task status and dependencies
-- **Syntax false positives:** Use language-appropriate validators
-
-## Quick Reference
-
-| Hook Type | When | Use |
-|-----------|------|-----|
-| PreToolUse | Before tool | Validation, prep |
-| PostToolUse | After tool | Syntax check |
-| Stop | Session end | Final verification |
-
-| Operation | Auto-Accept | Confirm |
-|-----------|-------------|---------|
-| Read/Glob/Grep | ✓ | |
-| Write/Edit | | ✓ |
-| Git status/log | ✓ | |
-| Delete/System ops | | ✓ |
+Scripts are stored in `.claude/hooks/` and committed to the repo.
 
 ## See Also
 
-- `coding-style.md` - Code formatting standards
 - `git-workflow.md` - Commit message conventions
-- `lang/shell.md` - Shell-specific validation
-- `lang/elisp.md` - Emacs Lisp validation
 - `security.md` - Secrets detection rules
+- `lang/elisp.md` - Emacs Lisp byte compilation

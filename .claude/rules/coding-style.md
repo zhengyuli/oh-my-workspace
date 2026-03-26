@@ -149,16 +149,15 @@ Keep files focused and manageable:
 
 ## Language-Specific Extensions
 
-The following rule files are **conditionally loaded** (path-scoped via
-`globs`) and injected into context only when working on matching files.
-They extend — never replace — this file.
+The following language-specific rule files are **conditionally loaded**
+via `globs` frontmatter. They extend — never replace — this file.
 
-| Rule file | Loaded when working on |
-|-----------|------------------------|
-| `lang/shell.md` | `**/*.sh`, `**/*.bash`, `shell/**` |
+| Rule file | Globs |
+|-----------|-------|
+| `lang/shell.md` | `**/*.sh`, `**/*.bash` |
 | `lang/bash.md` | `**/*.sh`, `**/*.bash` |
-| `lang/zsh.md` | `**/*.zsh`, `zsh/**` |
-| `lang/elisp.md` | `**/*.el`, `emacs/**` |
+| `lang/zsh.md` | `**/*.zsh`, `**/.zsh*`, `**/zshrc`, `**/zprofile`, `**/zshenv`, `**/zlogin` |
+| `lang/elisp.md` | `**/*.el` |
 | `lang/python.md` | `**/*.py` |
 
 ## Code Quality Checklist

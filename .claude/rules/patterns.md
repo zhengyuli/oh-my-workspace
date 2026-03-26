@@ -38,13 +38,7 @@ sed 's/old/new/' ~/.zshrc.bak > ~/.zshrc
 
 - **Organization:** By feature/domain, not by type
 - **Cohesion:** High within files, low between files
-- **Size targets by file type** (see `coding-style.md` for authoritative limits):
-
-| File Type | Target Lines | Max Lines |
-|-----------|-------------|-----------|
-| Shell scripts | 100-300 | 500 |
-| Python modules | 150-400 | 600 |
-| Emacs Lisp | 100-300 | 500 |
+- **Size targets by file type:** See `coding-style.md` for authoritative limits
 
 **When to split configuration files:**
 

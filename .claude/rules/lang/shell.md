@@ -1,5 +1,5 @@
 ---
-globs: ["**/*.sh", "**/*.bash", "shell/**"]
+globs: ["**/*.sh", "**/*.bash"]
 ---
 # Shell Best Practices
 
