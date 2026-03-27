@@ -1,9 +1,3 @@
----
-version: "1.0.0"
-last-updated: "2026-03-27"
-maintainer: "zhengyu.li"
----
-
 # CLAUDE.md
 
 macOS dotfiles repository using GNU Stow for XDG-compliant configuration management.
@@ -27,7 +21,11 @@ All configuration files follow standardized formats with:
 
 ## Tech Stack
 
-@.claude/shared/tech-stack.md
+- **Shell**: Zsh + Starship prompt, zoxide, direnv, carapace
+- **Editors**: Neovim, Emacs (modular configurations)
+- **Languages**: Python (uv), TypeScript (bun), Go, Rust
+- **Tools**: git, lazygit, ripgrep, fd, fzf, eza, bat, yazi
+- **Terminal**: Ghostty
 
 ## Prerequisites
 
@@ -154,8 +152,6 @@ This project uses Claude Code hooks for automated validation:
 - **PreToolUse** (Bash): Cleans stale compiled files before `git commit`
 - **Stop**: Session end verification (uncommitted changes, commit format)
 
-Hook scripts are stored in `.claude/hooks/` and committed to the repository.
-
 ## Coding Conventions
 
 Detailed conventions in `.claude/rules/`:
@@ -232,18 +228,6 @@ rm ~/.config/zsh/conf.d/aliases.zsh
 ./setup.sh install --force zsh
 ```
 
-**Claude Code hooks not running**
-
-Hook scripts must be executable and registered in `.claude/settings.json`.
-
-```bash
-# Verify hooks are executable
-ls -la .claude/hooks/
-
-# Make executable if needed
-chmod +x .claude/hooks/post-tool-use.sh
-```
-
 **Setup script fails with permission error**
 
 Some operations require elevated permissions or correct file ownership.
@@ -265,4 +249,4 @@ sudo chown -R $(whoami) ~/.config ~/.local
 
 ---
 
-For detailed coding standards and workflows, see `.claude/rules/` directory.
+For detailed coding standards, see `.claude/rules/`. For workflow guidance, see `.claude/skills/`.
