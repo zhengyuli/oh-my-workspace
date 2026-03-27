@@ -26,8 +26,16 @@ Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 
 ## Delimiter Hierarchy (MANDATORY)
 
-**Level 0** (File Header): `# ===` * 77 (79 chars)
-**Level 1** (Primary Section): `# ---` * 77 (79 chars)
+**Level 0** (File Header):
+```
+# =============================================================================
+```
+
+**Level 1** (Primary Section):
+```
+# -----------------------------------------------------------------------------
+```
+
 **Level 2** (Subsection): `# --- Title ---` (inline style)
 
 **Example:**
@@ -54,12 +62,15 @@ git:
 
 ## Documentation & Code Patterns
 
-**Comment Philosophy**:
+### Comments
+
 - Explain rationale (WHY), not mechanics (WHAT)
 - Prefer separate comment lines for clarity
 - Inline comments acceptable for brief notes only
 
-**Indentation**: Spaces only, 2-space indent, never tabs
+### Indentation
+
+Spaces only, 2-space indent, never tabs
 
 ```yaml
 # Catppuccin Mocha Blue theme
@@ -72,18 +83,29 @@ theme:
 nerdFontsVersion: "3"  # Required for latest symbols
 ```
 
-**Strings**: Quote special characters
+### Strings
+
+Quote special characters
 ```yaml
 name: "value"  # Quoted
 message: "error: file not found"  # Quote if contains colon
 pattern: "*.txt"  # Quote if contains asterisk
 ```
 
-**Booleans**: `enabled: true` (not `"true"`)
-**Lists**: `colors: [red, green]` or multiline
-**Maps**: Nested structure or inline `{x: 1, y: 2}`
+### Booleans
 
-**Formatting Rules:**
+`enabled: true` (not `"true"`)
+
+### Lists
+
+`colors: [red, green]` or multiline
+
+### Maps
+
+Nested structure or inline `{x: 1, y: 2}`
+
+### Formatting
+
 - Never align values with spaces
 - Prefer separate-line comments over inline
 
