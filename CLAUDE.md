@@ -131,15 +131,13 @@ oh-my-workspace/
 
 ## Automated Hooks
 
-This project uses Claude Code hooks for automated validation and verification:
+This project uses Claude Code hooks for automated validation:
 
 - **PostToolUse**: Syntax validation after file edits (shell, elisp, python)
+- **PreToolUse** (Bash): Cleans stale compiled files before `git commit`
 - **Stop**: Session end verification (uncommitted changes, commit format)
-- **Pre-commit**: Blocks `.elc` files, warns on potential issues
 
 Hook scripts are stored in `.claude/hooks/` and committed to the repository.
-
-See `hooks.md` for detailed documentation of hook behavior and configuration.
 
 ## Coding Conventions
 
@@ -147,14 +145,13 @@ Detailed conventions in `.claude/rules/`:
 
 ### Universal Standards
 - `coding-style.md` — Line length (80 chars), file headers, documentation
-- `quality.md` — Quality standards for AI-assisted code generation
 - `patterns.md` — Design patterns, immutability principle
 - `security.md` — Secrets management, input validation
 
 ### Workflow & Process
 - `dev-workflow.md` — Research-first approach, verification phases
 - `git-workflow.md` — Conventional Commits, branch naming
-- `hooks.md` — Claude Code automation hooks
+- `testing.md` — Syntax validation, functional and integration testing
 
 ### Language-Specific (conditionally loaded)
 - `lang/shell.md` — Universal shell practices (base)
@@ -178,6 +175,7 @@ Detailed conventions in `.claude/rules/`:
 | Preview           | `./setup.sh install --dry-run <package>` |
 | Status            | `./setup.sh status`                      |
 | Unstow            | `./setup.sh uninstall <package>`         |
+| Clean temp files  | `./setup.sh clean`                       |
 | Hook validation   | Automatic (see Automated Hooks section)  |
 
 ## Troubleshooting
@@ -220,16 +218,16 @@ rm ~/.config/zsh/conf.d/aliases.zsh
 ./setup.sh install --force zsh
 ```
 
-**Git hooks not running**
+**Claude Code hooks not running**
 
-Git hooks must be executable and in the correct location.
+Hook scripts must be executable and registered in `.claude/settings.json`.
 
 ```bash
-# Verify hook is executable
-ls -la .git/hooks/pre-commit
+# Verify hooks are executable
+ls -la .claude/hooks/
 
 # Make executable if needed
-chmod +x .git/hooks/pre-commit
+chmod +x .claude/hooks/post-tool-use.sh
 ```
 
 **Setup script fails with permission error**

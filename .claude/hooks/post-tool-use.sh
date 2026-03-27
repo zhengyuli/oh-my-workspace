@@ -10,10 +10,16 @@
 
 set -euo pipefail
 
-# Get the file path from the tool arguments
-FILE_PATH="${1:-}"
+# Read tool invocation context from stdin (Claude Code hook protocol).
+# PostToolUse delivers JSON: {"tool_name": "...", "tool_input": {"file_path": "..."}, ...}
+_input=$(cat)
+FILE_PATH=$(printf '%s\n' "$_input" \
+  | python3 -c \
+    "import sys,json; d=json.load(sys.stdin); \
+     print(d.get('tool_input',{}).get('file_path',''))" \
+  2>/dev/null || true)
 
-# Skip if no file provided
+# Skip if no file path in payload
 if [[ -z "$FILE_PATH" ]]; then
     exit 0
 fi

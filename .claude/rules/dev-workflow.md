@@ -102,6 +102,19 @@ python -m py_compile script.py  # Python
 - [ ] File headers present and accurate
 - [ ] Dependencies documented
 
+## Dotfiles Quality Rules
+
+When making changes to this repository:
+
+- **Before suggesting stow changes**: test with `stow -n -v` (dry-run first,
+  never modify the filesystem without previewing the plan)
+- **Respect existing category organization**: follow the `category/package`
+  naming scheme; don't invent new top-level categories
+- **Update `PKG_ALL`** in `setup.sh` when adding a new stow package
+- **When adding packages**: update README if it exists; add inline comments
+  explaining purpose; document any external dependencies
+- **Before committing**: run `./setup.sh clean` to remove stale compiled files
+
 ## Rollback Strategy
 
 ### Git Rollback
