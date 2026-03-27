@@ -59,7 +59,7 @@ readonly SCRIPT_NAME="$(basename "$0")"
 
 # --- Logging ---
 log_info() {
-  printf '[info] %s\n' "$1"
+  print "[info] $1"
 }
 
 # --- Validation ---
@@ -83,8 +83,7 @@ set -euo pipefail
 **ERR Trap**:
 ```zsh
 _err_handler() {
-  printf '[error] %s: line %d: exit %d\n' \
-    "${funcstack[2]:-main}" "${funcfiletrace[1]##*:}" "$?" >&2
+  print -u2 "[error] ${funcstack[2]:-main}: line ${funcfiletrace[1]##*:}: exit $?"
 }
 trap '_err_handler' ERR
 ```
@@ -135,15 +134,15 @@ WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 ```
 
 **Output Standards**:
-- Prefer `printf` over `echo` for predictable output formatting
-  - Rationale: `echo` behavior is inconsistent across shell implementations (BSD/GNU variants)
-  - `printf` is POSIX-compliant with consistent behavior
+- Use zsh `print` built-in for output formatting
+  - Rationale: `print` is zsh-native with rich formatting options
+  - `print` provides consistent behavior and better integration with zsh features
 - Direct all error and warning messages to stderr; reserve stdout for program output
 
 ```zsh
 # Correct — errors to stderr, output to stdout
-printf 'error: %s not found\n' "$pkg" >&2
-printf '%s\n' "$result"
+print -u2 "error: $pkg not found"
+print "$result"
 ```
 
 **Naming Conventions**:
@@ -207,7 +206,7 @@ _install_package() { ... }   # Installation only
 _validate_package() {
   local -r pkg="$1"
   if [[ -z "$pkg" ]]; then
-    printf 'error: package required\n' >&2
+    print -u2 "error: package required"
     return 1
   fi
 }
@@ -264,7 +263,7 @@ fi
 case "$user_input" in
   install)   _install ;;
   uninstall) _uninstall ;;
-  *)         printf 'error: invalid command: %s\n' "$user_input" >&2; exit 1 ;;
+  *)         print -u2 "error: invalid command: $user_input"; exit 1 ;;
 esac
 ```
 
