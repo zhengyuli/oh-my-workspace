@@ -7,7 +7,7 @@ globs:
 
 Coding standards for Emacs Lisp in oh-my-workspace.
 
-## File Header (MANDATORY)
+## File Header
 
 ```elisp
 ;;; filename.el -*- lexical-binding: t; -*-
@@ -62,10 +62,17 @@ Every file must end with:
 ;;; module-name.el ends here
 ```
 
-## Delimiter Hierarchy (MANDATORY)
+## Delimiter Hierarchy
 
-**Level 0** (File Header): `;; ===` × 76 (79 chars total)
-**Level 1** (Primary Section): `;; ---` × 76 (79 chars total)
+**Level 0** (File Header):
+```
+;; ============================================================================
+```
+
+**Level 1** (Primary Section):
+```
+;; ----------------------------------------------------------------------------
+```
 
 **Example:**
 ```elisp
@@ -131,10 +138,11 @@ the body succeeds or fails:
 
 ## Documentation & Code Patterns
 
-**Comments:**
-- Explain rationale (WHY), not mechanics (WHAT)
-- Document non-obvious decisions and constraints
-- Use separate comment lines; never inline explanations
+### Comments
+
+Explain rationale (WHY), not mechanics (WHAT). Document non-obvious
+decisions and constraints. Use separate comment lines; never inline
+explanations.
 
 ```elisp
 ;; Validate package exists before stow operations
@@ -143,8 +151,10 @@ the body succeeds or fails:
   (file-exists-p (expand-file-name pkg omw-script-dir)))
 ```
 
-**Docstrings**: Every public function requires a docstring. First line
-must be a complete sentence; document all parameters and return value:
+### Docstrings
+
+Every public function requires a docstring. First line must be a complete
+sentence; document all parameters and return value.
 
 ```elisp
 (defun omw-find-config (name &optional directory)
@@ -165,10 +175,11 @@ Returns the full path to the config file, or nil if not found."
 "Get workspace dir"
 ```
 
-**Naming:**
-- kebab-case only: `omw-buffer-empty-p`, never `omwBufferEmptyP`
-- All symbols must carry the `omw-` package prefix
-- Predicate names must end with `-p`
+### Naming
+
+kebab-case only: `omw-buffer-empty-p`, never `omwBufferEmptyP`. All
+symbols must carry the `omw-` package prefix. Predicate names must end
+with `-p`.
 
 ```elisp
 ;; CORRECT
@@ -180,16 +191,18 @@ Returns the full path to the config file, or nil if not found."
 (defun omwBufferEmptyP () ...)
 ```
 
-**Buffer-local variables**: Always declare with `defvar-local`; never
-use `make-local-variable`:
+### Buffer-local Variables
+
+Always declare with `defvar-local`; never use `make-local-variable`.
 
 ```elisp
 (defvar-local omw-shell-buffer-name nil
   "Name of the current shell buffer.")
 ```
 
-**Key binding syntax**: Always use `kbd` macro; never use raw escape
-strings:
+### Key Binding Syntax
+
+Always use `kbd` macro; never use raw escape strings.
 
 ```elisp
 ;; CORRECT
@@ -199,8 +212,9 @@ strings:
 (define-key shell-mode-map "\C-c\C-s" 'omw-shell-sync)
 ```
 
-**Immutability**: Never mutate shared lists in-place; always produce a
-new list via `cons`:
+### Immutability
+
+Never mutate shared lists in-place; always produce a new list via `cons`.
 
 ```elisp
 ;; WRONG
@@ -211,8 +225,10 @@ new list via `cons`:
       (cons '("\\.py\\'" . python-mode) auto-mode-alist))
 ```
 
-**use-package (MANDATORY)**: All package configuration must use
-`use-package`. Follow this keyword order within each declaration:
+### use-package Declaration
+
+All package configuration must use `use-package`. Follow this keyword
+order within each declaration.
 
 1. `:ensure` / `:ensure nil`
 2. `:demand t` / `:defer t`
@@ -238,8 +254,10 @@ new list via `cons`:
         #'magit-display-buffer-same-window-except-diff-v1))
 ```
 
-**Lazy loading**: Default to `:defer t` to minimize startup time; use
-`:mode`, `:hook`, and `:bind` where possible as they imply deferral:
+### Lazy Loading
+
+Default to `:defer t` to minimize startup time; use `:mode`, `:hook`,
+and `:bind` where possible as they imply deferral.
 
 ```elisp
 (use-package magit
@@ -251,9 +269,9 @@ new list via `cons`:
   :mode ("\\.py\\'" . python-mode))
 ```
 
-**Formatting:**
-- Never align values with spaces
-- Never use inline comments for explanations
+### Formatting
+
+Never align values with spaces. Never use inline comments for explanations.
 
 ```elisp
 ;; WRONG - aligned
@@ -275,10 +293,14 @@ new list via `cons`:
 
 ## Functions
 
-**Single responsibility**: Each function does exactly one thing.
+### Single Responsibility
 
-**`interactive` declaration**: All user-facing commands (key-bound or
-M-x callable) must declare `(interactive)`; internal helpers must not:
+Each function does exactly one thing.
+
+### Interactive Declaration
+
+All user-facing commands (key-bound or M-x callable) must declare
+`(interactive)`; internal helpers must not:
 
 ```elisp
 ;; CORRECT — user command
@@ -293,8 +315,9 @@ M-x callable) must declare `(interactive)`; internal helpers must not:
   ...)
 ```
 
-**Parameter validation**: Validate all required parameters at the start
-of the function body:
+### Parameter Validation
+
+Validate all required parameters at the start of the function body:
 
 ```elisp
 (defun omw-load-module (name)
@@ -304,8 +327,9 @@ of the function body:
   ...)
 ```
 
-**Optional dependency guard**: Always check existence before calling
-into optional features:
+### Optional Dependency Guard
+
+Always check existence before calling into optional features:
 
 ```elisp
 (when (featurep 'magit)
@@ -317,11 +341,15 @@ into optional features:
 
 ## Security
 
-**Package sources**: Only install packages from GNU ELPA or MELPA
-Stable; never from unverified third-party repositories.
+### Package Sources
 
-**Local overrides**: Keep machine-specific or sensitive settings in
-`omw-local.el`, excluded from version control via `.gitignore`:
+Only install packages from GNU ELPA or MELPA Stable; never from unverified
+third-party repositories.
+
+### Local Overrides
+
+Keep machine-specific or sensitive settings in `omw-local.el`, excluded from
+version control via `.gitignore`:
 
 ```elisp
 ;; Main config (committed)
@@ -336,13 +364,15 @@ Stable; never from unverified third-party repositories.
 (require 'omw-local nil t)
 ```
 
-**Stale `.elc` files**: Never commit `.elc` files; always delete them
-before committing.
+### Bytecompile Artifacts
+
+Never commit `.elc` files; always delete them before committing.
 
 ## Validation
 
-**Byte compilation**: Zero warnings required — treat every warning as
-an error:
+### Byte Compilation
+
+Zero warnings required — treat every warning as an error:
 
 ```bash
 # Single file
@@ -353,8 +383,9 @@ emacs --batch --eval \
   "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
 ```
 
-**Before committing**: After verification passes, delete all `.elc`
-files:
+### Pre-Commit Workflow
+
+After verification passes, delete all `.elc` files before committing:
 
 ```bash
 find emacs/ -name '*.elc' -delete
