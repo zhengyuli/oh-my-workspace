@@ -76,26 +76,12 @@ Every file must end with:
 
 **Example:**
 ```elisp
-;; ============================================================================
-;; Customization
-;; ============================================================================
-(defgroup omw-git nil
-  "Git integration settings.")
-
 ;; ----------------------------------------------------------------------------
 ;; Customization - Variables
 ;; ----------------------------------------------------------------------------
 (defcustom omw-git-auto-revert t
   "Automatically revert buffers."
   :type 'boolean
-  :group 'omw-git)
-
-;; ----------------------------------------------------------------------------
-;; Customization - Faces
-;; ----------------------------------------------------------------------------
-(defface omw-git-highlight-face
-  '((t :inherit highlight))
-  "Face for git highlights."
   :group 'omw-git)
 ```
 
@@ -277,7 +263,7 @@ Never align values with spaces. Never use inline comments for explanations.
 ;; WRONG - aligned
 (defvar config-dir nil
     "Config directory")
-(defvar data-dir  nil
+(defvar data-dir   nil
     "Data directory")
 
 ;; WRONG - inline comment for explanation
@@ -345,24 +331,6 @@ Always check existence before calling into optional features:
 
 Only install packages from GNU ELPA or MELPA Stable; never from unverified
 third-party repositories.
-
-### Local Overrides
-
-Keep machine-specific or sensitive settings in `omw-local.el`, excluded from
-version control via `.gitignore`:
-
-```elisp
-;; Main config (committed)
-(setq user-full-name "Your Name")
-
-;; Local overrides (not committed, in .gitignore)
-;; File: ~/.config/emacs/lisp/omw-local.el
-;; (setq user-mail-address "your.email@company.com")
-;; (setq smtpmail-smtp-server "smtp.company.com")
-
-;; Load local overrides if available
-(require 'omw-local nil t)
-```
 
 ### Bytecompile Artifacts
 
