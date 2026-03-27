@@ -18,7 +18,6 @@ All configuration files follow standardized formats with:
 - Comments explaining WHY, not WHAT
 - References to official documentation
 
-
 ## Tech Stack
 
 - **Shell**: Zsh + Starship prompt, zoxide, direnv, carapace
@@ -144,14 +143,6 @@ oh-my-workspace/
 
 **Dependencies**: Managed via `pkg/homebrew/Brewfile`
 
-## Automated Hooks
-
-This project uses Claude Code hooks for automated validation:
-
-- **PostToolUse**: Syntax validation after file edits (shell, elisp, config files)
-- **PreToolUse** (Bash): Cleans stale compiled files before `git commit`
-- **Stop**: Session end verification (uncommitted changes, commit format)
-
 ## Coding Conventions
 
 Detailed conventions in `.claude/rules/`:
@@ -159,10 +150,6 @@ Detailed conventions in `.claude/rules/`:
 ### Universal Standards
 - `coding-style.md` — Line length (80 chars), file headers, documentation
 - `patterns.md` — Design patterns, immutability principle
-
-### Workflow & Process (`.claude/skills/`)
-- `dev-workflow.md` — Research-first approach, verification phases
-- `git-workflow.md` — Conventional Commits, branch naming
 
 ### Language-Specific (`.claude/rules/lang/`)
 - `lang/bash.md` — Bash-specific features (namerefs, associative arrays)
@@ -249,4 +236,4 @@ sudo chown -R $(whoami) ~/.config ~/.local
 
 ---
 
-For detailed coding standards, see `.claude/rules/`. For workflow guidance, see `.claude/skills/`.
+For detailed coding standards, see `.claude/rules/`.
