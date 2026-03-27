@@ -336,11 +336,8 @@ Stable; never from unverified third-party repositories.
 (require 'omw-local nil t)
 ```
 
-**Stale `.elc` files**: Delete all `.elc` files before committing:
-
-```bash
-find emacs/ -name '*.elc' -delete
-```
+**Stale `.elc` files**: Never commit `.elc` files; always delete them
+before committing.
 
 ## Validation
 
@@ -356,11 +353,9 @@ emacs --batch --eval \
   "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
 ```
 
-**Before committing**: Delete `.elc` files, then recompile to verify
-the source is clean:
+**Before committing**: After verification passes, delete all `.elc`
+files:
 
 ```bash
 find emacs/ -name '*.elc' -delete
-emacs --batch --eval \
-  "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
 ```
