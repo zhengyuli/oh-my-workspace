@@ -1,31 +1,188 @@
 ---
-globs: ["**/*.zsh", "**/.zsh*", "**/zshrc", "**/zprofile", "**/zshenv", "**/zlogin"]
-version: "1.0.0"
-last-updated: "2026-03-26"
-maintainer: "zhengyu.li"
+globs:
+  - "**/*.zsh"
+  - "**/.zshrc"
+  - "**/.zprofile"
+  - "**/.zshenv"
+  - "**/zshrc"
+  - "**/zprofile"
+  - "**/zshenv"
+  - "**/zlogin"
 ---
+
 # Zsh-Specific Conventions
 
 Zsh-specific features extending the common shell practices.
 
-## Base Requirements
-
-This file extends `shell.md`. Read that first.
-
-## Shebang
-
-Always use `#!/usr/bin/env zsh`:
+## File Header (MANDATORY)
 
 ```zsh
 #!/usr/bin/env zsh
+# script.zsh -*- mode: sh; -*-
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Script Title - Brief Description
+#
+# Location: $WORKSPACE_DIR/path/to/script.zsh
+# Usage: ./script.zsh [options]
+# Dependencies: zsh 5.0+
+# References:
+#   1. Official documentation URL
+# =============================================================================
 ```
 
-## Key Differences from Bash
+**Shebang**: `#!/usr/bin/env zsh` (use `env` for portability)
+
+## Delimiter Hierarchy (MANDATORY)
+
+**Level 0** (File Header): `# ===` * 77 (79 chars)
+**Level 1** (Primary Section): `# ---` * 77 (79 chars)
+**Level 2** (Subsection): `# --- Title ---` (inline style)
+
+**Example:**
+```zsh
+#!/usr/bin/env zsh
+# =============================================================================
+# Setup Script
+# =============================================================================
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Constants
+# -----------------------------------------------------------------------------
+readonly SCRIPT_NAME="$(basename "$0")"
+
+# -----------------------------------------------------------------------------
+# Functions
+# -----------------------------------------------------------------------------
+
+# --- Logging ---
+log_info() {
+  printf '[info] %s\n' "$1"
+}
+
+# --- Validation ---
+validate_package() {
+  local -r pkg="$1"
+  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
+}
+```
+
+## Error Handling
+
+**Strict Mode** (MANDATORY for scripts):
+```zsh
+set -euo pipefail
+```
+
+- `-e` - Exit on non-zero status
+- `-u` - Treat unset variables as error
+- `-o pipefail` - Pipeline fails on first error
+
+**ERR Trap**:
+```zsh
+_err_handler() {
+  printf '[error] %s: line %d: exit %d\n' \
+    "${funcstack[2]:-main}" "${funcfiletrace[1]##*:}" "$?" >&2
+}
+trap '_err_handler' ERR
+```
+
+**Exit Codes**: `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
+
+**Note**: For interactive `.zshrc` files, **do not** use `set -e` — it causes unexpected exits on failed commands (e.g. `grep` finding no match).
+
+## Comments & Patterns
+
+**Comments**: Explain WHY, not WHAT. Use separate lines.
+
+```zsh
+# Validate package exists before stow operations
+_validate_package() {
+  local -r pkg="$1"
+  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
+}
+```
+
+**Variables**: Always quote, always local in functions
+```zsh
+# CORRECT
+_process_file() {
+  local -r input="$1"
+  rm -rf "$dir"
+}
+
+# WRONG
+_process_file() {
+  input=$1
+  rm -rf $dir
+}
+```
+
+**Conditionals**: `[[ ]]` for strings. `(( ))` for arithmetic
+```zsh
+if [[ "$var" == "value" ]]; then  # String
+if (( count > 0 )); then          # Arithmetic
+```
+
+**Default Values**: `${VAR:-default}`
+```zsh
+WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
+```
+
+**Formatting Rules:**
+- Never align values with spaces
+- Never use inline comments for explanations
+- Avoid `A || B` and `A && B` patterns, prefer `if-else` for clarity
+
+```zsh
+# WRONG - aligned
+SCRIPT_NAME="$(basename "$0")"
+SCRIPT_DIR ="$(cd "$(dirname "$0")" && pwd)"
+
+# WRONG - short-circuit logic (hard to read)
+[[ -f "$file" ]] && cat "$file"
+[[ -d "$dir" ]] || mkdir -p "$dir"
+
+# CORRECT
+SCRIPT_NAME="$(basename "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# CORRECT - explicit conditionals (clear intent)
+if [[ -f "$file" ]]; then
+  cat "$file"
+fi
+
+if [[ ! -d "$dir" ]]; then
+  mkdir -p "$dir"
+fi
+```
+
+## Functions
+
+**Single Responsibility**: One thing per function
+```zsh
+_validate_package() { ... }  # Validation only
+_install_package() { ... }   # Installation only
+```
+
+**Parameter Validation**: Validate at start
+```zsh
+_validate_package() {
+  local -r pkg="$1"
+  if [[ -z "$pkg" ]]; then
+    printf 'error: package required\n' >&2
+    return 1
+  fi
+}
+```
+
+## Zsh-Specific Features
 
 ### Array Indexing
 
 **Arrays start at 1, not 0:**
-
 ```zsh
 arr=(one two three)
 echo $arr[1]     # "one" (not "two" as in bash)
@@ -36,9 +193,7 @@ echo $arr[-1]    # "three" (last element)
 ### typeset vs declare
 
 Zsh prefers `typeset`:
-
 ```zsh
-# Both work, but typeset is more idiomatic in zsh
 typeset -a my_array
 typeset -A my_hash
 
@@ -48,8 +203,6 @@ declare -A my_hash
 ```
 
 ### Globbing Extensions
-
-Zsh has powerful globbing:
 
 ```zsh
 # Recursive glob
@@ -67,8 +220,6 @@ files=*(.om[1,5])   # 5 most recently modified files
 
 ### Parameter Expansion
 
-Additional features:
-
 ```zsh
 # Array length
 arr=(a b c)
@@ -83,33 +234,6 @@ echo ${arr:l}       # Lowercase
 str="a:b:c"
 arr=(${(s/:/)str})  # Split by :
 echo ${(j/-/)arr}   # Join with -
-```
-
-## Zsh-Specific Features
-
-### Options
-
-```zsh
-# Better globbing
-setopt EXTENDED_GLOB
-
-# No match is error (not pass-through)
-setopt NOMATCH
-
-# Auto cd (type directory name)
-setopt AUTO_CD
-
-# Correct typos
-setopt CORRECT
-
-# Share history
-setopt SHARE_HISTORY
-
-# Ignore dupes
-setopt HIST_IGNORE_ALL_DUPS
-
-# Don't record commands that start with a space — use for secrets
-setopt HIST_IGNORE_SPACE
 ```
 
 ### Associative Arrays
@@ -131,105 +255,9 @@ for key value in ${(kv)config}; do
 done
 ```
 
-### Functions with Explicit Arguments
+## Validation
 
 ```zsh
-# Named arguments (zsh 5.4+)
-func() {
-  local -A opts
-  zparseopts -A opts -- -help h -verbose v
-
-  (( ${+opts[--help]} )) && { show_help; return }
-  (( ${+opts[-v]} )) && verbose=1
-}
+zsh -n script.zsh      # Syntax check
+shellcheck script.sh   # If installed
 ```
-
-### Hooks
-
-```zsh
-# Run before each command
-precmd() {
-  # Update prompt, etc.
-}
-
-# Run after each command
-preexec() {
-  # Log command, etc.
-}
-
-# Chpwd - on directory change
-chpwd() {
-  ls -la
-}
-```
-
-## Prompt Customization
-
-Zsh has rich prompt support:
-
-```zsh
-# Simple
-PROMPT='%n@%m %# '
-
-# With git info (requires vcs_info)
-autoload -Uz vcs_info
-precmd_vcs_info() { vcs_info }
-precmd_functions+=( precmd_vcs_info )
-PROMPT='%~ %F{green}${vcs_info_msg_0_}%f %# '
-```
-
-## Compatibility
-
-### Writing Bash-Compatible Zsh
-
-For scripts that should work in both:
-
-```zsh
-# Avoid zsh-specific features
-# Use POSIX-compatible syntax
-# Test in both shells
-```
-
-### Zsh Emulation
-
-```zsh
-# Emulate sh/ksh
-emulate -L sh
-```
-
-## Error Handling
-
-Zsh supports the same strict mode as Bash (see `shell.md`):
-
-```zsh
-set -euo pipefail
-```
-
-For interactive `.zshrc` files **do not** use `set -e` — it causes
-unexpected exits on failed commands (e.g. `grep` finding no match).
-Reserve strict mode for non-interactive scripts with a `#!/usr/bin/env zsh`
-shebang.
-
-ERR trap in Zsh:
-
-```zsh
-_err_handler() {
-  printf '[error] %s: line %d: exit %d\n' \
-    "${funcstack[2]:-main}" "${funcfiletrace[1]##*:}" "$?" >&2
-}
-trap '_err_handler' ERR
-```
-
-## When to Use Zsh vs Bash vs sh
-
-| Situation | Recommended shell |
-|-----------|------------------|
-| Interactive config (`.zshrc`) | Zsh — full feature set |
-| Dotfiles installer / setup script | Bash — wider availability |
-| Portable one-off script | sh (POSIX) — broadest compat |
-| Plugin / function autoloaded by Zsh | Zsh |
-| Script run by CI (unknown env) | Bash or sh |
-
-Use Zsh when you need its extended globbing, associative arrays, or
-`zparseopts`. Use Bash when the script may run on systems where Zsh
-is not guaranteed to be installed.
