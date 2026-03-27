@@ -5,7 +5,7 @@
 This directory contains modular rules for Claude Code assistance in the oh-my-workspace project.
 
 **Loading Strategy:**
-- **Universal + Workflow rules** (7 files): Auto-loaded for all tasks
+- **Universal + Workflow rules** (6 files): Auto-loaded for all tasks
 - **Language-specific rules** (`lang/` directory): Conditionally loaded based on file type
 
 ## Rule Categories
@@ -14,18 +14,16 @@ This directory contains modular rules for Claude Code assistance in the oh-my-wo
 
 These rules define core standards that apply across all file types:
 
-- **`coding-style.md`** - Universal coding standards including line length (80 chars), file headers, documentation requirements, and code quality principles
-- **`quality.md`** - Quality standards for AI-assisted code generation including mandatory file headers, configuration comments, and quality checklists
+- **`coding-style.md`** - Universal coding standards including line length (80 chars), mandatory file headers, documentation requirements, naming conventions, and code quality principles
 - **`patterns.md`** - Design patterns and anti-patterns including immutability principle, file organization, modular configuration patterns
-- **`security.md`** - Security best practices for secrets management, input validation, file permissions, and incident response
+- **`security.md`** - Security best practices for secrets management, input validation, safe file operations, and incident response
 
 ### Workflow Rules (auto-loaded)
 
 These rules define development processes and conventions:
 
-- **`dev-workflow.md`** - Research-first development methodology with planning, implementation, verification, and rollback strategies
-- **`git-workflow.md`** - Git conventions including Conventional Commits format, branch naming, merge strategies, and hotfix workflows
-- **`hooks.md`** - Claude Code hooks integration for automated syntax validation, pre-commit checks, and session-end verification
+- **`dev-workflow.md`** - Research-first development methodology with planning, implementation, dotfiles quality rules, and rollback strategies
+- **`git-workflow.md`** - Git conventions including Conventional Commits format, branch naming, merge strategies, and dotfiles-specific commit practices
 - **`testing.md`** - Universal testing principles for configuration changes, including syntax validation, functional testing, and integration testing workflows
 
 ### Language-Specific Rules (conditionally loaded)
@@ -74,15 +72,15 @@ globs:
 ## Usage Examples
 
 ### Editing Python Files
-**Auto-loaded:** All 7 universal + workflow rules
+**Auto-loaded:** All 6 universal + workflow rules
 **Conditionally loaded:** `lang/python.md`
 
 ### Editing Shell Scripts
-**Auto-loaded:** All 7 universal + workflow rules
+**Auto-loaded:** All 6 universal + workflow rules
 **Conditionally loaded:** `lang/shell.md`, `lang/bash.md`
 
 ### Editing Zsh Files
-**Auto-loaded:** All 7 universal + workflow rules
+**Auto-loaded:** All 6 universal + workflow rules
 **Conditionally loaded:** `lang/shell.md`, `lang/zsh.md`
 
 ## Rule Dependencies
@@ -96,13 +94,11 @@ graph TD
     CLAUDE --> Language[Language Rules]
 
     Universal --> CS[coding-style.md]
-    Universal --> QL[quality.md]
     Universal --> PT[patterns.md]
     Universal --> SC[security.md]
 
     Workflow --> DW[dev-workflow.md]
     Workflow --> GW[git-workflow.md]
-    Workflow --> HK[hooks.md]
     Workflow --> TS[testing.md]
 
     Language --> SH[lang/shell.md]
@@ -115,19 +111,12 @@ graph TD
     SH -.->|extends| BA
     SH -.->|extends| ZH
 
-    CS -.->|references| QL
     CS -.->|references| PT
-    QL -.->|references| SC
+    CS -.->|references| SC
 
-    DW -.->|references| HK
     DW -.->|references| GW
     DW -.->|references| CS
 
-    HK -.->|references| GW
-    HK -.->|references| SC
-    HK -.->|references| EL
-
-    TS -.->|references| HK
     TS -.->|references| DW
     TS -.->|cross-references| PY
     TS -.->|cross-references| EL
@@ -143,9 +132,8 @@ graph TD
 
 **Key Dependencies:**
 - `lang/bash.md` and `lang/zsh.md` both extend `lang/shell.md`
-- `quality.md` references `coding-style.md` and `security.md`
-- `dev-workflow.md` references `hooks.md`, `git-workflow.md`, and `coding-style.md`
-- `hooks.md` references `git-workflow.md`, `security.md`, and `lang/elisp.md`
+- `coding-style.md` references `patterns.md` and `security.md`
+- `dev-workflow.md` references `git-workflow.md` and `coding-style.md`
 - `testing.md` provides universal testing principles with cross-references to language-specific testing
 
 ## Adding New Rules

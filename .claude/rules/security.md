@@ -140,6 +140,27 @@ setopt HIST_IGNORE_SPACE  # zsh
 export HISTCONTROL=ignorespace  # bash
 ```
 
+### Safe File Operations
+
+Always guard file operations to prevent data loss:
+
+```bash
+# Check directory exists before using it
+[[ -d "$dir" ]] || mkdir -p "$dir"
+
+# Verify before creating symlink (don't overwrite existing)
+[[ -L "$link" ]] || ln -s "$target" "$link"
+
+# Backup before modifying in-place
+cp "$file" "${file}.bak"
+
+# Check before overwriting a target file
+if [[ -f "$target" ]]; then
+  printf 'warning: %s exists, skipping\n' "$target" >&2
+  return 1
+fi
+```
+
 ## Incident Response
 
 If secrets are accidentally committed:
