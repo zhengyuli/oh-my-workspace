@@ -409,3 +409,419 @@ source "$ZDOTDIR/completion.zsh"
 
 For Bash-specific features, see `bash.md`.
 For Zsh-specific features, see `zsh.md`.
+## Section Structure (Enhanced)
+
+Organize shell scripts into logical sections with clear delimiters:
+
+```bash
+# -----------------------------------------------------------------------------
+# Section Title
+# -----------------------------------------------------------------------------
+```
+
+### Delimiter Format
+
+- **Length**: 77 characters (80 - 3 for `# `)
+- **Format**: `# ` + `-` * 77
+- **Purpose**: Visual separation of logical sections
+
+### Standard Section Order
+
+1. **File Header** - Purpose, usage, dependencies
+2. **Constants** - Read-only configuration (use `readonly`)
+3. **Utility Functions** - Private helpers (prefix with `_`)
+4. **Core Functions** - Public interface
+5. **Main Entry Point** - Script execution
+
+### Example
+
+```bash
+#!/usr/bin/env bash
+# script.sh -*- mode: sh; -*-
+# =============================================================================
+# Script Description
+#
+# Location: $WORKSPACE_DIR/script.sh
+# Usage: ./script.sh [options]
+# Dependencies: bash 4.3+
+# References:
+#   1. Related documentation
+# =============================================================================
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Constants
+# -----------------------------------------------------------------------------
+
+readonly SCRIPT_NAME="$(basename "$0")"
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+readonly DEFAULT_TIMEOUT=30
+
+# -----------------------------------------------------------------------------
+# Utility Functions
+# -----------------------------------------------------------------------------
+
+_log() {
+  local -r level="$1"
+  local -r message="$2"
+  printf '[%s] %s\n' "$level" "$message" >&2
+}
+
+# -----------------------------------------------------------------------------
+# Core Functions
+# -----------------------------------------------------------------------------
+
+process_file() {
+  local -r input="$1"
+  # Implementation
+}
+
+# -----------------------------------------------------------------------------
+# Main Entry Point
+# -----------------------------------------------------------------------------
+
+main() {
+  # Script logic
+}
+
+main "$@"
+```
+
+## Enhanced File Headers
+
+Shell scripts MUST include comprehensive headers matching config file patterns:
+
+```bash
+#!/usr/bin/env bash
+# script.sh -*- mode: sh; -*-
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Script Title - Brief Description
+#
+# Location: $WORKSPACE_DIR/path/to/script.sh
+# Usage: ./script.sh [options] [arguments]
+# Dependencies: bash 4.3+, required tools
+#
+# References:
+#   1. Official documentation URL
+#   2. Related reference URL
+#
+# Note: Important usage notes or warnings
+# =============================================================================
+```
+
+### Header Components
+
+**Shebang**: `#!/usr/bin/env bash` (or `zsh`)
+- Use `env` for portability across systems
+
+**Mode Line**: `-*- mode: sh; -*-`
+- Enables proper editor syntax highlighting
+
+**Timestamp**: `Time-stamp: <...>`
+- Format: `<YYYY-MM-DD HH:MM:SS Day by username>`
+- Auto-updated by Emacs `time-stamp` package
+
+**Location**: Where file resides
+- Use `$WORKSPACE_DIR` for repo-relative paths
+- Use `~/.config/...` for XDG-compliant paths
+
+**Usage**: How to run the script
+- Command syntax
+- Available options
+- Expected arguments
+
+**Dependencies**: External requirements
+- Shell version requirements
+- Required tools/packages
+- Optional dependencies
+
+**References**: External documentation
+- Numbered list (1., 2., 3.)
+- Include official docs first
+- Add helpful references second
+
+**Note**: Important clarifications
+- Non-obvious behavior
+- Security considerations
+- Platform-specific notes
+
+## Interactive Shell Files
+
+For `.zshrc`, `.bashrc`, and other interactive shell configs:
+
+### Header Pattern
+
+```bash
+# .zshrc
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Interactive Shell Orchestrator
+#
+# Loaded by: Interactive shells only (new terminal tab, zsh invocation)
+# Load order: After .zshenv and .zprofile
+#
+# Responsibilities:
+#   1. Guard against non-interactive execution
+#   2. Source all conf.d fragments in numeric order
+#
+# This file is a pure loader -- all configuration lives in conf.d/
+# Do NOT add: environment variables, PATH, direct configuration
+# =============================================================================
+```
+
+### Interactive Guard
+
+Always guard interactive-only configuration:
+
+```bash
+# Exit immediately if not running interactively.
+if [[ $- != *i* ]]; then
+  return
+fi
+```
+
+### conf.d Pattern
+
+Split configuration into focused files:
+
+```bash
+# Source all conf.d fragments in numeric order
+for config_file in "$ZDOTDIR/conf.d"/*.zsh; do
+  source "$config_file"
+done
+unset config_file
+```
+
+File naming convention:
+```
+00-env.zsh        # Environment variables
+05-path.zsh       # PATH configuration
+10-options.zsh    # Shell options
+15-aliases.zsh    # Aliases
+20-functions.zsh  # Functions
+25-completion.zsh # Completion system
+30-plugins.zsh    # Plugin loading
+35-prompt.zsh     # Prompt configuration
+```
+
+## Delimiter Hierarchy (MANDATORY)
+
+All shell scripts MUST use a three-level delimiter system:
+
+### Level 0: File Header Delimiter
+
+**Format**: `# ` + `=` * 77 (79 total characters)
+**Purpose**: Mark file-level metadata area
+**Character**: `=` (equals sign - strongest visual emphasis)
+
+```bash
+#!/usr/bin/env bash
+# script.sh -*- mode: sh; -*-
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Script Title
+#
+# Location: ...
+# Usage: ...
+# Dependencies: ...
+# References:
+#   1. ...
+# =============================================================================
+```
+
+**Position**: 
+- Immediately after shebang, mode line, and timestamp
+- Surrounds file header metadata
+
+### Level 1: Primary Section Delimiter
+
+**Format**: `# ` + `-` * 77 (79 total characters)
+**Purpose**: Mark major functional categories
+**Character**: `-` (hyphen - medium visual emphasis)
+
+```bash
+# -----------------------------------------------------------------------------
+# Primary Category
+# -----------------------------------------------------------------------------
+```
+
+**Characteristics**:
+- Appears in pairs (top and bottom boundary)
+- Single-level category (no hyphen in title)
+
+### Level 2: Subsection Delimiter
+
+**Format**: `# ` + `-` * 77 (79 total characters) + " - " in title
+**Purpose**: Mark subcategories within primary categories
+**Character**: `-` (hyphen - same as Level 1)
+**Distinction**: Title uses " - " (space-hyphen-space) to indicate hierarchy
+
+```bash
+# -----------------------------------------------------------------------------
+# Primary Category - Subcategory
+# -----------------------------------------------------------------------------
+```
+
+**Characteristics**:
+- Appears in pairs (top and bottom boundary)
+- Title contains " - " to show parent-child relationship
+- Uses same delimiter character as Level 1, distinguished by title content
+
+### Hierarchy Example
+
+```
+File Header (Level 0)
+├── Bootstrap (Level 1)
+├── Constants (Level 1)
+├── Functions (Level 1)
+│   ├── Functions - Logging (Level 2)
+│   ├── Functions - Validation (Level 2)
+│   └── Functions - Package Management (Level 2)
+└── Main Entry Point (Level 1)
+```
+
+### Complete Example
+
+```bash
+#!/usr/bin/env bash
+# setup.sh -*- mode: sh; -*-
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Oh-my-workspace Setup Script
+#
+# Location: $WORKSPACE_DIR/setup.sh
+# Usage: ./setup.sh install --all
+# Dependencies: bash 4.3+, GNU Stow
+# =============================================================================
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Bootstrap
+# -----------------------------------------------------------------------------
+# Version checks and environment validation
+
+if (( BASH_VERSINFO[0] < 4 )); then
+  echo "error: bash 4.3+ required" >&2
+  exit 1
+fi
+
+# -----------------------------------------------------------------------------
+# Constants
+# -----------------------------------------------------------------------------
+
+readonly SCRIPT_NAME="$(basename "$0")"
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+readonly NETWORK_TIMEOUT=60
+
+# -----------------------------------------------------------------------------
+# Functions
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Functions - Logging
+# -----------------------------------------------------------------------------
+
+log_info() {
+  printf '[info] %s\n' "$1"
+}
+
+log_error() {
+  printf '[error] %s\n' "$1" >&2
+}
+
+# -----------------------------------------------------------------------------
+# Functions - Validation
+# -----------------------------------------------------------------------------
+
+validate_package() {
+  local -r pkg="$1"
+  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
+}
+
+# -----------------------------------------------------------------------------
+# Functions - Package Management
+# -----------------------------------------------------------------------------
+
+install_package() {
+  local -r pkg="$1"
+  stow -v -t "$HOME" "$pkg"
+}
+
+# -----------------------------------------------------------------------------
+# Main Entry Point
+# -----------------------------------------------------------------------------
+
+main() {
+  log_info "Starting setup..."
+  # Implementation
+}
+
+main "$@"
+```
+
+### Delimiter Specifications
+
+**Width Calculation**:
+- Total width: 79 characters (80-char line - 1 newline)
+- Format: `# ` (2 chars) + delimiter character * 77
+
+**Character Selection**:
+- **Level 0**: `=` (equals) - strongest emphasis for file header
+- **Level 1 & 2**: `-` (hyphen) - medium emphasis for sections
+
+**Title Format**:
+- **Level 1**: `Primary Category` (single phrase)
+- **Level 2**: `Primary Category - Subcategory` (connected with " - ")
+
+### Comment Grouping (Optional)
+
+Within a section, use simple blank lines and comments for further grouping:
+
+```bash
+# -----------------------------------------------------------------------------
+# Constants
+# -----------------------------------------------------------------------------
+
+# Network settings
+readonly NETWORK_TIMEOUT=60
+readonly RETRY_DELAY=5
+
+# Display settings
+readonly COLOR_RED='\033[0;31m'
+readonly COLOR_GREEN='\033[0;32m'
+```
+
+This avoids excessive delimiter usage while maintaining clarity.
+
+### Interactive Shell Files
+
+For `.zshrc`, `.bashrc`, and similar files:
+
+```bash
+# .zshrc
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Interactive Shell Orchestrator
+#
+# Loaded by: Interactive shells only
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Interactive Guard
+# -----------------------------------------------------------------------------
+if [[ $- != *i* ]]; then
+  return
+fi
+
+# -----------------------------------------------------------------------------
+# Module Loader
+# -----------------------------------------------------------------------------
+# Load all conf.d fragments
+
+for config_file in "$ZDOTDIR/conf.d"/*.zsh; do
+  source "$config_file"
+done
+```

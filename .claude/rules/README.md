@@ -36,7 +36,9 @@ Located in the `lang/` subdirectory, these rules extend universal standards with
 | `lang/bash.md` | `**/*.sh`, `**/*.bash` | Bash-specific features |
 | `lang/zsh.md` | `**/*.zsh`, `**/.zsh*`, `**/zshrc`, `**/zprofile`, `**/zshenv`, `**/zlogin` | Zsh-specific features |
 | `lang/elisp.md` | `**/*.el` | Emacs Lisp conventions |
-| `lang/python.md` | `**/*.py` | Python standards |
+| `lang/config.md` | `**/config`, `**/*.conf`, `**/*.cfg`, `**/rc`, `**/.gitconfig`, `**/git/config` | Configuration files (no extension) |
+| `lang/toml.md` | `**/*.toml` | TOML configuration files |
+| `lang/yaml.md` | `**/*.yml`, `**/*.yaml` | YAML configuration files |
 
 ## Conditional Loading System
 
@@ -73,7 +75,6 @@ globs:
 
 ### Editing Python Files
 **Auto-loaded:** All 6 universal + workflow rules
-**Conditionally loaded:** `lang/python.md`
 
 ### Editing Shell Scripts
 **Auto-loaded:** All 6 universal + workflow rules
@@ -105,7 +106,6 @@ graph TD
     Language --> BA[lang/bash.md]
     Language --> ZH[lang/zsh.md]
     Language --> EL[lang/elisp.md]
-    Language --> PY[lang/python.md]
 
     %% Dependencies
     SH -.->|extends| BA
