@@ -36,8 +36,7 @@ vim/.config/vim/undo/
 vim/.config/vim/session/
 vim/.config/vim/view/
 
-# Claude Code (track rules, ignore local settings)
-.claude/settings.json
+# Claude Code (track rules and project settings, ignore local settings)
 .claude/settings.local.json
 
 # -----------------------------------------------------------------------------

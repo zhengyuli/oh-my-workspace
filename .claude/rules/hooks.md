@@ -43,9 +43,9 @@ At session end, verifies:
 
 ### Configuration
 
-Claude Code hooks must be configured in `settings.json` or `settings.local.json`:
+Claude Code hooks must be explicitly registered in `settings.json` or `settings.local.json`. **There is no auto-discovery mechanism** - hook scripts in `.claude/hooks/` will not run unless registered.
 
-**Project-level configuration** (`.claude/settings.local.json`):
+**Project-level configuration** (`.claude/settings.json`):
 ```json
 {
   "hooks": {
@@ -55,7 +55,7 @@ Claude Code hooks must be configured in `settings.json` or `settings.local.json`
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_ROOT}/.claude/hooks/post-tool-use.sh"
+            "command": ".claude/hooks/post-tool-use.sh"
           }
         ]
       }
@@ -66,7 +66,7 @@ Claude Code hooks must be configured in `settings.json` or `settings.local.json`
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_ROOT}/.claude/hooks/stop.sh"
+            "command": ".claude/hooks/stop.sh"
           }
         ]
       }
@@ -74,6 +74,8 @@ Claude Code hooks must be configured in `settings.json` or `settings.local.json`
   }
 }
 ```
+
+**Note:** Use relative paths from project root (`.claude/hooks/...`) instead of environment variables like `${CLAUDE_PROJECT_ROOT}`.
 
 **Global configuration** (`~/.claude/settings.json`):
 ```json
@@ -93,6 +95,10 @@ Claude Code hooks must be configured in `settings.json` or `settings.local.json`
   }
 }
 ```
+
+**Configuration Priority:**
+- Project-level `.claude/settings.json` overrides global `~/.claude/settings.json`
+- `.claude/settings.local.json` is for personal settings (typically in `.gitignore`)
 
 ### Matcher Patterns
 
@@ -150,19 +156,48 @@ Check for hardcoded secrets before commit (see `security.md`).
 
 ### Claude Code Hooks
 
-1. **Configure in settings:**
-   ```bash
-   # Edit project settings
-   vim .claude/settings.local.json
-   ```
+**Important:** Hook scripts must be explicitly registered in `settings.json` to run. There is no auto-discovery.
 
-2. **Add hook configuration:**
-   Add the JSON configuration shown above to the `hooks` section.
-
-3. **Verify hooks are executable:**
+1. **Verify hook scripts exist and are executable:**
    ```bash
+   ls -la .claude/hooks/
    chmod +x .claude/hooks/*.sh
    ```
+
+2. **Create or update `.claude/settings.json`:**
+   ```bash
+   # Create settings.json with hook configuration
+   cat > .claude/settings.json << 'EOF'
+   {
+     "hooks": {
+       "PostToolUse": [
+         {
+           "matcher": "Edit|Write",
+           "hooks": [
+             {
+               "type": "command",
+               "command": ".claude/hooks/post-tool-use.sh"
+             }
+           ]
+         }
+       ],
+       "Stop": [
+         {
+           "matcher": ".*",
+           "hooks": [
+             {
+               "type": "command",
+               "command": ".claude/hooks/stop.sh"
+             }
+           ]
+         }
+       ]
+     }
+   }
+   EOF
+   ```
+
+3. **Note:** `.claude/settings.json` may be in `.gitignore` if it contains project-specific settings. For team-shared hooks, consider committing a template or documenting the required configuration.
 
 ### Git Hooks
 

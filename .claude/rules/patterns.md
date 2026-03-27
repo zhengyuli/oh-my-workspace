@@ -68,7 +68,7 @@ sed 's/old/new/' ~/.zshrc.bak > ~/.zshrc
     │   └── omw-shell.el
     ├── tool/            # Tool integrations
     │   ├── omw-project.el
-    │   └── omw-vc.el
+    │   └── omw-git.el
     ├── text/            # Text processing
     │   └── omw-markdown.el
     └── lib/             # Utilities
@@ -119,7 +119,7 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 ;; Feature modules (optional based on use)
 (require 'omw-shell)
-(require 'omw-vc)
+(require 'omw-git)
 (require 'omw-project)
 
 ;; Local overrides (not in git)
@@ -128,7 +128,7 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 **Each module file should:**
 - Be < 400 lines
-- Have single responsibility (e.g., `omw-vc.el` only configures version control packages)
+- Have single responsibility (e.g., `omw-git.el` only configures git-related packages)
 - Be documented with commentary section
 - Handle missing dependencies gracefully
 
