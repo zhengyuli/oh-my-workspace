@@ -110,3 +110,18 @@ option10 = value10
 ```
 
 **Validate**: `git log -p | grep -E "(password|token|key)" | head -20`
+
+## Validation
+
+Verify the config is accepted by its consuming tool before committing:
+
+```bash
+# Git config
+git config --list
+
+# Ripgrep (no dedicated check — test a real search)
+rg --version
+```
+
+For other tools, reload or restart the application after editing to confirm
+the config is valid.

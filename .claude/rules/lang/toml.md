@@ -103,6 +103,38 @@ style = "bg:#00ADD8"
 **Arrays**: `items = ["a", "b"]` or multiline
 **Tables**: `[section]` or inline `{ x = 1, y = 2 }`
 
+## Security
+
+### Secrets
+
+Never hardcode API keys, tokens, or credentials in TOML files:
+
+```toml
+# Bad — hardcoded secret committed to git
+api_key = "sk-1234567890"
+```
+
+Use a split-file strategy: commit a `config.toml` with placeholders or
+non-sensitive defaults; keep secrets in a `config.local.toml` that is
+listed in `.gitignore`:
+
+```toml
+# config.toml (committed)
+[api]
+# Set key in config.local.toml or environment
+
+# config.local.toml (not committed)
+[api]
+key = "sk-1234567890"
+```
+
+Add to `.gitignore`:
+
+```
+*.local.toml
+*_secret.toml
+```
+
 ## Validation
 
 ```bash
