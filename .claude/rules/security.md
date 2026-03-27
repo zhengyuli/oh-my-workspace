@@ -132,13 +132,9 @@ Be careful with:
 - API calls with tokens
 - Database connection strings
 
-### Safe Defaults
-
-```bash
-# Don't store secrets in history
-setopt HIST_IGNORE_SPACE  # zsh
-export HISTCONTROL=ignorespace  # bash
-```
+Prefix sensitive commands with a space to exclude them from history.
+See `lang/zsh.md` (`HIST_IGNORE_SPACE`) and `lang/bash.md`
+(`HISTCONTROL`) for per-shell configuration.
 
 ### Safe File Operations
 

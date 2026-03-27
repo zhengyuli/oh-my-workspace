@@ -54,6 +54,35 @@ End predicate functions with `-p`:
 
 ## File Structure
 
+### Modular init.el
+
+Structure `init.el` as a thin loader — all configuration lives in
+feature modules:
+
+```elisp
+;;; init.el -*- lexical-binding: t; -*-
+;; Main entry point — load feature modules
+
+;; Core modules (always required)
+(require 'omw-base)
+(require 'omw-packages)
+(require 'omw-keybindings)
+
+;; Feature modules
+(require 'omw-shell)
+(require 'omw-git)
+(require 'omw-project)
+
+;; Local overrides (not in git)
+(require 'omw-local nil t)
+```
+
+Each module file must:
+- Be < 400 lines
+- Have single responsibility (e.g., `omw-git.el` only configures git)
+- Be documented with a commentary section
+- Handle missing dependencies gracefully
+
 ### Commentary Section
 
 Start with commentary:
@@ -180,6 +209,26 @@ Use `use-package` for dependencies:
 ```
 
 ## Best Practices
+
+### Immutability
+
+Prefer creating new lists over mutating existing ones:
+
+```elisp
+;; WRONG: Mutates the existing list in-place
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+
+;; CORRECT: Creates a new list — safe, side-effect-free
+(setq auto-mode-alist
+      (cons '("\\.py\\'" . python-mode) auto-mode-alist))
+```
+
+Use `defconst` for values that must never change:
+
+```elisp
+(defconst omw-version "1.0.0"
+  "Current version of oh-my-workspace.")
+```
 
 ### Lexical Binding
 
