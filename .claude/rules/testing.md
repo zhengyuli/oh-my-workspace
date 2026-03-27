@@ -78,7 +78,7 @@ emacs --batch --eval "(progn (find-file \"init.el\") (check-parens) (emacs-lisp-
 Run tests:
 ```bash
 # Run all tests
-emacs --batch -l init.el -l init-test.el -f ert-run-tests-batch-and-exit
+emacs --batch -l init.el -l omw-test.el -f ert-run-tests-batch-and-exit
 ```
 
 **Integration Testing:**
