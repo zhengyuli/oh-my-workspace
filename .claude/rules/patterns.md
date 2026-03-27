@@ -47,7 +47,7 @@ sed 's/old/new/' ~/.zshrc.bak > ~/.zshrc
 
 **When to split configuration files:**
 
-- Emacs: Separate major modes into individual files (e.g., `init-python.el`, `init-git.el`)
+- Emacs: Separate major modes into individual files (e.g., `omw-python.el`, `omw-git.el`)
 - Zsh: Split aliases, functions, and options into separate files
 - Shell scripts: Extract utilities from main scripts
 
@@ -55,12 +55,25 @@ sed 's/old/new/' ~/.zshrc.bak > ~/.zshrc
 
 ```
 ~/.config/emacs/
-├── init.el          # Main entry (< 100 lines)
-├── init-base.el     # Base configuration (< 300 lines)
-├── init-editor.el   # Editor settings (< 200 lines)
-├── init-shell.el    # Shell integration (< 150 lines)
-├── init-git.el      # Git configuration (< 200 lines)
-└── init-python.el   # Python setup (< 150 lines)
+├── init.el              # Main entry (< 100 lines)
+├── early-init.el        # Early initialization
+└── lisp/
+    ├── editor/          # Editor features
+    │   ├── omw-completion.el
+    │   ├── omw-edit.el
+    │   └── omw-search.el
+    ├── lang/            # Language support
+    │   ├── omw-python.el
+    │   ├── omw-gitconfig.el
+    │   └── omw-shell.el
+    ├── tool/            # Tool integrations
+    │   ├── omw-project.el
+    │   └── omw-vc.el
+    ├── text/            # Text processing
+    │   └── omw-markdown.el
+    └── lib/             # Utilities
+        ├── omw-utils.el
+        └── omw-proxy.el
 ```
 
 **Benefits:**
@@ -100,22 +113,22 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 ;; Main entry point - load modules
 
 ;; Core modules (required)
-(require 'init-base)
-(require 'init-packages)
-(require 'init-keybindings)
+(require 'omw-base)
+(require 'omw-packages)
+(require 'omw-keybindings)
 
 ;; Feature modules (optional based on use)
-(require 'init-shell)
-(require 'init-git)
-(require 'init-project)
+(require 'omw-shell)
+(require 'omw-vc)
+(require 'omw-project)
 
 ;; Local overrides (not in git)
-(require 'init-local nil t)
+(require 'omw-local nil t)
 ```
 
 **Each module file should:**
 - Be < 400 lines
-- Have single responsibility (e.g., `init-git.el` only configures git-related packages)
+- Have single responsibility (e.g., `omw-vc.el` only configures version control packages)
 - Be documented with commentary section
 - Handle missing dependencies gracefully
 
