@@ -189,26 +189,71 @@ Key structural elements to adopt:
 
 We adopt the **structure** (hierarchy levels) but adapt the **syntax** for Markdown.
 
+### Delimiter Usage Examples
+
+Level 0 (File boundaries):
+```markdown
+# ============================================================================
+# Coding Style
+# ============================================================================
+```
+
+Level 1 (Major sections):
+```markdown
+# -----------------------------------------------------------------------------
+# Comment Standards
+# -----------------------------------------------------------------------------
+```
+
+Level 2 (Subsections within a section):
+```markdown
+# --- Content Principles ---
+```
+
 ## Cross-Reference Inventory
 
-All files that reference moved/changed rules:
+### Files Being Modified/Moved
 
-| File | Lines | References | Action Required |
-|------|-------|------------|-----------------|
-| `CLAUDE.md` | 161-180 | `coding-style.md`, `patterns.md`, `dev-workflow.md`, `git-workflow.md` | Update paths for workflow files |
-| `CLAUDE.md` | 264, 271 | `.claude/rules/` directory | Update description if needed |
-| `patterns.md` | 26 | `coding-style.md` | No change (same file) |
-| `dev-workflow.md` | 234-235 | `git-workflow.md`, `coding-style.md` | Update paths in "See Also" section |
-| `README.md` | All | Multiple references | **Delete this file** |
+| File | Action | New Path | References to Update |
+|------|--------|----------|---------------------|
+| `coding-style.md` | Refactor | `.claude/rules/coding-style.md` (unchanged) | None |
+| `patterns.md` | Refactor | `.claude/rules/patterns.md` (unchanged) | Line 26: self-ref (no change) |
+| `dev-workflow.md` | Move | `.claude/skills/dev-workflow.md` | See below |
+| `git-workflow.md` | Move | `.claude/skills/git-workflow.md` | See below |
+| `README.md` | Delete | N/A | N/A |
 
-### Search Patterns for Finding References
+### References Requiring Updates
+
+| Source File | Lines | Reference | New Value |
+|-------------|-------|-----------|-----------|
+| `CLAUDE.md` | 169 | `.claude/rules/dev-workflow.md` | `.claude/skills/dev-workflow.md` |
+| `CLAUDE.md` | 170 | `.claude/rules/git-workflow.md` | `.claude/skills/git-workflow.md` |
+| `dev-workflow.md` | 234-235 | `git-workflow.md`, `coding-style.md` | Update to relative paths from `skills/` |
+| `CLAUDE.md` | 180 | `.claude/rules/README.md` | Remove line (README deleted) |
+
+### Non-Existent File References (Cleanup Required)
+
+| Source File | Lines | Missing Reference | Action |
+|-------------|-------|-------------------|--------|
+| `CLAUDE.md` | 166 | `security.md` | **Remove line** (no such file exists) |
+| `CLAUDE.md` | 171 | `testing.md` | **Remove line** (no such file exists) |
+| `CLAUDE.md` | 174 | `lang/shell.md` | **Remove line** (no such file exists) |
+| `CLAUDE.md` | 178 | `lang/python.md` | **Remove line** (no such file exists) |
+| `dev-workflow.md` | 233 | `hooks.md` | **Remove line** (no such file exists) |
+
+**Note:** These references are documentation bugs - they reference files that were planned but never created. This refactoring should clean them up.
+
+### Search Patterns for Verification
 
 ```bash
-# Find references to workflow files
+# Find references to workflow files (should find only in skills/ after migration)
 grep -r "dev-workflow\|git-workflow" .claude/
 
-# Find references to rules directory
-grep -r "\.claude/rules/" CLAUDE.md .claude/
+# Find references to non-existent files (should return nothing after cleanup)
+grep -E "security\.md|testing\.md|shell\.md|python\.md|hooks\.md" CLAUDE.md .claude/
+
+# Find all .md file references (for manual verification)
+grep -oE "[a-z-]+\.md" CLAUDE.md .claude/rules/*.md | sort -u
 ```
 
 ## Content Principles
@@ -249,10 +294,38 @@ Current `coding-style.md` contains an actionable checklist (lines 119-136). This
 
 ## Migration Plan
 
+### Phase 0: Pre-Flight Check
+1. Verify current state: `ls -la .claude/rules/`
+2. Document all files that reference rules:
+   ```bash
+   grep -r "\.claude/rules/" CLAUDE.md .claude/
+   grep -rE "coding-style|patterns\.md|dev-workflow|git-workflow" CLAUDE.md .claude/
+   ```
+3. Identify all non-existent file references:
+   ```bash
+   grep -E "security\.md|testing\.md|shell\.md|python\.md|hooks\.md" CLAUDE.md .claude/
+   ```
+
 ### Phase 1: Prepare
-1. Create `skills/` directory
-2. Create backup branch: `git checkout -b refactor/rules-cleanup`
-3. Verify current state: `ls -la .claude/rules/`
+1. Create backup branch: `git checkout -b refactor/rules-cleanup`
+2. Create `.claude/skills/` directory
+3. Verify current file list matches expected state
+
+### Phase 2: Refactor Universal Rules
+1. Refactor `coding-style.md`:
+   - Remove YAML frontmatter (lines 1-5)
+   - Restructure sections per template (hierarchy)
+   - Merge Comment/Delimiter sections
+   - Simplify to principle statements (remove "when to use" lists)
+   - Keep simplified checklist:
+     - **Keep**: File headers, comments, naming, immutability, file size
+     - **Remove**: "Run `./setup.sh clean`", "Commit message follows Conventional Commits"
+2. Refactor `patterns.md`:
+   - Remove YAML frontmatter (lines 1-5)
+   - Ensure focus is design/organization (not format)
+   - Simplify to principle statements
+   - Verify no overlap with `coding-style.md`
+3. Remove `README.md` (rules are self-documenting)
 
 ### Phase 2: Refactor Universal Rules
 1. Refactor `coding-style.md`:
@@ -275,11 +348,21 @@ Current `coding-style.md` contains an actionable checklist (lines 119-136). This
 
 ### Phase 4: Update Cross-References
 1. Update `CLAUDE.md`:
-   - Lines 161-180: Update workflow file paths
-   - Lines 264, 271: Verify description still accurate
-2. Verify no broken references:
+   - **Lines 161-180**: Update workflow file paths to `skills/` directory
+   - **Line 166**: Remove `security.md` reference (file doesn't exist)
+   - **Line 171**: Remove `testing.md` reference (file doesn't exist)
+   - **Line 174**: Remove `lang/shell.md` reference (file doesn't exist)
+   - **Line 178**: Remove `lang/python.md` reference (file doesn't exist)
+   - **Line 180**: Remove reference to `README.md` (file being deleted)
+   - **Lines 264, 271**: Verify description still accurate after changes
+2. Update moved files (`skills/dev-workflow.md`, `skills/git-workflow.md`):
+   - Update "See Also" section paths to relative references
+   - Remove `hooks.md` reference from `dev-workflow.md` (line 233)
+3. Verify no broken references:
    ```bash
+   # Should return nothing after cleanup
    grep -r "dev-workflow\|git-workflow" .claude/ --exclude-dir=skills
+   grep -E "security\.md|testing\.md|shell\.md|python\.md|hooks\.md" CLAUDE.md .claude/
    ```
 
 ### Phase 5: Verification Protocol
@@ -296,11 +379,13 @@ grep -r "\[.*\](.*\.md)" .claude/rules/ .claude/skills/
 #### 5.2 Content Review
 - [ ] Universal rules have no YAML frontmatter
 - [ ] No tool-specific content in universal rules
-- [ ] `coding-style.md` focuses on format
-- [ ] `patterns.md` focuses on design
+- [ ] `coding-style.md` focuses on format (not design)
+- [ ] `patterns.md` focuses on design (not format)
 - [ ] No overlap between the two files
 - [ ] Workflow files in `skills/` directory
 - [ ] All cross-references updated
+- [ ] CLAUDE.md references only existing files
+- [ ] No dangling references to deleted files (security.md, testing.md, etc.)
 
 #### 5.3 Rule Loading Verification
 Since Claude Code loads rules based on file structure and settings.json, verify:
@@ -328,6 +413,8 @@ If any of these occur, abort and restore from backup:
 7. ✅ All cross-references updated and verified
 8. ✅ No dangling references to old file locations
 9. ✅ Security content preserved (distributed across files)
+10. ✅ CLAUDE.md references only existing files
+11. ✅ No references to non-existent files (security.md, testing.md, shell.md, python.md, hooks.md)
 
 ## References
 
