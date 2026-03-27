@@ -1,43 +1,193 @@
 ---
-globs: ["**/*.sh", "**/*.bash"]
-version: "1.0.0"
-last-updated: "2026-03-26"
-maintainer: "zhengyu.li"
+globs:
+  - "**/*.sh"
+  - "**/*.bash"
 ---
-# Bash-Specific Conventions
 
-Bash-specific features extending the common shell practices.
+# Bash Conventions
 
-## Base Requirements
+Bash-specific features and universal shell practices.
 
-This file extends `shell.md`. Read that first.
-
-## Version Requirements
-
-- **Minimum:** Bash 4.3+ (for namerefs and associative arrays)
-- **Check version:** `echo "${BASH_VERSION}"`
-
-## Shebang
-
-Always use `#!/usr/bin/env bash`:
+## File Header (MANDATORY)
 
 ```bash
 #!/usr/bin/env bash
+# script.sh -*- mode: sh; -*-
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# =============================================================================
+# Script Title - Brief Description
+#
+# Location: $WORKSPACE_DIR/path/to/script.sh
+# Usage: ./script.sh [options]
+# Dependencies: bash 4.3+
+# References:
+#   1. Official documentation URL
+# =============================================================================
 ```
 
-**Rationale:**
-- Works across different systems
-- Respects user's PATH
-- Not hardcoded to `/bin/bash`
+**Shebang**: `#!/usr/bin/env bash` (use `env` for portability)
 
-## Advanced Features
+## Delimiter Hierarchy (MANDATORY)
+
+**Level 0** (File Header): `# ===` * 77 (79 chars)
+**Level 1** (Primary Section): `# ---` * 77 (79 chars)
+**Level 2** (Subsection): `# --- Title ---` (inline style)
+
+**Example:**
+```bash
+#!/usr/bin/env bash
+# =============================================================================
+# Setup Script
+# =============================================================================
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Constants
+# -----------------------------------------------------------------------------
+readonly SCRIPT_NAME="$(basename "$0")"
+
+# -----------------------------------------------------------------------------
+# Functions
+# -----------------------------------------------------------------------------
+
+# --- Logging ---
+log_info() {
+  printf '[info] %s\n' "$1"
+}
+
+# --- Validation ---
+validate_package() {
+  local -r pkg="$1"
+  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
+}
+```
+
+## Error Handling
+
+**Strict Mode** (MANDATORY for scripts):
+```bash
+set -euo pipefail
+```
+
+- `-e` - Exit on non-zero status
+- `-u` - Treat unset variables as error
+- `-o pipefail` - Pipeline fails on first error
+
+**ERR Trap** (Bash-specific):
+```bash
+_err_handler() {
+  local -r code=$?
+  printf '[error] %s() line %d: exit %d\n' \
+    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+}
+trap '_err_handler' ERR
+```
+
+**Exit Codes**: `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
+
+## Comments & Patterns
+
+**Comments**: Explain WHY, not WHAT. Use separate lines.
+
+```bash
+# Validate package exists before stow operations
+_validate_package() {
+  local -r pkg="$1"
+  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
+}
+```
+
+**Variables**: Always quote, always local in functions
+```bash
+# CORRECT
+_process_file() {
+  local -r input="$1"
+  rm -rf "$dir"
+}
+
+# WRONG
+_process_file() {
+  input=$1
+  rm -rf $dir
+}
+```
+
+**Conditionals**: `[[ ]]` for strings, `(( ))` for arithmetic
+```bash
+if [[ "$var" == "value" ]]; then  # String
+if (( count > 0 )); then          # Arithmetic
+```
+
+**Default Values**: `${VAR:-default}`
+```bash
+WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
+```
+
+**Formatting Rules:**
+- Never align values with spaces
+- Never use inline comments for explanations
+- Avoid `A || B` and `A && B` patterns, prefer `if-else` for clarity
+
+```bash
+# WRONG - aligned
+SCRIPT_NAME="$(basename "$0")"
+SCRIPT_DIR ="$(cd "$(dirname "$0")" && pwd)"
+
+# WRONG - short-circuit operators (unclear intent)
+[[ -f "$file" ]] && cat "$file"
+[[ ! -d "$dir" ]] || mkdir -p "$dir"
+
+# CORRECT - explicit conditionals (clear intent)
+if [[ -f "$file" ]]; then
+  cat "$file"
+fi
+
+if [[ ! -d "$dir" ]]; then
+  mkdir -p "$dir"
+fi
+```
+
+## Functions
+
+**Single Responsibility**: One thing per function
+```bash
+_validate_package() { ... }  # Validation only
+_install_package() { ... }   # Installation only
+```
+
+**Parameter Validation**: Validate at start
+```bash
+_validate_package() {
+  local -r pkg="$1"
+  if [[ -z "$pkg" ]]; then
+    printf 'error: package required\n' >&2
+    return 1
+  fi
+}
+```
+
+## Parameter Handling
+
+**getopts**: Use for option parsing
+```bash
+while getopts ":hd" opt; do
+  case "$opt" in
+    h) _show_help; exit 0 ;;
+    d) DRY_RUN=true ;;
+    \?) printf 'error: invalid option -%s\n' "$OPTARG" >&2; exit 1 ;;
+  esac
+done
+shift $((OPTIND - 1))
+```
+
+## Bash-Specific Features
 
 ### Namerefs (Bash 4.3+)
 
 Use `local -n` for pass-by-reference:
 
 ```bash
-# Pass array by reference
 _process_array() {
   local -n arr="$1"  # nameref
   local item
@@ -53,19 +203,16 @@ _process_array my_array
 
 ### Associative Arrays
 
-Use `declare -A` for key-value lookups:
+Use `declare -A` for key-value lookups
 
 ```bash
 declare -A config=(
   [editor]="emacs"
   [shell]="zsh"
-  [term]="ghostty"
 )
 
-# Access
 printf 'Editor: %s\n' "${config[editor]}"
 
-# Iterate
 for key in "${!config[@]}"; do
   printf '%s = %s\n' "$key" "${config[$key]}"
 done
@@ -73,7 +220,7 @@ done
 
 ### Readonly Arrays
 
-Use `readonly -a` for constant arrays:
+Use `readonly -a` for constant arrays
 
 ```bash
 readonly -a PKG_ALL=(
@@ -83,54 +230,20 @@ readonly -a PKG_ALL=(
 )
 ```
 
-### Reading Lines into Arrays with mapfile
+### mapfile
 
-Use `mapfile` (alias `readarray`) instead of a `while read` loop when
-capturing multi-line command output into an array:
+Use `mapfile` instead of `while read` loop
 
 ```bash
-# Good — mapfile is safe with filenames containing spaces/newlines
+# Good — safe with filenames containing spaces/newlines
 mapfile -t files < <(find . -name '*.sh' -type f)
 
 for f in "${files[@]}"; do
   bash -n "$f"
 done
-
-# Also good — read from a file directly
-mapfile -t lines < /etc/hosts
-
-# Avoid — word-splitting breaks filenames with spaces
-files=($(find . -name '*.sh'))  # WRONG
 ```
 
-Key flags:
-
-| Flag | Meaning |
-|------|---------|
-| `-t` | Strip the trailing newline from each element (almost always wanted) |
-| `-n N` | Read at most N lines |
-| `-s N` | Skip the first N lines |
-| `-d DELIM` | Use DELIM as the line terminator instead of newline |
-
-`mapfile` requires Bash 4.0+.
-
-## Bash-Specific Syntax
-
-### Parameter Expansion
-
-```bash
-# Default value
-dir="${path:-/default/path}"
-
-# Error if unset
-file="${config:?config is required}"
-
-# Substring
-version="${BASH_VERSION:0:3}"
-
-# String replacement
-path="${filepath//\//\\}"  # Replace all / with \
-```
+Key flags: `-t` (strip trailing newline), `-n N` (read at most N lines)
 
 ### Process Substitution
 
@@ -144,7 +257,7 @@ mapfile -t lines < <(find . -name '*.sh')
 
 ### Coproc
 
-For bidirectional communication:
+For bidirectional communication
 
 ```bash
 coproc backend {
@@ -160,14 +273,9 @@ read -r response <&${backend[0]}
 ### Bash-Specific Options
 
 ```bash
-# Verbose - show commands as read
-set -v
-
-# xtrace - show commands after expansion
-set -x
-
-# Combined with strict mode
-set -euxo pipefail
+set -v       # Verbose - show commands as read
+set -x       # xtrace - show commands after expansion
+set -euxo pipefail  # Combined with strict mode
 ```
 
 ### Debugging Functions
@@ -183,18 +291,16 @@ _debug_caller() {
 
 ### Shell History
 
-Prefix commands with a space to exclude them from history.
-Set `HISTCONTROL` in `.bashrc` / `.bash_profile`:
+Prefix commands with a space to exclude them from history
 
 ```bash
-# Ignore commands prefixed with a space (and deduplicate)
 export HISTCONTROL=ignoreboth
 
 # Then sensitive commands starting with a space are not recorded
  API_KEY=secret my-command   # not saved to history
 ```
 
-## Compatibility Notes
+## Compatibility
 
 ### Avoid Bash-Only Features for Portable Scripts
 
@@ -213,4 +319,11 @@ if (( BASH_VERSINFO[0] < 4 ||
   printf 'error: bash 4.3+ required\n' >&2
   exit 1
 fi
+```
+
+## Validation
+
+```bash
+bash -n script.sh      # Syntax check
+shellcheck script.sh   # If installed
 ```
