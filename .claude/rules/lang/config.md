@@ -55,9 +55,12 @@ Standards for configuration files without extensions (config, conf, rc).
 --glob=!target/*
 ```
 
-## Comments & Patterns
+## Documentation & Code Patterns
 
-**Comments**: Explain WHY, not WHAT. Use separate lines, never inline.
+**Comment Philosophy**:
+- Explain rationale (WHY), not mechanics (WHAT)
+- Document non-obvious design decisions and constraints
+- Use separate comment lines for clarity, never inline
 
 ```conf
 # Use delta for syntax-highlighted diffs (falls back to less)
@@ -91,11 +94,15 @@ option1 = value1
 option10 = value10
 ```
 
-## Secrets & Sensitive Values
+## Security
 
-**Never commit**: API keys, tokens, passwords, private keys, certificates, database credentials
+### Secrets Management
 
-**Split strategy**:
+**Prohibition**: Never commit sensitive data to version control
+
+**Sensitive Data Types**: API keys, tokens, passwords, private keys, certificates, database credentials
+
+**Split-file Strategy**:
 ```conf
 # Main config (committed)
 [core]
@@ -109,7 +116,7 @@ option10 = value10
     signingkey = ABC123DEF456
 ```
 
-**Validate**: `git log -p | grep -E "(password|token|key)" | head -20`
+**Validation Command**: `git log -p | grep -E "(password|token|key)" | head -20`
 
 ## Validation
 
