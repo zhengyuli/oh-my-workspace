@@ -12,7 +12,7 @@ globs:
 
 Standards for configuration files without extensions (config, conf, rc).
 
-## File Header (MANDATORY)
+## File Header
 
 ```
 # filename -*- mode: xxx; -*-
@@ -27,10 +27,18 @@ Standards for configuration files without extensions (config, conf, rc).
 # =============================================================================
 ```
 
-## Delimiter Hierarchy (MANDATORY)
+## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ===` * 77 (79 chars)
-**Level 1** (Primary Section): `# ---` * 77 (79 chars)
+**Level 0** (File Header):
+```
+# =============================================================================
+```
+
+**Level 1** (Primary Section):
+```
+# -----------------------------------------------------------------------------
+```
+
 **Level 2** (Subsection): `# --- Title ---` (inline style)
 
 **Example:**
@@ -57,10 +65,9 @@ Standards for configuration files without extensions (config, conf, rc).
 
 ## Documentation & Code Patterns
 
-**Comment Philosophy**:
-- Explain rationale (WHY), not mechanics (WHAT)
-- Document non-obvious design decisions and constraints
-- Use separate comment lines for clarity, never inline
+### Comments
+
+Explain rationale (WHY), not mechanics (WHAT). Document non-obvious design decisions and constraints. Use separate comment lines for clarity, never inline explanations.
 
 ```conf
 # Use delta for syntax-highlighted diffs (falls back to less)
@@ -70,11 +77,20 @@ pager = delta
 safecrlf = warn
 ```
 
-**Boolean**: `option = true` (explicit, not implicit)
-**Paths**: `~/.config/app/file` (XDG-compliant, not relative)
-**Includes**: `[include] path = config.local` (machine-specific overrides)
+### Booleans
 
-**Formatting Rules:**
+`option = true` (explicit, not `"true"`)
+
+### Paths
+
+`~/.config/app/file` (XDG-compliant, not relative)
+
+### Includes
+
+`[include] path = config.local` (machine-specific overrides)
+
+### Formatting
+
 - Never align values with spaces
 - Never use inline comments
 
@@ -98,7 +114,7 @@ option10 = value10
 
 ### Secrets Management
 
-**Prohibition**: Never commit sensitive data to version control
+Never commit sensitive data to version control.
 
 **Sensitive Data Types**: API keys, tokens, passwords, private keys, certificates, database credentials
 
@@ -130,5 +146,4 @@ git config --list
 rg --version
 ```
 
-For other tools, reload or restart the application after editing to confirm
-the config is valid.
+For other tools, reload or restart the application after editing to confirm the config is valid.
