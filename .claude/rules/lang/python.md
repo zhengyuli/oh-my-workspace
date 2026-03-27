@@ -68,6 +68,22 @@ from .utils import symlink
 from .config import Config
 ```
 
+## Immutability
+
+Use `tuple` for constant sequences — unlike `list`, they cannot be
+accidentally mutated:
+
+```python
+# Good - use tuples for immutable sequences
+REQUIRED_PACKAGES: tuple[str, ...] = ("zsh", "git", "emacs")
+
+# Avoid - lists can be modified
+required_packages: list[str] = ["zsh", "git", "emacs"]
+```
+
+Use `tuple` for configuration values, constants, and function arguments
+that must not change. Reserve `list` for accumulators and mutable state.
+
 ## Type Hints
 
 ### Always Use Type Hints

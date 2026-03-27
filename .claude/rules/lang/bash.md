@@ -179,6 +179,21 @@ _debug_caller() {
 }
 ```
 
+## Security
+
+### Shell History
+
+Prefix commands with a space to exclude them from history.
+Set `HISTCONTROL` in `.bashrc` / `.bash_profile`:
+
+```bash
+# Ignore commands prefixed with a space (and deduplicate)
+export HISTCONTROL=ignoreboth
+
+# Then sensitive commands starting with a space are not recorded
+ API_KEY=secret my-command   # not saved to history
+```
+
 ## Compatibility Notes
 
 ### Avoid Bash-Only Features for Portable Scripts

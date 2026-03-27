@@ -9,11 +9,12 @@ Universal coding standards for the oh-my-workspace repository.
 
 ## Style Guide References
 
-Follow these authoritative style guides:
+Authoritative style guides are listed in each language rule file.
+Quick reference:
 
-- **Shell (Bash/Zsh):** [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
-- **Python:** [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
-- **Emacs Lisp:** [Emacs Lisp Style Guide](https://github.com/bbatsov/emacs-lisp-style-guide)
+- **Shell/Bash/Zsh:** `lang/shell.md` → `lang/bash.md` / `lang/zsh.md`
+- **Python:** `lang/python.md`
+- **Emacs Lisp:** `lang/elisp.md`
 
 ## Line Length
 
@@ -27,48 +28,25 @@ Follow these authoritative style guides:
 Every configuration file MUST include a standard header with location and
 usage. AI must ensure all generated files include these headers.
 
-**Shell / script format:**
-```bash
-# setup.sh -*- mode: sh; -*-
-# =============================================================================
-# oh-my-workspace Setup Script
-#
-# Location: $WORKSPACE_DIR/setup.sh
-# Usage:    ./setup.sh help
-# =============================================================================
-```
-
-**Emacs Lisp format:**
-```elisp
-;;; omw-feature.el --- Brief description -*- lexical-binding: t; -*-
-
-;; Location: ~/.config/emacs/lisp/omw-feature.el
-;; Usage:    (require 'omw-feature)
-```
-
-Additional header elements to document:
-- Dependencies (packages, tools, other modules this file relies on)
+Required header elements:
+- File location path
+- Usage / invocation instructions
+- Dependencies (packages, tools, modules this file relies on)
 - Non-obvious design choices — include a reference URL where helpful
+
+For language-specific header formats, see:
+- Shell/Bash/Zsh — `lang/shell.md`
+- Emacs Lisp — `lang/elisp.md`
+- Python — `lang/python.md`
 
 ### Function Documentation
 
 Every function MUST have:
 - Purpose description
-- Parameters (`@param`)
-- Return values (`@return`)
-- Exit codes for shell functions
+- Parameters
+- Return values / exit codes
 
-Example:
-```bash
-# Validate package name exists in PKG_ALL array.
-#
-# @param $1 - Package name to validate
-# @return 0 if valid, 1 if not found
-_validate_package() {
-  local -r pkg="$1"
-  ...
-}
-```
+For language-specific documentation patterns, see the appropriate `lang/` rule.
 
 ### Comments
 
@@ -83,15 +61,7 @@ AI must add comments explaining:
 - Business rules and constraints
 - Workarounds and their reasons
 
-```bash
-# Good - explains WHY
-# Use printf instead of echo for portability (POSIX compliance)
-printf '%s\n' "$message"
-
-# Bad - explains WHAT (never write comments like this)
-# Print the message
-printf '%s\n' "$message"
-```
+For language-specific comment examples, see the appropriate `lang/` rule.
 
 ### Code Quality
 
@@ -104,42 +74,21 @@ printf '%s\n' "$message"
 
 ### Naming Conventions
 
-Use meaningful, descriptive names:
-
-```bash
-# Bad - cryptic
-x=$(pwd)
-
-# Good - descriptive
-workspace_dir=$(pwd)
-```
+Use meaningful, descriptive names. Avoid single-letter or cryptic
+abbreviations. For language-specific naming conventions, see the
+appropriate `lang/` rule.
 
 ## Immutability Principle
 
 ### Prefer Immutability
 
-Immutable data is easier to reason about and test.
+Immutable data is easier to reason about and test. Use read-only or
+constant constructs wherever your language supports them:
 
-#### Shell Variables
-
-```bash
-# Good - readonly prevents accidental modification
-local -r config_path="$HOME/.config"
-readonly -a REQUIRED_PACKAGES=(zsh git emacs)
-
-# Avoid - mutable without reason
-local config_path="$HOME/.config"
-```
-
-#### Python Variables
-
-```python
-# Good - use tuples for immutable sequences
-REQUIRED_PACKAGES: tuple[str, ...] = ("zsh", "git", "emacs")
-
-# Avoid - lists can be modified
-required_packages: list[str] = ["zsh", "git", "emacs"]
-```
+- Shell: `local -r`, `readonly -a` — see `lang/shell.md`
+- Python: `tuple` instead of `list` for constants — see `lang/python.md`
+- Emacs Lisp: `defconst`, prefer `cons` over `add-to-list` — see
+  `lang/elisp.md`
 
 ### When to Use Immutability
 
@@ -180,15 +129,10 @@ Keep files focused and manageable:
 3. Maintain single responsibility per file
 4. Update imports/requires in dependent files
 
-### File Structure Template
+### File Structure
 
-```bash
-# 1. Header (purpose, usage, author)
-# 2. Constants and configuration
-# 3. Utility functions (private)
-# 4. Core functions (public)
-# 5. Main entry point (if executable)
-```
+Each file type has an idiomatic internal ordering. For concrete
+templates, see the appropriate `lang/` rule.
 
 ## Language-Specific Extensions
 

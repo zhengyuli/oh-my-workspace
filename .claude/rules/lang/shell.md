@@ -199,6 +199,212 @@ rm -rf $dir
 printf '%s\n' $message
 ```
 
+## File Headers
+
+Every shell script MUST include a standard header:
+
+```bash
+# setup.sh -*- mode: sh; -*-
+# =============================================================================
+# oh-my-workspace Setup Script
+#
+# Location: $WORKSPACE_DIR/setup.sh
+# Usage:    ./setup.sh help
+# Dependencies: GNU Stow, Bash 4.3+
+# =============================================================================
+```
+
+## Function Documentation
+
+Use `@param` and `@return` annotations in function comments:
+
+```bash
+# Validate package name exists in PKG_ALL array.
+#
+# @param $1 - Package name to validate
+# @return 0 if valid, 1 if not found
+_validate_package() {
+  local -r pkg="$1"
+  ...
+}
+```
+
+## Comments
+
+Comments must explain **why**, not **what**:
+
+```bash
+# Good — explains WHY
+# Use printf instead of echo for portability (POSIX compliance)
+printf '%s\n' "$message"
+
+# Bad — explains WHAT (never write comments like this)
+# Print the message
+printf '%s\n' "$message"
+```
+
+## Naming
+
+Use meaningful, descriptive names:
+
+```bash
+# Bad - cryptic
+x=$(pwd)
+
+# Good - descriptive
+workspace_dir=$(pwd)
+```
+
+Private helper functions should be prefixed with `_`.
+
+## Immutability
+
+Prefer read-only variables and arrays:
+
+```bash
+# Good - readonly prevents accidental modification
+local -r config_path="$HOME/.config"
+readonly -a REQUIRED_PACKAGES=(zsh git emacs)
+
+# Avoid - mutable without reason
+local config_path="$HOME/.config"
+```
+
+Never modify files in-place when a backup approach is possible:
+
+```bash
+# WRONG: Modifies file in-place — no rollback
+sed -i 's/old/new/' ~/.zshrc
+
+# CORRECT: Creates new version with backup
+cp ~/.zshrc ~/.zshrc.bak
+sed 's/old/new/' ~/.zshrc.bak > ~/.zshrc
+```
+
+## File Structure
+
+Organize shell scripts in this order:
+
+```
+1. Header (purpose, usage, dependencies)
+2. Constants and configuration (readonly)
+3. Utility functions (private, _prefixed)
+4. Core functions (public)
+5. Main entry point / dispatch (if executable)
+```
+
+## Safe Defaults
+
+Always provide fallback values for environment variables:
+
+```bash
+# Good - uses default if not set
+EDITOR="${EDITOR:-emacs}"
+PAGER="${PAGER:-less}"
+
+# Provide sensible XDG defaults
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+```
+
+## Design Patterns
+
+### Validation Pattern
+
+Validate configs before sourcing or using them:
+
+```bash
+_validate_config() {
+  local -r config_file="$1"
+
+  [[ -f "$config_file" ]] || return 1
+  [[ -r "$config_file" ]] || return 1
+  bash -n "$config_file" 2>/dev/null || return 1
+  return 0
+}
+
+if _validate_config "$config"; then
+  source "$config"
+else
+  printf 'error: invalid config %s\n' "$config" >&2
+  return 1
+fi
+```
+
+## Anti-Patterns
+
+### Deep Nesting
+
+Limit nesting to 3 levels maximum. Use early-return guards:
+
+```bash
+# WRONG - 5 levels deep
+if condition1; then
+  if condition2; then
+    if condition3; then
+      if condition4; then
+        if condition5; then
+          # Too deep!
+        fi
+      fi
+    fi
+  fi
+fi
+
+# CORRECT - early returns flatten the structure
+_do_thing() {
+  condition1 || return 1
+  condition2 || return 1
+  condition3 || return 1
+  condition4 || return 1
+  # Execute logic here
+}
+```
+
+### Magic Numbers
+
+Use named constants instead of bare values:
+
+```bash
+# WRONG
+sleep 30
+timeout 300
+
+# CORRECT
+readonly CONNECT_TIMEOUT=30
+readonly RETRY_DELAY=5
+
+sleep "$RETRY_DELAY"
+timeout "$CONNECT_TIMEOUT"
+```
+
+### Hardcoded Paths
+
+Never hardcode absolute paths to home directories:
+
+```bash
+# WRONG
+source /home/user/.config/zsh/aliases.zsh
+
+# CORRECT
+source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/aliases.zsh"
+```
+
+### Large Monolithic Configs
+
+Split large configs into focused files:
+
+```bash
+# WRONG - 2000 line .zshrc
+# Everything in one file
+
+# CORRECT - Modular structure
+source "$ZDOTDIR/aliases.zsh"
+source "$ZDOTDIR/functions.zsh"
+source "$ZDOTDIR/options.zsh"
+source "$ZDOTDIR/completion.zsh"
+```
+
 ## Language-Specific Extensions
 
 For Bash-specific features, see `bash.md`.

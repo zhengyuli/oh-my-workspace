@@ -107,6 +107,9 @@ setopt SHARE_HISTORY
 
 # Ignore dupes
 setopt HIST_IGNORE_ALL_DUPS
+
+# Don't record commands that start with a space — use for secrets
+setopt HIST_IGNORE_SPACE
 ```
 
 ### Associative Arrays
