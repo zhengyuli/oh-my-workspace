@@ -14,7 +14,7 @@ globs:
 
 Zsh-specific features extending the common shell practices.
 
-## File Header (MANDATORY)
+## File Header
 
 ```zsh
 #!/usr/bin/env zsh
@@ -33,10 +33,18 @@ Zsh-specific features extending the common shell practices.
 
 **Shebang**: `#!/usr/bin/env zsh` (use `env` for portability)
 
-## Delimiter Hierarchy (MANDATORY)
+## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ===` * 77 (79 chars)
-**Level 1** (Primary Section): `# ---` * 77 (79 chars)
+**Level 0** (File Header):
+```
+# =============================================================================
+```
+
+**Level 1** (Primary Section):
+```
+# ----------------------------------------------------------------------------
+```
+
 **Level 2** (Subsection): `# --- Title ---` (inline style)
 
 **Example:**
@@ -94,10 +102,10 @@ trap '_err_handler' ERR
 
 ## Documentation & Code Patterns
 
-**Comment Philosophy**:
-- Explain rationale (WHY), not mechanics (WHAT)
-- Document non-obvious design decisions and constraints
-- Use separate comment lines for clarity
+### Comments
+
+Explain rationale (WHY), not mechanics (WHAT). Document non-obvious
+design decisions and constraints. Use separate comment lines for clarity.
 
 ```zsh
 # Validate package exists before stow operations
@@ -107,7 +115,10 @@ _validate_package() {
 }
 ```
 
-**Variable Handling**: Quote all variables, use `local` scope in functions
+### Variable Handling
+
+Quote all variables, use `local` scope in functions:
+
 ```zsh
 # CORRECT
 _process_file() {
@@ -122,22 +133,30 @@ _process_file() {
 }
 ```
 
-**Conditionals**: `[[ ]]` for strings. `(( ))` for arithmetic
+### Conditionals
+
+`[[ ]]` for strings, `(( ))` for arithmetic:
+
 ```zsh
 if [[ "$var" == "value" ]]; then  # String
 if (( count > 0 )); then          # Arithmetic
 ```
 
-**Default Values**: `${VAR:-default}`
+### Default Values
+
+`${VAR:-default}`:
+
 ```zsh
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 ```
 
-**Output Standards**:
-- Use zsh `print` built-in for output formatting
-  - Rationale: `print` is zsh-native with rich formatting options
-  - `print` provides consistent behavior and better integration with zsh features
-- Direct all error and warning messages to stderr; reserve stdout for program output
+### Output Standards
+
+Use zsh `print` built-in for output formatting:
+- Rationale: `print` is zsh-native with rich formatting options
+- `print` provides consistent behavior and better integration with zsh features
+
+Direct all error and warning messages to stderr; reserve stdout for program output:
 
 ```zsh
 # Correct — errors to stderr, output to stdout
@@ -145,16 +164,18 @@ print -u2 "error: $pkg not found"
 print "$result"
 ```
 
-**Naming Conventions**:
-- Constants and exported variables: Require `UPPER_SNAKE_CASE`
-- Local and temporary variables: Require `lower_snake_case`
+### Naming Conventions
+
+Constants and exported variables: `UPPER_SNAKE_CASE`
+Local and temporary variables: `lower_snake_case`
 
 ```zsh
 readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"  # constant
 local temp_file                                         # local variable
 ```
 
-**Code Formatting:**
+### Formatting
+
 - 2-space indentation (never tabs)
 - Never align values with spaces
 - Never use inline comments for explanations
@@ -195,13 +216,19 @@ find . -name '*.zsh' \
 
 ## Functions
 
-**Single Responsibility**: One thing per function
+### Single Responsibility
+
+One thing per function:
+
 ```zsh
 _validate_package() { ... }  # Validation only
 _install_package() { ... }   # Installation only
 ```
 
-**Parameter Validation**: Validate at start
+### Parameter Validation
+
+Validate at start:
+
 ```zsh
 _validate_package() {
   local -r pkg="$1"
@@ -212,8 +239,10 @@ _validate_package() {
 }
 ```
 
-**`main()` function**: For scripts longer than ~20 lines, wrap all logic in
-`main()` to allow function hoisting and make the entry point explicit:
+### Main Function
+
+For scripts longer than ~20 lines, wrap all logic in `main()` to allow
+function hoisting and make the entry point explicit:
 
 ```zsh
 main() {
@@ -225,10 +254,11 @@ main() {
 main "$@"
 ```
 
-**`local` + command substitution**: Always declare and assign on separate
-lines when the right-hand side is a command substitution. `local` is itself a
-command that always exits 0, so `local var="$(cmd)"` masks `cmd`'s failure —
-`set -e` will NOT catch it:
+### Local Command Substitution
+
+Always declare and assign on separate lines when the right-hand side is a
+command substitution. `local` is itself a command that always exits 0, so
+`local var="$(cmd)"` masks `cmd`'s failure — `set -e` will NOT catch it:
 
 ```zsh
 # WRONG — local masks the exit code of dirname
