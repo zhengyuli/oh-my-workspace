@@ -102,7 +102,8 @@ This follows Emacs convention and helps tools identify file boundaries.
 
 ## Error Handling
 
-**`ignore-errors`**: Suppress errors for non-critical operations
+Use `ignore-errors` only for side effects that must not interrupt the
+calling operation on failure:
 
 ```elisp
 ;; Pre-save hooks must not break the save on failure
@@ -110,8 +111,8 @@ This follows Emacs convention and helps tools identify file boundaries.
 (ignore-errors (time-stamp))
 ```
 
-**`condition-case`**: Structured handling when you need to react to
-specific error types
+Use `condition-case` to recover from or log specific failures — never
+silently discard errors on critical paths:
 
 ```elisp
 ;; Recover gracefully when loading optional local config
@@ -121,7 +122,8 @@ specific error types
                   (error-message-string err))))
 ```
 
-**`unwind-protect`**: Guarantee cleanup regardless of success or error
+Use `unwind-protect` when cleanup code must run regardless of whether
+the body succeeds or fails:
 
 ```elisp
 ;; Always restore window configuration even if body errors
@@ -129,14 +131,6 @@ specific error types
     (risky-operation)
   (set-window-configuration saved-config))
 ```
-
-**Rules**:
-- Use `ignore-errors` only for genuinely non-critical side effects
-- Use `condition-case` when you need to log, recover, or handle
-  specific error types
-- Never silently swallow errors in critical paths — use
-  `condition-case` to log or re-signal
-- Use `unwind-protect` when cleanup must run unconditionally
 
 ## Documentation & Code Patterns
 
@@ -219,23 +213,22 @@ Returns the full path to the config file, or nil if not found."
       (cons '("\\.py\\'" . python-mode) auto-mode-alist))
 ```
 
-**use-package Keyword Ordering (MANDATORY)**:
+**use-package (MANDATORY)**: Always use `use-package` for package
+configuration. Follow this keyword order within each declaration:
 
-When using `use-package`, follow this keyword order:
-
-1. `:ensure` / `:ensure nil` - Package installation
-2. `:demand t` / `:defer t` - Loading strategy
-3. `:when` / `:if` - Conditional loading
-4. `:after` - Dependencies
-5. `:requires` - Hard dependencies
-6. `:mode` / `:interpreter` - Auto-loading triggers
-7. `:magic` / `:magic-fallback` - Magic mode triggers
-8. `:hook` - Hooks
-9. `:bind` / `:bind*` - Key bindings
-10. `:bind-keymap` / `:bind-keymap*` - Keymap bindings
-11. `:chords` - Key chords
-12. `:init` - Initialization code (runs before load)
-13. `:config` - Configuration code (runs after load)
+1. `:ensure` / `:ensure nil`
+2. `:demand t` / `:defer t`
+3. `:when` / `:if`
+4. `:after`
+5. `:requires`
+6. `:mode` / `:interpreter`
+7. `:magic` / `:magic-fallback`
+8. `:hook`
+9. `:bind` / `:bind*`
+10. `:bind-keymap` / `:bind-keymap*`
+11. `:chords`
+12. `:init`
+13. `:config`
 
 ```elisp
 (use-package magit
@@ -247,15 +240,14 @@ When using `use-package`, follow this keyword order:
         #'magit-display-buffer-same-window-except-diff-v1))
 ```
 
-**Lazy Loading**: Defer loading until needed
+**Prefer lazy loading**: Default to `:defer t` to minimize startup
+time. Prefer `:mode`, `:hook`, and `:bind` which imply deferral:
 
 ```elisp
-;; Defer loading until first use
 (use-package magit
   :defer t
   :bind ("C-c g" . magit-status))
 
-;; Load only when opening matching file
 (use-package python
   :ensure nil
   :mode ("\\.py\\'" . python-mode))
