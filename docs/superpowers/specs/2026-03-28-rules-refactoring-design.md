@@ -327,19 +327,6 @@ Current `coding-style.md` contains an actionable checklist (lines 119-136). This
    - Verify no overlap with `coding-style.md`
 3. Remove `README.md` (rules are self-documenting)
 
-### Phase 2: Refactor Universal Rules
-1. Refactor `coding-style.md`:
-   - Remove YAML frontmatter
-   - Restructure sections per template
-   - Merge Comment/Delimiter sections
-   - Simplify to principle statements
-   - Keep simplified checklist (remove tool-specific items)
-2. Refactor `patterns.md`:
-   - Remove YAML frontmatter
-   - Ensure focus is design/organization (not format)
-   - Simplify to principle statements
-3. Remove `README.md` (rules are self-documenting)
-
 ### Phase 3: Move Workflow Files
 1. Create `.claude/skills/` directory
 2. Move `dev-workflow.md` → `skills/dev-workflow.md`
