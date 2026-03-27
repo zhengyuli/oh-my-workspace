@@ -171,10 +171,45 @@ Split by feature/domain
 Key structural elements to adopt:
 
 1. **Hierarchical section organization** - Clear top-level headers
-2. **Delimiter Hierarchy** - Visual comment conventions (adapted for `#`)
+2. **Delimiter Hierarchy** - Visual comment conventions
 3. **CORRECT/WRONG examples** - Show both good and bad patterns
 4. **Clear section separation** - Each concern has its own section
 5. **"WHY not WHAT" commentary** - Explain rationale
+
+### Adapting Template for Universal Rules
+
+`lang/elisp.md` uses Elisp comment syntax (`;`), but universal rules use Markdown:
+
+| Element | elisp.md | Universal Rules |
+|---------|----------|-----------------|
+| File comment | `;; ===` | `# ===` |
+| Section comment | `;; ---` | `# ---` |
+| Inline comment | `; text` | `# text` |
+| Example format | Elisp code | Config/pseudo-code |
+
+We adopt the **structure** (hierarchy levels) but adapt the **syntax** for Markdown.
+
+## Cross-Reference Inventory
+
+All files that reference moved/changed rules:
+
+| File | Lines | References | Action Required |
+|------|-------|------------|-----------------|
+| `CLAUDE.md` | 161-180 | `coding-style.md`, `patterns.md`, `dev-workflow.md`, `git-workflow.md` | Update paths for workflow files |
+| `CLAUDE.md` | 264, 271 | `.claude/rules/` directory | Update description if needed |
+| `patterns.md` | 26 | `coding-style.md` | No change (same file) |
+| `dev-workflow.md` | 234-235 | `git-workflow.md`, `coding-style.md` | Update paths in "See Also" section |
+| `README.md` | All | Multiple references | **Delete this file** |
+
+### Search Patterns for Finding References
+
+```bash
+# Find references to workflow files
+grep -r "dev-workflow\|git-workflow" .claude/
+
+# Find references to rules directory
+grep -r "\.claude/rules/" CLAUDE.md .claude/
+```
 
 ## Content Principles
 
@@ -197,29 +232,90 @@ Key structural elements to adopt:
 | Validation | Tool-specific commands |
 | Tool-specific operations | e.g., GNU Stow, Git commands |
 
+### Security Content Handling
+
+**Note:** There is no separate `security.md` file. Security content is distributed:
+
+- **Universal rules**: "No hardcoded secrets" in checklist (keep this)
+- **Language-specific rules**: Each `lang/*.md` has Security section (unchanged)
+
+Security guidance remains in place, just not as a separate universal file.
+
+### Code Quality Checklist Handling
+
+Current `coding-style.md` contains an actionable checklist (lines 119-136). This is useful for pre-commit verification.
+
+**Decision:** Keep the checklist, but simplify it to focus on universal concerns (format, structure) rather than implementation details (e.g., "Run `./setup.sh clean`" is tool-specific and should be removed).
+
 ## Migration Plan
 
 ### Phase 1: Prepare
 1. Create `skills/` directory
-2. Create backup of current rules
+2. Create backup branch: `git checkout -b refactor/rules-cleanup`
+3. Verify current state: `ls -la .claude/rules/`
 
 ### Phase 2: Refactor Universal Rules
-1. Refactor `coding-style.md`
-2. Refactor `patterns.md`
-3. Remove `README.md`
+1. Refactor `coding-style.md`:
+   - Remove YAML frontmatter
+   - Restructure sections per template
+   - Merge Comment/Delimiter sections
+   - Simplify to principle statements
+   - Keep simplified checklist (remove tool-specific items)
+2. Refactor `patterns.md`:
+   - Remove YAML frontmatter
+   - Ensure focus is design/organization (not format)
+   - Simplify to principle statements
+3. Remove `README.md` (rules are self-documenting)
 
 ### Phase 3: Move Workflow Files
-1. Move `dev-workflow.md` to `skills/`
-2. Move `git-workflow.md` to `skills/`
+1. Create `.claude/skills/` directory
+2. Move `dev-workflow.md` → `skills/dev-workflow.md`
+3. Move `git-workflow.md` → `skills/git-workflow.md`
+4. Update "See Also" section in moved files (new paths)
 
-### Phase 4: Update References
-1. Update CLAUDE.md if it references these files
-2. Update any cross-references between files
+### Phase 4: Update Cross-References
+1. Update `CLAUDE.md`:
+   - Lines 161-180: Update workflow file paths
+   - Lines 264, 271: Verify description still accurate
+2. Verify no broken references:
+   ```bash
+   grep -r "dev-workflow\|git-workflow" .claude/ --exclude-dir=skills
+   ```
 
-### Phase 5: Verify
-1. Syntax validation
-2. Content review
-3. Test that Claude loads rules correctly
+### Phase 5: Verification Protocol
+
+#### 5.1 Syntax Validation
+```bash
+# Markdown linting (if available)
+markdownlint .claude/rules/*.md .claude/skills/*.md
+
+# Check for broken links
+grep -r "\[.*\](.*\.md)" .claude/rules/ .claude/skills/
+```
+
+#### 5.2 Content Review
+- [ ] Universal rules have no YAML frontmatter
+- [ ] No tool-specific content in universal rules
+- [ ] `coding-style.md` focuses on format
+- [ ] `patterns.md` focuses on design
+- [ ] No overlap between the two files
+- [ ] Workflow files in `skills/` directory
+- [ ] All cross-references updated
+
+#### 5.3 Rule Loading Verification
+Since Claude Code loads rules based on file structure and settings.json, verify:
+
+1. Check `.claude/settings.json` for any explicit rule paths
+2. Test by starting a new Claude Code session
+3. Ask a simple question to verify rules are loaded
+4. If rules fail to load, restore from backup branch
+
+#### 5.4 Rollback Trigger
+If any of these occur, abort and restore from backup:
+- Claude reports missing rules
+- Syntax errors in any file
+- Broken cross-references detected
+- Universal rules contain tool-specific content
 
 ## Success Criteria
 
@@ -227,8 +323,11 @@ Key structural elements to adopt:
 2. ✅ Universal rules are general (no tool-specific details)
 3. ✅ `coding-style.md` and `patterns.md` have clear, non-overlapping responsibilities
 4. ✅ Workflow files are in `skills/` directory
-5. ✅ Structure follows `lang/elisp.md` template
+5. ✅ Structure follows `lang/elisp.md` template (adapted for Markdown)
 6. ✅ Content is simplified (principle statements, not detailed guidance)
+7. ✅ All cross-references updated and verified
+8. ✅ No dangling references to old file locations
+9. ✅ Security content preserved (distributed across files)
 
 ## References
 
