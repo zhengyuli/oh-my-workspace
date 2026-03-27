@@ -12,7 +12,7 @@ Universal coding standards for the oh-my-workspace repository.
 Authoritative style guides are listed in each language rule file.
 Quick reference:
 
-- **Shell/Bash/Zsh:** `lang/shell.md` → `lang/bash.md` / `lang/zsh.md`
+- **Shell/Bash/Zsh:** `lang/bash.md` / `lang/zsh.md`
 - **Python:** `lang/python.md`
 - **Emacs Lisp:** `lang/elisp.md`
 
@@ -35,7 +35,7 @@ Required header elements:
 - Non-obvious design choices — include a reference URL where helpful
 
 For language-specific header formats, see:
-- Shell/Bash/Zsh — `lang/shell.md`
+- Bash — `lang/bash.md`, Zsh — `lang/zsh.md`
 - Emacs Lisp — `lang/elisp.md`
 - Python — `lang/python.md`
 
@@ -85,7 +85,7 @@ appropriate `lang/` rule.
 Immutable data is easier to reason about and test. Use read-only or
 constant constructs wherever your language supports them:
 
-- Shell: `local -r`, `readonly -a` — see `lang/shell.md`
+- Shell: `local -r`, `readonly -a` — see `lang/bash.md` / `lang/zsh.md`
 - Python: `tuple` instead of `list` for constants — see `lang/python.md`
 - Emacs Lisp: `defconst`, prefer `cons` over `add-to-list` — see
   `lang/elisp.md`
@@ -141,7 +141,6 @@ via `globs` frontmatter. They extend — never replace — this file.
 
 | Rule file        | Globs                                                                       |
 |------------------|-----------------------------------------------------------------------------|
-| `lang/shell.md`  | `**/*.sh`, `**/*.bash`                                                      |
 | `lang/bash.md`   | `**/*.sh`, `**/*.bash`                                                      |
 | `lang/zsh.md`    | `**/*.zsh`, `**/.zsh*`, `**/zshrc`, `**/zprofile`, `**/zshenv`, `**/zlogin` |
 | `lang/elisp.md`  | `**/*.el`                                                                   |
