@@ -151,3 +151,36 @@ git branch -d hotfix/fix-zsh-path
 - Verify symlinks work after changes
 - Run `./setup.sh clean` before committing to remove stale compiled files
   (`.elc`, `.zwc`, `.pyc`, editor swap/backup files, `.DS_Store`)
+
+## Secrets & .gitignore
+
+Ensure sensitive file patterns are always in `.gitignore`:
+
+```
+.env
+*.key
+*.pem
+*_secret
+credentials
+config.local
+*.local.toml
+*.local.yml
+*.local.yaml
+```
+
+Scan before pushing:
+
+```bash
+git log -p | grep -E "(password|token|key)" | head -20
+```
+
+## Incident Response
+
+If secrets are accidentally committed:
+
+1. **Rotate immediately** — Generate new credentials before anything else
+2. **Remove from history** — Use
+   [`git filter-repo`](https://github.com/newren/git-filter-repo)
+   (preferred over deprecated `git filter-branch`) or BFG Repo-Cleaner
+3. **Force push** — Only after coordinating with all collaborators
+4. **Audit** — Check logs for unauthorized access

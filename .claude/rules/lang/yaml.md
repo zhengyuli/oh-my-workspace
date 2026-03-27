@@ -95,6 +95,39 @@ nerdFontsVersion: "3"
 showFileTree: true
 ```
 
+## Security
+
+### Secrets
+
+Never hardcode API keys, tokens, or credentials in YAML files:
+
+```yaml
+# Bad — hardcoded secret committed to git
+api_key: "sk-1234567890"
+```
+
+Use a split-file strategy: commit a `config.yml` with placeholders or
+non-sensitive defaults; keep secrets in a `config.local.yml` that is
+listed in `.gitignore`:
+
+```yaml
+# config.yml (committed)
+api:
+  key: ""  # Set in config.local.yml or environment
+
+# config.local.yml (not committed)
+api:
+  key: "sk-1234567890"
+```
+
+Add to `.gitignore`:
+
+```
+*.local.yml
+*.local.yaml
+*_secret.yml
+```
+
 ## Validation
 
 ```bash
