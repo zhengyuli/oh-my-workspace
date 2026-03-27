@@ -117,9 +117,12 @@ This follows Emacs convention and helps tools identify file boundaries.
   ...)
 ```
 
-## Comments & Patterns
+## Documentation & Code Patterns
 
-**Comments**: Explain WHY, not WHAT. Use separate lines.
+**Comment Philosophy**:
+- Explain rationale (WHY), not mechanics (WHAT)
+- Document non-obvious design decisions and constraints
+- Use separate comment lines for clarity
 
 ```elisp
 ;; Validate package exists before stow operations
@@ -128,7 +131,7 @@ This follows Emacs convention and helps tools identify file boundaries.
   (file-exists-p (expand-file-name pkg omw-script-dir)))
 ```
 
-**Docstrings**: Every public function needs a docstring
+**Docstring Standards**: Every public function requires a docstring
 
 ```elisp
 (defun omw-find-config (name &optional directory)
@@ -294,6 +297,44 @@ When using `use-package`, follow this keyword order:
 (cl-defun omw-process-output (&key input timeout)
   "Process INPUT with TIMEOUT."
   ...)
+```
+
+## Security
+
+### Package Security
+
+**Principles**:
+- Verify package sources before installation
+- Prefer GNU ELPA and MELPA Stable over unstable repositories
+- Review package signatures when available
+
+### Local Configuration Strategy
+
+**Split-file Pattern**: Separate sensitive configuration from version control
+
+```elisp
+;; Main config (committed)
+(setq user-full-name "Your Name")
+
+;; Local overrides (not committed, in .gitignore)
+;; File: ~/.config/emacs/lisp/omw-local.el
+;; (setq user-mail-address "your.email@company.com")
+;; (setq smtpmail-smtp-server "smtp.company.com")
+
+;; Load local overrides if available
+(require 'omw-local nil t)
+```
+
+### Byte Compilation Security
+
+**Stale .elc Files**: Emacs always prefers `foo.elc` over `foo.el`
+
+**Risk**: Editing `.el` files without removing stale `.elc` files causes Emacs to load outdated compiled versions.
+
+**Prevention**:
+```bash
+# Remove all .elc files before committing
+find ~/.config/emacs/ -name '*.elc' -delete
 ```
 
 ## Validation
