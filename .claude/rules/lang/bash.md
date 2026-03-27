@@ -8,7 +8,7 @@ globs:
 
 Bash-specific features and universal shell practices.
 
-## File Header (MANDATORY)
+## File Header
 
 ```bash
 #!/usr/bin/env bash
@@ -27,10 +27,18 @@ Bash-specific features and universal shell practices.
 
 **Shebang**: `#!/usr/bin/env bash` (use `env` for portability)
 
-## Delimiter Hierarchy (MANDATORY)
+## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ===` * 77 (79 chars)
-**Level 1** (Primary Section): `# ---` * 77 (79 chars)
+**Level 0** (File Header):
+```
+# =============================================================================
+```
+
+**Level 1** (Primary Section):
+```
+# -----------------------------------------------------------------------------
+```
+
 **Level 2** (Subsection): `# --- Title ---` (inline style)
 
 **Example:**
@@ -88,10 +96,10 @@ trap '_err_handler' ERR
 
 ## Documentation & Code Patterns
 
-**Comment Philosophy**:
-- Explain rationale (WHY), not mechanics (WHAT)
-- Document non-obvious design decisions and constraints
-- Use separate comment lines for clarity
+### Comments
+
+Explain rationale (WHY), not mechanics (WHAT). Document non-obvious design
+decisions and constraints. Use separate comment lines for clarity.
 
 ```bash
 # Validate package exists before stow operations
@@ -101,7 +109,10 @@ _validate_package() {
 }
 ```
 
-**Variable Handling**: Quote all variables, use `local` scope in functions
+### Variable Handling
+
+Quote all variables, use `local` scope in functions.
+
 ```bash
 # CORRECT
 _process_file() {
@@ -116,22 +127,33 @@ _process_file() {
 }
 ```
 
-**Conditionals**: `[[ ]]` for strings, `(( ))` for arithmetic
+### Conditionals
+
+Use `[[ ]]` for strings and `(( ))` for arithmetic.
+
 ```bash
 if [[ "$var" == "value" ]]; then  # String
 if (( count > 0 )); then          # Arithmetic
 ```
 
-**Default Values**: `${VAR:-default}`
+### Default Values
+
+Use `${VAR:-default}` pattern for default values.
+
 ```bash
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 ```
 
-**Output Standards**:
-- Prefer `printf` over `echo` for predictable output formatting
-  - Rationale: `echo` behavior is inconsistent across shell implementations (BSD/GNU variants)
-  - `printf` is POSIX-compliant with consistent behavior
-- Direct all error and warning messages to stderr; reserve stdout for program output
+### Output Standards
+
+Prefer `printf` over `echo` for predictable output formatting.
+
+Rationale:
+- `echo` behavior is inconsistent across shell implementations (BSD/GNU variants)
+- `printf` is POSIX-compliant with consistent behavior
+
+Direct all error and warning messages to stderr; reserve stdout for program
+output.
 
 ```bash
 # Correct — errors to stderr, output to stdout
@@ -139,21 +161,22 @@ printf 'error: %s not found\n' "$pkg" >&2
 printf '%s\n' "$result"
 ```
 
-**Naming Conventions**:
-- Constants and exported variables: Require `UPPER_SNAKE_CASE`
-- Local and temporary variables: Require `lower_snake_case`
+### Naming Conventions
+
+Constants and exported variables require `UPPER_SNAKE_CASE`. Local and temporary
+variables require `lower_snake_case`.
 
 ```bash
 readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"  # constant
 local temp_file                                         # local variable
 ```
 
-**Code Formatting:**
-- 2-space indentation (never tabs)
-- Never align values with spaces
-- Never use inline comments for explanations
-- Avoid `A || B` and `A && B` patterns, prefer `if-else` for clarity
-- Long pipelines: split at `|` with each stage on its own line
+### Formatting
+
+2-space indentation (never tabs). Never align values with spaces. Never use
+inline comments for explanations. Avoid `A || B` and `A && B` patterns, prefer
+`if-else` for clarity. Split long pipelines at `|` with each stage on its own
+line.
 
 ```bash
 # WRONG - aligned
@@ -185,13 +208,19 @@ find . -name '*.sh' \
 
 ## Functions
 
-**Single Responsibility**: One thing per function
+### Single Responsibility
+
+Each function does exactly one thing.
+
 ```bash
 _validate_package() { ... }  # Validation only
 _install_package() { ... }   # Installation only
 ```
 
-**Parameter Validation**: Validate at start
+### Parameter Validation
+
+Validate all required parameters at the start of the function body.
+
 ```bash
 _validate_package() {
   local -r pkg="$1"
@@ -202,8 +231,10 @@ _validate_package() {
 }
 ```
 
-**`main()` function**: For scripts longer than ~20 lines, wrap all logic in
-`main()` to allow function hoisting and make the entry point explicit:
+### Main Function
+
+For scripts longer than ~20 lines, wrap all logic in `main()` to allow
+function hoisting and make the entry point explicit.
 
 ```bash
 main() {
@@ -215,10 +246,11 @@ main() {
 main "$@"
 ```
 
-**`local` + command substitution**: Always declare and assign on separate
-lines when the right-hand side is a command substitution. `local` is itself a
-command that always exits 0, so `local var="$(cmd)"` masks `cmd`'s failure —
-`set -e` will NOT catch it:
+### Local Command Substitution
+
+Always declare and assign on separate lines when the right-hand side is a
+command substitution. `local` is itself a command that always exits 0, so
+`local var="$(cmd)"` masks `cmd`'s failure — `set -e` will NOT catch it.
 
 ```bash
 # WRONG — local masks the exit code of dirname
@@ -229,8 +261,9 @@ local dir
 dir="$(dirname "$file")"
 ```
 
-**Command existence check**: Use `command -v` (POSIX) not `which` (non-POSIX,
-behavior varies across systems):
+### Command Existence Check
+
+Use `command -v` (POSIX) not `which` (non-POSIX, behavior varies across systems).
 
 ```bash
 if command -v emacs >/dev/null 2>&1; then
