@@ -18,7 +18,7 @@ Rationale:
 - Maintains history of changes
 
 For language-specific immutability examples, see:
-- Shell: in-place edits vs backup-and-replace — `lang/shell.md`
+- Shell: in-place edits vs backup-and-replace — `lang/bash.md` / `lang/zsh.md`
 - Emacs Lisp: `cons` over `add-to-list` — `lang/elisp.md`
 - Python: `tuple` over `list` for constants — `lang/python.md`
 
@@ -39,7 +39,7 @@ For language-specific immutability examples, see:
 For language-specific file layout examples, see:
 - Emacs modular config structure — `lang/elisp.md`
 - Zsh conf.d split layout — `lang/zsh.md`
-- Shell script ordering — `lang/shell.md`
+- Shell script ordering — `lang/bash.md`
 
 ## Safe Defaults
 
@@ -47,7 +47,7 @@ Always provide fallback values so configs work even when optional
 environment variables are not set. Avoid hard failures caused by
 unset variables.
 
-For concrete examples, see `lang/shell.md`.
+For concrete examples, see `lang/bash.md`.
 
 ## Design Patterns
 
@@ -59,7 +59,7 @@ Always validate configs and inputs before use:
 2. Validate syntax
 3. Only proceed on success; emit a clear error and return on failure
 
-For a concrete implementation example, see `lang/shell.md`.
+For a concrete implementation example, see `lang/bash.md`.
 
 ### Repository Pattern for Configs
 
@@ -72,22 +72,22 @@ of config locations, simplifies testing, and centralises error handling.
 ### Deep Nesting
 
 Limit nesting to 3 levels maximum. Use early-return guards to flatten
-conditional structures. For a code example, see `lang/shell.md`.
+conditional structures. For a code example, see `lang/bash.md`.
 
 ### Magic Numbers
 
 Never use bare numeric literals — define named constants instead.
 This makes intent clear and centralises values that may need updating.
-For a code example, see `lang/shell.md`.
+For a code example, see `lang/bash.md`.
 
 ### Hardcoded Paths
 
 Never hardcode absolute paths to home directories or system locations.
 Use `$HOME` / `$XDG_*` variables with sensible defaults.
-For a code example, see `lang/shell.md`.
+For a code example, see `lang/bash.md`.
 
 ### Large Monolithic Configs
 
 Don't put everything in one file. Split by feature/domain into focused
 files that each have a single responsibility.
-For a code example, see `lang/shell.md`.
+For a code example, see `lang/bash.md`.
