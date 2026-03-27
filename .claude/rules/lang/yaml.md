@@ -52,11 +52,14 @@ git:
     - colorArg: always
 ```
 
-## Comments & Patterns
+## Documentation & Code Patterns
+
+**Comment Philosophy**:
+- Explain rationale (WHY), not mechanics (WHAT)
+- Prefer separate comment lines for clarity
+- Inline comments acceptable for brief notes only
 
 **Indentation**: Spaces only, 2-space indent, never tabs
-
-**Comments**: Prefer separate lines, inline acceptable for brief notes
 
 ```yaml
 # Catppuccin Mocha Blue theme
@@ -97,9 +100,11 @@ showFileTree: true
 
 ## Security
 
-### Secrets
+### Secrets Management
 
-Never hardcode API keys, tokens, or credentials in YAML files:
+**Prohibition**: Never hardcode sensitive data in YAML files
+
+**Sensitive Data Types**: API keys, tokens, credentials
 
 ```yaml
 # Bad — hardcoded secret committed to git

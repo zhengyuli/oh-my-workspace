@@ -9,6 +9,7 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 
 ## File Header (MANDATORY)
 
+
 ```toml
 # filename.toml -*- mode: toml; -*-
 # Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
@@ -54,9 +55,12 @@ symbol = " "
 symbol = " "
 ```
 
-## Comments & Patterns
+## Documentation & Code Patterns
 
-**Comments**: TOML supports inline comments, but prefer separate lines for clarity.
+**Comment Philosophy**:
+- Explain rationale (WHY), not mechanics (WHAT)
+- TOML supports inline comments, but prefer separate lines for clarity
+- Document non-obvious configuration choices
 
 ```toml
 # Use Nerd Font symbols for better visual identification
@@ -105,9 +109,11 @@ style = "bg:#00ADD8"
 
 ## Security
 
-### Secrets
+### Secrets Management
 
-Never hardcode API keys, tokens, or credentials in TOML files:
+**Prohibition**: Never hardcode sensitive data in TOML files
+
+**Sensitive Data Types**: API keys, tokens, credentials
 
 ```toml
 # Bad — hardcoded secret committed to git
