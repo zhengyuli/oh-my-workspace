@@ -1,43 +1,116 @@
 # .gitignore
-# Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
 # =============================================================================
 # Git Ignore Patterns - oh-my-workspace
 #
 # Location: $WORKSPACE_DIR/.gitignore (repository root)
 # Note: Patterns follow gitignore(5) specification
+#
+# Organization: Broad patterns (**/pattern) catch files wherever they appear
+# Rationale: Tools may write cache/data to wrong locations (e.g., ~/.config/xxx/
+#            instead of XDG directories). Broad patterns protect against this.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
 # Editor / IDE Files
 # -----------------------------------------------------------------------------
+# Catch editor-generated files wherever they appear in the repository
 
 # Emacs
+# Compiled elisp, auto-saves, backups, package cache
 *.elc
 .#*
 *~
 \#*\#
-emacs/.config/emacs/auto-save-list/
-emacs/.config/emacs/elpa/
-emacs/.config/emacs/url/
-emacs/.config/emacs/.emacs.desktop
-emacs/.config/emacs/.emacs.desktop.lock
-emacs/.config/emacs/desktop/
-emacs/.config/emacs/projects
-emacs/.config/emacs/.cache/
+**/auto-save-list/
+**/elpa/
+**/url/
+**/.emacs.desktop
+**/.emacs.desktop.lock
+**/desktop/
+**/projects
 
 # VS Code
 .vscode/
 
 # Vim
+# Swap files, undo history, sessions, views
 *.swp
 *.swo
-vim/.config/vim/viminfo
-vim/.config/vim/undo/
-vim/.config/vim/session/
-vim/.config/vim/view/
+**/viminfo
+**/undo/
+**/session/
+**/view/
+**/spell/
 
 # Claude Code (track rules and project settings, ignore local settings)
 .claude/settings.local.json
+
+# -----------------------------------------------------------------------------
+# Shell Files
+# -----------------------------------------------------------------------------
+# Catch completion caches, history, compiled scripts wherever they appear
+
+# Zsh
+**/.zcompdump
+**/.zcompdump.*
+**/*.zwc
+**/history
+**/.zhistory
+**/zinit/
+**/conf.d/99-local.zsh
+
+# -----------------------------------------------------------------------------
+# Tool Files
+# -----------------------------------------------------------------------------
+# Tool-specific cache, state, and local configuration files
+
+# Git
+**/config.local
+**/credentials
+
+# Ghostty
+**/config.local
+
+# Yazi
+**/plugins/
+**/flavors/
+
+# -----------------------------------------------------------------------------
+# Language Runtime Files
+# -----------------------------------------------------------------------------
+# Cache, build artifacts, dependency directories
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist-info/
+.eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+*.cover
+
+# TypeScript/Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Build artifacts
+dist/
+build/
+*.js.map
+*.d.ts.map
 
 # -----------------------------------------------------------------------------
 # Testing
@@ -66,56 +139,18 @@ Thumbs.db
 .claude/worktrees/
 
 # -----------------------------------------------------------------------------
-# Local / Machine-Specific Files
+# Cross-Cutting Patterns
 # -----------------------------------------------------------------------------
+# Only patterns that are truly universal (not already covered above)
 
-# Zsh
-zsh/.config/zsh/conf.d/99-local.zsh
-zsh/.config/zsh/.zcompdump
-zsh/.config/zsh/.zcompdump.*
-zsh/.config/zsh/cache/
-zsh/.config/zsh/history
-zsh/.config/zsh/.zhistory
-zsh/.config/zsh/zinit/
-zsh/.config/zsh/*.zwc
-zsh/.config/zsh/**/*.zwc
-
-# Git
-git/.config/git/config.local
-git/.config/git/credentials
-
-# Ghostty
-ghostty/.config/ghostty/config.local
-
-# Yazi
-tool/yazi/.config/yazi/plugins/
-tool/yazi/.config/yazi/flavors/
-
-# Vim (machine-specific)
-vim/.config/vim/**/*.swp
-vim/.config/vim/**/*.swo
-vim/.config/vim/**/*.bak
-vim/.config/vim/**/*~
-
-# -----------------------------------------------------------------------------
-# General Patterns
-# -----------------------------------------------------------------------------
-# Catch-all patterns for cache, backup, and temporary files
-
-# Cache directories and files
+# Cache directories (generic)
 **/.cache/
-**/*.cache
-**/*.zwc
-**/*.elc
-**/*.pyc
-**/*.pyo
 
-# Lock files
-**/.#*
-**/#*#
-
-# Backup files
-**/*~
+# Backup files (generic)
 **/*.bak
 **/*.backup
 **/*.orig
+
+# Editor lock files (generic)
+**/.#*
+**/#*#
