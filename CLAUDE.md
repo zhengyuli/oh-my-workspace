@@ -163,21 +163,18 @@ Detailed conventions in `.claude/rules/`:
 ### Universal Standards
 - `coding-style.md` — Line length (80 chars), file headers, documentation
 - `patterns.md` — Design patterns, immutability principle
-- `security.md` — Secrets management, input validation
 
-### Workflow & Process
+### Workflow & Process (`.claude/skills/`)
 - `dev-workflow.md` — Research-first approach, verification phases
 - `git-workflow.md` — Conventional Commits, branch naming
-- `testing.md` — Syntax validation, functional and integration testing
 
-### Language-Specific (conditionally loaded)
-- `lang/shell.md` — Universal shell practices (base)
+### Language-Specific (`.claude/rules/lang/`)
 - `lang/bash.md` — Bash-specific features (namerefs, associative arrays)
 - `lang/zsh.md` — Zsh-specific features (globbing, hooks)
 - `lang/elisp.md` — Emacs Lisp conventions (lexical binding, ERT testing)
-- `lang/python.md` — Python standards (type hints, pytest)
-
-**See `.claude/rules/README.md` for complete rule documentation.**
+- `lang/config.md` — Configuration files (no extension)
+- `lang/toml.md` — TOML configuration files
+- `lang/yaml.md` — YAML configuration files
 
 ## Quick Reference
 

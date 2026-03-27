@@ -150,7 +150,8 @@ git branch -d hotfix/fix-zsh-path
 - Update documentation when adding new packages
 - Verify symlinks work after changes
 - Run `./setup.sh clean` before committing to remove stale compiled files
-  (`.elc`, `.zwc`, `.pyc`, editor swap/backup files, `.DS_Store`)
+  (Project-specific extensions: `.elc`, `.zwc`, `.pyc`; plus editor swap/backup
+  files, `.DS_Store`)
 
 ## Secrets & .gitignore
 

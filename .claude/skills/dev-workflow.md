@@ -48,8 +48,8 @@ For multi-file updates or breaking changes, use TodoWrite to:
 Follow immutability principle - create backups:
 
 ```bash
-cp ~/.zshrc ~/.zshrc.bak
-cp init.el init.el.bak
+cp ~/.config/file ~/.config/file.bak
+cp ~/.local/config/file ~/.local/config/file.bak
 ```
 
 ### Make Changes Incrementally
@@ -65,11 +65,7 @@ cp init.el init.el.bak
 - Use symlinks to switch between versions
 - Keep old configs until new ones verified
 
-```bash
-cp config.v1 config.v2
-# Edit config.v2, test it
-ln -sf config.v2 config
-```
+Example: Create a new version, test it, then switch via symlink.
 
 ### Test After Each Change
 
@@ -81,17 +77,17 @@ ln -sf config.v2 config
 
 ### Syntax Validation
 
-```bash
-bash -n script.sh      # Shell
-zsh -n script.zsh      # Zsh
-emacs --batch -f batch-byte-compile init.el  # Emacs Lisp
-python -m py_compile script.py  # Python
-```
+Use the syntax verification tool appropriate for each file type:
+
+- **Shell scripts:** `bash -n` or `zsh -n`
+- **Configuration files:** Tool-specific validators
+- **Python:** `python -m py_compile`
+- **Emacs Lisp:** `emacs --batch -f batch-byte-compile`
 
 ### Functional Testing
 
 1. Shell changes: Open new terminal, test commands
-2. Emacs changes: **clean stale `.elc` first** (see `lang/elisp.md` for procedure)
+2. Configuration changes: Reload or restart the application
 3. Symlink changes: Verify symlinks point correctly
 4. Stow changes: Check stow status and target files
 
@@ -127,7 +123,7 @@ git revert <hash>      # Revert specific commit
 ### Backup Restoration
 
 ```bash
-cp ~/.zshrc.bak ~/.zshrc
+cp ~/.config/file.bak ~/.config/file
 git checkout HEAD~1 -- path/to/file
 ```
 
@@ -153,17 +149,17 @@ ln -sf config.v1 config  # Switch back to previous version
 
 ```bash
 # 1. Create directory tree mirroring target location
-mkdir -p shell/zsh/.config/zsh
+mkdir -p category/package/.config/app
 
 # 2. Add files with standard headers
 # 3. Dry-run to check for conflicts
-stow -n -v -t "$HOME" shell/zsh
+stow -n -v -t "$HOME" category/package
 
 # 4. Install
-stow -v -t "$HOME" shell/zsh
+stow -v -t "$HOME" category/package
 
 # 5. Verify symlinks
-ls -la "$HOME/.config/zsh"
+ls -la "$HOME/.config/app"
 
 # 6. Update PKG_ALL in setup.sh
 ```
@@ -172,17 +168,17 @@ ls -la "$HOME/.config/zsh"
 
 ```bash
 # Dry-run first
-stow -n -D -v -t "$HOME" shell/zsh
+stow -n -D -v -t "$HOME" category/package
 
 # Remove symlinks
-stow -D -v -t "$HOME" shell/zsh
+stow -D -v -t "$HOME" category/package
 ```
 
 ### Workflow: Restow After Moving Files
 
 ```bash
 # After restructuring a package directory
-stow -R -v -t "$HOME" shell/zsh
+stow -R -v -t "$HOME" category/package
 ```
 
 ### Resolving Conflicts
@@ -192,14 +188,14 @@ real file (not a symlink). Resolve before stowing:
 
 ```bash
 # Inspect conflict
-ls -la "$HOME/.zshrc"
+ls -la "$HOME/.config/file"
 
 # Back up and remove the blocking file
-cp "$HOME/.zshrc" "$HOME/.zshrc.bak"
-rm "$HOME/.zshrc"
+cp "$HOME/.config/file" "$HOME/.config/file.bak"
+rm "$HOME/.config/file"
 
 # Now stow succeeds
-stow -v -t "$HOME" shell/zsh
+stow -v -t "$HOME" category/package
 ```
 
 ## Config-Specific Workflows
@@ -234,7 +230,5 @@ stow -v -t "$HOME" shell/zsh
 
 ## See Also
 
-- `hooks.md` — Claude Code hooks integration for automated validation
 - `git-workflow.md` — Commit message conventions
-- `coding-style.md` — Code formatting standards
-- `lang/elisp.md` — Emacs Lisp byte-compile and `.elc` cleanup
+- `../rules/coding-style.md` — Code formatting standards
