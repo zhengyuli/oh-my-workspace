@@ -148,7 +148,7 @@ WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 
 Prefer `printf` over `echo` for predictable output formatting.
 
-Rationale:
+**Rationale:**
 - `echo` behavior is inconsistent across shell implementations (BSD/GNU variants)
 - `printf` is POSIX-compliant with consistent behavior
 
@@ -156,9 +156,13 @@ Direct all error and warning messages to stderr; reserve stdout for program
 output.
 
 ```bash
-# Correct — errors to stderr, output to stdout
+# CORRECT — errors to stderr, output to stdout
 printf 'error: %s not found\n' "$pkg" >&2
 printf '%s\n' "$result"
+
+# WRONG — errors to stdout (breaks piping)
+printf 'error: %s not found\n' "$pkg"
+printf '%s\n' "$result" >&2
 ```
 
 ### Naming Conventions

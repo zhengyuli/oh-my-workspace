@@ -66,24 +66,34 @@ symbol = " "
 ## Documentation & Code Patterns
 
 ### Comments
-- Explain rationale (WHY), not mechanics (WHAT)
-- TOML supports inline comments, but prefer separate lines for clarity
-- Document non-obvious configuration choices
+
+Explain rationale (WHY), not mechanics (WHAT). Document non-obvious
+configuration choices. TOML supports inline comments, but prefer separate
+lines for clarity.
 
 ```toml
-# Use Nerd Font symbols for better visual identification
+# Use Nerd Font symbols for better visual identification in terminal
 symbol = " "
 
-# Inline comment (acceptable for brief notes)
-style = "bg:#00ADD8"  # Go blue
+# CORRECT — separate comment explains WHY
+# Go language color scheme matches official branding
+style = "bg:#00ADD8"
+
+# WRONG — inline comment explains WHAT (obvious)
+symbol = " "  # Python language icon
 ```
 
 ### Strings
-Always quote strings, never unquoted
+
+Always quote strings, never unquoted.
+
 ```toml
-name = "value"  # Quoted
-path = "~/.config/app"  # Quoted
-# Avoid: name = value  # Unquoted (parsing errors)
+# CORRECT — always quote strings
+name = "value"
+path = "~/.config/app"
+
+# WRONG — unquoted causes parsing errors
+name = value
 ```
 
 ### Booleans

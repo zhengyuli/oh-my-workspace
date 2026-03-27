@@ -152,16 +152,22 @@ WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 
 ### Output Standards
 
-Use zsh `print` built-in for output formatting:
-- Rationale: `print` is zsh-native with rich formatting options
+Use zsh `print` built-in for output formatting.
+
+**Rationale:**
+- `print` is zsh-native with rich formatting options
 - `print` provides consistent behavior and better integration with zsh features
 
 Direct all error and warning messages to stderr; reserve stdout for program output:
 
 ```zsh
-# Correct — errors to stderr, output to stdout
+# CORRECT — errors to stderr, output to stdout
 print -u2 "error: $pkg not found"
 print "$result"
+
+# WRONG — errors to stdout (breaks piping)
+print "error: $pkg not found"
+print "$result" >&2
 ```
 
 ### Naming Conventions
