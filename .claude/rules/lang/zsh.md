@@ -93,9 +93,12 @@ trap '_err_handler' ERR
 
 **Note**: For interactive `.zshrc` files, **do not** use `set -e` — it causes unexpected exits on failed commands (e.g. `grep` finding no match).
 
-## Comments & Patterns
+## Documentation & Code Patterns
 
-**Comments**: Explain WHY, not WHAT. Use separate lines.
+**Comment Philosophy**:
+- Explain rationale (WHY), not mechanics (WHAT)
+- Document non-obvious design decisions and constraints
+- Use separate comment lines for clarity
 
 ```zsh
 # Validate package exists before stow operations
@@ -105,7 +108,7 @@ _validate_package() {
 }
 ```
 
-**Variables**: Always quote, always local in functions
+**Variable Handling**: Quote all variables, use `local` scope in functions
 ```zsh
 # CORRECT
 _process_file() {
@@ -131,10 +134,11 @@ if (( count > 0 )); then          # Arithmetic
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 ```
 
-**Output**:
-- Use `printf` over `echo` — `echo` behavior varies across shells and BSD/GNU
-  implementations; `printf` is predictable and POSIX-compliant
-- All error and warning messages must go to stderr; stdout is for program output
+**Output Standards**:
+- Prefer `printf` over `echo` for predictable output formatting
+  - Rationale: `echo` behavior is inconsistent across shell implementations (BSD/GNU variants)
+  - `printf` is POSIX-compliant with consistent behavior
+- Direct all error and warning messages to stderr; reserve stdout for program output
 
 ```zsh
 # Correct — errors to stderr, output to stdout
@@ -142,16 +146,16 @@ printf 'error: %s not found\n' "$pkg" >&2
 printf '%s\n' "$result"
 ```
 
-**Naming**:
-- Constants and exported variables: `UPPER_SNAKE_CASE`
-- Local and temporary variables: `lower_snake_case`
+**Naming Conventions**:
+- Constants and exported variables: Require `UPPER_SNAKE_CASE`
+- Local and temporary variables: Require `lower_snake_case`
 
 ```zsh
 readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"  # constant
 local temp_file                                         # local variable
 ```
 
-**Formatting Rules:**
+**Code Formatting:**
 - 2-space indentation (never tabs)
 - Never align values with spaces
 - Never use inline comments for explanations
@@ -245,139 +249,50 @@ if command -v emacs >/dev/null 2>&1; then
 fi
 ```
 
-## Zsh-Specific Features
-
-### Array Indexing
-
-**Arrays start at 1, not 0:**
-```zsh
-arr=(one two three)
-echo $arr[1]     # "one" (not "two" as in bash)
-echo $arr[2]     # "two"
-echo $arr[-1]    # "three" (last element)
-```
-
-### typeset vs declare
-
-Zsh prefers `typeset`:
-```zsh
-typeset -a my_array
-typeset -A my_hash
-
-# Also valid
-declare -a my_array
-declare -A my_hash
-```
-
-### Globbing Extensions
-
-```zsh
-# Recursive glob
-files=(**/*.sh)
-
-# Exclude pattern
-files=(^*.test.sh)
-
-# Numeric sort
-files=(*(n))
-
-# By modification time
-files=*(.om[1,5])   # 5 most recently modified files
-```
-
-### Parameter Expansion
-
-```zsh
-# Array length
-arr=(a b c)
-echo ${#arr}        # 3 (number of elements)
-echo ${#arr[1]}     # 1 (length of first element)
-
-# Modify on expansion
-echo ${arr:u}       # Uppercase
-echo ${arr:l}       # Lowercase
-
-# Split/join
-str="a:b:c"
-arr=(${(s/:/)str})  # Split by :
-echo ${(j/-/)arr}   # Join with -
-```
-
-### Associative Arrays
-
-```zsh
-typeset -A config
-config=(
-  editor emacs
-  shell zsh
-  term ghostty
-)
-
-# Access
-echo $config[editor]
-
-# Iterate
-for key value in ${(kv)config}; do
-  echo "$key = $value"
-done
-```
-
 ## Security
 
-### Avoid eval
+### Code Injection Prevention
 
-Never use `eval` in scripts — it executes arbitrary strings and bypasses all
-input validation. Use `case` for dispatch instead:
+**Prohibition**: Never use `eval` to execute user input or variable content.
+
+**Rationale**: `eval` bypasses input validation and enables arbitrary code execution.
+
+**Alternative Pattern**: Use explicit `case` dispatch for command routing.
 
 ```zsh
-# Dangerous — arbitrary code execution
-eval "$user_input"
-
-# Safe — explicit dispatch
+# Pattern: Explicit dispatch (not eval)
 case "$user_input" in
   install)   _install ;;
   uninstall) _uninstall ;;
-  *)         printf 'error: unknown command: %s\n' "$user_input" >&2; exit 1 ;;
+  *)         printf 'error: invalid command: %s\n' "$user_input" >&2; exit 1 ;;
 esac
 ```
 
-### File Permissions
+### Permission Management
 
-When scripts create or manage files, set permissions explicitly:
+**Principles**:
+- Set file permissions explicitly during creation
+- Use portable permission checking (avoid platform-specific `stat` variants)
+- Follow principle of least privilege for sensitive files
 
-```zsh
-# Set script executable
-chmod 755 "$script_file"
+**Recommended Permissions**:
 
-# Verify secret file permissions (cross-platform)
-# find returns output only if permissions match; empty = wrong perms
-if [[ -z "$(find "$secret_file" -maxdepth 0 -perm 0600 2>/dev/null)" ]]; then
-  printf 'error: %s must be 600\n' "$secret_file" >&2
-  chmod 600 "$secret_file"
-fi
-```
+| File Type    | Mode | Rationale                        |
+|--------------|------|----------------------------------|
+| Scripts      | 755  | Executable by owner/group/other  |
+| Config files | 644  | Readable by all, writable by owner |
+| SSH keys     | 600  | Accessible only by owner         |
+| Secret files | 600  | Accessible only by owner         |
 
-> **Note:** Use `find -perm` for portable permission checks — avoid `stat -f`
-> (macOS-only) and `stat -c` (Linux-only).
+### Secrets Management
 
-Recommended permissions:
-
-| File Type    | Octal |
-|--------------|-------|
-| Scripts      | 755   |
-| Config files | 644   |
-| SSH keys     | 600   |
-| Secret files | 600   |
-
-### Secrets in Scripts
-
-Never hardcode secrets. Read from environment variables with safe defaults:
+**Principles**:
+- Prohibit hardcoding credentials, API keys, or tokens in scripts
+- Read secrets from environment variables with safe defaults
+- Use `${VAR:-}` pattern to prevent errors from unset variables
 
 ```zsh
-# Bad — hardcoded
-API_KEY="sk-1234567890"
-
-# Good — from environment, empty default if unset
+# Pattern: Environment variable with safe default
 API_KEY="${API_KEY:-}"
 ```
 
