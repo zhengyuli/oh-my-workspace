@@ -765,87 +765,6 @@ cmd_status() {
   printf '\n'
 }
 
-# Removes generated/temporary files from the workspace tree.
-# Safe to run at any time; never touches local config, history, or
-# installed packages (elpa/, zinit/, yazi/plugins/, etc.).
-#
-# Patterns removed (all auto-regenerated):
-#   *.elc *.zwc *.pyc *.pyo   compiled bytecode
-#   .#*  #*#  *~               editor lock/backup files
-#   *.swp *.swo                Vim swap files
-#   *.bak *.backup *.orig      backup remnants
-#   .DS_Store                  macOS Finder metadata
-#   *-test-report-*.txt        test output artefacts
-#
-# Supports --dry-run to preview without deleting.
-# Globals:
-#   DRY_RUN (read)
-# Arguments: parsed from "$@"
-cmd_clean() {
-  local dry=false
-  local arg
-  for arg in "$@"; do
-    case "${arg}" in
-      --dry-run) dry=true ;;
-      -*) die "Unknown flag: ${arg}" ;;
-      *) die "clean takes no package arguments" ;;
-    esac
-  done
-
-  print_header "oh-my-workspace clean"
-
-  if "${dry}"; then
-    log_info "Dry-run mode: no files will be removed."
-  fi
-
-  # Build the find expression for all temporary file patterns.
-  mapfile -t _tmp_files < <(
-    find "${WORKSPACE_DIR}" \
-      -not -path "${WORKSPACE_DIR}/.git/*" \
-      \( \
-        -name '*.elc'              \
-        -o -name '*.zwc'           \
-        -o -name '*.pyc'           \
-        -o -name '*.pyo'           \
-        -o -name '.#*'             \
-        -o -name '#*#'             \
-        -o -name '*~'              \
-        -o -name '*.swp'           \
-        -o -name '*.swo'           \
-        -o -name '*.bak'           \
-        -o -name '*.backup'        \
-        -o -name '*.orig'          \
-        -o -name '.DS_Store'       \
-        -o -name '*-test-report-*.txt' \
-      \) \
-      -type f \
-    2>/dev/null || true
-  )
-
-  if (( ${#_tmp_files[@]} == 0 )); then
-    log_ok "Nothing to clean."
-    return 0
-  fi
-
-  local f
-  for f in "${_tmp_files[@]}"; do
-    local rel="${f#${WORKSPACE_DIR}/}"
-    if "${dry}"; then
-      log_info "[dry-run] would remove: ${rel}"
-    else
-      log_warn "Removing: ${rel}"
-      rm -f "${f}"
-    fi
-  done
-
-  printf '\n'
-  if "${dry}"; then
-    log_ok "Dry-run complete. ${#_tmp_files[@]} file(s) would be removed."
-  else
-    log_ok "Removed ${#_tmp_files[@]} temporary file(s)."
-  fi
-}
-
 # -----------------------------------------------------------------------------
 # Internal helpers
 # -----------------------------------------------------------------------------
@@ -893,7 +812,6 @@ Commands:
   install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages
   uninstall [--all] [<pkg>...]                         Unstow packages
   status    [<pkg>...]                                 Show status and symlinks
-  clean     [--dry-run]                               Remove temporary files
   help                                                 Show this help
 
 Flags:
@@ -914,8 +832,6 @@ Examples:
   ./setup.sh uninstall --all                  Unstow all
   ./setup.sh status                           Full status with symlinks
   ./setup.sh status zsh                       Status for one package
-  ./setup.sh clean                            Remove temporary files (*.elc etc.)
-  ./setup.sh clean --dry-run                  Preview what clean would remove
 
 Details:
   install --all
@@ -944,7 +860,6 @@ main() {
     install)        cmd_install "$@" ;;
     uninstall)      cmd_uninstall "$@" ;;
     status)         cmd_status "$@" ;;
-    clean)          cmd_clean "$@" ;;
     help|-h|--help) show_help ;;
     *)
       log_err "Unknown command: ${cmd}"

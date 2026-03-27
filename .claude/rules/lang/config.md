@@ -67,14 +67,20 @@ Standards for configuration files without extensions (config, conf, rc).
 
 ### Comments
 
-Explain rationale (WHY), not mechanics (WHAT). Document non-obvious design decisions and constraints. Use separate comment lines for clarity, never inline explanations.
+Explain rationale (WHY), not mechanics (WHAT). Document non-obvious design
+decisions and constraints. Use separate comment lines for clarity, never
+inline explanations.
 
 ```conf
 # Use delta for syntax-highlighted diffs (falls back to less)
 pager = delta
 
+# CORRECT — separate comment explains WHY
 # Warn when line endings change (prevents silent corruption)
 safecrlf = warn
+
+# WRONG — inline comment explains WHAT (obvious)
+pager = delta  # diff viewer
 ```
 
 ### Booleans

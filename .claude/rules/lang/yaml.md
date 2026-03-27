@@ -64,32 +64,41 @@ git:
 
 ### Comments
 
-- Explain rationale (WHY), not mechanics (WHAT)
-- Prefer separate comment lines for clarity
-- Inline comments acceptable for brief notes only
-
-### Indentation
-
-Spaces only, 2-space indent, never tabs
+Explain rationale (WHY), not mechanics (WHAT). Prefer separate comment lines
+for clarity. Inline comments acceptable for brief notes only.
 
 ```yaml
-# Catppuccin Mocha Blue theme
+# Catppuccin Mocha Blue theme for visual consistency
 # Reference: https://github.com/catppuccin/lazygit
 theme:
   activeBorderColor:
     - '#89b4fa'
 
-# Inline comment (acceptable for brief notes)
-nerdFontsVersion: "3"  # Required for latest symbols
+# CORRECT — separate comment explains WHY
+# Required for latest Nerd Font symbols (v3.0+)
+nerdFontsVersion: "3"
+
+# WRONG — inline comment explains WHAT (obvious)
+nerdFontsVersion: "3"  # Version number
 ```
+
+### Indentation
+
+Spaces only, 2-space indent, never tabs.
 
 ### Strings
 
-Quote special characters
+Quote strings containing special characters.
+
 ```yaml
-name: "value"  # Quoted
-message: "error: file not found"  # Quote if contains colon
-pattern: "*.txt"  # Quote if contains asterisk
+# CORRECT — quote strings with special characters
+name: "value"
+message: "error: file not found"
+pattern: "*.txt"
+
+# WRONG — unquoted special characters cause parsing errors
+message: error: file not found
+pattern: *.txt
 ```
 
 ### Booleans
