@@ -8,6 +8,23 @@ maintainer: "zhengyu.li"
 
 macOS dotfiles repository using GNU Stow for XDG-compliant configuration management.
 
+## Project Scope
+
+**This is a configuration management repository**, not a code repository.
+
+**Contains**: Configuration files (`.toml`, `.yml`, `.conf`, `.el`, `.sh`, `.zsh`)
+**Purpose**: Manage dotfiles and tool configurations across machines
+**Does NOT contain**: Application code in Python, Go, TypeScript, Rust, etc.
+
+The `lang/` directory contains configuration for language tools (uv, bun), not source code.
+
+All configuration files follow standardized formats with:
+- File headers (mode, timestamp, location, references)
+- Section delimiters for organization
+- Comments explaining WHY, not WHAT
+- References to official documentation
+
+
 ## Tech Stack
 
 @.claude/shared/tech-stack.md
@@ -133,7 +150,7 @@ oh-my-workspace/
 
 This project uses Claude Code hooks for automated validation:
 
-- **PostToolUse**: Syntax validation after file edits (shell, elisp, python)
+- **PostToolUse**: Syntax validation after file edits (shell, elisp, config files)
 - **PreToolUse** (Bash): Cleans stale compiled files before `git commit`
 - **Stop**: Session end verification (uncommitted changes, commit format)
 

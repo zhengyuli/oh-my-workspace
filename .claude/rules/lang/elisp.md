@@ -378,3 +378,590 @@ Run tests from the command line:
 emacs --batch -l omw-shell.el -l omw-shell-test.el \
   -f ert-run-tests-batch-and-exit
 ```
+## Enhanced File Headers (Based on Project Standards)
+
+All Emacs Lisp files MUST include comprehensive headers:
+
+```elisp
+;;; filename.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+
+;; Author: Your Name <email@example.com>
+;; Keywords: keyword1, keyword2
+;; Dependencies: (none) or list of packages
+
+;; Copyright (C) 2026 Your Name
+
+;; Permission is hereby granted, free of charge, to any person obtaining a copy
+;; of this software and associated documentation files (the "Software"), to deal
+;; in the Software without restriction, including without limitation the rights
+;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is
+;; furnished to do so, subject to the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be included in
+;; all copies or substantial portions of the Software.
+;;
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+;; THE SOFTWARE.
+
+;;; History:
+;;
+;; 2026-03-27 00:00 Your Name <email@example.com> created.
+
+;;; Commentary:
+;;
+;; Brief description of what this module does.
+;; Explain the purpose and how it fits into the larger configuration.
+
+;;; Code:
+
+;; ============================================================================
+;; Section title
+;; ============================================================================
+
+;;; filename.el ends here
+```
+
+### Header Components
+
+**Mode Line**: `;;; filename.el -*- lexical-binding: t; -*-`
+- Triple semicolon for file-level
+- Always use `lexical-binding: t`
+
+**Timestamp**: `Time-stamp: <...>`
+- Format: `<YYYY-MM-DD HH:MM:SS Day by username>`
+- Auto-updated by Emacs `time-stamp` package
+
+**Metadata**: Author, Keywords, Dependencies
+- Author: Name and email
+- Keywords: Relevant categories for finder-by-keyword
+- Dependencies: Required packages (or "none")
+
+**License**: MIT License (project standard)
+- Full license text in header
+- Adjust copyright holder as needed
+
+**History**: Change log
+- Date, author, brief description
+- Most recent first
+
+**Commentary**: Module description
+- Purpose and context
+- How it integrates with other modules
+- Usage examples if complex
+
+**Code Section**: `;;; Code:`
+- Delimiter between documentation and implementation
+- Use `;;` for section headers (double semicolon)
+
+**Footer**: `;;; filename.el ends here`
+- Marks end of file
+- Triple semicolon
+
+## Section Delimiters
+
+Organize code into logical sections with clear delimiters:
+
+```elisp
+;; ============================================================================
+;; Section Title
+;; ============================================================================
+
+(defun section-function ()
+  "Documentation."
+  ;; Implementation
+  )
+```
+
+### Delimiter Format
+
+- **Top line**: `;; ` + `=` * 76 (79 total with `;;`)
+- **Title**: `;; Section Title`
+- **Bottom line**: Same as top line
+
+### Common Sections
+
+Organize by functionality, not alphabetically:
+
+1. **Dependencies** - `require` statements
+2. **Customization** - `defgroup` and `defcustom`
+3. **Faces** - `defface` definitions
+4. **Variables** - `defvar`, `defconst`
+5. **Utility Functions** - Helper functions
+6. **Main Functions** - Core functionality
+7. **Keybindings** - `define-key` calls
+8. **Hooks** - `add-hook` calls
+9. **Mode Definition** - `define-derived-mode`
+
+### Example Structure
+
+```elisp
+;;; omw-git.el --- Git integration -*- lexical-binding: t; -*-
+
+;; [Header details...]
+
+;;; Code:
+
+;; ============================================================================
+;; Dependencies
+;; ============================================================================
+
+(require 'magit)
+(require 'diff-hl)
+
+;; ============================================================================
+;; Customization
+;; ============================================================================
+
+(defgroup omw-git nil
+  "Git integration settings."
+  :group 'tools
+  :prefix "omw-git-")
+
+(defcustom omw-git-auto-revert t
+  "Automatically revert buffers when git status changes."
+  :type 'boolean
+  :group 'omw-git)
+
+;; ============================================================================
+;; Utility Functions
+;; ============================================================================
+
+(defun omw-git--current-branch ()
+  "Return current git branch name."
+  (magit-get-current-branch))
+
+;; ============================================================================
+;; Main Functions
+;; ============================================================================
+
+(defun omw-git-status ()
+  "Show git status for current repository."
+  (interactive)
+  (magit-status-setup-buffer))
+
+;; ============================================================================
+;; Keybindings
+;; ============================================================================
+
+(global-set-key (kbd "C-c g s") 'omw-git-status)
+
+;; ============================================================================
+;; Hooks
+;; ============================================================================
+
+(add-hook 'after-save-hook 'omw-git-auto-commit-changed-files)
+
+;;; omw-git.el ends here
+```
+
+## Module Integration
+
+### Feature Requirements
+
+Declare dependencies clearly:
+
+```elisp
+;; At top of file
+(require 'magit)
+
+;; In Commentary section
+;;; Commentary:
+;;
+;; Git integration for oh-my-workspace.
+;; Requires: magit, diff-hl
+```
+
+### Provide Feature
+
+Always provide the feature at end:
+
+```elisp
+(provide 'omw-git)
+;;; omw-git.el ends here
+```
+
+### Lazy Loading
+
+Use `with-eval-after-load` for deferred loading:
+
+```elisp
+(with-eval-after-load 'magit
+  (define-key magit-mode-map (kbd "C-c C-f") 'omw-git-fetch-all))
+```
+
+## Use-Package Patterns
+
+### Standard Pattern
+
+```elisp
+(use-package feature-name
+  :ensure t                    ; Install if missing
+  :defer t                     ; Lazy load
+  :init                        ; Run before load
+  (setq variable t)
+  :config                      ; Run after load
+  (define-key map (kbd "k") 'fn)
+  :bind                        ; Keybindings
+  ("C-c f" . feature-command))
+```
+
+### Grouping Related Packages
+
+```elisp
+;; ============================================================================
+;; Git Integration
+;; ============================================================================
+
+(use-package magit
+  :ensure t
+  :defer t
+  :bind ("C-c g s" . magit-status))
+
+(use-package diff-hl
+  :ensure t
+  :defer t
+  :hook (prog-mode . diff-hl-mode))
+```
+
+## Byte Compilation
+
+### Compile Commands
+
+Always ensure files byte-compile cleanly:
+
+```bash
+# Single file
+emacs --batch -f batch-byte-compile omw-module.el
+
+# Directory
+emacs --batch --eval \
+  "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
+```
+
+### Compilation Warnings
+
+Treat warnings as errors:
+- Resolve all byte-compile warnings
+- Check for unused variables
+- Verify function definitions
+- Ensure proper requires
+
+### Clean Compilation
+
+```bash
+# Remove all .elc files
+find ~/.config/emacs/ -name '*.elc' -delete
+
+# Recompile everything
+emacs --batch --eval \
+  "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
+```
+
+## Testing Integration
+
+### ERT Test Files
+
+Create corresponding test files:
+
+```elisp
+;;; omw-module-test.el --- Tests for omw-module -*- lexical-binding: t; -*-
+
+;;; Code:
+
+(require 'ert)
+(require 'omw-module)
+
+(ert-deftest omw-module-function-test ()
+  "Test omw-module-function behavior."
+  (should (eq (omw-module-function input) expected)))
+
+(provide 'omw-module-test)
+;;; omw-module-test.el ends here
+```
+
+### Run Tests
+
+```bash
+emacs --batch -l omw-module.el -l omw-module-test.el \
+  -f ert-run-tests-batch-and-exit
+```
+
+## Delimiter Hierarchy (MANDATORY)
+
+All Emacs Lisp files MUST use a three-level delimiter system:
+
+### Level 0: File Header Delimiter
+
+**Format**: `;; ` + `=` * 76 (79 total characters)
+**Purpose**: Mark file-level metadata area
+**Character**: `=` (equals sign - strongest visual emphasis)
+
+```elisp
+;;; filename.el -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+
+;; Author: Your Name <email@example.com>
+;; Keywords: keyword1, keyword2
+
+;; Copyright (C) 2026 Your Name
+
+;; [License text...]
+
+;;; History:
+;;
+;; 2026-03-27 00:00 Your Name created.
+
+;;; Commentary:
+;;
+;; Module description.
+
+;;; Code:
+
+;; ============================================================================
+;; Section Title
+;; ============================================================================
+
+;;; filename.el ends here
+```
+
+**Position**: 
+- Not used as a wrapper (file header uses `;;;` semicolons)
+- Section delimiters start after `;;; Code:`
+
+### Level 1: Primary Section Delimiter
+
+**Format**: `;; ` + `=` * 76 (79 total characters)
+**Purpose**: Mark major functional categories
+**Character**: `=` (equals sign - strong visual emphasis)
+
+```elisp
+;; ============================================================================
+;; Primary Category
+;; ============================================================================
+```
+
+**Characteristics**:
+- Appears in pairs (top and bottom boundary)
+- Single-level category (no hyphen in title)
+- Uses double semicolon (`;;`) for section level
+
+### Level 2: Subsection Delimiter
+
+**Format**: `;; ` + `-` * 76 (79 total characters) + " - " in title
+**Purpose**: Mark subcategories within primary categories
+**Character**: `-` (hyphen - medium visual emphasis)
+**Distinction**: Title uses " - " (space-hyphen-space) to indicate hierarchy
+
+```elisp
+;; ----------------------------------------------------------------------------
+;; Primary Category - Subcategory
+;; ----------------------------------------------------------------------------
+```
+
+**Characteristics**:
+- Appears in pairs (top and bottom boundary)
+- Title contains " - " to show parent-child relationship
+- Uses different delimiter character (`-`) to distinguish from Level 1
+
+### Hierarchy Example
+
+```
+File Header (Level 0 - uses ;;; semicolons)
+├── Dependencies (Level 1)
+├── Customization (Level 1)
+│   ├── Customization - Variables (Level 2)
+│   └── Customization - Faces (Level 2)
+├── Functions (Level 1)
+│   ├── Functions - Utility (Level 2)
+│   └── Functions - Main (Level 2)
+├── Keybindings (Level 1)
+│   ├── Keybindings - Global (Level 2)
+│   └── Keybindings - Mode-Specific (Level 2)
+└── Hooks (Level 1)
+```
+
+### Complete Example
+
+```elisp
+;;; omw-git.el --- Git integration -*- lexical-binding: t; -*-
+;; Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+
+;; Author: zhengyu li <lizhengyu419@outlook.com>
+;; Keywords: git, tools
+
+;; Copyright (C) 2026 zhengyu li
+
+;; [MIT License text...]
+
+;;; History:
+;;
+;; 2026-03-27 00:00 zhengyu li created.
+
+;;; Commentary:
+;;
+;; Git integration for oh-my-workspace.
+
+;;; Code:
+
+;; ============================================================================
+;; Dependencies
+;; ============================================================================
+
+(require 'magit)
+(require 'diff-hl)
+
+;; ============================================================================
+;; Customization
+;; ============================================================================
+
+(defgroup omw-git nil
+  "Git integration settings."
+  :group 'tools)
+
+;; ----------------------------------------------------------------------------
+;; Customization - Variables
+;; ----------------------------------------------------------------------------
+
+(defcustom omw-git-auto-revert t
+  "Automatically revert buffers when git status changes."
+  :type 'boolean
+  :group 'omw-git)
+
+;; ----------------------------------------------------------------------------
+;; Customization - Faces
+;; ----------------------------------------------------------------------------
+
+(defface omw-git-highlight-face
+  '((t :inherit highlight))
+  "Face for git highlights."
+  :group 'omw-git)
+
+;; ============================================================================
+;; Functions
+;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Functions - Utility
+;; ----------------------------------------------------------------------------
+
+(defun omw-git--current-branch ()
+  "Return current git branch name."
+  (magit-get-current-branch))
+
+;; ----------------------------------------------------------------------------
+;; Functions - Main
+;; ----------------------------------------------------------------------------
+
+(defun omw-git-status ()
+  "Show git status for current repository."
+  (interactive)
+  (magit-status-setup-buffer))
+
+;; ============================================================================
+;; Keybindings
+;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Keybindings - Global
+;; ----------------------------------------------------------------------------
+
+(global-set-key (kbd "C-c g s") 'omw-git-status)
+
+;; ----------------------------------------------------------------------------
+;; Keybindings - Mode-Specific
+;; ----------------------------------------------------------------------------
+
+(with-eval-after-load 'magit
+  (define-key magit-mode-map (kbd "C-c C-f") 'omw-git-fetch-all))
+
+;; ============================================================================
+;; Hooks
+;; ============================================================================
+
+(add-hook 'after-save-hook 'omw-git-auto-commit-changed-files)
+
+(provide 'omw-git)
+;;; omw-git.el ends here
+```
+
+### Delimiter Specifications
+
+**Width Calculation**:
+- Total width: 79 characters (80-char line - 1 newline)
+- Format: `;; ` (3 chars) + delimiter character * 76
+
+**Character Selection**:
+- **Level 1**: `=` (equals) - strong emphasis for major sections
+- **Level 2**: `-` (hyphen) - medium emphasis for subsections
+
+**Title Format**:
+- **Level 1**: `Primary Category` (single phrase)
+- **Level 2**: `Primary Category - Subcategory` (connected with " - ")
+
+**Semicolon Convention**:
+- `;;;` (triple) - File-level (headers, provide, ends here)
+- `;;` (double) - Section level (delimiters, major sections)
+- `;` (single) - Line level (inline comments)
+
+### Comment Grouping (Optional)
+
+Within a section, use simple comments to group related items:
+
+```elisp
+;; ============================================================================
+;; Customization
+;; ============================================================================
+
+;; User-configurable variables
+(defcustom omw-git-auto-revert t
+  "Automatically revert buffers."
+  :type 'boolean
+  :group 'omw-git)
+
+;; Visual settings
+(defface omw-git-highlight-face
+  '((t :inherit highlight))
+  "Face for highlights."
+  :group 'omw-git)
+```
+
+### Use-Package Integration
+
+Group related package configurations:
+
+```elisp
+;; ============================================================================
+;; Git Integration
+;; ============================================================================
+
+;; Core git interface
+(use-package magit
+  :ensure t
+  :defer t
+  :bind ("C-c g s" . magit-status))
+
+;; Diff highlighting
+(use-package diff-hl
+  :ensure t
+  :defer t
+  :hook (prog-mode . diff-hl-mode))
+```
+
+### Module Organization Pattern
+
+For complex modules, use consistent section ordering:
+
+1. **Dependencies** - `require` statements
+2. **Customization** - `defgroup`, `defcustom`, `defface`
+3. **Variables** - `defvar`, `defconst`
+4. **Functions** - Utility first, then main
+5. **Keybindings** - Global first, then mode-specific
+6. **Hooks** - Mode setup and teardown
+7. **Mode Definition** - `define-derived-mode` (if applicable)
