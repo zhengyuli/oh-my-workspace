@@ -22,14 +22,12 @@ Follow these authoritative style guides:
 
 ## Universal Rules
 
-### File Headers
+### File Headers (MANDATORY)
 
-Every file should include a header with:
-- Purpose/description
-- Usage information
-- Author and date (optional but recommended)
+Every configuration file MUST include a standard header with location and
+usage. AI must ensure all generated files include these headers.
 
-Example:
+**Shell / script format:**
 ```bash
 # setup.sh -*- mode: sh; -*-
 # =============================================================================
@@ -40,9 +38,21 @@ Example:
 # =============================================================================
 ```
 
+**Emacs Lisp format:**
+```elisp
+;;; omw-feature.el --- Brief description -*- lexical-binding: t; -*-
+
+;; Location: ~/.config/emacs/lisp/omw-feature.el
+;; Usage:    (require 'omw-feature)
+```
+
+Additional header elements to document:
+- Dependencies (packages, tools, other modules this file relies on)
+- Non-obvious design choices — include a reference URL where helpful
+
 ### Function Documentation
 
-Document all functions with:
+Every function MUST have:
 - Purpose description
 - Parameters (`@param`)
 - Return values (`@return`)
@@ -67,6 +77,22 @@ _validate_package() {
 - Keep comments up-to-date with code changes
 - Remove commented-out code before committing
 
+AI must add comments explaining:
+- Complex logic or algorithms
+- Non-obvious design decisions
+- Business rules and constraints
+- Workarounds and their reasons
+
+```bash
+# Good - explains WHY
+# Use printf instead of echo for portability (POSIX compliance)
+printf '%s\n' "$message"
+
+# Bad - explains WHAT (never write comments like this)
+# Print the message
+printf '%s\n' "$message"
+```
+
 ### Code Quality
 
 - **No dead code** - Remove unused functions and variables
@@ -75,6 +101,18 @@ _validate_package() {
 - **YAGNI** - Don't add features you don't need yet
 - **KISS** - Keep it simple, avoid over-engineering
 - **Composition over inheritance** - Prefer composing behavior
+
+### Naming Conventions
+
+Use meaningful, descriptive names:
+
+```bash
+# Bad - cryptic
+x=$(pwd)
+
+# Good - descriptive
+workspace_dir=$(pwd)
+```
 
 ## Immutability Principle
 
@@ -169,12 +207,16 @@ via `globs` frontmatter. They extend — never replace — this file.
 
 Before completing any task, verify:
 
-- [ ] All functions documented
-- [ ] Complex logic explained
-- [ ] No hardcoded secrets
+- [ ] Standard file header present (location and usage)
+- [ ] All functions documented with purpose, params, return
+- [ ] Complex logic explained (comments say WHY, not WHAT)
+- [ ] Dependencies documented in file header
+- [ ] Non-obvious choices include references/URLs
+- [ ] No hardcoded secrets or machine-specific paths (use `$HOME`, `$XDG_*`)
 - [ ] Input validation present
-- [ ] Safe file operations
+- [ ] Safe file operations (check before overwrite; backup before modify)
 - [ ] Follows project conventions
 - [ ] Commit message follows Conventional Commits
+- [ ] Run `./setup.sh clean` to remove stale compiled files before commit
 - [ ] Immutable structures used where appropriate
 - [ ] File size within target limits
