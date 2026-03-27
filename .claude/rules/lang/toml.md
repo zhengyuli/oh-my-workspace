@@ -7,7 +7,7 @@ globs:
 
 Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 
-## File Header (MANDATORY)
+## File Header
 
 
 ```toml
@@ -24,10 +24,18 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 
 **Schema reference** (optional): `"$schema" = 'https://starship.rs/config-schema.json'`
 
-## Delimiter Hierarchy (MANDATORY)
+## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ===` * 77 (79 chars)
-**Level 1** (Primary Section): `# ---` * 77 (79 chars)
+**Level 0** (File Header):
+```
+# =============================================================================
+```
+
+**Level 1** (Primary Section):
+```
+# -----------------------------------------------------------------------------
+```
+
 **Level 2** (Subsection): `# --- Title ---` (inline style)
 
 **Example:**
@@ -57,7 +65,7 @@ symbol = " "
 
 ## Documentation & Code Patterns
 
-**Comment Philosophy**:
+### Comments
 - Explain rationale (WHY), not mechanics (WHAT)
 - TOML supports inline comments, but prefer separate lines for clarity
 - Document non-obvious configuration choices
@@ -70,18 +78,24 @@ symbol = " "
 style = "bg:#00ADD8"  # Go blue
 ```
 
-**Strings**: Always quote strings, never unquoted
+### Strings
+Always quote strings, never unquoted
 ```toml
 name = "value"  # Quoted
 path = "~/.config/app"  # Quoted
 # Avoid: name = value  # Unquoted (parsing errors)
 ```
 
-**Booleans**: `enabled = true` (explicit, not strings)
-**Arrays**: `colors = ["red", "green"]` (short inline, long multiline)
-**Tables**: `[section]` for top-level, `[section.sub]` for nested
+### Booleans
+`enabled = true` (explicit, not strings)
 
-**Formatting Rules:**
+### Arrays
+`colors = ["red", "green"]` (short inline, long multiline)
+
+### Tables
+`[section]` for top-level, `[section.sub]` for nested
+
+### Formatting
 - Never align values with spaces
 - Prefer separate-line comments over inline
 
