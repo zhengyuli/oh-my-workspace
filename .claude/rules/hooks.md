@@ -3,271 +3,90 @@ version: "1.0.0"
 last-updated: "2026-03-27"
 maintainer: "zhengyu.li"
 ---
-# Claude Code Hooks Integration
+# Hooks Integration Principles
 
-This project uses two types of hooks for automated validation and verification:
-1. **Claude Code hooks** - Integrated with Claude Code sessions
-2. **Git hooks** - Integrated with git operations
+This project uses hooks for automated validation. Hooks complement rules by
+providing **enforcement** rather than just guidance.
 
-## Hook Types Overview
+## Hook Philosophy
 
-| Type | Location | Trigger | Configuration |
-|------|----------|---------|---------------|
-| Claude Code hooks | `.claude/hooks/` | Claude Code tool events | `settings.json` or `settings.local.json` |
-| Git hooks | `.git/hooks/` | Git operations (commit, push, etc.) | Automatic (git built-in) |
+**Rules tell Claude what to think about; hooks force Claude what to do.**
 
-## Claude Code Hooks
+| Aspect | Rules (this directory) | Hook Scripts |
+|--------|------------------------|--------------|
+| Purpose | Behavioral guidance | Technical enforcement |
+| Loading | Into Claude context | Registered in settings.json |
+| Execution | LLM understands, may ignore | Deterministic, cannot bypass |
+| Use case | Tell Claude how to think | Force Claude to do something |
 
-### Available Hooks
+## Active Hooks
 
-#### PostToolUse: Syntax Validation
+### Claude Code Hooks (PostToolUse, Stop)
 
-After editing source files, syntax is automatically validated:
+**Purpose:** Validate changes during Claude sessions.
 
-| File Type | Command |
-|-----------|---------|
-| `.sh` | `bash -n` |
-| `.zsh` | `zsh -n` |
-| `.el` | `emacs --batch -f batch-byte-compile` |
-| `.py` | `python3 -m py_compile` |
+**What Claude should know:**
+- Hooks run automatically after edits (PostToolUse) and at session end (Stop)
+- Hooks catch syntax errors and configuration issues
+- Claude should not duplicate hook checks in responses (trust the hooks)
+- If hooks fail, Claude should help diagnose and fix the root cause
 
-**Script:** `.claude/hooks/post-tool-use.sh`
+**When Claude should suggest adding hooks:**
+- Recurring syntax errors in specific file types
+- Common mistakes that could be caught automatically
+- Project-specific validation needs (e.g., .elc detection for Emacs)
 
-#### Stop: Session End Check
+### Git Hooks (Pre-Commit)
 
-At session end, verifies:
-- No uncommitted config changes
-- Last commit follows Conventional Commits
+**Purpose:** Enforce standards before code enters the repository.
 
-**Script:** `.claude/hooks/stop.sh`
+**What Claude should know:**
+- Git hooks are **mandatory** - they cannot be bypassed
+- Pre-commit blocks .elc files (see `lang/elisp.md` for rationale)
+- Claude should proactively clean .elc files before committing Emacs changes
 
-### Configuration
+**When Claude should suggest git hooks:**
+- Files that should never be committed (.elc, secrets, build artifacts)
+- Project-specific commit requirements
 
-Claude Code hooks must be explicitly registered in `settings.json` or `settings.local.json`. **There is no auto-discovery mechanism** - hook scripts in `.claude/hooks/` will not run unless registered.
+## Hook Design Principles
 
-**Project-level configuration** (`.claude/settings.json`):
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/post-tool-use.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/stop.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+When Claude designs or suggests hooks:
 
-**Note:** Use relative paths from project root (`.claude/hooks/...`) instead of environment variables like `${CLAUDE_PROJECT_ROOT}`.
+1. **Single responsibility** - Each hook does one thing well
+2. **Fast execution** - Hooks run on every operation, must be quick
+3. **Clear output** - Use `[hook]` prefix, explain what failed and why
+4. **Non-blocking vs blocking** - Use exit codes appropriately:
+   - Exit 0: Success (allow operation)
+   - Exit 1: Error (block operation)
+   - Non-zero exit with warning: Log issue but allow operation
 
-**Global configuration** (`~/.claude/settings.json`):
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/path/to/oh-my-workspace/.claude/hooks/post-tool-use.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+## Configuration Requirements
 
-**Configuration Priority:**
-- Project-level `.claude/settings.json` overrides global `~/.claude/settings.json`
-- `.claude/settings.local.json` is for personal settings (typically in `.gitignore`)
+Claude must ensure:
 
-### Matcher Patterns
+- **Claude Code hooks**: Registered in `.claude/settings.json` using `$CLAUDE_PROJECT_DIR`
+- **Git hooks**: Manually created in `.git/hooks/` directory
 
-The `matcher` field uses regex to match tool names:
+## Proactive Actions
 
-| Pattern | Matches |
-|---------|---------|
-| `Edit` | Edit tool only |
-| `Edit\|Write` | Edit or Write tools |
-| `.*` | All tools |
+Claude should proactively perform these actions without waiting for hooks:
 
-### Hook Script Requirements
+### Before Committing Emacs Changes
 
-Hook scripts must:
-- Be executable (`chmod +x script.sh`)
-- Exit with code 0 on success
-- Exit with non-zero code to block the operation
-- Accept tool arguments via command line or environment variables
-
-## Git Hooks
-
-### Pre-Commit: .elc Detection and Validation
-
-Automatically runs before each commit to:
-
-1. **Block staged .elc files** - Prevents committing compiled Emacs files
-2. **Warn on stale .elc** - Alerts when emacs/ changes are committed with stale .elc in stow target
-
-**Script:** `.git/hooks/pre-commit` (not in version control, created during setup)
-
-**Implementation:**
 ```bash
-# Block staged .elc files
-if git diff --cached --name-only | grep -q '\.elc$'; then
-  printf 'error: staged .elc files detected\n' >&2
-  exit 1
-fi
+# Remove stale .elc files from repository
+find editor/emacs -name '*.elc' -delete
 
-# Warn on stale .elc in stow target
-if git diff --cached --name-only | grep -q '^emacs/.*\.el$'; then
-  stale=$(find "${HOME}/.config/emacs" -name '*.elc' 2>/dev/null)
-  if [[ -n "$stale" ]]; then
-    printf 'warning: stale .elc files in ~/.config/emacs/\n' >&2
-  fi
-fi
+# Remove stale .elc files from stow target
+find ~/.config/emacs/ -name '*.elc' -delete
 ```
 
-See `lang/elisp.md` for cleanup procedure.
-
-### Secrets Detection
-
-Check for hardcoded secrets before commit (see `security.md`).
-
-## Hook Installation
-
-### Claude Code Hooks
-
-**Important:** Hook scripts must be explicitly registered in `settings.json` to run. There is no auto-discovery.
-
-1. **Verify hook scripts exist and are executable:**
-   ```bash
-   ls -la .claude/hooks/
-   chmod +x .claude/hooks/*.sh
-   ```
-
-2. **Create or update `.claude/settings.json`:**
-   ```bash
-   # Create settings.json with hook configuration
-   cat > .claude/settings.json << 'EOF'
-   {
-     "hooks": {
-       "PostToolUse": [
-         {
-           "matcher": "Edit|Write",
-           "hooks": [
-             {
-               "type": "command",
-               "command": ".claude/hooks/post-tool-use.sh"
-             }
-           ]
-         }
-       ],
-       "Stop": [
-         {
-           "matcher": ".*",
-           "hooks": [
-             {
-               "type": "command",
-               "command": ".claude/hooks/stop.sh"
-             }
-           ]
-         }
-       ]
-     }
-   }
-   EOF
-   ```
-
-3. **Note:** `.claude/settings.json` may be in `.gitignore` if it contains project-specific settings. For team-shared hooks, consider committing a template or documenting the required configuration.
-
-### Git Hooks
-
-Git hooks are automatically installed during repository setup:
-
-1. **Created by setup script:**
-   ```bash
-   ./setup.sh install --all
-   ```
-
-2. **Manual installation (if needed):**
-   ```bash
-   # Copy hook template
-   cp .git/hooks/pre-commit.sample .git/hooks/pre-commit
-
-   # Make executable
-   chmod +x .git/hooks/pre-commit
-   ```
-
-## Troubleshooting
-
-### Claude Code Hooks Not Running
-
-**Symptom:** Hooks don't execute when using Claude Code.
-
-**Solutions:**
-1. Verify configuration in `settings.json` or `settings.local.json`
-2. Check hook script is executable: `ls -la .claude/hooks/`
-3. Verify matcher pattern matches the tool name
-4. Check hook script path is correct (use `${CLAUDE_PROJECT_ROOT}` for project-relative paths)
-
-### Git Hooks Not Running
-
-**Symptom:** Pre-commit checks don't run.
-
-**Solutions:**
-1. Verify hook exists: `ls -la .git/hooks/pre-commit`
-2. Make executable: `chmod +x .git/hooks/pre-commit`
-3. Test manually: `.git/hooks/pre-commit`
-
-### Hook Script Errors
-
-**Symptom:** Hook script fails with errors.
-
-**Solutions:**
-1. Check script syntax: `bash -n script.sh`
-2. Run script manually with test arguments
-3. Check script has proper shebang: `#!/usr/bin/env bash`
-4. Verify script uses `set -euo pipefail` for error handling
-
-## Best Practices
-
-### Hook Script Guidelines
-
-1. **Keep scripts focused** - Each hook should do one thing well
-2. **Provide clear output** - Use printf with [hook] prefix for messages
-3. **Handle errors gracefully** - Use proper exit codes
-4. **Document dependencies** - Comment required tools in script header
-5. **Test before deploying** - Run hooks manually to verify behavior
-
-### Configuration Guidelines
-
-1. **Use project-level settings** - Prefer `.claude/settings.local.json` for project-specific hooks
-2. **Use global settings sparingly** - Only for hooks that apply across all projects
-3. **Document hook behavior** - Update this file when adding new hooks
-4. **Version control hook scripts** - Store in `.claude/hooks/` and commit to repo
+See `lang/elisp.md` for detailed .elc cleanup procedure.
 
 ## See Also
 
 - `git-workflow.md` - Commit message conventions
-- `security.md` - Secrets detection rules
-- `lang/elisp.md` - Emacs Lisp byte compilation
+- `lang/elisp.md` - Emacs Lisp byte compilation and .elc cleanup
 - `testing.md` - Testing workflows with hooks
+- `security.md` - Secrets detection rules
