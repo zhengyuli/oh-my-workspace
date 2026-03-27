@@ -8,7 +8,7 @@ globs:
 
 Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 
-## File Header (MANDATORY)
+## File Header
 
 ```yaml
 # filename.yml -*- mode: yaml; -*-
@@ -24,7 +24,7 @@ Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 
 **Schema reference** (optional): `# yaml-language-server: $schema=https://example.com/schema.json`
 
-## Delimiter Hierarchy (MANDATORY)
+## Delimiter Hierarchy
 
 **Level 0** (File Header):
 ```
