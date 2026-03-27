@@ -44,19 +44,15 @@
 
 - [ ] **Step 1: List current rules directory**
 
-Run: `ls -la .claude/rules/`
+Run: `find .claude/rules -maxdepth 1 -name "*.md"`
 
 Expected output:
 ```
-total 40
-drwxr-xr-x   8 user  staff   256 Mar 28 00:00 .
-drwxr-xr-x   9 user  staff   288 Mar 28 00:00 ..
--rw-r--r--   1 user  staff  1234 Mar 28 00:00 coding-style.md
--rw-r--r--   1 user  staff   567 Mar 28 00:00 dev-workflow.md
--rw-r--r--   1 user  staff   890 Mar 28 00:00 git-workflow.md
--rw-r--r--   1 user  staff   456 Mar 28 00:00 patterns.md
--rw-r--r--   1 user  staff   789 Mar 28 00:00 README.md
-drwxr-xr-x   8 user  staff   256 Mar 28 00:00 lang
+.claude/rules/README.md
+.claude/rules/coding-style.md
+.claude/rules/dev-workflow.md
+.claude/rules/git-workflow.md
+.claude/rules/patterns.md
 ```
 
 - [ ] **Step 2: Verify no skills directory exists**
@@ -111,16 +107,11 @@ drwxr-xr-x   2 user  staff    64 Mar 28 00:00 .
 drwxr-xr-x  10 user  staff   320 Mar 28 00:00 ..
 ```
 
-- [ ] **Step 4: Commit preparation**
+- [ ] **Step 4: Skip empty directory commit**
 
-Run: `git add .claude/skills/.gitkeep 2>/dev/null || git add .claude/skills/ && git commit -m "$(cat <<'EOF'
-chore: create skills directory for workflow files
+Note: Empty directories cannot be committed to git. The skills/ directory will be created and populated in Task 6 when we move dev-workflow.md into it.
 
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-EOF
-)"`
-
-Note: If directory is empty, may need to skip this commit and include in next task.
+No commit needed for this step.
 
 ---
 
@@ -620,12 +611,18 @@ git-workflow.md
 
 - [ ] **Step 3: Verify no broken references**
 
-Run: `grep -rE "security\.md|testing\.md|shell\.md|python\.md|hooks\.md" CLAUDE.md .claude/ 2>/dev/null || echo "No broken references found (expected)"`
+Run: `grep -rE "security\.md|testing\.md|shell\.md|python\.md|hooks\.md" CLAUDE.md .claude/rules/coding-style.md .claude/skills/*.md 2>/dev/null || echo "No broken references found (expected)"`
 
 Expected output:
 ```
 No broken references found (expected)
 ```
+
+Note: Also verify coding-style.md does not reference non-existent lang/python.md:
+```bash
+grep "lang/python" .claude/rules/coding-style.md
+```
+Expected: No output (reference removed in refactored version)
 
 - [ ] **Step 4: Verify universal rules have no YAML frontmatter**
 
@@ -694,3 +691,49 @@ After completing all tasks, verify:
 - [ ] CLAUDE.md references only existing files
 - [ ] No references to non-existent files (security.md, testing.md, etc.)
 - [ ] All changes committed and pushed to master
+
+---
+
+## Rollback Procedure
+
+If any issues are discovered during implementation, use these commands to restore the previous state:
+
+### Rollback to Pre-Refactoring State
+
+```bash
+# Discard all uncommitted changes
+git checkout .
+
+# Switch back to master and delete the feature branch
+git checkout master
+git branch -D refactor/rules-cleanup
+
+# If already committed to master, revert the merge
+git reset --hard origin/master
+```
+
+### Partial Rollback (Undo Specific Task)
+
+If only one task caused issues:
+
+```bash
+# Find the commit for that task
+git log --oneline -10
+
+# Revert that specific commit
+git revert <commit-hash>
+```
+
+### Verification After Rollback
+
+After rollback, verify the system is in a clean state:
+
+```bash
+# Verify rules directory is unchanged
+find .claude/rules -maxdepth 1 -name "*.md"
+
+# Verify CLAUDE.md has original references
+grep -n "security\.md\|testing\.md" CLAUDE.md
+
+# Start a new Claude Code session to verify rules load correctly
+```
