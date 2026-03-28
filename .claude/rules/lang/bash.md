@@ -13,15 +13,13 @@ Bash-specific features and universal shell practices.
 ```bash
 #!/usr/bin/env bash
 # script.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Script Title - Brief Description
 #
 # Location: $WORKSPACE_DIR/path/to/script.sh
 # Usage: ./script.sh [options]
 # Dependencies: bash 4.3+
-# References:
-#   1. Official documentation URL
 # =============================================================================
 ```
 
@@ -29,51 +27,14 @@ Bash-specific features and universal shell practices.
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header):
-```
-# =============================================================================
-```
-
-**Level 1** (Primary Section):
-```
-# -----------------------------------------------------------------------------
-```
-
-**Level 2** (Subsection): `# --- Title ---` (inline style)
-
-**Example:**
-```bash
-#!/usr/bin/env bash
-# =============================================================================
-# Setup Script
-# =============================================================================
-
-set -euo pipefail
-
-# -----------------------------------------------------------------------------
-# Constants
-# -----------------------------------------------------------------------------
-readonly SCRIPT_NAME="$(basename "$0")"
-
-# -----------------------------------------------------------------------------
-# Functions
-# -----------------------------------------------------------------------------
-
-# --- Logging ---
-log_info() {
-  printf '[info] %s\n' "$1"
-}
-
-# --- Validation ---
-validate_package() {
-  local -r pkg="$1"
-  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
-}
-```
+**Level 0** (File Header): `# ============...`
+**Level 1** (Primary Section): `# -----------...`
+**Level 2** (Subsection): `# --- Title ---`
 
 ## Error Handling
 
-**Strict Mode** (MANDATORY for scripts):
+### Strict Mode (MANDATORY for scripts)
+
 ```bash
 set -euo pipefail
 ```
@@ -82,7 +43,10 @@ set -euo pipefail
 - `-u` - Treat unset variables as error
 - `-o pipefail` - Pipeline fails on first error
 
-**ERR Trap** (Bash-specific):
+**Note**: For interactive `.bashrc` files, **do not** use `set -e`.
+
+### ERR Trap
+
 ```bash
 _err_handler() {
   local -r code=$?
@@ -92,21 +56,19 @@ _err_handler() {
 trap '_err_handler' ERR
 ```
 
-**Exit Codes**: `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
+### Exit Codes
 
-## Documentation & Code Patterns
+`0` success, `1` error, `2` misuse, `126` not executable, `127` not found
+
+## Code Patterns
 
 ### Comments
 
-Explain rationale (WHY), not mechanics (WHAT). Document non-obvious design
-decisions and constraints. Use separate comment lines for clarity.
+Explain WHY, not WHAT. Use separate comment lines.
 
 ```bash
 # Validate package exists before stow operations
-_validate_package() {
-  local -r pkg="$1"
-  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
-}
+_validate_package() { ... }
 ```
 
 ### Variable Handling
@@ -118,12 +80,6 @@ Quote all variables, use `local` scope in functions.
 _process_file() {
   local -r input="$1"
   rm -rf "$dir"
-}
-
-# WRONG
-_process_file() {
-  input=$1
-  rm -rf $dir
 }
 ```
 
@@ -138,7 +94,7 @@ if (( count > 0 )); then          # Arithmetic
 
 ### Default Values
 
-Use `${VAR:-default}` pattern for default values.
+Use `${VAR:-default}` pattern.
 
 ```bash
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
@@ -146,84 +102,37 @@ WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 
 ### Output Standards
 
-Prefer `printf` over `echo` for predictable output formatting.
-
-**Rationale:**
-- `echo` behavior is inconsistent across shell implementations (BSD/GNU variants)
-- `printf` is POSIX-compliant with consistent behavior
-
-Direct all error and warning messages to stderr; reserve stdout for program
-output.
+Use `printf` over `echo` (POSIX-compliant). Direct errors to stderr.
 
 ```bash
-# CORRECT — errors to stderr, output to stdout
+# CORRECT — errors to stderr
 printf 'error: %s not found\n' "$pkg" >&2
-printf '%s\n' "$result"
-
-# WRONG — errors to stdout (breaks piping)
-printf 'error: %s not found\n' "$pkg"
-printf '%s\n' "$result" >&2
 ```
 
 ### Naming Conventions
 
-Constants and exported variables require `UPPER_SNAKE_CASE`. Local and temporary
-variables require `lower_snake_case`.
+Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`
 
 ```bash
-readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"  # constant
-local temp_file                                         # local variable
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+local temp_file
 ```
 
 ### Formatting
 
-2-space indentation (never tabs). Never align values with spaces. Never use
-inline comments for explanations. Avoid `A || B` and `A && B` patterns, prefer
-`if-else` for clarity. Split long pipelines at `|` with each stage on its own
-line.
-
-```bash
-# WRONG - aligned
-SCRIPT_NAME="$(basename "$0")"
-SCRIPT_DIR ="$(cd "$(dirname "$0")" && pwd)"
-
-# WRONG - short-circuit operators (unclear intent)
-[[ -f "$file" ]] && cat "$file"
-[[ ! -d "$dir" ]] || mkdir -p "$dir"
-
-# WRONG - long pipeline on one line
-find . -name '*.sh' | xargs grep 'TODO' | sort | uniq
-
-# CORRECT - explicit conditionals (clear intent)
-if [[ -f "$file" ]]; then
-  cat "$file"
-fi
-
-if [[ ! -d "$dir" ]]; then
-  mkdir -p "$dir"
-fi
-
-# CORRECT - pipeline split across lines
-find . -name '*.sh' \
-  | xargs grep 'TODO' \
-  | sort \
-  | uniq
-```
+- 2-space indentation (never tabs)
+- Never align values with spaces
+- Split long pipelines at `|` with each stage on its own line
 
 ## Functions
 
 ### Single Responsibility
 
-Each function does exactly one thing.
-
-```bash
-_validate_package() { ... }  # Validation only
-_install_package() { ... }   # Installation only
-```
+Each function does one thing only.
 
 ### Parameter Validation
 
-Validate all required parameters at the start of the function body.
+Validate required parameters at the start.
 
 ```bash
 _validate_package() {
@@ -237,8 +146,7 @@ _validate_package() {
 
 ### Main Function
 
-For scripts longer than ~20 lines, wrap all logic in `main()` to allow
-function hoisting and make the entry point explicit.
+For scripts longer than ~20 lines, wrap all logic in `main()`.
 
 ```bash
 main() {
@@ -252,55 +160,23 @@ main "$@"
 
 ### Local Command Substitution
 
-Always declare and assign on separate lines when the right-hand side is a
-command substitution. `local` is itself a command that always exits 0, so
-`local var="$(cmd)"` masks `cmd`'s failure — `set -e` will NOT catch it.
+Declare and assign on separate lines when RHS is command substitution.
 
 ```bash
-# WRONG — local masks the exit code of dirname
-local dir="$(dirname "$file")"
-
-# CORRECT — exit code of dirname is preserved
+# CORRECT — exit code preserved
 local dir
 dir="$(dirname "$file")"
 ```
 
-### Command Existence Check
+## Anti-Patterns
 
-Use `command -v` (POSIX) not `which` (non-POSIX, behavior varies across systems).
-
-```bash
-if command -v emacs >/dev/null 2>&1; then
-  emacs "$@"
-fi
-```
-
-## Parameter Handling
-
-**getopts**: Use for option parsing
-```bash
-while getopts ":hd" opt; do
-  case "$opt" in
-    h) _show_help; exit 0 ;;
-    d) DRY_RUN=true ;;
-    \?) printf 'error: invalid option -%s\n' "$OPTARG" >&2; exit 1 ;;
-  esac
-done
-shift $((OPTIND - 1))
-```
-
-## Security
-
-### Code Injection Prevention
-
-**Prohibition**: Never use `eval` to execute user input or variable content.
-
-**Rationale**: `eval` bypasses input validation and enables arbitrary code execution.
-
-**Alternative Pattern**: Use explicit `case` dispatch for command routing.
+### Don't: eval for User Input
 
 ```bash
-# Pattern: Explicit dispatch (not eval)
+# WRONG
+eval "$user_input"
+
+# CORRECT — explicit dispatch
 case "$user_input" in
   install)   _install ;;
   uninstall) _uninstall ;;
@@ -308,14 +184,41 @@ case "$user_input" in
 esac
 ```
 
+### Don't: local Masks Exit Codes
+
+```bash
+# WRONG — local always exits 0
+local dir="$(dirname "$file")"
+
+# CORRECT — exit code preserved
+local dir
+dir="$(dirname "$file")"
+```
+
+### Don't: Short-Circuit Operators
+
+```bash
+# WRONG — unclear intent
+[[ -f "$file" ]] && cat "$file"
+[[ ! -d "$dir" ]] || mkdir -p "$dir"
+
+# CORRECT — explicit conditionals
+if [[ -f "$file" ]]; then
+  cat "$file"
+fi
+
+if [[ ! -d "$dir" ]]; then
+  mkdir -p "$dir"
+fi
+```
+
+## Security
+
+### Code Injection Prevention
+
+Never use `eval` to execute user input. Use explicit `case` dispatch.
+
 ### Permission Management
-
-**Principles**:
-- Set file permissions explicitly during creation
-- Use portable permission checking (avoid platform-specific `stat` variants)
-- Follow principle of least privilege for sensitive files
-
-**Recommended Permissions**:
 
 | File Type    | Mode | Rationale                        |
 |--------------|------|----------------------------------|
@@ -326,19 +229,20 @@ esac
 
 ### Secrets Management
 
-**Principles**:
-- Prohibit hardcoding credentials, API keys, or tokens in scripts
-- Read secrets from environment variables with safe defaults
-- Use `${VAR:-}` pattern to prevent errors from unset variables
+Read secrets from environment variables with safe defaults.
 
 ```bash
-# Pattern: Environment variable with safe default
 API_KEY="${API_KEY:-}"
 ```
+
+## References
+
+1. [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
+2. [Bash Manual](https://www.gnu.org/software/bash/manual/)
 
 ## Validation
 
 ```bash
 bash -n script.sh      # Syntax check
-shellcheck script.sh   # If installed
+shellcheck script.sh   # Lint (if installed)
 ```
