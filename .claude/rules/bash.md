@@ -1,10 +1,12 @@
 ---
-globs:
+paths:
   - "**/*.sh"
   - "**/*.bash"
 ---
 
 # Bash Conventions
+
+Bash-specific features and universal shell practices.
 
 # =============================================================================
 ## File Header
@@ -25,6 +27,16 @@ globs:
 
 **Shebang**: `#!/usr/bin/env bash` (use `env` for portability)
 
+## Delimiter Hierarchy
+
+**Level 0** (File Header): `# ============...` (79 chars)
+**Level 1** (Primary Section): `# -----------...` (79 chars)
+**Level 2** (Subsection): `# --- Title ---`
+
+## Line Length
+
+79 characters maximum.
+
 # -----------------------------------------------------------------------------
 ## Error Handling
 # -----------------------------------------------------------------------------
@@ -34,6 +46,7 @@ globs:
 ```bash
 set -euo pipefail
 ```
+
 - `-e` - Exit on non-zero status
 - `-u` - Treat unset variables as error
 - `-o pipefail` - Pipeline fails on first error
@@ -51,11 +64,17 @@ _err_handler() {
 trap '_err_handler' ERR
 ```
 
+### Exit Codes
+
+`0` success, `1` error, `2` misuse, `126` not executable, `127` not found
+
 # -----------------------------------------------------------------------------
 ## Code Patterns
 # -----------------------------------------------------------------------------
 
 ### Variable Handling
+
+Quote all variables, use `local` scope in functions.
 
 ```bash
 _process_file() {
@@ -64,27 +83,117 @@ _process_file() {
 }
 ```
 
-### Conditionals, Defaults, Output, Naming
+### Conditionals
+
+Use `[[ ]]` for strings and `(( ))` for arithmetic.
 
 ```bash
-if [[ "$var" == "value" ]]; then
-if (( count > 0 )); then
+if [[ "$var" == "value" ]]; then  # String
+if (( count > 0 )); then          # Arithmetic
+```
+
+### Default Values
+
+Use `${VAR:-default}` pattern.
+
+```bash
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
-printf 'error: %s\n' "$pkg" >&2
+```
+
+### Output Standards
+
+Use `printf` over `echo` (POSIX-compliant). Direct errors to stderr.
+
+```bash
+printf 'error: %s not found\n' "$pkg" >&2
+```
+
+### Naming Conventions
+
+Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`
+
+```bash
 readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+local temp_file
 ```
 
 ### Formatting
 
-- 2-space indentation (never tabs)
-- Never align values with spaces
-- Split long pipelines at `|` with each stage on its own line
+Split long pipelines at `|` with each stage on its own line.
+
+### Validation at Boundaries
+
+Validate inputs at system boundaries (user input, file reads, API responses).
+
+```bash
+_process_user_input() {
+  local -r input="$1"
+  if [[ -z "${input// /}" ]]; then
+    printf 'error: input cannot be empty\n' >&2
+    return 1
+  fi
+}
+```
+
+### Nesting Limit
+
+Maximum 3 nesting levels. Use early-return guards to flatten structure.
+
+```bash
+# WRONG — 4 levels deep
+if [[ -f "$file" ]]; then
+  if [[ -r "$file" ]]; then
+    if [[ -s "$file" ]]; then
+      if grep -q "pattern" "$file"; then
+        process "$file"
+      fi
+    fi
+  fi
+fi
+
+# CORRECT — early returns, 2 levels max
+if [[ ! -f "$file" ]]; then
+  return 0
+fi
+if [[ ! -r "$file" ]] || [[ ! -s "$file" ]]; then
+  return 0
+fi
+if grep -q "pattern" "$file"; then
+  process "$file"
+fi
+```
+
+### No Magic Numbers
+
+Never use bare numeric literals. Use `readonly` named constants.
+
+```bash
+# WRONG
+sleep 30
+if [[ "$count" -gt 100 ]]; then
+  ...
+fi
+
+# CORRECT
+readonly DEFAULT_TIMEOUT=30
+readonly MAX_THRESHOLD=100
+sleep "$DEFAULT_TIMEOUT"
+if [[ "$count" -gt "$MAX_THRESHOLD" ]]; then
+  ...
+fi
+```
 
 # -----------------------------------------------------------------------------
 ## Functions
 # -----------------------------------------------------------------------------
 
+### Single Responsibility
+
+Each function does one thing only.
+
 ### Parameter Validation
+
+Validate required parameters at the start.
 
 ```bash
 _validate_package() {
@@ -98,6 +207,8 @@ _validate_package() {
 
 ### Main Function
 
+For scripts longer than ~20 lines, wrap all logic in `main()`.
+
 ```bash
 main() {
   local -r pkg="$1"
@@ -105,6 +216,15 @@ main() {
   _install_package "$pkg"
 }
 main "$@"
+```
+
+### Local Command Substitution
+
+Declare and assign on separate lines when RHS is command substitution.
+
+```bash
+local dir
+dir="$(dirname "$file")"
 ```
 
 # -----------------------------------------------------------------------------
@@ -117,45 +237,65 @@ main "$@"
 # WRONG
 eval "$user_input"
 
-# CORRECT
+# CORRECT — explicit dispatch
 case "$user_input" in
-  install) _install ;;
-  *) printf 'error: invalid command: %s\n' "$user_input" >&2; exit 1 ;;
+  install)   _install ;;
+  uninstall) _uninstall ;;
+  *)         printf 'error: invalid command: %s\n' "$user_input" >&2; exit 1 ;;
 esac
 ```
 
 ### Don't: local Masks Exit Codes
 
 ```bash
-# WRONG
+# WRONG — local always exits 0
 local dir="$(dirname "$file")"
 
-# CORRECT
+# CORRECT — exit code preserved
+local dir
 dir="$(dirname "$file")"
 ```
 
-# -----------------------------------------------------------------------------
-## Security
+### Don't: Short-Circuit Operators
 
 ```bash
-# WRONG
+# WRONG — unclear intent
 [[ -f "$file" ]] && cat "$file"
+[[ ! -d "$dir" ]] || mkdir -p "$dir"
 
-# CORRECT
-if [[ -f "$file" ]]; then cat "$file"; fi
+# CORRECT — explicit conditionals
+if [[ -f "$file" ]]; then
+  cat "$file"
+fi
+if [[ ! -d "$dir" ]]; then
+  mkdir -p "$dir"
+fi
 ```
 
 # -----------------------------------------------------------------------------
 ## Security
 # -----------------------------------------------------------------------------
 
+### Code Injection Prevention
+
+Never use `eval` to execute user input. Use explicit `case` dispatch.
+
 ### Permission Management
 
-| File Type    | Mode | Rationale                      |
-|--------------|------|--------------------------------|
-| Scripts      | 755  | Executable                     |
-| Config files | 644  | Writable by owner              |
-| SSH/Secrets  | 600  | Accessible only by owner       |
+| File Type    | Mode | Rationale                        |
+|--------------|------|----------------------------------|
+| Scripts      | 755  | Executable by owner/group/other  |
+| Config files | 644  | Readable by all, writable by owner |
+| SSH keys     | 600  | Accessible only by owner         |
+| Secret files | 600  | Accessible only by owner         |
+
+### Secrets Management
+
+Read secrets from environment variables with safe defaults.
+
+```bash
+API_KEY="${API_KEY:-}"
+```
 
 # -----------------------------------------------------------------------------
 ## References
