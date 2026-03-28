@@ -1,4 +1,4 @@
-# .zshrc
+# .zshrc -*- mode: sh; -*-
 # Time-stamp: <2026-03-18 00:00:00 Wednesday by zhengyu.li>
 # =============================================================================
 # Interactive Shell Orchestrator

@@ -1,4 +1,4 @@
-# 30-completion.zsh
+# 30-completion.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Completion System
@@ -37,12 +37,13 @@ autoload -Uz compinit
 
 _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 
-# Rebuild zcompdump if missing or older than 20 hours; use -C otherwise.
+# Rebuild zcompdump if missing or older than threshold; use -C otherwise.
 # Uses zsh glob qualifiers (no subshells, no external commands, portable):
 #   N  = nullglob (empty array instead of error when no match)
 #   .  = regular file (not a directory or symlink)
-#   mh-20 = modification time < 20 hours ago  (i.e., the dump is still fresh)
-_zcompdump_fresh=( ${_zcompdump}(N.mh-20) )
+#   mh-N = modification time < N hours ago  (i.e., the dump is still fresh)
+readonly COMPDUMP_MAX_AGE_HOURS=20
+_zcompdump_fresh=( ${_zcompdump}(N.mh-${COMPDUMP_MAX_AGE_HOURS}) )
 if (( ${#_zcompdump_fresh} )); then
   # fresh: skip security check for speed
   compinit -C -d "$_zcompdump"

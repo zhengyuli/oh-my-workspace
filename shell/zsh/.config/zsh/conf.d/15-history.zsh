@@ -1,4 +1,4 @@
-# 15-history.zsh
+# 15-history.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
 # History Configuration
@@ -23,8 +23,9 @@
 # HISTSIZE: maximum entries kept in memory during session
 # SAVEHIST: maximum entries written to HISTFILE on exit
 # Common practice: 10000-50000 (100000 is excessive)
-HISTSIZE=50000
-SAVEHIST=50000
+readonly HIST_MAX_ENTRIES=50000
+HISTSIZE=$HIST_MAX_ENTRIES
+SAVEHIST=$HIST_MAX_ENTRIES
 
 # -----------------------------------------------------------------------------
 # History Options
