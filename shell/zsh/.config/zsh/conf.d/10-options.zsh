@@ -1,4 +1,4 @@
-# 10-options.zsh
+# 10-options.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
 # Shell Options (setopt / unsetopt)

@@ -1,4 +1,4 @@
-# 40-plugins.zsh
+# 40-plugins.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-28 15:46:57 Saturday by zhengyuli>
 # =============================================================================
 # Zinit Plugin Management
@@ -162,8 +162,9 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
 
 # Environment variables: preview value
 # Match: -command-, -parameter-, -brace-parameter-, export, unset
-typeset -g _ev='(-command-|-parameter-|-brace-parameter-|export|unset)'
-zstyle ":fzf-tab:complete:${_ev}:*" fzf-preview 'printf "print -r -- "${(P)word}"'
+typeset -g _ev='(-command-|-parameter-|-brace-parameter-|export|unset|expand)'
+zstyle ":fzf-tab:complete:${_ev}:*" fzf-preview \
+  'print -r -- "${(P)word}"'
 unset _ev
 
 # kill: preview process info

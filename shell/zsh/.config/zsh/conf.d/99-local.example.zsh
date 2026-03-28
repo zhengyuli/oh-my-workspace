@@ -1,4 +1,4 @@
-# 99-local.zsh.example
+# 99-local.zsh.example -*- mode: sh; -*-
 # Time-stamp: <2026-03-22 21:42:42 Sunday by zhengyu.li>
 # =============================================================================
 # Machine-Local Configuration Template
@@ -49,7 +49,9 @@
 # Corporate proxy (office network, VPN, etc.)
 # -----------------------------------------------------------------------------
 # _PROXY_URL="http://proxy.company.com:8080"
-# _NO_PROXY_LIST="localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.company.com,company.com"
+# _NO_PROXY_LIST=\
+#   "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,"\
+#   "192.168.0.0/16,.company.com,company.com"
 
 # set_proxy() {
 #   # Uppercase — Go, npm, bun, Java, etc.
@@ -63,14 +65,14 @@
 #   # Catch-all for tools that only read ALL_PROXY
 #   export ALL_PROXY="$_PROXY_URL"
 #   export all_proxy="$_PROXY_URL"
-#   echo "Proxy set: $_PROXY_URL"
+#   print "Proxy set: $_PROXY_URL"
 # }
 
 # unset_proxy() {
 #   unset HTTP_PROXY HTTPS_PROXY NO_PROXY
 #   unset http_proxy https_proxy no_proxy
 #   unset ALL_PROXY all_proxy
-#   echo "Proxy unset"
+#   print "Proxy unset"
 # }
 
 # set_proxy

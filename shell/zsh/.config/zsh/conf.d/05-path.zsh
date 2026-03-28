@@ -1,4 +1,4 @@
-# 05-path.zsh
+# 05-path.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # PATH / FPATH / MANPATH / INFOPATH Management

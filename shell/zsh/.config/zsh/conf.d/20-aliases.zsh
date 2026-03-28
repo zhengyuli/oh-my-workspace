@@ -1,5 +1,5 @@
-# 20-aliases.zsh
-# Time-stamp: <2026-03-28 22:10:58 Saturday by zhengyuli>
+# 20-aliases.zsh -*- mode: sh; -*-
+# Time-stamp: <2026-03-28 22:10:58 Saturday by zhengyu.li>
 # =============================================================================
 # Command Aliases
 #
