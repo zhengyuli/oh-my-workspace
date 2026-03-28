@@ -4,7 +4,7 @@
 # Pretty print JSON with syntax highlighting
 #
 # Arguments:
-#   $@ - File path(s) (optional, reads from stdin if not provided)
+#   $@ - python3 json.tool flags and/or file paths (optional, reads stdin if none)
 #
 # Dependencies: python3, bat
 #
@@ -13,8 +13,4 @@
 #   cat data.json | jsonpp
 #   curl -s https://api.example.com | jsonpp
 # =============================================================================
-if [[ -t 0 ]]; then
-  python3 -m json.tool "$@" | bat --language json --style plain
-else
-  python3 -m json.tool | bat --language json --style plain
-fi
+python3 -m json.tool "$@" | bat --language json --style plain

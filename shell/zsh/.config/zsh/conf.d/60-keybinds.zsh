@@ -139,10 +139,8 @@ bindkey '^[,' cd-parent
 # Custom widget: clear screen and scrollback buffer (Ctrl-/)
 # -----------------------------------------------------------------------------
 clear-screen-and-scrollback() {
-  echoti civis
-  printf '\n%.0s' {1..$LINES}
+  printf '\033[3J\033[H'
   zle clear-screen
-  echoti cnorm
 }
 zle -N clear-screen-and-scrollback
 bindkey '^_' clear-screen-and-scrollback
