@@ -64,6 +64,14 @@
 (setq package-user-dir (expand-file-name "emacs/elpa/" omw/xdg-data-home))
 
 ;; ============================================================================
+;; Frame UI suppression (before first frame is displayed)
+(dolist (mode '(tool-bar-mode
+                scroll-bar-mode
+                menu-bar-mode
+                tooltip-mode))
+  (funcall mode -1))
+
+;; ============================================================================
 ;;; Provide features
 (provide 'early-init)
 

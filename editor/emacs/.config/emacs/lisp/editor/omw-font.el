@@ -121,15 +121,15 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
 
 (use-package emacs
   :ensure nil
-  :when (display-graphic-p)
   :demand t
+  :when (display-graphic-p)
   :hook (after-init . omw/setup-fonts))
 
 ;; ============================================================================
 (use-package textsize
   :ensure t
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :hook ((after-init . textsize-mode)
          (move-frame-functions . textsize-fix-frame))
   :config
@@ -145,8 +145,8 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
 ;; ============================================================================
 (use-package mixed-pitch
   :ensure t
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :hook (markdown-mode . mixed-pitch-mode))
 
 ;; ============================================================================

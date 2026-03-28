@@ -1,5 +1,5 @@
 " vimrc -*- mode: vim; -*-
-" Time-stamp: <2026-03-22 14:21:32 Sunday by zhengyuli>
+" Time-stamp: <2026-03-28 20:02:59 Saturday by zhengyuli>
 " =============================================================================
 " Minimal, plugin-free Vim config
 " Theme: doom-one (ported from doom-emacs, Atom One Dark lineage)
@@ -19,6 +19,8 @@
 " -----------------------------------------------------------------------------
 " Use Vim settings, not Vi
 set nocompatible
+" Disable modelines
+set nomodeline
 " Standard encoding
 set encoding=utf-8
 " Command line history

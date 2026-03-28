@@ -44,6 +44,24 @@ Includes header foreground color and code block background/foreground colors."
   :type 'alist
   :group 'omw-emacs)
 
+(defconst omw/markdown-h1-height 1.30
+  "Height scale for level-1 Markdown headers.")
+
+(defconst omw/markdown-h2-height 1.20
+  "Height scale for level-2 Markdown headers.")
+
+(defconst omw/markdown-h3-height 1.15
+  "Height scale for level-3 Markdown headers.")
+
+(defconst omw/markdown-h4-height 1.1
+  "Height scale for level-4 Markdown headers.")
+
+(defconst omw/markdown-h5-height 1.05
+  "Height scale for level-5 Markdown headers.")
+
+(defconst omw/markdown-h6-height 1.0
+  "Height scale for level-6 Markdown headers.")
+
 (defun omw/markdown-faces-remap ()
   "Remap markdown buffer faces."
   (let* ((header-color (cdr (assq 'header omw/markdown-colors)))
@@ -51,17 +69,17 @@ Includes header foreground color and code block background/foreground colors."
          (code-fg (cdr (assq 'code-fg omw/markdown-colors))))
     ;; Header faces - progressive size reduction for hierarchy
     (face-remap-add-relative 'markdown-header-face-1
-     `(:foreground ,header-color :weight bold :height 1.30))
+     `(:foreground ,header-color :weight bold :height ,omw/markdown-h1-height))
     (face-remap-add-relative 'markdown-header-face-2
-     `(:foreground ,header-color :weight bold :height 1.20))
+     `(:foreground ,header-color :weight bold :height ,omw/markdown-h2-height))
     (face-remap-add-relative 'markdown-header-face-3
-     `(:foreground ,header-color :weight bold :height 1.15))
+     `(:foreground ,header-color :weight bold :height ,omw/markdown-h3-height))
     (face-remap-add-relative 'markdown-header-face-4
-     `(:foreground ,header-color :weight bold :height 1.1))
+     `(:foreground ,header-color :weight bold :height ,omw/markdown-h4-height))
     (face-remap-add-relative 'markdown-header-face-5
-     `(:foreground ,header-color :weight bold :height 1.05))
+     `(:foreground ,header-color :weight bold :height ,omw/markdown-h5-height))
     (face-remap-add-relative 'markdown-header-face-6
-     `(:foreground ,header-color :weight bold :height 1.0))
+     `(:foreground ,header-color :weight bold :height ,omw/markdown-h6-height))
     ;; Code block faces - custom background and foreground
     (face-remap-add-relative 'markdown-pre-face
      `(:foreground ,code-fg :background ,code-bg :extend t))
@@ -73,8 +91,8 @@ Includes header foreground color and code block background/foreground colors."
 ;; ============================================================================
 (use-package valign
   :ensure t
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :hook (markdown-mode . valign-mode)
   :config
   (setq valign-fancy-bar t))

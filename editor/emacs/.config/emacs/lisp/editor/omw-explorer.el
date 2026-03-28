@@ -3,7 +3,7 @@
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: explorer, dirvish, file manager
-;; Dependencies: dired-custom-extension
+;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
 
@@ -52,7 +52,7 @@
   ;; Add dirvish extensions dir to load path
   (let* ((dir (file-name-directory (locate-library "dirvish")))
          (ext (expand-file-name "extensions" dir)))
-    (add-to-list 'load-path ext))
+    (push ext load-path))
 
   (require 'dirvish-vc)
   (require 'dirvish-subtree)

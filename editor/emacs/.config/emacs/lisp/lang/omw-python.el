@@ -104,8 +104,10 @@
                             "format" "--stdin-filename" filename "-"))
                 (buffer-string)))))
       (when (and formatted (not (string= original formatted)))
-        (erase-buffer)
-        (insert formatted)))))
+        (let ((src (generate-new-buffer " *ruff*")))
+          (with-current-buffer src (insert formatted))
+          (replace-buffer-contents src)
+          (kill-buffer src))))))
 
 (defun omw/python-before-save ()
   "Run Python-specific actions before saving."

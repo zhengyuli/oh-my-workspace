@@ -145,8 +145,7 @@ Never mutate shared lists in-place; always produce a new list via `cons`.
 
 ```elisp
 ;; CORRECT
-(setq auto-mode-alist
-      (cons '("\\.py\\'" . python-mode) auto-mode-alist))
+(push '("\\.py\\'" . python-mode) auto-mode-alist)
 ```
 
 ### Validation at Boundaries
@@ -231,8 +230,7 @@ and `:bind` where possible as they imply deferral.
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 
 ;; CORRECT
-(setq auto-mode-alist
-      (cons '("\\.py\\'" . python-mode) auto-mode-alist))
+(push '("\\.py\\'" . python-mode) auto-mode-alist)
 ```
 
 ### Don't: Raw Key Strings

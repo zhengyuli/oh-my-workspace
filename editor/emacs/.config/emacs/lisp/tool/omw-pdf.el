@@ -1,5 +1,5 @@
 ;;; omw-pdf.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-28 19:47:29 Saturday by zhengyuli>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: pdf, pdf-tools, document-viewer
@@ -39,14 +39,14 @@
 ;; ============================================================================
 (use-package pdf-tools
   :ensure t
-  :when (display-graphic-p)
-  :defer t)
+  :defer t
+  :when (display-graphic-p))
 
 ;; ============================================================================
 (use-package pdf-view
   :ensure nil
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . pdf-view-fit-height-to-window)
   :bind (:map pdf-view-mode-map
@@ -59,13 +59,13 @@
 
 ;; ============================================================================
 (defvar omw/pdf-view-restore-path
-  (expand-file-name "pdf-view-restore" user-emacs-directory)
-  "Pdf view restore file path, which will be used to store pdf view state.")
+  (expand-file-name "emacs/pdf-view-restore" omw/xdg-state-home)
+  "PDF view restore file path, which will be used to store pdf view state.")
 
 (use-package pdf-view-restore
   :ensure t
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :hook (pdf-view-mode . pdf-view-restore-mode)
   :config
   (setq pdf-view-restore-filename omw/pdf-view-restore-path))

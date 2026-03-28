@@ -39,15 +39,15 @@
 ;; ============================================================================
 (use-package emojify
   :ensure t
-  :when (display-graphic-p)
   :defer t
+  :when (display-graphic-p)
   :hook (markdown-mode . emojify-mode))
 
 ;; ============================================================================
 (use-package nerd-icons
   :ensure t
-  :when (display-graphic-p)
-  :defer t)
+  :defer t
+  :when (display-graphic-p))
 
 ;; ============================================================================
 (use-package doom-themes

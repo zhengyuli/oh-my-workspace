@@ -65,7 +65,7 @@ ACTION is a template file or function to insert."
   (let ((elt (assoc condition auto-insert-alist)))
     (if elt
         (setcdr elt action)
-      (add-to-list 'auto-insert-alist (cons condition action)))))
+      (push (cons condition action) auto-insert-alist))))
 
 (defun omw/autoinsert-yas-expand ()
   "Expand YASnippet template in current buffer."
