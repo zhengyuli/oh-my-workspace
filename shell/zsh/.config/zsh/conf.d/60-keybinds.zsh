@@ -1,5 +1,5 @@
 # 60-keybinds.zsh
-# Time-stamp: <2026-03-28 14:40:43 Saturday by zhengyuli>
+# Time-stamp: <2026-03-28 14:45:08 Saturday by zhengyuli>
 # =============================================================================
 # Key Bindings
 #
@@ -82,11 +82,6 @@ bindkey '^Y' yank
 bindkey '^[[3~' delete-char
 # Alt-Backspace
 bindkey '^[^?' backward-kill-word
-
-# Edit current command line in $EDITOR (Ctrl-X Ctrl-E)
-autoload -Uz edit-command-line
-zle -N edit-command-line
-bindkey '^X^E' edit-command-line
 
 # -----------------------------------------------------------------------------
 # Completion
