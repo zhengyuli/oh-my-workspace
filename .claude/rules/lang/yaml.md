@@ -12,7 +12,7 @@ Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 
 ```yaml
 # filename.yml -*- mode: yaml; -*-
-# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Title - Brief description
 #
@@ -22,109 +22,61 @@ Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 # =============================================================================
 ```
 
-**Schema reference** (optional): `# yaml-language-server: $schema=https://example.com/schema.json`
+**Schema reference** (optional): `# yaml-language-server: $schema=https://...`
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header):
-```
-# =============================================================================
-```
+**Level 0** (File Header): `# ============...`
+**Level 1** (Primary Section): `# -----------...`
+**Level 2** (Subsection): `# --- Title ---`
 
-**Level 1** (Primary Section):
-```
-# -----------------------------------------------------------------------------
-```
-
-**Level 2** (Subsection): `# --- Title ---` (inline style)
-
-**Example:**
-```yaml
-# =============================================================================
-# Lazygit Configuration
-# =============================================================================
-
-# -----------------------------------------------------------------------------
-# GUI
-# -----------------------------------------------------------------------------
-gui:
-  nerdFontsVersion: "3"
-
-# -----------------------------------------------------------------------------
-# Git
-# -----------------------------------------------------------------------------
-
-# --- Pagers ---
-git:
-  pagers:
-    - colorArg: always
-```
-
-## Documentation & Code Patterns
+## Code Patterns
 
 ### Comments
 
-Explain rationale (WHY), not mechanics (WHAT). Prefer separate comment lines
-for clarity. Inline comments acceptable for brief notes only.
+Explain WHY, not WHAT. Prefer separate lines; inline acceptable for brief notes only.
 
 ```yaml
 # Catppuccin Mocha Blue theme for visual consistency
-# Reference: https://github.com/catppuccin/lazygit
 theme:
   activeBorderColor:
     - '#89b4fa'
-
-# CORRECT — separate comment explains WHY
-# Required for latest Nerd Font symbols (v3.0+)
-nerdFontsVersion: "3"
-
-# WRONG — inline comment explains WHAT (obvious)
-nerdFontsVersion: "3"  # Version number
 ```
 
-### Indentation
+### Value Types
 
-Spaces only, 2-space indent, never tabs.
-
-### Strings
-
-Quote strings containing special characters.
-
-```yaml
-# CORRECT — quote strings with special characters
-name: "value"
-message: "error: file not found"
-pattern: "*.txt"
-
-# WRONG — unquoted special characters cause parsing errors
-message: error: file not found
-pattern: *.txt
-```
-
-### Booleans
-
-`enabled: true` (not `"true"`)
-
-### Lists
-
-`colors: [red, green]` or multiline
-
-### Maps
-
-Nested structure or inline `{x: 1, y: 2}`
+- **Strings**: Quote strings containing special characters
+- **Booleans**: `enabled: true` (not `"true"`)
+- **Lists**: `colors: [red, green]` or multiline
+- **Maps**: Nested structure or inline `{x: 1, y: 2}`
 
 ### Formatting
 
+- 2-space indentation (never tabs)
 - Never align values with spaces
-- Prefer separate-line comments over inline
+
+## Anti-Patterns
+
+### Don't: Unquoted Special Characters
 
 ```yaml
-# WRONG - aligned with spaces
+# WRONG
+message: error: file not found
+pattern: *.txt
+
+# CORRECT
+message: "error: file not found"
+pattern: "*.txt"
+```
+
+### Don't: Aligned Values
+
+```yaml
+# WRONG
 nerdFontsVersion: "3"
 showFileTree:     true
 
-# CORRECT - no alignment
-# Required for latest symbols
+# CORRECT
 nerdFontsVersion: "3"
 showFileTree: true
 ```
@@ -133,40 +85,31 @@ showFileTree: true
 
 ### Secrets Management
 
-**Prohibition**: Never hardcode sensitive data in YAML files
-
-**Sensitive Data Types**: API keys, tokens, credentials
-
-```yaml
-# Bad — hardcoded secret committed to git
-api_key: "sk-1234567890"
-```
-
-Use a split-file strategy: commit a `config.yml` with placeholders or
-non-sensitive defaults; keep secrets in a `config.local.yml` that is
-listed in `.gitignore`:
+Never hardcode sensitive data. Use split-file strategy
 
 ```yaml
 # config.yml (committed)
 api:
-  key: ""  # Set in config.local.yml or environment
+  key: ""  # Set in config.local.yml
 
-# config.local.yml (not committed)
+# config.local.yml (not committed, in .gitignore)
 api:
   key: "sk-1234567890"
 ```
 
-Add to `.gitignore`:
+Add to `.gitignore`: `*.local.yml`, `*.local.yaml`, `*_secret.yml`
 
-```
-*.local.yml
-*.local.yaml
-*_secret.yml
-```
+## References
+
+1. [YAML Specification](https://yaml.org/spec/)
+2. [YAMLlint Documentation](https://yamllint.readthedocs.io/)
 
 ## Validation
 
 ```bash
-python3 -c "import yaml; yaml.safe_load(open('config.yml'))"  # Python validator
-yamllint config.yml  # If installed
+# Python validator
+python3 -c "import yaml; yaml.safe_load(open('config.yml'))"
+
+# Yamllint (if installed)
+yamllint config.yml
 ```

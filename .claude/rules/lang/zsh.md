@@ -10,24 +10,22 @@ globs:
   - "**/zlogin"
 ---
 
-# Zsh-Specific Conventions
+# Zsh Conventions
 
-Zsh-specific features extending the common shell practices.
+Zsh-specific features and universal shell practices.
 
 ## File Header
 
 ```zsh
 #!/usr/bin/env zsh
 # script.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Script Title - Brief Description
 #
 # Location: $WORKSPACE_DIR/path/to/script.zsh
 # Usage: ./script.zsh [options]
 # Dependencies: zsh 5.0+
-# References:
-#   1. Official documentation URL
 # =============================================================================
 ```
 
@@ -35,51 +33,14 @@ Zsh-specific features extending the common shell practices.
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header):
-```
-# =============================================================================
-```
-
-**Level 1** (Primary Section):
-```
-# ----------------------------------------------------------------------------
-```
-
-**Level 2** (Subsection): `# --- Title ---` (inline style)
-
-**Example:**
-```zsh
-#!/usr/bin/env zsh
-# =============================================================================
-# Setup Script
-# =============================================================================
-
-set -euo pipefail
-
-# -----------------------------------------------------------------------------
-# Constants
-# -----------------------------------------------------------------------------
-readonly SCRIPT_NAME="$(basename "$0")"
-
-# -----------------------------------------------------------------------------
-# Functions
-# -----------------------------------------------------------------------------
-
-# --- Logging ---
-log_info() {
-  print "[info] $1"
-}
-
-# --- Validation ---
-validate_package() {
-  local -r pkg="$1"
-  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
-}
-```
+**Level 0** (File Header): `# ============...`
+**Level 1** (Primary Section): `# -----------...`
+**Level 2** (Subsection): `# --- Title ---`
 
 ## Error Handling
 
-**Strict Mode** (MANDATORY for scripts):
+### Strict Mode (MANDATORY for scripts)
+
 ```zsh
 set -euo pipefail
 ```
@@ -88,7 +49,10 @@ set -euo pipefail
 - `-u` - Treat unset variables as error
 - `-o pipefail` - Pipeline fails on first error
 
-**ERR Trap**:
+**Note**: For interactive `.zshrc` files, **do not** use `set -e` — it causes unexpected exits on failed commands (e.g., `grep` finding no match).
+
+### ERR Trap (Zsh-specific)
+
 ```zsh
 _err_handler() {
   print -u2 "[error] ${funcstack[2]:-main}: line ${funcfiletrace[1]##*:}: exit $?"
@@ -96,28 +60,24 @@ _err_handler() {
 trap '_err_handler' ERR
 ```
 
-**Exit Codes**: `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
+### Exit Codes
 
-**Note**: For interactive `.zshrc` files, **do not** use `set -e` — it causes unexpected exits on failed commands (e.g. `grep` finding no match).
+`0` success, `1` error, `2` misuse, `126` not executable, `127` not found
 
-## Documentation & Code Patterns
+## Code Patterns
 
 ### Comments
 
-Explain rationale (WHY), not mechanics (WHAT). Document non-obvious
-design decisions and constraints. Use separate comment lines for clarity.
+Explain WHY, not WHAT. Use separate comment lines.
 
 ```zsh
 # Validate package exists before stow operations
-_validate_package() {
-  local -r pkg="$1"
-  [[ -d "$SCRIPT_DIR/$pkg" ]] || return 1
-}
+_validate_package() { ... }
 ```
 
 ### Variable Handling
 
-Quote all variables, use `local` scope in functions:
+Quote all variables, use `local` scope in functions.
 
 ```zsh
 # CORRECT
@@ -125,17 +85,11 @@ _process_file() {
   local -r input="$1"
   rm -rf "$dir"
 }
-
-# WRONG
-_process_file() {
-  input=$1
-  rm -rf $dir
-}
 ```
 
 ### Conditionals
 
-`[[ ]]` for strings, `(( ))` for arithmetic:
+Use `[[ ]]` for strings and `(( ))` for arithmetic.
 
 ```zsh
 if [[ "$var" == "value" ]]; then  # String
@@ -144,7 +98,7 @@ if (( count > 0 )); then          # Arithmetic
 
 ### Default Values
 
-`${VAR:-default}`:
+Use `${VAR:-default}` pattern.
 
 ```zsh
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
@@ -152,88 +106,40 @@ WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 
 ### Output Standards
 
-Use zsh `print` built-in for output formatting.
+Use zsh `print` built-in for output formatting (zsh-native with rich options).
 
-**Rationale:**
-- `print` is zsh-native with rich formatting options
-- `print` provides consistent behavior and better integration with zsh features
-
-Direct all error and warning messages to stderr; reserve stdout for program output:
+Direct errors to stderr, output to stdout.
 
 ```zsh
-# CORRECT — errors to stderr, output to stdout
+# CORRECT — errors to stderr
 print -u2 "error: $pkg not found"
 print "$result"
-
-# WRONG — errors to stdout (breaks piping)
-print "error: $pkg not found"
-print "$result" >&2
 ```
 
 ### Naming Conventions
 
-Constants and exported variables: `UPPER_SNAKE_CASE`
-Local and temporary variables: `lower_snake_case`
+Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`
 
 ```zsh
-readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"  # constant
-local temp_file                                         # local variable
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+local temp_file
 ```
 
 ### Formatting
 
 - 2-space indentation (never tabs)
 - Never align values with spaces
-- Never use inline comments for explanations
-- Avoid `A || B` and `A && B` patterns, prefer `if-else` for clarity
-- Long pipelines: split at `|` with each stage on its own line
-
-```zsh
-# WRONG - aligned
-SCRIPT_NAME="$(basename "$0")"
-SCRIPT_DIR ="$(cd "$(dirname "$0")" && pwd)"
-
-# WRONG - short-circuit logic (hard to read)
-[[ -f "$file" ]] && cat "$file"
-[[ -d "$dir" ]] || mkdir -p "$dir"
-
-# WRONG - long pipeline on one line
-find . -name '*.zsh' | xargs grep 'TODO' | sort | uniq
-
-# CORRECT
-SCRIPT_NAME="$(basename "$0")"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-
-# CORRECT - explicit conditionals (clear intent)
-if [[ -f "$file" ]]; then
-  cat "$file"
-fi
-
-if [[ ! -d "$dir" ]]; then
-  mkdir -p "$dir"
-fi
-
-# CORRECT - pipeline split across lines
-find . -name '*.zsh' \
-  | xargs grep 'TODO' \
-  | sort \
-  | uniq
-```
+- Split long pipelines at `|` with each stage on its own line
 
 ## Functions
 
 ### Single Responsibility
 
-One thing per function:
-
-```zsh
-_validate_package() { ... }  # Validation only
-_install_package() { ... }   # Installation only
-```
+Each function does one thing only.
 
 ### Parameter Validation
 
-Validate at start:
+Validate required parameters at the start.
 
 ```zsh
 _validate_package() {
@@ -247,8 +153,7 @@ _validate_package() {
 
 ### Main Function
 
-For scripts longer than ~20 lines, wrap all logic in `main()` to allow
-function hoisting and make the entry point explicit:
+For scripts longer than ~20 lines, wrap all logic in `main()`.
 
 ```zsh
 main() {
@@ -262,40 +167,23 @@ main "$@"
 
 ### Local Command Substitution
 
-Always declare and assign on separate lines when the right-hand side is a
-command substitution. `local` is itself a command that always exits 0, so
-`local var="$(cmd)"` masks `cmd`'s failure — `set -e` will NOT catch it:
+Declare and assign on separate lines when RHS is command substitution.
 
 ```zsh
-# WRONG — local masks the exit code of dirname
-local dir="$(dirname "$file")"
-
-# CORRECT — exit code of dirname is preserved
+# CORRECT — exit code preserved
 local dir
 dir="$(dirname "$file")"
 ```
 
-**Command existence check**: Use `command -v` (POSIX) not `which` (non-POSIX,
-behavior varies across systems):
+## Anti-Patterns
+
+### Don't: eval for User Input
 
 ```zsh
-if command -v emacs >/dev/null 2>&1; then
-  emacs "$@"
-fi
-```
+# WRONG
+eval "$user_input"
 
-## Security
-
-### Code Injection Prevention
-
-**Prohibition**: Never use `eval` to execute user input or variable content.
-
-**Rationale**: `eval` bypasses input validation and enables arbitrary code execution.
-
-**Alternative Pattern**: Use explicit `case` dispatch for command routing.
-
-```zsh
-# Pattern: Explicit dispatch (not eval)
+# CORRECT — explicit dispatch
 case "$user_input" in
   install)   _install ;;
   uninstall) _uninstall ;;
@@ -303,14 +191,41 @@ case "$user_input" in
 esac
 ```
 
+### Don't: local Masks Exit Codes
+
+```zsh
+# WRONG — local always exits 0
+local dir="$(dirname "$file")"
+
+# CORRECT — exit code preserved
+local dir
+dir="$(dirname "$file")"
+```
+
+### Don't: Short-Circuit Operators
+
+```zsh
+# WRONG — unclear intent
+[[ -f "$file" ]] && cat "$file"
+[[ ! -d "$dir" ]] || mkdir -p "$dir"
+
+# CORRECT — explicit conditionals
+if [[ -f "$file" ]]; then
+  cat "$file"
+fi
+
+if [[ ! -d "$dir" ]]; then
+  mkdir -p "$dir"
+fi
+```
+
+## Security
+
+### Code Injection Prevention
+
+Never use `eval` to execute user input. Use explicit `case` dispatch.
+
 ### Permission Management
-
-**Principles**:
-- Set file permissions explicitly during creation
-- Use portable permission checking (avoid platform-specific `stat` variants)
-- Follow principle of least privilege for sensitive files
-
-**Recommended Permissions**:
 
 | File Type    | Mode | Rationale                        |
 |--------------|------|----------------------------------|
@@ -321,19 +236,20 @@ esac
 
 ### Secrets Management
 
-**Principles**:
-- Prohibit hardcoding credentials, API keys, or tokens in scripts
-- Read secrets from environment variables with safe defaults
-- Use `${VAR:-}` pattern to prevent errors from unset variables
+Read secrets from environment variables with safe defaults.
 
 ```zsh
-# Pattern: Environment variable with safe default
 API_KEY="${API_KEY:-}"
 ```
+
+## References
+
+1. [Zsh Manual](http://zsh.sourceforge.net/Doc/)
+2. [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
 
 ## Validation
 
 ```zsh
 zsh -n script.zsh      # Syntax check
-shellcheck script.sh   # If installed
+shellcheck script.sh   # Lint (if installed)
 ```
