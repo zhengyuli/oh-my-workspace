@@ -8,37 +8,6 @@ macOS dotfiles repository using GNU Stow for XDG-compliant configuration managem
 
 **Contains**: Configuration files (`.toml`, `.yml`, `.conf`, `.el`, `.sh`, `.zsh`)
 **Purpose**: Manage dotfiles and tool configurations across machines
-**Does NOT contain**: Application code in Python, Go, TypeScript, Rust, etc.
-
-The `lang/` directory contains configuration for language tools (uv, bun), not source code.
-
-All configuration files follow standardized formats with:
-- File headers (mode, timestamp, location, references)
-- Section delimiters for organization
-- Comments explaining WHY, not WHAT
-- References to official documentation
-
-## Tech Stack
-
-- **Shell**: Zsh + Starship prompt, zoxide, direnv, carapace
-- **Editors**: Neovim, Emacs (modular configurations)
-- **Languages**: Python (uv), TypeScript (bun), Go, Rust
-- **Tools**: git, lazygit, ripgrep, fd, fzf, eza, bat, yazi
-- **Terminal**: Ghostty
-
-## Prerequisites
-
-Before using this repository, ensure you have:
-
-- **GNU Stow** - For symlink management
-  ```bash
-  brew install stow
-  ```
-- **Git** - Version control (usually pre-installed on macOS)
-- **Zsh** - Default shell (macOS default since Catalina)
-- **Emacs** - For Emacs configuration (optional, `brew install emacs`)
-
-Additional tools are documented in the Tech Stack section above.
 
 ## Getting Started
 
@@ -50,22 +19,17 @@ For new users setting up the dotfiles repository:
    cd oh-my-workspace
    ```
 
-2. **Install prerequisites:**
-   ```bash
-   brew install stow
-   ```
-
-3. **Preview changes (recommended):**
+2. **Preview changes (recommended):**
    ```bash
    ./setup.sh install --dry-run --all
    ```
 
-4. **Run full setup:**
+3. **Run full setup:**
    ```bash
    ./setup.sh install --all
    ```
 
-5. **Verify installation:**
+4. **Verify installation:**
    ```bash
    ./setup.sh status
    ```
@@ -84,13 +48,15 @@ Organized by category in repository root:
 
 Files follow GNU Stow convention: placed as they appear in `$HOME`.
 
+**XDG Base Directory compliance**: Use `$XDG_CONFIG_HOME` (`~/.config`), `$XDG_DATA_HOME`, `$XDG_CACHE_HOME`, `$XDG_STATE_HOME` for all paths — never hardcode user-specific directories.
+
 ### Directory Structure
 
 ```
 oh-my-workspace/
-├── claude/             # Claude Code environment
-│   └── setup.md        # Setup guide for Claude Code
-├── shell/              # Shell configurations
+├── claude/            # Claude Code environment
+│   └── setup.md       # Setup guide for Claude Code
+├── shell/             # Shell configurations
 │   ├── starship/      # Starship prompt config
 │   └── zsh/           # Zsh config (.zshrc, .zshenv)
 ├── editor/            # Text editors
@@ -98,9 +64,9 @@ oh-my-workspace/
 │   └── vim/           # Neovim config
 ├── lang/              # Language runtimes
 │   ├── python/        # Python (uv) config
-│   │   └── uv/       # uv package manager
+│   │   └── uv/        # uv package manager
 │   └── typescript/    # TypeScript (bun) config
-│       └── bun/      # bun runtime
+│       └── bun/       # bun runtime
 ├── tool/              # CLI utilities
 │   ├── git/           # Git config
 │   ├── lazygit/       # Lazygit config
@@ -111,14 +77,6 @@ oh-my-workspace/
 └── platform/          # Platform-specific
     └── darwin/        # macOS scripts
 ```
-
-### Key Components
-
-**Zsh**: XDG-compliant two-stage loading (`~/.zshenv` → `$ZDOTDIR/conf.d/*.zsh`)
-
-**Emacs**: Modular structure (`init.el` → `lisp/{editor,lang,tool,lib}/`)
-
-**Stow**: Automatic conflict resolution via `_remove_stow_conflicts()` in setup.sh
 
 ## Development Workflow
 
@@ -167,8 +125,6 @@ Detailed conventions in `.claude/rules/`:
 | Preview           | `./setup.sh install --dry-run <package>` |
 | Status            | `./setup.sh status`                      |
 | Unstow            | `./setup.sh uninstall <package>`         |
-| Clean temp files  | `./setup.sh clean`                       |
-| Hook validation   | Automatic (see Automated Hooks section)  |
 
 ## Troubleshooting
 
@@ -186,48 +142,6 @@ rm ~/.zshrc
 # Now stow succeeds
 ./setup.sh install zsh
 ```
-
-**Emacs not loading changes**
-
-Emacs always prefers `.elc` files over `.el` files when both exist. Editing `.el` files without removing stale `.elc` files means Emacs loads the old compiled version.
-
-```bash
-# Clean stale .elc files (see elisp.md for details)
-find ~/.config/emacs/ -name '*.elc' -delete
-
-# Restart Emacs to load the .el source files
-```
-
-**Symlink points to wrong location**
-
-If a symlink is broken or points to the wrong location, restow the package.
-
-```bash
-# Remove broken symlink
-rm ~/.config/zsh/conf.d/aliases.zsh
-
-# Restow package to recreate symlink
-./setup.sh install --force zsh
-```
-
-**Setup script fails with permission error**
-
-Some operations require elevated permissions or correct file ownership.
-
-```bash
-# Check current permissions
-ls -la ~/ | grep -E "^\."
-
-# Fix ownership if needed
-sudo chown -R $(whoami) ~/.config ~/.local
-```
-
-### Getting Help
-
-- **Rule documentation**: Check `.claude/rules/` directory for detailed standards
-- **Setup help**: Run `./setup.sh help` for command reference
-- **Project README**: See `README.md` for project overview and setup guide
-- **Claude Code setup**: See `claude/setup.md` for Claude Code environment setup
 
 ---
 
