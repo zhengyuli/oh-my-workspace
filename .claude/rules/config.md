@@ -12,9 +12,7 @@ paths:
 
 Standards for configuration files without extensions (config, conf, rc).
 
-# =============================================================================
 ## File Header
-# =============================================================================
 
 ```
 # filename -*- mode: xxx; -*-
@@ -34,11 +32,23 @@ Standards for configuration files without extensions (config, conf, rc).
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
-## Line Length — 79 characters maximum.
+```conf
+# Level 0 (file header — shown in File Header section above)
 
+# Level 1 (primary section)
 # -----------------------------------------------------------------------------
+# Section Name
+# -----------------------------------------------------------------------------
+
+# Level 2 (subsection)
+# --- Subsection Title ---
+```
+
+## Line Length 
+
+79 characters maximum.
+
 ## Code Patterns
-# -----------------------------------------------------------------------------
 
 ### Comments
 
@@ -55,9 +65,7 @@ pager = delta
 - **Paths**: `~/.config/app/file` (XDG-compliant, not relative)
 - **Includes**: `[include] path = config.local` (machine-specific overrides)
 
-# -----------------------------------------------------------------------------
 ## Anti-Patterns
-# -----------------------------------------------------------------------------
 
 ### Don't: Inline Explanations
 
@@ -82,9 +90,7 @@ option1 = value1
 option10 = value10
 ```
 
-# -----------------------------------------------------------------------------
 ## Security
-# -----------------------------------------------------------------------------
 
 ### Secrets Management
 
@@ -104,16 +110,12 @@ Never commit sensitive data. Use split-file strategy
 
 **Sensitive types**: API keys, tokens, passwords, private keys, certificates
 
-# -----------------------------------------------------------------------------
 ## References
-# -----------------------------------------------------------------------------
 
 1. [Git Configuration](https://git-scm.com/docs/git-config)
 2. [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
 
-# -----------------------------------------------------------------------------
 ## Validation
-# -----------------------------------------------------------------------------
 
 ```bash
 # Git config

@@ -8,9 +8,7 @@ paths:
 
 Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 
-# =============================================================================
 ## File Header
-# =============================================================================
 
 ```yaml
 # filename.yml -*- mode: yaml; -*-
@@ -32,11 +30,23 @@ Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
-## Line Length — 79 characters maximum.
+```yaml
+# Level 0 (file header — shown in File Header section above)
 
+# Level 1 (primary section)
 # -----------------------------------------------------------------------------
+# Section Name
+# -----------------------------------------------------------------------------
+
+# Level 2 (subsection)
+# --- Subsection Title ---
+```
+
+## Line Length
+
+79 characters maximum.
+
 ## Code Patterns
-# -----------------------------------------------------------------------------
 
 ### Comments
 
@@ -58,9 +68,7 @@ theme:
 
 ### Formatting
 
-# -----------------------------------------------------------------------------
 ## Anti-Patterns
-# -----------------------------------------------------------------------------
 
 ### Don't: Unquoted Special Characters
 
@@ -86,9 +94,7 @@ nerdFontsVersion: "3"
 showFileTree: true
 ```
 
-# -----------------------------------------------------------------------------
 ## Security
-# -----------------------------------------------------------------------------
 
 ### Secrets Management
 
@@ -106,16 +112,12 @@ api:
 
 Add to `.gitignore`: `*.local.yml`, `*.local.yaml`, `*_secret.yml`
 
-# -----------------------------------------------------------------------------
 ## References
-# -----------------------------------------------------------------------------
 
 1. [YAML Specification](https://yaml.org/spec/)
 2. [YAMLlint Documentation](https://yamllint.readthedocs.io/)
 
-# -----------------------------------------------------------------------------
 ## Validation
-# -----------------------------------------------------------------------------
 
 ```bash
 # Python validator
@@ -124,5 +126,3 @@ python3 -c "import yaml; yaml.safe_load(open('config.yml'))"
 # Yamllint (if installed)
 yamllint config.yml
 ```
-
-# =============================================================================

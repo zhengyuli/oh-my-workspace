@@ -7,9 +7,7 @@ paths:
 
 Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 
-# =============================================================================
 ## File Header
-# =============================================================================
 
 ```toml
 # filename.toml -*- mode: toml; -*-
@@ -31,11 +29,23 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
-## Line Length — 79 characters maximum.
+```toml
+# Level 0 (file header — shown in File Header section above)
 
+# Level 1 (primary section)
 # -----------------------------------------------------------------------------
+# Section Name
+# -----------------------------------------------------------------------------
+
+# Level 2 (subsection)
+# --- Subsection Title ---
+```
+
+## Line Length
+
+79 characters maximum.
+
 ## Code Patterns
-# -----------------------------------------------------------------------------
 
 ### Comments
 
@@ -58,9 +68,7 @@ symbol = " "
 
 - Never align values with spaces
 
-# -----------------------------------------------------------------------------
 ## Anti-Patterns
-# -----------------------------------------------------------------------------
 
 ### Don't: Unquoted Strings
 
@@ -83,9 +91,7 @@ symbol = " "  # Python icon
 symbol = " "
 ```
 
-# -----------------------------------------------------------------------------
 ## Security
-# -----------------------------------------------------------------------------
 
 ### Secrets Management
 
@@ -103,16 +109,12 @@ key = "sk-1234567890"
 
 Add to `.gitignore`: `*.local.toml`, `*_secret.toml`
 
-# -----------------------------------------------------------------------------
 ## References
-# -----------------------------------------------------------------------------
 
 1. [TOML Specification](https://toml.io/en/)
 2. [TOML GitHub Wiki](https://github.com/toml-lang/toml/wiki)
 
-# -----------------------------------------------------------------------------
 ## Validation
-# -----------------------------------------------------------------------------
 
 ```bash
 # Python validator
