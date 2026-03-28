@@ -43,7 +43,9 @@ image_quality = 75
 [tasks]
 micro_workers = 10
 macro_workers = 25
+# 512 MiB limit — sufficient for high-res previews without runaway alloc
 image_alloc = 536870912
+# [0, 0] means no bound on image dimensions (width, height)
 image_bound = [0, 0]
 suppress_preload = false
 
