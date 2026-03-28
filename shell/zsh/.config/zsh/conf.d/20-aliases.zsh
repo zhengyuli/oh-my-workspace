@@ -1,5 +1,5 @@
 # 20-aliases.zsh
-# Time-stamp: <2026-03-26 16:23:50 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-28 17:08:10 Saturday by zhengyuli>
 # =============================================================================
 # Command Aliases
 #
@@ -56,7 +56,7 @@ alias ...='cd ../..'
 alias -- -='cd -'
 
 # -----------------------------------------------------------------------------
-# Editor & Viewing
+# Editor
 # -----------------------------------------------------------------------------
 # Vim
 alias v='nvim'
@@ -66,11 +66,6 @@ alias vimdiff='nvim -d'
 
 # Emacs
 alias e='emacs -nw'
-
-if command -v bat &>/dev/null; then
-  alias cat='bat --style=plain --paging=never'
-  alias cats='bat --style=numbers,changes'
-fi
 
 # -----------------------------------------------------------------------------
 # Git
@@ -85,3 +80,12 @@ alias grst='git reset --soft HEAD~1'
 # Utilities
 # -----------------------------------------------------------------------------
 alias path='printf "%s\n" "${path[@]}"'
+
+if command -v bat &>/dev/null; then
+  alias cat='bat --style=plain --paging=never'
+  alias cats='bat --style=numbers,changes'
+fi
+
+alias reload-zsh='exec zsh'
+
+alias brew-upgrade='brew update && brew upgrade && brew cleanup'
