@@ -44,18 +44,19 @@
 ;; XDG Base Directory Configuration
 ;; Must be set before package system initializes (Emacs 27+ auto-initializes)
 
-;; Define XDG directories as global variables for use in init.el
-(defvar omw/xdg-data-home (or (getenv "XDG_DATA_HOME")
-                              (expand-file-name "~/.local/share/"))
-  "XDG data home directory.")
+;; Define XDG directories as constants for use in init.el.
+;; Evaluated once from the environment at startup; never change mid-session.
+(defconst omw/xdg-data-home (or (getenv "XDG_DATA_HOME")
+                                (expand-file-name "~/.local/share/"))
+  "XDG data home directory ($XDG_DATA_HOME, defaults to ~/.local/share/).")
 
-(defvar omw/xdg-cache-home (or (getenv "XDG_CACHE_HOME")
-                               (expand-file-name "~/.cache/"))
-  "XDG cache home directory.")
+(defconst omw/xdg-cache-home (or (getenv "XDG_CACHE_HOME")
+                                 (expand-file-name "~/.cache/"))
+  "XDG cache home directory ($XDG_CACHE_HOME, defaults to ~/.cache/).")
 
-(defvar omw/xdg-state-home (or (getenv "XDG_STATE_HOME")
-                               (expand-file-name "~/.local/state/"))
-  "XDG state home directory.")
+(defconst omw/xdg-state-home (or (getenv "XDG_STATE_HOME")
+                                 (expand-file-name "~/.local/state/"))
+  "XDG state home directory ($XDG_STATE_HOME, defaults to ~/.local/state/).")
 
 ;; Emacs directory configuration
 (setq user-emacs-directory (expand-file-name "emacs/" omw/xdg-data-home))

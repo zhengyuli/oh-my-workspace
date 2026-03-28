@@ -36,13 +36,15 @@
 ;;; Code:
 
 ;; ============================================================================
-(defcustom omw/markdown-colors '((header . "#46dcb0")
-                                 (code-bg . "#293134")
-                                 (code-fg . "#e0e2e4"))
-  "Colors for Markdown syntax highlighting.
-Includes header foreground color and code block background/foreground colors."
-  :type 'alist
-  :group 'omw-emacs)
+(defconst omw/markdown-fill-column 150
+  "Text fill-column width for Markdown buffers.
+Controls both `fill-column' (hard wrap) and `visual-fill-column-width'.")
+
+(defconst omw/markdown-colors '((header . "#46dcb0")
+                                (code-bg . "#293134")
+                                (code-fg . "#e0e2e4"))
+  "Colors for Markdown syntax highlighting, tuned for doom-dracula.
+Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
 
 (defconst omw/markdown-h1-height 1.30
   "Height scale for level-1 Markdown headers.")
@@ -132,8 +134,8 @@ Includes header foreground color and code block background/foreground colors."
   (require 'visual-fill-column)
 
   ;; Visual fill column configuration
-  (setq-local fill-column 150
-              visual-fill-column-width fill-column
+  (setq-local fill-column omw/markdown-fill-column
+              visual-fill-column-width omw/markdown-fill-column
               visual-fill-column-center-text t)
 
   ;; Markdown-specific settings

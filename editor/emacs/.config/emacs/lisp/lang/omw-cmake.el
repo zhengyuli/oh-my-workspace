@@ -37,7 +37,7 @@
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/cmake-tool-specs
+(defconst omw/cmake-tool-specs
   '(("cmake-language-server" "uv tool install cmake-language-server" "uv"))
   "Tool specs for CMake development.")
 
