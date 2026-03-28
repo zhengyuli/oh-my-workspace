@@ -1,10 +1,12 @@
-# .gitignore
+# .gitignore -*- mode: gitignore; -*-
 # Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
 # =============================================================================
 # Git Ignore Patterns - oh-my-workspace
 #
-# Location: $WORKSPACE_DIR/.gitignore (repository root)
 # Note: Patterns follow gitignore(5) specification
+#
+# References:
+#   1. gitignore docs: https://git-scm.com/docs/gitignore
 #
 # Organization: Broad patterns (**/pattern) catch files wherever they appear
 # Rationale: Tools may write cache/data to wrong locations (e.g., ~/.config/xxx/

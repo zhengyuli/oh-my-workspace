@@ -1,8 +1,8 @@
 # theme.toml -*- mode: toml; -*-
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Yazi Theme - Catppuccin Mocha Flavor
 #
-# Location: ~/.config/yazi/theme.toml
 # Usage:    Uses catppuccin-mocha flavor (installed via ya pkg)
 #
 # Setup:

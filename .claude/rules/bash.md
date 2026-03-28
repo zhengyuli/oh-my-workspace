@@ -17,7 +17,6 @@ Bash-specific features and universal shell practices.
 # =============================================================================
 # Script Title - Brief Description
 #
-# Location: $WORKSPACE_DIR/path/to/script.sh
 # Usage: ./script.sh [options]
 # Dependencies: bash 4.3+
 # =============================================================================
@@ -282,12 +281,12 @@ Never use `eval` to execute user input. Use explicit `case` dispatch.
 
 ### Permission Management
 
-| File Type    | Mode | Rationale                        |
-|--------------|------|----------------------------------|
-| Scripts      | 755  | Executable by owner/group/other  |
+| File Type    | Mode | Rationale                          |
+|--------------|------|------------------------------------|
+| Scripts      | 755  | Executable by owner/group/other    |
 | Config files | 644  | Readable by all, writable by owner |
-| SSH keys     | 600  | Accessible only by owner         |
-| Secret files | 600  | Accessible only by owner         |
+| SSH keys     | 600  | Accessible only by owner           |
+| Secret files | 600  | Accessible only by owner           |
 
 ### Secrets Management
 

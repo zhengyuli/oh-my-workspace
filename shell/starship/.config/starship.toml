@@ -3,7 +3,6 @@
 # =============================================================================
 # Starship - Cross-shell prompt customization
 #
-# Location: $WORKSPACE_DIR/shell/starship/.config/starship.toml
 # References:
 #   1. Starship Docs: https://starship.rs/config/
 #   2. Nerd Fonts: https://www.nerdfonts.com/

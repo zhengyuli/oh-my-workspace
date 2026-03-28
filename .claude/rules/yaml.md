@@ -16,7 +16,6 @@ Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 # =============================================================================
 # Title - Brief description
 #
-# Location: $WORKSPACE_DIR/path/to/file.yml
 # References:
 #   1. Official documentation URL
 # =============================================================================

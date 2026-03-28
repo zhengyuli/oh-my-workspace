@@ -4,10 +4,9 @@
 # =============================================================================
 # oh-my-workspace Setup Script
 #
-# Location: $WORKSPACE_DIR/setup.sh (run directly, not stowed)
 # Usage:    ./setup.sh help
 #
-# Requires: bash 4.3+, macOS
+# Dependencies: bash 4.3+, macOS
 #
 # References:
 #   1. GNU Stow Manual: https://www.gnu.org/software/stow/manual/

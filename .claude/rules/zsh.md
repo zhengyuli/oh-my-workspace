@@ -24,7 +24,6 @@ Zsh-specific features and conventions.
 # =============================================================================
 # Script Title - Brief Description
 #
-# Location: $WORKSPACE_DIR/path/to/script.zsh
 # Usage: ./script.zsh [options]
 # Dependencies: zsh 5.0+
 # =============================================================================
