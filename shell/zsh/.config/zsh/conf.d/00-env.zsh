@@ -1,4 +1,4 @@
-# 00-env.zsh
+# 00-env.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Core Environment Variables

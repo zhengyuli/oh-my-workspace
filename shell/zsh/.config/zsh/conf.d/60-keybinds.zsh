@@ -1,4 +1,4 @@
-# 60-keybinds.zsh
+# 60-keybinds.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-28 14:45:08 Saturday by zhengyuli>
 # =============================================================================
 # Key Bindings
