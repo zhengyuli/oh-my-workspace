@@ -12,7 +12,9 @@ globs:
 
 Standards for configuration files without extensions (config, conf, rc).
 
+# =============================================================================
 ## File Header
+# =============================================================================
 
 ```
 # filename -*- mode: xxx; -*-
@@ -28,11 +30,13 @@ Standards for configuration files without extensions (config, conf, rc).
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ============...`
-**Level 1** (Primary Section): `# -----------...`
+**Level 0** (File Header): `# ============...` (79 chars)
+**Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
+# -----------------------------------------------------------------------------
 ## Code Patterns
+# -----------------------------------------------------------------------------
 
 ### Comments
 
@@ -54,7 +58,9 @@ pager = delta
 - Never align values with spaces
 - Never use inline comments for explanations
 
+# -----------------------------------------------------------------------------
 ## Anti-Patterns
+# -----------------------------------------------------------------------------
 
 ### Don't: Inline Explanations
 
@@ -79,7 +85,9 @@ option1 = value1
 option10 = value10
 ```
 
+# -----------------------------------------------------------------------------
 ## Security
+# -----------------------------------------------------------------------------
 
 ### Secrets Management
 
@@ -99,12 +107,16 @@ Never commit sensitive data. Use split-file strategy
 
 **Sensitive types**: API keys, tokens, passwords, private keys, certificates
 
+# -----------------------------------------------------------------------------
 ## References
+# -----------------------------------------------------------------------------
 
 1. [Git Configuration](https://git-scm.com/docs/git-config)
 2. [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
 
+# -----------------------------------------------------------------------------
 ## Validation
+# -----------------------------------------------------------------------------
 
 ```bash
 # Git config

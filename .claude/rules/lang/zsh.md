@@ -14,7 +14,9 @@ globs:
 
 Zsh-specific features and universal shell practices.
 
+# =============================================================================
 ## File Header
+# =============================================================================
 
 ```zsh
 #!/usr/bin/env zsh
@@ -33,11 +35,13 @@ Zsh-specific features and universal shell practices.
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ============...`
-**Level 1** (Primary Section): `# -----------...`
+**Level 0** (File Header): `# ============...` (79 chars)
+**Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
+# -----------------------------------------------------------------------------
 ## Error Handling
+# -----------------------------------------------------------------------------
 
 ### Strict Mode (MANDATORY for scripts)
 
@@ -64,7 +68,9 @@ trap '_err_handler' ERR
 
 `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
 
+# -----------------------------------------------------------------------------
 ## Code Patterns
+# -----------------------------------------------------------------------------
 
 ### Comments
 
@@ -131,7 +137,9 @@ local temp_file
 - Never align values with spaces
 - Split long pipelines at `|` with each stage on its own line
 
+# -----------------------------------------------------------------------------
 ## Functions
+# -----------------------------------------------------------------------------
 
 ### Single Responsibility
 
@@ -175,7 +183,9 @@ local dir
 dir="$(dirname "$file")"
 ```
 
+# -----------------------------------------------------------------------------
 ## Anti-Patterns
+# -----------------------------------------------------------------------------
 
 ### Don't: eval for User Input
 
@@ -219,7 +229,9 @@ if [[ ! -d "$dir" ]]; then
 fi
 ```
 
+# -----------------------------------------------------------------------------
 ## Security
+# -----------------------------------------------------------------------------
 
 ### Code Injection Prevention
 
@@ -242,12 +254,16 @@ Read secrets from environment variables with safe defaults.
 API_KEY="${API_KEY:-}"
 ```
 
+# -----------------------------------------------------------------------------
 ## References
+# -----------------------------------------------------------------------------
 
 1. [Zsh Manual](http://zsh.sourceforge.net/Doc/)
 2. [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
 
+# -----------------------------------------------------------------------------
 ## Validation
+# -----------------------------------------------------------------------------
 
 ```zsh
 zsh -n script.zsh      # Syntax check
