@@ -63,6 +63,7 @@ git:
 os:
   editPreset: vim
 
+# Prompt instead of silently skipping when launched outside a git repo
 notARepository: prompt
 
 # -----------------------------------------------------------------------------

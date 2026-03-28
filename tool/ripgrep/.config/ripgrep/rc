@@ -5,7 +5,8 @@
 #
 # Loaded via: RIPGREP_CONFIG_PATH environment variable (set in 00-env.zsh)
 # References:
-#   1. Config Guide: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+#   1. Config Guide:
+#      https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
 #   2. Man Page: https://manpages.org/rg
 #
 # Note: Tools that bypass this config with --no-config:

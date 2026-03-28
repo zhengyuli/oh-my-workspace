@@ -85,7 +85,7 @@
 # -----------------------------------------------------------------------------
 [alias]
     # Set user identity in config.local (git set-user "Name" "email")
-    set-user = "!f(){ g=~/.config/git/config.local;git config -f $g user.name \"$1\";git config -f $g user.email \"$2\";};f"
+    set-user = "!f(){ g=~/.config/git/config.local;git config -f \"$g\" user.name \"$1\";git config -f \"$g\" user.email \"$2\";};f"
     # Show current user identity
     whoami = "!git config user.name && git config user.email"
 
@@ -177,7 +177,7 @@
     # Use i/w/c/o prefixes instead of a/b
     mnemonicPrefix = true
 
-# Language-specific hunk headers
+# --- Language-specific hunk headers ---
 [diff "golang"]
     # Go function detection for better diff hunk headers
     xfuncname = "^func[[:space:]]+\\([^)]+\\)[[:space:]]+([^_(]+)"
