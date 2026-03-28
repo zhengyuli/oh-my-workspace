@@ -1,5 +1,5 @@
 # 60-keybinds.zsh
-# Time-stamp: <2026-03-19 22:30:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-28 14:32:01 Saturday by zhengyuli>
 # =============================================================================
 # Key Bindings
 #
@@ -139,8 +139,10 @@ bindkey '^[,' cd-parent
 # Custom widget: clear screen and scrollback buffer (Ctrl-/)
 # -----------------------------------------------------------------------------
 clear-screen-and-scrollback() {
-  printf '\033[3J'
+  echoti civis
+  printf '\n%.0s' {1..$LINES}
   zle clear-screen
+  echoti cnorm
 }
 zle -N clear-screen-and-scrollback
-bindkey '^_' clear-screen-and-scrollback
+bindkey '^L' clear-screen-and-scrollback
