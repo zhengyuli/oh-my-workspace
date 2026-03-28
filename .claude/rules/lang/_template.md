@@ -27,9 +27,9 @@ globs:
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ============...`
-**Level 1** (Primary Section): `# -----------...`
-**Level 2** (Subsection): `# --- Title ---`
+**Level 0** (File Header): `# ===...` (79 chars: `# ` + 77 `=`)
+**Level 1** (Primary Section): `# ---...` (79 chars: `# ` + 77 `-`)
+**Level 2** (Subsection): `# --- Title ---` (inline style)
 
 ## Code Patterns
 
@@ -62,7 +62,10 @@ globs:
 
 ### Delimiter Hierarchy
 - Identical across ALL files (consistent with coding-style.md)
-- Use exact character counts (80, 40, inline style)
+- Use exact character counts:
+  - **Level 0**: `# ` + 77 `=` = 79 characters total
+  - **Level 1**: `# ` + 77 `-` = 79 characters total
+  - **Level 2**: `# --- Title ---` (inline style)
 
 ### Code Patterns
 - Use imperative mood ("Use", "Do", "Never")
