@@ -7,9 +7,7 @@ paths:
 
 Coding standards for Emacs Lisp in oh-my-workspace.
 
-;; ============================================================================
 ## File Header
-;; ============================================================================
 
 ```elisp
 ;;; filename.el -*- lexical-binding: t; -*-
@@ -40,27 +38,34 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 ;; ============================================================================
 ```
 
-**Requirements:**
-- First line: `;;; -*- lexical-binding: t; -*-`
-- Last lines: `(provide 'module-name)` and `;;; module-name.el ends here`
+## File Tail
+
+```elisp
+;; ============================================================================
+;;; Provide features
+(provide 'module-name)
+
+;;; module-name.el ends here
+```
 
 ## Delimiter Hierarchy
 
 **Level 0** (File Header): `;; ============...` (79 chars)
-**Level 1** (Primary Section): `;; -----------...` (79 chars)
+**Level 1** (Primary Section): `;; ============...` (79 chars)
 
-**Semicolon convention:**
-- `;;;` — file-level (headers, `provide`, `ends here`)
-- `;;` — section-level (delimiters, major comments)
-- `;` — inline (line-level only)
+```elisp
+;;; Level 0 (file header — shown in File Header section above)
+
+;; ============================================================================
+;; Level 1 (primary section)
+;; Section Title
+```
 
 ## Line Length
 
 79 characters maximum.
 
-;; ----------------------------------------------------------------------------
 ## Error Handling
-;; ----------------------------------------------------------------------------
 
 ### ignore-errors
 
@@ -93,9 +98,7 @@ Use when cleanup code must run regardless of success/failure.
   (set-window-configuration saved-config))
 ```
 
-;; ----------------------------------------------------------------------------
 ## Code Patterns
-;; ----------------------------------------------------------------------------
 
 ### Docstrings
 
@@ -186,9 +189,7 @@ Use `defconst` for named constants.
 (if (> length omw-max-line-length)
 ```
 
-;; ----------------------------------------------------------------------------
 ## use-package Declaration
-;; ----------------------------------------------------------------------------
 
 All package configuration must use `use-package`. Follow this keyword order:
 
@@ -221,9 +222,7 @@ All package configuration must use `use-package`. Follow this keyword order:
 Default to `:defer t` to minimize startup time; use `:mode`, `:hook`,
 and `:bind` where possible as they imply deferral.
 
-;; ----------------------------------------------------------------------------
 ## Anti-Patterns
-;; ----------------------------------------------------------------------------
 
 ### Don't: Mutate Shared Lists
 
@@ -258,9 +257,7 @@ and `:bind` where possible as they imply deferral.
   "Config directory")
 ```
 
-;; ----------------------------------------------------------------------------
 ## Functions
-;; ----------------------------------------------------------------------------
 
 ### Interactive Declaration
 
@@ -291,9 +288,7 @@ Always check existence before calling into optional features.
   (eglot-ensure))
 ```
 
-;; ----------------------------------------------------------------------------
 ## Security
-;; ----------------------------------------------------------------------------
 
 ### Package Sources
 
@@ -304,16 +299,12 @@ third-party repositories.
 
 Never commit `.elc` files; always delete them before committing.
 
-;; ----------------------------------------------------------------------------
 ## References
-;; ----------------------------------------------------------------------------
 
 1. [Emacs Lisp Manual](https://www.gnu.org/software/emacs/manual/html_node/elisp/)
 2. [use-package Documentation](https://github.com/jwiegley/use-package)
 
-;; ----------------------------------------------------------------------------
 ## Validation
-;; ----------------------------------------------------------------------------
 
 ```bash
 # Single file

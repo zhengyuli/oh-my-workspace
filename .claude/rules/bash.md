@@ -8,9 +8,7 @@ paths:
 
 Bash-specific features and universal shell practices.
 
-# =============================================================================
 ## File Header
-# =============================================================================
 
 ```bash
 #!/usr/bin/env bash
@@ -33,13 +31,23 @@ Bash-specific features and universal shell practices.
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
+```bash
+# Level 0 (file header — shown in File Header section above)
+
+# Level 1 (primary section)
+# -----------------------------------------------------------------------------
+# Section Name
+# -----------------------------------------------------------------------------
+
+# Level 2 (subsection)
+# --- Subsection Title ---
+```
+
 ## Line Length
 
 79 characters maximum.
 
-# -----------------------------------------------------------------------------
 ## Error Handling
-# -----------------------------------------------------------------------------
 
 ### Strict Mode (MANDATORY for scripts)
 
@@ -68,9 +76,7 @@ trap '_err_handler' ERR
 
 `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
 
-# -----------------------------------------------------------------------------
 ## Code Patterns
-# -----------------------------------------------------------------------------
 
 ### Variable Handling
 
@@ -183,9 +189,7 @@ if [[ "$count" -gt "$MAX_THRESHOLD" ]]; then
 fi
 ```
 
-# -----------------------------------------------------------------------------
 ## Functions
-# -----------------------------------------------------------------------------
 
 ### Single Responsibility
 
@@ -227,9 +231,7 @@ local dir
 dir="$(dirname "$file")"
 ```
 
-# -----------------------------------------------------------------------------
 ## Anti-Patterns
-# -----------------------------------------------------------------------------
 
 ### Don't: eval for User Input
 
@@ -272,9 +274,7 @@ if [[ ! -d "$dir" ]]; then
 fi
 ```
 
-# -----------------------------------------------------------------------------
 ## Security
-# -----------------------------------------------------------------------------
 
 ### Code Injection Prevention
 
@@ -297,16 +297,12 @@ Read secrets from environment variables with safe defaults.
 API_KEY="${API_KEY:-}"
 ```
 
-# -----------------------------------------------------------------------------
 ## References
-# -----------------------------------------------------------------------------
 
 1. [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
 2. [Bash Manual](https://www.gnu.org/software/bash/manual/)
 
-# -----------------------------------------------------------------------------
 ## Validation
-# -----------------------------------------------------------------------------
 
 ```bash
 bash -n script.sh      # Syntax check
