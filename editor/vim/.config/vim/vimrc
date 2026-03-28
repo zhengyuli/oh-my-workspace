@@ -2,7 +2,7 @@
 " Time-stamp: <2026-03-28 20:02:59 Saturday by zhengyuli>
 " =============================================================================
 " Minimal, plugin-free Vim config
-" Theme: doom-one (ported from doom-emacs, Atom One Dark lineage)
+" Theme: Dracula (https://draculatheme.com/vim)
 "
 " Location: ~/.config/vim/vimrc
 " Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in 00-env.zsh)
@@ -117,8 +117,6 @@ set softtabstop=4
 set shiftwidth=4
 " Copy indent from current line
 set autoindent
-" Smart auto-indenting
-set smartindent
 
 " -----------------------------------------------------------------------------
 " Files & Persistence
@@ -205,6 +203,7 @@ augroup vimrc
         \     let b:_view = winsaveview() |
         \     silent! %s/\s\+$//e |
         \     call winrestview(b:_view) |
+        \     unlet b:_view |
         \ endif
 
     " Equalize splits when terminal is resized
@@ -241,7 +240,8 @@ augroup END
 " Shows: mode | filepath [modified][readonly] | filetype | encoding | col:line %
 
 function! StatuslineGit() abort
-    " Display current git branch via fugitive when available, else empty
+    " Optional: vim-fugitive (https://github.com/tpope/vim-fugitive)
+    " Degrades to empty string when plugin is not installed.
     return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
 endfunction
 
@@ -274,14 +274,13 @@ syntax enable
 filetype plugin indent on
 
 " -----------------------------------------------------------------------------
-" Doom-One Color Theme (plugin-free, inline highlight definitions)
+" Dracula Color Theme (plugin-free, inline highlight definitions)
 " -----------------------------------------------------------------------------
-" Palette sourced from doomemacs/themes doom-one-theme.el
-"   bg       #282c34    bg-alt     #21242b    fg          #bbc2cf
-"   red      #ff6c6b    orange     #da8548    green       #98be65
-"   yellow   #ECBE7B    blue       #51afef    dark-blue   #2257A0
-"   magenta  #c678dd    violet     #a9a1e1    cyan        #46D9FF
-"   grey     #3B3F46    dark-grey  #23272e
+" Palette sourced from https://spec.draculatheme.com
+"   bg       #282a36    bg-dark    #21222c    fg          #f8f8f2
+"   red      #ff5555    orange     #ffb86c    green       #50fa7b
+"   yellow   #f1fa8c    pink       #ff79c6    purple      #bd93f9
+"   cyan     #8be9fd    comment    #6272a4    selection   #44475a
 
 set background=dark
 
@@ -302,8 +301,8 @@ hi NormalNC        guifg=#f8f8f2  guibg=#21222c  gui=NONE
 " --- Cursor & Line ---
 hi Cursor          guifg=#282a36  guibg=#f8f8f2  gui=NONE
 hi CursorLine      guifg=NONE     guibg=#44475a  gui=NONE
-hi CursorLineNr    guifg=#bd93f9  guibg=#44475a  gui=bold
-hi ColorColumn     guifg=NONE     guibg=#44475a  gui=NONE
+hi CursorLineNr    guifg=#f1fa8c  guibg=#44475a  gui=bold
+hi ColorColumn     guifg=NONE     guibg=#21222c  gui=NONE
 " --- Line Numbers ---
 hi LineNr          guifg=#6272a4  guibg=NONE     gui=NONE
 hi SignColumn      guifg=NONE     guibg=#282a36  gui=NONE
@@ -316,34 +315,34 @@ hi MatchParen      guifg=#ff79c6  guibg=NONE     gui=bold,underline
 hi Comment         guifg=#6272a4  guibg=NONE     gui=italic
 " Purple
 hi Constant        guifg=#bd93f9  guibg=NONE     gui=NONE
-" Green
-hi String          guifg=#50fa7b  guibg=NONE     gui=NONE
-hi Character       guifg=#50fa7b  guibg=NONE     gui=NONE
+" Yellow
+hi String          guifg=#f1fa8c  guibg=NONE     gui=NONE
+hi Character       guifg=#f1fa8c  guibg=NONE     gui=NONE
 " Orange
 hi Number          guifg=#ffb86c  guibg=NONE     gui=NONE
 hi Boolean         guifg=#ffb86c  guibg=NONE     gui=NONE
 hi Float           guifg=#ffb86c  guibg=NONE     gui=NONE
 hi Identifier      guifg=#f8f8f2  guibg=NONE     gui=NONE
-" Pink
-hi Function        guifg=#ff79c6  guibg=NONE     gui=NONE
-" Cyan (keywords)
-hi Statement       guifg=#8be9fd  guibg=NONE     gui=NONE
-hi Conditional     guifg=#8be9fd  guibg=NONE     gui=NONE
-hi Repeat          guifg=#8be9fd  guibg=NONE     gui=NONE
-hi Label           guifg=#8be9fd  guibg=NONE     gui=NONE
-hi Operator        guifg=#8be9fd  guibg=NONE     gui=NONE
-hi Keyword         guifg=#8be9fd  guibg=NONE     gui=NONE
-hi Exception       guifg=#8be9fd  guibg=NONE     gui=NONE
+" Green
+hi Function        guifg=#50fa7b  guibg=NONE     gui=NONE
+" Pink (keywords)
+hi Statement       guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Conditional     guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Repeat          guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Label           guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Operator        guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Keyword         guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Exception       guifg=#ff79c6  guibg=NONE     gui=NONE
 " Pink
 hi PreProc         guifg=#ff79c6  guibg=NONE     gui=NONE
 hi Include         guifg=#ff79c6  guibg=NONE     gui=NONE
 hi Define          guifg=#ff79c6  guibg=NONE     gui=NONE
 hi Macro           guifg=#ff79c6  guibg=NONE     gui=NONE
-" Yellow
-hi Type            guifg=#f1fa8c  guibg=NONE     gui=NONE
-hi StorageClass    guifg=#f1fa8c  guibg=NONE     gui=NONE
-hi Structure       guifg=#f1fa8c  guibg=NONE     gui=NONE
-hi Typedef         guifg=#f1fa8c  guibg=NONE     gui=NONE
+" Cyan
+hi Type            guifg=#8be9fd  guibg=NONE     gui=italic
+hi StorageClass    guifg=#8be9fd  guibg=NONE     gui=italic
+hi Structure       guifg=#8be9fd  guibg=NONE     gui=italic
+hi Typedef         guifg=#8be9fd  guibg=NONE     gui=italic
 " Cyan
 hi Special         guifg=#8be9fd  guibg=NONE     gui=NONE
 hi SpecialChar     guifg=#8be9fd  guibg=NONE     gui=NONE
@@ -366,13 +365,15 @@ hi PmenuThumb      guifg=NONE     guibg=#bd93f9  gui=NONE
 hi TabLine         guifg=#6272a4  guibg=#21222c  gui=NONE
 hi TabLineSel      guifg=#f8f8f2  guibg=#282a36  gui=bold
 hi TabLineFill     guifg=NONE     guibg=#21222c  gui=NONE
-hi VertSplit       guifg=#44475a  guibg=#44475a  gui=NONE
+hi VertSplit       guifg=#6272a4  guibg=#21222c  gui=NONE
+" Neovim 0.6+ uses WinSeparator instead of VertSplit
+hi! link WinSeparator VertSplit
 hi Folded          guifg=#6272a4  guibg=#44475a  gui=italic
 hi FoldColumn      guifg=#6272a4  guibg=#282a36  gui=NONE
 hi NonText         guifg=#44475a  guibg=NONE     gui=NONE
 hi SpecialKey      guifg=#44475a  guibg=NONE     gui=NONE
-hi Title           guifg=#bd93f9  guibg=NONE     gui=bold
-hi Directory       guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Title           guifg=#50fa7b  guibg=NONE     gui=bold
+hi Directory       guifg=#bd93f9  guibg=NONE     gui=bold
 " --- Diagnostics ---
 hi ErrorMsg        guifg=#ff5555  guibg=NONE     gui=bold
 hi WarningMsg      guifg=#ffb86c  guibg=NONE     gui=NONE
@@ -388,3 +389,20 @@ hi DiffAdd         guifg=#50fa7b  guibg=#1e3626  gui=NONE
 hi DiffChange      guifg=#f1fa8c  guibg=#2b2900  gui=NONE
 hi DiffDelete      guifg=#ff5555  guibg=#2d1212  gui=NONE
 hi DiffText        guifg=#f1fa8c  guibg=#3b3600  gui=bold
+" --- Markdown ---
+hi markdownH1                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH2                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH3                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH4                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH5                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH6                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownBold              guifg=#ffb86c  guibg=NONE  gui=bold
+hi markdownItalic            guifg=#f1fa8c  guibg=NONE  gui=italic
+hi markdownCode              guifg=#50fa7b  guibg=NONE  gui=NONE
+hi markdownCodeBlock         guifg=#50fa7b  guibg=NONE  gui=NONE
+hi markdownLinkText          guifg=#8be9fd  guibg=NONE  gui=underline
+hi markdownUrl               guifg=#6272a4  guibg=NONE  gui=NONE
+hi markdownListMarker        guifg=#ff79c6  guibg=NONE  gui=NONE
+hi markdownOrderedListMarker guifg=#ff79c6  guibg=NONE  gui=NONE
+hi markdownBlockquote        guifg=#6272a4  guibg=NONE  gui=NONE
+hi markdownRule              guifg=#6272a4  guibg=NONE  gui=NONE
