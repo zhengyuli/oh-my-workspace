@@ -72,7 +72,6 @@
 (defconst omw/centaur-tabs-height 25
   "Height in pixels for the centaur-tabs tab bar.")
 
-;; ============================================================================
 (defface omw/centaur-tabs-base
   '((t :family "Monospace" :height 1.0))
   "Base face for centaur-tabs with fixed-pitch font."
