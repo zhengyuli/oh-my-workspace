@@ -1,5 +1,5 @@
 # 60-keybinds.zsh
-# Time-stamp: <2026-03-28 14:32:01 Saturday by zhengyuli>
+# Time-stamp: <2026-03-28 14:40:43 Saturday by zhengyuli>
 # =============================================================================
 # Key Bindings
 #
@@ -13,7 +13,7 @@
 #   1. Configure editing mode (Emacs or Vi)
 #   2. Configure history navigation key bindings
 #   3. Configure word/line movement key bindings
-#   4. Configure custom ZLE widgets (sudo toggle, cd parent, etc.)
+#   4. Configure custom ZLE widgets (sudo toggle etc.)
 #
 # Do NOT add: aliases, plugin key bindings, tool initialization
 #             → Aliases in 20-aliases.zsh
@@ -102,8 +102,6 @@ bindkey '^X^E' edit-command-line
 # -----------------------------------------------------------------------------
 # Ctrl-L  clear screen
 bindkey '^L' clear-screen
-# Space   expand history substitution (!! etc.)
-bindkey ' ' magic-space
 
 # -----------------------------------------------------------------------------
 # Custom widget: toggle sudo prefix (Esc Esc)
@@ -121,28 +119,3 @@ sudo-command-line() {
 }
 zle -N sudo-command-line
 bindkey '\e\e' sudo-command-line
-
-# -----------------------------------------------------------------------------
-# Custom widget: jump to parent directory (Alt-,)
-# -----------------------------------------------------------------------------
-# Goes up one level without discarding the current buffer
-# Note: Alt-. is reserved for insert-last-word (cycle through last arguments)
-cd-parent() {
-  if pushd .. &>/dev/null; then
-    zle reset-prompt
-  fi
-}
-zle -N cd-parent
-bindkey '^[,' cd-parent
-
-# -----------------------------------------------------------------------------
-# Custom widget: clear screen and scrollback buffer (Ctrl-/)
-# -----------------------------------------------------------------------------
-clear-screen-and-scrollback() {
-  echoti civis
-  printf '\n%.0s' {1..$LINES}
-  zle clear-screen
-  echoti cnorm
-}
-zle -N clear-screen-and-scrollback
-bindkey '^L' clear-screen-and-scrollback
