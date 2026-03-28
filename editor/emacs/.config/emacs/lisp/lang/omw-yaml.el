@@ -37,7 +37,7 @@
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/yaml-tool-specs
+(defconst omw/yaml-tool-specs
   '(("yaml-language-server" "bun install -g yaml-language-server" "bun"))
   "Tool specs for YAML development.")
 

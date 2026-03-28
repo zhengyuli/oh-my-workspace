@@ -36,7 +36,7 @@
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/sh-tool-specs
+(defconst omw/sh-tool-specs
   '(("bash-language-server" "bun install -g bash-language-server" "bun"))
   "Tool specs for shell script development.")
 

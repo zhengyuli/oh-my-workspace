@@ -58,9 +58,9 @@
   (pdf-tools-install :no-query))
 
 ;; ============================================================================
-(defvar omw/pdf-view-restore-path
+(defconst omw/pdf-view-restore-path
   (expand-file-name "emacs/pdf-view-restore" omw/xdg-state-home)
-  "PDF view restore file path, which will be used to store pdf view state.")
+  "Path to the pdf-view-restore state file (under XDG_STATE_HOME).")
 
 (use-package pdf-view-restore
   :ensure t

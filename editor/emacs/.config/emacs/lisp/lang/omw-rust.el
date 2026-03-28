@@ -36,7 +36,7 @@
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/rust-tool-specs
+(defconst omw/rust-tool-specs
   '(("rust-analyzer" "rustup component add rust-analyzer" "rustup")
     ("rustfmt" "rustup component add rustfmt" "rustup"))
   "Tool specs for Rust development.")

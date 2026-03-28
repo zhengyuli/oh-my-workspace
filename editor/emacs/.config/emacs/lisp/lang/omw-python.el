@@ -68,7 +68,7 @@
                     'help-echo (format "Python virtualenv: %s"
                                        omw/pet-virtualenv-root))))))
 
-(defvar omw/pet-mode-line-entry
+(defconst omw/pet-mode-line-entry
   '(:eval (omw/pet-mode-line-indicator))
   "Mode-line entry for pet-based venv indicator.")
 
@@ -123,7 +123,7 @@
     (remove-hook 'before-save-hook #'omw/python-before-save t)))
 
 ;; ============================================================================
-(defvar omw/python-tool-specs
+(defconst omw/python-tool-specs
   '(("basedpyright" "uv tool install basedpyright" "uv")
     ("ruff" "uv tool install ruff" "uv"))
   "Tool specs for Python development.")

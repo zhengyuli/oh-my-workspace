@@ -37,7 +37,7 @@
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/dockerfile-tool-specs
+(defconst omw/dockerfile-tool-specs
   '(("docker-langserver" "bun install -g dockerfile-language-server-nodejs" "bun"))
   "Tool specs for Dockerfile development.")
 

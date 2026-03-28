@@ -37,36 +37,49 @@
 ;;; Code:
 
 ;; ============================================================================
-(defcustom omw/font-monospace-list
+(defvar omw/font-monospace-list
   '("SauceCodePro Nerd Font Mono" "Menlo" "Monaco" "Monospace")
   "Priority list of monospace fonts for code editing.
-First available font in the list will be used."
-  :type '(repeat string)
-  :group 'omw-emacs)
+The first font found installed on the system will be used.
+Edit this list in source (or set before loading) to prefer a different font.")
 
-(defcustom omw/font-variable-pitch-list
+(defvar omw/font-variable-pitch-list
   '("Helvetica Neue" "Arial" "Sans Serif")
   "Priority list of variable-pitch fonts for prose and UI text.
-First available font in the list will be used."
-  :type '(repeat string)
-  :group 'omw-emacs)
+The first font found installed on the system will be used.")
 
-(defcustom omw/font-chinese-list
+(defvar omw/font-chinese-list
   '("PingFang SC" "Hiragino Sans GB" "Songti SC")
   "Priority list of Chinese fonts for CJK character display.
-First available font in the list will be used."
-  :type '(repeat string)
-  :group 'omw-emacs)
+The first font found installed on the system will be used.")
 
-(defcustom omw/font-size-default 160
-  "Default font height in 1/10pt units (160 = 16pt)."
-  :type 'integer
-  :group 'omw-emacs)
+(defvar omw/font-size-default 160
+  "Default font height in 1/10pt units (160 = 16pt).
+Used as the base size before textsize applies per-monitor DPI adjustment.")
 
-(defcustom omw/font-size-variable-multiplier 1.0
-  "Variable-pitch font size multiplier relative to monospace font."
-  :type 'number
-  :group 'omw-emacs)
+(defvar omw/font-size-variable-multiplier 1.0
+  "Scale factor for variable-pitch font height relative to the monospace size.
+1.0 means identical height; increase for visually larger prose text.")
+
+;; ============================================================================
+;; Unicode code-point ranges used when mapping the CJK fallback font.
+;; Defined as constants so that set-fontset-font call-sites are self-documenting
+;; and the ranges can be referenced without repeating raw hex literals.
+(defconst omw/font-cjk-unified-range '(#x4e00 . #x9fff)
+  "CJK Unified Ideographs: the primary block of common Chinese, Japanese,
+and Korean characters used in everyday text.")
+
+(defconst omw/font-cjk-ext-a-range '(#x3400 . #x4dbf)
+  "CJK Unified Ideographs Extension A: rare or historic CJK characters
+not covered by the main Unified block.")
+
+(defconst omw/font-cjk-ext-b-range '(#x20000 . #x2a6df)
+  "CJK Unified Ideographs Extension B and beyond: very rare or archaic
+characters, including those used in classical literature.")
+
+(defconst omw/font-cjk-symbols-range '(#x3000 . #x303f)
+  "CJK Symbols and Punctuation: ideographic space, corner brackets,
+wave dashes, and other CJK-specific punctuation marks.")
 
 ;; ============================================================================
 (defun omw/find-available-font (font-list)
@@ -103,14 +116,10 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
 
       ;; Configure Chinese font fallback for CJK character ranges
       (when cjk-font
-        ;; CJK Unified Ideographs (common Chinese characters)
-        (set-fontset-font t '(#x4e00 . #x9fff) cjk-font nil 'prepend)
-        ;; CJK Extension A
-        (set-fontset-font t '(#x3400 . #x4dbf) cjk-font nil 'prepend)
-        ;; CJK Extension B and beyond
-        (set-fontset-font t '(#x20000 . #x2a6df) cjk-font nil 'prepend)
-        ;; CJK Symbols and Punctuation
-        (set-fontset-font t '(#x3000 . #x303f) cjk-font nil 'prepend))
+        (set-fontset-font t omw/font-cjk-unified-range cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-ext-a-range   cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-ext-b-range   cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-symbols-range cjk-font nil 'prepend))
 
       ;; Log font configuration for debugging
       (when init-file-debug

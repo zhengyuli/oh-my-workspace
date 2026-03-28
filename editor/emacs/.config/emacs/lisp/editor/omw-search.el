@@ -58,7 +58,7 @@
   (setq xref-search-program 'ripgrep
         xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
-  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;; ============================================================================
 (use-package consult

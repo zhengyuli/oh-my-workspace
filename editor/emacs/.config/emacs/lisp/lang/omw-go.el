@@ -36,7 +36,7 @@
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/go-tool-specs
+(defconst omw/go-tool-specs
   '(("gopls" "go install golang.org/x/tools/gopls@latest" "go")
     ("gofumpt" "go install mvdan.cc/gofumpt@latest" "go"))
   "Tool specs for Go development.")
