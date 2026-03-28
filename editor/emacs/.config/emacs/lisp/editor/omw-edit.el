@@ -92,7 +92,7 @@ Otherwise kill buffer without confirmation."
   (interactive)
   ;; Only prompt for save if buffer has unsaved changes and is visiting a file
   (if (and buffer-file-name (buffer-modified-p))
-      (if (yes-or-no-p
+      (if (y-or-n-p
            (format "Buffer %s has unsaved changes. Save before killing? "
                    (buffer-name)))
           (progn (save-buffer) (kill-current-buffer))

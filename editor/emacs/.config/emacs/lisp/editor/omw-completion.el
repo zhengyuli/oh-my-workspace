@@ -62,13 +62,13 @@
   :ensure t
   :demand t
   :config
-  (add-to-list 'completion-at-point-functions (cape-capf-super
-                                               #'yasnippet-capf
-                                               #'cape-file
-                                               #'cape-dabbrev)))
+  (push (cape-capf-super #'yasnippet-capf
+                         #'cape-file
+                         #'cape-dabbrev)
+        completion-at-point-functions))
 
 ;; ============================================================================
-(defun omw/corfu-mode-setup ()
+(defun omw/corfu-init ()
   "Enable corfu auto-completion with documentation popup."
   (setq corfu-auto t)
   (global-corfu-mode 1)
@@ -77,7 +77,7 @@
 (use-package corfu
   :ensure t
   :defer t
-  :hook (after-init . omw/corfu-mode-setup))
+  :hook (after-init . omw/corfu-init))
 
 (use-package corfu-terminal
   :ensure t

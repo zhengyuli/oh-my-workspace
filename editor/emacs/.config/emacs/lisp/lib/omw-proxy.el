@@ -122,7 +122,7 @@ If neither source is configured, a warning is displayed."
           (setq omw/http-proxy proxy)
           (omw/set-http-proxy proxy))
       (message
-       "No HTTP proxy configured. Set HTTP_PROXY environment variable or `omw/http-proxy`."))))
+       "No HTTP proxy.  Set HTTP_PROXY or `omw/http-proxy`."))))
 
 ;; ============================================================================
 (defun omw/unset-http-proxy ()

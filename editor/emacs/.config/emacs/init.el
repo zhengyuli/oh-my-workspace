@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-26 17:02:48 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-28 19:32:12 Saturday by zhengyuli>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -79,7 +79,7 @@ Automatically resolves symlinks to find the actual configuration directory.")
   "Add subdirs to load path.
 Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (let ((default-directory base-dir))
-    (add-to-list 'load-path base-dir)
+    (push base-dir load-path)
     (normal-top-level-add-subdirs-to-load-path)))
 
 ;; ============================================================================
@@ -108,14 +108,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   ;; Version check - Emacs 30.2+ required for modern features
   (unless (version<= "30.2" emacs-version)
     (error "The Emacs version must be >= 30.2 (current: %s)" emacs-version))
-
-  ;; Frame UI suppression (avoid startup flicker)
-  ;; These should be called before the first frame is displayed
-  (dolist (mode '(tool-bar-mode
-                  scroll-bar-mode
-                  menu-bar-mode
-                  tooltip-mode))
-    (funcall mode -1))
 
   ;; GC tuning - use large threshold during startup for faster initialization
   ;; gcmh will manage GC after startup with reasonable thresholds
@@ -151,8 +143,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; ============================================================================
 (use-package exec-path-from-shell
   :ensure t
-  :when (eq system-type 'darwin)
   :defer t
+  :when (eq system-type 'darwin)
   :hook (after-init . exec-path-from-shell-initialize)
   :config
   (setq exec-path-from-shell-arguments '("-l")))
