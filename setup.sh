@@ -55,6 +55,7 @@ fi
 # -----------------------------------------------------------------------------
 
 readonly NETWORK_TIMEOUT=60
+readonly LINE_WIDTH=79
 
 # Format: <category>/<package>  category dirs organize configs by type
 readonly -a PKG_ALL=(
@@ -121,9 +122,9 @@ log_info() { printf "  ${_BLUE}[info]${_RESET} %s\n" "$*"; }
 
 print_header() {
   printf '\n%b' "${_BOLD}"
-  printf '=%.0s' {1..79}
+  printf '=%.0s' $(seq 1 "${LINE_WIDTH}")
   printf '\n  %s\n' "$1"
-  printf '=%.0s' {1..79}
+  printf '=%.0s' $(seq 1 "${LINE_WIDTH}")
   printf '\n%b\n' "${_RESET}"
 }
 
