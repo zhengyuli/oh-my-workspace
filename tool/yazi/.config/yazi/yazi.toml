@@ -53,12 +53,12 @@ suppress_preload = false
 
 # Git status fetcher for files
 [[plugin.prepend_fetchers]]
-id  = "git"
+id = "git"
 url = "*"
 run = "git"
 
 # Git status fetcher for directories
 [[plugin.prepend_fetchers]]
-id  = "git"
+id = "git"
 url = "*/"
 run = "git"
