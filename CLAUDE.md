@@ -148,16 +148,15 @@ oh-my-workspace/
 Detailed conventions in `.claude/rules/`:
 
 ### Universal Standards
-- `coding-style.md` — Line length (80 chars), file headers, documentation
-- `patterns.md` — Design patterns, immutability principle
+- `standards.md` — Universal baseline (formatting, file organization, comments, principles)
 
-### Language-Specific (`.claude/rules/lang/`)
-- `lang/bash.md` — Bash-specific features (namerefs, associative arrays)
-- `lang/zsh.md` — Zsh-specific features (globbing, hooks)
-- `lang/elisp.md` — Emacs Lisp conventions (lexical binding, ERT testing)
-- `lang/config.md` — Configuration files (no extension)
-- `lang/toml.md` — TOML configuration files
-- `lang/yaml.md` — YAML configuration files
+### Language-Specific (`.claude/rules/`)
+- `bash.md` — Bash shell scripting conventions
+- `zsh.md` — Zsh-specific features and conventions
+- `elisp.md` — Emacs Lisp conventions
+- `config.md` — Configuration files (no extension)
+- `toml.md` — TOML configuration files
+- `yaml.md` — YAML configuration files
 
 ## Quick Reference
 
@@ -197,7 +196,7 @@ rm ~/.zshrc
 Emacs always prefers `.elc` files over `.el` files when both exist. Editing `.el` files without removing stale `.elc` files means Emacs loads the old compiled version.
 
 ```bash
-# Clean stale .elc files (see lang/elisp.md for details)
+# Clean stale .elc files (see elisp.md for details)
 find ~/.config/emacs/ -name '*.elc' -delete
 
 # Restart Emacs to load the .el source files
