@@ -16,102 +16,65 @@ Standards for configuration files without extensions (config, conf, rc).
 
 ```
 # filename -*- mode: xxx; -*-
-# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Title - Brief description
 #
 # Location: $WORKSPACE_DIR/path/to/file
 # References:
 #   1. Official documentation URL
-# Note: Important usage notes, non-obvious behavior
 # =============================================================================
 ```
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header):
-```
-# =============================================================================
-```
+**Level 0** (File Header): `# ============...`
+**Level 1** (Primary Section): `# -----------...`
+**Level 2** (Subsection): `# --- Title ---`
 
-**Level 1** (Primary Section):
-```
-# -----------------------------------------------------------------------------
-```
-
-**Level 2** (Subsection): `# --- Title ---` (inline style)
-
-**Example:**
-```conf
-# =============================================================================
-# Ripgrep Configuration
-# =============================================================================
-
-# -----------------------------------------------------------------------------
-# Search Behavior
-# -----------------------------------------------------------------------------
---smart-case
-
-# -----------------------------------------------------------------------------
-# Ignore Patterns
-# -----------------------------------------------------------------------------
-
-# --- VCS ---
---glob=!.git/*
-
-# --- Build ---
---glob=!target/*
-```
-
-## Documentation & Code Patterns
+## Code Patterns
 
 ### Comments
 
-Explain rationale (WHY), not mechanics (WHAT). Document non-obvious design
-decisions and constraints. Use separate comment lines for clarity, never
-inline explanations.
+Explain WHY, not WHAT. Use separate comment lines.
 
 ```conf
 # Use delta for syntax-highlighted diffs (falls back to less)
 pager = delta
-
-# CORRECT — separate comment explains WHY
-# Warn when line endings change (prevents silent corruption)
-safecrlf = warn
-
-# WRONG — inline comment explains WHAT (obvious)
-pager = delta  # diff viewer
 ```
 
-### Booleans
+### Value Types
 
-`option = true` (explicit, not `"true"`)
-
-### Paths
-
-`~/.config/app/file` (XDG-compliant, not relative)
-
-### Includes
-
-`[include] path = config.local` (machine-specific overrides)
+- **Booleans**: `option = true` (not `"true"`)
+- **Paths**: `~/.config/app/file` (XDG-compliant, not relative)
+- **Includes**: `[include] path = config.local` (machine-specific overrides)
 
 ### Formatting
 
 - Never align values with spaces
-- Never use inline comments
+- Never use inline comments for explanations
+
+## Anti-Patterns
+
+### Don't: Inline Explanations
 
 ```conf
-# WRONG - aligned with spaces
+# WRONG
+pager = delta  # syntax highlighting
+
+# CORRECT
+# Use delta for syntax-highlighted diffs
+pager = delta
+```
+
+### Don't: Align Values
+
+```conf
+# WRONG
 option1  = value1
 option10 = value10
 
-# WRONG - inline comment
-pager = delta  # syntax highlighting
-
-# CORRECT - no alignment, separate comment
-# Use delta for syntax-highlighted diffs
-pager = delta
-
+# CORRECT
 option1 = value1
 option10 = value10
 ```
@@ -120,11 +83,8 @@ option10 = value10
 
 ### Secrets Management
 
-Never commit sensitive data to version control.
+Never commit sensitive data. Use split-file strategy
 
-**Sensitive Data Types**: API keys, tokens, passwords, private keys, certificates, database credentials
-
-**Split-file Strategy**:
 ```conf
 # Main config (committed)
 [core]
@@ -135,14 +95,16 @@ Never commit sensitive data to version control.
 # config.local (not committed, in .gitignore)
 [user]
     email = your.email@company.com
-    signingkey = ABC123DEF456
 ```
 
-**Validation Command**: `git log -p | grep -E "(password|token|key)" | head -20`
+**Sensitive types**: API keys, tokens, passwords, private keys, certificates
+
+## References
+
+1. [Git Configuration](https://git-scm.com/docs/git-config)
+2. [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
 
 ## Validation
-
-Verify the config is accepted by its consuming tool before committing:
 
 ```bash
 # Git config
@@ -151,5 +113,3 @@ git config --list
 # Ripgrep (no dedicated check — test a real search)
 rg --version
 ```
-
-For other tools, reload or restart the application after editing to confirm the config is valid.
