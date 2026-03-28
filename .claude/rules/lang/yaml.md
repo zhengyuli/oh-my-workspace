@@ -8,7 +8,9 @@ globs:
 
 Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 
+# =============================================================================
 ## File Header
+# =============================================================================
 
 ```yaml
 # filename.yml -*- mode: yaml; -*-
@@ -26,11 +28,13 @@ Standards for YAML configuration files (lazygit, GitHub Actions, etc.).
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header): `# ============...`
-**Level 1** (Primary Section): `# -----------...`
+**Level 0** (File Header): `# ============...` (79 chars)
+**Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
+# -----------------------------------------------------------------------------
 ## Code Patterns
+# -----------------------------------------------------------------------------
 
 ### Comments
 
@@ -55,7 +59,9 @@ theme:
 - 2-space indentation (never tabs)
 - Never align values with spaces
 
+# -----------------------------------------------------------------------------
 ## Anti-Patterns
+# -----------------------------------------------------------------------------
 
 ### Don't: Unquoted Special Characters
 
@@ -81,7 +87,9 @@ nerdFontsVersion: "3"
 showFileTree: true
 ```
 
+# -----------------------------------------------------------------------------
 ## Security
+# -----------------------------------------------------------------------------
 
 ### Secrets Management
 
@@ -99,12 +107,16 @@ api:
 
 Add to `.gitignore`: `*.local.yml`, `*.local.yaml`, `*_secret.yml`
 
+# -----------------------------------------------------------------------------
 ## References
+# -----------------------------------------------------------------------------
 
 1. [YAML Specification](https://yaml.org/spec/)
 2. [YAMLlint Documentation](https://yamllint.readthedocs.io/)
 
+# -----------------------------------------------------------------------------
 ## Validation
+# -----------------------------------------------------------------------------
 
 ```bash
 # Python validator
