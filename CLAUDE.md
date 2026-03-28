@@ -147,10 +147,6 @@ oh-my-workspace/
 
 Detailed conventions in `.claude/rules/`:
 
-### Universal Standards
-- `standards.md` — Universal baseline (formatting, file organization, comments, principles)
-
-### Language-Specific (`.claude/rules/`)
 - `bash.md` — Bash shell scripting conventions
 - `zsh.md` — Zsh-specific features and conventions
 - `elisp.md` — Emacs Lisp conventions
