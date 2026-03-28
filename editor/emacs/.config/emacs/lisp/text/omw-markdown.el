@@ -36,6 +36,14 @@
 ;;; Code:
 
 ;; ============================================================================
+(defcustom omw/markdown-fill-column 150
+  "Text fill-column width for Markdown buffers.
+Controls both `fill-column' (hard wrap) and `visual-fill-column-width'
+(soft wrap guide).  Increase for wide monitors; decrease for narrow ones."
+  :type 'integer
+  :group 'omw-emacs)
+
+;; ============================================================================
 (defcustom omw/markdown-colors '((header . "#46dcb0")
                                  (code-bg . "#293134")
                                  (code-fg . "#e0e2e4"))
@@ -132,8 +140,8 @@ Includes header foreground color and code block background/foreground colors."
   (require 'visual-fill-column)
 
   ;; Visual fill column configuration
-  (setq-local fill-column 150
-              visual-fill-column-width fill-column
+  (setq-local fill-column omw/markdown-fill-column
+              visual-fill-column-width omw/markdown-fill-column
               visual-fill-column-center-text t)
 
   ;; Markdown-specific settings

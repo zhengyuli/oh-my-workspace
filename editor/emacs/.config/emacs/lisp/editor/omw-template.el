@@ -60,12 +60,13 @@
 (defun omw/define-auto-insert-custom (condition action)
   "Add or update auto-insert rule for CONDITION with ACTION.
 CONDITION is a regex matching file names.
-ACTION is a template file or function to insert."
-  ;; Check if rule exists and update, otherwise add new rule
-  (let ((elt (assoc condition auto-insert-alist)))
-    (if elt
-        (setcdr elt action)
-      (push (cons condition action) auto-insert-alist))))
+ACTION is a template file or function to insert.
+
+Replaces any existing rule for CONDITION by rebuilding the list,
+avoiding in-place mutation of the shared `auto-insert-alist'."
+  (setq auto-insert-alist
+        (cons (cons condition action)
+              (assoc-delete-all condition auto-insert-alist))))
 
 (defun omw/autoinsert-yas-expand ()
   "Expand YASnippet template in current buffer."
@@ -80,7 +81,8 @@ ACTION is a template file or function to insert."
   :hook (after-init . auto-insert-mode)
   :config
   (setq auto-insert 'other
-        auto-insert-directory (concat omw/emacs-config-root-path "/templates/"))
+        auto-insert-directory
+        (expand-file-name "templates/" omw/emacs-config-root-path))
 
   (omw/define-auto-insert-custom
     '("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C/C++ header")

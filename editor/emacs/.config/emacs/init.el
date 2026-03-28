@@ -101,6 +101,20 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (require 'use-package)
 
 ;; ============================================================================
+;; GC tuning constants — applied early (before package initialization) to
+;; minimize garbage-collection pauses during startup.  gcmh will restore
+;; sensible values once Emacs is fully initialized.
+(defconst omw/gc-startup-threshold (* 100 1024 1024)
+  "GC cons threshold during startup (100 MiB).
+Raising this value reduces GC frequency while packages load, resulting
+in a noticeably faster startup time.  gcmh resets it after init.")
+
+(defconst omw/gc-startup-percentage 0.6
+  "GC cons percentage during startup.
+Paired with `omw/gc-startup-threshold'; both are reset by gcmh
+to more conservative values after the init phase completes.")
+
+;; ============================================================================
 (use-package emacs
   :ensure nil
   :demand t
@@ -111,8 +125,8 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
   ;; GC tuning - use large threshold during startup for faster initialization
   ;; gcmh will manage GC after startup with reasonable thresholds
-  (setq gc-cons-threshold (* 100 1024 1024)
-        gc-cons-percentage 0.6))
+  (setq gc-cons-threshold omw/gc-startup-threshold
+        gc-cons-percentage omw/gc-startup-percentage))
 
 ;; ============================================================================
 (use-package package
@@ -165,6 +179,12 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
   (which-key-setup-minibuffer))
 
 ;; ============================================================================
+;; Number of recent-file entries persisted across sessions.  200 provides a
+;; useful history without making recentf saves noticeably slow.
+(defconst omw/recentf-max-items 200
+  "Maximum number of recent file entries saved by recentf across sessions.")
+
+;; ============================================================================
 (defun omw/after-init-setup ()
   "Enable common post-initialization features.
 This includes save-place-mode, recentf-mode, column-number-mode,
@@ -204,7 +224,7 @@ global-auto-revert-mode and midnight-mode."
         delete-old-versions t)
 
   ;; File and buffer management
-  (setq recentf-max-saved-items 200
+  (setq recentf-max-saved-items omw/recentf-max-items
         uniquify-buffer-name-style 'forward
         uniquify-separator "/")
 
