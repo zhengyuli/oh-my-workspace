@@ -15,7 +15,6 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 # =============================================================================
 # Title - Brief description
 #
-# Location: $WORKSPACE_DIR/path/to/file.toml
 # References:
 #   1. Official documentation URL
 # =============================================================================

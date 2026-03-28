@@ -3,7 +3,6 @@
 # =============================================================================
 # Bun Global Configuration
 #
-# Location: ~/.config/bun/.bunfig.toml
 # XDG: Native support (no BUN_* env overrides needed)
 #
 # References:

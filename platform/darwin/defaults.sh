@@ -7,7 +7,9 @@
 # Copyright (C) 2026 zhengyu.li
 # Author: zhengyu.li <lizhengyu419@outlook.com>
 #
-# Location: $WORKSPACE_DIR/platform/darwin/defaults.sh  (not stowed; run directly)
+# Usage:       ./defaults.sh
+# Dependencies: bash 4.3+, macOS
+#
 # References:
 #   1. mathiasbynens/dotfiles: https://github.com/mathiasbynens/dotfiles/blob/main/.macos
 #   2. macOS defaults list: https://macos-defaults.com

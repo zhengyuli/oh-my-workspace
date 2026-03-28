@@ -3,7 +3,6 @@
 # =============================================================================
 # Ripgrep Configuration for Interactive CLI Use
 #
-# Location: ~/.config/ripgrep/rc
 # Loaded via: RIPGREP_CONFIG_PATH environment variable (set in 00-env.zsh)
 # References:
 #   1. Config Guide: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file

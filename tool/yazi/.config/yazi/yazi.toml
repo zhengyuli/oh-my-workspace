@@ -3,7 +3,6 @@
 # =============================================================================
 # Yazi - Blazing fast terminal file manager
 #
-# Location: ~/.config/yazi/yazi.toml
 # XDG: Follows XDG_CONFIG_HOME, uses ~/.config/yazi/
 #
 # References:

@@ -3,10 +3,13 @@
 # =============================================================================
 # Ghostty Local Configuration (machine-specific overrides)
 #
-# Location: ~/.config/ghostty/config.local
 # Usage: Copy this file to config.local and uncomment what you need.
 #        This file is loaded last and overrides the main config.
 #        It should NOT be tracked by version control (.gitignore it).
+#
+# References:
+#   1. Config Docs:  https://ghostty.org/docs/config
+#   2. Option Ref:   https://ghostty.org/docs/config/reference
 # =============================================================================
 
 # -----------------------------------------------------------------------------

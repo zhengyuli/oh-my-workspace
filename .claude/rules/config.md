@@ -20,7 +20,6 @@ Standards for configuration files without extensions (config, conf, rc).
 # =============================================================================
 # Title - Brief description
 #
-# Location: $WORKSPACE_DIR/path/to/file
 # References:
 #   1. Official documentation URL
 # =============================================================================

@@ -3,12 +3,11 @@
 # =============================================================================
 # Git Configuration
 #
-# Location: ~/.config/git/config
 # XDG: Native support (GIT_CONFIG_GLOBAL or default ~/.config/git/config)
 #      - Local override: ~/.config/git/config.local (identity, proxy, etc.)
 # References:
 #   1. Git Config Docs: https://git-scm.com/docs/git-config
-#   2. Julia Evans' Git Config Survey 2024: https://jvns.ca/blog/2024/02/16/popular-git-config-options/
+#   2. Julia Evans: https://jvns.ca/blog/2024/02/16/popular-git-config-options/
 # Note: Put personal user info (name, email) in ~/.config/git/config.local
 # =============================================================================
 
@@ -65,8 +64,7 @@
     # Enable parallel index loading for better performance
     preloadindex = true
 
-    # Use macOS file system watcher for faster status commands (requires Git 2.46+)
-    # Automatically uses FSMonitor on macOS for improved 'git status' performance
+    # Use macOS FSMonitor for faster status (requires Git 2.37+)
     fsmonitor = true
 
 # -----------------------------------------------------------------------------
@@ -144,9 +142,8 @@
     l = log --oneline -n 10
     # Log with graph (current branch)
     ll = log --oneline --graph --decorate
-    # Beautiful log graph with colors (all branches, last 15 commits)
-    # Based on Julia Evans' popular git config survey
-    lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all -n 15
+    # Colored log graph (all branches, last 15 commits)
+    lg = log --graph --format='%h %C(green)%ar %s%C(yellow)%d' --all -15
     # Show last commit with file statistics
     last = log -1 HEAD --stat
 
@@ -232,8 +229,8 @@
     contributors = shortlog -sn
 
     # --- Identity ---
-    # Set user identity in config.local (usage: git set-user "Name" "email@example.com")
-    set-user = "!f() { git config --file ~/.config/git/config.local user.name \"$1\"; git config --file ~/.config/git/config.local user.email \"$2\"; }; f"
+    # Set user identity in config.local (usage: git set-user "Name" "email")
+    set-user = "!f(){ g=~/.config/git/config.local;git config -f $g user.name \"$1\";git config -f $g user.email \"$2\";};f"
     # Show current user identity
     whoami = "!git config user.name && git config user.email"
 
@@ -300,7 +297,7 @@
 # Configure how Git retrieves changes from remote repositories
 
 [fetch]
-    # Automatically remove remote-tracking branches that no longer exist on remote
+    # Remove stale remote-tracking branches (git fetch --prune)
     # Prevents stale branch references (equivalent to: git fetch --prune)
     prune = true
 

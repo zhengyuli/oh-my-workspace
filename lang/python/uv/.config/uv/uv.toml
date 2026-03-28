@@ -3,7 +3,6 @@
 # =============================================================================
 # UV Package Manager Global Configuration
 #
-# Location: ~/.config/uv/uv.toml
 # XDG: Native support (no UV_* env overrides needed)
 #      - Cache: $XDG_CACHE_HOME/uv (~/.cache/uv)
 #      - Data:  $XDG_DATA_HOME/uv (~/.local/share/uv)

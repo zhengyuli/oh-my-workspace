@@ -5,10 +5,12 @@
 #
 # Machine-specific settings that should NOT be committed to version control.
 #
-# Location: ~/.config/git/config.local (XDG-compliant path)
 # Usage: Copy this file to ~/.config/git/config.local and customize
 # Note: This file is automatically included by ~/.config/git/config
 #       via the [include] directive.
+#
+# References:
+#   1. Git Config Docs: https://git-scm.com/docs/git-config
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -31,9 +33,7 @@
 # Uncomment and adjust if you need to use a proxy
 
 # [http]
-#     proxy = http://127.0.0.1:7890
-#
-# [https]
+#     # Proxy for both HTTP and HTTPS operations (no separate [https] section)
 #     proxy = http://127.0.0.1:7890
 
 # -----------------------------------------------------------------------------
