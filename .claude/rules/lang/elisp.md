@@ -11,7 +11,7 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 
 ```elisp
 ;;; filename.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+;; Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: keyword1, keyword2
@@ -28,62 +28,24 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 ;;
 ;; The above copyright notice and this permission notice shall be included in
 ;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
-
-;;; History:
-;;
-;; 2026-03-14 15:30 user <user@outlook.com> created.
 
 ;;; Commentary:
 ;;
 ;; Brief description of what this module does.
-;; Additional context about features and usage.
 
 ;;; Code:
 
 ;; ============================================================================
 ```
 
-Every file must declare `;;; -*- lexical-binding: t; -*-` on the first
-line.
-
-Every file must end with:
-
-```elisp
-;; ============================================================================
-(provide 'module-name)
-;;; module-name.el ends here
-```
+**Requirements:**
+- First line: `;;; -*- lexical-binding: t; -*-`
+- Last lines: `(provide 'module-name)` and `;;; module-name.el ends here`
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header):
-```
-;; ============================================================================
-```
-
-**Level 1** (Primary Section):
-```
-;; ----------------------------------------------------------------------------
-```
-
-**Example:**
-```elisp
-;; ----------------------------------------------------------------------------
-;; Customization - Variables
-;; ----------------------------------------------------------------------------
-(defcustom omw-git-auto-revert t
-  "Automatically revert buffers."
-  :type 'boolean
-  :group 'omw-git)
-```
+**Level 0** (File Header): `;; ============...`
+**Level 1** (Primary Section): `;; -----------...`
 
 **Semicolon convention:**
 - `;;;` — file-level (headers, `provide`, `ends here`)
@@ -92,8 +54,9 @@ Every file must end with:
 
 ## Error Handling
 
-Use `ignore-errors` only for side effects that must not interrupt the
-calling operation on failure:
+### ignore-errors
+
+Use only for side effects that must not interrupt the calling operation.
 
 ```elisp
 ;; Pre-save hooks must not break the save on failure
@@ -101,34 +64,32 @@ calling operation on failure:
 (ignore-errors (time-stamp))
 ```
 
-Use `condition-case` to recover from or log specific failures — never
-silently discard errors on critical paths:
+### condition-case
+
+Use to recover from or log specific failures — never silently discard errors on critical paths.
 
 ```elisp
-;; Recover gracefully when loading optional local config
 (condition-case err
     (load "omw-local")
   (error (message "omw-local not found: %s"
                   (error-message-string err))))
 ```
 
-Use `unwind-protect` when cleanup code must run regardless of whether
-the body succeeds or fails:
+### unwind-protect
+
+Use when cleanup code must run regardless of success/failure.
 
 ```elisp
-;; Always restore window configuration even if body errors
 (unwind-protect
     (risky-operation)
   (set-window-configuration saved-config))
 ```
 
-## Documentation & Code Patterns
+## Code Patterns
 
 ### Comments
 
-Explain rationale (WHY), not mechanics (WHAT). Document non-obvious
-decisions and constraints. Use separate comment lines; never inline
-explanations.
+Explain WHY, not WHAT. Use separate comment lines; never inline explanations.
 
 ```elisp
 ;; Validate package exists before stow operations
@@ -152,30 +113,11 @@ Returns the full path to the config file, or nil if not found."
   ...)
 ```
 
-```elisp
-;; CORRECT
-"Return the absolute path to the workspace directory."
-
-;; WRONG — not a sentence / too terse
-"Returns absolute path"
-"Get workspace dir"
-```
-
 ### Naming
 
 kebab-case only: `omw-buffer-empty-p`, never `omwBufferEmptyP`. All
 symbols must carry the `omw-` package prefix. Predicate names must end
 with `-p`.
-
-```elisp
-;; CORRECT
-(defun omw-buffer-empty-p ()
-  "Return t if buffer is empty."
-  (zerop (buffer-size)))
-
-;; WRONG
-(defun omwBufferEmptyP () ...)
-```
 
 ### Buffer-local Variables
 
@@ -193,9 +135,6 @@ Always use `kbd` macro; never use raw escape strings.
 ```elisp
 ;; CORRECT
 (define-key shell-mode-map (kbd "C-c C-s") 'omw-shell-sync)
-
-;; WRONG
-(define-key shell-mode-map "\C-c\C-s" 'omw-shell-sync)
 ```
 
 ### Immutability
@@ -203,18 +142,14 @@ Always use `kbd` macro; never use raw escape strings.
 Never mutate shared lists in-place; always produce a new list via `cons`.
 
 ```elisp
-;; WRONG
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-
 ;; CORRECT
 (setq auto-mode-alist
       (cons '("\\.py\\'" . python-mode) auto-mode-alist))
 ```
 
-### use-package Declaration
+## use-package Declaration
 
-All package configuration must use `use-package`. Follow this keyword
-order within each declaration.
+All package configuration must use `use-package`. Follow this keyword order:
 
 1. `:ensure` / `:ensure nil`
 2. `:demand t` / `:defer t`
@@ -245,65 +180,51 @@ order within each declaration.
 Default to `:defer t` to minimize startup time; use `:mode`, `:hook`,
 and `:bind` where possible as they imply deferral.
 
-```elisp
-(use-package magit
-  :defer t
-  :bind ("C-c g" . magit-status))
+## Anti-Patterns
 
-(use-package python
-  :ensure nil
-  :mode ("\\.py\\'" . python-mode))
+### Don't: Mutate Shared Lists
+
+```elisp
+;; WRONG
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+
+;; CORRECT
+(setq auto-mode-alist
+      (cons '("\\.py\\'" . python-mode) auto-mode-alist))
 ```
 
-### Formatting
-
-Never align values with spaces. Never use inline comments for explanations.
+### Don't: Raw Key Strings
 
 ```elisp
-;; WRONG - aligned
-(defvar config-dir nil
-    "Config directory")
-(defvar data-dir   nil
-    "Data directory")
+;; WRONG
+(define-key shell-mode-map "\C-c\C-s" 'omw-shell-sync)
 
-;; WRONG - inline comment for explanation
+;; CORRECT
+(define-key shell-mode-map (kbd "C-c C-s") 'omw-shell-sync)
+```
+
+### Don't: Inline Explanations
+
+```elisp
+;; WRONG
 (defvar config-dir nil)  ; Store config directory path
 
 ;; CORRECT
 ;; Store config directory path
 (defvar config-dir nil
   "Config directory")
-(defvar data-dir nil
-  "Data directory")
 ```
 
 ## Functions
 
-### Single Responsibility
-
-Each function does exactly one thing.
-
 ### Interactive Declaration
 
 All user-facing commands (key-bound or M-x callable) must declare
-`(interactive)`; internal helpers must not:
-
-```elisp
-;; CORRECT — user command
-(defun omw/jump-to-matched-paren ()
-  "Jump to the matched delimiter at point."
-  (interactive)
-  ...)
-
-;; CORRECT — internal helper
-(defun omw-find-config (name)
-  "Return path to config NAME, or nil if not found."
-  ...)
-```
+`(interactive)`; internal helpers must not.
 
 ### Parameter Validation
 
-Validate all required parameters at the start of the function body:
+Validate all required parameters at the start of the function body.
 
 ```elisp
 (defun omw-load-module (name)
@@ -315,7 +236,7 @@ Validate all required parameters at the start of the function body:
 
 ### Optional Dependency Guard
 
-Always check existence before calling into optional features:
+Always check existence before calling into optional features.
 
 ```elisp
 (when (featurep 'magit)
@@ -336,11 +257,12 @@ third-party repositories.
 
 Never commit `.elc` files; always delete them before committing.
 
+## References
+
+1. [Emacs Lisp Manual](https://www.gnu.org/software/emacs/manual/html_node/elisp/)
+2. [use-package Documentation](https://github.com/jwiegley/use-package)
+
 ## Validation
-
-### Byte Compilation
-
-Zero warnings required — treat every warning as an error:
 
 ```bash
 # Single file
@@ -349,12 +271,7 @@ emacs --batch -f batch-byte-compile omw-module.el
 # Directory
 emacs --batch --eval \
   "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
-```
 
-### Pre-Commit Workflow
-
-After verification passes, delete all `.elc` files before committing:
-
-```bash
+# Pre-commit cleanup
 find emacs/ -name '*.elc' -delete
 ```
