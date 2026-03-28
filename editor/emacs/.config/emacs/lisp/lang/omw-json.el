@@ -37,7 +37,7 @@
 ;;; Code:
 
 ;; ============================================================================
-(defvar omw/json-tool-specs
+(defconst omw/json-tool-specs
   '(("vscode-json-languageserver" "bun install -g vscode-json-languageserver" "bun")
     ("prettier" "bun install -g prettier" "bun"))
   "Tool specs for JSON development.")

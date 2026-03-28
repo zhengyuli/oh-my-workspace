@@ -44,7 +44,7 @@
          (c++-mode . google-set-c-style)))
 
 ;; ============================================================================
-(defvar omw/cc-tool-specs
+(defconst omw/cc-tool-specs
   '(("clangd" "brew install llvm" "brew"))
   "Tool specs for C/C++ development.
 clangd is provided by Homebrew llvm (in Brewfile).

@@ -69,11 +69,8 @@
   :hook (after-init . pulsar-global-mode))
 
 ;; ============================================================================
-(defcustom omw/centaur-tabs-height 25
-  "Height in pixels for the centaur-tabs tab bar.
-Adjust upward for high-DPI displays or larger font sizes."
-  :type 'integer
-  :group 'omw-emacs)
+(defconst omw/centaur-tabs-height 25
+  "Height in pixels for the centaur-tabs tab bar.")
 
 ;; ============================================================================
 (defface omw/centaur-tabs-base
