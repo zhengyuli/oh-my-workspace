@@ -117,9 +117,17 @@ Returns the full path to the config file, or nil if not found."
 
 ### Naming
 
-kebab-case only: `omw-buffer-empty-p`, never `omwBufferEmptyP`. All
-symbols must carry the `omw-` package prefix. Predicate names must end
-with `-p`.
+kebab-case only: `omw/buffer-empty-p`, never `omwBufferEmptyP`.
+
+Two prefix conventions are used:
+
+- **File names** use `omw-` prefix: `omw-font.el`, `omw-proxy.el`
+- **Code symbols** (functions, variables, constants) use `omw/` prefix:
+  `omw/setup-fonts`, `omw/http-proxy`, `omw/gc-startup-threshold`
+
+Private helpers use a double-slash prefix: `omw/--install-tool-spec`.
+
+Predicate names must end with `-p`: `omw/buffer-empty-p`.
 
 ### Buffer-local Variables
 
@@ -290,8 +298,16 @@ Always check existence before calling into optional features.
 
 ### Package Sources
 
-Only install packages from GNU ELPA or MELPA Stable; never from unverified
-third-party repositories.
+Install packages from GNU ELPA or MELPA by default.  Use `:vc` to fetch
+directly from a Git repository only when the package is not yet available on
+ELPA/MELPA.  Always add a comment explaining why `:vc` is required.
+
+```elisp
+;; Not yet published to ELPA/MELPA; install directly from upstream.
+(use-package some-package
+  :vc (:url "https://github.com/author/some-package.el" :rev :newest)
+  ...)
+```
 
 ### Bytecompile Artifacts
 

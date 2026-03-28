@@ -69,6 +69,13 @@
   :hook (after-init . pulsar-global-mode))
 
 ;; ============================================================================
+(defcustom omw/centaur-tabs-height 25
+  "Height in pixels for the centaur-tabs tab bar.
+Adjust upward for high-DPI displays or larger font sizes."
+  :type 'integer
+  :group 'omw-emacs)
+
+;; ============================================================================
 (defface omw/centaur-tabs-base
   '((t :family "Monospace" :height 1.0))
   "Base face for centaur-tabs with fixed-pitch font."
@@ -95,7 +102,7 @@
   (centaur-tabs-display-line
    ((t (:inherit omw/centaur-tabs-base :box nil :overline nil :underline nil))))
   :config
-  (setq centaur-tabs-height 25
+  (setq centaur-tabs-height omw/centaur-tabs-height
         centaur-tabs-set-close-button nil
         centaur-tabs-gray-out-icons 'buffer
         centaur-tabs-show-count t
@@ -121,7 +128,7 @@
   "Return random banner path from banners directory.
 Returns nil in terminal mode (uses official banner instead)."
   (when (display-graphic-p)
-    (let* ((banners-dir (concat omw/emacs-config-root-path "/banners"))
+    (let* ((banners-dir (expand-file-name "banners" omw/emacs-config-root-path))
            (banners (directory-files banners-dir t "\\.png\\'")))
       (when banners
         (nth (random (length banners)) banners)))))

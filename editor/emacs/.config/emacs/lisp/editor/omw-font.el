@@ -69,6 +69,26 @@ First available font in the list will be used."
   :group 'omw-emacs)
 
 ;; ============================================================================
+;; Unicode code-point ranges used when mapping the CJK fallback font.
+;; Defined as constants so that set-fontset-font call-sites are self-documenting
+;; and the ranges can be referenced without repeating raw hex literals.
+(defconst omw/font-cjk-unified-range '(#x4e00 . #x9fff)
+  "CJK Unified Ideographs: the primary block of common Chinese, Japanese,
+and Korean characters used in everyday text.")
+
+(defconst omw/font-cjk-ext-a-range '(#x3400 . #x4dbf)
+  "CJK Unified Ideographs Extension A: rare or historic CJK characters
+not covered by the main Unified block.")
+
+(defconst omw/font-cjk-ext-b-range '(#x20000 . #x2a6df)
+  "CJK Unified Ideographs Extension B and beyond: very rare or archaic
+characters, including those used in classical literature.")
+
+(defconst omw/font-cjk-symbols-range '(#x3000 . #x303f)
+  "CJK Symbols and Punctuation: ideographic space, corner brackets,
+wave dashes, and other CJK-specific punctuation marks.")
+
+;; ============================================================================
 (defun omw/find-available-font (font-list)
   "Return first available font from FONT-LIST."
   (cl-find-if (lambda (font)
@@ -103,14 +123,10 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
 
       ;; Configure Chinese font fallback for CJK character ranges
       (when cjk-font
-        ;; CJK Unified Ideographs (common Chinese characters)
-        (set-fontset-font t '(#x4e00 . #x9fff) cjk-font nil 'prepend)
-        ;; CJK Extension A
-        (set-fontset-font t '(#x3400 . #x4dbf) cjk-font nil 'prepend)
-        ;; CJK Extension B and beyond
-        (set-fontset-font t '(#x20000 . #x2a6df) cjk-font nil 'prepend)
-        ;; CJK Symbols and Punctuation
-        (set-fontset-font t '(#x3000 . #x303f) cjk-font nil 'prepend))
+        (set-fontset-font t omw/font-cjk-unified-range cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-ext-a-range   cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-ext-b-range   cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-symbols-range cjk-font nil 'prepend))
 
       ;; Log font configuration for debugging
       (when init-file-debug
