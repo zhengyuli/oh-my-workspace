@@ -1,5 +1,5 @@
 # 40-plugins.zsh
-# Time-stamp: <2026-03-22 11:00:21 Sunday by zhengyuli>
+# Time-stamp: <2026-03-28 15:46:57 Saturday by zhengyuli>
 # =============================================================================
 # Zinit Plugin Management
 #
@@ -46,6 +46,13 @@ fi
 if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
   return 1
 fi
+
+# Set compdump path BEFORE sourcing zinit so ALL internal compinit calls
+# (zicompinit, automatic rebuilds, self-update) use the XDG cache path.
+# Without this, zinit defaults to ${ZDOTDIR}/.zcompdump (~/.config/zsh/.zcompdump).
+typeset -gA ZINIT
+ZINIT[ZCOMPDUMP_PATH]="$XDG_CACHE_HOME/zsh/zcompdump"
+
 source "$ZINIT_HOME/zinit.zsh"
 ZINIT_INITIALIZED=1
 
@@ -117,7 +124,6 @@ zinit light hlissner/zsh-autopair
 #   zicdreplay → replay compdef calls captured from turbo plugins
 zinit ice wait"0c" lucid atinit'\
   ZINIT[COMPINIT_OPTS]=-C;\
-  ZINIT[ZCOMPDUMP_PATH]="${XDG_CACHE_HOME}/zsh/zcompdump";\
   zicompinit; zicdreplay'
 zinit light zdharma-continuum/fast-syntax-highlighting
 
