@@ -115,7 +115,6 @@ in a noticeably faster startup time.  gcmh resets it after init.")
 Paired with `omw/gc-startup-threshold'; both are reset by gcmh
 to more conservative values after the init phase completes.")
 
-;; ============================================================================
 (use-package emacs
   :ensure nil
   :demand t
@@ -185,7 +184,6 @@ to more conservative values after the init phase completes.")
 (defconst omw/recentf-max-items 200
   "Maximum number of recent file entries saved by recentf across sessions.")
 
-;; ============================================================================
 (defun omw/after-init-setup ()
   "Enable common post-initialization features.
 This includes save-place-mode, recentf-mode, column-number-mode,
