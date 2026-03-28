@@ -54,8 +54,24 @@ abbreviations.
 Language-specific rules are conditionally loaded via `globs` frontmatter.
 They extend these universal rules with language-specific conventions.
 
-| Rule file       | Globs                                                                       |
-|-----------------|-----------------------------------------------------------------------------|
-| `lang/bash.md`  | `**/*.sh`, `**/*.bash`                                                      |
-| `lang/zsh.md`   | `**/*.zsh`, `**/.zsh*`, `**/zshrc`, `**/zprofile`, `**/zshenv`, `**/zlogin` |
-| `lang/elisp.md` | `**/*.el`                                                                   |
+| Rule file        | Globs                                                                                             |
+|------------------|---------------------------------------------------------------------------------------------------|
+| `lang/bash.md`   | `**/*.sh`, `**/*.bash`                                                                            |
+| `lang/zsh.md`    | `**/*.zsh`, `**/.zsh*`, `**/zshrc`, `**/zprofile`, `**/zshenv`, `**/zlogin`                      |
+| `lang/elisp.md`  | `**/*.el`                                                                                         |
+| `lang/config.md` | `**/config`, `**/*.conf`, `**/*.cfg`, `**/rc`, `**/.gitconfig`, `**/git/config`                  |
+| `lang/toml.md`   | `**/*.toml`                                                                                       |
+| `lang/yaml.md`   | `**/*.yml`, `**/*.yaml`                                                                           |
+
+### Unified Structure
+
+All lang rules follow a consistent section template:
+1. **File Header** — Location, usage, dependencies
+2. **Delimiter Hierarchy** — Consistent with this file
+3. **Code Patterns** — Language-specific syntax and conventions
+4. **Anti-Patterns** — Explicit "Don't" list with corrections
+5. **Security** — Language-specific security concerns
+6. **References** — Links to official documentation
+7. **Validation** — Tool-specific commands
+
+See `lang/_template.md` for the complete template structure.
