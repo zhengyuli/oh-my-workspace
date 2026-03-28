@@ -1,5 +1,5 @@
 # config -*- mode: gitconfig; -*-
-# Time-stamp: <2026-03-25 00:00:00 Wednesday by zhengyu.li>
+# Time-stamp: <2026-03-28 00:00:00 Saturday by zhengyu.li>
 # =============================================================================
 # Git Configuration
 #
@@ -14,222 +14,77 @@
 # -----------------------------------------------------------------------------
 # User (override in ~/.config/git/config.local)
 # -----------------------------------------------------------------------------
-# User identity is intentionally NOT set here to allow machine-specific config.
-# Store machine-specific settings in ~/.config/git/config.local
+# Identity intentionally omitted here; set machine-specific config in .local
 
-# [user]
-#     name = Your Name
-#     email = you@example.com
-
-# Include local config for machine-specific settings (identity, proxy, etc.)
-# Uses XDG-compliant path: ~/.config/git/config.local
 [include]
     path = ~/.config/git/config.local
 
 # -----------------------------------------------------------------------------
 # Core Settings
 # -----------------------------------------------------------------------------
-# Fundamental Git behavior and preferences
-
 [core]
-    # Use vim as the default editor for commit messages, rebase, etc.
     editor = vim
-
-    # Pager: use delta for syntax-highlighted, line-numbered diff output
-    # Falls back to less if delta is not installed
+    # Use delta for syntax-highlighted, line-numbered diff output
     pager = delta
-
-    # Line ending handling: convert CRLF to LF on commit (Unix-style)
+    # Convert CRLF to LF on commit (Unix-style line endings)
     autocrlf = input
-
-    # Warn when line endings are changed in a way that might be problematic
-    safecrlf = warn
-
     # Display non-ASCII filenames correctly (e.g., Chinese characters)
     quotepath = false
-
     # Require exact case matching for reliable cross-platform behavior
     ignorecase = false
-
     # Normalize Unicode filenames on macOS for consistency
     precomposeunicode = true
-
-    # Global gitignore file (XDG-compliant path)
-    # Patterns applicable to all repositories
     excludesfile = ~/.config/git/ignore
-
-    # Maximum compression for better storage efficiency (Git 2.45+)
-    compression = 9
-
     # Enable parallel index loading for better performance
     preloadindex = true
-
-    # Use macOS FSMonitor for faster status (requires Git 2.37+)
+    # Cache untracked files for faster git status
+    untrackedCache = true
+    # macOS FSMonitor daemon for faster status (requires Git 2.37+)
     fsmonitor = true
 
 # -----------------------------------------------------------------------------
 # Interactive Settings
 # -----------------------------------------------------------------------------
-# Configure interactive Git commands (e.g., git add -p)
-
 [interactive]
-    # Pipe interactive diff output through delta for consistent rendering
-    # Ensures 'git add -p' (and similar) uses the same delta highlighting
+    # Pipe interactive diff through delta for consistent highlighting
     diffFilter = delta --color-only
 
 # -----------------------------------------------------------------------------
 # Delta Settings
 # -----------------------------------------------------------------------------
-# Configure delta: a syntax-highlighting pager for git diff/log/show
 # https://github.com/dandavison/delta
-
 [delta]
     # Enable n/N keybindings to navigate between diff hunks
     navigate = true
-
-    # Use dark theme (set to true if using a light terminal background)
     light = false
-
-    # Show line numbers in the left gutter
     line-numbers = true
-
-    # Show diff in side-by-side layout (set to true to enable)
     side-by-side = false
 
 # -----------------------------------------------------------------------------
 # Feature Flags
 # -----------------------------------------------------------------------------
-# Enable experimental or optional Git features
-
 [feature]
-    # Optimize commands for repositories with many files
-    # Improves performance for large monorepos
+    # Optimize for repositories with many files
     manyFiles = true
+
+# -----------------------------------------------------------------------------
+# Help Settings
+# -----------------------------------------------------------------------------
+[help]
+    # Confirm before running autocorrected command (Git 2.36+)
+    autocorrect = prompt
 
 # -----------------------------------------------------------------------------
 # Init Settings
 # -----------------------------------------------------------------------------
-# Configuration for repository initialization
-
 [init]
-    # Use 'main' as the default branch name for new repositories
-    # This follows the modern convention adopted by GitHub (2020+)
     defaultBranch = main
-
-# -----------------------------------------------------------------------------
-# Advice Settings
-# -----------------------------------------------------------------------------
-# Control Git's hint and suggestion messages
-
-[advice]
-    # Silence warning when attempting to add files matching .gitignore patterns
-    addIgnoredFile = false
 
 # -----------------------------------------------------------------------------
 # Alias Definitions
 # -----------------------------------------------------------------------------
-# Shortcuts for common Git commands to improve workflow efficiency
-
 [alias]
-    # --- Status ---
-    # Short status with branch tracking info
-    st = status -sb
-    # Compact status output (porcelain format)
-    s = status -s
-
-    # --- Log ---
-    # Recent commits (last 10)
-    l = log --oneline -n 10
-    # Log with graph (current branch)
-    ll = log --oneline --graph --decorate
-    # Colored log graph (all branches, last 15 commits)
-    lg = log --graph --format='%h %C(green)%ar %s%C(yellow)%d' --all -15
-    # Show last commit with file statistics
-    last = log -1 HEAD --stat
-
-    # --- Diff ---
-    d = diff
-    # Show staged changes
-    dc = diff --cached
-    # Diff with file statistics only
-    ds = diff --stat
-    # Show staged changes with statistics
-    staged = diff --cached --stat
-    # Show diff statistics summary (useful for code reviews)
-    changes = diff --stat
-
-    # --- Commit ---
-    c = commit
-    cm = commit -m
-    # Amend last commit (opens editor)
-    ca = commit --amend
-    # Amend last commit with new message
-    cam = commit --amend -m
-    # Amend last commit without editing message
-    amend = commit --amend --no-edit
-
-    # --- Branch ---
-    b = branch
-    # List all branches (local and remote)
-    ba = branch -a
-    # Delete merged branch safely
-    bd = branch -d
-    # Force delete branch
-    bD = branch -D
-
-    # --- Checkout ---
-    co = checkout
-    # Create and switch to new branch
-    cob = checkout -b
-    # Quick switch to main branch
-    com = checkout main
-
-    # --- Merge ---
-    m = merge
-    # Merge with explicit merge commit (no fast-forward)
-    mnf = merge --no-ff
-
-    # --- Rebase ---
-    r = rebase
-    # Interactive rebase
-    ri = rebase -i
-    rc = rebase --continue
-    ra = rebase --abort
-
-    # --- Remote ---
-    rem = remote -v
-
-    # --- Stash ---
-    ss = stash
-    # Apply and remove top stash
-    sp = stash pop
-    sl = stash list
-    sd = stash drop
-
-    # --- Reset ---
-    # Undo last commit, keep changes unstaged
-    undo = reset HEAD~1 --mixed
-    # Unstage files (keep working directory changes)
-    unstage = reset HEAD --
-    # Soft reset to previous commit, keep changes staged
-    uncommit = reset --soft HEAD^
-
-    # --- Interactive ---
-    # Interactive patch mode (stage changes by hunk)
-    ap = add -p
-
-    # --- Cleanup ---
-    # Delete all merged branches except main/master/develop
-    clean-branches = "!git branch --merged | grep -Ev '\\*|main|master|develop' | xargs -n 1 git branch -d"
-
-    # --- Workflow ---
-    # Quick work-in-progress commit
-    wip = "!git add -A && git commit -m 'WIP'"
-    # List contributors with commit counts
-    contributors = shortlog -sn
-
-    # --- Identity ---
-    # Set user identity in config.local (usage: git set-user "Name" "email")
+    # Set user identity in config.local (git set-user "Name" "email")
     set-user = "!f(){ g=~/.config/git/config.local;git config -f $g user.name \"$1\";git config -f $g user.email \"$2\";};f"
     # Show current user identity
     whoami = "!git config user.name && git config user.email"
@@ -237,151 +92,92 @@
 # -----------------------------------------------------------------------------
 # Color Settings
 # -----------------------------------------------------------------------------
-# Enable and customize colored output for better readability
-
 [color]
-    # Automatically colorize output when writing to terminal
+    # Colorize output when writing to terminal
     ui = auto
 
-[color "branch"]
-    # Highlight current branch in yellow
-    current = yellow bold
-    # Local branches in green
-    local = green bold
-    # Remote-tracking branches in cyan
-    remote = cyan bold
+# -----------------------------------------------------------------------------
+# Branch Settings
+# -----------------------------------------------------------------------------
+[branch]
+    # Sort branches by most recent commit (newest first)
+    sort = -committerdate
 
-[color "diff"]
-    # Diff header metadata
-    meta = yellow bold
-    # Hunk headers (@@ lines)
-    frag = magenta bold
-    # Removed lines in red
-    old = red bold
-    # Added lines in green
-    new = green bold
-    # Highlight trailing whitespace errors
-    whitespace = red reverse
+# -----------------------------------------------------------------------------
+# Tag Settings
+# -----------------------------------------------------------------------------
+[tag]
+    # Sort tags by semantic version (descending)
+    sort = -version:refname
 
-[color "status"]
-    # Newly added files
-    added = green bold
-    # Modified files
-    changed = yellow bold
-    # Untracked files
-    untracked = red bold
+# -----------------------------------------------------------------------------
+# Column Settings
+# -----------------------------------------------------------------------------
+[column]
+    # Display branch/tag lists in columns when space allows
+    ui = auto
 
 # -----------------------------------------------------------------------------
 # Push & Pull Settings
 # -----------------------------------------------------------------------------
-# Configure how Git handles push and pull operations
-
 [push]
-    # 'simple' is the safest default: only push current branch to its upstream
-    # Requires explicit tracking relationship, prevents accidental pushes
-    # Alternative: 'current' pushes to same-named branch (less safe)
+    # Only push current branch to its upstream (safest default)
     default = simple
-
     # Automatically set upstream when pushing a new branch
-    # Equivalent to: git push -u origin <branch>
     autoSetupRemote = true
 
 [pull]
-    # Rebase instead of merge when pulling (cleaner history)
-    # Equivalent to: git pull --rebase
+    # Rebase instead of merge for cleaner history
     rebase = true
 
 # -----------------------------------------------------------------------------
 # Fetch Settings
 # -----------------------------------------------------------------------------
-# Configure how Git retrieves changes from remote repositories
-
 [fetch]
-    # Remove stale remote-tracking branches (git fetch --prune)
-    # Prevents stale branch references (equivalent to: git fetch --prune)
+    # Remove stale remote-tracking branches
     prune = true
-
-    # Verify object integrity during fetch for security
-    # Detects corrupted or malicious objects
+    # Verify object integrity on fetch (security)
     fsckobjects = true
 
 # -----------------------------------------------------------------------------
 # Rebase Settings
 # -----------------------------------------------------------------------------
-# Enhance rebase workflow with automation
-
 [rebase]
-    # Automatically squash fixup! and squash! commits during interactive rebase
-    # Commits marked with 'fixup!' are automatically squashed into their target
+    # Auto-squash fixup!/squash! commits during interactive rebase
     autosquash = true
-
-    # Automatically stash uncommitted changes before rebase and restore after
-    # Prevents 'cannot rebase: uncommitted changes' errors
+    # Stash and restore uncommitted changes around rebase
     autostash = true
+    # Auto-update stacked branch refs (Git 2.38+)
+    updateRefs = true
 
 # -----------------------------------------------------------------------------
 # Rerere (Reuse Recorded Resolution)
 # -----------------------------------------------------------------------------
-# Remember how merge conflicts were resolved and reuse them
-
 [rerere]
-    # Enable rerere to remember conflict resolutions
-    # Useful when rebasing frequently or working on long-lived branches
-    # Records resolutions in .git/rr-cache/
+    # Remember and replay conflict resolutions
     enabled = true
 
 # -----------------------------------------------------------------------------
 # Commit Settings
 # -----------------------------------------------------------------------------
-# Configure commit behavior
-
 [commit]
     # Show diff in commit message editor template
-    # Helps write accurate commit messages by showing what's being committed
     verbose = true
-
-# -----------------------------------------------------------------------------
-# Branch Settings
-# -----------------------------------------------------------------------------
-# Configure branch-related behavior
-
-[branch]
-    # Sort branches by most recent commit (newest first)
-    # Affects 'git branch' and 'git branch -r' output
-    sort = -committerdate
-
-# -----------------------------------------------------------------------------
-# Log Settings
-# -----------------------------------------------------------------------------
-# Configure log output behavior
-
-[log]
-    # Show refs (branches, tags) inline with commit info
-    # 'short' shows only the ref name, not the full path
-    decorate = short
 
 # -----------------------------------------------------------------------------
 # Diff Settings
 # -----------------------------------------------------------------------------
-# Configure how differences are displayed
-
 [diff]
-    # Use vimdiff as the default diff tool
-    tool = vimdiff
-
-    # Use histogram algorithm for more accurate diff detection
-    # Better at handling code moves and reorganization
+    # Use histogram algorithm (better at handling code moves)
     algorithm = histogram
-
-    # Detect both renames AND copies
-    # 'copies' is more thorough than just 'renames'
+    # Detect both renames and copies
     renames = copies
-
-    # Color moved lines differently (helps identify code relocation)
-    # 'default' colors moved blocks in alternate colors
+    # Highlight relocated code blocks distinctly
     colorMoved = default
+    # Use i/w/c/o prefixes instead of a/b
+    mnemonicPrefix = true
 
-# Language-specific diff patterns
+# Language-specific hunk headers
 [diff "golang"]
     # Go function detection for better diff hunk headers
     xfuncname = "^func[[:space:]]+\\([^)]+\\)[[:space:]]+([^_(]+)"
@@ -389,65 +185,23 @@
 # -----------------------------------------------------------------------------
 # Merge Settings
 # -----------------------------------------------------------------------------
-# Configure merge behavior and conflict resolution
-
 [merge]
-    # Use vimdiff as the default merge tool
+    # Show base context in conflicts (Git 2.35+)
+    conflictstyle = zdiff3
     tool = vimdiff
 
-    # Show base version alongside ours/theirs in conflicts
-    # 'diff3' format: ||||||| base, ======, >>>>>>> theirs
-    conflictstyle = diff3
-
 [mergetool]
-    # Don't prompt before launching merge tool
     prompt = false
 
 # -----------------------------------------------------------------------------
 # Transfer Settings (Security)
 # -----------------------------------------------------------------------------
-# Verify data integrity during network operations
-
 [transfer]
-    # Verify integrity of objects during transfer
-    # Helps detect corruption and certain attack vectors
-    fsckobjects = true
-
-[receive]
-    # Verify incoming objects during git receive
-    # Important for repository hosts (less relevant for clients)
+    # Verify object integrity during transfer
     fsckobjects = true
 
 # -----------------------------------------------------------------------------
 # Credential Helper (macOS)
 # -----------------------------------------------------------------------------
-# Use macOS Keychain for secure credential storage
-
 [credential]
-    # Store credentials in macOS Keychain
-    # Provides secure, persistent storage with system integration
     helper = osxkeychain
-
-# -----------------------------------------------------------------------------
-# GPG Signing (Optional)
-# -----------------------------------------------------------------------------
-# Enable commit and tag signing for verification
-# Uncomment to enable GPG signing
-
-# [commit]
-#     gpgsign = true
-#
-# [tag]
-#     gpgsign = true
-#
-# [gpg]
-#     program = gpg
-
-# -----------------------------------------------------------------------------
-# URL Rewrites (Optional)
-# -----------------------------------------------------------------------------
-# Useful for switching between HTTPS and SSH
-# Uncomment to use SSH instead of HTTPS for GitHub
-
-# [url "git@github.com:"]
-#     insteadOf = https://github.com/

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-21 17:02:24 Saturday by zhengyuli>
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # macOS System Defaults - developer-optimized
 #
@@ -25,273 +25,330 @@
 #   - App Store: kept security updates only, disabled auto-install of others
 # =============================================================================
 
-osascript -e 'tell application "System Preferences" to quit' 2>/dev/null
-osascript -e 'tell application "System Settings" to quit' 2>/dev/null
+set -uo pipefail
 
 # -----------------------------------------------------------------------------
 # General UI/UX
 # -----------------------------------------------------------------------------
-printf 'Setting General UI/UX preferences...\n'
+_general_ui() {
+  printf 'Setting General UI/UX preferences...\n'
 
-# Set standby delay to 24 hours (AC power only - battery power left at system
-# default to avoid disk/system sleep timing conflicts)
-sudo pmset -c standbydelay 86400
+  # Set standby delay to 24 hours (AC power only - battery power left at system
+  # default to avoid disk/system sleep timing conflicts)
+  sudo pmset -c standbydelay 86400
 
-# Disable startup sound
-sudo nvram StartupMute=1
+  # Disable startup sound
+  sudo nvram StartupMute=1
 
-# Remove duplicates in the "Open With" menu
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
-    -r -domain local -domain system -domain user
+  # Remove duplicates in the "Open With" menu
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+      -r -domain local -domain system -domain user
 
-# Set sidebar icon size to medium
-defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
+  # Set sidebar icon size to medium
+  defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
 
-# Always show scrollbars
-defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
+  # Always show scrollbars
+  defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
 
-# Expand save panel by default
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+  # Expand save panel by default
+  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
 
-# Expand print panel by default
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+  # Expand print panel by default
+  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
-# Save to disk (not to iCloud) by default
-defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+  # Save to disk (not to iCloud) by default
+  defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
-# Automatically quit printer app once the print jobs complete
-defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
+  # Automatically quit printer app once the print jobs complete
+  defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
-# Speed up window resize animation
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+  # Speed up window resize animation
+  defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
 
-# Silence crash reporter dialogs
-defaults write com.apple.CrashReporter DialogType -string "none"
+  # Silence crash reporter dialogs
+  defaults write com.apple.CrashReporter DialogType -string "none"
+}
 
 # -----------------------------------------------------------------------------
 # Keyboard
 # -----------------------------------------------------------------------------
-printf 'Setting Keyboard preferences...\n'
+_keyboard() {
+  printf 'Setting Keyboard preferences...\n'
 
-# Enable full keyboard access for all controls
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+  # Enable full keyboard access for all controls
+  defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-# Maximum keyboard repeat rate (faster than original KeyRepeat=2)
-defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 10
+  # Maximum keyboard repeat rate (faster than original KeyRepeat=2)
+  defaults write NSGlobalDomain KeyRepeat -int 1
+  defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
-# Disable press-and-hold in favor of key repeat
-defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+  # Disable press-and-hold in favor of key repeat
+  defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+}
 
 # -----------------------------------------------------------------------------
 # Trackpad & Mouse
 # -----------------------------------------------------------------------------
-printf 'Setting Trackpad/Mouse preferences...\n'
+_trackpad_mouse() {
+  printf 'Setting Trackpad/Mouse preferences...\n'
 
-# Enable tap to click
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+  # Enable tap to click
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+  defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-# Right-click via two-finger tap (corner mapping removed - avoids accidents)
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
+  # Right-click via two-finger tap (corner mapping removed - avoids accidents)
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
 
-# Enable spring loading for directories (drag & hover to open)
-defaults write NSGlobalDomain com.apple.springing.enabled -bool true
-defaults write NSGlobalDomain com.apple.springing.delay -float 0
+  # Enable spring loading for directories (drag & hover to open)
+  defaults write NSGlobalDomain com.apple.springing.enabled -bool true
+  defaults write NSGlobalDomain com.apple.springing.delay -float 0
+}
 
 # -----------------------------------------------------------------------------
 # Screen
 # -----------------------------------------------------------------------------
-printf 'Setting Screen preferences...\n'
+_screen() {
+  printf 'Setting Screen preferences...\n'
 
-# Require password immediately after sleep or screen saver begins
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
+  # Require password immediately after sleep or screen saver begins
+  defaults write com.apple.screensaver askForPassword -int 1
+  defaults write com.apple.screensaver askForPasswordDelay -int 0
 
-# Save screenshots to Desktop in PNG format, without drop shadow
-defaults write com.apple.screencapture location -string "${HOME}/Desktop"
-defaults write com.apple.screencapture type -string "png"
-defaults write com.apple.screencapture disable-shadow -bool true
+  # Save screenshots to Desktop in PNG format, without drop shadow
+  defaults write com.apple.screencapture location -string "${HOME}/Desktop"
+  defaults write com.apple.screencapture type -string "png"
+  defaults write com.apple.screencapture disable-shadow -bool true
+}
 
 # -----------------------------------------------------------------------------
 # Finder
 # -----------------------------------------------------------------------------
-printf 'Setting Finder preferences...\n'
+_finder() {
+  printf 'Setting Finder preferences...\n'
 
-# Set $HOME as default for new Finder windows (more useful than Desktop)
-defaults write com.apple.finder NewWindowTarget -string "PfHm"
-defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
+  # Set $HOME as default for new Finder windows (more useful than Desktop)
+  defaults write com.apple.finder NewWindowTarget -string "PfHm"
+  defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 
-# Show external drives and servers on desktop; hide internal drive
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
-defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
-defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
+  # Show external drives and servers on desktop; hide internal drive
+  defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+  defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
+  defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
+  defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
-# Show all filename extensions, status bar, and path bar
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-defaults write com.apple.finder ShowStatusBar -bool true
-defaults write com.apple.finder ShowPathbar -bool true
+  # Show all filename extensions, status bar, and path bar
+  defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+  defaults write com.apple.finder ShowStatusBar -bool true
+  defaults write com.apple.finder ShowPathbar -bool true
 
-# Display full POSIX path as Finder window title
-defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+  # Display full POSIX path as Finder window title
+  defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
 
-# Keep folders on top when sorting by name
-defaults write com.apple.finder _FXSortFoldersFirst -bool true
+  # Keep folders on top when sorting by name
+  defaults write com.apple.finder _FXSortFoldersFirst -bool true
 
-# Search the current folder by default
-defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+  # Search the current folder by default
+  defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
-# Avoid creating .DS_Store files on network or USB volumes
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+  # Avoid creating .DS_Store files on network or USB volumes
+  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+  defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
-# Automatically open a new Finder window when a volume is mounted
-defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
-defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
-defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
+  # Automatically open a new Finder window when a volume is mounted
+  defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
+  defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
+  defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 
-# Use list view in all Finder windows by default
-defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+  # Use list view in all Finder windows by default
+  defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 
-# Show the ~/Library and /Volumes folders
-chflags nohidden ~/Library
-sudo chflags nohidden /Volumes
+  # Show the ~/Library and /Volumes folders
+  chflags nohidden ~/Library
+  sudo chflags nohidden /Volumes
 
-# Expand "General", "Open with", and "Sharing & Permissions" in File Info
-defaults write com.apple.finder FXInfoPanesExpanded -dict \
-         General -bool true \
-         OpenWith -bool true \
-         Privileges -bool true
+  # Expand "General", "Open with", and "Sharing & Permissions" in File Info
+  defaults write com.apple.finder FXInfoPanesExpanded -dict \
+           General -bool true \
+           OpenWith -bool true \
+           Privileges -bool true
 
-# Speed up Quick Look panel animation
-defaults write NSGlobalDomain QLPanelAnimationDuration -float 0
+  # Speed up Quick Look panel animation
+  defaults write NSGlobalDomain QLPanelAnimationDuration -float 0
+}
 
 # -----------------------------------------------------------------------------
 # Dock
 # -----------------------------------------------------------------------------
-printf 'Setting Dock preferences...\n'
+_dock() {
+  printf 'Setting Dock preferences...\n'
 
-# Minimize windows into their application's icon
-defaults write com.apple.dock minimize-to-application -bool true
+  # Minimize windows into their application's icon
+  defaults write com.apple.dock minimize-to-application -bool true
 
-# Show indicator lights for open applications
-defaults write com.apple.dock show-process-indicators -bool true
+  # Show indicator lights for open applications
+  defaults write com.apple.dock show-process-indicators -bool true
 
-# Speed up Mission Control animations
-defaults write com.apple.dock expose-animation-duration -float 0.1
+  # Speed up Mission Control animations
+  defaults write com.apple.dock expose-animation-duration -float 0.1
 
-# Auto-hide Dock instantly (no delay, no animation)
-defaults write com.apple.dock autohide -bool true
-defaults write com.apple.dock autohide-delay -float 0
-defaults write com.apple.dock autohide-time-modifier -float 0
+  # Auto-hide Dock instantly (no delay, no animation)
+  defaults write com.apple.dock autohide -bool true
+  defaults write com.apple.dock autohide-delay -float 0
+  defaults write com.apple.dock autohide-time-modifier -float 0
 
-# Make Dock icons of hidden applications translucent
-defaults write com.apple.dock showhidden -bool true
+  # Make Dock icons of hidden applications translucent
+  defaults write com.apple.dock showhidden -bool true
 
-# Don't show recent applications in Dock
-defaults write com.apple.dock show-recents -bool false
+  # Don't show recent applications in Dock
+  defaults write com.apple.dock show-recents -bool false
+}
 
 # -----------------------------------------------------------------------------
 # Mission Control & Spaces
 # -----------------------------------------------------------------------------
-printf 'Setting Mission Control & Spaces preferences...\n'
+_mission_control() {
+  printf 'Setting Mission Control & Spaces preferences...\n'
 
-# Don't auto-rearrange Spaces based on most recent use - keeps Space order
-# stable and prevents fullscreen Spaces from being reshuffled after exit
-defaults write com.apple.dock mru-spaces -bool false
+  # Don't auto-rearrange Spaces based on most recent use - keeps Space order
+  # stable and prevents fullscreen Spaces from being reshuffled after exit
+  defaults write com.apple.dock mru-spaces -bool false
 
-# Each display has its own Space set (required for per-display fullscreen
-# Spaces to be isolated; prevents cross-display Space leakage)
-defaults write com.apple.spaces spans-displays -bool false
+  # Each display has its own Space set (required for per-display fullscreen
+  # Spaces to be isolated; prevents cross-display Space leakage)
+  defaults write com.apple.spaces spans-displays -bool false
 
-# Group windows by application in Mission Control - makes it easier to spot
-# and close orphaned Spaces left behind by exited fullscreen windows
-defaults write com.apple.dock expose-group-apps -bool true
+  # Group windows by application in Mission Control - makes it easier to spot
+  # and close orphaned Spaces left behind by exited fullscreen windows
+  defaults write com.apple.dock expose-group-apps -bool true
+}
 
 # -----------------------------------------------------------------------------
 # Terminal
 # -----------------------------------------------------------------------------
-printf 'Setting Terminal preferences...\n'
+_terminal() {
+  printf 'Setting Terminal preferences...\n'
 
-# Only use UTF-8
-defaults write com.apple.Terminal StringEncodings -array 4
+  # Only use UTF-8
+  defaults write com.apple.Terminal StringEncodings -array 4
 
-# Enable Secure Keyboard Entry - blocks other processes from reading keystrokes
-# NOTE: may interfere with some tmux attach setups; disable if needed
-defaults write com.apple.Terminal SecureKeyboardEntry -bool true
+  # Enable Secure Keyboard Entry - blocks other processes from reading keystrokes
+  # NOTE: may interfere with some tmux attach setups; disable if needed
+  defaults write com.apple.Terminal SecureKeyboardEntry -bool true
 
-# Disable line marks
-defaults write com.apple.Terminal ShowLineMarks -int 0
+  # Disable line marks
+  defaults write com.apple.Terminal ShowLineMarks -int 0
+}
 
 # -----------------------------------------------------------------------------
 # Time Machine
 # -----------------------------------------------------------------------------
-printf 'Setting Time Machine preferences...\n'
+_time_machine() {
+  printf 'Setting Time Machine preferences...\n'
 
-# Don't prompt to use new disks as backup volumes
-defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+  # Don't prompt to use new disks as backup volumes
+  defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+}
 
 # -----------------------------------------------------------------------------
 # TextEdit
 # -----------------------------------------------------------------------------
-printf 'Setting TextEdit preferences...\n'
+_textedit() {
+  printf 'Setting TextEdit preferences...\n'
 
-# Plain text mode + UTF-8 by default
-defaults write com.apple.TextEdit RichText -int 0
-defaults write com.apple.TextEdit PlainTextEncoding -int 4
-defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
+  # Plain text mode + UTF-8 by default
+  defaults write com.apple.TextEdit RichText -int 0
+  defaults write com.apple.TextEdit PlainTextEncoding -int 4
+  defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
+}
 
 # -----------------------------------------------------------------------------
 # Mac App Store
 # -----------------------------------------------------------------------------
-printf 'Setting Mac App Store preferences...\n'
+_app_store() {
+  printf 'Setting Mac App Store preferences...\n'
 
-# Check for updates daily
-defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
-defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
+  # Check for updates daily
+  defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
+  defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 
-# Auto-install security/critical updates only; leave regular updates manual
-defaults write com.apple.SoftwareUpdate AutomaticDownload -int 0
-defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int 1
-defaults write com.apple.commerce AutoUpdate -bool false
+  # Auto-install security/critical updates only; leave regular updates manual
+  defaults write com.apple.SoftwareUpdate AutomaticDownload -int 0
+  defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int 1
+  defaults write com.apple.commerce AutoUpdate -bool false
+}
 
 # -----------------------------------------------------------------------------
 # Photos
 # -----------------------------------------------------------------------------
-printf 'Setting Photos preferences...\n'
+_photos() {
+  printf 'Setting Photos preferences...\n'
 
-# Prevent Photos from opening automatically when devices are plugged in
-defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+  # Prevent Photos from opening automatically when devices are plugged in
+  defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+}
 
 # -----------------------------------------------------------------------------
 # Messages
 # -----------------------------------------------------------------------------
-printf 'Setting Messages preferences...\n'
+_messages() {
+  printf 'Setting Messages preferences...\n'
 
-# Disable smart quotes and continuous spell checking
-defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add \
-         "automaticQuoteSubstitutionEnabled" -bool false \
-         "continuousSpellCheckingEnabled" -bool false
+  # Disable smart quotes and continuous spell checking
+  defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add \
+           "automaticQuoteSubstitutionEnabled" -bool false \
+           "continuousSpellCheckingEnabled" -bool false
+}
 
 # -----------------------------------------------------------------------------
 # Kill affected applications
 # -----------------------------------------------------------------------------
-printf 'Restarting affected applications...\n'
+_restart_apps() {
+  printf 'Restarting affected applications...\n'
 
-for app in \
-    "cfprefsd" \
-    "Dock" \
-    "Finder" \
-    "Messages" \
-    "Photos" \
-    "SystemUIServer" \
-    "Terminal"; do
-    killall "${app}" 2>/dev/null || true
-done
+  local app
+  for app in \
+      "cfprefsd" \
+      "Dock" \
+      "Finder" \
+      "Messages" \
+      "Photos" \
+      "SystemUIServer" \
+      "Terminal"; do
+      if ! killall "${app}" 2>/dev/null; then
+          : # Application not running, skip
+      fi
+  done
+}
 
-printf 'Done. Note that some of these changes require a logout/restart to take effect.\n'
+# =============================================================================
+# Main
+# =============================================================================
+
+main() {
+  # Close System Preferences/Settings to avoid conflicts
+  osascript -e 'tell application "System Preferences" to quit' 2>/dev/null
+  osascript -e 'tell application "System Settings" to quit' 2>/dev/null
+
+  _general_ui
+  _keyboard
+  _trackpad_mouse
+  _screen
+  _finder
+  _dock
+  _mission_control
+  _terminal
+  _time_machine
+  _textedit
+  _app_store
+  _photos
+  _messages
+  _restart_apps
+
+  printf 'Done. Note that some of these changes require a logout/restart to take effect.\n'
+}
+
+main "$@"

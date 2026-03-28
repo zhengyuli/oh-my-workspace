@@ -1,5 +1,5 @@
 # 20-aliases.zsh
-# Time-stamp: <2026-03-28 17:08:10 Saturday by zhengyuli>
+# Time-stamp: <2026-03-28 22:10:58 Saturday by zhengyuli>
 # =============================================================================
 # Command Aliases
 #
@@ -66,15 +66,6 @@ alias vimdiff='nvim -d'
 
 # Emacs
 alias e='emacs -nw'
-
-# -----------------------------------------------------------------------------
-# Git
-# -----------------------------------------------------------------------------
-alias gst='git status -sb'
-alias gd='git diff'
-alias gds='git diff --staged'
-alias gl='git log --oneline --graph --decorate'
-alias grst='git reset --soft HEAD~1'
 
 # -----------------------------------------------------------------------------
 # Utilities
