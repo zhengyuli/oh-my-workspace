@@ -139,7 +139,7 @@ bindkey '^[,' cd-parent
 # Custom widget: clear screen and scrollback buffer (Ctrl-/)
 # -----------------------------------------------------------------------------
 clear-screen-and-scrollback() {
-  printf '\033[3J\033[H'
+  printf '\033[3J'
   zle clear-screen
 }
 zle -N clear-screen-and-scrollback
