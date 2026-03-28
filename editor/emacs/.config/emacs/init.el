@@ -55,25 +55,26 @@ Used for setting `user-mail-address'."
   :group 'omw-emacs)
 
 ;; ============================================================================
-(defvar omw/emacs-custom-file-path
+(defconst omw/emacs-custom-file-path
   (expand-file-name "custom.el" user-emacs-directory)
-  "Emacs custom file path, which will be used to add extra customization.")
+  "Path to the Customize-generated file.
+Set early so Emacs writes customizations here instead of init.el.")
 
-(defvar omw/emacs-config-root-path
+(defconst omw/emacs-config-root-path
   (let ((config-file (or load-file-name buffer-file-name)))
     (if config-file
         (file-name-directory (file-chase-links config-file))
       default-directory))
-  "Emacs configuration root path.
-Automatically resolves symlinks to find the actual configuration directory.")
+  "Absolute path to the Emacs configuration directory.
+Resolved through symlinks so stow-managed configs point to the real source.")
 
-(defvar omw/emacs-config-lisp-path
+(defconst omw/emacs-config-lisp-path
   (expand-file-name "lisp/" omw/emacs-config-root-path)
-  "Emacs configuration lisp modules path.")
+  "Path to the lisp modules directory within the configuration.")
 
-(defvar omw/emacs-config-site-packages-path
+(defconst omw/emacs-config-site-packages-path
   (expand-file-name "site-packages/" omw/emacs-config-root-path)
-  "Emacs configuration custom site packages path.")
+  "Path to the bundled site-packages directory within the configuration.")
 
 (defun omw/emacs-add-subdirs-to-load-path (base-dir)
   "Add subdirs to load path.

@@ -37,36 +37,29 @@
 ;;; Code:
 
 ;; ============================================================================
-(defcustom omw/font-monospace-list
+(defvar omw/font-monospace-list
   '("SauceCodePro Nerd Font Mono" "Menlo" "Monaco" "Monospace")
   "Priority list of monospace fonts for code editing.
-First available font in the list will be used."
-  :type '(repeat string)
-  :group 'omw-emacs)
+The first font found installed on the system will be used.
+Edit this list in source (or set before loading) to prefer a different font.")
 
-(defcustom omw/font-variable-pitch-list
+(defvar omw/font-variable-pitch-list
   '("Helvetica Neue" "Arial" "Sans Serif")
   "Priority list of variable-pitch fonts for prose and UI text.
-First available font in the list will be used."
-  :type '(repeat string)
-  :group 'omw-emacs)
+The first font found installed on the system will be used.")
 
-(defcustom omw/font-chinese-list
+(defvar omw/font-chinese-list
   '("PingFang SC" "Hiragino Sans GB" "Songti SC")
   "Priority list of Chinese fonts for CJK character display.
-First available font in the list will be used."
-  :type '(repeat string)
-  :group 'omw-emacs)
+The first font found installed on the system will be used.")
 
-(defcustom omw/font-size-default 160
-  "Default font height in 1/10pt units (160 = 16pt)."
-  :type 'integer
-  :group 'omw-emacs)
+(defvar omw/font-size-default 160
+  "Default font height in 1/10pt units (160 = 16pt).
+Used as the base size before textsize applies per-monitor DPI adjustment.")
 
-(defcustom omw/font-size-variable-multiplier 1.0
-  "Variable-pitch font size multiplier relative to monospace font."
-  :type 'number
-  :group 'omw-emacs)
+(defvar omw/font-size-variable-multiplier 1.0
+  "Scale factor for variable-pitch font height relative to the monospace size.
+1.0 means identical height; increase for visually larger prose text.")
 
 ;; ============================================================================
 ;; Unicode code-point ranges used when mapping the CJK fallback font.
