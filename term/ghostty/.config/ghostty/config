@@ -80,6 +80,7 @@ shell-integration-features = cursor,sudo,title
 # unfocused. 
 desktop-notifications = true
 notify-on-command-finish = unfocused
+# Suppress terminal bell; use desktop notification only (less disruptive)
 notify-on-command-finish-action = no-bell,notify
 notify-on-command-finish-after = 30s
 
@@ -145,25 +146,25 @@ auto-update = check
 # -----------------------------------------------------------------------------
 # Keybindings
 # -----------------------------------------------------------------------------
-# Config
+# --- Config ---
 keybind = super+shift+comma=reload_config
 
-# Splits
+# --- Splits ---
 keybind = super+shift+j=goto_split:next
 
-# Tabs — create & cycle
+# --- Tabs: create & cycle ---
 keybind = super+t=new_tab
 keybind = super+shift+n=next_tab
 keybind = super+shift+p=previous_tab
 
-# Tabs — reorder
+# --- Tabs: reorder ---
 keybind = super+shift+left=move_tab:-1
 keybind = super+shift+right=move_tab:1
 
-# Quick Terminal
+# --- Quick Terminal ---
 keybind = super+shift+l=toggle_quick_terminal
 
-# Passthrough — let zsh handle these directly
+# --- Passthrough: let zsh handle these directly ---
 keybind = ctrl+l=unbind
 
 # -----------------------------------------------------------------------------

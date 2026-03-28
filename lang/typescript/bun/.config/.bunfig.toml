@@ -9,7 +9,9 @@
 #   1. Bun Config Docs: https://bun.sh/docs/runtime/bunfig
 # =============================================================================
 
-# Install cache
+# -----------------------------------------------------------------------------
+# Install Cache
+# -----------------------------------------------------------------------------
+# Redirect to XDG cache dir so ~/.bun stays clean and follows XDG spec
 [install.cache]
-# Mirror default structure: ~/.bun/install/cache → ~/.cache/bun/install/cache
 dir = "~/.cache/bun/install/cache"
