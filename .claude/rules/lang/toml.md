@@ -9,10 +9,9 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 
 ## File Header
 
-
 ```toml
 # filename.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-27 00:00:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 # =============================================================================
 # Title - Brief description
 #
@@ -22,148 +21,83 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 # =============================================================================
 ```
 
-**Schema reference** (optional): `"$schema" = 'https://starship.rs/config-schema.json'`
+**Schema reference** (optional): `"$schema" = 'https://...'`
 
 ## Delimiter Hierarchy
 
-**Level 0** (File Header):
-```
-# =============================================================================
-```
+**Level 0** (File Header): `# ============...`
+**Level 1** (Primary Section): `# -----------...`
+**Level 2** (Subsection): `# --- Title ---`
 
-**Level 1** (Primary Section):
-```
-# -----------------------------------------------------------------------------
-```
-
-**Level 2** (Subsection): `# --- Title ---` (inline style)
-
-**Example:**
-```toml
-# =============================================================================
-# Starship Configuration
-# =============================================================================
-
-# -----------------------------------------------------------------------------
-# Languages
-# -----------------------------------------------------------------------------
-[python]
-symbol = " "
-
-# -----------------------------------------------------------------------------
-# Cloud Services
-# -----------------------------------------------------------------------------
-
-# --- AWS ---
-[aws]
-symbol = " "
-
-# --- GCP ---
-[gcloud]
-symbol = " "
-```
-
-## Documentation & Code Patterns
+## Code Patterns
 
 ### Comments
 
-Explain rationale (WHY), not mechanics (WHAT). Document non-obvious
-configuration choices. TOML supports inline comments, but prefer separate
-lines for clarity.
+Explain WHY, not WHAT. Prefer separate lines over inline.
 
 ```toml
-# Use Nerd Font symbols for better visual identification in terminal
+# Use Nerd Font symbols for better visual identification
 symbol = " "
-
-# CORRECT — separate comment explains WHY
-# Go language color scheme matches official branding
-style = "bg:#00ADD8"
-
-# WRONG — inline comment explains WHAT (obvious)
-symbol = " "  # Python language icon
 ```
 
-### Strings
+### Value Types
 
-Always quote strings, never unquoted.
-
-```toml
-# CORRECT — always quote strings
-name = "value"
-path = "~/.config/app"
-
-# WRONG — unquoted causes parsing errors
-name = value
-```
-
-### Booleans
-`enabled = true` (explicit, not strings)
-
-### Arrays
-`colors = ["red", "green"]` (short inline, long multiline)
-
-### Tables
-`[section]` for top-level, `[section.sub]` for nested
+- **Strings**: Always quoted `"value"`
+- **Numbers**: `timeout = 30` (int), `ratio = 0.8` (float)
+- **Booleans**: `enabled = true` (not `"true"`)
+- **Arrays**: `items = ["a", "b"]` or multiline
+- **Tables**: `[section]` or inline `{ x = 1 }`
 
 ### Formatting
+
 - Never align values with spaces
 - Prefer separate-line comments over inline
 
+## Anti-Patterns
+
+### Don't: Unquoted Strings
+
 ```toml
-# WRONG - aligned with spaces
-symbol  = " "
-style   = "bg:#00ADD8"
+# WRONG
+name = value
 
-# WRONG - inline comment for explanation
-symbol = " "  # Python language icon
-
-# CORRECT - no alignment, separate comment
-# Python language icon
-symbol = " "
-style = "bg:#00ADD8"
+# CORRECT
+name = "value"
 ```
 
-## Value Types
+### Don't: Inline Explanations
 
-**Strings**: Always quoted `"value"`
-**Numbers**: `timeout = 30` (int), `ratio = 0.8` (float)
-**Booleans**: `enabled = true` (not `"true"`)
-**Arrays**: `items = ["a", "b"]` or multiline
-**Tables**: `[section]` or inline `{ x = 1, y = 2 }`
+```toml
+# WRONG
+symbol = " "  # Python icon
+
+# CORRECT
+# Python language icon
+symbol = " "
+```
 
 ## Security
 
 ### Secrets Management
 
-**Prohibition**: Never hardcode sensitive data in TOML files
-
-**Sensitive Data Types**: API keys, tokens, credentials
-
-```toml
-# Bad — hardcoded secret committed to git
-api_key = "sk-1234567890"
-```
-
-Use a split-file strategy: commit a `config.toml` with placeholders or
-non-sensitive defaults; keep secrets in a `config.local.toml` that is
-listed in `.gitignore`:
+Never hardcode sensitive data. Use split-file strategy
 
 ```toml
 # config.toml (committed)
 [api]
 # Set key in config.local.toml or environment
 
-# config.local.toml (not committed)
+# config.local.toml (not committed, in .gitignore)
 [api]
 key = "sk-1234567890"
 ```
 
-Add to `.gitignore`:
+Add to `.gitignore`: `*.local.toml`, `*_secret.toml`
 
-```
-*.local.toml
-*_secret.toml
-```
+## References
+
+1. [TOML Specification](https://toml.io/en/)
+2. [TOML GitHub Wiki](https://github.com/toml-lang/toml/wiki)
 
 ## Validation
 
