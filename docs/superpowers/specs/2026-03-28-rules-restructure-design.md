@@ -28,6 +28,19 @@ dotfiles repository.
 - **Scope**: Project-level `.claude/rules/` only; global rules untouched
 - **Target**: Minimize unconditional context while preserving all
   repo-specific constraints
+- **Line length**: Changed from 80 to 79 characters across all lang
+  rules. Rationale: 79 aligns with the delimiter width (79 `=` / `-`
+  chars including `#` prefix for comment-based files), providing
+  internal consistency. This is a deliberate change from the previous
+  "80 chars" in `coding-style.md`.
+
+### Known Risks
+
+The `paths:` frontmatter field has reported parsing issues in some
+Claude Code versions. If `paths:` fails to trigger conditional loading,
+the fallback is: keep the flat structure and reduced line counts (still
+a significant improvement from 1,354 to ~665 total lines), and accept
+unconditional loading until the bug is resolved.
 
 ## Target Structure
 
@@ -84,6 +97,7 @@ Universal baseline for the oh-my-workspace repository.
 - Immutability: create new configurations, never modify in-place
 - XDG paths: use `$HOME` / `$XDG_*` variables, never hardcode
 - Safe defaults: provide fallback values for optional variables
+- No dead code or commented-out code
 - DRY / KISS / YAGNI / Single Responsibility
 ```
 
@@ -155,7 +169,7 @@ paths:
   - "**/zshrc"
   - "**/zprofile"
   - "**/zshenv"
----
+  - "**/zlogin"
 ```
 
 **Content**: Same structure as bash.md with zsh-specific differences:
@@ -308,13 +322,16 @@ paths:
 
 | Scenario | Before (lines) | After (lines) | Savings |
 |----------|---------------|---------------|---------|
-| Unconditional | 1,354* or 148 | ~40 | 73-97% |
+| Unconditional | 1,354* or 148** | ~40 | 73-97% |
 | Edit .zsh file | 1,354 or 419 | ~200 | 52-85% |
 | Edit .el file | 1,354 or 443 | ~220 | 50-84% |
 | Edit .toml file | 1,354 or 270 | ~115 | 57-92% |
 
-*If `globs:` frontmatter is ignored, all 1,206 lang lines load
-unconditionally.
+\* Worst case: if `globs:` frontmatter is ignored, all 1,206 lang
+lines load unconditionally (total 1,354).
+
+\*\* Best case: if `globs:` works, only `coding-style.md` (77) +
+`patterns.md` (71) = 148 lines load unconditionally.
 
 ## Migration Plan
 
@@ -331,8 +348,14 @@ unconditionally.
 
 ### Phase 3: Update references
 
-1. Update `CLAUDE.md` if it references old rule structure
-2. Verify no other files reference `lang/` paths
+1. **MANDATORY**: Update `CLAUDE.md` Coding Conventions section
+   (lines ~150-160) which explicitly references `coding-style.md`,
+   `patterns.md`, and `lang/` directory structure. These references
+   become invalid after Phase 2.
+2. The pre-existing broken reference to `lang/_template.md` in
+   `coding-style.md` is eliminated automatically when that file is
+   deleted in Phase 2.
+3. Verify no other files reference `lang/` paths
 
 ### Validation
 
