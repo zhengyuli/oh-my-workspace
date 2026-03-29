@@ -32,7 +32,10 @@ fi
 # -----------------------------------------------------------------------------
 # Load all conf.d fragments in lexicographic (numeric prefix) order.
 # (N) glob qualifier: silently skip if no files match (null glob).
-for _conf in "$ZDOTDIR"/conf.d/*.zsh(N~*.example.zsh); do
+for _conf in "$ZDOTDIR"/conf.d/*.zsh(N); do
+  if [[ $_conf == *.example.zsh ]]; then
+    continue
+  fi
   source "$_conf"
 done
 unset _conf
