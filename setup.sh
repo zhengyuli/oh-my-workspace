@@ -85,7 +85,8 @@ BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
 readonly BREWFILE
 
 # Mutable script-wide flag set by --dry-run.
-# Read by _remove_stow_conflicts and _stow_exec.
+# Read by _remove_stow_conflicts, _stow_exec, and unstow_package.
+# Intentionally not readonly — toggled by --dry-run flag.
 DRY_RUN=false
 
 # -----------------------------------------------------------------------------
@@ -121,6 +122,8 @@ log_warn() { printf "  ${_YELLOW}[warn]${_RESET} %s\n" "$*"; }
 log_info() { printf "  ${_BLUE}[info]${_RESET} %s\n" "$*"; }
 
 print_header() {
+  # $(seq) is intentionally unquoted: word-splitting produces N arguments
+  # for printf's %.0s format, With numeric LINE_WIDTH this is safe.
   printf '\n%b' "${_BOLD}"
   printf '=%.0s' $(seq 1 "${LINE_WIDTH}")
   printf '\n  %s\n' "$1"
@@ -272,13 +275,13 @@ stow_links() {
   local src rel check
 
   while IFS= read -r src; do
-    rel="${src#${pkg_dir}/}"
+    rel="${src#"${pkg_dir}"/}"
     check="${HOME}/${rel}"
     while [[ "${check}" != "${HOME}" ]]; do
       if [[ -L "${check}" && -z "${shown[${check}]+set}" ]]; then
         shown[${check}]=1
         printf '      %s -> %s\n' \
-          "${check#${HOME}/}" "$(readlink "${check}")"
+          "${check#"${HOME}"/}" "$(readlink "${check}")"
         break
       fi
       check="${check%/*}"
@@ -317,6 +320,11 @@ _remove_stow_conflicts() {
         log_info "[dry-run] would remove conflicting path: ${target}"
       else
         log_warn "Removing conflicting path: ${target}"
+        # Guard: refuse to remove paths outside $HOME.
+        if [[ "${target}" != "${HOME}"/* ]]; then
+          log_err "Refusing to remove path outside HOME: ${target}"
+          return 1
+        fi
         rm -rf "${target}"
       fi
     fi
@@ -405,6 +413,8 @@ restow_package() {
 }
 
 # Removes stow symlinks for pkg.
+# Globals:
+#   DRY_RUN (read)
 # Arguments: $1 - full package path
 unstow_package() {
   local pkg="$1"
@@ -417,6 +427,22 @@ unstow_package() {
     log_warn "${pkg_base}: not stowed, skipping"
     return 0
   fi
+
+  if "${DRY_RUN}"; then
+    log_info "[dry-run] would unstow: ${pkg_base}"
+    local output line
+    output=$(
+      stow -n -D -v -d "${stow_dir}" \
+        -t "${HOME}" "${pkg_base}" 2>&1
+    ) || true
+    while IFS= read -r line; do
+      if [[ "${line}" =~ ^(LINK|UNLINK): ]]; then
+        log_info "[dry-run]   ${line}"
+      fi
+    done <<< "${output}"
+    return 0
+  fi
+
   if stow -D -d "${stow_dir}" -t "${HOME}" "${pkg_base}"; then
     log_ok "${pkg_base}: unstowed"
   else
@@ -783,7 +809,7 @@ _offer_shell_switch() {
     return 0
   fi
   if ! confirm "Switch default shell to zsh?" y; then
-    log_info "Skipped — run: chsh -s \$(which zsh)"
+    log_info "Skipped — run: chsh -s \"\$(which zsh)\""
     return 0
   fi
   local zsh_path
@@ -795,7 +821,8 @@ _offer_shell_switch() {
     log_ok "Default shell changed to zsh — open a new terminal."
   else
     log_warn "chsh failed — zsh may not be in /etc/shells"
-    log_info "Run: echo '${zsh_path}' | sudo tee -a /etc/shells"
+    log_info \
+      "Run: echo '${zsh_path}' | sudo tee -a /etc/shells"
     log_info "Then: chsh -s '${zsh_path}'"
   fi
 }
@@ -823,7 +850,7 @@ Flags:
   --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked
 
 Packages (base name or full category/name):
-  zsh  starship  vim  emacs  ghostty  git  lazygit  ripgrep  uv  bun
+  zsh  starship  vim  emacs  ghostty  git  lazygit  ripgrep  yazi  uv  bun
 
 Examples:
   ./setup.sh install --all                 Bootstrap: prereqs + brew + stow all
