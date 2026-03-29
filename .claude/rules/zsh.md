@@ -134,6 +134,27 @@ local temp_file
 
 Split long pipelines at `|` with each stage on its own line.
 
+### Section Uniqueness
+
+Each section title must be unique within the file at every delimiter level (Level 1 and Level 2). Group related settings together — do not create multiple sections of the same name.
+
+```zsh
+# WRONG — duplicate section at Level 2
+# --- Paths ---
+export PATH_A="/a"
+# --- Other Config ---
+export FOO="bar"
+# --- Paths ---              ← same name reused
+export PATH_B="/b"
+
+# CORRECT
+# --- Paths ---
+export PATH_A="/a"
+export PATH_B="/b"
+# --- Other Config ---
+export FOO="bar"
+```
+
 ### Validation at Boundaries
 
 Validate inputs at system boundaries (user input, file reads, API responses).
@@ -265,14 +286,19 @@ local dir
 dir="$(dirname "$file")"
 ```
 
-### Don't: Short-Circuit Operators
+### Don't: Short-Circuit Control Flow
+
+Do not use `&&` or `||` as shorthand for conditionals.
+They obscure control flow intent: `&&` means "proceed only on success"
+and `||` means "proceed only on failure", but neither makes the
+branching logic readable at a glance.
 
 ```zsh
-# WRONG — unclear intent
+# WRONG — control flow hidden behind operators
 [[ -f "$file" ]] && cat "$file"
 [[ ! -d "$dir" ]] || mkdir -p "$dir"
 
-# CORRECT — explicit conditionals
+# CORRECT — explicit conditionals make intent obvious
 if [[ -f "$file" ]]; then
   cat "$file"
 fi

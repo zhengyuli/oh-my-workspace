@@ -64,6 +64,27 @@ pager = delta
 - **Paths**: `~/.config/app/file` (XDG-compliant, not relative)
 - **Includes**: `[include] path = config.local` (machine-specific overrides)
 
+### Section Uniqueness
+
+Each section title must be unique within the file at every delimiter level (Level 1 and Level 2). Group related settings together — do not create multiple sections of the same name.
+
+```conf
+# WRONG — duplicate section at Level 2
+# --- Paths ---
+pager = delta
+# --- Other Config ---
+editor = vim
+# --- Paths ---              ← same name reused
+default = main
+
+# CORRECT
+# --- Paths ---
+pager = delta
+default = main
+# --- Other Config ---
+editor = vim
+```
+
 ## Anti-Patterns
 
 ### Don't: Inline Explanations

@@ -67,6 +67,29 @@ theme:
 
 ### Formatting
 
+### Section Uniqueness
+
+Each section title must be unique within the file at every delimiter level (Level 1 and Level 2). Group related settings together — do not create multiple sections of the same name.
+
+```yaml
+# WRONG — duplicate section at Level 2
+# --- GUI ---
+nerdFontsVersion: "3"
+# --- Git ---
+paging:
+  colorArg: always
+# --- GUI ---              ← same name reused
+showFileTree: true
+
+# CORRECT
+# --- GUI ---
+nerdFontsVersion: "3"
+showFileTree: true
+# --- Git ---
+paging:
+  colorArg: always
+```
+
 ## Anti-Patterns
 
 ### Don't: Unquoted Special Characters
