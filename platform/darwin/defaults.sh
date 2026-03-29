@@ -50,12 +50,12 @@ readonly STANDBY_DELAY_24H=86400
 readonly DISABLE_LINE_MARKS=0
 
 # Keyboard
-readonly KEYBOARD_ACCESS_FULL=3   # 3 = full keyboard access for all controls
-readonly KEY_REPEAT_FASTEST=1     # lower = faster; 1 is the hardware minimum
+readonly KEYBOARD_ACCESS_FULL=3
+readonly KEY_REPEAT_FASTEST=1
 readonly INITIAL_KEY_REPEAT_FAST=10
 
 # Trackpad
-readonly TAP_TO_CLICK=1           # 1 = tap to click enabled
+readonly TAP_TO_CLICK=1
 readonly SPRING_LOAD_NO_DELAY=0
 
 # Screen / screensaver
@@ -68,11 +68,11 @@ readonly DOCK_AUTOHIDE_NO_DELAY=0
 readonly DOCK_AUTOHIDE_NO_ANIMATION=0
 
 # Terminal
-readonly STRING_ENCODING_UTF8=4   # NSStringEncoding value for UTF-8
+readonly STRING_ENCODING_UTF8=4
 
 # TextEdit
-readonly PLAIN_TEXT_MODE=0        # RichText 0 = plain text
-readonly TEXT_ENCODING_UTF8=4     # NSStringEncoding value for UTF-8
+readonly PLAIN_TEXT_MODE=0
+readonly TEXT_ENCODING_UTF8=4
 
 # App Store
 readonly UPDATE_CHECK_DAILY=1
