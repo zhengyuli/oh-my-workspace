@@ -88,15 +88,20 @@
               ("M-N" . centaur-tabs-forward-group))
   :custom-face
   (centaur-tabs-selected
-   ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#28cd41" :height 1.0))))
+   ((t (:inherit omw/centaur-tabs-base :bold t
+        :foreground "#28cd41" :height 1.0))))
   (centaur-tabs-selected-modified
-   ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#ff9300" :height 1.0))))
+   ((t (:inherit omw/centaur-tabs-base :bold t
+        :foreground "#ff9300" :height 1.0))))
   (centaur-tabs-unselected
-   ((t (:inherit omw/centaur-tabs-base :bold t :foreground "grey" :height 1.0))))
+   ((t (:inherit omw/centaur-tabs-base :bold t
+        :foreground "grey" :height 1.0))))
   (centaur-tabs-unselected-modified
-   ((t (:inherit omw/centaur-tabs-base :bold t :foreground "#ff9300" :height 1.0))))
+   ((t (:inherit omw/centaur-tabs-base :bold t
+        :foreground "#ff9300" :height 1.0))))
   (centaur-tabs-display-line
-   ((t (:inherit omw/centaur-tabs-base :box nil :overline nil :underline nil))))
+   ((t (:inherit omw/centaur-tabs-base
+        :box nil :overline nil :underline nil))))
   :config
   (setq centaur-tabs-height omw/centaur-tabs-height
         centaur-tabs-set-close-button nil
@@ -124,7 +129,8 @@
   "Return random banner path from banners directory.
 Returns nil in terminal mode (uses official banner instead)."
   (when (display-graphic-p)
-    (let* ((banners-dir (expand-file-name "banners" omw/emacs-config-root-path))
+    (let* ((banners-dir
+            (expand-file-name "banners" omw/emacs-config-root-path))
            (banners (directory-files banners-dir t "\\.png\\'")))
       (when banners
         (nth (random (length banners)) banners)))))

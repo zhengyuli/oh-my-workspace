@@ -217,7 +217,8 @@ global-auto-revert-mode and midnight-mode."
 
   ;; Backup and version control
   (setq backup-directory-alist
-        (list (cons ".*" (expand-file-name "emacs/backup/" omw/xdg-state-home)))
+        (list (cons ".*"
+                    (expand-file-name "emacs/backup/" omw/xdg-state-home)))
         backup-by-copying t
         version-control t
         delete-old-versions t)
