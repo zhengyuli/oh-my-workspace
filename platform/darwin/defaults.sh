@@ -46,6 +46,8 @@ trap '_err_handler' ERR
 # General UI
 readonly SIDEBAR_ICON_SIZE_MEDIUM=2
 readonly WINDOW_RESIZE_FAST=0.001
+readonly STANDBY_DELAY_24H=86400
+readonly DISABLE_LINE_MARKS=0
 
 # Keyboard
 readonly KEYBOARD_ACCESS_FULL=3   # 3 = full keyboard access for all controls
@@ -79,10 +81,6 @@ readonly CRITICAL_UPDATES_AUTO=1
 
 # Finder
 readonly QUICK_LOOK_NO_ANIMATION=0
-
-# General UI
-readonly STANDBY_DELAY_24H=86400
-readonly DISABLE_LINE_MARKS=0
 
 # -----------------------------------------------------------------------------
 # General UI/UX
