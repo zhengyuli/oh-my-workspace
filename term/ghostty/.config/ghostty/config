@@ -29,7 +29,6 @@ font-feature = ss13
 
 # Shaping & weight rendering
 font-shaping-break = cursor
-bold-is-bright = true
 
 # -----------------------------------------------------------------------------
 # Cursor
@@ -48,7 +47,6 @@ window-padding-y = 8
 window-padding-balance = true
 
 background-opacity = 0.98
-background-blur = true
 background-blur-radius = 20
 
 # "tabs" integrates the tab bar directly into the titlebar — more compact than
@@ -56,13 +54,11 @@ background-blur-radius = 20
 # Multiple related macOS bugs were fixed in Ghostty 1.2.3; now stable.
 macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
-macos-window-shadow = true
 
 # -----------------------------------------------------------------------------
 # Rendering
 # -----------------------------------------------------------------------------
 window-vsync = true
-alpha-blending = linear-corrected
 minimum-contrast = 1.1
 window-colorspace = display-p3
 
@@ -77,8 +73,7 @@ shell-integration-features = cursor,sudo,title
 # -----------------------------------------------------------------------------
 # Requires shell integration (OSC 133) — already enabled above.
 # Covers long-running shell commands (builds, tests, etc.) when Ghostty is
-# unfocused. 
-desktop-notifications = true
+# unfocused.
 notify-on-command-finish = unfocused
 # Suppress terminal bell; use desktop notification only (less disruptive)
 notify-on-command-finish-action = no-bell,notify
