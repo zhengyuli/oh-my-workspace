@@ -80,6 +80,10 @@ readonly CRITICAL_UPDATES_AUTO=1
 # Finder
 readonly QUICK_LOOK_NO_ANIMATION=0
 
+# General UI
+readonly STANDBY_DELAY_24H=86400
+readonly DISABLE_LINE_MARKS=0
+
 # -----------------------------------------------------------------------------
 # General UI/UX
 # -----------------------------------------------------------------------------
@@ -88,7 +92,7 @@ _general_ui() {
 
   # Set standby delay to 24 hours (AC power only - battery power left at system
   # default to avoid disk/system sleep timing conflicts)
-  sudo pmset -c standbydelay 86400
+  sudo pmset -c standbydelay "${STANDBY_DELAY_24H}"
 
   # Disable startup sound
   sudo nvram StartupMute=1
@@ -310,7 +314,7 @@ _terminal() {
   defaults write com.apple.Terminal SecureKeyboardEntry -bool true
 
   # Disable line marks
-  defaults write com.apple.Terminal ShowLineMarks -int 0
+  defaults write com.apple.Terminal ShowLineMarks -int "${DISABLE_LINE_MARKS}"
 }
 
 # -----------------------------------------------------------------------------
