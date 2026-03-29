@@ -63,7 +63,7 @@ Used as the base size before textsize applies per-monitor DPI adjustment.")
 
 ;; ============================================================================
 ;; Unicode code-point ranges used when mapping the CJK fallback font.
-;; Defined as constants so that set-fontset-font call-sites are self-documenting
+;; Defined as constants so set-fontset-font call-sites are self-documenting
 ;; and the ranges can be referenced without repeating raw hex literals.
 (defconst omw/font-cjk-unified-range '(#x4e00 . #x9fff)
   "CJK Unified Ideographs: the primary block of common Chinese, Japanese,
