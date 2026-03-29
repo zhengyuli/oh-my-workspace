@@ -1,4 +1,4 @@
-# 99-local.zsh.example -*- mode: sh; -*-
+# 99-local.example.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-22 21:42:42 Sunday by zhengyu.li>
 # =============================================================================
 # Machine-Local Configuration Template
@@ -48,12 +48,12 @@
 # -----------------------------------------------------------------------------
 # Corporate proxy (office network, VPN, etc.)
 # -----------------------------------------------------------------------------
-# _PROXY_URL="http://proxy.company.com:8080"
-# _NO_PROXY_LIST=\
-#   "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,"\
-#   "192.168.0.0/16,.company.com,company.com"
-
 # set_proxy() {
+#   local -r _PROXY_URL="http://proxy.company.com:8080"
+#   local -r _NO_PROXY_LIST=\
+#     "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,"\
+#     "192.168.0.0/16,.company.com,company.com"
+#
 #   # Uppercase — Go, npm, bun, Java, etc.
 #   export HTTP_PROXY="$_PROXY_URL"
 #   export HTTPS_PROXY="$_PROXY_URL"

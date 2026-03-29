@@ -1,5 +1,5 @@
 # 40-plugins.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-28 15:46:57 Saturday by zhengyuli>
+# Time-stamp: <2026-03-28 15:46:57 Saturday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management
 #

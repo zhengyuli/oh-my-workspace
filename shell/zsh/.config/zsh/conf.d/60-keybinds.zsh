@@ -1,5 +1,5 @@
 # 60-keybinds.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-28 14:45:08 Saturday by zhengyuli>
+# Time-stamp: <2026-03-28 14:45:08 Saturday by zhengyu.li>
 # =============================================================================
 # Key Bindings
 #
@@ -103,14 +103,27 @@ bindkey '^L' clear-screen
 # -----------------------------------------------------------------------------
 # Press Esc twice to add or remove 'sudo' at the start of the line
 sudo-command-line() {
+  local prefix="sudo "
+
   if [[ -z "$BUFFER" ]]; then
     zle up-history
+    return
   fi
-  if [[ "$BUFFER" == sudo\ * ]]; then
-    LBUFFER="${LBUFFER#sudo }"
+
+  if [[ "$BUFFER" == ${prefix}* ]]; then
+    BUFFER="${BUFFER#${prefix}}"
+
+    if (( CURSOR >= ${#prefix} )); then
+      (( CURSOR -= ${#prefix} ))
+    else
+      CURSOR=0
+    fi
   else
-    LBUFFER="sudo $LBUFFER"
+    BUFFER="${prefix}${BUFFER}"
+    (( CURSOR += ${#prefix} ))
   fi
+
+  zle redisplay
 }
 zle -N sudo-command-line
 bindkey '\e\e' sudo-command-line
