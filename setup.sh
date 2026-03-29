@@ -832,47 +832,39 @@ _offer_shell_switch() {
 # -----------------------------------------------------------------------------
 
 show_help() {
-  cat <<'EOF'
-oh-my-workspace setup
-
-Usage:
-  ./setup.sh <command> [flags] [packages]
-
-Commands:
-  install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages
-  uninstall [--all] [<pkg>...]                         Unstow packages
-  status    [<pkg>...]                                 Show status and symlinks
-  help                                                 Show this help
-
-Flags:
-  --all      Apply to all packages (install / uninstall)
-  --force    Restow even if already stowed (install only)
-  --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked
-
-Packages (base name or full category/name):
-  zsh  starship  vim  emacs  ghostty  git  lazygit  ripgrep  yazi  uv  bun
-
-Examples:
-  ./setup.sh install --all                    Bootstrap: prereqs + brew + stow all
-  ./setup.sh install zsh git                  Stow specific packages
-  ./setup.sh install --force zsh              Restow zsh (pick up new dotfiles)
-  ./setup.sh install --force --all            Restow everything
-  ./setup.sh install --dry-run zsh            Preview what install would do
-  ./setup.sh install --force --dry-run --all  Preview a full restow
-  ./setup.sh uninstall --all                  Unstow all
-  ./setup.sh status                           Full status with symlinks
-  ./setup.sh status zsh                       Status for one package
-
-Details:
-  install --all
-    Installs Xcode CLI + Homebrew + GNU Stow, runs brew bundle,
-    stows all packages, offers to switch default shell to zsh.
-
-  install --force
-    Runs stow -R (remove + re-link). Conflicting files or symlinks
-    at target paths are deleted before stowing. Use after adding new
-    dotfiles to a package dir.
-EOF
+  printf '%b\n' \
+    "${_BOLD}oh-my-workspace setup${_RESET}" '' \
+    'Usage:' \
+    '  ./setup.sh <command> [flags] [packages]' '' \
+    "${_BOLD}Commands:${_RESET}" \
+    '  install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages' \
+    '  uninstall [--all] [<pkg>...]                         Unstow packages' \
+    '  status    [<pkg>...]                                 Show status and symlinks' \
+    '  help                                                 Show this help' '' \
+    "${_BOLD}Flags:${_RESET}" \
+    '  --all      Apply to all packages (install / uninstall)' \
+    '  --force    Restow even if already stowed (install only).' \
+    '             Runs stow -R; conflicts at target paths are deleted.' \
+    '             Use after adding new dotfiles to a package dir.' \
+    '  --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked' '' \
+    "${_BOLD}Packages${_RESET} (base name or full category/name):" \
+    '  shell:   zsh  starship' \
+    '  editor:  vim  emacs' \
+    '  term:    ghostty' \
+    '  tool:    git  lazygit  ripgrep  yazi' \
+    '  lang:    uv  bun' '' \
+    "${_BOLD}Examples:${_RESET}" \
+    '  ./setup.sh install --all                    Prereqs + brew + stow all packages' \
+    '  ./setup.sh install zsh git                  Stow specific packages' \
+    '  ./setup.sh install --force zsh              Restow (pick up new dotfiles)' \
+    '  ./setup.sh install --force --all            Restow everything' \
+    '  ./setup.sh install --dry-run zsh            Preview what install would do' \
+    '  ./setup.sh install --force --dry-run --all  Preview a full restow' \
+    '  ./setup.sh uninstall --all                  Unstow all' \
+    '  ./setup.sh status                           Full status with symlinks' \
+    '  ./setup.sh status zsh                       Status for one package' '' \
+    "${_BOLD}Note:${_RESET}" \
+    '  install without packages or --all shows this help.'
 }
 
 # -----------------------------------------------------------------------------
