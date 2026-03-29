@@ -23,7 +23,6 @@
 # Core Settings
 # -----------------------------------------------------------------------------
 [core]
-    editor = vim
     # Use delta for syntax-highlighted, line-numbered diff output
     pager = delta
     # Convert CRLF to LF on commit (Unix-style line endings)
@@ -188,7 +187,7 @@
 [merge]
     # Show base context in conflicts (Git 2.35+)
     conflictstyle = zdiff3
-    tool = vimdiff
+    tool = nvimdiff
 
 [mergetool]
     prompt = false
