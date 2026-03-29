@@ -309,7 +309,7 @@ _terminal() {
   defaults write com.apple.Terminal \
       StringEncodings -array "${STRING_ENCODING_UTF8}"
 
-  # Enable Secure Keyboard Entry; blocks other processes from reading keystrokes
+  # Enable Secure Keyboard Entry; blocks other processes reading keystrokes
   # NOTE: may interfere with some tmux attach setups; disable if needed
   defaults write com.apple.Terminal SecureKeyboardEntry -bool true
 
