@@ -67,6 +67,27 @@ symbol = " "
 
 - Never align values with spaces
 
+### Section Uniqueness
+
+Each section title must be unique within the file at every delimiter level (Level 1 and Level 2). Group related settings together — do not create multiple sections of the same name.
+
+```toml
+# WRONG — duplicate section at Level 2
+# --- Style ---
+symbol = " "
+# --- Other Config ---
+disabled = false
+# --- Style ---              ← same name reused
+style = "bold"
+
+# CORRECT
+# --- Style ---
+symbol = " "
+style = "bold"
+# --- Other Config ---
+disabled = false
+```
+
 ## Anti-Patterns
 
 ### Don't: Unquoted Strings
