@@ -90,7 +90,8 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
         ;; Configure Emacs internal proxy with bypass rules
         (setq url-proxy-services
               `(("no_proxy" .
-                 "^\\(127\\.0\\.0\\.1\\|localhost\\|10\\..*\\|192\\.168\\..*\\)")
+                 (concat "^\\(127\\.0\\.0\\.1\\|localhost\\|"
+                         "10\\..*\\|192\\.168\\..*\\)"))
                 ("http" . ,(format "%s:%d" host port))
                 ("https" . ,(format "%s:%d" host port))))
         (omw/show-http-proxy))

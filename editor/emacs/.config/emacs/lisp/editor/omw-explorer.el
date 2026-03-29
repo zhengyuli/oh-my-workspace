@@ -69,7 +69,8 @@
 
   ;; Display attributes and performance
   (setq dirvish-attributes
-        '(vc-state subtree-state nerd-icons git-msg file-modes file-time file-size)
+        '(vc-state subtree-state nerd-icons git-msg
+          file-modes file-time file-size)
         dirvish-large-directory-threshold 20000))
 
 ;; ============================================================================
