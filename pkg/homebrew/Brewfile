@@ -153,7 +153,7 @@ brew "yq"
 # HTTP downloader
 brew "wget"
 # Process viewer
-brew "htop"
+brew "btop"
 # GNU core utilities (gls, etc.)
 brew "coreutils"
 # Symlink farm manager for dotfiles
