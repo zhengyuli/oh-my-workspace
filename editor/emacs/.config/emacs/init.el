@@ -232,7 +232,7 @@ global-auto-revert-mode and midnight-mode."
         (expand-file-name "emacs/projects" omw/xdg-state-home))
 
   ;; User identity and timestamps
-  (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by %u"
+  (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by zhengyu.li"
         user-full-name omw/emacs-user-name
         user-mail-address omw/emacs-user-email)
 
