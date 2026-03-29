@@ -8,7 +8,7 @@
 #   2. Nerd Fonts: https://www.nerdfonts.com/
 # =============================================================================
 
-"$schema" = 'https://starship.rs/config-schema.json'
+"$schema" = "https://starship.rs/config-schema.json"
 
 # -----------------------------------------------------------------------------
 # Cloud Services
@@ -189,7 +189,7 @@ symbol = " "
 symbol = " "
 
 [git_commit]
-tag_symbol = '  '
+tag_symbol = "  "
 
 [hg_branch]
 symbol = " "
