@@ -2,12 +2,12 @@
 
 **Date**: 2026-03-29
 **Status**: Approved
-**Scope**: Fix 11 verified issues from comprehensive config code audit
+**Scope**: Fix 12 verified issues from comprehensive config code audit
 
 ## Background
 
 A full audit of 92 configuration files across 6 dimensions (quality, correctness,
-security, best practices, `.claude/rules` compliance) identified 11 verified issues.
+security, best practices, `.claude/rules` compliance) identified 12 verified issues.
 No security vulnerabilities were found. This spec covers all fixes.
 
 ## Issues Summary
@@ -23,6 +23,7 @@ No security vulnerabilities were found. This spec covers all fixes.
 | C6   | CONVENTION | Magic numbers in defaults.sh             |
 | C7   | CONVENTION | Template.sh header deviations            |
 | C8   | CONVENTION | Unquoted string in lazygit config.yml    |
+| C9   | CONVENTION | lazygit editPreset = vim should be nvim  |
 | Q1   | QUALITY    | WHAT comments in yazi theme.toml         |
 | Q2   | QUALITY    | WHAT comment in lazygit config.yml       |
 
@@ -55,14 +56,18 @@ Change `merge.tool = vimdiff` to `merge.tool = nvimdiff` at
 
 ### C3: Fix Time-stamp Author Name
 
-Nine `.el` files have `by zhengyuli` in their time-stamp while 23 others have
+Six `.el` files have `by zhengyuli` in their time-stamp while 24 others have
 `by zhengyu.li`. The `time-stamp` package in `init.el` uses `%u` which expands
 to `user-login-name`. Fix by changing the `time-stamp-format` in `init.el` to
 use a hardcoded author string `zhengyu.li` instead of `%u`.
 
-Files affected: `init.el`, `omw-appearance.el`, `omw-font.el`,
-`omw-gitconfig.el`, `omw-json.el`, `omw-shell.el`, `omw-git.el`,
-`omw-pdf.el`, `omw-term.el`.
+Files affected (all under `editor/emacs/.config/emacs/`):
+- `init.el`
+- `lisp/editor/omw-appearance.el`
+- `lisp/lang/omw-gitconfig.el`
+- `lisp/tool/omw-git.el`
+- `lisp/tool/omw-pdf.el`
+- `lisp/tool/omw-term.el`
 
 ### C4: Fix Single-quoted Strings in starship.toml
 
@@ -89,17 +94,19 @@ which is legal text and stays at 80 chars). Targets:
 ### C6: Extract Magic Numbers in defaults.sh
 
 Add `readonly` named constants near `_general_ui()` in
-`platform/darwin/defaults.sh`:
+`platform/darwin/defaults.sh` (line numbers are pre-fix and will shift):
 
-- `STANDBY_DELAY_24H=86400` for line 90
-- `DISABLE_LINE_MARKS=0` for line 309
+- `STANDBY_DELAY_24H=86400` for `sudo pmset -c standbydelay` call
+- `DISABLE_LINE_MARKS=0` for `ShowLineMarks -int` call
 
 ### C7: Fix template.sh Header
 
 Fix `editor/emacs/.config/emacs/templates/template.sh`:
 
-- Change delimiters from 88 chars to 79 chars
-- Add mode line `# -*- mode: sh; -*-`
+- Change Level 1 delimiter (line 2, 88 chars) to 79 chars
+- Change Level 0 delimiter (line 26, 88 chars) to 79 chars
+- Change History delimiter (line 29, 66 chars) to 79 chars
+- Add mode line `# -*- mode: sh; -*-` after shebang
 - Keep `#!/bin/bash` as-is (template output, env not needed for yasnippet)
 
 ### C8: Quote String in lazygit config.yml
@@ -108,6 +115,12 @@ Per `yaml.md`, strings with special characters must be quoted. Change
 `tool/lazygit/.config/lazygit/config.yml` line 57:
 
 `pager: delta --dark --paging=never` to `pager: "delta --dark --paging=never"`
+
+### C9: Fix lazygit editPreset
+
+Change `editPreset: vim` to `editPreset: nvim` at
+`tool/lazygit/.config/lazygit/config.yml` line 64. Same inconsistency as C1:
+the project uses nvim as the default editor.
 
 ### Q1: Improve yazi theme.toml Comments
 
@@ -136,5 +149,8 @@ These were flagged but verified as non-issues:
 ## Out of Scope
 
 - MIT license 80-char lines in .el files (legal boilerplate, leave unchanged)
+- lazygit `$schema` comment line (113 chars, URL cannot be wrapped)
+- `defaults.sh` system paths (e.g., `lsregister` at 108 chars, cannot be wrapped)
 - Third-party Yazi plugin files (managed by `ya pkg`)
 - Structural changes (Stow, Brewfile, PKG_ALL all verified correct)
+- `template.sh` time-stamp header (yasnippet template, not a standalone file)
