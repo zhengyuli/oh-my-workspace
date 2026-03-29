@@ -853,7 +853,7 @@ Packages (base name or full category/name):
   zsh  starship  vim  emacs  ghostty  git  lazygit  ripgrep  yazi  uv  bun
 
 Examples:
-  ./setup.sh install --all                 Bootstrap: prereqs + brew + stow all
+  ./setup.sh install --all                    Bootstrap: prereqs + brew + stow all
   ./setup.sh install zsh git                  Stow specific packages
   ./setup.sh install --force zsh              Restow zsh (pick up new dotfiles)
   ./setup.sh install --force --all            Restow everything
