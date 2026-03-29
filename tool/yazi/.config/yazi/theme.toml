@@ -17,15 +17,15 @@
 [flavor]
 dark = "catppuccin-mocha"
 
-# Override mgr border style
+# Border color lacks contrast on dark themes; use explicit color
 [mgr]
 border_style = { fg = "#45475a" }
 
-# Override indicator to remove preview pane indicator
+# Preview pane indicator is redundant with custom status bar
 [indicator]
 preview = { fg = "#89b4fa" }
 
-# Style status bar permissions to be less prominent
+# File permissions are informational; reduce visual weight
 [status]
 perm_type = { fg = "#45475a" }
 perm_read = { fg = "#45475a" }
