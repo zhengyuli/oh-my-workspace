@@ -31,7 +31,7 @@ error: bash 4.3 or later required
   Current version: BASH_VERSION_PLACEHOLDER
 
   Why upgrade?
-    • Security: bash 3.2 (macOS default) is from 2007 with known vulnerabilities
+    • Security: bash 3.2 (macOS default) has known vulnerabilities (2007)
     • Features: nameref, associative arrays, better glob patterns
     • Performance: bash 5.x is significantly faster
     • Compatibility: bash 5.x runs virtually all bash 3.2 scripts
@@ -72,7 +72,7 @@ readonly -a PKG_ALL=(
   lang/typescript/bun
 )
 
-# Google style: declaration and assignment must be separate when the value comes
+# Declaration and assignment must be separate when the value comes from a
 # from a command substitution, so that a failure in $() is not masked by the
 # exit status of readonly itself.
 # cd ... && pwd is the standard idiom for resolving a directory's absolute path
@@ -101,7 +101,7 @@ readonly _RESET='\033[0m'
 
 _err_handler() {
   local -r code=$?
-  printf "  ${_RED}[error]${_RESET} unexpected failure in %s() at line %d (exit %d)\n" \
+  printf "  ${_RED}[error]${_RESET} failure in %s() line %d (exit %d)\n" \
     "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
 }
 trap '_err_handler' ERR
@@ -161,7 +161,7 @@ pkg_category() { printf '%s' "${1%/*}"; }
 # Returns the name portion of a package path ("shell/zsh" -> "zsh").
 pkg_name() { printf '%s' "${1##*/}"; }
 
-# Returns the stow directory for a package ("shell/zsh" -> "$WORKSPACE_DIR/shell").
+# Returns the stow dir for a package ("shell/zsh" -> "$WORKSPACE_DIR/shell").
 pkg_stow_dir() { printf '%s/%s' "${WORKSPACE_DIR}" "$(pkg_category "$1")"; }
 
 # Returns 0 if the given string matches a known package path in PKG_ALL.
@@ -305,9 +305,11 @@ _remove_stow_conflicts() {
   while IFS= read -r target; do
     if [[ -L "${target}" ]]; then
       if "${DRY_RUN}"; then
-        log_info "[dry-run] would remove foreign symlink: ${target} -> $(readlink "${target}")"
+        log_info "[dry-run] would remove foreign symlink:"
+        log_info "  ${target} -> $(readlink "${target}")"
       else
-        log_warn "Removing foreign symlink: ${target} -> $(readlink "${target}")"
+        log_warn "Removing foreign symlink:"
+        log_warn "  ${target} -> $(readlink "${target}")"
         rm -f "${target}"
       fi
     elif [[ -e "${target}" ]]; then
@@ -458,7 +460,8 @@ _install_homebrew() {
   log_info "Installing Homebrew..."
   # Note: curl | bash is the official Homebrew installation method.
   # Security: URL is hardcoded HTTPS to Homebrew's official GitHub repo.
-  local -r url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
+  local -r url
+  url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
   if ! curl --fail --silent --show-error \
       --connect-timeout "${NETWORK_TIMEOUT}" "${url}" | /bin/bash; then
     log_err "Homebrew installation failed"
@@ -823,7 +826,7 @@ Packages (base name or full category/name):
   zsh  starship  vim  emacs  ghostty  git  lazygit  ripgrep  uv  bun
 
 Examples:
-  ./setup.sh install --all                    Bootstrap: prereqs + brew + stow all
+  ./setup.sh install --all                  Bootstrap: prereqs + brew + stow all
   ./setup.sh install zsh git                  Stow specific packages
   ./setup.sh install --force zsh              Restow zsh (pick up new dotfiles)
   ./setup.sh install --force --all            Restow everything
