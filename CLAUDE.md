@@ -15,7 +15,7 @@ For new users setting up the dotfiles repository:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/zhengyu-li/oh-my-workspace.git
+   git clone https://github.com/zhengyuli/oh-my-workspace.git
    cd oh-my-workspace
    ```
 
