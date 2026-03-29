@@ -1,5 +1,6 @@
 #!/bin/bash
-# --------------------------------------------------------------------------------------
+# -*- mode: sh; -*-
+# ---------------------------------------------------------------------------
 # File: `(file-name-nondirectory (buffer-file-name))`
 # Author: `user-full-name` <`user-mail-address`>
 # Purpose: ${1:purpose}
@@ -23,10 +24,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# ======================================================================================
+# ===========================================================================
 
 # History:
-# ================================================================
+# ===========================================================================
 # `(format-time-string "%Y-%m-%d %H:%M")` `user-full-name` <`user-mail-address`> created.
 
 $0
