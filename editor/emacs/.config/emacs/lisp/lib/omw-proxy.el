@@ -1,5 +1,5 @@
 ;;; omw-proxy.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-03-29 14:51:55 Sunday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: proxy, network, http
@@ -90,8 +90,8 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
         ;; Configure Emacs internal proxy with bypass rules
         (setq url-proxy-services
               `(("no_proxy" .
-                 (concat "^\\(127\\.0\\.0\\.1\\|localhost\\|"
-                         "10\\..*\\|192\\.168\\..*\\)"))
+                 ,(concat "^\\(127\\.0\\.0\\.1\\|localhost\\|"
+                          "10\\..*\\|192\\.168\\..*\\)"))
                 ("http" . ,(format "%s:%d" host port))
                 ("https" . ,(format "%s:%d" host port))))
         (omw/show-http-proxy))
