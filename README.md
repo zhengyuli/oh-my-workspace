@@ -31,14 +31,14 @@ That's it. Your development environment is ready.
 
 ## Features
 
-- **🐚 Modern Shell** — Zsh with Starship prompt, zoxide (smart cd), direnv, and carapace completions
-- **📝 Dual Editor Setup** — Neovim and Emacs configurations included
-- **⚡ Fast Terminal** — Ghostty with optimized settings
-- **🔍 Powerful Search** — ripgrep, fd, fzf, and eza for file operations
-- **🐍 Language Runtimes** — Pre-configured for Python (uv), TypeScript (bun), Go, and Rust
-- **🔧 Git Workflow** — git + lazygit + GPG signing support
-- **📦 One-Command Setup** — `./setup.sh install --all` handles everything
-- **🔗 Clean Symlinks** — GNU Stow manages dotfiles without cluttering `$HOME`
+- **Modern Shell** — Zsh with Starship prompt, zoxide (smart cd), direnv, and carapace completions
+- **Dual Editor Setup** — Neovim and Emacs configurations included
+- **Fast Terminal** — Ghostty with tmux multiplexing
+- **Powerful Search** — ripgrep, fd, fzf, and eza for file operations
+- **Language Runtimes** — Pre-configured for Python (uv), TypeScript (bun), Go, and Rust
+- **Git Workflow** — git + lazygit + git-delta + GPG signing support
+- **One-Command Setup** — `./setup.sh install --all` handles everything
+- **Clean Symlinks** — GNU Stow manages dotfiles without cluttering `$HOME`
 
 ## Installation
 
@@ -48,9 +48,9 @@ That's it. Your development environment is ready.
 |-------------|-------------------|-----------------|
 | macOS       | `uname -s`        | —               |
 | Bash 4.3+   | `bash --version`  | —               |
-| Xcode CLI   | `xcode-select -p` | ✅              |
-| Homebrew    | `brew --version`  | ✅              |
-| GNU Stow    | `stow --version`  | ✅              |
+| Xcode CLI   | `xcode-select -p` | Yes             |
+| Homebrew    | `brew --version`  | Yes             |
+| GNU Stow    | `stow --version`  | Yes             |
 
 ### Full Installation
 
@@ -68,13 +68,10 @@ This command:
 
 ### Partial Installation
 
-Install specific packages only:
+Install specific packages only (prerequisites must already be installed):
 
 ```bash
-# Install prerequisites only (no brew bundle, no stow)
-./setup.sh install
-
-# Stow specific packages (requires prerequisites)
+# Stow specific packages
 ./setup.sh install zsh git vim
 
 # Preview changes without modifying files
@@ -117,14 +114,16 @@ Output shows:
 ## Directory Structure
 
 ```
-$WORKSPACE_DIR/
+oh-my-workspace/
 ├── setup.sh              # Main setup script
-├── Brewfile              # Homebrew package list
+├── CLAUDE.md
 ├── LICENSE
 ├── README.md
 │
 ├── claude/               # Claude Code environment
 │   └── setup.md          # Setup guide for Claude Code
+│
+├── docs/                 # Documentation
 │
 ├── shell/                # Shell configuration
 │   ├── zsh/              # ~/.config/zsh/, ~/.zshenv
@@ -147,11 +146,11 @@ $WORKSPACE_DIR/
 │   ├── python/uv/        # ~/.config/uv/
 │   └── typescript/bun/   # ~/.config/bun/
 │
-├── platform/            # Platform-specific configs
+├── platform/             # Platform-specific configs
 │   └── darwin/           # Darwin/macOS preferences
 │
 └── pkg/                  # Package management
-    └── homebrew/         # Brewfile location
+    └── homebrew/         # Brewfile
 ```
 
 Each package directory follows the [GNU Stow](https://www.gnu.org/software/stow/manual/) convention: files are placed as they would appear in `$HOME`.
@@ -249,7 +248,9 @@ echo "alias mycmd='echo hello'" > ~/.config/zsh/local/aliases.zsh
 |-----------------------------------------------------|--------------------------------------|
 | [git](https://git-scm.com/)                         | Distributed version control          |
 | [lazygit](https://github.com/jesseduffield/lazygit) | Simple terminal UI for git           |
+| [git-delta](https://github.com/dandavison/delta)    | Syntax-highlighting pager for git    |
 | [gnupg](https://www.gnupg.org/)                     | GNU Privacy Guard for commit signing |
+| [pass](https://www.passwordstore.org/)              | Standard Unix password manager       |
 
 ### Language Runtimes
 
@@ -269,6 +270,13 @@ echo "alias mycmd='echo hello'" > ~/.config/zsh/local/aliases.zsh
 | [wget](https://www.gnu.org/software/wget/) | Network downloader           |
 | [htop](https://htop.dev/)                  | Interactive process viewer   |
 | [pandoc](https://pandoc.org/)              | Universal document converter |
+
+### GUI Applications
+
+| Package                                       | Description               |
+|-----------------------------------------------|---------------------------|
+| [Emacs](https://www.gnu.org/software/emacs/)  | Emacs as macOS application |
+| [Rectangle](https://rectangleapp.com/)        | Window management          |
 
 ## Migration Notes
 
@@ -323,13 +331,13 @@ If you prefer manual control over symlinks:
 
 ```bash
 # Check what a package would link
-stow -n -v -d $WORKSPACE_DIR/shell -t ~ zsh
+stow -n -v -d "$WORKSPACE_DIR/shell" -t ~ zsh
 
 # Stow manually
-stow -v -d $WORKSPACE_DIR/shell -t ~ zsh
+stow -v -d "$WORKSPACE_DIR/shell" -t ~ zsh
 
 # Unstow manually
-stow -D -v -d $WORKSPACE_DIR/shell -t ~ zsh
+stow -D -v -d "$WORKSPACE_DIR/shell" -t ~ zsh
 ```
 
 ## Troubleshooting
@@ -350,10 +358,10 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 **"Stow conflict: existing file"**
 ```bash
-# Option 1: Preview what would be removed
+# Option 1: Preview what would be linked
 ./setup.sh install --dry-run zsh
 
-# Option 2: Force restow (removes conflicting files)
+# Option 2: Force restow (replaces conflicting symlinks)
 ./setup.sh install --force zsh
 ```
 
