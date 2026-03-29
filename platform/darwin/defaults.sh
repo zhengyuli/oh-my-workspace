@@ -11,7 +11,8 @@
 # Dependencies: bash 4.3+, macOS
 #
 # References:
-#   1. mathiasbynens/dotfiles: https://github.com/mathiasbynens/dotfiles/blob/main/.macos
+#   1. mathiasbynens/dotfiles:
+#      https://github.com/mathiasbynens/dotfiles/blob/main/.macos
 #   2. macOS defaults list: https://macos-defaults.com
 #   3. Apple defaults(1) man page: man defaults
 # Note: Some changes require logout or restart. Run as your normal user (sudo
@@ -118,7 +119,8 @@ _general_ui() {
   defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
   # Speed up window resize animation
-  defaults write NSGlobalDomain NSWindowResizeTime -float "${WINDOW_RESIZE_FAST}"
+  defaults write NSGlobalDomain NSWindowResizeTime \
+    -float "${WINDOW_RESIZE_FAST}"
 
   # Silence crash reporter dialogs
   defaults write com.apple.CrashReporter DialogType -string "none"
@@ -136,7 +138,8 @@ _keyboard() {
 
   # Maximum keyboard repeat rate (faster than original KeyRepeat=2)
   defaults write NSGlobalDomain KeyRepeat -int "${KEY_REPEAT_FASTEST}"
-  defaults write NSGlobalDomain InitialKeyRepeat -int "${INITIAL_KEY_REPEAT_FAST}"
+  defaults write NSGlobalDomain InitialKeyRepeat \
+    -int "${INITIAL_KEY_REPEAT_FAST}"
 
   # Disable press-and-hold in favor of key repeat
   defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
@@ -261,7 +264,8 @@ _dock() {
 
   # Auto-hide Dock instantly (no delay, no animation)
   defaults write com.apple.dock autohide -bool true
-  defaults write com.apple.dock autohide-delay -float "${DOCK_AUTOHIDE_NO_DELAY}"
+  defaults write com.apple.dock autohide-delay \
+    -float "${DOCK_AUTOHIDE_NO_DELAY}"
   defaults write com.apple.dock \
       autohide-time-modifier -float "${DOCK_AUTOHIDE_NO_ANIMATION}"
 
@@ -301,7 +305,7 @@ _terminal() {
   defaults write com.apple.Terminal \
       StringEncodings -array "${STRING_ENCODING_UTF8}"
 
-  # Enable Secure Keyboard Entry - blocks other processes from reading keystrokes
+  # Enable Secure Keyboard Entry; blocks other processes from reading keystrokes
   # NOTE: may interfere with some tmux attach setups; disable if needed
   defaults write com.apple.Terminal SecureKeyboardEntry -bool true
 
@@ -369,7 +373,8 @@ _messages() {
   printf 'Setting Messages preferences...\n'
 
   # Disable smart quotes and continuous spell checking
-  defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add \
+  defaults write com.apple.messageshelper.MessageController \
+    SOInputLineSettings -dict-add \
            "automaticQuoteSubstitutionEnabled" -bool false \
            "continuousSpellCheckingEnabled" -bool false
 }
@@ -419,7 +424,7 @@ main() {
   _messages
   _restart_apps
 
-  printf 'Done. Note that some of these changes require a logout/restart to take effect.\n'
+  printf 'Done. Some changes require a logout/restart to take effect.\n'
 }
 
 main "$@"
