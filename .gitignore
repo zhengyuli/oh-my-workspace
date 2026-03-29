@@ -48,6 +48,12 @@
 # Claude Code (track rules and project settings, ignore local settings)
 .claude/settings.local.json
 
+# OpenAI Codex
+.codex/
+
+# omc
+.omc/
+
 # -----------------------------------------------------------------------------
 # Shell Files
 # -----------------------------------------------------------------------------
