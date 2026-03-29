@@ -33,13 +33,14 @@
     ignorecase = false
     # Normalize Unicode filenames on macOS for consistency
     precomposeunicode = true
-    excludesfile = ~/.config/git/ignore
     # Enable parallel index loading for better performance
     preloadindex = true
     # Cache untracked files for faster git status
     untrackedCache = true
     # macOS FSMonitor daemon for faster status (requires Git 2.37+)
     fsmonitor = true
+    # Global ignore patterns (OS/editor artifacts; repo-specific in .gitignore)
+    excludesfile = ~/.config/git/ignore
 
 # -----------------------------------------------------------------------------
 # Interactive Settings
