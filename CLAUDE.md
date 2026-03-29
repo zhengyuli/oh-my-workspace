@@ -54,28 +54,42 @@ Files follow GNU Stow convention: placed as they appear in `$HOME`.
 
 ```
 oh-my-workspace/
+├── setup.sh           # Main setup script
+├── CLAUDE.md
+├── LICENSE
+├── README.md
+│
 ├── claude/            # Claude Code environment
 │   └── setup.md       # Setup guide for Claude Code
+│
+├── docs/              # Documentation
+│
 ├── shell/             # Shell configurations
-│   ├── starship/      # Starship prompt config
-│   └── zsh/           # Zsh config (.zshrc, .zshenv)
+│   ├── starship/      # Starship prompt config (~/.config/starship.toml)
+│   └── zsh/           # Zsh config (~/.config/zsh/, ~/.zshenv)
+│
 ├── editor/            # Text editors
-│   ├── emacs/         # Emacs modular config
-│   └── vim/           # Neovim config
-├── lang/              # Language runtimes
-│   ├── python/        # Python (uv) config
-│   │   └── uv/        # uv package manager
-│   └── typescript/    # TypeScript (bun) config
-│       └── bun/       # bun runtime
-├── tool/              # CLI utilities
-│   ├── git/           # Git config
-│   ├── lazygit/       # Lazygit config
-│   ├── ripgrep/       # Ripgrep config
-│   └── yazi/          # Yazi file manager
+│   ├── emacs/         # Emacs modular config (~/.config/emacs/)
+│   └── vim/           # Vim config (~/.config/vim/)
+│
 ├── term/              # Terminal emulators
-│   └── ghostty/       # Ghostty config
-└── platform/          # Platform-specific
-    └── darwin/        # macOS scripts
+│   └── ghostty/       # Ghostty config (~/.config/ghostty/)
+│
+├── tool/              # CLI utilities
+│   ├── git/           # Git config (~/.config/git/)
+│   ├── lazygit/       # Lazygit config (~/.config/lazygit/)
+│   ├── ripgrep/       # Ripgrep config (~/.config/ripgrep/)
+│   └── yazi/          # Yazi file manager (~/.config/yazi/)
+│
+├── lang/              # Language runtimes
+│   ├── python/uv/     # uv config (~/.config/uv/)
+│   └── typescript/bun/# bun config (~/.config/bun/)
+│
+├── platform/          # Platform-specific
+│   └── darwin/        # macOS scripts (defaults.sh)
+│
+└── pkg/               # Package management
+    └── homebrew/      # Brewfile
 ```
 
 ## Development Workflow
