@@ -15,7 +15,7 @@ This guide will configure the following components:
 | **Plugins**         | 19    | Development tools, MCP integration, auxiliary features         |
 | **MCP Servers**     | 4     | Memory management, search, browser automation, advanced search |
 | **Hooks**           | 2     | Token optimization, command rewriting                          |
-| **Auxiliary Tools** | 3     | RTK (token savings), dippy, claude-hud (status bar)            |
+| **Auxiliary Tools** | 2     | RTK (token savings), claude-hud (status bar)                   |
 
 ## 🎯 Execution Order
 
@@ -42,7 +42,6 @@ Step 9: Troubleshooting        → Troubleshoot issues
 - **claude-mem**: https://github.com/thedotmack/claude-mem
 - **claude-hud**: https://github.com/jarrodwatts/claude-hud
 - **RTK**: https://github.com/rtk-ai/rtk
-- **Dippy**: https://github.com/ldayton/Dippy
 
 ---
 
@@ -388,10 +387,9 @@ curl -s http://localhost:37777/health | jq .
 
 Hooks are Claude Code automation scripts:
 
-| Hook      | Trigger           | Purpose                    | Source                                            |
-|-----------|-------------------|----------------------------|---------------------------------------------------|
-| **RTK**   | PreToolUse (Bash) | Token optimization 60-90%  | [rtk-ai/rtk](https://github.com/rtk-ai/rtk)       |
-| **Dippy** | PreToolUse (Bash) | Auto-approve safe commands | [ldayton/Dippy](https://github.com/ldayton/Dippy) |
+| Hook    | Trigger           | Purpose                   | Source                                      |
+|---------|-------------------|---------------------------|---------------------------------------------|
+| **RTK** | PreToolUse (Bash) | Token optimization 60-90% | [rtk-ai/rtk](https://github.com/rtk-ai/rtk) |
 
 ### 📦 6.1 Install RTK
 
@@ -412,23 +410,6 @@ rtk init --show
 - Intelligent filtering and compression of command output
 - Supports git, gh, cargo, npm, docker, kubectl and other commands
 
-### 📦 6.2 Install Dippy
-
-```bash
-# Install Dippy
-brew tap ldayton/dippy
-brew install dippy
-
-# Verify installation
-dippy
-# Should return: {}
-```
-
-**Dippy Features:**
-- ✅ Auto-approve safe commands (reduce permission fatigue)
-- 🚫 Block dangerous operations
-- 💬 Custom deny messages to guide AI
-
 ### ✅ Verify Hooks
 
 ```bash
@@ -438,9 +419,6 @@ jq '.hooks' ~/.claude/settings.json
 # Check RTK status
 rtk --version
 rtk init --show
-
-# Check Dippy status
-command -v dippy >/dev/null 2>&1 && echo "✓ Dippy installed" || echo "✗ Dippy not installed"
 ```
 
 ---
@@ -453,7 +431,6 @@ Auxiliary tools were installed in previous steps, only need verification and con
 
 - **claude-hud** - Installed in Step 4.3
 - **RTK** - Installed in Step 6.1
-- **Dippy** - Installed in Step 6.2
 
 ### 📦 7.1 Configure claude-hud Statusline
 
@@ -481,10 +458,7 @@ jq '.statusLine' ~/.claude/settings.json
 rtk --version
 rtk init --show
 
-# 3. Verify Dippy
-command -v dippy >/dev/null 2>&1 && echo "✓ Dippy installed" || echo "✗ Dippy not installed"
-
-# 4. Verify Plugin count
+# 3. Verify Plugin count
 claude /plugin list | wc -l
 echo "Expected: 19 plugins"
 ```
@@ -528,11 +502,7 @@ jq -e '.hooks.PreToolUse' ~/.claude/settings.json >/dev/null 2>&1 && echo "✓ H
 echo -e "\n[5/7] RTK Check"
 command -v rtk >/dev/null 2>&1 && echo "✓ RTK installed: $(rtk --version 2>&1 | head -1)" || echo "✗ RTK not installed"
 
-# 6. Dippy Check
-echo -e "\n[6/7] Dippy Check"
-command -v dippy >/dev/null 2>&1 && echo "✓ Dippy installed" || echo "✗ Dippy not installed"
-
-# 7. claude-mem Worker Check
+# 6. claude-mem Worker Check
 echo -e "\n[7/7] claude-mem Worker Check"
 curl -s http://localhost:37777/health >/dev/null 2>&1 && echo "✓ claude-mem Worker running" || echo "⚠ claude-mem Worker not running"
 
@@ -635,9 +605,6 @@ jq '.hooks' ~/.claude/settings.json
 # Check RTK
 rtk --version
 rtk init --show
-
-# Check Dippy
-which dippy
 ```
 
 ### 🔧 9.5 Network Issues
@@ -665,7 +632,6 @@ cp ~/.claude.json ~/claude.json.backup
 rm -rf ~/.claude/
 rm -rf ~/.claude-mem/
 rm -rf ~/.config/rtk/
-rm -rf ~/.dippy/
 
 # 3. Restart configuration
 # Re-execute all steps starting from Step 1
@@ -680,7 +646,6 @@ Your Claude Code environment is now fully configured with:
 - ✅ 19 plugins
 - ✅ 4+ MCP servers
 - ✅ RTK token optimization
-- ✅ Dippy permission management
 - ✅ claude-hud status bar
 
 Enjoy using Claude Code! 🚀
