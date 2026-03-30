@@ -157,9 +157,30 @@ Claude Code internal models correspond to GLM models:
 
 **Note:** GLM-5.1 usage is calculated as "3x during peak hours, 2x during off-peak hours", recommended for complex tasks.
 
+### Default Model & Model Environment Variables
+
+The `@z_ai/coding-helper` may not configure the default model and model environment variables. These must be set manually — they are **required** for Claude Code to route requests to the correct GLM models.
+
+```bash
+# Set default model to Sonnet with extended context (1M tokens)
+jq '.model = "sonnet[1m]"' "$HOME/.claude/settings.json" > /tmp/claude-settings.json && mv /tmp/claude-settings.json "$HOME/.claude/settings.json"
+
+# Set model environment variables (map Claude internal model names to GLM models)
+jq '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air" | \
+    .env.ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5-turbo" | \
+    .env.ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1"' "$HOME/.claude/settings.json" > /tmp/claude-settings.json && mv /tmp/claude-settings.json "$HOME/.claude/settings.json"
+```
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| `model` | `"sonnet[1m]"` | Default model: Sonnet with 1M context window |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `"glm-4.5-air"` | Maps Haiku requests to GLM-4.5-air |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `"glm-5-turbo"` | Maps Sonnet requests to GLM-5-turbo |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `"glm-5.1"` | Maps Opus requests to GLM-5.1 |
+
 ### Critical Environment Variables
 
-The `@z_ai/coding-helper` automatically injects environment variables into `~/.claude/settings.json`. The following three are **critical for GLM API compatibility** — do NOT remove or modify them:
+The following three are **critical for GLM API compatibility** — do NOT remove or modify them:
 
 | Variable | Value | Why It Matters |
 |----------|-------|----------------|
