@@ -152,7 +152,36 @@ fi
 # This wrapper redirects writes so git config --global never touches config.
 git() {
   if [[ "$1" == config && "$2" == --global ]]; then
-    command git config -f "$XDG_CONFIG_HOME/git/config.local" "${@:3}"
+    local -a args=("${@:3}")
+    local mode=  # 'r' = read, 'w' = write
+    for a in "${args[@]}"; do
+      case "$a" in
+        --get|--get-all|--get-regexp|--get-urlmatch|--list|--show-origin|--show-scope)
+          mode=r; break ;;
+        --add|--unset|--unset-all|--rename-section|--remove-section)
+          mode=w; break ;;
+      esac
+    done
+    if [[ -z "$mode" ]]; then
+      # No explicit flag: key value = write, bare key = read
+      local -a pos=()
+      local skip=0
+      for a in "${args[@]}"; do
+        if (( skip )); then skip=0; continue; fi
+        case "$a" in
+          --default|--type|--value-type|--fixed-value|--pattern|--expires-after)
+            skip=1 ;;
+          --*) ;;
+          *) pos+=("$a") ;;
+        esac
+      done
+      (( ${#pos[@]} >= 2 )) && mode=w || mode=r
+    fi
+    if [[ "$mode" == w ]]; then
+      command git config -f "$XDG_CONFIG_HOME/git/config.local" "${args[@]}"
+    else
+      command git config --global --includes "${args[@]}"
+    fi
   else
     command git "$@"
   fi
