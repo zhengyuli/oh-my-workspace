@@ -115,6 +115,17 @@ oh-my-workspace/
 
 **Dependencies**: Managed via `pkg/homebrew/Brewfile`
 
+## GLM API Configuration
+
+This environment uses Zhipu GLM API instead of Anthropic. The following env vars in `~/.claude/settings.json` are critical for GLM compatibility — do NOT remove:
+- `ENABLE_TOOL_SEARCH: "0"` — prevents tool search conflicts
+- `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS: "1"` — prevents unsupported API calls
+- `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"` — stops Anthropic telemetry
+
+Model mapping: Haiku → glm-4.5-air, Sonnet → glm-5-turbo, Opus → glm-5.1
+
+See `claude/setup.md` for full environment setup guide.
+
 ## Coding Conventions
 
 Detailed conventions in `.claude/rules/`:
@@ -132,7 +143,7 @@ Detailed conventions in `.claude/rules/`:
 |-------------------|------------------------------------------|
 | First-time setup  | See Getting Started section above        |
 | Prerequisites     | `brew install stow`                      |
-| Claude Code setup | See `claude/setup.md`                    |
+| Claude Code setup | See `claude/setup.md` (15 plugins, 6 MCP servers, RTK, claude-hud) |
 | Full setup        | `./setup.sh install --all`               |
 | Stow package      | `./setup.sh install <package>`           |
 | Restow            | `./setup.sh install --force <package>`   |
