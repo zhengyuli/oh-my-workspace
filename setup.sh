@@ -65,7 +65,7 @@ readonly _RESET='\033[0m'
 
 _err_handler() {
   local -r code=$?
-  printf "  ${_RED}[error]${_RESET} failure in %s() line %d (exit %d)\n" \
+  printf "  ${_RED}[error]${_RESET} %s() line %d: exit %d\n" \
     "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
 }
 trap '_err_handler' ERR
@@ -77,6 +77,11 @@ trap '_err_handler' ERR
 die() {
   printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2;
   exit 1;
+}
+
+_misuse() {
+  printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2;
+  exit 2;
 }
 
 log_ok() {
@@ -244,7 +249,7 @@ _bootstrap_homebrew_env() {
   local b
   for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
     if [[ -x "${b}" ]]; then
-      eval "$("${b}" shellenv)"
+      source <("${b}" shellenv)
       return 0
     fi
   done
@@ -303,9 +308,11 @@ _install_homebrew() {
     return 0
   fi
   log_info "Installing Homebrew..."
-  local -r url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
+  local -r url
+  url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
   if ! curl --fail --silent --show-error \
-      --connect-timeout "${NETWORK_TIMEOUT}" "${url}" | /bin/bash; then
+      --connect-timeout "${NETWORK_TIMEOUT}" \
+      "${url}" | /bin/bash; then
     log_err "Homebrew installation failed"
     return 1
   fi
@@ -444,6 +451,34 @@ _parse_stow_targets() {
   done <<< "${output}"
 }
 
+_resolve_stow_conflict() {
+  local -r target="$1"
+  if [[ -L "${target}" ]]; then
+    if "${DRY_RUN}"; then
+      log_info "[dry-run] would remove foreign symlink:"
+      log_info "  ${target} -> $(readlink "${target}")"
+      return 0
+    fi
+    log_warn "Removing foreign symlink:"
+    log_warn "  ${target} -> $(readlink "${target}")"
+    rm -f "${target}"
+    return 0
+  fi
+  if [[ ! -e "${target}" ]]; then
+    return 0
+  fi
+  if "${DRY_RUN}"; then
+    log_info "[dry-run] would remove conflicting path: ${target}"
+    return 0
+  fi
+  if [[ "${target}" != "${HOME}"/* ]]; then
+    log_err "Refusing to remove path outside HOME: ${target}"
+    return 1
+  fi
+  log_warn "Removing conflicting path: ${target}"
+  rm -rf "${target}"
+}
+
 _stow_exec() {
   local pkg="$1"
   local mode="${2:-stow}"
@@ -487,27 +522,7 @@ _stow_exec() {
   if [[ "${mode}" != unstow ]]; then
     local target
     while IFS= read -r target; do
-      if [[ -L "${target}" ]]; then
-        if "${DRY_RUN}"; then
-          log_info "[dry-run] would remove foreign symlink:"
-          log_info "  ${target} -> $(readlink "${target}")"
-        else
-          log_warn "Removing foreign symlink:"
-          log_warn "  ${target} -> $(readlink "${target}")"
-          rm -f "${target}"
-        fi
-      elif [[ -e "${target}" ]]; then
-        if "${DRY_RUN}"; then
-          log_info "[dry-run] would remove conflicting path: ${target}"
-        else
-          if [[ "${target}" != "${HOME}"/* ]]; then
-            log_err "Refusing to remove path outside HOME: ${target}"
-            return 1
-          fi
-          log_warn "Removing conflicting path: ${target}"
-          rm -rf "${target}"
-        fi
-      fi
+      _resolve_stow_conflict "${target}" || return 1
     done < <(_parse_stow_targets "${dry_output}")
   fi
 
@@ -521,8 +536,10 @@ _stow_exec() {
         has_actions=true
       fi
     done <<< "${dry_output}"
-    if ! "${has_actions}" && grep -q 'existing target' <<< "${dry_output}"; then
-      log_info "[dry-run]   (exact links hidden by conflicts — will be created after removal)"
+    if ! "${has_actions}" \
+        && grep -q 'existing target' <<< "${dry_output}"; then
+      log_info "[dry-run]   (exact links hidden by conflicts" \
+        " — will be created after removal)"
     fi
     return 0
   fi
@@ -610,13 +627,13 @@ cmd_install() {
       --all)     do_all=true ;;
       --force)   force=true ;;
       --dry-run) DRY_RUN=true ;;
-      -*)        die "Unknown flag: ${arg}" ;;
+      -*)        _misuse "Unknown flag: ${arg}" ;;
       *)         pkgs+=("${arg}") ;;
     esac
   done
 
   if "${do_all}" && (( ${#pkgs[@]} > 0 )); then
-    die "--all and package names are mutually exclusive"
+    _misuse "--all and package names are mutually exclusive"
   fi
 
   if "${DRY_RUN}"; then
@@ -681,13 +698,13 @@ cmd_uninstall() {
     case "${arg}" in
       --all)     do_all=true ;;
       --dry-run) DRY_RUN=true ;;
-      -*)        die "Unknown flag: ${arg}" ;;
+      -*)        _misuse "Unknown flag: ${arg}" ;;
       *)         pkgs+=("${arg}") ;;
     esac
   done
 
   if "${do_all}" && (( ${#pkgs[@]} > 0 )); then
-    die "--all and package names are mutually exclusive"
+    _misuse "--all and package names are mutually exclusive"
   fi
 
   if "${DRY_RUN}"; then
@@ -871,7 +888,7 @@ main() {
       log_err "Unknown command: ${cmd}"
       printf '\n'
       show_help
-      exit 1
+      exit 2
       ;;
   esac
 }
