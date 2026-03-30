@@ -25,6 +25,12 @@ readonly NETWORK_TIMEOUT=60
 # Bootstrap checks
 # -----------------------------------------------------------------------------
 
+# This script targets macOS only (Xcode CLI, Homebrew).
+if [[ "$(uname -s)" != Darwin ]]; then
+  printf 'error: macOS required\n' >&2
+  exit 1
+fi
+
 # Require bash 4.3+ for local -n (nameref) and associative arrays.
 # If the running bash is too old, offer to install Homebrew + a modern bash,
 # configure PATH persistently, then re-exec this script under the new bash.
@@ -106,12 +112,6 @@ EOF
   fi
   printf '  [ok] Re-running with %s...\n' "${_new_bash}"
   exec "${_new_bash}" "$0" "$@"
-fi
-
-# This script targets macOS only (Xcode CLI, Homebrew).
-if [[ "$(uname -s)" != Darwin ]]; then
-  printf 'error: macOS required\n' >&2
-  exit 1
 fi
 
 # -----------------------------------------------------------------------------
