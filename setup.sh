@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-30 13:53:50 Monday by zhengyu.li>
+# Time-stamp: <2026-03-30 14:12:39 Monday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -24,10 +24,8 @@ set -euo pipefail
 
 readonly LINE_WIDTH=79
 
-# Timeout in seconds for curl in _install_homebrew.
 readonly NETWORK_TIMEOUT=60
 
-# Format: <category>/<package>  category dirs organize configs by type
 readonly -a PKG_ALL=(
   shell/zsh
   shell/starship
@@ -42,16 +40,12 @@ readonly -a PKG_ALL=(
   lang/typescript/bun
 )
 
-# Separate declaration and assignment: readonly masks $() failures otherwise.
-# cd ... && pwd resolves symlinks without requiring realpath or readlink -f.
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 readonly WORKSPACE_DIR
 
 BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
 readonly BREWFILE
 
-# Script-wide dry-run flag; set by --dry-run in cmd_install.
-# Intentionally not readonly — toggled at runtime.
 DRY_RUN=false
 
 # -----------------------------------------------------------------------------
@@ -80,23 +74,32 @@ trap '_err_handler' ERR
 # Logging
 # -----------------------------------------------------------------------------
 
-die() { printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2; exit 1; }
+die() {
+  printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2;
+  exit 1;
+}
 
-log_ok()   { printf "  ${_GREEN}[ok]${_RESET} %s\n"    "$*"; }
+log_ok() {
+  printf "  ${_GREEN}[ok]${_RESET} %s\n"    "$*";
+}
 
-log_err()  { printf "  ${_RED}[error]${_RESET} %s\n"   "$*" >&2; }
+log_err() {
+  printf "  ${_RED}[error]${_RESET} %s\n"   "$*" >&2;
+}
 
-log_warn() { printf "  ${_YELLOW}[warn]${_RESET} %s\n" "$*"; }
+log_warn() {
+  printf "  ${_YELLOW}[warn]${_RESET} %s\n" "$*";
+}
 
-log_info() { printf "  ${_BLUE}[info]${_RESET} %s\n"   "$*"; }
+log_info() {
+  printf "  ${_BLUE}[info]${_RESET} %s\n"   "$*";
+}
 
 # -----------------------------------------------------------------------------
 # UI helpers
 # -----------------------------------------------------------------------------
 
 print_header() {
-  # $(seq) is intentionally unquoted: word-splitting produces N arguments
-  # for printf's %.0s format. With numeric LINE_WIDTH this is safe.
   printf '\n%b' "${_BOLD}"
   printf '=%.0s' $(seq 1 "${LINE_WIDTH}")
   printf '\n  %s\n' "$1"
@@ -104,12 +107,6 @@ print_header() {
   printf '\n%b\n' "${_RESET}"
 }
 
-# Prompts the user for a yes/no confirmation.
-# Arguments:
-#   $1 - prompt text
-#   $2 - default answer: "y" or "n" (default: "n")
-# Returns:
-#   0 if user answered yes, 1 otherwise
 confirm() {
   local prompt="$1"
   local default="${2:-n}"
@@ -131,17 +128,18 @@ confirm() {
 # Package path helpers
 # -----------------------------------------------------------------------------
 
-# Returns the category portion of a package path ("shell/zsh" -> "shell").
-pkg_category() { printf '%s' "${1%/*}"; }
+pkg_category() {
+  printf '%s' "${1%/*}";
+}
 
-# Returns the name portion of a package path ("shell/zsh" -> "zsh").
-pkg_name() { printf '%s' "${1##*/}"; }
+pkg_name() {
+  printf '%s' "${1##*/}";
+}
 
-# Returns the stow dir for a package ("shell/zsh" -> "$WORKSPACE_DIR/shell").
-pkg_stow_dir() { printf '%s/%s' "${WORKSPACE_DIR}" "$(pkg_category "$1")"; }
+pkg_stow_dir() {
+  printf '%s/%s' "${WORKSPACE_DIR}" "$(pkg_category "$1")";
+}
 
-# Returns 0 if the given string matches a known package path in PKG_ALL.
-# Arguments: $1 - package path to test
 _is_valid_pkg() {
   local p
   for p in "${PKG_ALL[@]}"; do
@@ -152,15 +150,6 @@ _is_valid_pkg() {
   return 1
 }
 
-# Resolves package name arguments to full category/name paths.
-# Accepts both "shell/zsh" and bare "zsh" forms. Warns on unknowns.
-# Uses nameref so the caller's own array is populated directly, avoiding
-# a global output variable.
-# Arguments:
-#   $1   - name of caller's output array variable (nameref)
-#   $2.. - package names to resolve
-# Returns:
-#   0 if at least one package resolved, 1 if none
 validate_pkgs() {
   local -n _out="$1"
   shift
@@ -180,8 +169,7 @@ validate_pkgs() {
       fi
     done
     if [[ -z "${found}" ]]; then
-      # Check if input is a partial path suffix (e.g. "python/uv" for
-      # "lang/python/uv") and suggest the correct full path.
+      # Suggest correct full path for partial suffixes (e.g. "python/uv").
       local suggestion=''
       for pkg in "${PKG_ALL[@]}"; do
         if [[ "${pkg}" == */"${p}" ]]; then
@@ -203,17 +191,20 @@ validate_pkgs() {
 # Prerequisites — probes  (pure, no side effects)
 # -----------------------------------------------------------------------------
 
-_has_xcode_cli() { xcode-select -p &>/dev/null; }
-_has_homebrew()  { command -v brew  &>/dev/null; }
-_has_stow()      { command -v stow  &>/dev/null; }
+_has_xcode_cli() {
+  xcode-select -p &>/dev/null;
+}
+_has_homebrew() {
+  command -v brew  &>/dev/null;
+}
+_has_stow() {
+  command -v stow  &>/dev/null;
+}
 
 # -----------------------------------------------------------------------------
 # Prerequisites — bootstrap
 # -----------------------------------------------------------------------------
 
-# Validates platform (macOS) and bash version (4.3+).
-# Called once at the top of main(), after all functions are defined, so that
-# _upgrade_bash() — which calls _install_homebrew() — is already available.
 _bootstrap_checks() {
   if [[ "$(uname -s)" != Darwin ]]; then
     printf 'error: macOS required\n' >&2
@@ -240,16 +231,12 @@ EOF
       printf '  Aborted.\n' >&2
       exit 1
     fi
-    # Forward original argv so the re-exec'd script runs the intended command.
     _upgrade_bash "$@"
-    # _upgrade_bash() calls exec, so this line is only reached on error.
+    # _upgrade_bash() calls exec; unreachable if exec succeeds.
     exit 1
   fi
 }
 
-# Injects Homebrew shellenv if brew exists at a known path but is absent from
-# PATH. Idempotent: no-op if brew is already on PATH or not installed at all.
-# Known locations: Apple Silicon (/opt/homebrew) and Intel (/usr/local).
 _bootstrap_homebrew_env() {
   if _has_homebrew; then
     return 0
@@ -316,15 +303,12 @@ _install_homebrew() {
     return 0
   fi
   log_info "Installing Homebrew..."
-  # Note: curl | bash is the official Homebrew installation method.
-  # Security: URL is hardcoded HTTPS to Homebrew's official GitHub repo.
   local -r url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
   if ! curl --fail --silent --show-error \
       --connect-timeout "${NETWORK_TIMEOUT}" "${url}" | /bin/bash; then
     log_err "Homebrew installation failed"
     return 1
   fi
-  # Inject shellenv after fresh install via the shared bootstrap helper.
   if ! _bootstrap_homebrew_env || ! _has_homebrew; then
     log_err "Homebrew not found after installation"
     return 1
@@ -359,10 +343,6 @@ _run_brew_bundle() {
   fi
 }
 
-# Ensures Xcode CLI, Homebrew, and GNU Stow are present.
-# In install mode, installs any missing tools and short-circuits on failure.
-# In check mode, reports all missing tools before returning 1.
-# Arguments: $1 - mode: "install" or "check" (default)
 ensure_prerequisites() {
   local mode="${1:-check}"
   local ok=1
@@ -396,7 +376,7 @@ ensure_prerequisites() {
     log_info "Run: ./setup.sh install --all"
     return 1
   fi
-  # Sanity-check: stow must be reachable after installation.
+  # stow must be reachable after installation.
   if ! _has_stow; then
     die "GNU Stow unavailable after installation"
   fi
@@ -406,8 +386,6 @@ ensure_prerequisites() {
 # Stow state queries  (pure — no side effects)
 # -----------------------------------------------------------------------------
 
-# Returns 0 if pkg is fully stowed (stow -n -v reports no LINK operations).
-# Returns 1 if stow is absent, any links are missing, or conflicts exist.
 is_stowed() {
   if ! _has_stow; then
     return 1
@@ -417,54 +395,12 @@ is_stowed() {
       -t "${HOME}" "$(pkg_name "$1")" 2>&1); then
     return 1
   fi
-  # LINK: lines in output mean stow has work to do — package is not fully stowed.
+  # LINK: lines mean stow has pending work — package is not fully stowed.
   if grep -q '^LINK:' <<< "${output}"; then
     return 1
   fi
 }
 
-# Prints $HOME-absolute paths that stow would touch when linking pkg.
-# mode=stow    uses stow -n -v     (for packages not yet stowed)
-# mode=restow  uses stow -R -n -v  (for --force: detects new conflicts that
-#                                   arise after old links are removed)
-# Parses LINK and "existing target" lines from stow dry-run output.
-# Arguments:
-#   $1 - full package path
-#   $2 - mode: "stow" (default) or "restow"
-# Outputs: one absolute $HOME path per line
-stow_targets() {
-  local pkg="$1"
-  local mode="${2:-stow}"
-  local stow_dir
-  stow_dir=$(pkg_stow_dir "${pkg}")
-  local pkg_base
-  pkg_base=$(pkg_name "${pkg}")
-  local -a flags=(-n -v -d "${stow_dir}" -t "${HOME}")
-  if [[ "${mode}" == restow ]]; then
-    flags+=(-R)
-  fi
-
-  local -r link_pat='^LINK: ([^[:space:]]+)'
-  # stow conflict format: "existing target is not owned by stow: .zshrc"
-  # capture the path after the colon, not the word after "existing target".
-  local -r conflict_pat='existing target[^:]+: ([^[:space:]]+)'
-  local output line
-  output=$(stow "${flags[@]}" "${pkg_base}" 2>&1) || true
-  while IFS= read -r line; do
-    if [[ "${line}" =~ ${link_pat} || "${line}" =~ ${conflict_pat} ]]; then
-      printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
-    fi
-  done <<< "${output}"
-}
-
-# Prints the symlinks in $HOME that currently belong to pkg.
-# Walks the package dir tree and traces each file's $HOME path upward to find
-# its symlink, correctly handling stow tree-folding (whole subtree collapsed
-# into one directory symlink).
-# Process substitution (< <(find)) keeps the while loop in the current shell
-# so the associative array deduplication remains visible throughout.
-# Arguments: $1 - full package path
-# Outputs: relative path and symlink target, one line per link
 stow_links() {
   local pkg="$1"
   local stow_dir
@@ -491,59 +427,23 @@ stow_links() {
 }
 
 # -----------------------------------------------------------------------------
-# Conflict resolution
-# -----------------------------------------------------------------------------
-
-# Removes files or symlinks that would block stow from linking pkg.
-# In dry-run mode, logs what would be removed without touching the filesystem.
-# Globals:
-#   DRY_RUN (read)
-# Arguments:
-#   $1 - full package path
-#   $2 - stow_targets mode: "stow" (default) or "restow"
-_remove_stow_conflicts() {
-  local pkg="$1"
-  local mode="${2:-stow}"
-  local target
-
-  while IFS= read -r target; do
-    if [[ -L "${target}" ]]; then
-      if "${DRY_RUN}"; then
-        log_info "[dry-run] would remove foreign symlink:"
-        log_info "  ${target} -> $(readlink "${target}")"
-      else
-        log_warn "Removing foreign symlink:"
-        log_warn "  ${target} -> $(readlink "${target}")"
-        rm -f "${target}"
-      fi
-    elif [[ -e "${target}" ]]; then
-      if "${DRY_RUN}"; then
-        log_info "[dry-run] would remove conflicting path: ${target}"
-      else
-        # Guard: refuse to remove paths outside $HOME.
-        if [[ "${target}" != "${HOME}"/* ]]; then
-          log_err "Refusing to remove path outside HOME: ${target}"
-          return 1
-        fi
-        log_warn "Removing conflicting path: ${target}"
-        rm -rf "${target}"
-      fi
-    fi
-  done < <(stow_targets "${pkg}" "${mode}")
-}
-
-# -----------------------------------------------------------------------------
 # Stow operations
 # -----------------------------------------------------------------------------
 
-# Runs stow (or stow -R for restow mode) for pkg after clearing any conflicts.
-# In dry-run mode, prints planned LINK/UNLINK actions without modifying
-# the filesystem.
-# Globals:
-#   DRY_RUN (read)
-# Arguments:
-#   $1 - full package path
-#   $2 - mode: "stow" (default) or "restow"
+# Parse stow dry-run output for conflict/link targets.
+# Outputs absolute paths of targets that would be linked or conflict.
+_parse_stow_targets() {
+  local output="$1"
+  local -r link_pat='^LINK: ([^[:space:]]+)'
+  local -r conflict_pat='existing target[^:]+: ([^[:space:]]+)'
+  local line
+  while IFS= read -r line; do
+    if [[ "${line}" =~ ${link_pat} || "${line}" =~ ${conflict_pat} ]]; then
+      printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
+    fi
+  done <<< "${output}"
+}
+
 _stow_exec() {
   local pkg="$1"
   local mode="${2:-stow}"
@@ -557,44 +457,93 @@ _stow_exec() {
     return 1
   fi
 
-  _remove_stow_conflicts "${pkg}" "${mode}"
+  # --- Single stow dry-run for all decisions ---
+  local -a dry_flags=(-n -v -d "${stow_dir}" -t "${HOME}")
+  case "${mode}" in
+    restow)  dry_flags+=(-R) ;;
+    unstow)  dry_flags+=(-D) ;;
+  esac
 
-  # Pre-create ~/.config so stow links individual items inside it rather
-  # than folding the whole directory into a single symlink.
-  if ! "${DRY_RUN}"; then
-    mkdir -p "${HOME}/.config"
+  local dry_rc=0
+  local dry_output
+  dry_output=$(stow "${dry_flags[@]}" "${pkg_base}" 2>&1) || dry_rc=$?
+
+  # --- State check ---
+  # stow: skip if already fully stowed (rc==0, no LINK: lines).
+  if [[ "${mode}" == stow ]] \
+      && (( dry_rc == 0 )) \
+      && ! grep -q '^LINK:' <<< "${dry_output}"; then
+    log_info "${pkg_base}: already stowed"
+    return 0
+  fi
+  # unstow: skip if nothing is stowed (no UNLINK: lines).
+  if [[ "${mode}" == unstow ]] \
+      && ! grep -q '^UNLINK:' <<< "${dry_output}"; then
+    log_warn "${pkg_base}: not stowed, skipping"
+    return 0
   fi
 
-  local -a flags=(-d "${stow_dir}" -t "${HOME}")
-  if [[ "${mode}" == restow ]]; then
-    flags+=(-R)
+  # --- Conflict resolution (stow/restow only) ---
+  if [[ "${mode}" != unstow ]]; then
+    local target
+    while IFS= read -r target; do
+      if [[ -L "${target}" ]]; then
+        if "${DRY_RUN}"; then
+          log_info "[dry-run] would remove foreign symlink:"
+          log_info "  ${target} -> $(readlink "${target}")"
+        else
+          log_warn "Removing foreign symlink:"
+          log_warn "  ${target} -> $(readlink "${target}")"
+          rm -f "${target}"
+        fi
+      elif [[ -e "${target}" ]]; then
+        if "${DRY_RUN}"; then
+          log_info "[dry-run] would remove conflicting path: ${target}"
+        else
+          if [[ "${target}" != "${HOME}"/* ]]; then
+            log_err "Refusing to remove path outside HOME: ${target}"
+            return 1
+          fi
+          log_warn "Removing conflicting path: ${target}"
+          rm -rf "${target}"
+        fi
+      fi
+    done < <(_parse_stow_targets "${dry_output}")
   fi
 
+  # --- Dry-run display ---
   if "${DRY_RUN}"; then
     log_info "[dry-run] would ${mode}: ${pkg_base}"
-    local output line has_actions=false
-    output=$(stow -n -v "${flags[@]}" "${pkg_base}" 2>&1) || true
+    local line has_actions=false
     while IFS= read -r line; do
       if [[ "${line}" =~ ^(LINK|UNLINK): ]]; then
         log_info "[dry-run]   ${line}"
         has_actions=true
       fi
-    done <<< "${output}"
-    # When conflicts prevent stow from reporting LINK lines in dry-run
-    # (because conflicting files were not actually removed), inform the user
-    # that links will be created once conflicts are cleared.
-    if ! "${has_actions}" && grep -q 'existing target' <<< "${output}"; then
+    done <<< "${dry_output}"
+    if ! "${has_actions}" && grep -q 'existing target' <<< "${dry_output}"; then
       log_info "[dry-run]   (exact links hidden by conflicts — will be created after removal)"
     fi
     return 0
   fi
 
-  local action
-  if [[ "${mode}" == restow ]]; then
-    action='restowed'
-  else
-    action='stowed'
+  # --- Actual execution ---
+  if [[ "${mode}" != unstow ]]; then
+    mkdir -p "${HOME}/.config"
   fi
+
+  local -a flags=(-d "${stow_dir}" -t "${HOME}")
+  case "${mode}" in
+    restow)  flags+=(-R) ;;
+    unstow)  flags+=(-D) ;;
+  esac
+
+  local action
+  case "${mode}" in
+    stow)    action='stowed' ;;
+    restow)  action='restowed' ;;
+    unstow)  action='unstowed' ;;
+  esac
 
   if stow "${flags[@]}" "${pkg_base}"; then
     log_ok "${pkg_base}: ${action}"
@@ -604,67 +553,22 @@ _stow_exec() {
   fi
 }
 
-# Stows pkg if not already stowed.
-# Arguments: $1 - full package path
 stow_package() {
-  if is_stowed "$1"; then
-    log_info "$(pkg_name "$1"): already stowed"
-    return 0
-  fi
   _stow_exec "$1" stow
 }
 
-# Restows pkg unconditionally (remove existing links, then re-link).
-# Arguments: $1 - full package path
 restow_package() {
   _stow_exec "$1" restow
 }
 
-# Removes stow symlinks for pkg.
-# Globals:
-#   DRY_RUN (read)
-# Arguments: $1 - full package path
 unstow_package() {
-  local pkg="$1"
-  local stow_dir
-  stow_dir=$(pkg_stow_dir "${pkg}")
-  local pkg_base
-  pkg_base=$(pkg_name "${pkg}")
-
-  if ! is_stowed "${pkg}"; then
-    log_warn "${pkg_base}: not stowed, skipping"
-    return 0
-  fi
-
-  if "${DRY_RUN}"; then
-    log_info "[dry-run] would unstow: ${pkg_base}"
-    local output line
-    output=$(
-      stow -n -D -v -d "${stow_dir}" \
-        -t "${HOME}" "${pkg_base}" 2>&1
-    ) || true
-    while IFS= read -r line; do
-      if [[ "${line}" =~ ^(LINK|UNLINK): ]]; then
-        log_info "[dry-run]   ${line}"
-      fi
-    done <<< "${output}"
-    return 0
-  fi
-
-  if stow -D -d "${stow_dir}" -t "${HOME}" "${pkg_base}"; then
-    log_ok "${pkg_base}: unstowed"
-  else
-    log_err "${pkg_base}: unstow failed"
-    return 1
-  fi
+  _stow_exec "$1" unstow
 }
 
 # -----------------------------------------------------------------------------
 # Internal helpers
 # -----------------------------------------------------------------------------
 
-# Offers to switch the login shell to zsh after a successful full install.
-# No-op if zsh is already the active shell or if shell/zsh was not stowed.
 _offer_shell_switch() {
   if ! is_stowed shell/zsh; then
     return 0
@@ -695,13 +599,6 @@ _offer_shell_switch() {
 # Commands
 # -----------------------------------------------------------------------------
 
-# Stows one or more packages.
-#   --all      Stow all packages (mutually exclusive with <pkg>)
-#   --force    Restow even if already stowed (picks up new dotfiles)
-#   --dry-run  Preview what would change without modifying anything
-# Globals:
-#   DRY_RUN (write)
-# Arguments: parsed from "$@"
 cmd_install() {
   local do_all=false
   local force=false
@@ -727,8 +624,7 @@ cmd_install() {
   fi
 
   if "${do_all}"; then
-    # In dry-run mode, only check prerequisites (do not install anything);
-    # stow must already be present for stow -n -v calls to work.
+    # Dry-run: only check prerequisites (stow -n -v needs stow present).
     if "${DRY_RUN}"; then
       ensure_prerequisites check
     else
@@ -743,8 +639,7 @@ cmd_install() {
         stow_package "${pkg}"
       fi
     done
-    # Only offer shell switch on first-time full install, not on restow or
-    # dry-run (dry-run must not modify the login shell).
+    # Only offer on first-time install, not restow or dry-run.
     if ! "${force}" && ! "${DRY_RUN}"; then
       _offer_shell_switch
     fi
@@ -777,12 +672,6 @@ cmd_install() {
   done
 }
 
-# Unstows one or more packages.
-#   --all      Unstow all currently stowed packages (mutually exclusive with <pkg>)
-#   --dry-run  Preview what would change without modifying anything
-# Globals:
-#   DRY_RUN (write)
-# Arguments: parsed from "$@"
 cmd_uninstall() {
   local do_all=false
   local -a pkgs=()
@@ -806,8 +695,7 @@ cmd_uninstall() {
   fi
 
   if "${do_all}"; then
-    # is_stowed() requires stow; without it, all packages appear "not stowed"
-    # which would silently hide the real problem (missing tool).
+    # is_stowed() needs stow; without it all packages appear "not stowed".
     if ! _has_stow; then
       log_err "GNU Stow not installed — cannot determine stow state"
       log_info "Run: ./setup.sh install --all"
@@ -851,9 +739,6 @@ cmd_uninstall() {
   done
 }
 
-# Displays prerequisite status and stow state for packages.
-# Optionally filters to specific packages; defaults to all.
-# Arguments: parsed from "$@"
 cmd_status() {
   local -a pkgs
 
@@ -888,8 +773,7 @@ cmd_status() {
     printf "  ${_RED}--${_RESET}  GNU Stow\n"
   fi
 
-  # Single pass: run is_stowed() once per package to avoid a second redundant
-  # stow -n -v call in the display loop below.
+  # Single pass to cache is_stowed() results, avoiding redundant stow -n -v.
   local -A pkg_stowed=()
   local stowed_count=0
   local pkg
@@ -934,7 +818,7 @@ show_help() {
     '  ./setup.sh <command> [flags] [packages]' '' \
     "${_BOLD}Commands:${_RESET}" \
     '  install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages' \
-    '  uninstall [--all] [--dry-run] [<pkg>...]              Unstow packages' \
+    '  uninstall [--all] [--dry-run] [<pkg>...]             Unstow packages' \
     '  status    [<pkg>...]                                 Show status and symlinks' \
     '  help                                                 Show this help' '' \
     "${_BOLD}Flags:${_RESET}" \
@@ -957,7 +841,7 @@ show_help() {
     '  ./setup.sh install --dry-run zsh            Preview what install would do' \
     '  ./setup.sh install --force --dry-run --all  Preview a full restow' \
     '  ./setup.sh uninstall --all                  Unstow all' \
-    '  ./setup.sh uninstall --dry-run zsh           Preview what uninstall would do' \
+    '  ./setup.sh uninstall --dry-run zsh          Preview what uninstall would do' \
     '  ./setup.sh status                           Full status with symlinks' \
     '  ./setup.sh status zsh                       Status for one package' '' \
     "${_BOLD}Note:${_RESET}" \
@@ -969,8 +853,8 @@ show_help() {
 # -----------------------------------------------------------------------------
 
 main() {
-  _bootstrap_checks "$@"           # platform + bash version; all functions defined here
-  _bootstrap_homebrew_env || true  # inject PATH for pre-installed brew
+  _bootstrap_checks "$@"
+  _bootstrap_homebrew_env || true
 
   if [[ $# -eq 0 ]]; then
     show_help
