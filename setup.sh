@@ -32,8 +32,7 @@ if [[ "$(uname -s)" != Darwin ]]; then
 fi
 
 # Require bash 4.3+ for local -n (nameref) and associative arrays.
-# If the running bash is too old, offer to install Homebrew + a modern bash,
-# configure PATH persistently, then re-exec this script under the new bash.
+# If the running bash is too old, offer to upgrade via _upgrade_bash().
 if (( BASH_VERSINFO[0] < 4 ||
       ( BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 3 ) )); then
   sed "s/BASH_VERSION_PLACEHOLDER/${BASH_VERSION}/" >&2 <<'EOF'
@@ -47,71 +46,16 @@ warn: bash 4.3 or later required (current: BASH_VERSION_PLACEHOLDER)
   This script will:
     1. Install Homebrew (skipped if already installed)
     2. Install the latest bash via Homebrew
-    3. Configure Homebrew PATH in ~/.bash_profile
-    4. Re-run this script with the new bash automatically
+    3. Re-run this script with the new bash automatically
 
 EOF
-  printf '  Continue? [y/N]: ' >&2
-  _reply=''
-  if ! read -r _reply; then
-    _reply=''
-  fi
-  if [[ ! "${_reply}" =~ ^[Yy]$ ]]; then
+  if ! confirm "Continue with bash upgrade?" n; then
     printf '  Aborted.\n' >&2
     exit 1
   fi
-
-  # --- Install Homebrew if absent ---
-  if ! command -v brew &>/dev/null; then
-    printf '  [info] Installing Homebrew...\n'
-    _brew_url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
-    if ! curl --fail --silent --show-error \
-        --connect-timeout "${NETWORK_TIMEOUT}" "${_brew_url}" | /bin/bash; then
-      printf '  [error] Homebrew installation failed\n' >&2
-      exit 1
-    fi
-  fi
-
-  # --- Locate brew binary; update PATH for this session ---
-  _brew_bin=''
-  for _b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
-    if [[ -x "${_b}" ]]; then
-      _brew_bin="${_b}"
-      break
-    fi
-  done
-  if [[ -z "${_brew_bin}" ]]; then
-    printf '  [error] brew not found after installation\n' >&2
-    exit 1
-  fi
-  # Note: eval is required per Homebrew's official post-install instructions.
-  # Security: path is hardcoded to official Homebrew locations.
-  eval "$("${_brew_bin}" shellenv)"
-
-  # --- Persist Homebrew PATH in ~/.bash_profile ---
-  _brew_prefix=$("${_brew_bin}" --prefix)
-  _profile="${HOME}/.bash_profile"
-  _shellenv_line="eval \"\$(${_brew_prefix}/bin/brew shellenv)\""
-  if ! grep -qF "${_shellenv_line}" "${_profile}" 2>/dev/null; then
-    printf '\n# Homebrew\n%s\n' "${_shellenv_line}" >> "${_profile}"
-    printf '  [ok] Homebrew PATH added to %s\n' "${_profile}"
-  fi
-
-  # --- Install latest bash ---
-  printf '  [info] Installing latest bash via Homebrew...\n'
-  if ! brew install bash; then
-    printf '  [error] Failed to install bash via Homebrew\n' >&2
-    exit 1
-  fi
-
-  # --- Re-exec with the new bash (4.3+) ---
-  _new_bash="${_brew_prefix}/bin/bash"
-  if [[ ! -x "${_new_bash}" ]]; then
-    printf '  [error] New bash not found at %s\n' "${_new_bash}" >&2
-    exit 1
-  fi
-  printf '  [ok] Re-running with %s...\n' "${_new_bash}"
-  exec "${_new_bash}" "$0" "$@"
+  _upgrade_bash
+  # _upgrade_bash() calls exec, so this line is only reached on error
+  exit 1
 fi
 
 # -----------------------------------------------------------------------------
