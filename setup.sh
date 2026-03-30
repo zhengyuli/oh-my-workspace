@@ -563,18 +563,6 @@ _install_homebrew() {
     log_err "Homebrew not found after installation"
     return 1
   fi
-  # Persist Homebrew PATH in ~/.bash_profile for future shell sessions.
-  local brew_prefix
-  brew_prefix=$(brew --prefix)
-  local -r profile="${HOME}/.bash_profile"
-  local -r shellenv_line="eval \"\$(${brew_prefix}/bin/brew shellenv)\""
-  if ! grep -qF "${shellenv_line}" "${profile}" 2>/dev/null; then
-    {
-      printf '\n# Homebrew\n'
-      printf '%s\n' "${shellenv_line}"
-    } >> "${profile}"
-    log_ok "Homebrew PATH configured in ${profile}"
-  fi
   log_ok "Homebrew: installed"
 }
 
