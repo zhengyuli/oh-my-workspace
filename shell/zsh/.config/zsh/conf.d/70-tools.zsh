@@ -142,3 +142,18 @@ if command -v zoxide &>/dev/null; then
   # picker. Use 'zinit' directly for zinit commands.
   unalias zi 2>/dev/null
 fi
+
+# -----------------------------------------------------------------------------
+# git -- Redirect --global writes to config.local
+# -----------------------------------------------------------------------------
+# ~/.config/git/config is the shared config (version-controlled).
+# ~/.config/git/config.local holds machine-specific overrides (not tracked).
+# config includes config.local via [include], so reads work transparently.
+# This wrapper redirects writes so git config --global never touches config.
+git() {
+  if [[ "$1" == config && "$2" == --global ]]; then
+    command git config -f "$XDG_CONFIG_HOME/git/config.local" "${@:3}"
+  else
+    command git "$@"
+  fi
+}
