@@ -532,6 +532,46 @@ _has_xcode_cli() { xcode-select -p &>/dev/null; }
 _has_homebrew() { command -v brew &>/dev/null; }
 _has_stow() { command -v stow &>/dev/null; }
 
+_upgrade_bash() {
+  log_info "bash 4.3+ required for nameref and associative arrays"
+  log_info "Current version: ${BASH_VERSION}"
+  log_info ""
+  log_info "This script will:"
+  log_info "  1. Install Homebrew (skipped if already installed)"
+  log_info "  2. Install the latest bash via Homebrew"
+  log_info "  3. Re-run this script with the new bash automatically"
+
+  if ! confirm "Continue with bash upgrade?" n; then
+    log_info "Aborted"
+    exit 1
+  fi
+
+  # Install Homebrew if needed
+  if ! _install_homebrew; then
+    exit 1
+  fi
+
+  # Install latest bash
+  log_info "Installing latest bash via Homebrew..."
+  if ! brew install bash; then
+    log_err "Failed to install bash via Homebrew"
+    exit 1
+  fi
+
+  # Locate new bash
+  local brew_prefix
+  brew_prefix=$(brew --prefix)
+  local new_bash="${brew_prefix}/bin/bash"
+  if [[ ! -x "${new_bash}" ]]; then
+    log_err "New bash not found at ${new_bash}"
+    exit 1
+  fi
+
+  # Re-exec with new bash
+  log_ok "Re-running with ${new_bash}..."
+  exec "${new_bash}" "$0" "$@"
+}
+
 _install_xcode_cli() {
   if _has_xcode_cli; then
     log_ok "Xcode CLI: already installed"
