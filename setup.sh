@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-31 19:54:38 Tuesday by zhengyu.li>
+# Time-stamp: <2026-03-31 21:47:27 Tuesday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -125,10 +125,11 @@ confirm() {
   else
     printf '\n  %s [y/N]: ' "${prompt}"
   fi
-  # read returns non-zero on EOF (non-interactive stdin); treat as default.
+
   if ! read -r reply; then
     reply=''
   fi
+
   [[ "${reply:-${default}}" =~ ^[Yy]$ ]]
 }
 
@@ -150,6 +151,7 @@ pkg_stow_dir() {
 
 _is_valid_pkg() {
   local p
+
   for p in "${PKG_ALL[@]}"; do
     if [[ "$1" == "${p}" ]]; then
       return 0
@@ -163,12 +165,14 @@ validate_pkgs() {
   shift
   _out=()
   local p found pkg
+
   for p in "$@"; do
     found=''
     if _is_valid_pkg "${p}"; then
       _out+=("${p}")
       continue
     fi
+
     for pkg in "${PKG_ALL[@]}"; do
       if [[ "$(pkg_name "${pkg}")" == "${p}" ]]; then
         _out+=("${pkg}")
@@ -176,8 +180,8 @@ validate_pkgs() {
         break
       fi
     done
+
     if [[ -z "${found}" ]]; then
-      # Suggest correct full path for partial suffixes (e.g. "python/uv").
       local suggestion=''
       for pkg in "${PKG_ALL[@]}"; do
         if [[ "${pkg}" == */"${p}" ]]; then
@@ -185,6 +189,7 @@ validate_pkgs() {
           break
         fi
       done
+
       if [[ -n "${suggestion}" ]]; then
         log_warn "Unknown package: ${p} — did you mean: ${suggestion}?"
       else
@@ -192,6 +197,7 @@ validate_pkgs() {
       fi
     fi
   done
+
   (( ${#_out[@]} > 0 ))
 }
 
@@ -202,9 +208,11 @@ validate_pkgs() {
 _has_xcode_cli() {
   xcode-select -p &>/dev/null;
 }
+
 _has_homebrew() {
   command -v brew  &>/dev/null;
 }
+
 _has_stow() {
   command -v stow  &>/dev/null;
 }
@@ -217,6 +225,7 @@ _bootstrap_homebrew_env() {
   if _has_homebrew; then
     return 0
   fi
+
   local b
   for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
     if [[ -x "${b}" ]]; then
@@ -224,6 +233,7 @@ _bootstrap_homebrew_env() {
       return 0
     fi
   done
+
   return 1
 }
 
@@ -232,34 +242,28 @@ _bootstrap_homebrew_env() {
 # -----------------------------------------------------------------------------
 
 _install_xcode_cli() {
-  if _has_xcode_cli; then
-    log_ok "Xcode CLI: already installed"
-    return 0
-  fi
   log_info "Installing Xcode Command Line Tools..."
   log_warn "Complete the dialog that appears, then press any key here."
+
   xcode-select --install
-  # read returns non-zero on EOF (non-interactive stdin); treat as default.
   if ! read -r -n 1 -s; then
     :
   fi
+
   if ! _has_xcode_cli; then
     log_err "Xcode CLI installation failed"
     return 1
   fi
+
   log_ok "Xcode CLI: installed"
 }
 
 _install_homebrew() {
-  _bootstrap_homebrew_env
-  if _has_homebrew; then
-    log_ok "Homebrew: already installed"
-    return 0
-  fi
   log_info "Installing Homebrew..."
   local -r url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
   local installer
   installer="$(mktemp)"
+
   if ! curl --fail --silent --show-error \
       --connect-timeout "${NETWORK_TIMEOUT}" \
       --output "$installer" "${url}"; then
@@ -267,11 +271,13 @@ _install_homebrew() {
     log_err "Homebrew download failed"
     return 1
   fi
+
   if ! /bin/bash "$installer"; then
     rm -f "$installer"
     log_err "Homebrew installation failed"
     return 1
   fi
+
   rm -f "$installer"
   if ! _bootstrap_homebrew_env || ! _has_homebrew; then
     log_err "Homebrew not found after installation"
@@ -283,6 +289,7 @@ _install_homebrew() {
 _ensure_homebrew_version() {
   local ver
   ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}')
+
   local major minor
   major=$(echo "${ver}" | cut -d. -f1)
   minor=$(echo "${ver}" | cut -d. -f2)
@@ -297,27 +304,19 @@ _ensure_homebrew_version() {
   log_info "Removing old Homebrew..."
 
   local -r uninstall_url='https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh'
-  if ! curl --fail --silent --show-error \
-      --connect-timeout "${NETWORK_TIMEOUT}" \
-      "${uninstall_url}" | /bin/bash; then
+  if ! curl --fail --silent --show-error --connect-timeout "${NETWORK_TIMEOUT}" \
+       "${uninstall_url}" | /bin/bash; then
     log_err "Homebrew uninstall failed"
     return 1
   fi
 
-  # Clear stale env so _install_homebrew finds a clean state
   hash -r
-  if ! _install_homebrew; then
-    return 1
-  fi
-  log_ok "Homebrew reinstalled"
+  return 1
 }
 
 _install_stow() {
-  if _has_stow; then
-    log_ok "GNU Stow: already installed"
-    return 0
-  fi
   log_info "Installing GNU Stow..."
+
   if brew install stow; then
     log_ok "GNU Stow: installed"
   else
@@ -327,10 +326,8 @@ _install_stow() {
 }
 
 _run_brew_bundle() {
-  if [[ ! -f "${BREWFILE}" ]]; then
-    die "Brewfile not found: ${BREWFILE}"
-  fi
   log_info "Running brew bundle..."
+
   if brew bundle --verbose --file="${BREWFILE}"; then
     log_ok "brew bundle: complete"
   else
@@ -340,45 +337,29 @@ _run_brew_bundle() {
 }
 
 ensure_prerequisites() {
-  local mode="${1:-check}"
-  local ok=1
-
   if ! _has_xcode_cli; then
-    if [[ "${mode}" == install ]]; then
-      if ! _install_xcode_cli; then return 1; fi
-    else
-      log_err "Xcode CLI missing"
-      ok=0
-    fi
-  fi
-  if ! _has_homebrew; then
-    if [[ "${mode}" == install ]]; then
-      if ! _install_homebrew; then return 1; fi
-    else
-      log_err "Homebrew missing"
-      ok=0
-    fi
-  fi
-  if ! _has_stow; then
-    if [[ "${mode}" == install ]]; then
-      if ! _install_stow; then return 1; fi
-    else
-      log_err "GNU Stow missing"
-      ok=0
+    if ! _install_xcode_cli; then
+      return 1;
     fi
   fi
 
-  if [[ "${mode}" == install ]]; then
-    if ! _ensure_homebrew_version; then return 1; fi
+  if ! _bootstrap_homebrew_env; then
+    # No brew found — fresh install
+    if ! _install_homebrew; then
+      return 1;
+    fi
+  elif ! _ensure_homebrew_version; then
+    # Brew found but too old — uninstalled, now reinstall
+    if ! _install_homebrew; then
+      return 1;
+    fi
   fi
+  _bootstrap_homebrew_env
 
-  if (( ! ok )); then
-    log_info "Run: ./setup.sh install --all"
-    return 1
-  fi
-  # stow must be reachable after installation.
   if ! _has_stow; then
-    die "GNU Stow unavailable after installation"
+    if ! _install_stow; then
+      return 1;
+    fi
   fi
 }
 
@@ -387,15 +368,13 @@ ensure_prerequisites() {
 # -----------------------------------------------------------------------------
 
 is_stowed() {
-  if ! _has_stow; then
-    return 1
-  fi
   local output
+
   if ! output=$(stow -n -v -d "$(pkg_stow_dir "$1")" \
-      -t "${HOME}" "$(pkg_name "$1")" 2>&1); then
+                     -t "${HOME}" "$(pkg_name "$1")" 2>&1); then
     return 1
   fi
-  # LINK: lines mean stow has pending work — package is not fully stowed.
+
   if grep -q '^LINK:' <<< "${output}"; then
     return 1
   fi
@@ -405,8 +384,10 @@ stow_links() {
   local pkg="$1"
   local stow_dir
   stow_dir=$(pkg_stow_dir "${pkg}")
+
   local pkg_base
   pkg_base=$(pkg_name "${pkg}")
+
   local pkg_dir="${stow_dir}/${pkg_base}"
   local -A shown=()
   local src rel check
@@ -414,6 +395,7 @@ stow_links() {
   while IFS= read -r src; do
     rel="${src#"${pkg_dir}"/}"
     check="${HOME}/${rel}"
+
     while [[ "${check}" != "${HOME}" ]]; do
       if [[ -L "${check}" && -z "${shown[${check}]+set}" ]]; then
         shown[${check}]=1
@@ -431,12 +413,12 @@ stow_links() {
 # -----------------------------------------------------------------------------
 
 # Parse stow dry-run output for conflict/link targets.
-# Outputs absolute paths of targets that would be linked or conflict.
 _parse_stow_targets() {
   local output="$1"
   local -r link_pat='^LINK: ([^[:space:]]+)'
   local -r conflict_pat='existing target[^:]+: ([^[:space:]]+)'
   local line
+
   while IFS= read -r line; do
     if [[ "${line}" =~ ${link_pat} || "${line}" =~ ${conflict_pat} ]]; then
       printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
@@ -446,28 +428,34 @@ _parse_stow_targets() {
 
 _resolve_stow_conflict() {
   local -r target="$1"
+
   if [[ -L "${target}" ]]; then
     if "${DRY_RUN}"; then
       log_info "[dry-run] would remove foreign symlink:"
       log_info "  ${target} -> $(readlink "${target}")"
       return 0
     fi
+
     log_warn "Removing foreign symlink:"
     log_warn "  ${target} -> $(readlink "${target}")"
     rm -f "${target}"
     return 0
   fi
+
   if [[ ! -e "${target}" ]]; then
     return 0
   fi
+
   if "${DRY_RUN}"; then
     log_info "[dry-run] would remove conflicting path: ${target}"
     return 0
   fi
+
   if [[ "${target}" != "${HOME}"/* ]]; then
     log_err "Refusing to remove path outside HOME: ${target}"
     return 1
   fi
+
   log_warn "Removing conflicting path: ${target}"
   rm -rf "${target}"
 }
@@ -477,6 +465,7 @@ _stow_exec() {
   local mode="${2:-stow}"
   local stow_dir
   stow_dir=$(pkg_stow_dir "${pkg}")
+
   local pkg_base
   pkg_base=$(pkg_name "${pkg}")
 
@@ -488,8 +477,8 @@ _stow_exec() {
   # --- Single stow dry-run for all decisions ---
   local -a dry_flags=(-n -v -d "${stow_dir}" -t "${HOME}")
   case "${mode}" in
-    restow)  dry_flags+=(-R) ;;
-    unstow)  dry_flags+=(-D) ;;
+    restow) dry_flags+=(-R) ;;
+    unstow) dry_flags+=(-D) ;;
   esac
 
   local dry_rc=0
@@ -504,6 +493,7 @@ _stow_exec() {
     log_info "${pkg_base}: already stowed"
     return 0
   fi
+
   # unstow: skip if nothing is stowed (no UNLINK: lines).
   if [[ "${mode}" == unstow ]] \
       && ! grep -q '^UNLINK:' <<< "${dry_output}"; then
@@ -523,12 +513,14 @@ _stow_exec() {
   if "${DRY_RUN}"; then
     log_info "[dry-run] would ${mode}: ${pkg_base}"
     local line has_actions=false
+
     while IFS= read -r line; do
       if [[ "${line}" =~ ^(LINK|UNLINK): ]]; then
         log_info "[dry-run]   ${line}"
         has_actions=true
       fi
     done <<< "${dry_output}"
+
     if ! "${has_actions}" \
         && grep -q 'existing target' <<< "${dry_output}"; then
       log_info "[dry-run]   (exact links hidden by conflicts" \
@@ -544,15 +536,15 @@ _stow_exec() {
 
   local -a flags=(-d "${stow_dir}" -t "${HOME}")
   case "${mode}" in
-    restow)  flags+=(-R) ;;
-    unstow)  flags+=(-D) ;;
+    restow) flags+=(-R) ;;
+    unstow) flags+=(-D) ;;
   esac
 
   local action
   case "${mode}" in
-    stow)    action='stowed' ;;
-    restow)  action='restowed' ;;
-    unstow)  action='unstowed' ;;
+    stow) action='stowed' ;;
+    restow) action='restowed' ;;
+    unstow) action='unstowed' ;;
   esac
 
   if stow "${flags[@]}" "${pkg_base}"; then
@@ -583,19 +575,23 @@ _offer_shell_switch() {
   if ! is_stowed shell/zsh; then
     return 0
   fi
+
   if [[ -n "${ZSH_VERSION:-}" || "${SHELL##*/}" == zsh ]]; then
     log_info "Already running zsh"
     return 0
   fi
+
   if ! confirm "Switch default shell to zsh?" y; then
     log_info "Skipped — run: chsh -s \"\$(which zsh)\""
     return 0
   fi
+
   local zsh_path
   if ! zsh_path=$(command -v zsh 2>/dev/null); then
     log_err "zsh not in PATH"
     return 1
   fi
+
   if chsh -s "${zsh_path}" 2>/dev/null; then
     log_ok "Default shell changed to zsh — open a new terminal."
   else
@@ -633,14 +629,13 @@ cmd_install() {
     log_info "Dry-run mode: no files will be modified."
   fi
 
+  ensure_prerequisites
+
   if "${do_all}"; then
-    # Dry-run: only check prerequisites (stow -n -v needs stow present).
-    if "${DRY_RUN}"; then
-      ensure_prerequisites check
-    else
-      ensure_prerequisites install
+    if ! "${DRY_RUN}"; then
       _run_brew_bundle
     fi
+
     local pkg
     for pkg in "${PKG_ALL[@]}"; do
       if "${force}"; then
@@ -649,10 +644,11 @@ cmd_install() {
         stow_package "${pkg}"
       fi
     done
-    # Only offer on first-time install, not restow or dry-run.
+
     if ! "${force}" && ! "${DRY_RUN}"; then
       _offer_shell_switch
     fi
+
     printf '\n'
     if "${DRY_RUN}"; then
       log_ok "Dry-run complete. No files were modified."
@@ -671,7 +667,7 @@ cmd_install() {
   if ! validate_pkgs resolved "${pkgs[@]}"; then
     die "No valid packages specified"
   fi
-  ensure_prerequisites check
+
   local pkg
   for pkg in "${resolved[@]}"; do
     if "${force}"; then
@@ -689,10 +685,10 @@ cmd_uninstall() {
 
   for arg in "$@"; do
     case "${arg}" in
-      --all)     do_all=true ;;
+      --all) do_all=true ;;
       --dry-run) DRY_RUN=true ;;
-      -*)        _misuse "Unknown flag: ${arg}" ;;
-      *)         pkgs+=("${arg}") ;;
+      -*) _misuse "Unknown flag: ${arg}" ;;
+      *) pkgs+=("${arg}") ;;
     esac
   done
 
@@ -704,15 +700,12 @@ cmd_uninstall() {
     log_info "Dry-run mode: no files will be modified."
   fi
 
+  ensure_prerequisites
+
   if "${do_all}"; then
-    # is_stowed() needs stow; without it all packages appear "not stowed".
-    if ! _has_stow; then
-      log_err "GNU Stow not installed — cannot determine stow state"
-      log_info "Run: ./setup.sh install --all"
-      return 1
-    fi
     local -a stowed=()
     local p
+
     for p in "${PKG_ALL[@]}"; do
       if is_stowed "${p}"; then
         stowed+=("${p}")
@@ -742,7 +735,7 @@ cmd_uninstall() {
   if ! validate_pkgs resolved "${pkgs[@]}"; then
     return 1
   fi
-  ensure_prerequisites check
+
   local pkg
   for pkg in "${resolved[@]}"; do
     unstow_package "${pkg}"
@@ -752,11 +745,15 @@ cmd_uninstall() {
 cmd_status() {
   local -a pkgs
 
+  ensure_prerequisites
+
   if (( $# > 0 )); then
     local -a resolved=()
+
     if ! validate_pkgs resolved "$@"; then
       return 1
     fi
+
     pkgs=("${resolved[@]}")
   else
     pkgs=("${PKG_ALL[@]}")
@@ -765,25 +762,12 @@ cmd_status() {
   print_header "oh-my-workspace status"
 
   printf '  Prerequisites\n\n'
-  if _has_xcode_cli; then
-    printf "  ${_GREEN}ok${_RESET}  Xcode CLI\n"
-  else
-    printf "  ${_RED}--${_RESET}  Xcode CLI\n"
-  fi
-  if _has_homebrew; then
-    printf "  ${_GREEN}ok${_RESET}  Homebrew  %s\n" \
-      "$(brew --version 2>/dev/null | head -1 | awk '{print $2}')"
-  else
-    printf "  ${_RED}--${_RESET}  Homebrew\n"
-  fi
-  if _has_stow; then
-    printf "  ${_GREEN}ok${_RESET}  GNU Stow  %s\n" \
-      "$(stow --version 2>/dev/null | head -1 | awk '{print $NF}')"
-  else
-    printf "  ${_RED}--${_RESET}  GNU Stow\n"
-  fi
+  printf "  ${_GREEN}ok${_RESET}  Xcode CLI\n"
+  printf "  ${_GREEN}ok${_RESET}  Homebrew  %s\n" \
+    "$(brew --version 2>/dev/null | head -1 | awk '{print $2}')"
+  printf "  ${_GREEN}ok${_RESET}  GNU Stow  %s\n" \
+    "$(stow --version 2>/dev/null | head -1 | awk '{print $NF}')"
 
-  # Single pass to cache is_stowed() results, avoiding redundant stow -n -v.
   local -A pkg_stowed=()
   local stowed_count=0
   local pkg
@@ -798,7 +782,6 @@ cmd_status() {
 
   printf '\n  Packages  (%d / %d stowed)\n' "${stowed_count}" "${#PKG_ALL[@]}"
 
-  # When displaying a filtered subset, note how many are shown.
   if (( ${#pkgs[@]} < ${#PKG_ALL[@]} )); then
     printf '  (showing %d of %d)\n' "${#pkgs[@]}" "${#PKG_ALL[@]}"
   fi
@@ -877,9 +860,9 @@ main() {
   local cmd="$1"
   shift
   case "${cmd}" in
-    install)        cmd_install "$@" ;;
-    uninstall)      cmd_uninstall "$@" ;;
-    status)         cmd_status "$@" ;;
+    install) cmd_install "$@" ;;
+    uninstall) cmd_uninstall "$@" ;;
+    status) cmd_status "$@" ;;
     help|-h|--help) show_help ;;
     *)
       log_err "Unknown command: ${cmd}"

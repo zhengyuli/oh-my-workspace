@@ -157,8 +157,6 @@ brew "wget"
 brew "btop"
 # GNU core utilities (gls, etc.)
 brew "coreutils"
-# Symlink farm manager for dotfiles
-brew "stow"
 
 # -----------------------------------------------------------------------------
 # Language Runtimes & Modern Toolchain
