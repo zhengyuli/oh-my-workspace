@@ -305,9 +305,6 @@ echo "========================================="
 # 1. GLM Configuration Check
 echo -e "\n[1/7] GLM Configuration Check"
 jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1 && echo "  GLM API endpoint configured" || echo "  GLM configuration missing"
-jq -e '.env.ENABLE_TOOL_SEARCH' ~/.claude/settings.json >/dev/null 2>&1 && echo "  ENABLE_TOOL_SEARCH set" || echo "  WARNING: ENABLE_TOOL_SEARCH missing (GLM compatibility)"
-jq -e '.env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS' ~/.claude/settings.json >/dev/null 2>&1 && echo "  DISABLE_EXPERIMENTAL_BETAS set" || echo "  WARNING: DISABLE_EXPERIMENTAL_BETAS missing (GLM compatibility)"
-jq -e '.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC' ~/.claude/settings.json >/dev/null 2>&1 && echo "  DISABLE_NONESSENTIAL_TRAFFIC set" || echo "  WARNING: DISABLE_NONESSENTIAL_TRAFFIC missing (GLM compatibility)"
 
 # 2. Plugin Count Check
 echo -e "\n[2/7] Plugin Count Check"
