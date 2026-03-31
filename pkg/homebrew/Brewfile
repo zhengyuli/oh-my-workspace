@@ -19,6 +19,7 @@ cask "font-sauce-code-pro-nerd-font"
 # Shell Environment
 # -----------------------------------------------------------------------------
 # Shell
+brew "bash"
 brew "zsh"
 # Cross-shell prompt
 brew "starship"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-30 14:12:39 Monday by zhengyu.li>
+# Time-stamp: <2026-03-31 19:54:38 Tuesday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -25,6 +25,9 @@ set -euo pipefail
 readonly LINE_WIDTH=79
 
 readonly NETWORK_TIMEOUT=60
+
+readonly MIN_HOMEBREW_MAJOR=4
+readonly MIN_HOMEBREW_MINOR=4
 
 readonly -a PKG_ALL=(
   shell/zsh
@@ -210,38 +213,6 @@ _has_stow() {
 # Prerequisites — bootstrap
 # -----------------------------------------------------------------------------
 
-_bootstrap_checks() {
-  if [[ "$(uname -s)" != Darwin ]]; then
-    printf 'error: macOS required\n' >&2
-    exit 1
-  fi
-
-  if (( BASH_VERSINFO[0] < 4 ||
-        ( BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 3 ) )); then
-    sed "s/BASH_VERSION_PLACEHOLDER/${BASH_VERSION}/" >&2 <<'EOF'
-warn: bash 4.3 or later required (current: BASH_VERSION_PLACEHOLDER)
-
-  Why upgrade?
-    • Security: bash 3.2 (macOS default) has known vulnerabilities (2007)
-    • Features: nameref, associative arrays, better glob patterns
-    • Compatibility: bash 5.x runs virtually all bash 3.2 scripts
-
-  This script will:
-    1. Install Homebrew (skipped if already installed)
-    2. Install the latest bash via Homebrew
-    3. Re-run this script with the new bash automatically
-
-EOF
-    if ! confirm "Continue with bash upgrade?" n; then
-      printf '  Aborted.\n' >&2
-      exit 1
-    fi
-    _upgrade_bash "$@"
-    # _upgrade_bash() calls exec; unreachable if exec succeeds.
-    exit 1
-  fi
-}
-
 _bootstrap_homebrew_env() {
   if _has_homebrew; then
     return 0
@@ -259,29 +230,6 @@ _bootstrap_homebrew_env() {
 # -----------------------------------------------------------------------------
 # Prerequisites — install
 # -----------------------------------------------------------------------------
-
-_upgrade_bash() {
-  if ! _install_homebrew; then
-    exit 1
-  fi
-
-  log_info "Installing latest bash via Homebrew..."
-  if ! brew install bash; then
-    log_err "Failed to install bash via Homebrew"
-    exit 1
-  fi
-
-  local brew_prefix
-  brew_prefix=$(brew --prefix)
-  local new_bash="${brew_prefix}/bin/bash"
-  if [[ ! -x "${new_bash}" ]]; then
-    log_err "New bash not found at ${new_bash}"
-    exit 1
-  fi
-
-  log_ok "Re-running with ${new_bash}..."
-  exec "${new_bash}" "$0" "$@"
-}
 
 _install_xcode_cli() {
   if _has_xcode_cli; then
@@ -303,24 +251,65 @@ _install_xcode_cli() {
 }
 
 _install_homebrew() {
+  _bootstrap_homebrew_env
   if _has_homebrew; then
     log_ok "Homebrew: already installed"
     return 0
   fi
   log_info "Installing Homebrew..."
-  local -r url
-  url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
+  local -r url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
+  local installer
+  installer="$(mktemp)"
   if ! curl --fail --silent --show-error \
       --connect-timeout "${NETWORK_TIMEOUT}" \
-      "${url}" | /bin/bash; then
+      --output "$installer" "${url}"; then
+    rm -f "$installer"
+    log_err "Homebrew download failed"
+    return 1
+  fi
+  if ! /bin/bash "$installer"; then
+    rm -f "$installer"
     log_err "Homebrew installation failed"
     return 1
   fi
+  rm -f "$installer"
   if ! _bootstrap_homebrew_env || ! _has_homebrew; then
     log_err "Homebrew not found after installation"
     return 1
   fi
   log_ok "Homebrew: installed"
+}
+
+_ensure_homebrew_version() {
+  local ver
+  ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}')
+  local major minor
+  major=$(echo "${ver}" | cut -d. -f1)
+  minor=$(echo "${ver}" | cut -d. -f2)
+
+  if (( major > MIN_HOMEBREW_MAJOR )) \
+     || (( major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR )); then
+    log_ok "Homebrew version: ${ver}"
+    return 0
+  fi
+
+  log_warn "Homebrew ${ver} is too old (need >= ${MIN_HOMEBREW_MAJOR}.${MIN_HOMEBREW_MINOR})"
+  log_info "Removing old Homebrew..."
+
+  local -r uninstall_url='https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh'
+  if ! curl --fail --silent --show-error \
+      --connect-timeout "${NETWORK_TIMEOUT}" \
+      "${uninstall_url}" | /bin/bash; then
+    log_err "Homebrew uninstall failed"
+    return 1
+  fi
+
+  # Clear stale env so _install_homebrew finds a clean state
+  hash -r
+  if ! _install_homebrew; then
+    return 1
+  fi
+  log_ok "Homebrew reinstalled"
 }
 
 _install_stow() {
@@ -377,6 +366,10 @@ ensure_prerequisites() {
       log_err "GNU Stow missing"
       ok=0
     fi
+  fi
+
+  if [[ "${mode}" == install ]]; then
+    if ! _ensure_homebrew_version; then return 1; fi
   fi
 
   if (( ! ok )); then
@@ -624,11 +617,11 @@ cmd_install() {
 
   for arg in "$@"; do
     case "${arg}" in
-      --all)     do_all=true ;;
-      --force)   force=true ;;
+      --all) do_all=true ;;
+      --force) force=true ;;
       --dry-run) DRY_RUN=true ;;
-      -*)        _misuse "Unknown flag: ${arg}" ;;
-      *)         pkgs+=("${arg}") ;;
+      -*) _misuse "Unknown flag: ${arg}" ;;
+      *) pkgs+=("${arg}") ;;
     esac
   done
 
@@ -870,9 +863,13 @@ show_help() {
 # -----------------------------------------------------------------------------
 
 main() {
-  _bootstrap_checks "$@"
-  _bootstrap_homebrew_env || true
+  # Platform check (fast, no side effects)
+  if [[ "$(uname -s)" != Darwin ]]; then
+    printf 'error: macOS required\n' >&2
+    exit 1
+  fi
 
+  # Parse args before any dependency installation
   if [[ $# -eq 0 ]]; then
     show_help
     exit 0

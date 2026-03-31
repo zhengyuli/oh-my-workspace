@@ -1,5 +1,5 @@
 " vimrc -*- mode: vim; -*-
-" Time-stamp: <2026-03-28 20:02:59 Saturday by zhengyuli>
+" Time-stamp: <2026-03-31 19:58:58 Tuesday by zhengyu.li>
 " =============================================================================
 " Minimal, plugin-free Vim config
 " Theme: Dracula (https://draculatheme.com/vim)
@@ -268,6 +268,12 @@ set statusline+=\ %3p%%
 " -----------------------------------------------------------------------------
 " Syntax Highlighting
 " -----------------------------------------------------------------------------
+" Disable treesitter — no parsers installed and Neovim 0.12+ ftplugin
+" unconditionally calls vim.treesitter.start() which errors without them
+if has('nvim')
+    lua vim.treesitter.start = function() end
+endif
+
 " Enable syntax highlighting (keeps current colors)
 syntax enable
 " Enable filetype detection, plugins, and indent rules
