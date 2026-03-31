@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pre-setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-30 21:03:20 Monday by zhengyu.li>
+# Time-stamp: <2026-03-31 23:32:43 Tuesday by zhengyu.li>
 # =============================================================================
 # Claude Code Pre-Setup
 #
@@ -45,6 +45,7 @@ _fail() {
 
 _check_cmd() {
   local -r name="$1"
+
   if command -v "$name" >/dev/null 2>&1; then
     _pass "$name: $(command "$name" --version 2>/dev/null | head -1)"
   else
@@ -71,8 +72,8 @@ _check_prerequisites() {
   if ! python3 -c "
 import sys
 from packaging.version import Version
-sys.exit(0 if Version('$os_version') >= Version('$MIN_MACOS_VERSION') else 1)
-" 2>/dev/null; then
+sys.exit(0 if Version(sys.argv[1]) >= Version(sys.argv[2]) else 1)
+" "$os_version" "$MIN_MACOS_VERSION" 2>/dev/null; then
     # Fallback: simple string comparison
     if [[ "$os_version" < "$MIN_MACOS_VERSION" ]]; then
       _fail "macOS $os_version (need $MIN_MACOS_VERSION+)"
@@ -156,22 +157,64 @@ _apply_post_fixes() {
   # Set default model to Sonnet with 1M context
   local tmp
   tmp="$(mktemp)"
-  jq '.model = "sonnet[1m]"' "$settings" > "$tmp" && mv "$tmp" "$settings"
+  if [[ -z "$tmp" ]]; then
+    _fail "mktemp failed"
+    return 1
+  fi
+
+  trap 'rm -f "$tmp"' RETURN
+  if ! jq '.model = "sonnet[1m]"' "$settings" > "$tmp"; then
+    _fail "jq failed (model)"
+    return 1
+  fi
+
+  if ! mv "$tmp" "$settings"; then
+    _fail "mv failed"
+    return 1
+  fi
   _pass "Default model set to sonnet[1m]"
 
   # Set model environment variables
   tmp="$(mktemp)"
-  jq '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air" | .env.ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5-turbo" | .env.ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1"' \
-    "$settings" > "$tmp" && mv "$tmp" "$settings"
+  if [[ -z "$tmp" ]]; then
+    _fail "mktemp failed"
+    return 1
+  fi
+
+  if ! jq '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air" | .env.ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5-turbo" | .env.ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1"' \
+    "$settings" > "$tmp"; then
+    _fail "jq failed (model env vars)"
+    return 1
+  fi
+
+  if ! mv "$tmp" "$settings"; then
+    _fail "mv failed"
+    return 1
+  fi
   _pass "Model env vars configured (haiku/sonnet/opus → GLM)"
 
   # Prevent GLM API conflicts and unsupported feature calls
   tmp="$(mktemp)"
-  jq '.env.ENABLE_TOOL_SEARCH = "0"
+  if [[ -z "$tmp" ]]; then
+    _fail "mktemp failed"
+    return 1
+  fi
+
+  if ! jq '.env.ENABLE_TOOL_SEARCH = "0"
     | .env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1"
     | .env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"' \
-    "$settings" > "$tmp" && mv "$tmp" "$settings"
+    "$settings" > "$tmp"; then
+    _fail "jq failed (GLM flags)"
+    return 1
+  fi
+
+  if ! mv "$tmp" "$settings"; then
+    _fail "mv failed"
+    return 1
+  fi
   _pass "GLM compatibility flags set"
+
+  trap - RETURN
 }
 
 # -----------------------------------------------------------------------------
