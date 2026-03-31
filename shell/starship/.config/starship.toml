@@ -11,6 +11,95 @@
 "$schema" = "https://starship.rs/config-schema.json"
 
 # -----------------------------------------------------------------------------
+# General Settings
+# -----------------------------------------------------------------------------
+
+# Date/time on info line (before line break), input line has only character
+format = "$all${custom.rdate}${custom.rtime}$line_break$character"
+
+[directory]
+read_only = " 󰌾"
+
+[hostname]
+ssh_symbol = "󰣇 "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[status]
+symbol = "✕ "
+
+[time]
+disabled = true
+
+[custom.rdate]
+command = "date '+%Y-%m-%d'"
+format = "[Time:$output/]($style)"
+style = "#bd93f9"
+when = "true"
+
+[custom.rtime]
+command = "date '+%H:%M:%S'"
+format = "[$output]($style)"
+style = "#8be9fd"
+when = "true"
+
+# -----------------------------------------------------------------------------
+# OS Symbols
+# -----------------------------------------------------------------------------
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+AOSC = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Elementary = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Ios = "󰀷 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
+Zorin = " "
+
+# -----------------------------------------------------------------------------
 # Cloud Services
 # -----------------------------------------------------------------------------
 
@@ -163,22 +252,6 @@ symbol = " "
 symbol = "󰟔 "
 
 # -----------------------------------------------------------------------------
-# General Settings
-# -----------------------------------------------------------------------------
-
-[directory]
-read_only = " 󰌾"
-
-[hostname]
-ssh_symbol = "󰣇 "
-
-[memory_usage]
-symbol = "󰍛 "
-
-[status]
-symbol = "✕ "
-
-# -----------------------------------------------------------------------------
 # Version Control
 # -----------------------------------------------------------------------------
 
@@ -206,58 +279,3 @@ symbol = " "
 
 [gcloud]
 symbol = "󰱽 "
-
-# -----------------------------------------------------------------------------
-# OS Symbols
-# -----------------------------------------------------------------------------
-
-[os.symbols]
-Alpaquita = " "
-Alpine = " "
-AlmaLinux = " "
-Amazon = " "
-Android = " "
-AOSC = " "
-Arch = " "
-Artix = " "
-CachyOS = " "
-CentOS = " "
-Debian = " "
-DragonFly = " "
-Elementary = " "
-Emscripten = " "
-EndeavourOS = " "
-Fedora = " "
-FreeBSD = " "
-Garuda = "󰛓 "
-Gentoo = " "
-HardenedBSD = "󰞌 "
-Illumos = "󰈸 "
-Ios = "󰀷 "
-Kali = " "
-Linux = " "
-Mabox = " "
-Macos = " "
-Manjaro = " "
-Mariner = " "
-MidnightBSD = " "
-Mint = " "
-NetBSD = " "
-NixOS = " "
-Nobara = " "
-OpenBSD = "󰈺 "
-openSUSE = " "
-OracleLinux = "󰌷 "
-Pop = " "
-Raspbian = " "
-Redhat = " "
-RedHatEnterprise = " "
-RockyLinux = " "
-Redox = "󰀘 "
-Solus = "󰠳 "
-SUSE = " "
-Ubuntu = " "
-Unknown = " "
-Void = " "
-Windows = "󰍲 "
-Zorin = " "
