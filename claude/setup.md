@@ -19,13 +19,13 @@ Run `claude/pre-setup.sh` before starting. It handles:
 
 This guide will configure the following components:
 
-| Component           | Count | Purpose                                                        |
-|---------------------|-------|----------------------------------------------------------------|
-| **Plugin Marketplaces** | 3  | Official + community + GLM plugin sources                     |
-| **Plugins**         | 15    | Development tools, MCP integration, auxiliary features         |
-| **MCP Servers**     | 6     | Vision, search, web reader, documentation, browser, advanced search |
-| **Hooks**           | 1     | Token optimization (RTK)                                       |
-| **Auxiliary Tools** | 2     | RTK (token savings), claude-hud (status bar)                   |
+| Component               | Count | Purpose                                                             |
+|-------------------------|-------|---------------------------------------------------------------------|
+| **Plugin Marketplaces** | 3     | Official + community + GLM plugin sources                           |
+| **Plugins**             | 15    | Development tools, MCP integration, auxiliary features              |
+| **MCP Servers**         | 6     | Vision, search, web reader, documentation, browser, advanced search |
+| **Hooks**               | 1     | Token optimization (RTK)                                            |
+| **Auxiliary Tools**     | 2     | RTK (token savings), claude-hud (status bar)                        |
 
 ## Execution Order
 
@@ -57,11 +57,11 @@ Step 7: Troubleshooting        -> Troubleshoot issues
 
 Claude Code supports a plugin system to extend functionality. This guide uses 3 plugin marketplaces:
 
-| Marketplace                  | Purpose                       | Source                                                          |
-|------------------------------|-------------------------------|-----------------------------------------------------------------|
-| **claude-plugins-official**  | Official plugins              | [GitHub](https://github.com/anthropics/claude-plugins-official) |
-| **zai-coding-plugins**       | GLM-specific plugins          | Auto-configured by `@z_ai/coding-helper`                        |
-| **claude-hud**               | Status bar display            | [GitHub](https://github.com/jarrodwatts/claude-hud)             |
+| Marketplace                 | Purpose              | Source                                                          |
+|-----------------------------|----------------------|-----------------------------------------------------------------|
+| **claude-plugins-official** | Official plugins     | [GitHub](https://github.com/anthropics/claude-plugins-official) |
+| **zai-coding-plugins**      | GLM-specific plugins | Auto-configured by `@z_ai/coding-helper`                        |
+| **claude-hud**              | Status bar display   | [GitHub](https://github.com/jarrodwatts/claude-hud)             |
 
 ### Add Plugin Marketplaces
 
