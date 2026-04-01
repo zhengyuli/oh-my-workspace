@@ -229,7 +229,7 @@ augroup vimrc_ft
     autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
     " Text files: wrap and spell check
     autocmd FileType markdown,text
-                \ setlocal wrap linebreak spell spelllang=en_us nolist
+                \ setlocal wrap linebreak nolist
     " Git commits: 72 char width, spell check
     autocmd FileType gitcommit
                 \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
