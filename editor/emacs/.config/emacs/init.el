@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-01 14:29:00 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-04-01 15:48:24 Wednesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -232,6 +232,9 @@ global-auto-revert-mode and midnight-mode."
         backup-by-copying t
         version-control t
         delete-old-versions t)
+
+  ;; Auto buffer revert
+  (setq global-auto-revert-non-file-buffers t)
 
   ;; File and buffer management
   (setq recentf-max-saved-items omw/recentf-max-items
