@@ -684,12 +684,22 @@ _offer_shell_switch() {
     return 0
   fi
 
+  if ! grep -qx "${zsh_path}" /etc/shells 2>/dev/null; then
+    if echo "${zsh_path}" | sudo tee -a /etc/shells >/dev/null 2>&1; then
+      log_ok "Added ${zsh_path} to /etc/shells"
+    else
+      log_warn "Cannot add to /etc/shells (need sudo)"
+      log_info "Run: echo '${zsh_path}' | sudo tee -a /etc/shells"
+      log_info "Then: chsh -s '${zsh_path}'"
+      return 0
+    fi
+  fi
+
   if chsh -s "${zsh_path}" 2>/dev/null; then
     log_ok "Default shell changed to zsh — open a new terminal."
   else
-    log_warn "chsh failed — zsh may not be in /etc/shells"
-    log_info "Run: echo '${zsh_path}' | sudo tee -a /etc/shells"
-    log_info "Then: chsh -s '${zsh_path}'"
+    log_warn "chsh failed"
+    log_info "Run: chsh -s '${zsh_path}'"
   fi
 }
 
