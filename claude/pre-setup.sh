@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pre-setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-31 23:32:43 Tuesday by zhengyu.li>
+# Time-stamp: <2026-04-01 14:02:49 Wednesday by zhengyu.li>
 # =============================================================================
 # Claude Code Pre-Setup
 #
@@ -15,10 +15,17 @@
 set -euo pipefail
 
 # -----------------------------------------------------------------------------
-# Helpers
+# Constants
 # -----------------------------------------------------------------------------
 
+readonly NETWORK_TIMEOUT=10
+readonly INSTALL_TIMEOUT=120
+
 readonly MIN_MACOS_VERSION="13.0"
+
+# -----------------------------------------------------------------------------
+# Error handling
+# -----------------------------------------------------------------------------
 
 _err_handler() {
   local -r code=$?
@@ -26,6 +33,10 @@ _err_handler() {
     "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
+
+# -----------------------------------------------------------------------------
+# Logging
+# -----------------------------------------------------------------------------
 
 _info() {
   printf '[info] %s\n' "$*"
@@ -43,11 +54,22 @@ _fail() {
   printf '  ✗ %s\n' "$*" >&2
 }
 
+# Check if a command exists and print its version (best-effort).
+# Some tools do not support --version; the version line will be blank.
 _check_cmd() {
   local -r name="$1"
 
+  if [[ -z "$name" ]]; then
+    return 1
+  fi
+
   if command -v "$name" >/dev/null 2>&1; then
-    _pass "$name: $(command "$name" --version 2>/dev/null | head -1)"
+    local ver
+    ver="$(command "$name" --version 2>/dev/null | head -1)" || true
+    if [[ -z "$ver" ]]; then
+      ver="(unknown version)"
+    fi
+    _pass "$name: $ver"
   else
     _fail "$name: NOT INSTALLED"
     return 1
@@ -58,10 +80,55 @@ _check_cmd() {
 # Step 1: Prerequisites Check
 # -----------------------------------------------------------------------------
 
+# Compare two dot-separated version strings (e.g. "13.0" vs "13.0").
+# Uses python3 with packaging.version if available, falls back to awk.
+# Returns 0 if os_version >= min_version, 1 otherwise.
+_check_macos_version() {
+  local -r os_version="$1"
+  local -r min_version="$2"
+
+  # Guard: empty or non-numeric version strings cannot be compared safely.
+  if [[ -z "$os_version" || ! "$os_version" =~ ^[0-9] ]]; then
+    return 1
+  fi
+  if [[ -z "$min_version" || ! "$min_version" =~ ^[0-9] ]]; then
+    return 1
+  fi
+
+  # Primary: python3 + packaging (handles pre-release tags, etc.)
+  # Guard: avoid triggering macOS "install developer tools" popup.
+  if command -v python3 >/dev/null 2>&1 \
+    && python3 -c "from packaging.version import Version" 2>/dev/null \
+    && python3 -c "
+import sys
+from packaging.version import Version
+sys.exit(0 if Version(sys.argv[1]) >= Version(sys.argv[2]) else 1)
+" "$os_version" "$min_version" 2>/dev/null; then
+    return 0
+  fi
+
+  # Fallback: numeric field comparison via awk.
+  # Compares up to 3 fields (major.minor.patch); missing fields treated as 0.
+  # Uses ARGV (not -v) to avoid backslash-escape interpretation.
+  if awk 'BEGIN {
+      ver = ARGV[1]; min = ARGV[2]
+      split(ver, v, "."); split(min, m, ".")
+      for (i = 1; i <= 3; i++) {
+        if ((v[i]+0) < (m[i]+0)) exit 1
+        if ((v[i]+0) > (m[i]+0)) exit 0
+      }
+      exit 0
+    }' "$os_version" "$min_version"; then
+    return 0
+  fi
+
+  return 1
+}
+
 _check_prerequisites() {
   _info "Checking prerequisites..."
 
-  # macOS version
+  # --- Platform ---
   if [[ "$(uname -s)" != Darwin ]]; then
     _fail "Not macOS ($(uname -s))"
     return 1
@@ -69,21 +136,17 @@ _check_prerequisites() {
 
   local os_version
   os_version="$(sw_vers -productVersion)"
-  if ! python3 -c "
-import sys
-from packaging.version import Version
-sys.exit(0 if Version(sys.argv[1]) >= Version(sys.argv[2]) else 1)
-" "$os_version" "$MIN_MACOS_VERSION" 2>/dev/null; then
-    # Fallback: simple string comparison
-    if [[ "$os_version" < "$MIN_MACOS_VERSION" ]]; then
-      _fail "macOS $os_version (need $MIN_MACOS_VERSION+)"
-      return 1
-    fi
+
+  if ! _check_macos_version "$os_version" "$MIN_MACOS_VERSION"; then
+    _fail "macOS $os_version (need $MIN_MACOS_VERSION+)"
+    return 1
   fi
   _pass "macOS $os_version"
 
-  # Required tools
+  # --- Required tools ---
   local missing=0
+  local cmd
+
   for cmd in git jq curl bun uv; do
     if ! _check_cmd "$cmd"; then
       missing=$((missing + 1))
@@ -91,15 +154,19 @@ sys.exit(0 if Version(sys.argv[1]) >= Version(sys.argv[2]) else 1)
   done
 
   if [[ "$missing" -gt 0 ]]; then
-    _warn "$missing tool(s) missing — run: brew bundle --file=pkg/homebrew/Brewfile"
+    local workspace_dir
+    workspace_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    _warn "$missing tool(s) missing —" \
+      "run: brew bundle --file=${workspace_dir}/pkg/homebrew/Brewfile"
     return 1
   fi
 
-  # Network
-  if curl -s --max-time 5 https://api.github.com >/dev/null 2>&1; then
+  # --- Network ---
+  if curl -s --max-time "$NETWORK_TIMEOUT" \
+    https://api.github.com >/dev/null 2>&1; then
     _pass "GitHub API accessible"
   else
-    _fail "Cannot reach GitHub API"
+    _fail "Cannot reach GitHub API (timeout: ${NETWORK_TIMEOUT}s)"
     return 1
   fi
 }
@@ -115,8 +182,24 @@ _install_claude() {
   fi
 
   _info "Installing claude CLI..."
-  curl -fSL https://claude.ai/install.sh | bash
-  _pass "claude CLI installed: $(claude --version 2>/dev/null)"
+
+  # Pipe curl output directly to bash — pipefail ensures failure
+  # propagates if either curl or bash fails.
+  if ! curl -fSL --connect-timeout "$NETWORK_TIMEOUT" \
+    --max-time "$INSTALL_TIMEOUT" \
+    https://claude.ai/install.sh | bash; then
+    _fail "claude CLI installation failed"
+    return 1
+  fi
+
+  # The install script may add claude to a directory not yet in PATH
+  # (e.g. ~/.claude/bin); verify availability before declaring success.
+  if command -v claude >/dev/null 2>&1; then
+    _pass "claude CLI installed: $(claude --version 2>/dev/null)"
+  else
+    _warn "claude CLI installed but not yet in PATH"
+    _warn "Will be available after opening a new terminal"
+  fi
 }
 
 # -----------------------------------------------------------------------------
@@ -124,15 +207,28 @@ _install_claude() {
 # -----------------------------------------------------------------------------
 
 _configure_glm() {
+  local -r settings="$HOME/.claude/settings.json"
+
+  # Skip if ZAI has already configured the essential auth vars.
+  if [[ -f "$settings" ]] \
+    && jq -e '.env.ANTHROPIC_BASE_URL' "$settings" >/dev/null 2>&1 \
+    && jq -e '.env.ANTHROPIC_AUTH_TOKEN' "$settings" >/dev/null 2>&1; then
+    _pass "GLM credentials already configured — skipping ZAI helper"
+    return 0
+  fi
+
   _info "Running GLM configuration helper (interactive)..."
   _info "Follow the prompts: select language, enter API key, choose plan"
 
   # Interactive tool — user may cancel (Ctrl+C) or tool may return non-zero.
-  # Do not let set -e kill the script; check exit code explicitly.
+  # Disable both set -e and the ERR trap so we can inspect the exit code.
+  # Without disabling the trap, it would overwrite $? before we capture it.
   set +e
+  trap - ERR
   bunx @z_ai/coding-helper
   local -r rc=$?
   set -e
+  trap '_err_handler' ERR
 
   if [[ "$rc" -ne 0 ]]; then
     _warn "ZAI helper exited with code $rc (may need re-run later)"
@@ -144,6 +240,8 @@ _configure_glm() {
 # Step 4: Post-ZAI Fixes
 # -----------------------------------------------------------------------------
 
+# Rewrite settings.json atomically: jq writes to a temp file, then mv
+# replaces the original.  A RETURN trap ensures cleanup on early return.
 _apply_post_fixes() {
   local -r settings="$HOME/.claude/settings.json"
 
@@ -154,67 +252,46 @@ _apply_post_fixes() {
 
   _info "Applying post-ZAI configuration fixes..."
 
-  # Set default model to Sonnet with 1M context
+  local orig_perms
+  orig_perms="$(/usr/bin/stat -f '%Lp' "$settings" 2>/dev/null \
+    || printf '%s' "600")"
+
   local tmp
   tmp="$(mktemp)"
+
   if [[ -z "$tmp" ]]; then
     _fail "mktemp failed"
     return 1
   fi
 
-  trap 'rm -f "$tmp"' RETURN
-  if ! jq '.model = "sonnet[1m]"' "$settings" > "$tmp"; then
-    _fail "jq failed (model)"
-    return 1
-  fi
+  # Remove temp file on any early return (before mv succeeds).
+  trap 'rm -f "${tmp:-}"' RETURN
 
-  if ! mv "$tmp" "$settings"; then
-    _fail "mv failed"
-    return 1
-  fi
-  _pass "Default model set to sonnet[1m]"
-
-  # Set model environment variables
-  tmp="$(mktemp)"
-  if [[ -z "$tmp" ]]; then
-    _fail "mktemp failed"
-    return 1
-  fi
-
-  if ! jq '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air" | .env.ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5-turbo" | .env.ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1"' \
-    "$settings" > "$tmp"; then
-    _fail "jq failed (model env vars)"
-    return 1
-  fi
-
-  if ! mv "$tmp" "$settings"; then
-    _fail "mv failed"
-    return 1
-  fi
-  _pass "Model env vars configured (haiku/sonnet/opus → GLM)"
-
-  # Prevent GLM API conflicts and unsupported feature calls
-  tmp="$(mktemp)"
-  if [[ -z "$tmp" ]]; then
-    _fail "mktemp failed"
-    return 1
-  fi
-
-  if ! jq '.env.ENABLE_TOOL_SEARCH = "0"
+  if ! jq '.model = "sonnet[1m]"
+    | .env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
+    | .env.ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5-turbo"
+    | .env.ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1"
+    | .env.ENABLE_TOOL_SEARCH = "0"
     | .env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1"
     | .env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"' \
     "$settings" > "$tmp"; then
-    _fail "jq failed (GLM flags)"
+    _fail "jq failed to process settings.json"
     return 1
   fi
 
   if ! mv "$tmp" "$settings"; then
-    _fail "mv failed"
+    _fail "mv failed — temp file will be cleaned up: $tmp"
     return 1
   fi
-  _pass "GLM compatibility flags set"
 
+  # Temp file already renamed — clear cleanup trap.
   trap - RETURN
+
+  if ! chmod "$orig_perms" "$settings"; then
+    _warn "Could not restore permissions ($orig_perms) on $settings"
+  fi
+
+  _pass "Model set to sonnet[1m] with GLM env vars and compatibility flags"
 }
 
 # -----------------------------------------------------------------------------
@@ -223,12 +300,22 @@ _apply_post_fixes() {
 
 _verify() {
   local -r settings="$HOME/.claude/settings.json"
-  local ok=0
+  local failed=0
 
   printf '\n'
   _info "Verifying configuration..."
 
-  # Check required env vars
+  if [[ ! -f "$settings" ]]; then
+    _fail "settings.json not found at $settings"
+    return 1
+  fi
+
+  if ! jq empty "$settings" 2>/dev/null; then
+    _fail "settings.json is not valid JSON"
+    return 1
+  fi
+
+  # --- Check required env vars ---
   local -a required=(
     ANTHROPIC_BASE_URL
     ANTHROPIC_AUTH_TOKEN
@@ -240,36 +327,41 @@ _verify() {
     ANTHROPIC_DEFAULT_OPUS_MODEL
   )
 
+  local var val
   for var in "${required[@]}"; do
-    if jq -e ".env.\"$var\"" "$settings" >/dev/null 2>&1; then
+    val="$(jq -r ".env.\"$var\"" "$settings")"
+    if [[ -n "$val" && "$val" != "null" ]]; then
       _pass "$var"
     else
-      _fail "$var missing"
-      ok=1
+      _fail "$var missing or empty"
+      failed=1
     fi
   done
 
-  # Check model
+  # --- Check model ---
   local model
   model="$(jq -r '.model' "$settings")"
+
   if [[ "$model" == "sonnet[1m]" ]]; then
     _pass "model = $model"
   else
     _fail "model = $model (expected sonnet[1m])"
-    ok=1
+    failed=1
   fi
 
-  # Check claude CLI
+  # --- Check claude CLI ---
+  # May need a new terminal if just installed (PATH not yet updated).
   if command -v claude >/dev/null 2>&1; then
     _pass "claude CLI: $(claude --version 2>/dev/null)"
   else
-    _fail "claude CLI not found"
-    ok=1
+    _warn "claude CLI not in PATH (available after new terminal)"
   fi
 
-  if [[ "$ok" -ne 0 ]]; then
+  if [[ "$failed" -ne 0 ]]; then
     return 1
   fi
+
+  return 0
 }
 
 # -----------------------------------------------------------------------------
@@ -281,19 +373,50 @@ main() {
   printf ' Claude Code Pre-Setup\n'
   printf '=========================================\n\n'
 
-  _check_prerequisites
+  if ! _check_prerequisites; then
+    printf '\n'
+    _warn "Prerequisites check failed — resolve issues above, then re-run"
+    trap - ERR
+    exit 1
+  fi
   printf '\n'
 
-  _install_claude
+  if ! _install_claude; then
+    printf '\n'
+    _warn "Claude CLI installation failed — check network, then re-run"
+    trap - ERR
+    exit 1
+  fi
   printf '\n'
 
   _configure_glm
   printf '\n'
 
-  _apply_post_fixes
+  # Guard: ZAI helper must have created settings.json before post-fixes.
+  if [[ ! -f "$HOME/.claude/settings.json" ]]; then
+    _warn "settings.json not created — ZAI helper may have been cancelled"
+    _warn "Re-run ./claude/pre-setup.sh and complete the ZAI prompts"
+    trap - ERR
+    exit 1
+  fi
+
+  if ! _apply_post_fixes; then
+    printf '\n'
+    _warn "Post-configuration failed — check ~/.claude/settings.json"
+    trap - ERR
+    exit 1
+  fi
   printf '\n'
 
-  _verify
+  if ! _verify; then
+    printf '\n'
+    _warn "Verification found issues — review the output above"
+    printf '\nNext steps:\n'
+    printf '  1. Re-run: ./claude/pre-setup.sh\n'
+    printf '  2. Or manually check: ~/.claude/settings.json\n'
+    trap - ERR
+    exit 1
+  fi
 
   printf '\n'
   printf '=========================================\n'
