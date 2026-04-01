@@ -210,8 +210,9 @@ augroup vimrc
     " Equalize splits when terminal is resized
     autocmd VimResized * wincmd =
 
-    " Auto-reload file when gaining focus (external changes)
+    " Auto-reload file when gaining focus or on idle (external changes)
     autocmd FocusGained,BufEnter * silent! checktime
+    autocmd CursorHold,CursorHoldI * silent! checktime
 
 augroup END
 
