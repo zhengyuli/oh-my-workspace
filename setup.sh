@@ -362,6 +362,14 @@ _ensure_homebrew_version() {
   # Return 1 intentionally so the caller (ensure_prerequisites) proceeds
   # to re-install Homebrew via _install_homebrew.
   hash -r
+
+  # Verify brew is truly gone from PATH after uninstall.
+  local _brew_residual
+  if _brew_residual=$(command -v brew 2>/dev/null); then
+    log_warn "Homebrew still found at ${_brew_residual} after uninstall"
+    log_info "PATH may contain stale entries"
+  fi
+
   return 1
 }
 
@@ -488,12 +496,18 @@ stow_links() {
 # Returns absolute target paths, one per line.
 _parse_stow_targets() {
   local output="$1"
-  local -r link_pat='^LINK: (.+) =>'
-  local -r conflict_pat='existing target[^:]+: (.+)'
-  local line
+  local -r conflict_owned_pat='existing target is not owned by stow: (.+)'
+  local -r conflict_file_pat='existing target ([^ ]+) since'
+  local line _rest
 
   while IFS= read -r line; do
-    if [[ "${line}" =~ ${link_pat} || "${line}" =~ ${conflict_pat} ]]; then
+    if [[ "${line}" == LINK:* ]]; then
+      # Split on first " => " to extract the link target path.
+      _rest="${line#LINK: }"
+      printf '%s\n' "${HOME}/${_rest%% => *}"
+    elif [[ "${line}" =~ ${conflict_owned_pat} ]]; then
+      printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
+    elif [[ "${line}" =~ ${conflict_file_pat} ]]; then
       printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
     fi
   done <<< "${output}"
@@ -528,10 +542,17 @@ _resolve_stow_conflict() {
   fi
 
   # Safety: refuse to remove non-empty directories (e.g. ~/.config).
-  if [[ -d "${target}" ]] && [[ -n "$(ls -A "${target}" 2>/dev/null)" ]]; then
-    log_err "Refusing to remove non-empty directory: ${target}"
-    log_info "Move it aside manually: mv '${target}' '${target}.bak'"
-    return 1
+  if [[ -d "${target}" ]]; then
+    if [[ ! -r "${target}" ]]; then
+      log_err "Cannot read directory (permission denied): ${target}"
+      log_info "Remove it manually: sudo rm -rf '${target}'"
+      return 1
+    fi
+    if [[ -n "$(ls -A "${target}")" ]]; then
+      log_err "Refusing to remove non-empty directory: ${target}"
+      log_info "Move it aside manually: mv '${target}' '${target}.bak'"
+      return 1
+    fi
   fi
 
   if "${DRY_RUN}"; then
@@ -589,6 +610,14 @@ _stow_exec() {
       return 1
     fi
     log_warn "${pkg_base}: not stowed, skipping"
+    return 0
+  fi
+
+  # restow: skip if already fully stowed with no conflicts.
+  if [[ "${mode}" == restow ]] \
+       && ! grep -q 'existing target' <<< "${dry_output}" \
+       && is_stowed "$1"; then
+    log_info "${pkg_base}: already stowed, no changes needed"
     return 0
   fi
 
@@ -750,7 +779,12 @@ cmd_install() {
         log_info "[dry-run] would run brew bundle"
       fi
     else
-      _run_brew_bundle || log_warn "brew bundle had failures, continuing..."
+      if _run_brew_bundle; then
+        : # success, proceed to stow
+      elif ! confirm "brew bundle had failures. Continue with stow?" n; then
+        log_info "Cancelled"
+        return 1
+      fi
     fi
 
     local pkg
@@ -931,21 +965,28 @@ cmd_status() {
   local total_stowed=0
   local pkg
 
-  for pkg in "${PKG_ALL[@]}"; do
+  for pkg in "${pkgs[@]}"; do
     if is_stowed "${pkg}"; then
       pkg_stowed[${pkg}]=1
-      total_stowed=$(( total_stowed + 1 ))
+      stowed_count=$(( stowed_count + 1 ))
     else
       pkg_stowed[${pkg}]=0
     fi
   done
 
-  # Count stowed packages within the filtered set.
-  for pkg in "${pkgs[@]}"; do
-    if (( pkg_stowed[${pkg}] )); then
-      stowed_count=$(( stowed_count + 1 ))
-    fi
-  done
+  # Calculate total stowed across all packages (for subset display).
+  if (( ${#pkgs[@]} < ${#PKG_ALL[@]} )); then
+    total_stowed="${stowed_count}"
+    local other_pkg
+    for other_pkg in "${PKG_ALL[@]}"; do
+      if [[ -z "${pkg_stowed[${other_pkg}]+set}" ]] \
+           && is_stowed "${other_pkg}"; then
+        total_stowed=$(( total_stowed + 1 ))
+      fi
+    done
+  else
+    total_stowed="${stowed_count}"
+  fi
 
   printf '\n  Packages  (%d / %d stowed' "${stowed_count}" "${#pkgs[@]}"
   if (( ${#pkgs[@]} < ${#PKG_ALL[@]} )); then
