@@ -294,7 +294,7 @@ rtk --version
 rtk init --show
 
 # 3. Verify Plugin count
-claude plugin list | wc -l
+claude plugin list 2>/dev/null | grep -c '✔ enabled'
 printf 'Expected: 15 plugins\n'
 ```
 
@@ -335,7 +335,7 @@ fi
 # 2. Plugin Count Check
 printf '\n[2/7] Plugin Count Check\n'
 if command -v claude >/dev/null 2>&1; then
-  PLUGIN_COUNT="$(claude plugin list 2>/dev/null | wc -l | xargs)"
+  PLUGIN_COUNT="$(claude plugin list 2>/dev/null | grep -c '✔ enabled')"
   if (( PLUGIN_COUNT >= MIN_PLUGIN_COUNT )); then
     _pass "Plugin count: $PLUGIN_COUNT"
   else

@@ -260,6 +260,8 @@ echo "alias mycmd='echo hello'" > ~/.config/zsh/local/aliases.zsh
 |----------------------------------|---------------------------------------------------|
 | [uv](https://docs.astral.sh/uv/) | Fast Python package manager (replaces pip/pipenv) |
 | [bun](https://bun.sh/)           | JavaScript/TypeScript runtime and package manager |
+| [node](https://nodejs.org/)      | Node.js runtime (plugin compatibility)            |
+| [python](https://www.python.org/) | Python runtime (plugin compatibility)            |
 | [go](https://go.dev/)            | Go programming language                           |
 | [rustup](https://rustup.rs/)     | Rust toolchain installer                          |
 
@@ -270,7 +272,8 @@ echo "alias mycmd='echo hello'" > ~/.config/zsh/local/aliases.zsh
 | [jq](https://stedolan.github.io/jq/)       | Command-line JSON processor  |
 | [yq](https://github.com/mikefarah/yq)      | Command-line YAML processor  |
 | [wget](https://www.gnu.org/software/wget/) | Network downloader           |
-| [htop](https://htop.dev/)                  | Interactive process viewer   |
+| [btop](https://github.com/aristocratos/btop) | System resource monitor     |
+| [coreutils](https://www.gnu.org/software/coreutils/) | GNU core utilities (gls, etc.) |
 | [pandoc](https://pandoc.org/)              | Universal document converter |
 
 ### GUI Applications
