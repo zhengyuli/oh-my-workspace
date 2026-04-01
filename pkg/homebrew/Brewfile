@@ -168,6 +168,14 @@ brew "oven-sh/bun/bun"
 # uv -- Python package manager (replaces pyenv/pip)
 brew "uv"
 
+# Node.js -- some Claude Code plugins require node directly
+# (primary runtime is bun; node is for compatibility only)
+brew "node"
+
+# Python -- fallback for scripts requiring system python3
+# (primary package manager is uv; python is for compatibility only)
+brew "python"
+
 # Go -- Go runtime
 brew "go"
 
