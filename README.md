@@ -153,7 +153,9 @@ oh-my-workspace/
     └── homebrew/         # Brewfile
 ```
 
-Each package directory follows the [GNU Stow](https://www.gnu.org/software/stow/manual/) convention: files are placed as they would appear in `$HOME`.
+Each package directory follows the [GNU Stow][stow] convention: files are placed as they would appear in `$HOME`.
+
+[stow]: https://www.gnu.org/software/stow/manual/
 
 ## Customization
 

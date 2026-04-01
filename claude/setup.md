@@ -6,14 +6,19 @@
 
 ## Prerequisite
 
-Run `claude/pre-setup.sh` before starting. It handles:
+**IMPORTANT**: Run `claude/pre-setup.sh` manually in your terminal BEFORE entering Claude Code. Claude Code MUST NOT execute this script — it requires interactive input (API key, plan selection) that only a human can provide.
+
+It handles:
 - System prerequisites check (macOS 13+, git, jq, curl, bun, uv)
 - Claude CLI installation
 - GLM API configuration (model mapping, env vars)
 
 ```bash
+# Run this in your terminal, NOT inside Claude Code
 ./claude/pre-setup.sh
 ```
+
+After `pre-setup.sh` completes successfully, open Claude Code and follow Steps 1–7 below.
 
 ## Configuration Overview
 
@@ -30,6 +35,12 @@ This guide will configure the following components:
 ## Execution Order
 
 **Must execute in order, do not skip or reorder**
+
+> **Idempotent**: All commands in this guide are safe to re-run.
+> Plugin marketplace add, plugin install, and MCP add skip or overwrite
+> existing entries without error.
+
+**Claude Code starts here** — execute Steps 1–7 sequentially:
 
 ```
 Step 1: Plugin Marketplaces    -> Add plugin sources
