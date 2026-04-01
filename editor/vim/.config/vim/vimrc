@@ -179,9 +179,10 @@ nnoremap <C-l> <C-w>l
 " Disable accidental Ex mode entry
 nnoremap Q <Nop>
 
-" System clipboard integration
+" System clipboard via OSC 52
+" Neovim 0.10+ auto-detects OSC 52 from Ghostty terminal capability.
+" Vim requires +clipboard compile flag (macOS system Vim has this).
 if has('clipboard')
-    " Use system clipboard for yank/paste
     set clipboard=unnamedplus
 endif
 

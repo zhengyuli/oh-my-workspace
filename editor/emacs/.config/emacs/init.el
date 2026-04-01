@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-28 19:32:12 Saturday by zhengyuli>
+;; Time-stamp: <2026-04-01 14:29:00 Wednesday by zhengyu.li>
 
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
@@ -155,15 +155,6 @@ to more conservative values after the init phase completes.")
   :hook (after-init . gcmh-mode))
 
 ;; ============================================================================
-(use-package exec-path-from-shell
-  :ensure t
-  :defer t
-  :when (eq system-type 'darwin)
-  :hook (after-init . exec-path-from-shell-initialize)
-  :config
-  (setq exec-path-from-shell-arguments '("-l")))
-
-;; ============================================================================
 (use-package auto-package-update
   :ensure t
   :defer t
@@ -177,6 +168,25 @@ to more conservative values after the init phase completes.")
   :hook (after-init . which-key-mode)
   :config
   (which-key-setup-minibuffer))
+
+;; ============================================================================
+(use-package exec-path-from-shell
+  :ensure t
+  :defer t
+  :when (eq system-type 'darwin)
+  :hook (after-init . exec-path-from-shell-initialize)
+  :config
+  (setq exec-path-from-shell-arguments '("-l")))
+
+;; ============================================================================
+;; GUI frames use native macOS clipboard (NS pasteboard).
+;; Terminal frames rely on OSC 52 to bridge kill-ring → system clipboard.
+(unless (display-graphic-p)
+  (setq xterm-extra-capabilities '(setSelection))
+  (when (fboundp 'xterm--set-selection)
+    (setq interprogram-cut-function
+          (lambda (text)
+            (xterm--set-selection "c" text)))))
 
 ;; ============================================================================
 ;; Number of recent-file entries persisted across sessions.  200 provides a
