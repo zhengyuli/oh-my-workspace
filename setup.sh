@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-31 23:29:31 Tuesday by zhengyu.li>
+# Time-stamp: <2026-04-01 13:11:14 Wednesday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -135,8 +135,8 @@ confirm() {
 
 # --- Status display (table format — no bracket prefix) ---
 # Label widths: "ok" (2) padded to match "missing" (7).
-_status_ok() { printf "  ${_GREEN}ok${_RESET}       %s\n" "$*"; }
-_status_missing() { printf "  ${_RED}missing${_RESET}  %s\n" "$*"; }
+_status_ok() { printf "  ${_GREEN}[ok]${_RESET}       %s\n" "$*"; }
+_status_missing() { printf "  ${_RED}[missing]${_RESET}  %s\n" "$*"; }
 
 # --- Package status labels ---
 _status_stowed() { printf "  %s ${_GREEN}[stowed]${_RESET}    :\n" "$1"; }
@@ -179,6 +179,9 @@ validate_pkgs() {
   local p found pkg
 
   for p in "$@"; do
+    if [[ -z "${p}" ]]; then
+      continue
+    fi
     found=''
 
     # Exact "category/name" match
@@ -248,7 +251,7 @@ _bootstrap_homebrew_env() {
 # -----------------------------------------------------------------------------
 
 readonly XCODE_POLL_INTERVAL=5
-readonly XCODE_POLL_MAX=60
+readonly XCODE_POLL_MAX=600
 
 # Install Xcode CLI and poll until available (timeout XCODE_POLL_MAX seconds).
 _install_xcode_cli() {
@@ -304,7 +307,7 @@ _install_homebrew() {
 # If too old: offer to uninstall, then return 1 so the caller reinstalls.
 _ensure_homebrew_version() {
   local ver
-  ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}')
+  ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}') || true
 
   if [[ -z "${ver}" || ! "${ver}" =~ ^[0-9]+\.[0-9]+ ]]; then
     log_err "Cannot determine Homebrew version (got: '${ver}')"
@@ -338,12 +341,23 @@ _ensure_homebrew_version() {
   log_info "Removing old Homebrew..."
 
   local -r uninstall_url='https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh'
+  local uninstaller
+  uninstaller="$(mktemp)"
+
   if ! curl --fail --silent --show-error \
        --connect-timeout "${NETWORK_TIMEOUT}" \
-       "${uninstall_url}" | /bin/bash; then
+       --output "$uninstaller" "${uninstall_url}"; then
+    rm -f "$uninstaller"
+    log_err "Homebrew uninstall script download failed"
+    return 1
+  fi
+
+  if ! /bin/bash "$uninstaller"; then
+    rm -f "$uninstaller"
     log_err "Homebrew uninstall failed"
     return 1
   fi
+  rm -f "$uninstaller"
 
   # Return 1 intentionally so the caller (ensure_prerequisites) proceeds
   # to re-install Homebrew via _install_homebrew.
@@ -474,8 +488,8 @@ stow_links() {
 # Returns absolute target paths, one per line.
 _parse_stow_targets() {
   local output="$1"
-  local -r link_pat='^LINK: ([^[:space:]]+)'
-  local -r conflict_pat='existing target[^:]+: ([^[:space:]]+)'
+  local -r link_pat='^LINK: (.+) =>'
+  local -r conflict_pat='existing target[^:]+: (.+)'
   local line
 
   while IFS= read -r line; do
@@ -490,12 +504,13 @@ _parse_stow_targets() {
 _resolve_stow_conflict() {
   local -r target="$1"
 
-  if [[ -L "${target}" ]]; then
-    if [[ "${target}" != "${HOME}"/* ]]; then
-      log_err "Refusing to remove symlink outside HOME: ${target}"
-      return 1
-    fi
+  # Safety: refuse to operate outside $HOME (check before any other logic).
+  if [[ "${target}" != "${HOME}"/* ]]; then
+    log_err "Refusing to remove path outside HOME: ${target}"
+    return 1
+  fi
 
+  if [[ -L "${target}" ]]; then
     if "${DRY_RUN}"; then
       log_info "[dry-run] would remove foreign symlink:"
       log_info "  ${target} -> $(readlink "${target}")"
@@ -522,11 +537,6 @@ _resolve_stow_conflict() {
   if "${DRY_RUN}"; then
     log_info "[dry-run] would remove conflicting path: ${target}"
     return 0
-  fi
-
-  if [[ "${target}" != "${HOME}"/* ]]; then
-    log_err "Refusing to remove path outside HOME: ${target}"
-    return 1
   fi
 
   log_warn "Removing conflicting path: ${target}"
@@ -605,7 +615,7 @@ _stow_exec() {
     if ! "${has_actions}" \
         && grep -q 'existing target' <<< "${dry_output}"; then
       log_info "[dry-run]   (exact links hidden by conflicts" \
-               " — will be created after removal)"
+               "— will be created after removal)"
     fi
     return 0
   fi
@@ -671,7 +681,7 @@ _offer_shell_switch() {
   local zsh_path
   if ! zsh_path=$(command -v zsh 2>/dev/null); then
     log_err "zsh not in PATH"
-    return 1
+    return 0
   fi
 
   if chsh -s "${zsh_path}" 2>/dev/null; then
@@ -719,8 +729,18 @@ cmd_install() {
   ensure_prerequisites
 
   if "${do_all}"; then
-    if ! "${DRY_RUN}"; then
-      _run_brew_bundle
+    if "${DRY_RUN}"; then
+      if _has_homebrew && [[ -f "${BREWFILE}" ]]; then
+        log_info "[dry-run] brew bundle preview:"
+        brew bundle check --file="${BREWFILE}" 2>&1 \
+          | while IFS= read -r line; do
+              log_info "[dry-run]   ${line}"
+            done || true
+      else
+        log_info "[dry-run] would run brew bundle"
+      fi
+    else
+      _run_brew_bundle || log_warn "brew bundle had failures, continuing..."
     fi
 
     local pkg
@@ -760,7 +780,13 @@ cmd_install() {
   done
 
   if ! "${DRY_RUN}"; then
-    _offer_shell_switch
+    local _pkg
+    for _pkg in "${resolved[@]}"; do
+      if [[ "${_pkg}" == "shell/zsh" ]]; then
+        _offer_shell_switch
+        break
+      fi
+    done
   fi
 }
 
@@ -815,7 +841,12 @@ cmd_uninstall() {
       return 0
     fi
 
-    if ! confirm "Uninstall all ${#stowed[@]} stowed packages?" n; then
+    if "${DRY_RUN}"; then
+      log_info "Would uninstall ${#stowed[@]} stowed packages:"
+      for p in "${stowed[@]}"; do
+        log_info "  $(pkg_name "${p}")"
+      done
+    elif ! confirm "Uninstall all ${#stowed[@]} stowed packages?" n; then
       log_info "Cancelled"
       return 0
     fi
@@ -865,7 +896,7 @@ cmd_status() {
 
   if _has_homebrew; then
     local brew_ver
-    brew_ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}')
+    brew_ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}') || true
     _status_ok "Homebrew  ${brew_ver}"
   else
     _status_missing "Homebrew"
@@ -873,7 +904,7 @@ cmd_status() {
 
   if _has_stow; then
     local stow_ver
-    stow_ver=$(stow --version 2>/dev/null | head -1 | awk '{print $NF}')
+    stow_ver=$(stow --version 2>/dev/null | head -1 | awk '{print $NF}') || true
     _status_ok "GNU Stow  ${stow_ver}"
   else
     _status_missing "GNU Stow"

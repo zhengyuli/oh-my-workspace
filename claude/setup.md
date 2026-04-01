@@ -181,8 +181,10 @@ MCP (Model Context Protocol) server configuration (6 total):
 # Visit: https://tavily.com/
 # Register account and get API Key
 
-# 2. Add global MCP configuration
-claude mcp add --transport http --scope user tavily "https://mcp.tavily.com/mcp/?tavilyApiKey=Your_Tavily_Key"
+# 2. Add global MCP configuration (replace <YOUR_KEY> with actual key)
+TAVILY_KEY="<YOUR_TAVILY_KEY>"  # ← Replace with your actual key
+claude mcp add --transport http --scope user tavily \
+  "https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_KEY}"
 
 # 3. Verify configuration
 jq '.mcpServers | keys' ~/.claude.json
@@ -282,7 +284,7 @@ rtk init --show
 
 # 3. Verify Plugin count
 claude plugin list | wc -l
-echo "Expected: 15 plugins"
+printf 'Expected: 15 plugins\n'
 ```
 
 ---
@@ -296,61 +298,108 @@ After completing all configurations, perform comprehensive verification.
 ### Complete Verification Script
 
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "========================================="
-echo "Claude Code Environment Verification"
-echo "========================================="
+readonly SCRIPT_NAME="Claude Code Environment Verification"
+readonly MIN_PLUGIN_COUNT=15
+readonly MIN_MCP_COUNT=4
+
+# --- Logging ---
+_pass() { printf '  ✓ %s\n' "$*"; }
+_fail() { printf '  ✗ %s\n' "$*" >&2; }
+
+printf '=========================================\n'
+printf ' %s\n' "$SCRIPT_NAME"
+printf '=========================================\n'
 
 # 1. GLM Configuration Check
-echo -e "\n[1/7] GLM Configuration Check"
-jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1 && echo "  GLM API endpoint configured" || echo "  GLM configuration missing"
+printf '\n[1/7] GLM Configuration Check\n'
+if jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1; then
+  _pass "GLM API endpoint configured"
+else
+  _fail "GLM configuration missing"
+fi
 
 # 2. Plugin Count Check
-echo -e "\n[2/7] Plugin Count Check"
-PLUGIN_COUNT=$(claude plugin list 2>/dev/null | wc -l | xargs)
-[[ "$PLUGIN_COUNT" -ge 15 ]] && echo "  Plugin count: $PLUGIN_COUNT" || echo "  Low plugin count: $PLUGIN_COUNT"
+printf '\n[2/7] Plugin Count Check\n'
+if command -v claude >/dev/null 2>&1; then
+  PLUGIN_COUNT="$(claude plugin list 2>/dev/null | wc -l | xargs)"
+  if (( PLUGIN_COUNT >= MIN_PLUGIN_COUNT )); then
+    _pass "Plugin count: $PLUGIN_COUNT"
+  else
+    _fail "Low plugin count: $PLUGIN_COUNT (expected >= $MIN_PLUGIN_COUNT)"
+  fi
+else
+  _fail "claude CLI not in PATH"
+fi
 
 # 3. MCP Check
-echo -e "\n[3/7] MCP Check"
-MCP_COUNT=$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)
-[[ "$MCP_COUNT" -ge 4 ]] && echo "  MCP count: $MCP_COUNT" || echo "  Low MCP count: $MCP_COUNT"
+printf '\n[3/7] MCP Check\n'
+if [[ -f ~/.claude.json ]]; then
+  MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)"
+  if (( MCP_COUNT >= MIN_MCP_COUNT )); then
+    _pass "MCP count: $MCP_COUNT (3 GLM + 1+ plugins/tavily)"
+  else
+    _fail "Low MCP count: $MCP_COUNT (expected >= $MIN_MCP_COUNT)"
+  fi
+else
+  _fail "~/.claude.json not found"
+fi
 
 # 4. Hooks Check
-echo -e "\n[4/7] Hooks Check"
-jq -e '.hooks.PreToolUse' ~/.claude/settings.json >/dev/null 2>&1 && echo "  Hooks configured" || echo "  Hooks not configured"
+printf '\n[4/7] Hooks Check\n'
+if jq -e '.hooks.PreToolUse' ~/.claude/settings.json >/dev/null 2>&1; then
+  _pass "Hooks configured"
+else
+  _fail "Hooks not configured"
+fi
 
 # 5. RTK Check
-echo -e "\n[5/7] RTK Check"
-command -v rtk >/dev/null 2>&1 && echo "  RTK installed: $(rtk --version 2>&1 | head -1)" || echo "  RTK not installed"
+printf '\n[5/7] RTK Check\n'
+if command -v rtk >/dev/null 2>&1; then
+  _pass "RTK installed: $(rtk --version 2>&1 | head -1)"
+else
+  _fail "RTK not installed"
+fi
 
 # 6. claude-hud Check
-echo -e "\n[6/7] claude-hud Check"
-jq -e '.statusLine' ~/.claude/settings.json >/dev/null 2>&1 && echo "  claude-hud configured" || echo "  claude-hud not configured"
+printf '\n[6/7] claude-hud Check\n'
+if jq -e '.statusLine' ~/.claude/settings.json >/dev/null 2>&1; then
+  _pass "claude-hud configured"
+else
+  _fail "claude-hud not configured (run /claude-hud:setup)"
+fi
 
 # 7. Configuration File Format Check
-echo -e "\n[7/7] Configuration File Format Check"
-jq empty ~/.claude/settings.json 2>/dev/null && echo "  settings.json OK" || echo "  settings.json INVALID"
-jq empty ~/.claude.json 2>/dev/null && echo "  .claude.json OK" || echo "  .claude.json INVALID"
+printf '\n[7/7] Configuration File Format Check\n'
+if jq empty ~/.claude/settings.json 2>/dev/null; then
+  _pass "settings.json OK"
+else
+  _fail "settings.json INVALID"
+fi
+if jq empty ~/.claude.json 2>/dev/null; then
+  _pass ".claude.json OK"
+else
+  _fail ".claude.json INVALID"
+fi
 
-echo -e "\n========================================="
-echo "Verification Complete"
-echo "========================================="
+printf '\n=========================================\n'
+printf ' Verification Complete\n'
+printf '=========================================\n'
 ```
 
-**Save and Execute Verification Script:**
+**Save and Execute:**
 
 ```bash
-# Save verification script
-cat > /tmp/verify-claude-env.sh << 'EOF'
-#!/bin/bash
-# [Paste the verification script content above]
-EOF
+# Option 1: Copy the script above and pipe to bash
+# (select the verification script block, copy to clipboard, then run)
+pbpaste | bash
 
-# Add execute permission
+# Option 2: Save to file and execute
+# (copy the script block, then save and run)
+pbpaste > /tmp/verify-claude-env.sh
 chmod +x /tmp/verify-claude-env.sh
-
-# Execute verification
 /tmp/verify-claude-env.sh
 ```
 
@@ -362,8 +411,9 @@ chmod +x /tmp/verify-claude-env.sh
 
 **Problem: Invalid GLM API Key**
 ```bash
-# Diagnose
-curl -H "Authorization: Bearer YOUR_API_KEY" https://open.bigmodel.cn/api/anthropic
+# Diagnose (replace <YOUR_API_KEY> with actual key)
+GLM_KEY="<YOUR_API_KEY>"  # ← Replace with your actual key
+curl -H "Authorization: Bearer ${GLM_KEY}" https://open.bigmodel.cn/api/anthropic
 
 # Solution
 # Re-run pre-setup.sh
@@ -380,9 +430,13 @@ claude plugin marketplace list
 # Re-add marketplace
 claude plugin marketplace add anthropics/claude-plugins-official
 
-# Manually clone marketplace
-cd ~/.claude/plugins/marketplaces
-git clone https://github.com/anthropics/claude-plugins-official.git
+# Manually clone marketplace (if re-add fails)
+if [[ -d ~/.claude/plugins/marketplaces ]]; then
+  cd ~/.claude/plugins/marketplaces
+  git clone https://github.com/anthropics/claude-plugins-official.git
+else
+  printf 'error: directory not found: ~/.claude/plugins/marketplaces\n' >&2
+fi
 ```
 
 **Problem: Plugin Not Loading**
@@ -433,20 +487,26 @@ export HTTPS_PROXY="http://your-proxy:port"
 ### 7.6 Complete Reset
 
 **Problem: All Configuration Failed**
+
+> **Warning**: This deletes ALL Claude Code data — CLI binary, plugins, MCP servers, hooks, and settings. You must re-run `pre-setup.sh` and all setup steps from scratch.
+
 ```bash
-# Warning: This will delete all configurations
+# 1. Backup important files (if still readable)
+if [[ -f ~/.claude/settings.json ]]; then
+  cp ~/.claude/settings.json ~/settings.json.backup
+fi
+if [[ -f ~/.claude.json ]]; then
+  cp ~/.claude.json ~/claude.json.backup
+fi
 
-# 1. Backup important files
-cp ~/.claude/settings.json ~/settings.json.backup
-cp ~/.claude.json ~/claude.json.backup
-
-# 2. Delete configuration directories
+# 2. Delete all Claude Code data (CLI + config + plugins)
 rm -rf ~/.claude/
 rm -rf ~/.config/rtk/
 
-# 3. Restart configuration
+# 3. Reinstall CLI + GLM config
 ./claude/pre-setup.sh
-# Then follow this guide from Step 1
+
+# 4. Re-apply all setup steps (from Step 1)
 ```
 
 ---
