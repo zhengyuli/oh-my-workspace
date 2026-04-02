@@ -27,7 +27,7 @@ if (( ${+ZINIT_INITIALIZED} )); then
   return 0
 fi
 
-ZINIT_HOME="$XDG_DATA_HOME/zinit/zinit.git"
+typeset -g ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
 
 if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
   print -P "%F{cyan}Installing Zinit...%f"
@@ -55,7 +55,7 @@ typeset -gA ZINIT
 ZINIT[ZCOMPDUMP_PATH]="$XDG_CACHE_HOME/zsh/zcompdump"
 
 source "$ZINIT_HOME/zinit.zsh"
-ZINIT_INITIALIZED=1
+typeset -g ZINIT_INITIALIZED=1
 
 # -----------------------------------------------------------------------------
 # Plugin loading order (matches actual execution order)
@@ -90,7 +90,11 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 # disabled: perf cost on large histories
 # HISTORY_SUBSTRING_SEARCH_FUZZY=1
 # Keybindings via atload: widgets must exist before bindkey can reference them
+# Use terminfo for maximum terminal compatibility (official README recommendation)
+# plus both normal-mode and application-mode fallbacks.
 zinit ice wait"0b" lucid atload'
+  bindkey "$terminfo[kcuu1]" history-substring-search-up
+  bindkey "$terminfo[kcud1]" history-substring-search-down
   bindkey "^[[A" history-substring-search-up
   bindkey "^[[B" history-substring-search-down
   bindkey "^[OA" history-substring-search-up
@@ -106,8 +110,8 @@ zinit light zsh-users/zsh-history-substring-search
 # so the first suggestion appears without requiring a keypress.
 # history first, then completion
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-# no suggestion for long buffers
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40
+# no suggestion for very long buffers (>75 chars)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=75
 # Doom One comment color
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'
 zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
@@ -162,14 +166,15 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
    || eza -1 --color=always --icons "$realpath" 2>/dev/null'
 
 # Environment variables: preview value (hide sensitive variables)
-# Match: -command-, -parameter-, -brace-parameter-, export, unset
-typeset -g _sensitive_pattern
-_sensitive_pattern='(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE)'
-typeset -g _ev='(-command-|-parameter-|-brace-parameter-|export|unset|expand)'
-zstyle ":fzf-tab:complete:${_ev}:*" fzf-preview \
-  '[[ "$word" =~ ${(q)_sensitive_pattern} ]] && print "(hidden)" \
-   || print -r -- "${(P)word}"'
-unset _ev _sensitive_pattern
+# Match: -command-, -parameter-, -brace-parameter-, export, unset, expand
+# Single-quoted regex is literal — no variable expansion at registration or
+# execution time.  Pattern is embedded directly to avoid unset-variable bugs
+# that would break the entire preview (previous code used a temp var that was
+# unset before fzf-tab could evaluate it).
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
+  fzf-preview \
+  '[[ "$word" =~ (?i)(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE) ]] \
+   && print "(hidden)" || print -r -- "${(P)word}"'
 
 # kill: preview process info
 # Use BSD-compatible -p flag (macOS ps does not support --pid)
@@ -186,7 +191,7 @@ zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' fzf-preview \
 
 # man: preview man page
 zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview \
-  'man $word 2>/dev/null | head -50'
+  'MANPAGER=cat man $word 2>/dev/null | head -50'
 
 # git: preview diff/log
 zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
