@@ -12,11 +12,20 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 ```toml
 # filename.toml -*- mode: toml; -*-
 # Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
+#
 # =============================================================================
 # Title - Brief description
 #
-# References:
-#   1. Official documentation URL
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: keyword1, keyword2
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-MM-DD HH:MM zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Detailed description of what this config does.
 # =============================================================================
 ```
 
@@ -28,13 +37,16 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
+Blank line is required after every Level 1 closing line before code.
+
 ```toml
 # Level 0 (file header — shown in File Header section above)
 
 # Level 1 (primary section)
 # -----------------------------------------------------------------------------
-# Section Name
+# Section Title
 # -----------------------------------------------------------------------------
+# ← blank line required here
 
 # Level 2 (subsection)
 # --- Subsection Title ---
