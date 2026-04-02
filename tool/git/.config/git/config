@@ -1,20 +1,32 @@
 # config -*- mode: gitconfig; -*-
 # Time-stamp: <2026-03-28 00:00:00 Saturday by zhengyu.li>
+#
 # =============================================================================
 # Git Configuration
 #
-# XDG: Native support (GIT_CONFIG_GLOBAL or default ~/.config/git/config)
-#      - Local override: ~/.config/git/config.local (identity, proxy, etc.)
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: git, vcs, config
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-28 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Global Git configuration for all repositories. User identity is
+#   intentionally omitted; set machine-specific config in config.local.
+#   Local override: ~/.config/git/config.local (identity, proxy, etc.)
+#
 # References:
 #   1. Git Config Docs: https://git-scm.com/docs/git-config
 #   2. Julia Evans: https://jvns.ca/blog/2024/02/16/popular-git-config-options/
-# Note: Put personal user info (name, email) in ~/.config/git/config.local
 # =============================================================================
 
 # -----------------------------------------------------------------------------
 # User (override in ~/.config/git/config.local)
 # -----------------------------------------------------------------------------
-# Identity intentionally omitted here; set machine-specific config in .local
+
+# Identity intentionally omitted; set machine-specific config in .local
 
 [include]
     path = ~/.config/git/config.local
@@ -22,6 +34,7 @@
 # -----------------------------------------------------------------------------
 # Core Settings
 # -----------------------------------------------------------------------------
+
 [core]
     # Use delta for syntax-highlighted, line-numbered diff output
     pager = delta
@@ -45,6 +58,7 @@
 # -----------------------------------------------------------------------------
 # Interactive Settings
 # -----------------------------------------------------------------------------
+
 [interactive]
     # Pipe interactive diff through delta for consistent highlighting
     diffFilter = delta --color-only
@@ -52,6 +66,7 @@
 # -----------------------------------------------------------------------------
 # Delta Settings
 # -----------------------------------------------------------------------------
+
 # https://github.com/dandavison/delta
 [delta]
     # Enable n/N keybindings to navigate between diff hunks
@@ -63,6 +78,7 @@
 # -----------------------------------------------------------------------------
 # Feature Flags
 # -----------------------------------------------------------------------------
+
 [feature]
     # Optimize for repositories with many files
     manyFiles = true
@@ -70,6 +86,7 @@
 # -----------------------------------------------------------------------------
 # Help Settings
 # -----------------------------------------------------------------------------
+
 [help]
     # Confirm before running autocorrected command (Git 2.36+)
     autocorrect = prompt
@@ -77,12 +94,14 @@
 # -----------------------------------------------------------------------------
 # Init Settings
 # -----------------------------------------------------------------------------
+
 [init]
     defaultBranch = main
 
 # -----------------------------------------------------------------------------
 # Alias Definitions
 # -----------------------------------------------------------------------------
+
 [alias]
     # Set user identity in config.local (git set-user "Name" "email")
     set-user = "!f(){ g=~/.config/git/config.local;git config -f \"$g\" user.name \"$1\";git config -f \"$g\" user.email \"$2\";};f"
@@ -92,6 +111,7 @@
 # -----------------------------------------------------------------------------
 # Color Settings
 # -----------------------------------------------------------------------------
+
 [color]
     # Colorize output when writing to terminal
     ui = auto
@@ -99,6 +119,7 @@
 # -----------------------------------------------------------------------------
 # Branch Settings
 # -----------------------------------------------------------------------------
+
 [branch]
     # Sort branches by most recent commit (newest first)
     sort = -committerdate
@@ -106,6 +127,7 @@
 # -----------------------------------------------------------------------------
 # Tag Settings
 # -----------------------------------------------------------------------------
+
 [tag]
     # Sort tags by semantic version (descending)
     sort = -version:refname
@@ -113,6 +135,7 @@
 # -----------------------------------------------------------------------------
 # Column Settings
 # -----------------------------------------------------------------------------
+
 [column]
     # Display branch/tag lists in columns when space allows
     ui = auto
@@ -120,6 +143,7 @@
 # -----------------------------------------------------------------------------
 # Push & Pull Settings
 # -----------------------------------------------------------------------------
+
 [push]
     # Only push current branch to its upstream (safest default)
     default = simple
@@ -133,6 +157,7 @@
 # -----------------------------------------------------------------------------
 # Fetch Settings
 # -----------------------------------------------------------------------------
+
 [fetch]
     # Remove stale remote-tracking branches
     prune = true
@@ -142,6 +167,7 @@
 # -----------------------------------------------------------------------------
 # Rebase Settings
 # -----------------------------------------------------------------------------
+
 [rebase]
     # Auto-squash fixup!/squash! commits during interactive rebase
     autosquash = true
@@ -153,6 +179,7 @@
 # -----------------------------------------------------------------------------
 # Rerere (Reuse Recorded Resolution)
 # -----------------------------------------------------------------------------
+
 [rerere]
     # Remember and replay conflict resolutions
     enabled = true
@@ -160,6 +187,7 @@
 # -----------------------------------------------------------------------------
 # Commit Settings
 # -----------------------------------------------------------------------------
+
 [commit]
     # Show diff in commit message editor template
     verbose = true
@@ -167,6 +195,7 @@
 # -----------------------------------------------------------------------------
 # Diff Settings
 # -----------------------------------------------------------------------------
+
 [diff]
     # Use histogram algorithm (better at handling code moves)
     algorithm = histogram
@@ -185,6 +214,7 @@
 # -----------------------------------------------------------------------------
 # Merge Settings
 # -----------------------------------------------------------------------------
+
 [merge]
     # Show base context in conflicts (Git 2.35+)
     conflictstyle = zdiff3
@@ -196,6 +226,7 @@
 # -----------------------------------------------------------------------------
 # Transfer Settings (Security)
 # -----------------------------------------------------------------------------
+
 [transfer]
     # Verify object integrity during transfer
     fsckobjects = true
@@ -203,5 +234,6 @@
 # -----------------------------------------------------------------------------
 # Credential Helper (macOS)
 # -----------------------------------------------------------------------------
+
 [credential]
     helper = osxkeychain

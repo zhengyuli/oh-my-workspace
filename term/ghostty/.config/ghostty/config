@@ -1,9 +1,21 @@
 # config -*- mode: conf; -*-
 # Time-stamp: <2026-03-21 00:00:00 Friday by zhengyu.li>
+#
 # =============================================================================
 # Ghostty Terminal Configuration
 #
-# XDG: Native support (reads $XDG_CONFIG_HOME/ghostty/config by default)
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: ghostty, terminal, config
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-21 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Ghostty terminal emulator configuration. XDG native support reads
+#   $XDG_CONFIG_HOME/ghostty/config by default.
+#
 # References:
 #   1. Config Docs:   https://ghostty.org/docs/config
 #   2. Option Ref:    https://ghostty.org/docs/config/reference
@@ -13,11 +25,13 @@
 # -----------------------------------------------------------------------------
 # Theme
 # -----------------------------------------------------------------------------
+
 theme = Dracula
 
 # -----------------------------------------------------------------------------
 # Fonts
 # -----------------------------------------------------------------------------
+
 font-family = "SauceCodePro Nerd Font"
 font-size = 15
 font-thicken = true
@@ -33,6 +47,7 @@ font-shaping-break = cursor
 # -----------------------------------------------------------------------------
 # Cursor
 # -----------------------------------------------------------------------------
+
 cursor-style = bar
 cursor-style-blink = false
 cursor-color = #00BFFF
@@ -42,6 +57,7 @@ adjust-cursor-thickness = 12
 # -----------------------------------------------------------------------------
 # Window & Appearance
 # -----------------------------------------------------------------------------
+
 window-padding-x = 8
 window-padding-y = 8
 window-padding-balance = true
@@ -58,6 +74,7 @@ macos-titlebar-proxy-icon = hidden
 # -----------------------------------------------------------------------------
 # Rendering
 # -----------------------------------------------------------------------------
+
 window-vsync = true
 minimum-contrast = 1.1
 window-colorspace = display-p3
@@ -65,12 +82,14 @@ window-colorspace = display-p3
 # -----------------------------------------------------------------------------
 # Shell Integration
 # -----------------------------------------------------------------------------
+
 shell-integration = detect
 shell-integration-features = cursor,sudo,title
 
 # -----------------------------------------------------------------------------
 # Notifications
 # -----------------------------------------------------------------------------
+
 # Requires shell integration (OSC 133) — already enabled above.
 # Covers long-running shell commands (builds, tests, etc.) when Ghostty is
 # unfocused.
@@ -82,6 +101,7 @@ notify-on-command-finish-after = 30s
 # -----------------------------------------------------------------------------
 # Scrollback & Selection
 # -----------------------------------------------------------------------------
+
 # Increased from 10000: Claude Code sessions generate substantial output.
 scrollback-limit = 50000
 copy-on-select = clipboard
@@ -90,12 +110,14 @@ selection-clear-on-typing = true
 # -----------------------------------------------------------------------------
 # URL Handling
 # -----------------------------------------------------------------------------
+
 link-url = true
 link-previews = true
 
 # -----------------------------------------------------------------------------
 # Clipboard
 # -----------------------------------------------------------------------------
+
 clipboard-read = allow
 clipboard-write = allow
 clipboard-trim-trailing-spaces = true
@@ -105,11 +127,13 @@ clipboard-paste-bracketed-safe = true
 # -----------------------------------------------------------------------------
 # Mouse
 # -----------------------------------------------------------------------------
+
 mouse-hide-while-typing = true
 
 # -----------------------------------------------------------------------------
 # Terminal
 # -----------------------------------------------------------------------------
+
 term = xterm-ghostty
 grapheme-width-method = unicode
 bell-features = system
@@ -117,6 +141,7 @@ bell-features = system
 # -----------------------------------------------------------------------------
 # Multi-surface Behavior
 # -----------------------------------------------------------------------------
+
 window-inherit-working-directory = true
 window-inherit-font-size = true
 window-new-tab-position = current
@@ -127,6 +152,7 @@ unfocused-split-opacity = 0.6
 # -----------------------------------------------------------------------------
 # Quick Terminal
 # -----------------------------------------------------------------------------
+
 quick-terminal-position = top
 quick-terminal-screen = main
 quick-terminal-animation-duration = 0.2
@@ -134,6 +160,7 @@ quick-terminal-animation-duration = 0.2
 # -----------------------------------------------------------------------------
 # macOS
 # -----------------------------------------------------------------------------
+
 macos-option-as-alt = left
 macos-icon = retro
 auto-update = check
@@ -141,6 +168,7 @@ auto-update = check
 # -----------------------------------------------------------------------------
 # Keybindings
 # -----------------------------------------------------------------------------
+
 # --- Config ---
 keybind = super+shift+comma=reload_config
 
@@ -165,4 +193,5 @@ keybind = ctrl+l=unbind
 # -----------------------------------------------------------------------------
 # Local overrides  (optional, not tracked by version control)
 # -----------------------------------------------------------------------------
+
 config-file = ?config.local
