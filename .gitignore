@@ -65,6 +65,7 @@
 **/*.zwc
 **/history
 **/.zhistory
+**/.zsh_history
 **/zinit/
 **/conf.d/99-local.zsh
 

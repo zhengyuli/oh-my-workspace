@@ -11,7 +11,7 @@
 #   2. Configure function search path (FPATH) for completions/autoload
 #   3. Configure manual page search path (MANPATH)
 #   4. Configure info page search path (INFOPATH)
-#   5. Ensure idempotency via typeset -gU (unique, global)
+#   5. Ensure unique entries via typeset -gU (unique, global)
 #
 # Prerequisites:
 #   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL, XDG_* variables
@@ -23,13 +23,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Idempotency Guard
-# -----------------------------------------------------------------------------
-(( ${+_OMW_PATH_INITIALIZED} )) && return 0
-_OMW_PATH_INITIALIZED=1
-
-# -----------------------------------------------------------------------------
-# Deduplication (must come first for idempotency)
+# Deduplication (must come first)
 # -----------------------------------------------------------------------------
 # -g: global scope (affects all contexts)
 # -U: unique (remove duplicates, keep first occurrence)
