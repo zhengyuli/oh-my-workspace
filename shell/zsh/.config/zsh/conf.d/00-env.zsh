@@ -1,5 +1,5 @@
 # 00-env.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-04-02 12:01:02 Thursday by zhengyu.li>
 # =============================================================================
 # Core Environment Variables
 #
@@ -21,6 +21,12 @@
 #             → Functions in functions/ directory (autoloaded)
 #             → Tool initialization in 70-tools.zsh (lazy-loaded)
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# Idempotency Guard
+# -----------------------------------------------------------------------------
+(( ${+_OMW_ENV_INITIALIZED} )) && return 0
+_OMW_ENV_INITIALIZED=1
 
 # -----------------------------------------------------------------------------
 # Editor / Pager

@@ -1,5 +1,5 @@
 # 05-path.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-04-02 11:26:39 Thursday by zhengyu.li>
 # =============================================================================
 # PATH / FPATH / MANPATH / INFOPATH Management
 #
@@ -20,14 +20,13 @@
 #             → Tool initialization in 70-tools.zsh
 #             → Aliases in 20-aliases.zsh
 #             → Environment variables in 00-env.zsh
-#
-# PATH Priority (highest to lowest):
-#   1. User-local binaries (~/.local/bin) - explicit user choice; uv installs
-#   2. Development tool binaries - user-installed dev tools (cargo, go, bun)
-#   3. Package manager binaries - Homebrew, system packages
-#   4. System sbin - admin commands (lower priority)
-#   5. Existing system PATH - fallback
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# Idempotency Guard
+# -----------------------------------------------------------------------------
+(( ${+_OMW_PATH_INITIALIZED} )) && return 0
+_OMW_PATH_INITIALIZED=1
 
 # -----------------------------------------------------------------------------
 # Deduplication (must come first for idempotency)

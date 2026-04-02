@@ -30,7 +30,7 @@ This guide will configure the following components:
 | **Plugins**             | 15    | Development tools, MCP integration, auxiliary features              |
 | **MCP Servers**         | 6     | Vision, search, web reader, documentation, browser, advanced search |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
-| **Auxiliary Tools**     | 2     | RTK (token savings), claude-hud (status bar)                        |
+| **Auxiliary Tools**     | 3     | RTK (token savings), claude-hud (status bar), Happy (mobile client) |
 
 ## Execution Order
 
@@ -59,6 +59,7 @@ Step 7: Troubleshooting        -> Troubleshoot issues
 - **GLM API Documentation**: https://open.bigmodel.cn/dev/api
 - **claude-hud**: https://github.com/jarrodwatts/claude-hud
 - **RTK**: https://github.com/rtk-ai/rtk
+- **Happy**: https://happy.engineering
 
 ---
 
@@ -259,8 +260,24 @@ jq '.hooks' ~/.claude/settings.json
 
 Auxiliary tools were installed in previous steps, only need verification and configuration:
 
+- **Happy** - Claude Code mobile/web client
 - **claude-hud** - Installed in Step 2.3
 - **RTK** - Installed in Step 4
+
+### Install Happy
+
+```bash
+# Install Happy CLI globally via bun
+bun install -g happy
+
+# Trust the package (required by bun for global packages)
+cd ~/.local/share/bun/install/global && bun pm trust happy
+
+# Verify installation
+happy --version
+```
+
+> **Note**: `bun pm trust` is required because bun restricts lifecycle scripts for globally installed packages. Without this step, Happy may fail to run properly.
 
 ### Configure claude-hud Statusline
 
@@ -285,15 +302,18 @@ claude
 ### Verify All Tools
 
 ```bash
-# 1. Verify claude-hud
+# 1. Verify Happy
+happy --version
+
+# 2. Verify claude-hud
 claude plugin list | grep claude-hud
 jq '.statusLine' ~/.claude/settings.json
 
-# 2. Verify RTK
+# 3. Verify RTK
 rtk --version
 rtk init --show
 
-# 3. Verify Plugin count
+# 4. Verify Plugin count
 claude plugin list 2>/dev/null | grep -c '✔ enabled'
 printf 'Expected: 15 plugins\n'
 ```
@@ -374,16 +394,24 @@ else
   _fail "RTK not installed"
 fi
 
-# 6. claude-hud Check
-printf '\n[6/7] claude-hud Check\n'
+# 6. Happy Check
+printf '\n[6/8] Happy Check\n'
+if command -v happy >/dev/null 2>&1; then
+  _pass "Happy installed: $(happy --version 2>&1 | head -1)"
+else
+  _fail "Happy not installed"
+fi
+
+# 7. claude-hud Check
+printf '\n[7/8] claude-hud Check\n'
 if jq -e '.statusLine' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "claude-hud configured"
 else
   _fail "claude-hud not configured (run /claude-hud:setup)"
 fi
 
-# 7. Configuration File Format Check
-printf '\n[7/7] Configuration File Format Check\n'
+# 8. Configuration File Format Check
+printf '\n[8/8] Configuration File Format Check\n'
 if jq empty ~/.claude/settings.json 2>/dev/null; then
   _pass "settings.json OK"
 else
@@ -530,5 +558,6 @@ Your Claude Code environment is now fully configured with:
 - 6 MCP servers
 - RTK token optimization
 - claude-hud status bar
+- Happy mobile client
 
 Enjoy using Claude Code!

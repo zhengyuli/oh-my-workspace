@@ -77,6 +77,6 @@ if command -v bat &>/dev/null; then
   alias cats='bat --style=numbers,changes'
 fi
 
-alias reload-zsh='exec zsh'
+alias reload-zsh='exec zsh -l'
 
 alias brew-upgrade='brew update && brew upgrade && brew cleanup'

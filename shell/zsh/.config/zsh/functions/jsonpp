@@ -13,5 +13,5 @@
 #   cat data.json | jsonpp
 #   curl -s https://api.example.com | jsonpp
 # =============================================================================
-setopt pipefail
+setopt localoptions pipefail
 python3 -m json.tool "$@" | bat --language json --style plain
