@@ -85,7 +85,11 @@
               ("M-p" . centaur-tabs-backward)
               ("M-n" . centaur-tabs-forward)
               ("M-P" . centaur-tabs-backward-group)
-              ("M-N" . centaur-tabs-forward-group))
+              ("M-N" . centaur-tabs-forward-group)
+              ("s-p" . centaur-tabs-backward)
+              ("s-n" . centaur-tabs-forward)
+              ("s-P" . centaur-tabs-backward-group)
+              ("s-N" . centaur-tabs-forward-group))
   :custom-face
   (centaur-tabs-selected
    ((t (:inherit omw/centaur-tabs-base :bold t
