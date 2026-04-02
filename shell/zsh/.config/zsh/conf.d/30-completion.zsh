@@ -42,7 +42,9 @@ _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 #   N  = nullglob (empty array instead of error when no match)
 #   .  = regular file (not a directory or symlink)
 #   mh-N = modification time < N hours ago  (i.e., the dump is still fresh)
-readonly COMPDUMP_MAX_AGE_HOURS=20
+if (( ! ${+COMPDUMP_MAX_AGE_HOURS} )); then
+  readonly COMPDUMP_MAX_AGE_HOURS=20
+fi
 _zcompdump_fresh=( ${_zcompdump}(N.mh-${COMPDUMP_MAX_AGE_HOURS}) )
 if (( ${#_zcompdump_fresh} )); then
   # fresh: skip security check for speed
@@ -50,6 +52,13 @@ if (( ${#_zcompdump_fresh} )); then
 else
   # stale/missing: full rebuild
   compinit -d "$_zcompdump"
+fi
+
+# Compile dump to bytecode for faster subsequent loads.
+# .zwc is loaded automatically when newer than the source dump.
+if [[ -s "$_zcompdump" && ( ! -s "${_zcompdump}.zwc" \
+  || "$_zcompdump" -nt "${_zcompdump}.zwc" ) ]]; then
+  zcompile "$_zcompdump"
 fi
 unset _zcompdump _zcompdump_fresh
 
@@ -62,7 +71,10 @@ unset _zcompdump _zcompdump_fresh
 # creates confusion about which system is in control.
 
 # Matcher list: zsh tries each pattern in order until one matches
-#   1. m:{a-z}={A-Za-z} - case-insensitive (fo → Foo, FO, foo)
+#   1. m:{a-z}={A-Za-z} - smart case: lowercase matches both cases
+#                         (fo → Foo, FO, foo; but FO does NOT match foo).
+#                         Chosen over m:{a-zA-Z}={A-Za-z} to avoid a
+#                         zsh 5.9 regression (Debian #1013434).
 #   2. r:|[._-]=* r:|=* - partial-word after separators (f_b → foo_bar)
 #   3. l:|=* r:|=* - substring anywhere (bar → foo_bar, oob → foo_bar)
 zstyle ':completion:*' matcher-list \
@@ -93,8 +105,12 @@ zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 #   =01;34=0=01 means: match=bold blue, first group=default, second group=bold
 zstyle ':completion:*:*:kill:*:processes' list-colors \
   '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+# Fallback for when fzf-tab is disabled: use built-in menu selection for kill.
+# When fzf-tab is active, these are dead code (fzf-tab intercepts completions
+# before zsh's menu system is invoked; see 40-plugins.zsh kill fzf-preview).
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*' force-list always
+# insert-ids controls PID insertion behavior (not display), remains effective.
 zstyle ':completion:*:*:kill:*' insert-ids single
 
 # ssh / scp / rsync host completion (from known_hosts)
@@ -105,6 +121,9 @@ zstyle ':completion:*:(ssh|scp|rsync):*' group-order \
 
 # List directories before files
 zstyle ':completion:*' list-dirs-first true
+
+# Collapse consecutive slashes in path completion (foo//bar → foo/bar)
+zstyle ':completion:*' squeeze-slashes true
 
 # Completion cache (speeds up completion on large systems)
 zstyle ':completion:*' use-cache yes
