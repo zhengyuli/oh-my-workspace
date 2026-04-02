@@ -1,29 +1,12 @@
 ;;; omw-markdown.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: markdown, polymode
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -32,13 +15,16 @@
 ;;; Commentary:
 ;;
 ;; Markdown mode configuration with Claude Code integration.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Markdown
+;; ----------------------------------------------------------------------------
+
+;; --- Markdown Constants ---
 (defconst omw/markdown-fill-column 150
   "Text fill-column width for Markdown buffers.
-Controls both `fill-column' (hard wrap) and `visual-fill-column-width'.")
+Controls both `fill-column' (hard wrap) and `visual-fill-column-width').")
 
 (defconst omw/markdown-colors '((header . "#46dcb0")
                                 (code-bg . "#293134")
@@ -64,6 +50,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
 (defconst omw/markdown-h6-height 1.0
   "Height scale for level-6 Markdown headers.")
 
+;; --- Markdown Faces Remap ---
 (defun omw/markdown-faces-remap ()
   "Remap markdown buffer faces."
   (let* ((header-color (cdr (assq 'header omw/markdown-colors)))
@@ -91,7 +78,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
     (face-remap-add-relative 'markdown-inline-code-face
      `(:foreground ,code-fg))))
 
-;; ============================================================================
+;; --- valign ---
 (use-package valign
   :ensure t
   :defer t
@@ -100,25 +87,25 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
   :config
   (setq valign-fancy-bar t))
 
-;; ============================================================================
+;; --- markdownfmt ---
 (use-package markdownfmt
   :ensure t
   :defer t)
 
-;; ============================================================================
+;; --- visual-fill-column ---
 (use-package visual-fill-column
   :ensure t
   :defer t
   :config
   (setq visual-fill-column-enable-sensible-window-split t))
 
-;; ============================================================================
+;; --- olivetti ---
 (use-package olivetti
   :ensure t
   :defer t
   :hook (markdown-mode . olivetti-mode))
 
-;; ============================================================================
+;; --- Markdown Align All Tables ---
 (defun omw/markdown-align-all-tables ()
   "Align all markdown tables in current buffer."
   (interactive)
@@ -130,6 +117,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
         (markdown-table-align))
       (forward-line 1))))
 
+;; --- Markdown Mode Setup ---
 (defun omw/markdown-mode-setup ()
   "Apply custom settings for markdown mode."
   (require 'visual-fill-column)

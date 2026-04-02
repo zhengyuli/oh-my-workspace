@@ -1,29 +1,12 @@
 ;;; omw-edit.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: editing, deletion, whitespace, pairs
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -33,10 +16,13 @@
 ;;
 ;; Editing enhancements: smart text operations, visual undo,
 ;; expand region, kill ring browser, and file templates.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Editing
+;; ----------------------------------------------------------------------------
+
+;; --- Smart Indent ---
 (defun omw/indent-entire-buffer ()
   "Format entire buffer.
 Indent, delete trailing whitespace, convert tabs to spaces."
@@ -55,7 +41,7 @@ Indent, delete trailing whitespace, convert tabs to spaces."
         (call-interactively 'indent-region)
       (call-interactively 'omw/indent-entire-buffer))))
 
-;; ============================================================================
+;; --- Copy Region ---
 (defun omw/copy-region ()
   "Copy active region to kill ring."
   (interactive)
@@ -75,7 +61,7 @@ Indent, delete trailing whitespace, convert tabs to spaces."
         (call-interactively 'omw/copy-region)
       (call-interactively 'omw/copy-current-line))))
 
-;; ============================================================================
+;; --- Smart Kill Region ---
 (defun omw/smart-kill-region ()
   "Kill region if mark is active; otherwise kill entire line."
   (interactive)
@@ -83,7 +69,7 @@ Indent, delete trailing whitespace, convert tabs to spaces."
       (call-interactively 'kill-region)
     (call-interactively 'kill-whole-line)))
 
-;; ============================================================================
+;; --- Smart Kill Buffer ---
 (defun omw/smart-kill-buffer ()
   "Smart buffer close.
 Prompt for file buffers with changes, kill others directly.
@@ -99,25 +85,25 @@ Otherwise kill buffer without confirmation."
         (kill-current-buffer))
     (kill-current-buffer)))
 
-;; ============================================================================
+;; --- vundo ---
 (use-package vundo
   :ensure t
   :defer t
   :bind ("M-u" . vundo))
 
-;; ============================================================================
+;; --- expand-region ---
 (use-package expand-region
   :ensure t
   :defer t
   :bind ("M-M" . er/expand-region))
 
-;; ============================================================================
+;; --- goto-chg ---
 (use-package goto-chg
   :ensure t
   :defer t
   :bind ("M-o" . goto-last-change))
 
-;; ============================================================================
+;; --- emacs ---
 (use-package emacs
   :ensure nil
   :demand t

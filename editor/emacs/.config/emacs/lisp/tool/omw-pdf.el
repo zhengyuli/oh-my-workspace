@@ -1,29 +1,12 @@
 ;;; omw-pdf.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-28 19:47:29 Saturday by zhengyuli>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: pdf, pdf-tools, document-viewer
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -33,16 +16,19 @@
 ;;
 ;; PDF viewing and navigation configuration using pdf-tools.
 ;; Features: PDF viewing, editing, navigation, and state restoration.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; PDF Viewer
+;; ----------------------------------------------------------------------------
+
+;; --- pdf-tools ---
 (use-package pdf-tools
   :ensure t
   :defer t
   :when (display-graphic-p))
 
-;; ============================================================================
+;; --- pdf-view ---
 (use-package pdf-view
   :ensure nil
   :defer t
@@ -57,7 +43,7 @@
   :config
   (pdf-tools-install :no-query))
 
-;; ============================================================================
+;; --- Pdf View Restore Path ---
 (defconst omw/pdf-view-restore-path
   (expand-file-name "emacs/pdf-view-restore" omw/xdg-state-home)
   "Path to the pdf-view-restore state file (under XDG_STATE_HOME).")
