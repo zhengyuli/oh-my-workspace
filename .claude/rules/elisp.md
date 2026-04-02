@@ -12,30 +12,31 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 ```elisp
 ;;; filename.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
-
+;;
+;; ============================================================================
+;; filename.el - Brief description
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: keyword1, keyword2
 ;; Dependencies: (none) or list of packages
-
-;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
 ;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-
+;; Copyright (C) 2026 zhengyu li
+;;
+;;; History:
+;;
+;; 2026-MM-DD HH:MM zhengyu li <lizhengyu419@outlook.com> created.
+;;
 ;;; Commentary:
 ;;
-;; Brief description of what this module does.
-
-;;; Code:
-
+;; Detailed description of what this module does.
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Section Title
+;; ----------------------------------------------------------------------------
+
+;; --- Subsection Title ---
+;; code here...
 ```
 
 ## File Tail
@@ -51,14 +52,22 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 ## Delimiter Hierarchy
 
 **Level 0** (File Header): `;; ============...` (79 chars)
-**Level 1** (Primary Section): `;; ============...` (79 chars)
+**Level 1** (Primary Section): `;; -----------...` (79 chars)
+**Level 2** (Subsection): `;; --- Title ---`
+
+Blank line is required after every Level 1 closing line before code.
 
 ```elisp
 ;;; Level 0 (file header — shown in File Header section above)
 
-;; ============================================================================
 ;; Level 1 (primary section)
+;; ----------------------------------------------------------------------------
 ;; Section Title
+;; ----------------------------------------------------------------------------
+;; ← blank line required here
+
+;; Level 2 (subsection)
+;; --- Subsection Title ---
 ```
 
 ## Line Length
@@ -124,8 +133,6 @@ Two prefix conventions are used:
 - **File names** use `omw-` prefix: `omw-font.el`, `omw-proxy.el`
 - **Code symbols** (functions, variables, constants) use `omw/` prefix:
   `omw/setup-fonts`, `omw/http-proxy`, `omw/gc-startup-threshold`
-
-Private helpers use a double-slash prefix: `omw/--install-tool-spec`.
 
 Predicate names must end with `-p`: `omw/buffer-empty-p`.
 

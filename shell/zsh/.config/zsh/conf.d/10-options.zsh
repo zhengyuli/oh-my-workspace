@@ -49,6 +49,8 @@ setopt AUTO_PARAM_SLASH
 setopt COMPLETE_IN_WORD
 # disable Ctrl-S / Ctrl-Q flow control
 unsetopt FLOW_CONTROL
+# enable menu on repeated Tab press (fallback when fzf-tab is disabled)
+setopt AUTO_MENU
 
 # -----------------------------------------------------------------------------
 # Globbing / Expansion
