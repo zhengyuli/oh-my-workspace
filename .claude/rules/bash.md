@@ -42,13 +42,16 @@ must omit the shebang.
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
+Blank line is required after every Level 1 closing line before code.
+
 ```bash
 # Level 0 (file header — shown in File Header section above)
 
 # Level 1 (primary section)
 # -----------------------------------------------------------------------------
-# Section Name
+# Section Title
 # -----------------------------------------------------------------------------
+# ← blank line required here
 
 # Level 2 (subsection)
 # --- Subsection Title ---
