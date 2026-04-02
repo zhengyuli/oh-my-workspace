@@ -42,12 +42,15 @@ _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 #   N  = nullglob (empty array instead of error when no match)
 #   .  = regular file (not a directory or symlink)
 #   mh-N = modification time < N hours ago  (i.e., the dump is still fresh)
+# Override: set COMPDUMP_MAX_AGE_HOURS in 00-env.zsh (before this file loads).
 if (( ! ${+COMPDUMP_MAX_AGE_HOURS} )); then
   readonly COMPDUMP_MAX_AGE_HOURS=20
 fi
-_zcompdump_fresh=( ${_zcompdump}(N.mh-${COMPDUMP_MAX_AGE_HOURS}) )
+_zcompdump_fresh=( ${_zcompdump}(N..mh-${COMPDUMP_MAX_AGE_HOURS}) )
 if (( ${#_zcompdump_fresh} )); then
-  # fresh: skip security check for speed
+  # fresh: skip security audit and dump rebuild for speed.
+  # Tradeoff: insecure fpath directories are only detected on full rebuild
+  # (once per COMPDUMP_MAX_AGE_HOURS). Acceptable for single-user machines.
   compinit -C -d "$_zcompdump"
 else
   # stale/missing: full rebuild
@@ -56,9 +59,14 @@ fi
 
 # Compile dump to bytecode for faster subsequent loads.
 # .zwc is loaded automatically when newer than the source dump.
+# Atomic lock via mkdir prevents concurrent zcompile corruption
+# (ohmyzsh/ohmyzsh#11341).
 if [[ -s "$_zcompdump" && ( ! -s "${_zcompdump}.zwc" \
   || "$_zcompdump" -nt "${_zcompdump}.zwc" ) ]]; then
-  zcompile "$_zcompdump"
+  if mkdir "${_zcompdump}.lock" 2>/dev/null; then
+    zcompile "$_zcompdump"
+    rm -rf "${_zcompdump}.lock"
+  fi
 fi
 unset _zcompdump _zcompdump_fresh
 
@@ -73,8 +81,9 @@ unset _zcompdump _zcompdump_fresh
 # Matcher list: zsh tries each pattern in order until one matches
 #   1. m:{a-z}={A-Za-z} - smart case: lowercase matches both cases
 #                         (fo → Foo, FO, foo; but FO does NOT match foo).
-#                         Chosen over m:{a-zA-Z}={A-Za-z} to avoid a
-#                         zsh 5.9 regression (Debian #1013434).
+#                         Chosen for UX consistency with ripgrep/fzf
+#                         smart-case. Additionally avoids zsh 5.9
+#                         cfp_matcher_range() bug (Debian #1013434).
 #   2. r:|[._-]=* r:|=* - partial-word after separators (f_b → foo_bar)
 #   3. l:|=* r:|=* - substring anywhere (bar → foo_bar, oob → foo_bar)
 zstyle ':completion:*' matcher-list \
@@ -101,10 +110,11 @@ zstyle ':completion:*' ignored-patterns \
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
 # kill completion
-# Regex: (#b) backreferences; captures PID ($word[1]) and cmd ($word[2])
-#   =01;34=0=01 means: match=bold blue, first group=default, second group=bold
+# Regex: (#b) backreferences; captures PID ($match[1])
+#   =0=01;31 means: unmatched parts=normal, PID group=bold red
+# Canonical pattern from zsh Guide (Peter Stephenson, Chapter 6).
 zstyle ':completion:*:*:kill:*:processes' list-colors \
-  '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+  '=(#b) #([0-9]#)*=0=01;31'
 # Fallback for when fzf-tab is disabled: use built-in menu selection for kill.
 # When fzf-tab is active, these are dead code (fzf-tab intercepts completions
 # before zsh's menu system is invoked; see 40-plugins.zsh kill fzf-preview).
@@ -117,7 +127,7 @@ zstyle ':completion:*:*:kill:*' insert-ids single
 zstyle ':completion:*:(ssh|scp|rsync):*' tag-order \
   'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
 zstyle ':completion:*:(ssh|scp|rsync):*' group-order \
-  users hosts-domain hosts-host users hosts-ipaddr
+  users hosts-domain hosts-host hosts-ipaddr
 
 # List directories before files
 zstyle ':completion:*' list-dirs-first true
@@ -138,3 +148,7 @@ zstyle ':completion:*' completer _extensions _complete
 
 # Do not offer current directory when completing cd ../
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
+
+# Auto-detect newly installed commands (brew install, cargo install, etc.)
+# without manual `rehash`. Minimal perf cost on local filesystems.
+zstyle ':completion:*' rehash true

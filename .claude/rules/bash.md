@@ -14,15 +14,27 @@ Bash-specific features and universal shell practices.
 #!/usr/bin/env bash
 # script.sh -*- mode: sh; -*-
 # Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
+#
 # =============================================================================
 # Script Title - Brief Description
 #
-# Usage: ./script.sh [options]
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: keyword1, keyword2
 # Dependencies: bash 4.3+
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-MM-DD HH:MM zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Detailed description of what this script does.
 # =============================================================================
 ```
 
-**Shebang**: `#!/usr/bin/env bash` (use `env` for portability)
+**Shebang**: `#!/usr/bin/env bash` is required only for directly executable
+scripts.  Sourced files (function libraries, completion scripts, env setup)
+must omit the shebang.
 
 ## Delimiter Hierarchy
 

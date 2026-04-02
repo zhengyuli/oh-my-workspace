@@ -21,15 +21,27 @@ Zsh-specific features and conventions.
 #!/usr/bin/env zsh
 # script.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
+#
 # =============================================================================
 # Script Title - Brief Description
 #
-# Usage: ./script.zsh [options]
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: keyword1, keyword2
 # Dependencies: zsh 5.0+
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-MM-DD HH:MM zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Detailed description of what this script does.
 # =============================================================================
 ```
 
-**Shebang**: `#!/usr/bin/env zsh` (use `env` for portability)
+**Shebang**: `#!/usr/bin/env zsh` is required only for directly executable
+scripts.  Sourced files (`.zshrc`, `conf.d/*.zsh`, completion scripts)
+must omit the shebang.
 
 ## Delimiter Hierarchy
 
