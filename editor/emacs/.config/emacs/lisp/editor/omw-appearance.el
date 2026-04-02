@@ -1,29 +1,12 @@
 ;;; omw-appearance.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-22 10:40:32 Sunday by zhengyuli>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: ui, theme, tabs, dashboard
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -33,42 +16,45 @@
 ;;
 ;; UI configuration: theme, icons, modeline, tabs, window management,
 ;; and startup dashboard for a modern Emacs experience.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Appearance
+;; ----------------------------------------------------------------------------
+
+;; --- emojify ---
 (use-package emojify
   :ensure t
   :defer t
   :when (display-graphic-p)
   :hook (markdown-mode . emojify-mode))
 
-;; ============================================================================
+;; --- nerd-icons ---
 (use-package nerd-icons
   :ensure t
   :defer t
   :when (display-graphic-p))
 
-;; ============================================================================
+;; --- doom-themes ---
 (use-package doom-themes
   :ensure t
   :demand t
   :config
   (load-theme 'doom-dracula t))
 
-;; ============================================================================
+;; --- doom-modeline ---
 (use-package doom-modeline
   :ensure t
   :defer t
   :hook (after-init . doom-modeline-mode))
 
-;; ============================================================================
+;; --- pulsar ---
 (use-package pulsar
   :ensure t
   :defer t
   :hook (after-init . pulsar-global-mode))
 
-;; ============================================================================
+;; --- Centaur Tabs Height ---
 (defconst omw/centaur-tabs-height 25
   "Height in pixels for the centaur-tabs tab bar.")
 
@@ -113,7 +99,7 @@
         centaur-tabs-show-count t
         centaur-tabs-cycle-scope 'tabs))
 
-;; ============================================================================
+;; --- winum ---
 (use-package winum
   :ensure t
   :defer t
@@ -128,7 +114,7 @@
          ("M-8" . winum-select-window-8)
          ("M-9" . winum-select-window-9)))
 
-;; ============================================================================
+;; --- Get Random Banner ---
 (defun omw/get-random-banner ()
   "Return random banner path from banners directory.
 Returns nil in terminal mode (uses official banner instead)."
@@ -139,6 +125,7 @@ Returns nil in terminal mode (uses official banner instead)."
       (when banners
         (nth (random (length banners)) banners)))))
 
+;; --- dashboard ---
 (use-package dashboard
   :ensure t
   :defer t

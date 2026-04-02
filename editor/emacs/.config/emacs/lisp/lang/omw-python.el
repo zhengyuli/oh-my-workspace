@@ -1,29 +1,12 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-20 10:32:09 Friday by zhengyu.li>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: python, uv, ruff, pet
 ;; Dependencies: pet, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -34,15 +17,18 @@
 ;;; Commentary:
 ;;
 ;; Python mode configuration with uv and pet support.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Python
+;; ----------------------------------------------------------------------------
+
+;; --- pet ---
 (use-package pet
   :ensure t
   :defer t)
 
-;; ============================================================================
+;; --- Pet Virtualenv Root ---
 (defvar-local omw/pet-virtualenv-root nil
   "Buffer-local venv root path detected by pet.")
 
@@ -78,7 +64,7 @@
     (setq-local mode-line-misc-info
                 (cons omw/pet-mode-line-entry mode-line-misc-info))))
 
-;; ============================================================================
+;; --- Pet Setup ---
 (defun omw/pet-setup ()
   "Setup pet for current Python buffer."
   (when-let ((venv (pet-virtualenv-root)))
@@ -88,26 +74,35 @@
                 python-shell-interpreter-args "-i")
     (pet-eglot-setup)))
 
-;; ============================================================================
+;; --- Python Format Buffer ---
+(defun omw/ruff-format-string (content filename)
+  "Format CONTENT as Python using ruff with stdin-filename FILENAME.
+Returns the formatted string, or nil if formatting fails."
+  (with-temp-buffer
+    (insert content)
+    (when (zerop (call-process-region
+                  (point-min) (point-max)
+                  "ruff" t t nil
+                  "format" "--stdin-filename" filename "-"))
+      (buffer-string))))
+
+(defun omw/replace-buffer-content (new-content)
+  "Replace current buffer content with NEW-CONTENT using diff-based replace."
+  (let ((src (generate-new-buffer " *ruff*")))
+    (unwind-protect
+        (progn
+          (with-current-buffer src (insert new-content))
+          (replace-buffer-contents src))
+      (kill-buffer src))))
+
 (defun omw/python-format-buffer ()
   "Format current Python buffer using ruff."
-  (when (and (executable-find "ruff")
-             (buffer-file-name))
+  (when (and (executable-find "ruff") (buffer-file-name))
     (let* ((original (buffer-string))
            (filename (buffer-file-name))
-           (formatted
-            (with-temp-buffer
-              (insert original)
-              (when (zerop (call-process-region
-                            (point-min) (point-max)
-                            "ruff" t t nil
-                            "format" "--stdin-filename" filename "-"))
-                (buffer-string)))))
+           (formatted (omw/ruff-format-string original filename)))
       (when (and formatted (not (string= original formatted)))
-        (let ((src (generate-new-buffer " *ruff*")))
-          (with-current-buffer src (insert formatted))
-          (replace-buffer-contents src)
-          (kill-buffer src))))))
+        (omw/replace-buffer-content formatted)))))
 
 (defun omw/python-before-save ()
   "Run Python-specific actions before saving."
@@ -122,7 +117,7 @@
       (add-hook 'before-save-hook #'omw/python-before-save nil t)
     (remove-hook 'before-save-hook #'omw/python-before-save t)))
 
-;; ============================================================================
+;; --- Python Tool Specs ---
 (defconst omw/python-tool-specs
   '(("basedpyright" "uv tool install basedpyright" "uv")
     ("ruff" "uv tool install ruff" "uv"))
@@ -134,7 +129,7 @@ if not present."
   (interactive)
   (apply #'omw/tools-install omw/python-tool-specs))
 
-;; ============================================================================
+;; --- Python Mode Setup ---
 (defun omw/python-mode-setup ()
   "Apply custom settings for Python mode."
   (omw/pet-setup)

@@ -1,29 +1,12 @@
 ;;; omw-font.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 22:59:48 Wednesday by zhengyu.li>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: font, faces
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -33,10 +16,12 @@
 ;;
 ;; Font configuration for optimal code editing and CJK support.
 ;; Features: monospace fonts, Chinese fallback, dynamic text scaling.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Font Configuration
+;; ----------------------------------------------------------------------------
+
 (defvar omw/font-monospace-list
   '("SauceCodePro Nerd Font Mono" "Menlo" "Monaco" "Monospace")
   "Priority list of monospace fonts for code editing.
@@ -61,7 +46,7 @@ Used as the base size before textsize applies per-monitor DPI adjustment.")
   "Scale factor for variable-pitch font height relative to the monospace size.
 1.0 means identical height; increase for visually larger prose text.")
 
-;; ============================================================================
+;; --- CJK Code-Point Ranges ---
 ;; Unicode code-point ranges used when mapping the CJK fallback font.
 ;; Defined as constants so set-fontset-font call-sites are self-documenting
 ;; and the ranges can be referenced without repeating raw hex literals.
@@ -81,7 +66,7 @@ characters, including those used in classical literature.")
   "CJK Symbols and Punctuation: ideographic space, corner brackets,
 wave dashes, and other CJK-specific punctuation marks.")
 
-;; ============================================================================
+;; --- Font Setup ---
 (defun omw/find-available-font (font-list)
   "Return first available font from FONT-LIST."
   (cl-find-if (lambda (font)
@@ -134,7 +119,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   :when (display-graphic-p)
   :hook (after-init . omw/setup-fonts))
 
-;; ============================================================================
+;; --- textsize ---
 (use-package textsize
   :ensure t
   :defer t
@@ -151,7 +136,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
         textsize-pixel-pitch-thresholds
         '((0 . 0) (0.12 . 0) (0.18 . 0) (0.25 . 0))))
 
-;; ============================================================================
+;; --- mixed-pitch ---
 (use-package mixed-pitch
   :ensure t
   :defer t

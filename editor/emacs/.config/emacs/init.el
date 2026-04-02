@@ -1,29 +1,12 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-01 15:48:24 Wednesday by zhengyu.li>
+;; Time-stamp: <2026-04-02 19:09:41 Thursday by zhengyu.li>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -32,16 +15,17 @@
 ;;; Commentary:
 ;;
 ;; Emacs configuration entry point.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Configuration Group & Paths
+;; ----------------------------------------------------------------------------
+
 (defgroup omw-emacs nil
   "Oh My Workspace configuration group."
   :group 'convenience
   :prefix "omw/")
 
-;; ============================================================================
 (defcustom omw/emacs-user-name "Zhengyu Li"
   "Emacs configuration user name.
 Used for dashboard banner and setting `user-full-name'."
@@ -54,7 +38,7 @@ Used for setting `user-mail-address'."
   :type 'string
   :group 'omw-emacs)
 
-;; ============================================================================
+;; --- Path Constants ---
 (defconst omw/emacs-custom-file-path
   (expand-file-name "custom.el" user-emacs-directory)
   "Path to the Customize-generated file.
@@ -83,7 +67,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
     (push base-dir load-path)
     (normal-top-level-add-subdirs-to-load-path)))
 
-;; ============================================================================
+;; --- Load Path Setup ---
 ;; Set custom file early to prevent Emacs from writing
 ;; customizations to init.el
 (setq custom-file omw/emacs-custom-file-path)
@@ -92,16 +76,21 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-lisp-path)
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-site-packages-path)
 
-;; ============================================================================
+;; ----------------------------------------------------------------------------
+;; Proxy Setup
+;; ----------------------------------------------------------------------------
+
 ;; HTTP Proxy Configuration
 (require 'omw-proxy)
 (omw/enable-http-proxy)
 
-;; ============================================================================
+;; ----------------------------------------------------------------------------
 ;; Package Management
+;; ----------------------------------------------------------------------------
+
 (require 'use-package)
 
-;; ============================================================================
+;; --- GC Tuning ---
 ;; GC tuning constants — applied early (before package initialization) to
 ;; minimize garbage-collection pauses during startup.  gcmh will restore
 ;; sensible values once Emacs is fully initialized.
@@ -128,7 +117,7 @@ to more conservative values after the init phase completes.")
   (setq gc-cons-threshold omw/gc-startup-threshold
         gc-cons-percentage omw/gc-startup-percentage))
 
-;; ============================================================================
+;; --- Package Archives ---
 (use-package package
   :ensure nil
   :demand t
@@ -143,25 +132,25 @@ to more conservative values after the init phase completes.")
                                      ("gnu" . 10)))
   (package-initialize))
 
-;; ============================================================================
+;; ----------------------------------------------------------------------------
+;; Utility Packages
+;; ----------------------------------------------------------------------------
+
 (use-package async
   :ensure t
   :defer t)
 
-;; ============================================================================
 (use-package gcmh
   :ensure t
   :defer t
   :hook (after-init . gcmh-mode))
 
-;; ============================================================================
 (use-package auto-package-update
   :ensure t
   :defer t
   :config
   (setq auto-package-update-delete-old-versions t))
 
-;; ============================================================================
 (use-package which-key
   :ensure t
   :defer t
@@ -169,7 +158,6 @@ to more conservative values after the init phase completes.")
   :config
   (which-key-setup-minibuffer))
 
-;; ============================================================================
 (use-package exec-path-from-shell
   :ensure t
   :defer t
@@ -178,7 +166,11 @@ to more conservative values after the init phase completes.")
   :config
   (setq exec-path-from-shell-arguments '("-l")))
 
-;; ============================================================================
+;; ----------------------------------------------------------------------------
+;; Core Settings
+;; ----------------------------------------------------------------------------
+
+;; --- Clipboard ---
 ;; GUI frames use native macOS clipboard (NS pasteboard).
 ;; Terminal frames rely on OSC 52 to bridge kill-ring → system clipboard.
 (unless (display-graphic-p)
@@ -188,7 +180,7 @@ to more conservative values after the init phase completes.")
           (lambda (text)
             (xterm--set-selection "c" text)))))
 
-;; ============================================================================
+;; --- Post-Init Hooks ---
 ;; Number of recent-file entries persisted across sessions.  200 provides a
 ;; useful history without making recentf saves noticeably slow.
 (defconst omw/recentf-max-items 200
@@ -210,6 +202,7 @@ global-auto-revert-mode and midnight-mode."
            (float-time (time-subtract after-init-time before-init-time))
            gcs-done))
 
+;; --- Emacs Configuration ---
 (use-package emacs
   :ensure nil
   :demand t
@@ -264,13 +257,14 @@ global-auto-revert-mode and midnight-mode."
     (setq mac-command-modifier 'super
           mac-option-modifier 'meta)))
 
-;; ============================================================================
-;; Load modules
+;; ----------------------------------------------------------------------------
+;; Module Loading
+;; ----------------------------------------------------------------------------
 
-;; Core libraries
+;; --- Core Libraries ---
 (require 'omw-utils)
 
-;; Editor modules
+;; --- Editor Modules ---
 (require 'omw-font)
 (require 'omw-appearance)
 (require 'omw-edit)
@@ -279,14 +273,14 @@ global-auto-revert-mode and midnight-mode."
 (require 'omw-completion)
 (require 'omw-explorer)
 
-;; Tool modules
+;; --- Tool Modules ---
 (require 'omw-pass)
 (require 'omw-git)
 (require 'omw-term)
 (require 'omw-pdf)
 (require 'omw-ai)
 
-;; Programming language modules
+;; --- Programming Languages ---
 (require 'omw-prog)
 (require 'omw-cc)
 (require 'omw-go)
@@ -296,7 +290,7 @@ global-auto-revert-mode and midnight-mode."
 (require 'omw-elisp)
 (require 'omw-shell)
 
-;; Config/build language modules
+;; --- Config/Build Languages ---
 (require 'omw-cmake)
 (require 'omw-yaml)
 (require 'omw-json)
@@ -304,10 +298,13 @@ global-auto-revert-mode and midnight-mode."
 (require 'omw-vimrc)
 (require 'omw-gitconfig)
 
-;; Text derived modules
+;; --- Text Modules ---
 (require 'omw-markdown)
 
-;; ============================================================================
+;; ----------------------------------------------------------------------------
+;; Custom Settings
+;; ----------------------------------------------------------------------------
+
 ;; Load custom settings
 (when (file-readable-p custom-file)
   (load custom-file nil 'nomessage))

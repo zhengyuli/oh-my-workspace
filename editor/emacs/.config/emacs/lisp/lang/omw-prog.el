@@ -1,29 +1,12 @@
 ;;; omw-prog.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: prog, programming, hooks
 ;; Dependencies: (none)
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -33,10 +16,13 @@
 ;;
 ;; Base programming configuration: smartparens, rainbow-delimiters,
 ;; eglot, etc.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; Programming
+;; ----------------------------------------------------------------------------
+
+;; --- Jump to Matched Paren ---
 (defun omw/jump-to-matched-paren ()
   "Jump to the matched parenthesis/bracket/brace for the current position.
 If cursor is on/after an opening delimiter, jump to its closing match.
@@ -53,7 +39,7 @@ If no delimiter is found, show an error message."
          (backward-sexp))
         (t (message "couldn't find matched paren"))))
 
-;; ============================================================================
+;; --- copyright ---
 (use-package copyright
   :ensure nil
   :defer t
@@ -65,7 +51,7 @@ If no delimiter is found, show an error message."
          "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
          (regexp-quote omw/emacs-user-name))))
 
-;; ============================================================================
+;; --- smartparens ---
 (use-package smartparens
   :ensure t
   :defer t
@@ -73,36 +59,36 @@ If no delimiter is found, show an error message."
   :config
   (require 'smartparens-config))
 
-;; ============================================================================
+;; --- hungry-delete ---
 (use-package hungry-delete
   :ensure t
   :defer t
   :hook (prog-mode . hungry-delete-mode))
 
-;; ============================================================================
+;; --- rainbow-delimiters ---
 (use-package rainbow-delimiters
   :ensure t
   :defer t
   :hook (prog-mode . rainbow-delimiters-mode))
 
-;; ============================================================================
+;; --- hl-todo ---
 (use-package hl-todo
   :ensure t
   :defer t
   :hook (prog-mode . hl-todo-mode))
 
-;; ============================================================================
+;; --- whitespace-cleanup-mode ---
 (use-package whitespace-cleanup-mode
   :ensure t
   :defer t
   :hook (prog-mode . whitespace-cleanup-mode))
 
-;; ============================================================================
+;; --- quickrun ---
 (use-package quickrun
   :ensure t
   :defer t)
 
-;; ============================================================================
+;; --- eglot ---
 (use-package eglot
   :ensure nil
   :defer t
@@ -122,7 +108,7 @@ If no delimiter is found, show an error message."
   (setq eglot-sync-connect nil
         eglot-autoshutdown t))
 
-;; ============================================================================
+;; --- Prog Before Save ---
 (defun omw/prog-before-save ()
   "Run pre-save hooks for programming buffers.
 Updates copyright, timestamp, and untabifies."
@@ -139,7 +125,7 @@ Updates copyright, timestamp, and untabifies."
       (add-hook 'before-save-hook #'omw/prog-before-save nil t)
     (remove-hook 'before-save-hook #'omw/prog-before-save t)))
 
-;; ============================================================================
+;; --- Prog Mode Setup ---
 (defun omw/prog-mode-setup ()
   "Apply custom settings for programming modes."
   (setq-local tab-width 4

@@ -1,29 +1,12 @@
 ;;; omw-cc.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-20 10:25:23 Friday by zhengyu.li>
 
+;; ============================================================================
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: c, cpp
 ;; Dependencies: omw-prog, omw-utils
 
 ;; Copyright (C) 2026 zhengyu li
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-;; THE SOFTWARE.
 
 ;;; History:
 ;;
@@ -33,24 +16,27 @@
 ;;
 ;; C/C++ mode configuration with clangd LSP and Google code style.
 ;; LSP server (clangd) is configured in prog.el.
-
-;;; Code:
-
 ;; ============================================================================
+
+;; ----------------------------------------------------------------------------
+;; C/C++
+;; ----------------------------------------------------------------------------
+
+;; --- google-c-style ---
 (use-package google-c-style
   :ensure t
   :defer t
   :hook ((c-mode . google-set-c-style)
          (c++-mode . google-set-c-style)))
 
-;; ============================================================================
+;; --- Cc Tool Specs ---
 (defconst omw/cc-tool-specs
   '(("clangd" "brew install llvm" "brew"))
   "Tool specs for C/C++ development.
 clangd is provided by Homebrew llvm (in Brewfile).
 Run `brew install llvm' if clangd is missing.")
 
-;; ============================================================================
+;; --- Cc Mode Setup ---
 (defun omw/cc-mode-setup ()
   "Check required C/C++ development tools and prompt to install if missing."
   (apply #'omw/tools-check-and-prompt omw/cc-tool-specs))
