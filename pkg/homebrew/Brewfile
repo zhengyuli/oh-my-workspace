@@ -157,6 +157,9 @@ brew "wget"
 brew "btop"
 # GNU core utilities (gls, etc.)
 brew "coreutils"
+# macOS input source manager
+tap "laishulu/homebrew"
+brew "laishulu/homebrew/macism"
 
 # -----------------------------------------------------------------------------
 # Language Runtimes & Modern Toolchain
