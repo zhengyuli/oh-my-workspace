@@ -1,17 +1,19 @@
 ;;; omw-git.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-22 13:51:42 Sunday by zhengyuli>
-
+;; Time-stamp: <2026-03-22 13:51:42 Sunday by zhengyu.li>
+;;
 ;; ============================================================================
+;; omw-git.el - Version control with Magit.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: vc, git, diff, merge
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Version control integration with Magit for powerful Git operations.

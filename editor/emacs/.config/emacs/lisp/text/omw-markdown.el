@@ -1,17 +1,19 @@
 ;;; omw-markdown.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-markdown.el - Markdown mode with visual formatting and table alignment.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: markdown, polymode
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Markdown mode configuration with Claude Code integration.

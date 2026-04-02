@@ -1,17 +1,19 @@
 ;;; omw-utils.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-23 12:11:14 Monday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-utils.el - Shared utility functions for omw Emacs config.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: utils, tools
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-18 00:00 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Shared utility functions for omw Emacs configuration.

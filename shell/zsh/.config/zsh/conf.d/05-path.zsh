@@ -25,6 +25,7 @@
 # -----------------------------------------------------------------------------
 # Deduplication (must come first)
 # -----------------------------------------------------------------------------
+
 # -g: global scope (affects all contexts)
 # -U: unique (remove duplicates, keep first occurrence)
 typeset -gU path fpath manpath infopath cdpath
@@ -33,6 +34,7 @@ typeset -gU path fpath manpath infopath cdpath
 # PATH -- executable search path
 # Highest priority first; $path preserves existing system entries
 # -----------------------------------------------------------------------------
+
 # Glob qualifier (N-/): N=nullglob (no error if missing), -/=<only dirs>
 path=(
   # --- Priority 1: User-local binaries (HIGHEST) ---
@@ -68,6 +70,7 @@ path=(
 # FPATH -- function/completion search path
 # Must be set before compinit (30-completion.zsh)
 # -----------------------------------------------------------------------------
+
 fpath=(
   # Custom completion scripts (highest priority)
   "$ZDOTDIR/completions"(N-/)
@@ -86,6 +89,7 @@ fpath=(
 # -----------------------------------------------------------------------------
 # MANPATH -- manual page search path
 # -----------------------------------------------------------------------------
+
 manpath=(
   # Homebrew man pages (HOMEBREW_PREFIX from 00-env.zsh; Apple Silicon + Intel)
   "$HOMEBREW_PREFIX/share/man"(N-/)
@@ -101,6 +105,7 @@ manpath=(
 # -----------------------------------------------------------------------------
 # INFOPATH -- info page search path (GNU info system)
 # -----------------------------------------------------------------------------
+
 infopath=(
   # Homebrew info pages (HOMEBREW_PREFIX from 00-env.zsh; both architectures)
   "$HOMEBREW_PREFIX/share/info"(N-/)
@@ -119,6 +124,7 @@ infopath=(
 # (N:t) -- (N)=nullglob silently skip if no matches, (:t)=filename only
 # Guard required: 'autoload -Uz' with no args lists all functions to stdout
 # -----------------------------------------------------------------------------
+
 _func_files=($ZDOTDIR/functions/*(N:t))
 if (( ${#_func_files} )); then
   autoload -Uz "${_func_files[@]}"

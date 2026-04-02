@@ -1,17 +1,19 @@
 ;;; omw-dockerfile.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-20 10:19:40 Friday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-dockerfile.el - Dockerfile mode with LSP support.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: dockerfile, docker
 ;; Dependencies: omw-prog, omw-utils
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Dockerfile mode configuration with LSP support.

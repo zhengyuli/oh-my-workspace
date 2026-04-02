@@ -1,9 +1,19 @@
 # keymap.toml -*- mode: toml; -*-
 # Time-stamp: <2026-03-25 00:00:00 Tue by zhengyu.li>
+#
 # =============================================================================
 # Yazi - Keymap Configuration
 #
-# Usage:    Customize keyboard shortcuts
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: yazi, keymap, keybindings, toml
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-25 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Custom keybindings for Yazi file manager (smart-enter, filter, zoom, etc.)
 #
 # References:
 #   1. https://yazi-rs.github.io/docs/configuration/keymap/

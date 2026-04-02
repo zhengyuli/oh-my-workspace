@@ -1,17 +1,19 @@
 ;;; early-init.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; early-init.el - Early initialization for XDG paths and package dirs.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-16 11:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Early initialization file for Emacs 27+.

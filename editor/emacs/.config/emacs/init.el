@@ -1,17 +1,19 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-02 19:09:41 Thursday by zhengyu.li>
-
+;; Time-stamp: <2026-04-02 23:36:35 Thursday by zhengyu.li>
+;;
 ;; ============================================================================
+;; init.el - Emacs configuration entry point.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: emacs, config
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Emacs configuration entry point.
@@ -165,6 +167,15 @@ to more conservative values after the init phase completes.")
   :hook (after-init . exec-path-from-shell-initialize)
   :config
   (setq exec-path-from-shell-arguments '("-l")))
+
+(use-package sis
+  :ensure t
+  :defer t
+  :when (eq system-type 'darwin)
+  :hook (after-init . sis-global-respect-mode)
+  :config
+  (sis-ism-lazyman-config "com.apple.keylayout.ABC"
+                          "com.apple.inputmethod.SCIM.ITABC"))
 
 ;; ----------------------------------------------------------------------------
 ;; Core Settings

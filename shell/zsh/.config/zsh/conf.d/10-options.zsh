@@ -25,6 +25,7 @@
 # -----------------------------------------------------------------------------
 # Directory Navigation
 # -----------------------------------------------------------------------------
+
 # type a directory name to cd into it
 setopt AUTO_CD
 # cd automatically pushes old dir onto the stack
@@ -39,6 +40,7 @@ setopt CDABLE_VARS
 # -----------------------------------------------------------------------------
 # Completion
 # -----------------------------------------------------------------------------
+
 # move cursor to end after completion
 setopt ALWAYS_TO_END
 # automatically list choices on ambiguous completion
@@ -55,6 +57,7 @@ setopt AUTO_MENU
 # -----------------------------------------------------------------------------
 # Globbing / Expansion
 # -----------------------------------------------------------------------------
+
 # enable extended glob operators: ^, ~, #
 setopt EXTENDED_GLOB
 # silently remove patterns with no matches
@@ -65,6 +68,7 @@ setopt NUMERIC_GLOB_SORT
 # -----------------------------------------------------------------------------
 # Input / Output
 # -----------------------------------------------------------------------------
+
 # allow # comments in interactive shell
 setopt INTERACTIVE_COMMENTS
 # allow '' inside single-quoted strings
@@ -79,6 +83,7 @@ unsetopt RM_STAR_SILENT
 # -----------------------------------------------------------------------------
 # Job Control
 # -----------------------------------------------------------------------------
+
 # resume a stopped job by typing its name
 setopt AUTO_RESUME
 # display PID when listing jobs

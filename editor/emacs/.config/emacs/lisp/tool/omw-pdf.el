@@ -1,17 +1,19 @@
 ;;; omw-pdf.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-28 19:47:29 Saturday by zhengyuli>
-
+;; Time-stamp: <2026-03-28 19:47:29 Saturday by zhengyu.li>
+;;
 ;; ============================================================================
+;; omw-pdf.el - PDF viewer with pdf-tools.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: pdf, pdf-tools, document-viewer
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; PDF viewing and navigation configuration using pdf-tools.

@@ -28,6 +28,7 @@
 # -----------------------------------------------------------------------------
 # bun -- JavaScript/TypeScript Runtime
 # -----------------------------------------------------------------------------
+
 # Bun is a fast native binary, no lazy loading needed.
 # Completions are installed to $BUN_INSTALL/_bun
 #
@@ -41,6 +42,7 @@ fi
 # -----------------------------------------------------------------------------
 # uv -- Python Package Manager
 # -----------------------------------------------------------------------------
+
 # uv is a fast native binary, no lazy loading needed.
 # Completions are generated dynamically and cache to file with mtime check.
 #
@@ -61,6 +63,7 @@ fi
 # -----------------------------------------------------------------------------
 # carapace -- Universal Shell Completion
 # -----------------------------------------------------------------------------
+
 # Provides fzf-compatible completions for 1600+ CLI tools automatically.
 # Replaces the need to manually write _<cmd> completion functions.
 #
@@ -87,6 +90,7 @@ fi
 # -----------------------------------------------------------------------------
 # fzf -- Fuzzy Finder
 # -----------------------------------------------------------------------------
+
 # Load key bindings only. Must load AFTER fzf-tab (40-plugins.zsh).
 #
 # Prerequisites: brew install fzf
@@ -115,6 +119,7 @@ fi
 # -----------------------------------------------------------------------------
 # zoxide -- Smart cd Command
 # -----------------------------------------------------------------------------
+
 # Fast directory jumping with frecency algorithm. Replaces z, autojump.
 #
 # Prerequisites: brew install zoxide
@@ -133,44 +138,85 @@ fi
 # -----------------------------------------------------------------------------
 # git -- Redirect --global writes to config.local
 # -----------------------------------------------------------------------------
+
+# Print 'r' for read flags, 'w' for write flags, empty otherwise.
+_git_check_flag() {
+  case "$1" in
+    --get|--get-all|--get-regexp|--get-urlmatch|--list|\
+      --show-origin|--show-scope)
+      print -r -- r ;;
+    --add|--unset|--unset-all|--rename-section|\
+      --remove-section|--replace-all|--edit|-e|--comment)
+      print -r -- w ;;
+  esac
+}
+
+# Return 0 if the flag takes a value argument.
+_git_flag_takes_value() {
+  case "$1" in
+    --default|--type|--value-type|--fixed-value|--pattern|\
+      --expires-after)
+      return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# Print 'r' for read operations, 'w' for write operations.
+_git_classify_config_op() {
+  local _a=
+  local _result=
+
+  for _a in "${@}"; do
+    _result="$(_git_check_flag "$_a")"
+    if [[ -n "$_result" ]]; then
+      print -r -- "$_result"
+      return
+    fi
+  done
+
+  # No explicit flag: infer from positional arg count
+  local -a _pos=()
+  local _skip=0
+  for _a in "${@}"; do
+    if (( _skip )); then
+      _skip=0
+      continue
+    fi
+    if _git_flag_takes_value "$_a"; then
+      _skip=1
+      continue
+    fi
+    case "$_a" in
+      --*) ;;
+      *) _pos+=("$_a") ;;
+    esac
+  done
+
+  if (( ${#_pos[@]} >= 2 )); then
+    print -r -- w
+  else
+    print -r -- r
+  fi
+}
+
+# Redirect git config --global writes to config.local.
 # ~/.config/git/config is the shared config (version-controlled).
 # ~/.config/git/config.local holds machine-specific overrides (not tracked).
 # config includes config.local via [include], so reads work transparently.
-# This wrapper redirects writes so git config --global never touches config.
 git() {
-  if [[ "$1" == config && "$2" == --global ]]; then
-    local -a args=("${@:3}")
-    local mode=  # 'r' = read, 'w' = write
-    for a in "${args[@]}"; do
-      case "$a" in
-        --get|--get-all|--get-regexp|--get-urlmatch|--list|--show-origin|--show-scope)
-          mode=r; break ;;
-        --add|--unset|--unset-all|--rename-section|--remove-section|\
-          --replace-all|--edit|-e|--comment)
-          mode=w; break ;;
-      esac
-    done
-    if [[ -z "$mode" ]]; then
-      # No explicit flag: key value = write, bare key = read
-      local -a pos=()
-      local skip=0
-      for a in "${args[@]}"; do
-        if (( skip )); then skip=0; continue; fi
-        case "$a" in
-          --default|--type|--value-type|--fixed-value|--pattern|--expires-after)
-            skip=1 ;;
-          --*) ;;
-          *) pos+=("$a") ;;
-        esac
-      done
-      (( ${#pos[@]} >= 2 )) && mode=w || mode=r
-    fi
-    if [[ "$mode" == w ]]; then
-      command git config -f "$XDG_CONFIG_HOME/git/config.local" "${args[@]}"
-    else
-      command git config --global --includes "${args[@]}"
-    fi
-  else
+  if [[ "$1" != config || "$2" != --global ]]; then
     command git "$@"
+    return
+  fi
+
+  local -a _args=("${@:3}")
+  local _mode=
+  _mode="$(_git_classify_config_op "${_args[@]}")"
+
+  if [[ "$_mode" == w ]]; then
+    command git config -f "$XDG_CONFIG_HOME/git/config.local" \
+      "${_args[@]}"
+  else
+    command git config --global --includes "${_args[@]}"
   fi
 }

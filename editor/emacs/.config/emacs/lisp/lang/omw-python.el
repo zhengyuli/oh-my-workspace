@@ -1,19 +1,21 @@
 ;;; omw-python.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-20 10:32:09 Friday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-python.el - Python mode with uv and pet support.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: python, uv, ruff, pet
 ;; Dependencies: pet, omw-utils
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
 ;; 2026-03-16       drop pyvenv/poetry, adopt pet.el for uv venv detection;
 ;;                  ruff format via stdin; mode-line driven by pet.
-
+;;
 ;;; Commentary:
 ;;
 ;; Python mode configuration with uv and pet support.

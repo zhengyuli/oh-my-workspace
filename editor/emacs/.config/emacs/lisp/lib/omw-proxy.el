@@ -1,17 +1,19 @@
 ;;; omw-proxy.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-29 14:51:55 Sunday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-proxy.el - HTTP/HTTPS proxy configuration for Emacs.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: proxy, network, http
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; HTTP/HTTPS proxy configuration for Emacs network operations.

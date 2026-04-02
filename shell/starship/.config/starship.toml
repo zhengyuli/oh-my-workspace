@@ -1,7 +1,19 @@
 # starship.toml -*- mode: toml; -*-
 # Time-stamp: <2026-03-24 21:30:00 Mon by zhengyu.li>
+#
 # =============================================================================
 # Starship - Cross-shell prompt customization
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: starship, prompt, shell, toml
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-24 21:30 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Cross-shell prompt with Nerd Font symbols and custom date/time modules.
 #
 # References:
 #   1. Starship Docs: https://starship.rs/config/

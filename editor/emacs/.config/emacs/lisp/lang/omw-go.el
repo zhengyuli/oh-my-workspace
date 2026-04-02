@@ -1,17 +1,19 @@
 ;;; omw-go.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-20 10:20:51 Friday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-go.el - Go mode with gopls LSP.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: go, golang
 ;; Dependencies: omw-prog, omw-utils
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Go mode configuration with LSP support via gopls.

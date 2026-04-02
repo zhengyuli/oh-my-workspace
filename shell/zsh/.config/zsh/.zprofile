@@ -16,6 +16,7 @@
 # -----------------------------------------------------------------------------
 # Core Configuration Fragments
 # -----------------------------------------------------------------------------
+
 # These modules are safe for non-interactive contexts and should be available
 # to all login shells (including scripts run via 'ssh host command').
 
