@@ -271,13 +271,20 @@ Auxiliary tools were installed in previous steps, only need verification and con
 bun install -g happy
 
 # Trust the package (required by bun for global packages)
-cd ~/.local/share/bun/install/global && bun pm trust happy
+# Uses XDG_DATA_HOME (falls back to ~/.local/share) to locate bun global dir
+BUN_GLOBAL_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/bun/install/global"
+if [[ -d "$BUN_GLOBAL_DIR" ]]; then
+  cd "$BUN_GLOBAL_DIR" && bun pm trust happy
+else
+  echo "Warning: bun global dir not found at $BUN_GLOBAL_DIR"
+  echo "Please run manually: cd <bun-global-dir> && bun pm trust happy"
+fi
 
 # Verify installation
 happy --version
 ```
 
-> **Note**: `bun pm trust` is required because bun restricts lifecycle scripts for globally installed packages. Without this step, Happy may fail to run properly.
+> **Note**: `bun pm trust` is required because bun restricts lifecycle scripts for globally installed packages. Without this step, Happy may fail to run properly. If the automatic trust fails (e.g. non-standard bun install path), run `bun pm -g bin` to find your global directory, then `cd` into it and run `bun pm trust happy`.
 
 ### Configure claude-hud Statusline
 
@@ -345,7 +352,7 @@ printf ' %s\n' "$SCRIPT_NAME"
 printf '=========================================\n'
 
 # 1. GLM Configuration Check
-printf '\n[1/7] GLM Configuration Check\n'
+printf '\n[1/8] GLM Configuration Check\n'
 if jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "GLM API endpoint configured"
 else
@@ -353,7 +360,7 @@ else
 fi
 
 # 2. Plugin Count Check
-printf '\n[2/7] Plugin Count Check\n'
+printf '\n[2/8] Plugin Count Check\n'
 if command -v claude >/dev/null 2>&1; then
   PLUGIN_COUNT="$(claude plugin list 2>/dev/null | grep -c '✔ enabled')"
   if (( PLUGIN_COUNT >= MIN_PLUGIN_COUNT )); then
@@ -366,7 +373,7 @@ else
 fi
 
 # 3. MCP Check
-printf '\n[3/7] MCP Check\n'
+printf '\n[3/8] MCP Check\n'
 if [[ -f ~/.claude.json ]]; then
   MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)"
   if (( MCP_COUNT >= MIN_MCP_COUNT )); then
@@ -379,7 +386,7 @@ else
 fi
 
 # 4. Hooks Check
-printf '\n[4/7] Hooks Check\n'
+printf '\n[4/8] Hooks Check\n'
 if jq -e '.hooks.PreToolUse' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "Hooks configured"
 else
@@ -387,7 +394,7 @@ else
 fi
 
 # 5. RTK Check
-printf '\n[5/7] RTK Check\n'
+printf '\n[5/8] RTK Check\n'
 if command -v rtk >/dev/null 2>&1; then
   _pass "RTK installed: $(rtk --version 2>&1 | head -1)"
 else
