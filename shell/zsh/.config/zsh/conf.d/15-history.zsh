@@ -54,6 +54,8 @@ setopt HIST_FIND_NO_DUPS
 # SHARE_HISTORY implies immediate append, so INC_APPEND_HISTORY is redundant
 # Share history across all running shells in real time
 setopt SHARE_HISTORY
+# Use fcntl() for file locking (faster, safer on NFS, zero downside)
+setopt HIST_FCNTL_LOCK
 
 # --- Safety ---
 # Show expanded history substitution before executing

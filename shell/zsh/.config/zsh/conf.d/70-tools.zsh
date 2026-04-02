@@ -113,19 +113,6 @@ if command -v fzf &>/dev/null; then
 fi
 
 # -----------------------------------------------------------------------------
-# direnv -- Per-Directory Environment
-# -----------------------------------------------------------------------------
-# Automatically load/unload environment variables when entering/leaving
-# directories with .envrc files. Hook is lightweight (<5ms), no lazy load.
-#
-# Prerequisites: brew install direnv
-# Usage: echo 'export API_KEY=xxx' > .envrc && direnv allow
-# Documentation: https://direnv.net/
-if command -v direnv &>/dev/null; then
-  eval "$(direnv hook zsh)"
-fi
-
-# -----------------------------------------------------------------------------
 # zoxide -- Smart cd Command
 # -----------------------------------------------------------------------------
 # Fast directory jumping with frecency algorithm. Replaces z, autojump.
@@ -158,7 +145,8 @@ git() {
       case "$a" in
         --get|--get-all|--get-regexp|--get-urlmatch|--list|--show-origin|--show-scope)
           mode=r; break ;;
-        --add|--unset|--unset-all|--rename-section|--remove-section|--replace-all|--edit|-e)
+        --add|--unset|--unset-all|--rename-section|--remove-section|\
+          --replace-all|--edit|-e|--comment)
           mode=w; break ;;
       esac
     done

@@ -9,7 +9,7 @@
 # Responsibilities:
 #   1. Initialize zsh completion system (compinit)
 #   2. Configure completion styles (zstyle)
-#   3. Load completion modules (complist, bashcompinit)
+#   3. Load completion modules (complist)
 #   4. Set up completion caching for performance
 #
 # Prerequisites:
@@ -119,11 +119,3 @@ zstyle ':completion:*' completer _extensions _complete
 
 # Do not offer current directory when completing cd ../
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
-
-# -----------------------------------------------------------------------------
-# Additional completion helpers
-# -----------------------------------------------------------------------------
-
-# bashcompinit: allows use of bash-style complete commands
-autoload -Uz bashcompinit
-bashcompinit

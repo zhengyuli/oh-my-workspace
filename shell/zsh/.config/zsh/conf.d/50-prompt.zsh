@@ -33,9 +33,11 @@ if command -v starship &>/dev/null; then
 # --- Window Title ---
 # Set terminal title to current directory for supported terminals.
 # Use add-zsh-hook (NOT precmd() directly) to keep starship's hook.
-  if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty) ]] || \
+  if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty|Apple_Terminal) ]] || \
+     [[ "$TERM_PROGRAM" == tmux ]] || \
      [[ "$TERM" == alacritty* ]] || \
-     [[ "$TERM" == kitty* ]]; then
+     [[ "$TERM" == kitty* ]] || \
+     [[ -n "$TMUX" ]]; then
     autoload -Uz add-zsh-hook
     _omw_set_window_title() { print -Pn "\e]0;%~\a" }
     add-zsh-hook precmd _omw_set_window_title
