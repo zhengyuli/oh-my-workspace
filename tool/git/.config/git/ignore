@@ -1,9 +1,19 @@
 # ignore -*- mode: gitignore; -*-
 # Time-stamp: <2026-03-29 00:00:00 Saturday by zhengyu.li>
+#
 # =============================================================================
 # Global Git Ignore Patterns
 #
-# OS and editor artifacts only. Per-repository patterns go in .gitignore.
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: git, ignore, patterns
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-29 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   OS and editor artifacts only. Per-repository patterns go in .gitignore.
 #
 # References:
 #   1. gitignore docs: https://git-scm.com/docs/gitignore
@@ -12,6 +22,7 @@
 # -----------------------------------------------------------------------------
 # macOS
 # -----------------------------------------------------------------------------
+
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -20,6 +31,7 @@
 # -----------------------------------------------------------------------------
 # Editor / IDE
 # -----------------------------------------------------------------------------
+
 *.swp
 *~
 .#*
