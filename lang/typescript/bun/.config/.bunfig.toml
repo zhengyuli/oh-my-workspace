@@ -23,6 +23,7 @@
 # -----------------------------------------------------------------------------
 # Install Cache
 # -----------------------------------------------------------------------------
+
 # Redirect to XDG cache dir so ~/.bun stays clean and follows XDG spec
 [install.cache]
 dir = "~/.cache/bun/install/cache"
