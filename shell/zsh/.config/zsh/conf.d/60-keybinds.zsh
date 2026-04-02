@@ -56,8 +56,12 @@ bindkey '^[f' forward-word
 bindkey '^[b' backward-word
 # Alt-d   delete word forward
 bindkey '^[d' kill-word
-# Ctrl-Backspace  delete word backward (Ghostty sends ^H; may conflict in other terminals)
-bindkey '^H' backward-kill-word
+# Ctrl-Backspace  delete word backward
+# Ghostty sends ^H for Ctrl+Backspace; most other terminals send ^H for
+# plain Backspace, so only bind in Ghostty to avoid breaking Backspace.
+if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
+  bindkey '^H' backward-kill-word
+fi
 # Ctrl-Delete     delete word forward
 bindkey '^[[3;5~' kill-word
 

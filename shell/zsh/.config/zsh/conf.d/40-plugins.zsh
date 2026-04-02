@@ -12,8 +12,9 @@
 #   3. Load core plugins (syntax highlighting, autosuggestions, etc.)
 #   4. Load utility plugins (autopair)
 #   5. Configure plugin-specific settings
+#   6. Initialize direnv (must load before starship in 50-prompt.zsh)
 #
-# Do NOT add: Tool initialization (pyenv, fnm, direnv, etc.)
+# Do NOT add: Tool initialization (pyenv, fnm, etc.)
 #             → Put these in 70-tools.zsh (separate concern)
 # =============================================================================
 
@@ -160,12 +161,15 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
   'bat --color=always --style=plain --line-range=:50 "$realpath" 2>/dev/null \
    || eza -1 --color=always --icons "$realpath" 2>/dev/null'
 
-# Environment variables: preview value
+# Environment variables: preview value (hide sensitive variables)
 # Match: -command-, -parameter-, -brace-parameter-, export, unset
+typeset -g _sensitive_pattern
+_sensitive_pattern='(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE)'
 typeset -g _ev='(-command-|-parameter-|-brace-parameter-|export|unset|expand)'
 zstyle ":fzf-tab:complete:${_ev}:*" fzf-preview \
-  'print -r -- "${(P)word}"'
-unset _ev
+  '[[ "$word" =~ ${(q)_sensitive_pattern} ]] && print "(hidden)" \
+   || print -r -- "${(P)word}"'
+unset _ev _sensitive_pattern
 
 # kill: preview process info
 # Use BSD-compatible -p flag (macOS ps does not support --pid)
@@ -195,3 +199,20 @@ zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
 
 # Switch groups with , and .
 zstyle ':fzf-tab:*' switch-group ',' '.'
+
+# -----------------------------------------------------------------------------
+# direnv -- Per-Directory Environment (must load before starship)
+# -----------------------------------------------------------------------------
+# Automatically load/unload environment variables when entering/leaving
+# directories with .envrc files. Hook is lightweight (<5ms), no lazy load.
+#
+# IMPORTANT: Must load before starship (50-prompt.zsh) so that .envrc
+# variables are visible to the prompt on first render in a new directory.
+# zoxide (70-tools.zsh) must load AFTER starship per zoxide docs.
+#
+# Prerequisites: brew install direnv
+# Usage: echo 'export API_KEY=xxx' > .envrc && direnv allow
+# Documentation: https://direnv.net/
+if command -v direnv &>/dev/null; then
+  eval "$(direnv hook zsh)"
+fi
