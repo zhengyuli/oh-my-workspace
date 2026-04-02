@@ -158,7 +158,7 @@ git() {
       case "$a" in
         --get|--get-all|--get-regexp|--get-urlmatch|--list|--show-origin|--show-scope)
           mode=r; break ;;
-        --add|--unset|--unset-all|--rename-section|--remove-section)
+        --add|--unset|--unset-all|--rename-section|--remove-section|--replace-all|--edit|-e)
           mode=w; break ;;
       esac
     done

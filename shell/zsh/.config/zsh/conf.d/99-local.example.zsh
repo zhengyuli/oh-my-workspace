@@ -11,7 +11,7 @@
 #   2. Document common local customization patterns
 #
 # Usage:
-#   cp 99-local.zsh.example 99-local.zsh
+#   cp 99-local.example.zsh 99-local.zsh
 #   Edit 99-local.zsh with machine-specific settings
 #
 # Note:
