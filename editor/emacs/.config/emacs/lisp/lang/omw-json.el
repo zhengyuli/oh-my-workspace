@@ -1,17 +1,19 @@
 ;;; omw-json.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-21 12:00:00 Saturday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-json.el - JSON mode with LSP support.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: json, data
 ;; Dependencies: omw-prog, omw-utils
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-21 12:00 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; JSON mode configuration with LSP support.

@@ -21,6 +21,7 @@
 # -----------------------------------------------------------------------------
 # Zinit bootstrap
 # -----------------------------------------------------------------------------
+
 # Data directory follows XDG: $XDG_DATA_HOME/zinit/
 # Idempotency guard - prevent double loading
 if (( ${+ZINIT_INITIALIZED} )); then
@@ -50,7 +51,8 @@ fi
 
 # Set compdump path BEFORE sourcing zinit so ALL internal compinit calls
 # (zicompinit, automatic rebuilds, self-update) use the XDG cache path.
-# Without this, zinit defaults to ${ZDOTDIR}/.zcompdump (~/.config/zsh/.zcompdump).
+# Without this, zinit defaults to ${ZDOTDIR}/.zcompdump\
+# (~/.config/zsh/.zcompdump).
 typeset -gA ZINIT
 ZINIT[ZCOMPDUMP_PATH]="$XDG_CACHE_HOME/zsh/zcompdump"
 
@@ -60,6 +62,7 @@ typeset -g ZINIT_INITIALIZED=1
 # -----------------------------------------------------------------------------
 # Plugin loading order (matches actual execution order)
 # -----------------------------------------------------------------------------
+
 # Execution timeline:
 #   During startup (sync):
 #     1. fzf-tab - must own ^I before any turbo plugin can override it
@@ -90,7 +93,8 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 # disabled: perf cost on large histories
 # HISTORY_SUBSTRING_SEARCH_FUZZY=1
 # Keybindings via atload: widgets must exist before bindkey can reference them
-# Use terminfo for maximum terminal compatibility (official README recommendation)
+# Use terminfo for maximum terminal compatibility\
+# (official README recommendation)
 # plus both normal-mode and application-mode fallbacks.
 zinit ice wait"0b" lucid atload'
   bindkey "$terminfo[kcuu1]" history-substring-search-up
@@ -171,7 +175,8 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
 # execution time.  Pattern is embedded directly to avoid unset-variable bugs
 # that would break the entire preview (previous code used a temp var that was
 # unset before fzf-tab could evaluate it).
-zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
+zstyle ':fzf-tab:complete:(-command-|-parameter-'\
+'|-brace-parameter-|export|unset|expand):*' \
   fzf-preview \
   '[[ "$word" =~ (?i)(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE) ]] \
    && print "(hidden)" || print -r -- "${(P)word}"'
@@ -208,6 +213,7 @@ zstyle ':fzf-tab:*' switch-group ',' '.'
 # -----------------------------------------------------------------------------
 # direnv -- Per-Directory Environment (must load before starship)
 # -----------------------------------------------------------------------------
+
 # Automatically load/unload environment variables when entering/leaving
 # directories with .envrc files. Hook is lightweight (<5ms), no lazy load.
 #

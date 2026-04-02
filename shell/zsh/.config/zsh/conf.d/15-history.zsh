@@ -20,6 +20,7 @@
 # -----------------------------------------------------------------------------
 # History Size
 # -----------------------------------------------------------------------------
+
 # HISTSIZE: maximum entries kept in memory during session
 # SAVEHIST: maximum entries written to HISTFILE on exit
 # Common practice: 10000-50000 (100000 is excessive)
@@ -30,6 +31,7 @@ SAVEHIST=$HIST_MAX_ENTRIES
 # -----------------------------------------------------------------------------
 # History Options
 # -----------------------------------------------------------------------------
+
 # See: https://zsh.sourceforge.io/Doc/Release/Options.html#History
 
 # --- Recording ---

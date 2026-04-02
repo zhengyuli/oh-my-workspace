@@ -1,17 +1,19 @@
 ;;; omw-cmake.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-20 10:16:24 Friday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-cmake.el - CMake mode with LSP support.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: cmake
 ;; Dependencies: omw-prog, omw-utils
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; CMake mode configuration with LSP support.

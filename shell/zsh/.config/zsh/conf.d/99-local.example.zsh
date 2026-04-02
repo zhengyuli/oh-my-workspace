@@ -23,18 +23,21 @@
 # -----------------------------------------------------------------------------
 # Project directory shortcuts
 # -----------------------------------------------------------------------------
+
 # alias work='cd ~/Projects/mycompany'
 # alias proj='cd ~/Projects/myproject'
 
 # -----------------------------------------------------------------------------
 # Machine-specific PATH additions
 # -----------------------------------------------------------------------------
+
 # path+=("$HOME/bin/scripts")
 # path+=("/opt/custom-tool/bin")
 
 # -----------------------------------------------------------------------------
 # Secrets and API keys (local only -- never commit)
 # -----------------------------------------------------------------------------
+
 # export GITHUB_TOKEN=""
 # export ANTHROPIC_API_KEY=""
 # export AWS_PROFILE="default"
@@ -42,12 +45,14 @@
 # -----------------------------------------------------------------------------
 # Machine-specific tool configuration
 # -----------------------------------------------------------------------------
+
 # export JAVA_HOME="/opt/homebrew/opt/openjdk@17"
 # export ANDROID_HOME="$HOME/Library/Android/sdk"
 
 # -----------------------------------------------------------------------------
 # Corporate proxy (office network, VPN, etc.)
 # -----------------------------------------------------------------------------
+
 # set_proxy() {
 #   local -r _PROXY_URL="http://proxy.company.com:8080"
 #   local -r _NO_PROXY_LIST=\

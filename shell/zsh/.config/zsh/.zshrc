@@ -21,6 +21,7 @@
 # -----------------------------------------------------------------------------
 # Interactive Guard
 # -----------------------------------------------------------------------------
+
 # Exit immediately if not running interactively.
 # Prevents configuration from leaking into scripts or non-interactive shells.
 if [[ $- != *i* ]]; then
@@ -30,10 +31,11 @@ fi
 # -----------------------------------------------------------------------------
 # Module Loader
 # -----------------------------------------------------------------------------
+
 # Load all conf.d fragments in lexicographic (numeric prefix) order.
 # (N) glob qualifier: silently skip if no files match (null glob).
 for _conf in "$ZDOTDIR"/conf.d/*.zsh(N); do
-  if [[ $_conf == *.example.zsh ]]; then
+  if [[ "$_conf" == *.example.zsh ]]; then
     continue
   fi
   source "$_conf"

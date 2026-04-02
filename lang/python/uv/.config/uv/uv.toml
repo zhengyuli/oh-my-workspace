@@ -1,29 +1,35 @@
 # uv.toml -*- mode: toml; -*-
 # Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+#
 # =============================================================================
 # UV Package Manager Global Configuration
 #
-# XDG: Native support (no UV_* env overrides needed)
-#      - Cache: $XDG_CACHE_HOME/uv (~/.cache/uv)
-#      - Data:  $XDG_DATA_HOME/uv (~/.local/share/uv)
-#      - State: $XDG_STATE_HOME/uv (~/.local/state/uv)
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: uv, python, package-manager
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-20 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Global configuration for the UV Python package manager.
+#   XDG: Native support (no UV_* env overrides needed)
+#        - Cache: $XDG_CACHE_HOME/uv (~/.cache/uv)
+#        - Data:  $XDG_DATA_HOME/uv (~/.local/share/uv)
+#        - State: $XDG_STATE_HOME/uv (~/.local/state/uv)
+#   Project-specific settings go in pyproject.toml [tool.uv] section.
 #
 # References:
 #   1. Official Docs: https://docs.astral.sh/uv/concepts/configuration-files/
 #   2. Config Options: https://docs.astral.sh/uv/reference/settings/
 #   3. PyTorch: https://docs.astral.sh/uv/guides/integration/pytorch/
-#
-# Project-specific settings go in pyproject.toml [tool.uv] section.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Package Index
+# Publishing
 # -----------------------------------------------------------------------------
-[[index]]
-name = "pypi"
-url = "https://pypi.org/simple/"
 publish-url = "https://upload.pypi.org/legacy/"
-default = true
 
 # -----------------------------------------------------------------------------
 # Networking
@@ -48,7 +54,7 @@ native-tls = true
 # compile-bytecode = true
 
 # Allow pre-release versions (useful for testing new features)
-# pre-release = "allow"
+# prerelease = "allow"
 
 # Concurrency settings (defaults are usually optimal)
 # concurrent-builds = 8
@@ -61,3 +67,11 @@ native-tls = true
 #   UV_FROZEN=true          - Fail if lockfile is outdated
 #   UV_NO_PROGRESS=true     - Disable progress bars in logs
 #   UV_CACHE_DIR=/tmp/uv    - Override cache location
+
+# -----------------------------------------------------------------------------
+# Package Index
+# -----------------------------------------------------------------------------
+[[index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+default = true

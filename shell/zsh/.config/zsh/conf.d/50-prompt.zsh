@@ -24,6 +24,7 @@
 # -----------------------------------------------------------------------------
 # Option A: Starship (Default)
 # -----------------------------------------------------------------------------
+
 # Cross-shell prompt written in Rust.
 # Prerequisites: brew install starship
 # Config: $XDG_CONFIG_HOME/starship.toml

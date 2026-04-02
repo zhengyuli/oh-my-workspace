@@ -1,17 +1,19 @@
 ;;; omw-term.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-28 19:56:12 Saturday by zhengyuli>
-
+;; Time-stamp: <2026-03-28 19:56:12 Saturday by zhengyu.li>
+;;
 ;; ============================================================================
+;; omw-term.el - Terminal emulation with vterm.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: terminal, vterm, eshell
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Terminal emulation configuration with vterm for fast, native PTY support.

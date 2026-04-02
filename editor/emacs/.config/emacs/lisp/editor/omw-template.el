@@ -1,17 +1,19 @@
 ;;; omw-template.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-04-02 21:21:54 Thursday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-template.el - Template system using yasnippet.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: template, yasnippet, snippet
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 19:10 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Template system using yasnippet for file header generation.

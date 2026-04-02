@@ -24,6 +24,7 @@
 # -----------------------------------------------------------------------------
 # Keymap -- Emacs style (default)
 # -----------------------------------------------------------------------------
+
 # Works well in terminals even if you use Vim for editing.
 # To use vi mode: replace 'bindkey -e' with 'bindkey -v'
 # emacs keymap
@@ -36,6 +37,7 @@ bindkey -e
 # -----------------------------------------------------------------------------
 # History search
 # -----------------------------------------------------------------------------
+
 # Ctrl-P / Ctrl-N: prefix-based history search (built-in widgets)
 bindkey '^P' history-search-backward
 bindkey '^N' history-search-forward
@@ -46,6 +48,7 @@ bindkey '^N' history-search-forward
 # -----------------------------------------------------------------------------
 # Word movement
 # -----------------------------------------------------------------------------
+
 # Ctrl-Right
 bindkey -- '^[[1;5C' forward-word
 # Ctrl-Left
@@ -68,6 +71,7 @@ bindkey '^[[3;5~' kill-word
 # -----------------------------------------------------------------------------
 # Line editing
 # -----------------------------------------------------------------------------
+
 # Ctrl-A  jump to start of line
 bindkey '^A' beginning-of-line
 # Ctrl-E  jump to end of line
@@ -82,6 +86,7 @@ bindkey '^Y' yank
 # -----------------------------------------------------------------------------
 # Editing
 # -----------------------------------------------------------------------------
+
 # Delete key
 bindkey '^[[3~' delete-char
 # Alt-Backspace
@@ -90,6 +95,7 @@ bindkey '^[^?' backward-kill-word
 # -----------------------------------------------------------------------------
 # Completion
 # -----------------------------------------------------------------------------
+
 # Tab (^I) is owned by fzf-tab (40-plugins.zsh) - do NOT rebind ^I here.
 # fzf-tab registers fzf-tab-complete synchronously at plugin load; any
 # subsequent bindkey '^I' would silently break fzf-tab's UI.
@@ -99,12 +105,14 @@ bindkey '^[^?' backward-kill-word
 # -----------------------------------------------------------------------------
 # Miscellaneous
 # -----------------------------------------------------------------------------
+
 # Ctrl-L  clear screen
 bindkey '^L' clear-screen
 
 # -----------------------------------------------------------------------------
 # Custom widget: toggle sudo prefix (Esc Esc)
 # -----------------------------------------------------------------------------
+
 # Press Esc twice to add or remove 'sudo' at the start of the line
 sudo-command-line() {
   local prefix="sudo "

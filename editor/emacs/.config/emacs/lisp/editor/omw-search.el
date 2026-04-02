@@ -1,17 +1,19 @@
 ;;; omw-search.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-search.el - Search and navigation with consult and embark.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: search, consult, embark, xref
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 19:15 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Search and navigation with consult, embark, wgrep, and xref integration.

@@ -1,17 +1,19 @@
 ;;; omw-explorer.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-explorer.el - File explorer with Dirvish and dired.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: explorer, dirvish, file manager
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Dired configuration with Dirvish for modern file management.
@@ -21,6 +23,10 @@
 ;; ----------------------------------------------------------------------------
 ;; File Explorer
 ;; ----------------------------------------------------------------------------
+
+;; --- Dirvish Threshold ---
+(defconst omw/dirvish-large-dir-threshold 20000
+  "Number of entries above which a directory is considered large by Dirvish.")
 
 ;; --- dired-hacks-utils ---
 (use-package dired-hacks-utils
@@ -57,7 +63,7 @@
   (setq dirvish-attributes
         '(vc-state subtree-state nerd-icons git-msg
           file-modes file-time file-size)
-        dirvish-large-directory-threshold 20000))
+        dirvish-large-directory-threshold omw/dirvish-large-dir-threshold))
 
 ;; --- dired-externally ---
 (defun omw/dired-open-externally ()

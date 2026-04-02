@@ -1,17 +1,19 @@
 ;;; omw-edit.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-edit.el - Editing enhancements and smart text operations.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: editing, deletion, whitespace, pairs
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Editing enhancements: smart text operations, visual undo,

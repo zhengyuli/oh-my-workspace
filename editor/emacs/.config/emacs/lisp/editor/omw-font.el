@@ -1,17 +1,19 @@
 ;;; omw-font.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-18 22:59:48 Wednesday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-font.el - Font configuration with CJK support.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: font, faces
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Font configuration for optimal code editing and CJK support.

@@ -1,17 +1,19 @@
 ;;; omw-gitconfig.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-21 15:39:57 Saturday by zhengyuli>
-
+;; Time-stamp: <2026-03-21 15:39:57 Saturday by zhengyu.li>
+;;
 ;; ============================================================================
+;; omw-gitconfig.el - Git configuration file modes.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: git, gitconfig, gitignore, configuration
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-19 16:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Git configuration file modes setup.

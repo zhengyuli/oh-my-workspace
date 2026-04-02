@@ -1,17 +1,19 @@
 ;;; omw-prog.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-prog.el - Base programming configuration and hooks.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: prog, programming, hooks
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Base programming configuration: smartparens, rainbow-delimiters,

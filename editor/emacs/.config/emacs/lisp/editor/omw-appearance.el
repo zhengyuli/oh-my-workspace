@@ -1,17 +1,19 @@
 ;;; omw-appearance.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-22 10:40:32 Sunday by zhengyuli>
-
+;; Time-stamp: <2026-03-22 10:40:32 Sunday by zhengyu.li>
+;;
 ;; ============================================================================
+;; omw-appearance.el - UI theme, icons, modeline, tabs, and dashboard.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: ui, theme, tabs, dashboard
 ;; Dependencies: (none)
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-14 15:30 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; UI configuration: theme, icons, modeline, tabs, window management,

@@ -1,17 +1,19 @@
 ;;; omw-rust.el -*- lexical-binding: t; -*-
 ;; Time-stamp: <2026-03-20 10:32:39 Friday by zhengyu.li>
-
+;;
 ;; ============================================================================
+;; omw-rust.el - Rust mode with rust-analyzer.
+;;
 ;; Author: zhengyu li <lizhengyu419@outlook.com>
 ;; Keywords: rust, rust-analyzer
 ;; Dependencies: omw-prog, omw-utils
-
+;;
 ;; Copyright (C) 2026 zhengyu li
-
+;;
 ;;; History:
 ;;
 ;; 2026-03-19 17:00 zhengyu li <lizhengyu419@outlook.com> created.
-
+;;
 ;;; Commentary:
 ;;
 ;; Rust mode configuration with LSP support via rust-analyzer.

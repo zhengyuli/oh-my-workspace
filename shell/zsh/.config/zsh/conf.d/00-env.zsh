@@ -25,6 +25,7 @@
 # -----------------------------------------------------------------------------
 # Editor / Pager
 # -----------------------------------------------------------------------------
+
 export EDITOR=nvim
 export VISUAL=nvim
 export PAGER=less
@@ -32,6 +33,7 @@ export PAGER=less
 # -----------------------------------------------------------------------------
 # Locale
 # -----------------------------------------------------------------------------
+
 # Use LANG only; avoid LC_ALL as it overrides all LC_* settings.
 # Set specific LC_* variables if needed (e.g., LC_TIME for date format).
 export LANG=en_US.UTF-8
@@ -39,6 +41,7 @@ export LANG=en_US.UTF-8
 # -----------------------------------------------------------------------------
 # Zsh History
 # -----------------------------------------------------------------------------
+
 # History is STATE (persists, cannot be regenerated) → XDG_STATE_HOME.
 # Do NOT use XDG_CACHE_HOME: cache directories are cleared by OS maintenance
 # tools and "free disk space" scripts, which would silently destroy history.
@@ -58,6 +61,7 @@ fi
 # -----------------------------------------------------------------------------
 # XDG Redirections -- Build and Development Tools
 # -----------------------------------------------------------------------------
+
 # Redirect tool data from ~/.toolname to XDG directories.
 # See: https://wiki.archlinux.org/title/XDG_Base_Directory
 
@@ -76,7 +80,8 @@ export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
 # -----------------------------------------------------------------------------
 
 # Vim -- no native XDG support, must redirect via VIMINIT
-export VIMINIT="set nocp | execute 'source' fnameescape('${XDG_CONFIG_HOME}/vim/vimrc')"
+export VIMINIT="set nocp | "\
+"execute 'source' fnameescape('${XDG_CONFIG_HOME}/vim/vimrc')"
 
 # -----------------------------------------------------------------------------
 # XDG Redirections -- CLI Tools
@@ -98,12 +103,14 @@ export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
 # -----------------------------------------------------------------------------
 # Less -- Modern Configuration
 # -----------------------------------------------------------------------------
+
 # Use less with mouse support, line numbers, and colors
 export LESS='-R -F -X -i -M --use-color -Dd+r$Du+b'
 
 # -----------------------------------------------------------------------------
 # Homebrew (macOS)
 # -----------------------------------------------------------------------------
+
 # Pure environment variables; needed even in non-interactive shells.
 # HOMEBREW_PREFIX may already be set by Homebrew's shellenv; use ${:-} to
 # preserve existing value.
@@ -124,6 +131,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 # -----------------------------------------------------------------------------
 # LS_COLORS -- Colored ls and completion output
 # -----------------------------------------------------------------------------
+
 # macOS BSD ls uses LSCOLORS (different format); LS_COLORS is the GNU/XDG
 # format used by zsh completion (list-colors in 30-completion.zsh) and eza.
 # gdircolors is provided by coreutils (brew install coreutils, in Brewfile).
@@ -137,6 +145,7 @@ fi
 # -----------------------------------------------------------------------------
 # fzf -- Fuzzy Finder Environment
 # -----------------------------------------------------------------------------
+
 # Must be set before fzf-tab loads in 40-plugins.zsh.
 # Doom One color theme for visual consistency.
 #
