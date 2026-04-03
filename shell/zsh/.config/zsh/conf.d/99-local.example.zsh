@@ -28,14 +28,14 @@
 # alias proj='cd ~/Projects/myproject'
 
 # -----------------------------------------------------------------------------
-# Machine-specific PATH additions
+# Machine-Specific PATH Additions
 # -----------------------------------------------------------------------------
 
 # path+=("$HOME/bin/scripts")
 # path+=("/opt/custom-tool/bin")
 
 # -----------------------------------------------------------------------------
-# Secrets and API Keys
+# Secrets And API Keys
 # -----------------------------------------------------------------------------
 
 # export GITHUB_TOKEN=""

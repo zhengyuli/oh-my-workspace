@@ -29,7 +29,7 @@
 ;; ----------------------------------------------------------------------------
 
 ;; --- XDG Base Directory Configuration ---
-;; Must be set before package system initializes (Emacs 27+ auto-initializes)
+;; Must be set before package system initializes — Emacs 27+ auto-initializes.
 (defconst omw/xdg-data-home (or (getenv "XDG_DATA_HOME")
                                 (expand-file-name "~/.local/share/"))
   "XDG data home directory ($XDG_DATA_HOME, defaults to ~/.local/share/).")
@@ -42,7 +42,7 @@
                                  (expand-file-name "~/.local/state/"))
   "XDG state home directory ($XDG_STATE_HOME, defaults to ~/.local/state/).")
 
-;; --- Builtin directory configuration ---
+;; --- Builtin Directory Configuration ---
 ;; Emacs directory configuration
 (setq user-emacs-directory (expand-file-name "emacs/" omw/xdg-data-home))
 

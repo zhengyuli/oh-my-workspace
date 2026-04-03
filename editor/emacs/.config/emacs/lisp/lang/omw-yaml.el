@@ -17,7 +17,7 @@
 ;;; Commentary:
 ;;
 ;; YAML mode configuration with LSP support.
-;; LSP server (yaml-language-server) is configured in omw-prog.el.
+;; LSP server yaml-language-server is configured in omw-prog.el.
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------
@@ -33,7 +33,7 @@
   (interactive)
   (apply #'omw/tools-install omw/yaml-tool-specs))
 
-;; --- Yaml Mode Setup ---
+;; --- YAML Mode Setup ---
 (defun omw/yaml-mode-setup ()
   "Apply custom settings for yaml mode."
   (apply #'omw/tools-check-and-prompt omw/yaml-tool-specs))

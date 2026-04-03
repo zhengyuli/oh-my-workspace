@@ -93,7 +93,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (require 'use-package)
 
 ;; --- GC Tuning ---
-;; GC tuning constants — applied early (before package initialization) to
+;; GC tuning constants — applied early, before package initialization, to
 ;; minimize garbage-collection pauses during startup.  gcmh will restore
 ;; sensible values once Emacs is fully initialized.
 (defconst omw/gc-startup-threshold (* 100 1024 1024)
@@ -182,7 +182,7 @@ to more conservative values after the init phase completes.")
 ;; ----------------------------------------------------------------------------
 
 ;; --- Clipboard ---
-;; GUI frames use native macOS clipboard (NS pasteboard).
+;; GUI frames use native macOS clipboard via NS pasteboard.
 ;; Terminal frames rely on OSC 52 to bridge kill-ring → system clipboard.
 (unless (display-graphic-p)
   (setq xterm-extra-capabilities '(setSelection))

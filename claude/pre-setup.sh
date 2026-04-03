@@ -153,7 +153,7 @@ _check_prerequisites() {
   fi
   _pass "macOS $os_version"
 
-  # --- Required tools ---
+  # --- Required Tools ---
   local missing=0
   local cmd
 
@@ -325,7 +325,7 @@ _verify() {
     return 1
   fi
 
-  # --- Check required env vars ---
+  # --- Check Required Env Vars ---
   local -a required=(
     ANTHROPIC_BASE_URL
     ANTHROPIC_AUTH_TOKEN
@@ -348,7 +348,7 @@ _verify() {
     fi
   done
 
-  # --- Check model ---
+  # --- Check Model ---
   local model
   model="$(jq -r '.model' "$settings")"
 
@@ -359,7 +359,7 @@ _verify() {
     failed=1
   fi
 
-  # --- Check claude CLI ---
+  # --- Check Claude CLI ---
   # May need a new terminal if just installed (PATH not yet updated).
   if command -v claude >/dev/null 2>&1; then
     _pass "claude CLI: $(claude --version 2>/dev/null)"

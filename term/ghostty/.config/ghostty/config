@@ -65,9 +65,9 @@ window-padding-balance = true
 background-opacity = 0.98
 background-blur-radius = 20
 
-# "tabs" integrates the tab bar directly into the titlebar — more compact than
-# "transparent" which stacks a separate native tab bar on top of the titlebar.
-# Multiple related macOS bugs were fixed in Ghostty 1.2.3; now stable.
+# "tabs" embeds the tab bar in the titlebar; more compact than "transparent"
+# which stacks a separate native tab bar on top of the titlebar.
+# macOS titlebar bugs were fixed in Ghostty 1.2.3; now stable.
 macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
 
@@ -175,23 +175,24 @@ keybind = super+shift+comma=reload_config
 # --- Splits ---
 keybind = super+shift+j=goto_split:next
 
-# --- Tabs: create & cycle ---
+# --- Tabs: Create & Cycle ---
 keybind = super+t=new_tab
 keybind = super+shift+n=next_tab
 keybind = super+shift+p=previous_tab
 
-# --- Tabs: reorder ---
+# --- Tabs: Reorder ---
 keybind = super+shift+left=move_tab:-1
 keybind = super+shift+right=move_tab:1
 
 # --- Quick Terminal ---
 keybind = super+shift+l=toggle_quick_terminal
 
-# --- Passthrough: let zsh handle these directly ---
+# --- Passthrough ---
+# Let zsh handle these directly
 keybind = ctrl+l=unbind
 
 # -----------------------------------------------------------------------------
-# Local overrides  (optional, not tracked by version control)
+# Local Overrides
 # -----------------------------------------------------------------------------
 
 config-file = ?config.local

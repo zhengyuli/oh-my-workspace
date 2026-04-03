@@ -70,18 +70,18 @@ typeset -g ZINIT_INITIALIZED=1
 #     3. history-substring-search, autosuggestions, autopair  [0b]
 #     4. fast-syntax-highlighting  [0c, LAST] - wraps all ZLE widgets;
 
-# --- Sync: fzf-tab (must be first and synchronous) ---
+# --- Sync: FZF Tab ---
 # Load before turbo plugins to ensure ^I ownership is established immediately.
 # fzf's completion.zsh is intentionally NOT loaded (see 70-tools.zsh comment).
 zinit light Aloxaf/fzf-tab
 
-# --- Turbo 0a: completions (early, before zicdreplay in FSH) ---
+# --- Turbo 0a: Completions ---
 # blockf: tells zinit not to add plugin to fpath (avoids triggering compinit
 # rebuild); completions are still available via zinit's own path management.
 zinit ice wait"0a" lucid blockf
 zinit light zsh-users/zsh-completions
 
-# --- Turbo 0b: interactive enhancement plugins ---
+# --- Turbo 0b: Interactive Enhancement Plugins ---
 # History substring search
 # Config vars are read at highlight render time (not at plugin load), so timing
 # is not critical. Set here for co-location with the plugin declaration -
@@ -122,7 +122,7 @@ zinit light zsh-users/zsh-autosuggestions
 zinit ice wait"0b" lucid
 zinit light hlissner/zsh-autopair
 
-# --- Turbo 0c: fast-syntax-highlighting (MUST be last) ---
+# --- Turbo 0c: Fast Syntax Highlighting ---
 # atinit runs before the plugin code:
 #   ZINIT[COMPINIT_OPTS]=-C → use cached dump (fast, no security check)
 #   zicompinit → re-run compinit to pick up any new completions
@@ -145,7 +145,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 # Git branch sorting
 zstyle ':completion:*:git-checkout:*' sort false
 
-# --- fzf-tab Preview Configurations ---
+# --- FZF Tab Preview Configurations ---
 # NOTE: Variable quoting here is intentional:
 #         - Double quotes (command style): $USER expands at source time
 #         - Single quotes (preview): $word/$group expand at completion time

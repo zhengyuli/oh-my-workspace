@@ -23,19 +23,19 @@
 ;; Emacs Lisp
 ;; ----------------------------------------------------------------------------
 
-;; --- elisp-slime-nav ---
+;; --- Elisp Slime Nav ---
 (use-package elisp-slime-nav
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . elisp-slime-nav-mode))
 
-;; --- lisp-extra-font-lock ---
+;; --- Lisp Extra Font Lock ---
 (use-package lisp-extra-font-lock
   :ensure t
   :defer t
   :hook (emacs-lisp-mode . lisp-extra-font-lock-mode))
 
-;; --- rainbow-mode ---
+;; --- Rainbow Mode ---
 (use-package rainbow-mode
   :ensure t
   :defer t

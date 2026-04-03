@@ -24,7 +24,7 @@
 ;; Programming
 ;; ----------------------------------------------------------------------------
 
-;; --- Jump to Matched Paren ---
+;; --- Jump To Matched Paren ---
 (defun omw/jump-to-matched-paren ()
   "Jump to the matched parenthesis/bracket/brace for the current position.
 If cursor is on/after an opening delimiter, jump to its closing match.
@@ -41,7 +41,7 @@ If no delimiter is found, show an error message."
          (backward-sexp))
         (t (message "couldn't find matched paren"))))
 
-;; --- copyright ---
+;; --- Copyright ---
 (use-package copyright
   :ensure nil
   :defer t
@@ -53,7 +53,7 @@ If no delimiter is found, show an error message."
          "[Cc]opyright\\s *(C)\\s *\\([0-9]+\\),[ \t]*\\([0-9]+\\)[ \t]*%s"
          (regexp-quote omw/emacs-user-name))))
 
-;; --- smartparens ---
+;; --- Smartparens ---
 (use-package smartparens
   :ensure t
   :defer t
@@ -61,36 +61,36 @@ If no delimiter is found, show an error message."
   :config
   (require 'smartparens-config))
 
-;; --- hungry-delete ---
+;; --- Hungry Delete ---
 (use-package hungry-delete
   :ensure t
   :defer t
   :hook (prog-mode . hungry-delete-mode))
 
-;; --- rainbow-delimiters ---
+;; --- Rainbow Delimiters ---
 (use-package rainbow-delimiters
   :ensure t
   :defer t
   :hook (prog-mode . rainbow-delimiters-mode))
 
-;; --- hl-todo ---
+;; --- HL Todo ---
 (use-package hl-todo
   :ensure t
   :defer t
   :hook (prog-mode . hl-todo-mode))
 
-;; --- whitespace-cleanup-mode ---
+;; --- Whitespace Cleanup Mode ---
 (use-package whitespace-cleanup-mode
   :ensure t
   :defer t
   :hook (prog-mode . whitespace-cleanup-mode))
 
-;; --- quickrun ---
+;; --- Quickrun ---
 (use-package quickrun
   :ensure t
   :defer t)
 
-;; --- eglot ---
+;; --- Eglot ---
 (use-package eglot
   :ensure nil
   :defer t

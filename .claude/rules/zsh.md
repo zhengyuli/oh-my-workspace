@@ -51,6 +51,12 @@ must omit the shebang.
 
 Blank line is required after every Level 1 closing line before code.
 
+**Title Case required**: capitalize the first letter of every word in both
+Section Title and Subsection Title (e.g., `Git Status`, `Doom Modeline`).
+Abbreviations follow their established convention: ALL CAPS for standard
+abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`), lowercase
+for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
+
 ```zsh
 # Level 0 (file header — shown in File Header section above)
 

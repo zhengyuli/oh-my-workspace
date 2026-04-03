@@ -28,12 +28,12 @@
 (defconst omw/dirvish-large-dir-threshold 20000
   "Number of entries above which a directory is considered large by Dirvish.")
 
-;; --- dired-hacks-utils ---
+;; --- Dired Hacks Utils ---
 (use-package dired-hacks-utils
   :ensure t
   :defer t)
 
-;; --- dirvish ---
+;; --- Dirvish ---
 (use-package dirvish
   :ensure t
   :defer t
@@ -65,7 +65,7 @@
           file-modes file-time file-size)
         dirvish-large-directory-threshold omw/dirvish-large-dir-threshold))
 
-;; --- dired-externally ---
+;; --- Dired Externally ---
 (defun omw/dired-open-externally ()
   "Open file (or marked files) externally."
   (interactive)
@@ -93,7 +93,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   "Apply custom settings for dired mode."
   (dired-omit-mode (if omw/omit-global-mode 1 -1)))
 
-;; --- dired ---
+;; --- Dired ---
 (use-package dired
   :ensure nil
   :defer t

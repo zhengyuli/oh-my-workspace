@@ -57,6 +57,12 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 
 Blank line is required after every Level 1 closing line before code.
 
+**Title Case required**: capitalize the first letter of every word in both
+Section Title and Subsection Title (e.g., `GC Tuning`, `Doom Modeline`).
+Abbreviations follow their established convention: ALL CAPS for standard
+abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`, `VTERM`),
+lowercase for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
+
 ```elisp
 ;;; Level 0 (file header — shown in File Header section above)
 

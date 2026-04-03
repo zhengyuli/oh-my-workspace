@@ -33,7 +33,7 @@
   ;; GPG passphrase)
   (setq epg-pinentry-mode 'loopback))
 
-;; --- auth-source-pass ---
+;; --- Auth Source Pass ---
 (use-package auth-source-pass
   :ensure nil
   :demand t
@@ -41,7 +41,7 @@
   ;; Enable pass (password-store.org) as auth source backend
   (auth-source-pass-enable))
 
-;; --- pass ---
+;; --- Pass ---
 (use-package pass
   :ensure t
   :defer t)

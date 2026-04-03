@@ -24,13 +24,13 @@
 ;; PDF Viewer
 ;; ----------------------------------------------------------------------------
 
-;; --- pdf-tools ---
+;; --- PDF Tools ---
 (use-package pdf-tools
   :ensure t
   :defer t
   :when (display-graphic-p))
 
-;; --- pdf-view ---
+;; --- PDF View ---
 (use-package pdf-view
   :ensure nil
   :defer t
@@ -45,7 +45,7 @@
   :config
   (pdf-tools-install :no-query))
 
-;; --- Pdf View Restore Path ---
+;; --- PDF View Restore Path ---
 (defconst omw/pdf-view-restore-path
   (expand-file-name "emacs/pdf-view-restore" omw/xdg-state-home)
   "Path to the pdf-view-restore state file (under XDG_STATE_HOME).")

@@ -87,25 +87,25 @@ Otherwise kill buffer without confirmation."
         (kill-current-buffer))
     (kill-current-buffer)))
 
-;; --- vundo ---
+;; --- Vundo ---
 (use-package vundo
   :ensure t
   :defer t
   :bind ("M-u" . vundo))
 
-;; --- expand-region ---
+;; --- Expand Region ---
 (use-package expand-region
   :ensure t
   :defer t
   :bind ("M-M" . er/expand-region))
 
-;; --- goto-chg ---
+;; --- Goto Chg ---
 (use-package goto-chg
   :ensure t
   :defer t
   :bind ("M-o" . goto-last-change))
 
-;; --- emacs ---
+;; --- Emacs ---
 (use-package emacs
   :ensure nil
   :demand t

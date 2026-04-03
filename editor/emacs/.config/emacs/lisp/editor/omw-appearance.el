@@ -24,33 +24,33 @@
 ;; Appearance
 ;; ----------------------------------------------------------------------------
 
-;; --- emojify ---
+;; --- Emojify ---
 (use-package emojify
   :ensure t
   :defer t
   :when (display-graphic-p)
   :hook (markdown-mode . emojify-mode))
 
-;; --- nerd-icons ---
+;; --- Nerd Icons ---
 (use-package nerd-icons
   :ensure t
   :defer t
   :when (display-graphic-p))
 
-;; --- doom-themes ---
+;; --- Doom Themes ---
 (use-package doom-themes
   :ensure t
   :demand t
   :config
   (load-theme 'doom-dracula t))
 
-;; --- doom-modeline ---
+;; --- Doom Modeline ---
 (use-package doom-modeline
   :ensure t
   :defer t
   :hook (after-init . doom-modeline-mode))
 
-;; --- pulsar ---
+;; --- Pulsar ---
 (use-package pulsar
   :ensure t
   :defer t
@@ -101,7 +101,7 @@
         centaur-tabs-show-count t
         centaur-tabs-cycle-scope 'tabs))
 
-;; --- winum ---
+;; --- Winum ---
 (use-package winum
   :ensure t
   :defer t
@@ -127,7 +127,7 @@ Returns nil in terminal mode (uses official banner instead)."
       (when banners
         (nth (random (length banners)) banners)))))
 
-;; --- dashboard ---
+;; --- Dashboard ---
 (use-package dashboard
   :ensure t
   :defer t

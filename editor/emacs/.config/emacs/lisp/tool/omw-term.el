@@ -23,7 +23,7 @@
 ;; Terminal Emulation
 ;; ----------------------------------------------------------------------------
 
-;; --- vterm Helpers ---
+;; --- VTERM Helpers ---
 (defun omw/vterm-send-C-g ()
   "Send C-g to the vterm terminal."
   (interactive)
@@ -35,7 +35,7 @@
   (hl-line-mode -1)
   (corfu-mode -1))
 
-;; --- vterm ---
+;; --- VTERM ---
 (use-package vterm
   :ensure t
   :defer t
@@ -53,7 +53,7 @@
               ("C-g" . omw/vterm-send-C-g)
               ("M-<backspace>" . vterm-send-meta-backspace)))
 
-;; --- multi-vterm ---
+;; --- Multi VTERM ---
 (use-package multi-vterm
   :ensure t
   :defer t

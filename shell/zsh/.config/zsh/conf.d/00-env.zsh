@@ -59,7 +59,7 @@ if [[ ! -d "$XDG_CACHE_HOME/zsh" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# Build and Development Tools
+# Build And Development Tools
 # -----------------------------------------------------------------------------
 
 # Redirect tool data from ~/.toolname to XDG directories.
