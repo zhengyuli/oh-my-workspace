@@ -25,7 +25,7 @@
 ;; ----------------------------------------------------------------------------
 
 ;; --- Claude Code IDE ---
-;; Install from GitHub (not yet in ELPA/MELPA)
+;; Not yet published to ELPA/MELPA; install directly from upstream.
 (use-package claude-code-ide
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
   :defer t

@@ -4,26 +4,36 @@
 # =============================================================================
 # macOS System Defaults - developer-optimized
 #
-# Copyright (C) 2026 zhengyu.li
-# Author: zhengyu.li <lizhengyu419@outlook.com>
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: macos, defaults, system-preferences
+# Dependencies: bash 4.3+, macOS
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-28 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Set macOS system defaults optimized for developer workflows.
+#   Some changes require logout or restart. Run as your normal user
+#   (sudo is used only where required). Close System Settings before
+#   running.
 #
 # Usage:       ./defaults.sh
-# Dependencies: bash 4.3+, macOS
 #
 # References:
 #   1. mathiasbynens/dotfiles:
 #      https://github.com/mathiasbynens/dotfiles/blob/main/.macos
 #   2. macOS defaults list: https://macos-defaults.com
 #   3. Apple defaults(1) man page: man defaults
-# Note: Some changes require logout or restart. Run as your normal user (sudo
-#       is used only where required). Close System Settings before running.
 #
 # Customizations vs. standard mathiasbynens/dotfiles:
 #   - Finder new window defaults to $HOME instead of Desktop
 #   - Keyboard repeat can go to max (KeyRepeat=1, InitialKeyRepeat=10)
 #   - Trackpad corner right-click removed (prone to accidental triggers)
-#   - Added: window/QL animation speedup, CrashReporter silence, spring loading
-#   - App Store: kept security updates only, disabled auto-install of others
+#   - Added: window/QL animation speedup, CrashReporter silence,
+#     spring loading
+#   - App Store: kept security updates only, disabled auto-install
 # =============================================================================
 
 set -euo pipefail
@@ -96,8 +106,9 @@ _general_ui() {
   sudo nvram StartupMute=1
 
   # Remove duplicates in the "Open With" menu
-  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
-      -r -domain local -domain system -domain user
+  local -r _lsreg='/System/Library/Frameworks/CoreServices.framework/'\
+'Frameworks/LaunchServices.framework/Support/lsregister'
+  "${_lsreg}" -r -domain local -domain system -domain user
 
   # Set sidebar icon size to medium (1=small, 2=medium, 3=large)
   defaults write NSGlobalDomain NSTableViewDefaultSizeMode \
@@ -402,9 +413,9 @@ _restart_apps() {
   done
 }
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Main
-# =============================================================================
+# -----------------------------------------------------------------------------
 
 main() {
   # Close System Preferences/Settings to avoid conflicts

@@ -21,7 +21,7 @@
 #   2. https://github.com/jesseduffield/lazygit/blob/master/schema/config.json
 # =============================================================================
 
-# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+# yaml-language-server: $schema=https://json.schemastore.org/lazygit
 
 # -----------------------------------------------------------------------------
 # GUI

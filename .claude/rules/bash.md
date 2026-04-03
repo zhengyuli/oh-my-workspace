@@ -59,7 +59,12 @@ Blank line is required after every Level 1 closing line before code.
 
 ## Line Length
 
-79 characters maximum.
+79 characters maximum. 
+
+Exceptions:
+
+- URLs and file paths that cannot be wrapped
+- Help text strings in `printf` / `echo` (user-facing output)
 
 ## Error Handling
 
