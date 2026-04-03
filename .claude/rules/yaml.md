@@ -1,7 +1,7 @@
 ---
 paths:
-  - "**/*.yml"
-  - "**/*.yaml"
+  - "tool/**/*.yml"
+  - "tool/**/*.yaml"
 ---
 
 # YAML Configuration Files

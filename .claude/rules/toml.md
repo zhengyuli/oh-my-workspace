@@ -1,6 +1,8 @@
 ---
 paths:
-  - "**/*.toml"
+  - "shell/starship/**/*.toml"
+  - "tool/yazi/**/*.toml"
+  - "lang/**/*.toml"
 ---
 
 # TOML Configuration Files

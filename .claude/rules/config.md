@@ -1,21 +1,38 @@
 ---
 paths:
-  - "**/config"
-  - "**/*.conf"
-  - "**/*.cfg"
-  - "**/rc"
-  - "**/.gitconfig"
   - "**/git/config"
+  - "**/ripgrep/rc"
+  - "**/ghostty/config"
 ---
 
 # Configuration Files (No Extension)
 
-Standards for configuration files without extensions (config, conf, rc).
+Standards for `#`-commented, key-value configuration files without extensions.
+
+**Scope**: git config, ripgrep rc, ghostty config, and similar tools that use
+`#` for comments and `key = value` (or `--flag`) syntax. TOML, YAML, and INI
+formats with their own comment syntax (`;`, `"`) are covered by their
+respective rules.
+
+**Out of scope**: `ssh_config` (has its own syntax quirks), `.editorconfig`
+(key-value but different semantics), binary configs.
+
+## XDG Path Mapping
+
+This repository is XDG-compliant. Each tool's config location:
+
+| Tool    | Path                            | XDG Native | Notes                     |
+|---------|---------------------------------|------------|---------------------------|
+| git     | `$XDG_CONFIG_HOME/git/config`   | Yes        | No setup needed           |
+| ripgrep | `$XDG_CONFIG_HOME/ripgrep/rc`   | Via env    | Set `RIPGREP_CONFIG_PATH` |
+| ghostty | `$XDG_CONFIG_HOME/ghostty/config` | Yes      | No setup needed           |
+
+Tools that require environment variable redirection: set in `shell/zsh/00-env.zsh`.
 
 ## File Header
 
 ```
-# filename -*- mode: xxx; -*-
+# filename -*- mode: <mode>; -*-
 # Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 #
 # =============================================================================
@@ -31,8 +48,13 @@ Standards for configuration files without extensions (config, conf, rc).
 #
 # Commentary:
 #   Detailed description of what this config does.
+#
+# References:
+#   1. ...
 # =============================================================================
 ```
+
+**Mode mappings**: `gitconfig` (git/config), `conf` (ripgrep/rc, ghostty/config).
 
 ## Delimiter Hierarchy
 
@@ -61,7 +83,50 @@ for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 # --- Subsection Title ---
 ```
 
-## Line Length 
+### INI Section Headers vs. Delimiter Hierarchy
+
+Git config uses INI-style `[section]` headers (e.g., `[core]`, `[alias]`).
+These are **syntax-level structure** defined by the tool — they must not be
+removed or replaced by comment delimiters.
+
+The delimiter hierarchy is an **additional organizational layer** in comments
+above the INI headers. Together they look like:
+
+```conf
+# -----------------------------------------------------------------------------
+# Core Settings
+# -----------------------------------------------------------------------------
+
+[core]
+    pager = delta
+    autocrlf = input
+```
+
+Rules:
+- One INI `[section]` per Level 1 block. Group related INI sections under
+  a shared Level 1 header when they belong together logically.
+- Never place a Level 1 delimiter *inside* an INI section — close the
+  section first, then add the next delimiter block.
+- For tools without INI syntax (ripgrep, ghostty), the delimiter hierarchy
+  is the sole organizational structure.
+
+## Indentation
+
+- **Within INI sections** (git config): indent key-value pairs 4 spaces.
+- **Flat key-value files** (ripgrep, ghostty): no indentation.
+
+```conf
+# Git config — indented within [section]
+[core]
+    pager = delta
+    autocrlf = input
+
+# Ghostty/ripgrep — flat, no indentation
+font-family = "SauceCodePro Nerd Font"
+--smart-case
+```
+
+## Line Length
 
 79 characters maximum.
 
@@ -79,12 +144,52 @@ pager = delta
 ### Value Types
 
 - **Booleans**: `option = true` (not `"true"`)
-- **Paths**: `~/.config/app/file` (XDG-compliant, not relative)
-- **Includes**: `[include] path = config.local` (machine-specific overrides)
+- **Strings**: Quoted when containing spaces — `font-family = "SauceCode Pro"`
+- **Numbers**: `font-size = 15` (bare integer)
+- **Paths**: Use `~/.config/app/file` (XDG-compliant) or `$XDG_CONFIG_HOME`
+  expansion only when the tool supports it (see per-tool notes below).
+  **Not all tools expand `~`** — ripgrep does not expand environment
+  variables.
+- **Lists**: Multi-valued keys use repeated entries (git), comma-separated
+  values (ghostty), or repeated flags (ripgrep).
+
+```conf
+# Git — multi-value via repeated key
+[diff]
+    xfuncname = "^func pattern1"
+    xfuncname = "^func pattern2"
+
+# Ghostty — comma-separated
+shell-integration-features = cursor,sudo,title
+
+# Ripgrep — repeated flag
+--glob=!target/*
+--glob=!node_modules/*
+```
+
+- **Includes**: Use for machine-specific overrides (see Security section).
+
+### Per-Tool Syntax
+
+| Aspect            | git config          | ripgrep rc        | ghostty config     |
+|-------------------|---------------------|-------------------|--------------------|
+| Syntax            | INI `[section]`     | `--flag`          | `key = value`      |
+| Values            | `key = value`       | `--flag=value`    | `key = value`      |
+| Indent            | 4 spaces in section | None              | None               |
+| Env var expansion | Yes (`$HOME`, etc.) | **No**            | Limited            |
+| `~` expansion     | Yes                 | **No**            | Yes                |
+| Multi-value       | Repeated key        | Repeated flag     | Comma-separated    |
+| Local override    | `[include] path`    | N/A               | `config-file = ?`  |
+
+**Ripgrep caveat**: `RIPGREP_CONFIG_PATH` must be set as an absolute path
+(via `00-env.zsh`) because ripgrep does not expand `$HOME` or `~` in its
+config file.
 
 ### Section Uniqueness
 
-Each section title must be unique within the file at every delimiter level (Level 1 and Level 2). Group related settings together — do not create multiple sections of the same name.
+Each section title must be unique within the file at every delimiter level
+(Level 1 and Level 2). Group related settings together — do not create
+multiple sections of the same name.
 
 ```conf
 # WRONG — duplicate section at Level 2
@@ -132,7 +237,7 @@ option10 = value10
 
 ### Secrets Management
 
-Never commit sensitive data. Use split-file strategy
+Never commit sensitive data. Use split-file strategy.
 
 ```conf
 # Main config (committed)
@@ -146,19 +251,29 @@ Never commit sensitive data. Use split-file strategy
     email = your.email@company.com
 ```
 
-**Sensitive types**: API keys, tokens, passwords, private keys, certificates
+**Sensitive types**: API keys, tokens, passwords, private keys, certificates.
+
+**Per-tool local override patterns**:
+- git: `[include] path = ~/.config/git/config.local`
+- ghostty: `config-file = ?config.local` (the `?` prefix suppresses errors
+  if the file is absent)
 
 ## References
 
 1. [Git Configuration](https://git-scm.com/docs/git-config)
-2. [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+2. [Ripgrep Configuration Guide](https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md)
+3. [Ghostty Configuration](https://ghostty.org/docs/config)
+4. [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
 
 ## Validation
 
 ```bash
-# Git config
-git config --list
+# Git — list all config with source file
+git config --list --show-origin
 
-# Ripgrep (no dedicated check — test a real search)
-rg --version
+# Ripgrep — verify config is loaded (shows config path if set)
+rg --debug 2>&1 | head -5
+
+# Ghostty — validate config and list errors
+ghostty +validate-config
 ```
