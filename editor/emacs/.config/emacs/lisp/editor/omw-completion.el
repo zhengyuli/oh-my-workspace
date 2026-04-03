@@ -16,15 +16,15 @@
 ;;
 ;;; Commentary:
 ;;
-;; Modern completion framework with vertico (UI), orderless (matching),
-;; marginalia (annotations), cape (completion extensions), and corfu (popup).
+;; Modern completion framework with vertico for UI, orderless for matching,
+;; marginalia for annotations, cape for completion extensions, and corfu popup.
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------
 ;; Completion Framework
 ;; ----------------------------------------------------------------------------
 
-;; --- orderless ---
+;; --- Orderless ---
 (use-package orderless
   :ensure t
   :demand t
@@ -33,19 +33,19 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
-;; --- vertico ---
+;; --- Vertico ---
 (use-package vertico
   :ensure t
   :defer t
   :hook (after-init . vertico-mode))
 
-;; --- marginalia ---
+;; --- Marginalia ---
 (use-package marginalia
   :ensure t
   :defer t
   :hook (after-init . marginalia-mode))
 
-;; --- cape ---
+;; --- Cape ---
 (use-package cape
   :ensure t
   :demand t
@@ -55,7 +55,7 @@
                          #'cape-dabbrev)
         completion-at-point-functions))
 
-;; --- corfu ---
+;; --- Corfu ---
 (defun omw/corfu-init ()
   "Enable corfu auto-completion with documentation popup."
   (setq corfu-auto t)

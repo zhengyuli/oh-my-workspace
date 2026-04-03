@@ -33,7 +33,7 @@ if not present."
   (interactive)
   (apply #'omw/tools-install omw/sh-tool-specs))
 
-;; --- Sh Mode Setup ---
+;; --- sh Mode Setup ---
 (defun omw/sh-mode-setup ()
   "Apply custom settings for shell script mode."
   (setq-local sh-basic-offset 2)

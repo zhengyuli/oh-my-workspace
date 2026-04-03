@@ -121,7 +121,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
   :when (display-graphic-p)
   :hook (after-init . omw/setup-fonts))
 
-;; --- textsize ---
+;; --- Textsize ---
 (use-package textsize
   :ensure t
   :defer t
@@ -138,7 +138,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
         textsize-pixel-pitch-thresholds
         '((0 . 0) (0.12 . 0) (0.18 . 0) (0.25 . 0))))
 
-;; --- mixed-pitch ---
+;; --- Mixed Pitch ---
 (use-package mixed-pitch
   :ensure t
   :defer t

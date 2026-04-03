@@ -163,3 +163,11 @@ Thumbs.db
 # Editor lock files (generic)
 **/.#*
 **/#*#
+
+# Local and secret config overrides (TOML/YAML split-file strategy)
+*.local.toml
+*.local.yml
+*.local.yaml
+*_secret.toml
+*_secret.yml
+*_secret.yaml

@@ -17,28 +17,28 @@
 ;;; Commentary:
 ;;
 ;; C/C++ mode configuration with clangd LSP and Google code style.
-;; LSP server (clangd) is configured in prog.el.
+;; LSP server clangd is configured in prog.el.
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------
 ;; C/C++
 ;; ----------------------------------------------------------------------------
 
-;; --- google-c-style ---
+;; --- Google C Style ---
 (use-package google-c-style
   :ensure t
   :defer t
   :hook ((c-mode . google-set-c-style)
          (c++-mode . google-set-c-style)))
 
-;; --- Cc Tool Specs ---
+;; --- cc Tool Specs ---
 (defconst omw/cc-tool-specs
   '(("clangd" "brew install llvm" "brew"))
   "Tool specs for C/C++ development.
 clangd is provided by Homebrew llvm (in Brewfile).
 Run `brew install llvm' if clangd is missing.")
 
-;; --- Cc Mode Setup ---
+;; --- cc Mode Setup ---
 (defun omw/cc-mode-setup ()
   "Check required C/C++ development tools and prompt to install if missing."
   (apply #'omw/tools-check-and-prompt omw/cc-tool-specs))

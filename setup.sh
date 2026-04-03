@@ -145,12 +145,12 @@ confirm() {
   [[ "${reply:-${default}}" =~ ^[Yy]$ ]]
 }
 
-# --- Status display (table format — no bracket prefix) ---
+# --- Status Display ---
 # Label widths: "ok" (2) padded to match "missing" (7).
 _status_ok() { printf "  ${_GREEN}[ok]${_RESET}       %s\n" "$*"; }
 _status_missing() { printf "  ${_RED}[missing]${_RESET}  %s\n" "$*"; }
 
-# --- Package status labels ---
+# --- Package Status Labels ---
 _status_stowed() { printf "  %s ${_GREEN}[stowed]${_RESET}    :\n" "$1"; }
 _status_unstowed() { printf "  %s ${_YELLOW}[unstowed]${_RESET}:\n" "$1"; }
 
@@ -616,7 +616,7 @@ _stow_exec() {
     return 1
   fi
 
-  # --- Single stow dry-run for all decisions ---
+  # --- Single Stow Dry Run For All Decisions ---
   local -a dry_flags=(-n -v -d "${stow_dir}" -t "${HOME}")
   case "${mode}" in
     restow) dry_flags+=(-R) ;;
@@ -627,7 +627,7 @@ _stow_exec() {
   local dry_output
   dry_output=$(stow "${dry_flags[@]}" "${pkg_base}" 2>&1) || dry_rc=$?
 
-  # --- State check ---
+  # --- State Check ---
   # stow: skip if already fully stowed (rc==0, no LINK: lines).
   if [[ "${mode}" == stow ]] \
        && (( dry_rc == 0 )) \
@@ -657,7 +657,7 @@ _stow_exec() {
     return 0
   fi
 
-  # --- Conflict resolution (stow/restow only) ---
+  # --- Conflict Resolution (Stow/Restow Only) ---
   if [[ "${mode}" != unstow ]]; then
     local target
     while IFS= read -r target; do
@@ -667,7 +667,7 @@ _stow_exec() {
     done < <(_parse_stow_targets "${dry_output}")
   fi
 
-  # --- Dry-run display ---
+  # --- Dry Run Display ---
   if "${dry_run}"; then
     log_info "[dry-run] would ${mode}: ${pkg_base}"
     local line has_actions=false
@@ -687,7 +687,7 @@ _stow_exec() {
     return 0
   fi
 
-  # --- Actual execution ---
+  # --- Actual Execution ---
   if [[ "${mode}" != unstow ]]; then
     mkdir -p "${HOME}/.config"
   fi
@@ -956,7 +956,7 @@ cmd_status() {
 
   print_header "oh-my-workspace status"
 
-  # --- Prerequisites (read-only checks) ---
+  # --- Prerequisites (Read Only Checks) ---
   printf '  Prerequisites\n\n'
 
   if _has_xcode_cli; then

@@ -79,7 +79,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
     (face-remap-add-relative 'markdown-inline-code-face
      `(:foreground ,code-fg))))
 
-;; --- valign ---
+;; --- Valign ---
 (use-package valign
   :ensure t
   :defer t
@@ -88,19 +88,19 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
   :config
   (setq valign-fancy-bar t))
 
-;; --- markdownfmt ---
+;; --- Markdownfmt ---
 (use-package markdownfmt
   :ensure t
   :defer t)
 
-;; --- visual-fill-column ---
+;; --- Visual Fill Column ---
 (use-package visual-fill-column
   :ensure t
   :defer t
   :config
   (setq visual-fill-column-enable-sensible-window-split t))
 
-;; --- olivetti ---
+;; --- Olivetti ---
 (use-package olivetti
   :ensure t
   :defer t

@@ -23,10 +23,10 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# User (override in ~/.config/git/config.local)
+# User
 # -----------------------------------------------------------------------------
 
-# Identity intentionally omitted; set machine-specific config in .local
+# Identity omitted by default; override in ~/.config/git/config.local
 
 [include]
     path = ~/.config/git/config.local
@@ -177,11 +177,11 @@
     updateRefs = true
 
 # -----------------------------------------------------------------------------
-# Rerere (Reuse Recorded Resolution)
+# Rerere
 # -----------------------------------------------------------------------------
 
+# Reuse Recorded Resolution — remember and replay conflict resolutions
 [rerere]
-    # Remember and replay conflict resolutions
     enabled = true
 
 # -----------------------------------------------------------------------------
@@ -206,7 +206,7 @@
     # Use i/w/c/o prefixes instead of a/b
     mnemonicPrefix = true
 
-# --- Language-specific hunk headers ---
+# --- Language-Specific Hunk Headers ---
 [diff "golang"]
     # Go function detection for better diff hunk headers
     xfuncname = "^func[[:space:]]+\\([^)]+\\)[[:space:]]+([^_(]+)"
@@ -224,16 +224,17 @@
     prompt = false
 
 # -----------------------------------------------------------------------------
-# Transfer Settings (Security)
+# Transfer Settings
 # -----------------------------------------------------------------------------
 
+# Security: verify object integrity during transfer
 [transfer]
-    # Verify object integrity during transfer
     fsckobjects = true
 
 # -----------------------------------------------------------------------------
-# Credential Helper (macOS)
+# Credential Helper
 # -----------------------------------------------------------------------------
 
+# macOS Keychain for credential storage
 [credential]
     helper = osxkeychain

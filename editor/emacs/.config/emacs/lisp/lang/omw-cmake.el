@@ -17,7 +17,7 @@
 ;;; Commentary:
 ;;
 ;; CMake mode configuration with LSP support.
-;; LSP server (cmake-language-server) is configured in omw-prog.el.
+;; LSP server cmake-language-server is configured in omw-prog.el.
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------

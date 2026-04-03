@@ -1,7 +1,7 @@
 # 10-options.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
-# Shell Options (setopt / unsetopt)
+# Shell Options
 #
 # Loaded by: .zshrc (interactive shells only)
 # Load order: 10 (after 05-path.zsh, before 15-history.zsh)

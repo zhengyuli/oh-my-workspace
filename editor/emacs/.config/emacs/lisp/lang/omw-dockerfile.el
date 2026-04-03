@@ -17,7 +17,7 @@
 ;;; Commentary:
 ;;
 ;; Dockerfile mode configuration with LSP support.
-;; LSP server (docker-langserver) is configured in omw-prog.el.
+;; LSP server docker-langserver is configured in omw-prog.el.
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------

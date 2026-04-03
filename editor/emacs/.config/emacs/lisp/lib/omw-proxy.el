@@ -33,7 +33,7 @@ This affects package installation, HTTP requests, and Git operations."
                  (string :tag "Proxy address"))
   :group 'omw-emacs)
 
-;; --- Show Http Proxy ---
+;; --- Show HTTP Proxy ---
 (defun omw/show-http-proxy ()
   "Display current HTTP/HTTPS proxy configuration."
   (interactive)
@@ -41,7 +41,7 @@ This affects package installation, HTTP requests, and Git operations."
       (message "Current http proxy is %s." (cdr (nth 1 url-proxy-services)))
     (message "No http proxy")))
 
-;; --- Set Http Proxy ---
+;; --- Set HTTP Proxy ---
 (defun omw/set-http-proxy (proxy)
   "Configure HTTP/HTTPS proxy for Emacs and subprocess environment.
 
@@ -85,7 +85,7 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
     (error
      (message "Proxy error: %s" (error-message-string err)))))
 
-;; --- Enable Http Proxy ---
+;; --- Enable HTTP Proxy ---
 (defun omw/enable-http-proxy ()
   "Enable HTTP proxy for Emacs.
 
@@ -112,7 +112,7 @@ If neither source is configured, a warning is displayed."
       (message
        "No HTTP proxy.  Set HTTP_PROXY or `omw/http-proxy`."))))
 
-;; --- Unset Http Proxy ---
+;; --- Unset HTTP Proxy ---
 (defun omw/unset-http-proxy ()
   "Disable HTTP/HTTPS proxy for Emacs and subprocess environment.
 

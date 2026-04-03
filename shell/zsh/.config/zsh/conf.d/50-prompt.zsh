@@ -44,7 +44,7 @@ if command -v starship &>/dev/null; then
     add-zsh-hook precmd _omw_set_window_title
   fi
 else
-# --- Fallback: Native vcs_info Prompt ---
+# --- Fallback: Native VCS Info Prompt ---
 # Built-in Zsh prompt with git branch display. Used when no external
 # prompt tools are installed. No configuration needed.
   autoload -Uz vcs_info add-zsh-hook

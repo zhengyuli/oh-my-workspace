@@ -35,7 +35,7 @@ if not present."
   (interactive)
   (apply #'omw/tools-install omw/typescript-tool-specs))
 
-;; --- Typescript Mode Setup ---
+;; --- TypeScript Mode Setup ---
 (defun omw/typescript-mode-setup ()
   "Apply custom settings for TypeScript mode."
   (setq-local typescript-indent-level 2)

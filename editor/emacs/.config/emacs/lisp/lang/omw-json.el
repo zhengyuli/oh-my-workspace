@@ -17,14 +17,14 @@
 ;;; Commentary:
 ;;
 ;; JSON mode configuration with LSP support.
-;; LSP server (vscode-json-languageserver) is configured in omw-prog.el.
+;; LSP server vscode-json-languageserver is configured in omw-prog.el.
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------
 ;; JSON
 ;; ----------------------------------------------------------------------------
 
-;; --- Json Tool Specs ---
+;; --- JSON Tool Specs ---
 (defconst omw/json-tool-specs
   '(("vscode-json-languageserver"
      "bun install -g vscode-json-languageserver" "bun")
@@ -36,7 +36,7 @@
   (interactive)
   (apply #'omw/tools-install omw/json-tool-specs))
 
-;; --- Json Mode Setup ---
+;; --- JSON Mode Setup ---
 (defun omw/json-mode-setup ()
   "Apply custom settings for json mode."
   (setq-local js-indent-level 2)
@@ -49,7 +49,7 @@
   :bind (:map json-mode-map
               ("C-c C-g" . jsons-print-path)))
 
-;; --- json-snatcher ---
+;; --- JSON Snatcher ---
 (use-package json-snatcher
   :ensure t
   :defer t)

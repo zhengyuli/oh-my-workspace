@@ -20,10 +20,10 @@
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------
-;; Search and Navigation
+;; Search And Navigation
 ;; ----------------------------------------------------------------------------
 
-;; --- wgrep ---
+;; --- Wgrep ---
 (use-package wgrep
   :ensure t
   :defer t
@@ -32,7 +32,7 @@
   :config
   (setq wgrep-auto-save-buffer t))
 
-;; --- dumb-jump ---
+;; --- Dumb Jump ---
 (use-package dumb-jump
   :ensure t
   :defer t
@@ -48,7 +48,7 @@
         xref-show-definitions-function #'consult-xref)
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
-;; --- consult ---
+;; --- Consult ---
 (use-package consult
   :ensure t
   :defer t
@@ -93,7 +93,7 @@
           ;; generated/compiled files
           "--glob=!*.{lock,min.js,min.css,elc,pyc}")))
 
-;; --- embark ---
+;; --- Embark ---
 ;; Will be loaded by embark automatically.
 (use-package embark-consult
   :ensure t
