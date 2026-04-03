@@ -17,6 +17,7 @@
 " -----------------------------------------------------------------------------
 " Baseline
 " -----------------------------------------------------------------------------
+
 " Use Vim settings, not Vi
 set nocompatible
 " Disable modelines
@@ -29,12 +30,14 @@ set history=500
 set backspace=indent,eol,start
 
 " -----------------------------------------------------------------------------
-" XDG Paths (VIMINIT bypasses default vimrc loader, so we must do this manually)
+" XDG Paths
 " -----------------------------------------------------------------------------
+
 " Resolve XDG dirs with fallback for non-XDG environments
 let s:cfg = ($XDG_CONFIG_HOME != '' ? $XDG_CONFIG_HOME : $HOME . '/.config')
 let s:data = ($XDG_DATA_HOME != '' ? $XDG_DATA_HOME : $HOME . '/.local/share')
-let s:state = ($XDG_STATE_HOME != '' ? $XDG_STATE_HOME : $HOME . '/.local/state')
+let s:state = ($XDG_STATE_HOME != ''
+             \ ? $XDG_STATE_HOME : $HOME . '/.local/state')
 
 " Redirect runtimepath (VIMINIT skips this; default still points to ~/.vim)
 let &runtimepath = s:cfg  . '/vim,'
@@ -55,6 +58,7 @@ endfor
 " -----------------------------------------------------------------------------
 " Display
 " -----------------------------------------------------------------------------
+
 " Absolute line number on current line
 set number
 " Relative numbers on all other lines
@@ -92,6 +96,7 @@ set signcolumn=yes
 " -----------------------------------------------------------------------------
 " Search
 " -----------------------------------------------------------------------------
+
 " Highlight matches as you type
 set incsearch
 " Keep matches highlighted
@@ -107,6 +112,7 @@ nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 " -----------------------------------------------------------------------------
 " Indentation
 " -----------------------------------------------------------------------------
+
 " Use spaces instead of tabs
 set expandtab
 " Number of spaces per tab character
@@ -121,6 +127,7 @@ set autoindent
 " -----------------------------------------------------------------------------
 " Files & Persistence
 " -----------------------------------------------------------------------------
+
 " Allow hidden buffers
 set hidden
 " No backup files (use version control)
@@ -136,6 +143,7 @@ set undofile
 " -----------------------------------------------------------------------------
 " Behaviour
 " -----------------------------------------------------------------------------
+
 " Mouse support in all modes
 set mouse=a
 " Horizontal splits open below
@@ -189,6 +197,7 @@ endif
 " -----------------------------------------------------------------------------
 " Auto Commands
 " -----------------------------------------------------------------------------
+
 augroup vimrc
     autocmd!
 
@@ -217,8 +226,9 @@ augroup vimrc
 augroup END
 
 " -----------------------------------------------------------------------------
-" File-type Overrides
+" File Type Overrides
 " -----------------------------------------------------------------------------
+
 augroup vimrc_ft
     autocmd!
     " Python: 4 spaces
@@ -237,10 +247,12 @@ augroup vimrc_ft
 augroup END
 
 " -----------------------------------------------------------------------------
-" Status Line (built-in, no plugin)
+" Status Line
 " -----------------------------------------------------------------------------
-" Shows: mode | filepath [modified][readonly] | filetype | encoding | col:line %
 
+" mode | filepath [modified][readonly] | filetype | encoding | col:line %
+
+" Must be global (not s:) — statusline %{expr} evaluates outside script scope
 function! StatuslineGit() abort
     " Optional: vim-fugitive (https://github.com/tpope/vim-fugitive)
     " Degrades to empty string when plugin is not installed.
@@ -270,6 +282,7 @@ set statusline+=\ %3p%%
 " -----------------------------------------------------------------------------
 " Syntax Highlighting
 " -----------------------------------------------------------------------------
+
 " Disable treesitter — no parsers installed and Neovim 0.12+ ftplugin
 " unconditionally calls vim.treesitter.start() which errors without them
 if has('nvim')
@@ -282,8 +295,9 @@ syntax enable
 filetype plugin indent on
 
 " -----------------------------------------------------------------------------
-" Dracula Color Theme (plugin-free, inline highlight definitions)
+" Dracula Color Theme
 " -----------------------------------------------------------------------------
+
 " Palette sourced from https://spec.draculatheme.com
 "   bg       #282a36    bg-dark    #21222c    fg          #f8f8f2
 "   red      #ff5555    orange     #ffb86c    green       #50fa7b
