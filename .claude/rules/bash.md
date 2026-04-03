@@ -97,6 +97,17 @@ _err_handler() {
 trap '_err_handler' ERR
 ```
 
+### EXIT Trap (Cleanup)
+
+Use `trap ... EXIT` for resource cleanup (temp files, lock files).
+
+```bash
+_cleanup() {
+  rm -f "$_tmp_file"
+}
+trap _cleanup EXIT
+```
+
 ### Exit Codes
 
 `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
@@ -106,8 +117,12 @@ trap '_err_handler' ERR
 ### Variable Handling
 
 Quote all variables, use `local` scope in functions.
+Use `readonly` for top-level constants, `local -r` for function-scoped
+immutables.
 
 ```bash
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 _process_file() {
   local -r input="$1"
   rm -rf "$dir"
@@ -134,6 +149,8 @@ WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 ### Output Standards
 
 Use `printf` over `echo` (POSIX-compliant). Direct errors to stderr.
+Format strings must use **single quotes** (no variable expansion needed
+in the format).
 
 ```bash
 printf 'error: %s not found\n' "$pkg" >&2
@@ -141,7 +158,9 @@ printf 'error: %s not found\n' "$pkg" >&2
 
 ### Naming Conventions
 
-Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`
+Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`.
+Private/internal functions use `_` prefix; public entry functions (e.g.,
+`main`) have no prefix.
 
 ```bash
 readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -346,6 +365,93 @@ Read secrets from environment variables with safe defaults.
 
 ```bash
 API_KEY="${API_KEY:-}"
+```
+
+### Umask
+
+For scripts handling sensitive data, set restrictive umask at the top.
+
+```bash
+umask 077  # Owner-only for new files
+```
+
+## Comments
+
+Comments explain *why*, not *what*. The code itself should be readable
+enough to show what it does. Only add comments when the reasoning is
+non-obvious from the code.
+
+```bash
+# WRONG — restates the code
+# Increment count by 1
+(( count += 1 ))
+
+# CORRECT — explains the reasoning
+# Retries are capped at 3 to avoid hammering a down service
+(( count += 1 ))
+```
+
+## Arrays
+
+Declare arrays explicitly. Always quote `"${arr[@]}"` to preserve
+word-splitting safety.
+
+```bash
+# Indexed array
+local -ra pkgs=("git" "vim" "zsh")
+for pkg in "${pkgs[@]}"; do
+  _install_package "$pkg"
+done
+
+# Array length
+local -r count="${#pkgs[@]}"
+
+# Appending
+pkgs+=("lazygit")
+
+# Associative array (bash 4.3+)
+declare -A defaults=(
+  ["editor"]="vim"
+  ["pager"]="less"
+)
+printf '%s\n' "${defaults["editor"]}"
+```
+
+## Line Continuation
+
+Break long lines with `\`. Align continuation lines at the same indent
+level as the opening construct.
+
+```bash
+# Long condition
+if [[ "$mode" == "install" ]] \
+   && [[ -n "$pkg" ]] \
+   && [[ -r "$config_file" ]]; then
+  _install_package "$pkg"
+fi
+
+# Long printf
+printf 'error: cannot install %s — missing dependency %s\n' \
+  "$pkg" \
+  "$dep" \
+  >&2
+```
+
+## Dry-Run Pattern
+
+When a script supports dry-run, check the flag at the point of action,
+not at the call site.
+
+```bash
+readonly DRY_RUN="${DRY_RUN:-0}"
+
+_run() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    printf '[dry-run] %s\n' "$*"
+    return 0
+  fi
+  "$@"
+}
 ```
 
 ## References

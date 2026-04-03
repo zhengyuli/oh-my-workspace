@@ -102,6 +102,27 @@ trap '_err_handler' ERR
 
 `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
 
+### emulate for Portable Functions
+
+Use `emulate -L zsh` at the top of autoloaded functions and shared library
+functions that may be sourced from different emulation contexts (bash
+compatibility mode, ksh emulation, etc.).
+
+```zsh
+# Autoloaded function — emulation context is unknown at load time
+_my_utility() {
+  emulate -L zsh
+  # Now guaranteed: extended_glob, zsh parameter expansion, zsh globs
+  local -a files=( **/*.md(N) )
+}
+```
+
+**When to use**: autoloaded functions (`autoload -Uz`), functions in shared
+libraries, completion functions.
+
+**When NOT needed**: functions defined within your own conf.d/ files (already
+running in zsh emulation), scripts with `#!/usr/bin/env zsh` shebang.
+
 ## Code Patterns
 
 ### Variable Handling
@@ -134,12 +155,21 @@ WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 
 ### Output Standards
 
-Use zsh `print` built-in for output formatting (zsh-native with rich options).
-Direct errors to stderr, output to stdout.
+Use `print` for all output. It is the zsh-native built-in with rich options
+(`-u` for fd, `-r` for raw, `-P` for prompt expansion).
+
+Use `printf` only when you need format specifiers (`%s`, `%d`, `%04x`).
 
 ```zsh
-print -u2 "error: $pkg not found"
-print "$result"
+# Simple output — always use print
+print "processing $file"
+print -u2 "error: $pkg not found"     # stderr via -u2
+
+# Formatted output — use printf
+printf '[error] %s() line %d: exit %d\n' "$func" "$line" "$code" >&2
+
+# Raw output (no escape interpretation) — use print -r
+print -r -- "$untrusted_content"
 ```
 
 ### Naming Conventions
@@ -238,6 +268,95 @@ if (( count > MAX_THRESHOLD )); then
 fi
 ```
 
+## Zsh Features
+
+### Glob Qualifiers
+
+Glob qualifiers are zsh's most powerful file selection mechanism — use them
+instead of `find` + `grep` pipelines. Common qualifiers:
+
+| Qualifier | Meaning | Example |
+|-----------|---------|---------|
+| `.` | Regular file | `*(.)` — all files |
+| `/` | Directory | `*(/)` — all dirs |
+| `N` | Null glob (no error on empty) | `*(N)` — safe empty check |
+| `om` | Order by mtime (newest first) | `*(om)` |
+| `[1]` | First match only | `*(om[1])` — newest file |
+| `L+0` | Size > 0 bytes | `*(.L+0)` — non-empty files |
+
+Always combine `N` with other qualifiers in config scripts to prevent
+`zsh: no matches found` errors.
+
+```zsh
+# WRONG — forks find, fragile parsing
+newest="$(find . -maxdepth 1 -type f -printf '%T@ %p\n' | sort -rn | head -1)"
+
+# CORRECT — zsh-native, no subshells
+newest=( *(.Nom[1]) )
+```
+
+### Parameter Expansion Flags
+
+Zsh parameter flags replace many external tools (`cut`, `tr`, `awk`):
+
+```zsh
+# Split string by delimiter
+path_parts=( "${(@s.:.)LS_COLORS}" )    # split LS_COLORS on :
+
+# Split by lines
+lines=( "${(f)content}" )                # split on \n (no IFS pollution)
+
+# Uppercase / lowercase
+print "${(U)var}"                         # uppercase
+print "${(L)var}"                         # lowercase
+
+# Join array
+print "${(j., .)array}"                   # join with ", "
+
+# Expand to get variable value (indirection)
+print "${(P)var_name}"                    # like bash ${!var_name}
+```
+
+Prefer parameter expansion flags over forking external commands.
+
+### Anonymous Functions
+
+Use `() { ... }` for temporary scope isolation without naming a function:
+
+```zsh
+# Isolate local variables to avoid polluting outer scope
+() {
+  local -a temp=( *.tmp(N) )
+  (( ${#temp} )) && rm -v "${temp[@]}"
+}
+```
+
+### Array and Hash Types
+
+```zsh
+# Associative array (hash map)
+typeset -A color_map=(
+  error   red
+  warning yellow
+  info    green
+)
+
+# Global associative array (for plugin state, cross-function sharing)
+typeset -gA ZINIT=( )
+
+# Typed arrays
+local -a files=( )             # array
+local -A opts=( )              # associative array
+```
+
+### Autoload
+
+```zsh
+# -U: suppress alias expansion (prevents alias shadowing)
+# -z: use zsh-style function loading
+autoload -Uz compinit
+```
+
 ## Functions
 
 ### Single Responsibility
@@ -280,6 +399,22 @@ local dir
 dir="$(dirname "$file")"
 ```
 
+## Comments
+
+Comments explain *why*, not *what*. The code itself should be readable
+enough to show what it does. Only add comments when the reasoning is
+non-obvious from the code.
+
+```zsh
+# WRONG — restates the code
+# Export PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# CORRECT — explains the reasoning
+# Local bin takes precedence over system packages (personal builds)
+export PATH="$HOME/.local/bin:$PATH"
+```
+
 ## Anti-Patterns
 
 ### Don't: eval for User Input
@@ -296,15 +431,17 @@ case "$user_input" in
 esac
 ```
 
-### Don't: local Masks Exit Codes
+### Don't: local Masks Exit Codes (Bash Only)
+
+**Zsh does not have this problem** — `local` preserves the exit code of
+command substitution in zsh (unlike bash where `local` always returns 0).
+The separate-declaration pattern is still valid zsh but is not required.
 
 ```zsh
-# WRONG — local always exits 0
-local dir="$(dirname "$file")"
-
-# CORRECT — exit code preserved
+# Both are correct in zsh
+local dir="$(dirname "$file")"    # OK in zsh (exit code preserved)
 local dir
-dir="$(dirname "$file")"
+dir="$(dirname "$file")"          # also fine — portable to bash
 ```
 
 ### Don't: Short-Circuit Control Flow

@@ -1,10 +1,12 @@
 ---
 paths:
-  - "**/vimrc"
-  - "**/*.vim"
+  - "editor/vim/**"
 ---
 
 # Vim Script Configuration Files
+
+This rule targets **Vim only**. Neovim-specific features (`:checkhealth`,
+built-in LSP, Lua config) are out of scope.
 
 Standards for Vim configuration files (vimrc, .vim).
 
@@ -40,7 +42,11 @@ Inline comments after commands are allowed, but discouraged — prefer separate
 lines above the setting to explain WHY.
 
 ```vim
-" CORRECT — separate comment above
+" WRONG — restates the obvious (what the code already says)
+" Set expandtab to use spaces
+set expandtab
+
+" CORRECT — explains why (project convention)
 " Use spaces instead of tabs (project convention)
 set expandtab
 
@@ -88,6 +94,12 @@ let &runtimepath = s:cfg  . '/vim,'
 ```
 
 ## Code Patterns
+
+### Plugin Management
+
+No plugin manager by design. Vim is a lightweight fallback editor; Doom Emacs
+is the primary editor. Optional plugin support degrades gracefully (e.g.,
+vim-fugitive branch in statusline shows empty string when absent).
 
 ### Options: `set` vs `let`
 
@@ -200,7 +212,8 @@ and `mkdir` guard.
 ```vim
 let s:cfg = ($XDG_CONFIG_HOME != '' ? $XDG_CONFIG_HOME : $HOME . '/.config')
 let s:data = ($XDG_DATA_HOME != '' ? $XDG_DATA_HOME : $HOME . '/.local/share')
-let s:state = ($XDG_STATE_HOME != '' ? $XDG_STATE_HOME : $HOME . '/.local/state'
+let s:state = ($XDG_STATE_HOME != ''
+             \ ? $XDG_STATE_HOME : $HOME . '/.local/state')
 
 for s:dir in [s:state . '/vim', s:data . '/vim/undo']
     if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
@@ -287,13 +300,15 @@ nnoremap gj j
 ## Validation
 
 ```bash
+# Static lint (no side effects)
+vint ~/.config/vim/vimrc
+
 # Check for syntax errors (Ex mode, silent)
 vim -e -c 'source ~/.config/vim/vimrc' -c 'q' 2>&1
 
 # Verify specific option values
 vim -e -c 'set tabstop?' -c 'q'
 
-# Validate in Vim
+# Validate loaded scripts
 :scriptnames
-:checkhealth  " Neovim only
 ```

@@ -263,6 +263,26 @@ is redundant.
   :config ...)
 ```
 
+## Comments
+
+Comments explain *why*, not *what*. The code itself should be readable
+enough to show what it does. Only add comments when the reasoning is
+non-obvious from the code.
+
+```elisp
+;; WRONG — restates the code
+;; Set tab width to 4
+(setq tab-width 4)
+
+;; CORRECT — explains the reasoning
+;; Match project convention (Go, Python default indent)
+(setq tab-width 4)
+```
+
+Docstrings serve a different purpose — they describe public API contracts
+(see Docstrings under Code Patterns). Do not duplicate docstring content
+in inline comments.
+
 ## Anti-Patterns
 
 ### Don't: Mutate Shared Lists
