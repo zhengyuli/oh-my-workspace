@@ -28,11 +28,10 @@
 # -----------------------------------------------------------------------------
 
 gui:
-  nerdFontsVersion: "3"
+  nerdFontsVersion: '3'
   showFileTree: true
   showRandomTip: false
   showCommandLog: false
-
   # Catppuccin Mocha Blue theme for visual consistency with terminal
   # Reference: https://github.com/catppuccin/lazygit
   theme:
@@ -55,7 +54,6 @@ gui:
       - '#cdd6f4'
     searchingActiveBorderColor:
       - '#f9e2af'
-
   authorColors:
     '*': '#cba6f7'
 
@@ -66,7 +64,7 @@ gui:
 git:
   pagers:
     - colorArg: always
-      pager: "delta --dark --paging=never"
+      pager: 'delta --dark --paging=never'
 
 # -----------------------------------------------------------------------------
 # OS
@@ -75,7 +73,6 @@ git:
 os:
   editPreset: nvim
 
-# Prompt instead of silently skipping when launched outside a git repo
 notARepository: prompt
 
 # -----------------------------------------------------------------------------

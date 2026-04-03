@@ -20,7 +20,7 @@
 #   2. Nerd Fonts: https://www.nerdfonts.com/
 # =============================================================================
 
-"$schema" = "https://starship.rs/config-schema.json"
+"$schema" = 'https://starship.rs/config-schema.json'
 
 # -----------------------------------------------------------------------------
 # General Settings

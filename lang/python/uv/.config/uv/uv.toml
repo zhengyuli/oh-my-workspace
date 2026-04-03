@@ -41,29 +41,6 @@ publish-url = "https://upload.pypi.org/legacy/"
 native-tls = true
 
 # -----------------------------------------------------------------------------
-# Optional Settings
-# -----------------------------------------------------------------------------
-
-# These are common settings users might want. Uncomment as needed.
-
-# Installation strategy options:
-# - clone: copy-on-write, most efficient on macOS/APFS
-# - symlink: traditional approach, best compatibility
-# - copy: safe but slower, works everywhere
-# - hardlink: fast but may cause issues with some tools
-# link-mode = "clone"
-
-# Compile Python bytecode for faster imports after installation.
-# compile-bytecode = true
-
-# Allow pre-release versions (useful for testing new features)
-# prerelease = "allow"
-
-# Concurrency settings (defaults are usually optimal)
-# concurrent-builds = 8
-# concurrent-installs = 8
-
-# -----------------------------------------------------------------------------
 # Package Index
 # -----------------------------------------------------------------------------
 
