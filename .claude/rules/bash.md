@@ -1,7 +1,8 @@
 ---
 paths:
-  - "**/*.sh"
-  - "**/*.bash"
+  - "setup.sh"
+  - "claude/**/*.sh"
+  - "platform/**/*.sh"
 ---
 
 # Bash Conventions

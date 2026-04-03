@@ -1,14 +1,6 @@
 ---
 paths:
-  - "**/*.zsh"
-  - "**/.zshrc"
-  - "**/.zprofile"
-  - "**/.zshenv"
-  - "**/.zlogin"
-  - "**/zshrc"
-  - "**/zprofile"
-  - "**/zshenv"
-  - "**/zlogin"
+  - "shell/zsh/**"
 ---
 
 # Zsh Conventions
