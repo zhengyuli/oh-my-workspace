@@ -488,6 +488,169 @@ Read secrets from environment variables with safe defaults.
 API_KEY="${API_KEY:-}"
 ```
 
+## Shell Options
+
+### Conventions
+
+One option per line, with a comment explaining what it does. Group related
+options by category using Level 1 delimiters.
+
+```zsh
+# -----------------------------------------------------------------------------
+# Directory Navigation
+# -----------------------------------------------------------------------------
+
+# type a directory name to cd into it
+setopt AUTO_CD
+# suppress output of pushd / popd
+setopt PUSHD_SILENT
+```
+
+### Where to Set Options
+
+Place all `setopt`/`unsetopt` in a dedicated conf.d file (e.g., `10-options.zsh`).
+Do not scatter options across multiple files.
+
+**Exceptions**: completion-related options (e.g., `setopt AUTO_MENU`) may live
+in the completion config file for co-location with their zstyle settings.
+
+## conf.d/ Organization
+
+### Numbering Ranges
+
+| Range  | Purpose                    | Examples                        |
+|--------|----------------------------|---------------------------------|
+| 00-09  | Environment & paths        | 00-env.zsh, 05-path.zsh        |
+| 10-19  | Shell behavior & options   | 10-options.zsh, 15-history.zsh  |
+| 20-29  | Aliases & abbreviations    | 20-aliases.zsh                  |
+| 30-39  | Completion system          | 30-completion.zsh               |
+| 40-49  | Plugin management          | 40-plugins.zsh                  |
+| 50-59  | Prompt theme               | 50-prompt.zsh                   |
+| 60-69  | Key bindings               | 60-keybinds.zsh                 |
+| 70-89  | Tool integrations          | 70-tools.zsh                    |
+| 90-99  | Local overrides            | 99-local.zsh                    |
+
+### File Naming
+
+```
+NN-name.zsh
+```
+
+- `NN` — two-digit number with leading zero
+- `name` — lowercase, hyphen-separated, descriptive
+- Extension — `.zsh` (never `.sh`)
+
+### conf.d/ File Header
+
+```zsh
+# NN-name.zsh -*- mode: sh; -*-
+# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
+# =============================================================================
+# Section Title
+#
+# Loaded by: .zshrc (interactive shells only)
+# Load order: NN (after XX-previous.zsh, before YY-next.zsh)
+#
+# Prerequisites:
+#   - dependency description
+#
+# Responsibilities:
+#   1. First responsibility
+#   2. Second responsibility
+#
+# Do NOT add: unrelated concerns
+#             → Those belong in appropriate file
+# =============================================================================
+```
+
+The `Loaded by`, `Load order`, `Prerequisites`, `Responsibilities`, and
+`Do NOT add` fields make cross-file dependencies explicit and prevent scope
+creep within individual conf.d files.
+
+## Plugin Management
+
+### Zinit Plugin Declarations
+
+Use `zinit ice` + `zinit light` pairs. Place ice modifiers on a single line
+with space-separated key-value pairs:
+
+```zsh
+# Sync plugin — no ice needed
+zinit light owner/plugin
+
+# Turbo plugin with ice modifiers
+zinit ice wait"0b" lucid atload'bindkey ...'
+zinit light owner/plugin
+```
+
+### Grouping
+
+Group plugins by load timing with Level 2 subsection delimiters:
+
+```zsh
+# --- Sync: Plugin Name ---
+zinit light owner/plugin
+
+# --- Turbo 0a: Category ---
+zinit ice wait"0a" lucid blockf
+zinit light owner/plugin
+
+# --- Turbo 0b: Category ---
+zinit ice wait"0b" lucid
+zinit light owner/plugin
+```
+
+### Comment Requirements
+
+Every plugin declaration must include:
+
+1. **Why it loads at this timing** — sync vs turbo, and the suffix letter
+   reason (a/b/c ordering)
+2. **Config variables** — set BEFORE the `ice`/`light` pair with a comment
+   explaining when they are read
+3. **Ice modifier explanations** — only for non-obvious modifiers
+   (e.g., `blockf`, `atload"!"`)
+
+## Completion System
+
+### compinit
+
+Cache the completion dump in `$XDG_CACHE_HOME/zsh/zcompdump` with a freshness
+check using zsh glob qualifiers (avoid forking `find` or `stat`):
+
+```zsh
+autoload -Uz compinit
+_zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
+
+# Rebuild if stale/missing; skip audit if fresh
+_zcompdump_fresh=( ${_zcompdump}(N.mh-${COMPDUMP_MAX_AGE_HOURS:-20}) )
+if (( ${#_zcompdump_fresh} )); then
+  compinit -C -d "$_zcompdump"
+else
+  compinit -d "$_zcompdump"
+fi
+```
+
+### zstyle Formatting
+
+- Use continuation lines (`\`) when zstyle value exceeds 79 chars
+- Comment complex matcher-list or list-colors patterns
+- Group zstyle by context (`:completion:*`, `:fzf-tab:*`)
+
+```zsh
+# Matcher: smart-case → partial-word → substring
+zstyle ':completion:*' matcher-list \
+  'm:{a-z}={A-Za-z}' \
+  'r:|[._-]=* r:|=*' \
+  'l:|=* r:|=*'
+```
+
+### fzf-tab Coexistence
+
+When using fzf-tab, set `zstyle ':completion:*' menu no` and document that
+fzf-tab owns all Tab completion UI. Do NOT set `menu select` in completion
+config — it creates dead config that fzf-tab overrides.
+
 ## References
 
 1. [Zsh Manual](http://zsh.sourceforge.net/Doc/)
@@ -496,6 +659,11 @@ API_KEY="${API_KEY:-}"
 ## Validation
 
 ```zsh
-zsh -n script.zsh      # Syntax check
-shellcheck script.sh   # Lint (if installed)
+zsh -n script.zsh      # Syntax check (primary — handles all zsh syntax)
 ```
+
+**Note**: `shellcheck` has limited zsh support — it does not recognize
+zsh-only syntax (glob qualifiers, parameter expansion flags, `typeset -A`,
+`zstyle`, `zmodload`, etc.). Only use `shellcheck` on scripts that stick to
+POSIX-compatible constructs. For zsh-heavy files, `zsh -n` is the only
+reliable syntax checker.
