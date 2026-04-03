@@ -23,7 +23,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Load completion modules
+# Completion Modules
 # -----------------------------------------------------------------------------
 
 # Must load complist before compinit for menu-select to work
@@ -31,7 +31,7 @@
 zmodload -i zsh/complist
 
 # -----------------------------------------------------------------------------
-# compinit -- initialize the completion system
+# Compinit
 # -----------------------------------------------------------------------------
 
 # Stores zcompdump in XDG cache directory
@@ -48,7 +48,7 @@ _zcompdump="$XDG_CACHE_HOME/zsh/zcompdump"
 if (( ! ${+COMPDUMP_MAX_AGE_HOURS} )); then
   readonly COMPDUMP_MAX_AGE_HOURS=20
 fi
-_zcompdump_fresh=( ${_zcompdump}(N..mh-${COMPDUMP_MAX_AGE_HOURS}) )
+_zcompdump_fresh=( ${_zcompdump}(N.mh-${COMPDUMP_MAX_AGE_HOURS}) )
 if (( ${#_zcompdump_fresh} )); then
   # fresh: skip security audit and dump rebuild for speed.
   # Tradeoff: insecure fpath directories are only detected on full rebuild
@@ -73,7 +73,7 @@ fi
 unset _zcompdump _zcompdump_fresh
 
 # -----------------------------------------------------------------------------
-# Completion styles
+# Completion Styles
 # -----------------------------------------------------------------------------
 
 # Completion menu is managed entirely by fzf-tab (40-plugins.zsh sets menu no).

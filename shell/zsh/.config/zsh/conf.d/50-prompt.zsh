@@ -22,7 +22,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Option A: Starship (Default)
+# Starship
 # -----------------------------------------------------------------------------
 
 # Cross-shell prompt written in Rust.
@@ -32,7 +32,7 @@ if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 
 # --- Window Title ---
-# Set terminal title to current directory for supported terminals.
+# Not all terminals support OSC 0 title escapes; check known-good ones.
 # Use add-zsh-hook (NOT precmd() directly) to keep starship's hook.
   if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty|Apple_Terminal) ]] || \
      [[ "$TERM_PROGRAM" == tmux ]] || \

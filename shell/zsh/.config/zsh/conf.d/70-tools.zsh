@@ -26,7 +26,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# bun -- JavaScript/TypeScript Runtime
+# bun
 # -----------------------------------------------------------------------------
 
 # Bun is a fast native binary, no lazy loading needed.
@@ -40,7 +40,7 @@ if [[ -f "$BUN_INSTALL/_bun" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# uv -- Python Package Manager
+# uv
 # -----------------------------------------------------------------------------
 
 # uv is a fast native binary, no lazy loading needed.
@@ -61,7 +61,7 @@ if command -v uv &>/dev/null; then
 fi
 
 # -----------------------------------------------------------------------------
-# carapace -- Universal Shell Completion
+# carapace
 # -----------------------------------------------------------------------------
 
 # Provides fzf-compatible completions for 1600+ CLI tools automatically.
@@ -88,7 +88,7 @@ if command -v carapace &>/dev/null; then
 fi
 
 # -----------------------------------------------------------------------------
-# fzf -- Fuzzy Finder
+# fzf
 # -----------------------------------------------------------------------------
 
 # Load key bindings only. Must load AFTER fzf-tab (40-plugins.zsh).
@@ -117,7 +117,7 @@ if command -v fzf &>/dev/null; then
 fi
 
 # -----------------------------------------------------------------------------
-# zoxide -- Smart cd Command
+# zoxide
 # -----------------------------------------------------------------------------
 
 # Fast directory jumping with frecency algorithm. Replaces z, autojump.
@@ -136,7 +136,7 @@ if command -v zoxide &>/dev/null; then
 fi
 
 # -----------------------------------------------------------------------------
-# git -- Redirect --global writes to config.local
+# git
 # -----------------------------------------------------------------------------
 
 # Print 'r' for read flags, 'w' for write flags, empty otherwise.

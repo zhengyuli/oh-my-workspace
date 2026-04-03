@@ -22,7 +22,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Keymap -- Emacs style (default)
+# Emacs Keymap
 # -----------------------------------------------------------------------------
 
 # Works well in terminals even if you use Vim for editing.
@@ -35,7 +35,7 @@ bindkey -e
 # export KEYTIMEOUT=1   # reduce mode-switch delay to 0.1s
 
 # -----------------------------------------------------------------------------
-# History search
+# History Search
 # -----------------------------------------------------------------------------
 
 # Ctrl-P / Ctrl-N: prefix-based history search (built-in widgets)
@@ -46,7 +46,7 @@ bindkey '^N' history-search-forward
 # 40-plugins.zsh via Zinit's atload hook to ensure widgets exist before binding
 
 # -----------------------------------------------------------------------------
-# Word movement
+# Word Movement
 # -----------------------------------------------------------------------------
 
 # Ctrl-Right
@@ -69,7 +69,7 @@ fi
 bindkey '^[[3;5~' kill-word
 
 # -----------------------------------------------------------------------------
-# Line editing
+# Line Editing
 # -----------------------------------------------------------------------------
 
 # Ctrl-A  jump to start of line
@@ -110,7 +110,7 @@ bindkey '^[^?' backward-kill-word
 bindkey '^L' clear-screen
 
 # -----------------------------------------------------------------------------
-# Custom widget: toggle sudo prefix (Esc Esc)
+# Sudo Toggle
 # -----------------------------------------------------------------------------
 
 # Press Esc twice to add or remove 'sudo' at the start of the line

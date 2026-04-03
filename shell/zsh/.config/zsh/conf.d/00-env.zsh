@@ -59,7 +59,7 @@ if [[ ! -d "$XDG_CACHE_HOME/zsh" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# XDG Redirections -- Build and Development Tools
+# Build and Development Tools
 # -----------------------------------------------------------------------------
 
 # Redirect tool data from ~/.toolname to XDG directories.
@@ -76,7 +76,7 @@ export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
 
 # -----------------------------------------------------------------------------
-# XDG Redirections -- Editor Tools
+# Editor Tools
 # -----------------------------------------------------------------------------
 
 # Vim -- no native XDG support, must redirect via VIMINIT
@@ -84,10 +84,10 @@ export VIMINIT="set nocp | "\
 "execute 'source' fnameescape('${XDG_CONFIG_HOME}/vim/vimrc')"
 
 # -----------------------------------------------------------------------------
-# XDG Redirections -- CLI Tools
+# CLI Tools
 # -----------------------------------------------------------------------------
 
-# ripgrep -- supports XDG_CONFIG_HOME but needs explicit path for config file
+# ripgrep -- no auto-discovery; requires explicit config path via env var
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 
 # carapace -- bridge to native shell completions when no carapace spec exists
@@ -101,19 +101,20 @@ export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
 
 # -----------------------------------------------------------------------------
-# Less -- Modern Configuration
+# Less Configuration
 # -----------------------------------------------------------------------------
 
-# Use less with mouse support, line numbers, and colors
+# -R (color passthrough) -F (auto-quit) -X (no termcap clear)
+# -i (case-insensitive search) -M (verbose prompt) + custom colors
 export LESS='-R -F -X -i -M --use-color -Dd+r$Du+b'
 
 # -----------------------------------------------------------------------------
-# Homebrew (macOS)
+# Homebrew
 # -----------------------------------------------------------------------------
 
 # Pure environment variables; needed even in non-interactive shells.
-# HOMEBREW_PREFIX may already be set by Homebrew's shellenv; use ${:-} to
-# preserve existing value.
+# HOMEBREW_PREFIX may already be set by Homebrew's shellenv; check before
+# overriding.
 if [[ -z "$HOMEBREW_PREFIX" ]]; then
   # arm64 (Apple Silicon): /opt/homebrew
   # x86_64 (Intel): /usr/local
@@ -129,7 +130,7 @@ export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_AUTO_UPDATE=1
 
 # -----------------------------------------------------------------------------
-# LS_COLORS -- Colored ls and completion output
+# LS_COLORS
 # -----------------------------------------------------------------------------
 
 # macOS BSD ls uses LSCOLORS (different format); LS_COLORS is the GNU/XDG
@@ -143,13 +144,11 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# fzf -- Fuzzy Finder Environment
+# fzf Environment
 # -----------------------------------------------------------------------------
 
 # Must be set before fzf-tab loads in 40-plugins.zsh.
-# Doom One color theme for visual consistency.
-#
-# Note: FZF_ALT_C_COMMAND uses --type d (directories only) for Alt+C cd widget.
+# Doom Dracula color theme for visual consistency.
 export FZF_DEFAULT_OPTS="
   --color=bg:#292a30,bg+:#1f2024
   --color=fg:#dfdfe0,fg+:#dfdfe0
@@ -167,4 +166,5 @@ export FZF_DEFAULT_OPTS="
 "
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# --type d: directories only, for Alt+C cd widget
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'

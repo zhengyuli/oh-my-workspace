@@ -21,7 +21,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Project directory shortcuts
+# Project Directory Shortcuts
 # -----------------------------------------------------------------------------
 
 # alias work='cd ~/Projects/mycompany'
@@ -35,7 +35,7 @@
 # path+=("/opt/custom-tool/bin")
 
 # -----------------------------------------------------------------------------
-# Secrets and API keys (local only -- never commit)
+# Secrets and API Keys
 # -----------------------------------------------------------------------------
 
 # export GITHUB_TOKEN=""
@@ -43,14 +43,14 @@
 # export AWS_PROFILE="default"
 
 # -----------------------------------------------------------------------------
-# Machine-specific tool configuration
+# Machine-Specific Tool Configuration
 # -----------------------------------------------------------------------------
 
 # export JAVA_HOME="/opt/homebrew/opt/openjdk@17"
 # export ANDROID_HOME="$HOME/Library/Android/sdk"
 
 # -----------------------------------------------------------------------------
-# Corporate proxy (office network, VPN, etc.)
+# Corporate Proxy
 # -----------------------------------------------------------------------------
 
 # set_proxy() {
@@ -83,5 +83,5 @@
 # set_proxy
 
 # -----------------------------------------------------------------------------
-# Experimental settings (move to the appropriate conf.d fragment once stable)
+# Experimental Settings
 # -----------------------------------------------------------------------------

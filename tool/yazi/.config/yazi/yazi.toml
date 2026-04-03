@@ -61,7 +61,7 @@ image_bound = [0, 0]
 suppress_preload = false
 
 # -----------------------------------------------------------------------------
-# Plugins - Fetchers
+# Plugin Fetchers
 # -----------------------------------------------------------------------------
 
 # Git status fetcher for files

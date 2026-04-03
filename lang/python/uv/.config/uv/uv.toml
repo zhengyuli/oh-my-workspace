@@ -41,7 +41,7 @@ publish-url = "https://upload.pypi.org/legacy/"
 native-tls = true
 
 # -----------------------------------------------------------------------------
-# Optional Settings (uncomment to enable)
+# Optional Settings
 # -----------------------------------------------------------------------------
 
 # These are common settings users might want. Uncomment as needed.

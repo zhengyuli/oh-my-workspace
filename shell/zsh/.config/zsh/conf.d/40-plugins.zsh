@@ -19,7 +19,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Zinit bootstrap
+# Zinit Bootstrap
 # -----------------------------------------------------------------------------
 
 # Data directory follows XDG: $XDG_DATA_HOME/zinit/
@@ -59,7 +59,7 @@ source "$ZINIT_HOME/zinit.zsh"
 typeset -g ZINIT_INITIALIZED=1
 
 # -----------------------------------------------------------------------------
-# Plugin loading order (matches actual execution order)
+# Plugin Loading Order
 # -----------------------------------------------------------------------------
 
 # Execution timeline:
@@ -111,9 +111,9 @@ zinit light zsh-users/zsh-history-substring-search
 # are already in scope because they are set synchronously above).
 # The ! prefix on atload tells zinit to redraw the prompt after activation,
 # so the first suggestion appears without requiring a keypress.
-# history first, then completion
+# Suggest from history first; fall back to completion-based matches
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-# Doom One comment color
+# Doom Dracula comment color
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'
 zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions
@@ -133,7 +133,7 @@ zinit ice wait"0c" lucid atinit'\
 zinit light zdharma-continuum/fast-syntax-highlighting
 
 # -----------------------------------------------------------------------------
-# Plugin configuration
+# Plugin Configuration
 # -----------------------------------------------------------------------------
 
 # fzf-tab -- disable default completion menu in favor of fzf popup
@@ -151,7 +151,7 @@ zstyle ':completion:*:git-checkout:*' sort false
 #         - Single quotes (preview): $word/$group expand at completion time
 # Do NOT add extra quoting - it would break fzf-tab's internal substitution.
 
-# Inherit FZF_DEFAULT_OPTS (Doom One colors from 00-env.zsh).
+# Inherit FZF_DEFAULT_OPTS (Doom Dracula colors from 00-env.zsh).
 # Without this, fzf-tab ignores all FZF_DEFAULT_OPTS settings completely.
 # Per-command fzf-flags override conflicting settings from FZF_DEFAULT_OPTS.
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
@@ -215,7 +215,7 @@ zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
 zstyle ':fzf-tab:*' switch-group ',' '.'
 
 # -----------------------------------------------------------------------------
-# direnv -- Per-Directory Environment (must load before starship)
+# direnv
 # -----------------------------------------------------------------------------
 
 # Automatically load/unload environment variables when entering/leaving
