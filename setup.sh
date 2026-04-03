@@ -80,8 +80,8 @@ readonly _RESET='\033[0m'
 
 _err_handler() {
   local -r code=$?
-  printf "  ${_RED}[error]${_RESET} %s() line %d: exit %d\n" \
-         "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
+  printf '  %s[error]%s %s() line %d: exit %d\n' \
+         "$_RED" "$_RESET" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
 
@@ -90,29 +90,29 @@ trap '_err_handler' ERR
 # -----------------------------------------------------------------------------
 
 die() {
-  printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2
+  printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$*" >&2
   exit 1
 }
 
 _misuse() {
-  printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2
+  printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$*" >&2
   exit 2
 }
 
 log_ok() {
-  printf "  ${_GREEN}[ok]${_RESET} %s\n" "$*"
+  printf '  %s[ok]%s %s\n' "$_GREEN" "$_RESET" "$*"
 }
 
 log_err() {
-  printf "  ${_RED}[error]${_RESET} %s\n" "$*" >&2
+  printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$*" >&2
 }
 
 log_warn() {
-  printf "  ${_YELLOW}[warn]${_RESET} %s\n" "$*"
+  printf '  %s[warn]%s %s\n' "$_YELLOW" "$_RESET" "$*"
 }
 
 log_info() {
-  printf "  ${_BLUE}[info]${_RESET} %s\n" "$*"
+  printf '  %s[info]%s %s\n' "$_BLUE" "$_RESET" "$*"
 }
 
 # -----------------------------------------------------------------------------
@@ -147,12 +147,12 @@ confirm() {
 
 # --- Status Display ---
 # Label widths: "ok" (2) padded to match "missing" (7).
-_status_ok() { printf "  ${_GREEN}[ok]${_RESET}       %s\n" "$*"; }
-_status_missing() { printf "  ${_RED}[missing]${_RESET}  %s\n" "$*"; }
+_status_ok() { printf '  %s[ok]%s       %s\n' "$_GREEN" "$_RESET" "$*"; }
+_status_missing() { printf '  %s[missing]%s  %s\n' "$_RED" "$_RESET" "$*"; }
 
 # --- Package Status Labels ---
-_status_stowed() { printf "  %s ${_GREEN}[stowed]${_RESET}    :\n" "$1"; }
-_status_unstowed() { printf "  %s ${_YELLOW}[unstowed]${_RESET}:\n" "$1"; }
+_status_stowed() { printf '  %s %s[stowed]%s    :\n' "$1" "$_GREEN" "$_RESET"; }
+_status_unstowed() { printf '  %s %s[unstowed]%s:\n' "$1" "$_YELLOW" "$_RESET"; }
 
 # -----------------------------------------------------------------------------
 # Package Path Helpers
