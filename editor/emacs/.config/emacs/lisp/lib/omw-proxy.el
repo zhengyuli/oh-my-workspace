@@ -60,21 +60,19 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
   (when (string-empty-p proxy)
     (user-error "Proxy cannot be empty"))
   (condition-case err
-      (let* (;; Normalize proxy URL: add http:// prefix if missing
+      (let* (;; url-generic-parse-url requires a scheme prefix
              (proxy-url (if (string-match-p "\\`https?://" proxy)
                             proxy
                           (concat "http://" proxy)))
-             ;; Parse proxy URL to extract host and port
              (parsed (url-generic-parse-url proxy-url))
              (host (url-host parsed))
              (port (url-port parsed)))
-        ;; Validate proxy configuration
         (unless (and host port)
           (error "Invalid proxy: missing host or port"))
-        ;; Set environment variables for subprocesses (Git, curl, etc.)
+        ;; Emacs url library and subprocesses use separate proxy mechanisms
         (dolist (var '("http_proxy" "https_proxy" "all_proxy"))
           (setenv var proxy-url))
-        ;; Configure Emacs internal proxy with bypass rules
+        ;; Localhost and private networks must bypass for dev workflows
         (setq url-proxy-services
               `(("no_proxy" .
                  ,(concat "^\\(127\\.0\\.0\\.1\\|localhost\\|"
@@ -106,7 +104,6 @@ If neither source is configured, a warning is displayed."
              omw/http-proxy)))
     (if proxy
         (progn
-          ;; Keep variable in sync with the effective proxy
           (setq omw/http-proxy proxy)
           (omw/set-http-proxy proxy))
       (message

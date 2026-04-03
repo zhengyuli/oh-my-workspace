@@ -29,8 +29,7 @@
   :ensure nil
   :demand t
   :config
-  ;; Use loopback mode for PIN entry (allows Emacs to prompt for
-  ;; GPG passphrase)
+  ;; GPG agent UI not available in terminal; let Emacs handle prompting
   (setq epg-pinentry-mode 'loopback))
 
 ;; --- Auth Source Pass ---
@@ -38,7 +37,6 @@
   :ensure nil
   :demand t
   :config
-  ;; Enable pass (password-store.org) as auth source backend
   (auth-source-pass-enable))
 
 ;; --- Pass ---

@@ -1,14 +1,14 @@
 " vimrc -*- mode: vim; -*-
 " Time-stamp: <2026-03-31 19:58:58 Tuesday by zhengyu.li>
 " =============================================================================
-" Minimal, plugin-free Vim config
-" Theme: Dracula (https://draculatheme.com/vim)
+" Minimal Vim Config — Dracula theme (https://draculatheme.com/vim)
 "
 " Location: ~/.config/vim/vimrc
 " Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in 00-env.zsh)
 " XDG: Manually redirected (Vim predates XDG; VIMINIT bypasses default loader)
 "      - Data:  $XDG_DATA_HOME/vim/undo  (~/.local/share/vim/undo)
 "      - State: $XDG_STATE_HOME/vim/viminfo  (~/.local/state/vim/viminfo)
+"
 " References:
 "   1. Vim Options: https://vimdoc.sourceforge.net/htmldoc/options.html
 "   2. XDG in Vim: https://wiki.archlinux.org/title/XDG_Base_Directory#Vim
@@ -18,13 +18,13 @@
 " Baseline
 " -----------------------------------------------------------------------------
 
-" Use Vim settings, not Vi
+" Avoid Vi compatibility quirks (e.g., limited regex, no autoindent)
 set nocompatible
-" Disable modelines
+" Security: modelines allow arbitrary commands in file headers
 set nomodeline
-" Standard encoding
+" UTF-8 required for multi-byte characters and modern tooling
 set encoding=utf-8
-" Command line history
+" Longer history aids command recall across sessions
 set history=500
 " Sane backspace behavior
 set backspace=indent,eol,start
@@ -59,11 +59,11 @@ endfor
 " Display
 " -----------------------------------------------------------------------------
 
-" Absolute line number on current line
+" Absolute number on active line aids error message navigation
 set number
-" Relative numbers on all other lines
+" Relative numbers enable fast vertical motion (e.g., 5j, 12k)
 set relativenumber
-" Highlight the current line
+" Cursor line highlights active context during split editing
 set cursorline
 " Keep 8 lines of context above/below cursor
 set scrolloff=8
@@ -77,33 +77,33 @@ set linebreak
 set showmatch
 " Show match for 0.2 seconds
 set matchtime=2
-" Always show status line
+" Always show status line for consistent split visibility
 set laststatus=2
-" Show partial command bottom-right
+" Partial command display catches incomplete key sequences early
 set showcmd
-" Show line/col in status line
+" Built-in ruler as a lightweight alternative to statusline plugins
 set ruler
-" Enhanced command-line completion
+" Wildmenu provides navigable tab-completion suggestions
 set wildmenu
-" Completion mode: longest match, then full
+" Longest:full avoids premature completion; full for disambiguation
 set wildmode=longest:full,full
-" Ignore compiled files and VCS dirs in wildmenu
+" Ignore artifacts that clutter completions (build outputs, VCS dirs)
 set wildignore+=*.o,*.obj,*.pyc,*.class,*.swp,*.bak
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/node_modules/*
-" Always-on sign column (no layout jitter)
+" Always-on sign column prevents horizontal jitter on lint/diag signs
 set signcolumn=yes
 
 " -----------------------------------------------------------------------------
 " Search
 " -----------------------------------------------------------------------------
 
-" Highlight matches as you type
+" Incremental search gives immediate feedback while typing pattern
 set incsearch
-" Keep matches highlighted
+" Persistent highlights help scan all matches at a glance
 set hlsearch
-" Case-insensitive by default
+" Case-insensitive by default for fewer keystrokes
 set ignorecase
-" Case-sensitive if pattern contains uppercase
+" Smart case: uppercase in query signals intentional case-sensitivity
 set smartcase
 
 " Clear search highlight with double-ESC
@@ -113,28 +113,28 @@ nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 " Indentation
 " -----------------------------------------------------------------------------
 
-" Use spaces instead of tabs
+" Spaces instead of tabs (project convention; avoids mixed-indent issues)
 set expandtab
-" Number of spaces per tab character
+" 4-space width matches Python and most style guides
 set tabstop=4
-" Spaces inserted by <Tab> key
+" Tab key inserts spaces consistent with expandtab
 set softtabstop=4
-" Spaces per indentation level
+" Shiftwidth aligns with tabstop for uniform indentation
 set shiftwidth=4
-" Copy indent from current line
+" Autoindent preserves block structure without manual re-indent
 set autoindent
 
 " -----------------------------------------------------------------------------
 " Files & Persistence
 " -----------------------------------------------------------------------------
 
-" Allow hidden buffers
+" Hidden buffers allow backgrounding unsaved files without closing
 set hidden
-" No backup files (use version control)
+" No backup files — version control makes them redundant
 set nobackup
-" No swap files
+" No swap files — recovery handled by persistent undo and version control
 set noswapfile
-" Auto-reload files changed externally
+" Auto-reload saves a :checktime step when files change externally
 set autoread
 
 " Persistent undo (directory created in XDG section above)
@@ -144,48 +144,48 @@ set undofile
 " Behaviour
 " -----------------------------------------------------------------------------
 
-" Mouse support in all modes
+" Mouse support in all modes (scrolling, resizing splits in terminal)
 set mouse=a
-" Horizontal splits open below
+" Splits open below keep original file in upper pane (natural reading flow)
 set splitbelow
-" Vertical splits open to the right
+" Splits open right mirror editor layout convention (file tree left)
 set splitright
-" Ask instead of failing on unsaved changes
+" Confirm dialog prevents accidental :qa with unsaved changes
 set confirm
-" No audio bell; visual bell instead
+" Silence audio bell; use visual bell instead (avoids terminal beeps)
 set noerrorbells visualbell
-" Disable visual bell flash
+" Empty t_vb disables visual bell flash entirely
 set t_vb=
-" Don't redraw during macros (performance)
+" Skip redraw during macros for smoother playback on large files
 set lazyredraw
-" Faster CursorHold/sign-column refresh
+" 200 ms updatetime balances responsiveness with CPU usage for sign column
 set updatetime=200
-" Key sequence timeout (ms)
+" 500 ms timeoutlen allows comfortable multi-key sequences (e.g., <leader>w)
 set timeoutlen=500
-" Allow cursor keys to wrap between lines
+" Cursor keys wrap across line boundaries for smoother paragraph navigation
 set whichwrap+=<,>,h,l
 
 " Keep cursor centered when navigating (zz=center, zv=unfold)
-nnoremap n     nzzzv
-nnoremap N     Nzzzv
-nnoremap <C-d> <C-d>zz
-nnoremap <C-u> <C-u>zz
+nnoremap <silent> n     nzzzv
+nnoremap <silent> N     Nzzzv
+nnoremap <silent> <C-d> <C-d>zz
+nnoremap <silent> <C-u> <C-u>zz
 
 " Yank to end of line (consistent with C and D)
-nnoremap Y y$
+nnoremap <silent> Y y$
 
 " Stay in visual mode after indenting
-vnoremap < <gv
-vnoremap > >gv
+vnoremap <silent> < <gv
+vnoremap <silent> > >gv
 
 " Window navigation with Ctrl+hjkl
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+nnoremap <silent> <C-h> <C-w>h
+nnoremap <silent> <C-j> <C-w>j
+nnoremap <silent> <C-k> <C-w>k
+nnoremap <silent> <C-l> <C-w>l
 
 " Disable accidental Ex mode entry
-nnoremap Q <Nop>
+nnoremap <silent> Q <Nop>
 
 " System clipboard via OSC 52
 " Neovim 0.10+ auto-detects OSC 52 from Ghostty terminal capability.
@@ -320,19 +320,23 @@ let g:colors_name = 'Dracula'
 hi Normal          guifg=#f8f8f2  guibg=#282a36  gui=NONE
 " Inactive windows slightly darker
 hi NormalNC        guifg=#f8f8f2  guibg=#21222c  gui=NONE
+
 " --- Cursor & Line ---
 hi Cursor          guifg=#282a36  guibg=#f8f8f2  gui=NONE
 hi CursorLine      guifg=NONE     guibg=#44475a  gui=NONE
 hi CursorLineNr    guifg=#f1fa8c  guibg=#44475a  gui=bold
 hi ColorColumn     guifg=NONE     guibg=#21222c  gui=NONE
+
 " --- Line Numbers ---
 hi LineNr          guifg=#6272a4  guibg=NONE     gui=NONE
 hi SignColumn      guifg=NONE     guibg=#282a36  gui=NONE
+
 " --- Selection & Search ---
 hi Visual          guifg=NONE     guibg=#44475a  gui=NONE
 hi Search          guifg=#282a36  guibg=#f1fa8c  gui=bold
 hi IncSearch       guifg=#282a36  guibg=#8be9fd  gui=bold
 hi MatchParen      guifg=#ff79c6  guibg=NONE     gui=bold,underline
+
 " --- Syntax ---
 hi Comment         guifg=#6272a4  guibg=NONE     gui=italic
 " Purple
@@ -376,6 +380,7 @@ hi Underlined      guifg=#8be9fd  guibg=NONE     gui=underline
 hi Ignore          guifg=#6272a4  guibg=NONE     gui=NONE
 hi Error           guifg=#ff5555  guibg=NONE     gui=bold
 hi Todo            guifg=#282a36  guibg=#f1fa8c  gui=bold
+
 " --- UI Chrome ---
 hi StatusLine      guifg=#f8f8f2  guibg=#44475a  gui=NONE
 hi StatusLineNC    guifg=#6272a4  guibg=#21222c  gui=NONE
@@ -396,6 +401,7 @@ hi NonText         guifg=#44475a  guibg=NONE     gui=NONE
 hi SpecialKey      guifg=#44475a  guibg=NONE     gui=NONE
 hi Title           guifg=#50fa7b  guibg=NONE     gui=bold
 hi Directory       guifg=#bd93f9  guibg=NONE     gui=bold
+
 " --- Diagnostics ---
 hi ErrorMsg        guifg=#ff5555  guibg=NONE     gui=bold
 hi WarningMsg      guifg=#ffb86c  guibg=NONE     gui=NONE
@@ -406,11 +412,13 @@ hi SpellBad        guifg=#ff5555  guibg=NONE     gui=undercurl
 hi SpellCap        guifg=#ffb86c  guibg=NONE     gui=undercurl
 hi SpellRare       guifg=#8be9fd  guibg=NONE     gui=undercurl
 hi SpellLocal      guifg=#ffb86c  guibg=NONE     gui=undercurl
+
 " --- Diff ---
 hi DiffAdd         guifg=#50fa7b  guibg=#1e3626  gui=NONE
 hi DiffChange      guifg=#f1fa8c  guibg=#2b2900  gui=NONE
 hi DiffDelete      guifg=#ff5555  guibg=#2d1212  gui=NONE
 hi DiffText        guifg=#f1fa8c  guibg=#3b3600  gui=bold
+
 " --- Markdown ---
 hi markdownH1                guifg=#bd93f9  guibg=NONE  gui=bold
 hi markdownH2                guifg=#bd93f9  guibg=NONE  gui=bold

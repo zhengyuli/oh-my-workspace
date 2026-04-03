@@ -24,6 +24,7 @@
 ;; TypeScript Configuration
 ;; ----------------------------------------------------------------------------
 
+;; --- TypeScript Tool Specs ---
 (defconst omw/typescript-tool-specs
   '(("typescript-language-server"
      "bun install -g typescript-language-server typescript" "bun"))

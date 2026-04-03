@@ -23,6 +23,7 @@
 ;; Rust Configuration
 ;; ----------------------------------------------------------------------------
 
+;; --- Rust Tool Specs ---
 (defconst omw/rust-tool-specs
   '(("rust-analyzer" "rustup component add rust-analyzer" "rustup")
     ("rustfmt" "rustup component add rustfmt" "rustup"))

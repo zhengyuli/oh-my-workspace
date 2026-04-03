@@ -38,7 +38,7 @@
 
 ;; --- JSON Mode Setup ---
 (defun omw/json-mode-setup ()
-  "Apply custom settings for json mode."
+  "Apply custom settings for JSON mode."
   (setq-local js-indent-level 2)
   (apply #'omw/tools-check-and-prompt omw/json-tool-specs))
 

@@ -41,7 +41,7 @@
               ("TAB" . dirvish-subtree-toggle)
               ("<tab>" . dirvish-subtree-toggle))
   :config
-  ;; Add dirvish extensions dir to load path
+  ;; Extensions ship alongside dirvish but aren't on load-path
   (let* ((dir (file-name-directory (locate-library "dirvish")))
          (ext (expand-file-name "extensions" dir)))
     (push ext load-path))
@@ -148,7 +148,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   (require 'dired-async)
   (require 'dired-custom-extension)
 
-  ;; Navigation behavior
+  ;; dwim-target uses other dired window as copy/move destination
   (setq dired-dwim-target t
         dired-recursive-copies 'always
         dired-recursive-deletes 'always
@@ -174,7 +174,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
             dired-listing-switches "-alh --group-directories-first")
     (setq dired-listing-switches "-alh"))
 
-  ;; Dirvish integration
+  ;; Dirvish must be activated after dired config to override defaults
   (dirvish-override-dired-mode 1)
   (dired-async-mode 1))
 

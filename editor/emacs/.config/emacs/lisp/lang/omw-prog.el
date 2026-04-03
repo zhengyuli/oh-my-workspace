@@ -46,7 +46,7 @@ If no delimiter is found, show an error message."
   :ensure nil
   :defer t
   :config
-  ;; Copyright query settings
+  ;; Auto-update avoids manual copyright year bumps
   (setq copyright-query nil
         copyright-names-regexp
         (format
@@ -141,17 +141,13 @@ Updates copyright, timestamp, and untabifies."
   :demand t
   :hook (prog-mode . omw/prog-mode-setup)
   :bind (:map prog-mode-map
-              ;; Navigation
               ("C-c M-a" . beginning-of-defun)
               ("C-c M-e" . end-of-defun)
               ("C-]" . omw/jump-to-matched-paren)
-              ;; Comment toggle
               ("C-c C-c" . comment-line)
-              ;; Xref
               ("M-." . xref-find-definitions)
               ("M-," . xref-go-back)
               ("M-r" . xref-find-references)
-              ;; Newline + indent
               ("RET" . newline-and-indent)
               ("<return>" . newline-and-indent)))
 

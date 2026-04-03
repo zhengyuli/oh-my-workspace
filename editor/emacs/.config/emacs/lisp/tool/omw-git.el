@@ -39,7 +39,7 @@
          ("M-3" . nil)
          ("M-4" . nil))
   :config
-  ;; Show word-level diff refinement in all hunks
+  ;; Full refinement needed for detailed code review
   (setq magit-diff-refine-hunk 'all))
 
 ;; ============================================================================
