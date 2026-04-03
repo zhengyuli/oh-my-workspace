@@ -43,26 +43,63 @@ must omit the shebang.
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
-Blank line is required after every Level 1 closing line before code.
-
 **Title Case required**: capitalize the first letter of every word in both
 Section Title and Subsection Title (e.g., `Git Status`, `Doom Modeline`).
 Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`), lowercase
 for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
+### Blank Lines
+
+Blank lines mark boundaries between delimiter levels and top-level statements.
+
+**Around delimiters** — one blank line before Level 1 opening, one after
+Level 1 closing.  Level 2 has no trailing blank line — code follows directly.
+
 ```bash
-# Level 0 (file header — shown in File Header section above)
-
-# Level 1 (primary section)
 # -----------------------------------------------------------------------------
-# Section Title
+# Package Management
 # -----------------------------------------------------------------------------
-# ← blank line required here
 
-# Level 2 (subsection)
-# --- Subsection Title ---
+# --- Core Packages ---
+readonly CORE_PKGS=("git" "vim" "zsh")
+readonly EXTRA_PKGS=("lazygit" "ripgrep")
+
+# --- Optional Packages ---
+readonly OPT_PKGS=("fzf" "bat")
 ```
+
+**Between top-level statements within the same subsection** — one blank line.
+Related statements (e.g., consecutive `export` or `readonly`) are not separated.
+
+```bash
+# --- Paths ---
+export PATH="$HOME/.local/bin:$PATH"
+export MANPATH="$HOME/.local/share/man:$MANPATH"
+
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+_cleanup() { rm -f "$_tmp_file"; }
+```
+
+**Inside function bodies** — one blank line between logical steps.
+Single-statement functions have no extra blank lines.
+
+```bash
+# Multi-step body
+_install_package() {
+  local -r pkg="$1"
+  _validate_package "$pkg"
+
+  printf 'installing %s...\n' "$pkg"
+  sudo apt-get install -y "$pkg"
+}
+
+# Single-statement body — no extra blank lines
+_cleanup() { rm -f "$_tmp_file"; }
+```
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
 
 ## Line Length
 
@@ -307,9 +344,9 @@ eval "$user_input"
 
 # CORRECT — explicit dispatch
 case "$user_input" in
-  install)   _install ;;
+  install) _install ;;
   uninstall) _uninstall ;;
-  *)         printf 'error: invalid command: %s\n' "$user_input" >&2; exit 1 ;;
+  *) printf 'error: invalid command: %s\n' "$user_input" >&2; exit 1 ;;
 esac
 ```
 
@@ -343,6 +380,39 @@ fi
 if [[ ! -d "$dir" ]]; then
   mkdir -p "$dir"
 fi
+```
+
+### Don't: Inline Explanations
+
+Prefer separate comment lines above the code — inline comments after a
+statement obscure the reasoning and are easily overlooked during review.
+
+```bash
+# WRONG — inline comment restates the obvious
+export PATH="$HOME/bin:$PATH"  # Add bin to PATH
+
+# CORRECT — separate line explains reasoning
+# Personal builds take precedence over system packages
+export PATH="$HOME/bin:$PATH"
+```
+
+### Don't: Align Values
+
+Do not pad `=` in assignments or align continuation markers with extra
+spaces — it creates noisy diffs when names or values change.
+
+```bash
+# WRONG — alignment breaks on first rename
+case "$mode" in
+  install)    _install  ;;
+  uninstall)  _remove   ;;
+esac
+
+# CORRECT
+case "$mode" in
+  install) _install ;;
+  uninstall) _remove ;;
+esac
 ```
 
 ## Security

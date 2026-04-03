@@ -1,6 +1,6 @@
 ---
 paths:
-  - "editor/emacs/**/*.el"
+  - "editor/emacs/.config/emacs/**/*.el"
 ---
 
 # Emacs Lisp Conventions
@@ -30,13 +30,6 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 ;;
 ;; Detailed description of what this module does.
 ;; ============================================================================
-
-;; ----------------------------------------------------------------------------
-;; Section Title
-;; ----------------------------------------------------------------------------
-
-;; --- Subsection Title ---
-;; code here...
 ```
 
 ## File Tail
@@ -44,18 +37,50 @@ Coding standards for Emacs Lisp in oh-my-workspace.
 ```elisp
 ;; ============================================================================
 ;;; Provide features
-(provide 'module-name)
+(provide 'omw-module)
 
-;;; module-name.el ends here
+;;; omw-module.el ends here
+```
+
+Feature names use hyphenated form matching the file base name: file
+`omw-font.el` provides `'omw-font`, file `omw-python.el` provides
+`'omw-python`.  The `omw/` prefix is for code symbols only — never for
+feature names or file names.
+
+## Module Loading
+
+Modules are loaded via `require` in `init.el`.  Each module file must
+`(provide 'omw-module-name)` at its tail so that `require` can find it.
+
+The `init.el` adds all subdirectories under `lisp/` to `load-path`
+recursively, so `require` resolves module names without directory prefixes.
+
+Do not use `use-package` for local modules — `use-package` is for
+third-party packages only.  Local modules use plain `require`:
+
+```elisp
+;; In init.el — local module loading
+(require 'omw-utils)
+(require 'omw-font)
+
+;; In module files — third-party packages via use-package
+(use-package eglot
+  :ensure t
+  ...)
 ```
 
 ## Delimiter Hierarchy
 
+File headers (`;;; Commentary:`, `;;; History:`) follow the standard Emacs
+Lisp header convention recognized by `outline-minor-mode` and `imenu`.  The
+`;;;` semicolons there are not part of the delimiter hierarchy below.
+
+The delimiter hierarchy applies to project-internal logical sections within
+the file body:
+
 **Level 0** (File Header): `;; ============...` (79 chars)
 **Level 1** (Primary Section): `;; -----------...` (79 chars)
 **Level 2** (Subsection): `;; --- Title ---`
-
-Blank line is required after every Level 1 closing line before code.
 
 **Title Case required**: capitalize the first letter of every word in both
 Section Title and Subsection Title (e.g., `GC Tuning`, `Doom Modeline`).
@@ -63,22 +88,75 @@ Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`, `VTERM`),
 lowercase for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
+### Blank Lines
+
+Blank lines mark boundaries between delimiter levels and top-level forms.
+
+**Around delimiters** — one blank line before Level 1 opening, one after
+Level 1 closing.  Level 2 has no trailing blank line — code follows directly.
+
 ```elisp
-;;; Level 0 (file header — shown in File Header section above)
-
-;; Level 1 (primary section)
 ;; ----------------------------------------------------------------------------
-;; Section Title
+;; Font Configuration
 ;; ----------------------------------------------------------------------------
-;; ← blank line required here
 
-;; Level 2 (subsection)
+;; --- Base Font ---
+(set-face-attribute 'default nil :height 120)
+(set-face-attribute 'default nil :width 'normal)
+
+;; --- Fallback Font ---
+(set-face-attribute 'variable-pitch nil :family "Serif")
+```
+
+**Between top-level forms within the same subsection** — one blank line.
+Related forms (e.g., consecutive `setq`) are not separated.
+
+```elisp
+;; --- Hook Setup ---
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+(add-hook 'prog-mode-hook #'hl-line-mode)
+
+(defvar omw/prog-margin 80
+  "Right margin for prog buffers.")
+
+(make-variable-buffer-local 'omw/prog-margin)
+```
+
+**Inside function bodies** — one blank line between logical paragraphs.
+Single-expression bodies have no extra blank lines.
+
+```elisp
+;; Multi-paragraph body
+(defun omw/setup-theme ()
+  "Apply theme and adjust faces."
+  (load-theme 'modus-vivendi t)
+  (set-face-attribute 'mode-line nil :box nil)
+
+  (set-face-attribute 'font-lock-comment-face nil
+                      :slant 'italic))
+
+;; Single-expression body — no extra blank lines
+(defun omw/buffer-empty-p ()
+  "Return non-nil if buffer is empty."
+  (= (buffer-size) 0))
+```
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
+
+```elisp
+;; Level 1 / Level 2 — no trailing blank line
 ;; --- Subsection Title ---
+(code-here)
 ```
 
 ## Line Length
 
 79 characters maximum.
+
+Exceptions:
+
+- URLs and file paths that cannot be wrapped
+- Symbol names and docstrings that cannot be meaningfully split
 
 ## Error Handling
 
@@ -134,11 +212,11 @@ Returns the full path to the config file, or nil if not found."
 
 kebab-case only: `omw/buffer-empty-p`, never `omwBufferEmptyP`.
 
-Two prefix conventions are used:
+All project symbols use `omw/` prefix: `omw/setup-fonts`,
+`omw/http-proxy`, `omw/gc-startup-threshold`.
 
-- **File names** use `omw-` prefix: `omw-font.el`, `omw-proxy.el`
-- **Code symbols** (functions, variables, constants) use `omw/` prefix:
-  `omw/setup-fonts`, `omw/http-proxy`, `omw/gc-startup-threshold`
+File names use `omw-` with hyphen: `omw-font.el`, `omw-proxy.el`.  The
+`omw/` prefix is for code symbols only — never for file names.
 
 Predicate names must end with `-p`: `omw/buffer-empty-p`.
 
@@ -151,21 +229,59 @@ Always declare with `defvar-local`; never use `make-local-variable`.
   "Name of the current shell buffer.")
 ```
 
+### Customizable Variables
+
+Use `defcustom` for user-facing options that benefit from type checking and
+the Customize UI.  Use `defvar` for internal state that should not be exposed
+to users.
+
+```elisp
+;; User-facing option — appears in Customize
+(defcustom omw/emacs-user-name "Zhengyu Li"
+  "Emacs configuration user name."
+  :type 'string
+  :group 'omw-emacs)
+
+;; Internal state — not for Customize
+(defvar omw/http-proxy nil
+  "HTTP proxy URL loaded from environment.")
+```
+
 ### Key Binding Syntax
 
 Always use `kbd` macro; never use raw escape strings.
 
 ```elisp
 ;; CORRECT
-(define-key shell-mode-map (kbd "C-c C-s") 'omw-shell-sync)
+(define-key shell-mode-map (kbd "C-c C-s") #'omw-shell-sync)
 ```
 
 ### Immutability
 
-Never mutate shared lists in-place; always produce a new list via `cons`.
+Use `#'` (sharp quote) for all function references so the byte-compiler can
+verify the function exists at compile time.  Use `'` (plain quote) only for
+symbols that are not function names (e.g., `'forward` as a direction argument).
 
 ```elisp
 ;; CORRECT
+(add-hook 'eglot-mode-hook #'eglot-ensure)
+(define-key map (kbd "C-c s") #'omw-shell-sync)
+
+;; WRONG — loses compile-time checking
+(add-hook 'eglot-mode-hook 'eglot-ensure)
+```
+
+### Lists
+
+Prefer `push` over `add-to-list` in init files.  `push` is a macro that
+prepends in O(1) without duplicate checking; `add-to-list` is a function
+that traverses the entire list in O(n) for a redundant membership test.
+Under `lexical-binding: t`, `push` also behaves predictably with lexical
+variables, whereas `add-to-list` requires a quoted symbol referencing a
+global variable.
+
+```elisp
+;; CORRECT — direct prepend, no redundant traversal
 (push '("\\.py\\'" . python-mode) auto-mode-alist)
 ```
 
@@ -207,6 +323,53 @@ Use `defconst` for named constants.
 (defconst omw-max-line-length 80
   "Maximum line length for Emacs Lisp files.")
 (if (> length omw-max-line-length)
+```
+
+### Variable Assignment
+
+Use `setq` consistently for all variable assignments.  Reserve `setopt`
+(Emacs 29+) only for variables where the custom setter side-effect is
+explicitly needed (e.g., `setopt indicate-empty-lines t` triggers the
+display update that `setq` would skip).  When in doubt, use `setq`.
+
+### Hook Functions
+
+Always use named functions in `add-hook` — they are debuggable, traceable,
+and removable via `remove-hook`.  Avoid anonymous lambdas.
+
+```elisp
+;; CORRECT
+(defun omw/after-init-setup () ...)
+(add-hook 'after-init-hook #'omw/after-init-setup)
+
+;; WRONG — cannot remove or debug
+(add-hook 'after-init-hook (lambda () ...))
+```
+
+When using `use-package`, prefer the `:hook` keyword which generates the
+named-function pattern automatically.
+
+### Section Uniqueness
+
+Each section title must be unique within the file at every delimiter level
+(Level 1 and Level 2).  Group related settings together — do not create
+multiple sections of the same name.
+
+```elisp
+;; WRONG — duplicate section at Level 2
+;; --- Font Setup ---
+(set-face-attribute 'default nil :height 120)
+;; --- Other Config ;;
+(global-display-line-numbers-mode t)
+;; --- Font Setup ---              ← same name reused
+(set-face-attribute 'default nil :width 'normal)
+
+;; CORRECT
+;; --- Font Setup ---
+(set-face-attribute 'default nil :height 120)
+(set-face-attribute 'default nil :width 'normal)
+;; --- Other Config ;;
+(global-display-line-numbers-mode t)
 ```
 
 ## use-package Declaration
@@ -285,13 +448,18 @@ in inline comments.
 
 ## Anti-Patterns
 
-### Don't: Mutate Shared Lists
+### Don't: add-to-list in Init Files
+
+`add-to-list` performs an O(n) duplicate check on every call — unnecessary
+overhead when you control the config and know the entry is new.  Under
+`lexical-binding: t` it also requires a quoted global-variable symbol,
+making it fragile with lexical bindings.
 
 ```elisp
-;; WRONG
+;; WRONG — O(n) duplicate check, unnecessary in config
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 
-;; CORRECT
+;; CORRECT — O(1) prepend, lexical-binding safe
 (push '("\\.py\\'" . python-mode) auto-mode-alist)
 ```
 
@@ -299,10 +467,10 @@ in inline comments.
 
 ```elisp
 ;; WRONG
-(define-key shell-mode-map "\C-c\C-s" 'omw-shell-sync)
+(define-key shell-mode-map "\C-c\C-s" #'omw-shell-sync)
 
 ;; CORRECT
-(define-key shell-mode-map (kbd "C-c C-s") 'omw-shell-sync)
+(define-key shell-mode-map (kbd "C-c C-s") #'omw-shell-sync)
 ```
 
 ### Don't: Inline Explanations
@@ -315,6 +483,21 @@ in inline comments.
 ;; Store config directory path
 (defvar config-dir nil
   "Config directory")
+```
+
+### Don't: Align Values
+
+Do not pad `setq` arguments with extra spaces to create visual alignment —
+it produces noisy diffs when variable names or values change.
+
+```elisp
+;; WRONG — alignment breaks on first rename
+(setq-default tab-width    4
+              fill-column 80)
+
+;; CORRECT
+(setq-default tab-width 4
+              fill-column 80)
 ```
 
 ## Functions
@@ -367,6 +550,50 @@ ELPA/MELPA.  Always add a comment explaining why `:vc` is required.
 
 Never commit `.elc` files; always delete them before committing.
 
+### Secrets Management
+
+Never hardcode API keys, tokens, or passwords in Emacs Lisp files.  Read
+sensitive values from environment variables via `getenv`.
+
+```elisp
+;; WRONG — hardcoded credential
+(setq omw/http-proxy "http://user:pass@proxy:8080")
+
+;; CORRECT — read from environment
+(defvar omw/http-proxy (getenv "HTTP_PROXY")
+  "HTTP proxy URL loaded from environment.")
+```
+
+**Sensitive types**: API keys, tokens, passwords, private keys, certificates.
+
+## LSP Configuration (eglot)
+
+This project uses `eglot` as the LSP client — never generate `lsp-mode` code.
+
+### Server Registration
+
+Register language servers via the `:hook` keyword in `use-package eglot`.
+Server programs are configured with `eglot-server-programs` in the `:config`
+section when the default entry needs customization.
+
+```elisp
+(use-package eglot
+  :ensure t
+  :defer t
+  :hook ((python-mode . eglot-ensure)
+         (typescript-mode . eglot-ensure))
+  :config
+  (setq eglot-sync-connect nil
+        eglot-autoshutdown t))
+```
+
+### Per-language Server Setup
+
+Language-specific server configuration (e.g., `basedpyright` for Python,
+`typescript-language-server` for TypeScript) lives in the corresponding
+language module (`omw-python.el`, `omw-typescript.el`), not in `omw-prog.el`.
+Tool installation is managed via `omw/tools-install` with declarative specs.
+
 ## References
 
 1. [Emacs Lisp Manual](https://www.gnu.org/software/emacs/manual/html_node/elisp/)
@@ -375,12 +602,15 @@ Never commit `.elc` files; always delete them before committing.
 ## Validation
 
 ```bash
-# Single file
+# Single file — syntax check
 emacs --batch -f batch-byte-compile omw-module.el
 
-# Directory
+# Directory — recompile all
 emacs --batch --eval \
   "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
+
+# Naming and docstring conventions (install: M-x package-install package-lint)
+emacs --batch -f package-lint-batch-and-exit omw-module.el
 
 # Pre-commit cleanup
 find emacs/ -name '*.elc' -delete
