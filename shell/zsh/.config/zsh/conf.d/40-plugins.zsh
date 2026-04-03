@@ -32,14 +32,13 @@ typeset -g ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
 
 if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
   print -P "%F{cyan}Installing Zinit...%f"
-  if mkdir -p "$(dirname "$ZINIT_HOME")"; then
-    if ! git clone \
-      https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"; then
-      print -P "%F{red}Failed to clone Zinit%f"
-      return 1
-    fi
-  else
-    print -P "%F{red}Failed to create Zinit directory%f"
+  if ! mkdir -p "$(dirname "$ZINIT_HOME")"; then
+    print -P -u2 "%F{red}Failed to create Zinit directory%f"
+    return 1
+  fi
+  if ! git clone \
+    https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"; then
+    print -P -u2 "%F{red}Failed to clone Zinit%f"
     return 1
   fi
 fi
@@ -51,7 +50,7 @@ fi
 
 # Set compdump path BEFORE sourcing zinit so ALL internal compinit calls
 # (zicompinit, automatic rebuilds, self-update) use the XDG cache path.
-# Without this, zinit defaults to ${ZDOTDIR}/.zcompdump\
+# Without this, zinit defaults to ${ZDOTDIR}/.zcompdump
 # (~/.config/zsh/.zcompdump).
 typeset -gA ZINIT
 ZINIT[ZCOMPDUMP_PATH]="$XDG_CACHE_HOME/zsh/zcompdump"
@@ -93,7 +92,7 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 # disabled: perf cost on large histories
 # HISTORY_SUBSTRING_SEARCH_FUZZY=1
 # Keybindings via atload: widgets must exist before bindkey can reference them
-# Use terminfo for maximum terminal compatibility\
+# Use terminfo for maximum terminal compatibility
 # (official README recommendation)
 # plus both normal-mode and application-mode fallbacks.
 zinit ice wait"0b" lucid atload'
@@ -114,8 +113,6 @@ zinit light zsh-users/zsh-history-substring-search
 # so the first suggestion appears without requiring a keypress.
 # history first, then completion
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-# no suggestion for very long buffers (>75 chars)
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=75
 # Doom One comment color
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'
 zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
@@ -128,7 +125,6 @@ zinit light hlissner/zsh-autopair
 # --- Turbo 0c: fast-syntax-highlighting (MUST be last) ---
 # atinit runs before the plugin code:
 #   ZINIT[COMPINIT_OPTS]=-C → use cached dump (fast, no security check)
-#   ZINIT[ZCOMPDUMP_PATH] → set XDG-compliant zcompdump path
 #   zicompinit → re-run compinit to pick up any new completions
 #   zicdreplay → replay compdef calls captured from turbo plugins
 zinit ice wait"0c" lucid atinit'\
@@ -155,6 +151,11 @@ zstyle ':completion:*:git-checkout:*' sort false
 #         - Single quotes (preview): $word/$group expand at completion time
 # Do NOT add extra quoting - it would break fzf-tab's internal substitution.
 
+# Inherit FZF_DEFAULT_OPTS (Doom One colors from 00-env.zsh).
+# Without this, fzf-tab ignores all FZF_DEFAULT_OPTS settings completely.
+# Per-command fzf-flags override conflicting settings from FZF_DEFAULT_OPTS.
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+
 # Global preview window size - right panel, 55% width, line-wrap enabled
 # Per-command fzf-flags below override this where needed (e.g. kill: down:3)
 zstyle ':fzf-tab:*' fzf-flags --preview-window=right:55%:wrap
@@ -166,27 +167,29 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview \
 # Files: preview content - scoped to argument completion only to avoid
 # triggering on command names, users, hostnames, etc.
 zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
-  'bat --color=always --style=plain --line-range=:50 "$realpath" 2>/dev/null \
-   || eza -1 --color=always --icons "$realpath" 2>/dev/null'
+  'if ! bat --color=always --style=plain --line-range=:50'\
+  ' "$realpath" 2>/dev/null; then eza -1 --color=always'\
+  ' --icons "$realpath" 2>/dev/null; fi'
 
 # Environment variables: preview value (hide sensitive variables)
 # Match: -command-, -parameter-, -brace-parameter-, export, unset, expand
-# Single-quoted regex is literal — no variable expansion at registration or
-# execution time.  Pattern is embedded directly to avoid unset-variable bugs
-# that would break the entire preview (previous code used a temp var that was
-# unset before fzf-tab could evaluate it).
+# ${(U)word} normalizes to uppercase so the regex only needs one case variant.
+# Sensitive keywords: TOKEN, KEY, SECRET, PASSWORD, API, CREDENTIAL, PRIVATE,
+#   AUTH, DSN, CERT — covers common secret/credential variable names.
 zstyle ':fzf-tab:complete:(-command-|-parameter-'\
 '|-brace-parameter-|export|unset|expand):*' \
   fzf-preview \
-  '[[ "$word" =~ (?i)(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE) ]] \
-   && print "(hidden)" || print -r -- "${(P)word}"'
+  'if [[ "${(U)word}" =~ '\
+  '(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\
+  ' print "(hidden)"; else print -r -- "${(P)word}"; fi'
 
 # kill: preview process info
 # Use BSD-compatible -p flag (macOS ps does not support --pid)
 zstyle ':completion:*:*:*:*:processes' \
   command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-  '[[ $group == "[process ID]" ]] && ps -p $word -o comm= 2>/dev/null'
+  'if [[ $group == "[process ID]" ]]; then'\
+  ' ps -p $word -o comm= 2>/dev/null; fi'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
   fzf-flags --preview-window=down:3:wrap
 
@@ -202,10 +205,11 @@ zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview \
 zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
   'git diff --color=always $word'
 zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
-  'git log --oneline --color=always $word'
+  'git log --oneline --color=always -20 $word'
 zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
-  'git log --oneline --color=always $word 2>/dev/null \
-   || git show --color=always $word 2>/dev/null'
+  'if ! git log --oneline --color=always $word'\
+  ' 2>/dev/null; then git show --color=always'\
+  ' $word 2>/dev/null; fi'
 
 # Switch groups with , and .
 zstyle ':fzf-tab:*' switch-group ',' '.'
@@ -225,5 +229,7 @@ zstyle ':fzf-tab:*' switch-group ',' '.'
 # Usage: echo 'export API_KEY=xxx' > .envrc && direnv allow
 # Documentation: https://direnv.net/
 if command -v direnv &>/dev/null; then
+  # Suppress "direnv: loading..." / "direnv: export..." log clutter
+  export DIRENV_LOG_FORMAT=""
   eval "$(direnv hook zsh)"
 fi

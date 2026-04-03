@@ -4,16 +4,28 @@
 # =============================================================================
 # oh-my-workspace Setup Script
 #
-# Usage:    ./setup.sh help
-#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: dotfiles, stow, homebrew, setup
 # Dependencies: bash 4.3+, macOS
 #
-# References:
-#   1. GNU Stow Manual: https://www.gnu.org/software/stow/manual/
-#   2. Homebrew Bundle: https://github.com/Homebrew/homebrew-bundle
+# Copyright (C) 2026 zhengyu li
 #
-# Note: Uses stow -n -v to simulate operations, delegating all ignore rules,
-# tree-folding logic, and edge cases to stow itself.
+# History:
+#   2026-04-01 13:11 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Main setup script for managing dotfiles via GNU Stow.
+#   Handles prerequisites, Homebrew bundle, and package stowing.
+#   Uses stow -n -v to simulate operations, delegating all ignore
+#   rules, tree-folding logic, and edge cases to stow itself.
+#
+# Usage:    ./setup.sh help
+#
+# References:
+#   1. GNU Stow Manual:
+#      https://www.gnu.org/software/stow/manual/
+#   2. Homebrew Bundle:
+#      https://github.com/Homebrew/homebrew-bundle
 # =============================================================================
 
 set -euo pipefail
@@ -49,7 +61,7 @@ readonly WORKSPACE_DIR
 BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
 readonly BREWFILE
 
-DRY_RUN=false
+dry_run=false
 
 # -----------------------------------------------------------------------------
 # Colors
@@ -235,7 +247,9 @@ _bootstrap_homebrew_env() {
   local b env_output
   for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
     if [[ -x "${b}" ]]; then
-      env_output=$("${b}" shellenv 2>/dev/null) || continue
+      if ! env_output=$("${b}" shellenv 2>/dev/null); then
+        continue
+      fi
       source <(printf '%s\n' "${env_output}")
       if _has_homebrew; then
         return 0
@@ -328,7 +342,7 @@ _ensure_homebrew_version() {
   local -r min_ver="${MIN_HOMEBREW_MAJOR}.${MIN_HOMEBREW_MINOR}"
   log_warn "Homebrew ${ver} is too old (need >= ${min_ver})"
 
-  if "${DRY_RUN}"; then
+  if "${dry_run}"; then
     log_info "[dry-run] would remove old Homebrew and reinstall"
     return 1
   fi
@@ -395,9 +409,31 @@ _run_brew_bundle() {
   fi
 }
 
+_preview_brew_bundle() {
+  if _has_homebrew && [[ -f "${BREWFILE}" ]]; then
+    log_info "[dry-run] brew bundle preview:"
+    brew bundle check --file="${BREWFILE}" 2>&1 \
+      | while IFS= read -r line; do
+          log_info "[dry-run]   ${line}"
+        done || true
+  else
+    log_info "[dry-run] would run brew bundle"
+  fi
+}
+
+_run_brew_bundle_checked() {
+  if _run_brew_bundle; then
+    return 0
+  fi
+  if ! confirm "brew bundle had failures. Continue with stow?" n; then
+    log_info "Cancelled"
+    return 1
+  fi
+}
+
 ensure_prerequisites() {
   if ! _has_xcode_cli; then
-    if "${DRY_RUN}"; then
+    if "${dry_run}"; then
       log_info "[dry-run] would install Xcode CLI"
     elif ! _install_xcode_cli; then
       return 1
@@ -405,13 +441,13 @@ ensure_prerequisites() {
   fi
 
   if ! _bootstrap_homebrew_env; then
-    if "${DRY_RUN}"; then
+    if "${dry_run}"; then
       log_info "[dry-run] would install Homebrew"
     elif ! _install_homebrew; then
       return 1
     fi
   elif ! _ensure_homebrew_version; then
-    if "${DRY_RUN}"; then
+    if "${dry_run}"; then
       log_info "[dry-run] would reinstall Homebrew"
     elif ! _install_homebrew; then
       return 1
@@ -419,7 +455,7 @@ ensure_prerequisites() {
   fi
 
   if ! _has_stow; then
-    if "${DRY_RUN}"; then
+    if "${dry_run}"; then
       log_info "[dry-run] would install GNU Stow"
     elif ! _install_stow; then
       return 1
@@ -525,7 +561,7 @@ _resolve_stow_conflict() {
   fi
 
   if [[ -L "${target}" ]]; then
-    if "${DRY_RUN}"; then
+    if "${dry_run}"; then
       log_info "[dry-run] would remove foreign symlink:"
       log_info "  ${target} -> $(readlink "${target}")"
       return 0
@@ -555,7 +591,7 @@ _resolve_stow_conflict() {
     fi
   fi
 
-  if "${DRY_RUN}"; then
+  if "${dry_run}"; then
     log_info "[dry-run] would remove conflicting path: ${target}"
     return 0
   fi
@@ -625,12 +661,14 @@ _stow_exec() {
   if [[ "${mode}" != unstow ]]; then
     local target
     while IFS= read -r target; do
-      _resolve_stow_conflict "${target}" || return 1
+      if ! _resolve_stow_conflict "${target}"; then
+        return 1
+      fi
     done < <(_parse_stow_targets "${dry_output}")
   fi
 
   # --- Dry-run display ---
-  if "${DRY_RUN}"; then
+  if "${dry_run}"; then
     log_info "[dry-run] would ${mode}: ${pkg_base}"
     local line has_actions=false
 
@@ -746,7 +784,7 @@ cmd_install() {
     case "${arg}" in
       --all) do_all=true ;;
       --force) force=true ;;
-      --dry-run) DRY_RUN=true ;;
+      --dry-run) dry_run=true ;;
       -*) _misuse "Unknown flag: ${arg}" ;;
       *) pkgs+=("${arg}") ;;
     esac
@@ -761,28 +799,17 @@ cmd_install() {
     return 0
   fi
 
-  if "${DRY_RUN}"; then
+  if "${dry_run}"; then
     log_info "Dry-run mode: no files will be modified."
   fi
 
   ensure_prerequisites
 
   if "${do_all}"; then
-    if "${DRY_RUN}"; then
-      if _has_homebrew && [[ -f "${BREWFILE}" ]]; then
-        log_info "[dry-run] brew bundle preview:"
-        brew bundle check --file="${BREWFILE}" 2>&1 \
-          | while IFS= read -r line; do
-              log_info "[dry-run]   ${line}"
-            done || true
-      else
-        log_info "[dry-run] would run brew bundle"
-      fi
+    if "${dry_run}"; then
+      _preview_brew_bundle
     else
-      if _run_brew_bundle; then
-        : # success, proceed to stow
-      elif ! confirm "brew bundle had failures. Continue with stow?" n; then
-        log_info "Cancelled"
+      if ! _run_brew_bundle_checked; then
         return 1
       fi
     fi
@@ -796,12 +823,12 @@ cmd_install() {
       fi
     done
 
-    if ! "${DRY_RUN}"; then
+    if ! "${dry_run}"; then
       _offer_shell_switch
     fi
 
     printf '\n'
-    if "${DRY_RUN}"; then
+    if "${dry_run}"; then
       log_ok "Dry-run complete. No files were modified."
     else
       log_ok "Done. Source ~/.zshenv or open a new terminal to apply changes."
@@ -823,7 +850,7 @@ cmd_install() {
     fi
   done
 
-  if ! "${DRY_RUN}"; then
+  if ! "${dry_run}"; then
     local _pkg
     for _pkg in "${resolved[@]}"; do
       if [[ "${_pkg}" == "shell/zsh" ]]; then
@@ -842,7 +869,7 @@ cmd_uninstall() {
   for arg in "$@"; do
     case "${arg}" in
       --all) do_all=true ;;
-      --dry-run) DRY_RUN=true ;;
+      --dry-run) dry_run=true ;;
       -*) _misuse "Unknown flag: ${arg}" ;;
       *) pkgs+=("${arg}") ;;
     esac
@@ -858,7 +885,7 @@ cmd_uninstall() {
     return 1
   fi
 
-  if "${DRY_RUN}"; then
+  if "${dry_run}"; then
     log_info "Dry-run mode: no files will be modified."
   fi
 
@@ -885,7 +912,7 @@ cmd_uninstall() {
       return 0
     fi
 
-    if "${DRY_RUN}"; then
+    if "${dry_run}"; then
       log_info "Would uninstall ${#stowed[@]} stowed packages:"
       for p in "${stowed[@]}"; do
         log_info "  $(pkg_name "${p}")"

@@ -236,6 +236,27 @@ All package configuration must use `use-package`. Follow this keyword order:
 Default to `:defer t` to minimize startup time; use `:mode`, `:hook`,
 and `:bind` where possible as they imply deferral.
 
+### `:after` Implies `:defer`
+
+Do not combine `:after` with `:defer t`.  The `:after` keyword already
+defers loading until the named package is available; adding `:defer t`
+is redundant.
+
+```elisp
+;; WRONG
+(use-package corfu-terminal
+  :ensure t
+  :defer t
+  :after corfu
+  :config ...)
+
+;; CORRECT
+(use-package corfu-terminal
+  :ensure t
+  :after corfu
+  :config ...)
+```
+
 ## Anti-Patterns
 
 ### Don't: Mutate Shared Lists

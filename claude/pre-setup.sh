@@ -4,12 +4,22 @@
 # =============================================================================
 # Claude Code Pre-Setup
 #
-# Run this script before entering Claude Code for the first time.
-# Covers prerequisites check, claude CLI install, and GLM API configuration.
-# After completion, enter Claude Code and follow setup.md for the rest.
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: claude-code, glm, setup, zai
+# Dependencies: bash 4.3+, macOS 13+
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-04-01 14:02 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Run this script before entering Claude Code for the first time.
+#   Covers prerequisites check, claude CLI install, and GLM API
+#   configuration via the ZAI helper. After completion, enter
+#   Claude Code and follow setup.md for the rest.
 #
 # Usage: ./claude/pre-setup.sh
-# Dependencies: bash 4.3+, macOS 13+
 # =============================================================================
 
 set -euo pipefail

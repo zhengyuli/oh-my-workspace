@@ -1,5 +1,5 @@
 ;;; early-init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-04-03 07:46:04 Friday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; early-init.el - Early initialization for XDG paths and package dirs.
@@ -30,7 +30,6 @@
 
 ;; --- XDG Base Directory Configuration ---
 ;; Must be set before package system initializes (Emacs 27+ auto-initializes)
-;; Evaluated once from the environment at startup; never change mid-session.
 (defconst omw/xdg-data-home (or (getenv "XDG_DATA_HOME")
                                 (expand-file-name "~/.local/share/"))
   "XDG data home directory ($XDG_DATA_HOME, defaults to ~/.local/share/).")
@@ -43,6 +42,7 @@
                                  (expand-file-name "~/.local/state/"))
   "XDG state home directory ($XDG_STATE_HOME, defaults to ~/.local/state/).")
 
+;; --- Builtin directory configuration ---
 ;; Emacs directory configuration
 (setq user-emacs-directory (expand-file-name "emacs/" omw/xdg-data-home))
 

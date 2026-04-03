@@ -60,8 +60,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
          (code-fg (cdr (assq 'code-fg omw/markdown-colors))))
     ;; Header faces - progressive size reduction for hierarchy
     (face-remap-add-relative 'markdown-header-face-1
-      `(:foreground ,header-color
-        :weight bold :height ,omw/markdown-h1-height))
+     `(:foreground ,header-color :weight bold :height ,omw/markdown-h1-height))
     (face-remap-add-relative 'markdown-header-face-2
      `(:foreground ,header-color :weight bold :height ,omw/markdown-h2-height))
     (face-remap-add-relative 'markdown-header-face-3
