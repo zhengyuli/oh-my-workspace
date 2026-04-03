@@ -60,31 +60,77 @@ set nocompatible  " not strictly needed in Neovim
 **Level 1** (Primary Section): `" -----------...` (79 chars)
 **Level 2** (Subsection): `" --- Title ---`
 
-Blank line is required after every Level 1 closing line before code.
-
 **Title Case required**: capitalize the first letter of every word in both
 Section Title and Subsection Title (e.g., `XDG Paths`, `File Type Overrides`).
 Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`), lowercase
 for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
+### Blank Lines
+
+Blank lines mark boundaries between delimiter levels and top-level statements.
+
+**Around delimiters** — one blank line before Level 1 opening, one after
+Level 1 closing.  Level 2 has no trailing blank line — code follows directly.
+
 ```vim
-" Level 0 (file header — shown in File Header section above)
-
-" Level 1 (primary section)
 " -----------------------------------------------------------------------------
-" Section Title
+" Display
 " -----------------------------------------------------------------------------
-" ← blank line required here
 
-" Level 2 (subsection)
-" --- Subsection Title ---
+" --- Core ---
+set number
+set relativenumber
+
+" --- Colors ---
+set termguicolors
 ```
+
+**Between top-level statements within the same subsection** — one blank line.
+Related statements (e.g., consecutive `set`, `let`) are not separated.
+
+```vim
+" --- Navigation ---
+nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
+vnoremap < <gv
+vnoremap > >gv
+
+augroup vimrc
+    autocmd!
+augroup END
+
+let s:cfg = ($XDG_CONFIG_HOME != '' ? $XDG_CONFIG_HOME : $HOME . '/.config')
+```
+
+**Inside function bodies** — one blank line between logical steps.
+Single-expression functions have no extra blank lines.
+
+```vim
+" Multi-step body
+function! s:StatuslineActive() abort
+    let l:git = exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+    let l:ft = &filetype
+
+    return l:git . ' ' . l:ft
+endfunction
+
+" Single-expression body — no extra blank lines
+function! s:StatuslineGit() abort
+    return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+endfunction
+```
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
 
 ## Line Length
 
 79 characters maximum. Use line continuation (`\`) aligned under the opening
 statement.
+
+Exceptions:
+
+- URLs and file paths that cannot be wrapped
+- Option values that cannot be meaningfully split
 
 ```vim
 " CORRECT — continuation indented to match opening command
@@ -226,6 +272,61 @@ Each section title must be unique within the file at every delimiter level
 (Level 1 and Level 2). Group related settings together — do not create
 multiple sections of the same name.
 
+### Validation at Boundaries
+
+Validate inputs at system boundaries in script-local functions.
+
+```vim
+function! s:LoadConfig(name) abort
+    if a:name !~# '\v^\w+$'
+        echoerr 'Invalid config name: ' . a:name
+        return
+    endif
+    execute 'source' s:cfg . '/vim/' . a:name . '.vim'
+endfunction
+```
+
+### Nesting Limit
+
+Maximum 3 nesting levels. Use early-return guards to flatten structure.
+
+```vim
+" WRONG — 4 levels deep
+function! s:Process(file) abort
+    if filereadable(a:file)
+        if !isdirectory(s:tmp)
+            if mkdir(s:tmp, 'p')
+                if writefile([], a:file) == 0
+                    " process file
+                endif
+            endif
+        endif
+    endif
+endfunction
+
+" CORRECT — early returns, 2 levels max
+function! s:Process(file) abort
+    if !filereadable(a:file) | return | endif
+    if isdirectory(s:tmp) | return | endif
+    call mkdir(s:tmp, 'p')
+    call writefile([], a:file)
+endfunction
+```
+
+### No Magic Numbers
+
+Non-obvious numeric values must be explained with a comment.  Self-explanatory
+values (e.g., `tabstop=4`) need no comment.
+
+```vim
+" WRONG — what does 4200 mean?
+set timeoutlen=4200
+
+" CORRECT — explain non-obvious values
+" 4.2 s: long enough for multi-key sequences (e.g., <Esc><Esc>)
+set timeoutlen=4200
+```
+
 ### Highlight Definitions
 
 Group by semantic category. Align columns for readability.
@@ -288,6 +389,37 @@ nnoremap gj j
 " CORRECT — use noremap to avoid recursion
 nnoremap gj j
 ```
+
+### Don't: Inline Explanations
+
+Prefer separate comment lines above the setting — inline comments after
+commands obscure the reasoning and are easily overlooked during review.
+
+```vim
+" WRONG — inline comment restates the obvious
+set number  " Show line numbers
+
+" CORRECT — separate line explains reasoning
+" Line numbers help navigate compiler error messages
+set number
+```
+
+## Security
+
+### Secrets Management
+
+Never hardcode API keys, tokens, or passwords in vimrc.  Vim has no native
+secret management — use environment variables accessed via `$VAR`.
+
+```vim
+" WRONG — hardcoded token
+let g:plugin_token = 'sk-1234567890'
+
+" CORRECT — read from environment
+let s:plugin_token = $PLUGIN_TOKEN
+```
+
+**Sensitive types**: API keys, tokens, passwords, private keys, certificates.
 
 ## References
 

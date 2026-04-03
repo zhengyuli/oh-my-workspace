@@ -62,26 +62,47 @@ Tools that require environment variable redirection: set in `shell/zsh/00-env.zs
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
-Blank line is required after every Level 1 closing line before code.
-
 **Title Case required**: capitalize the first letter of every word in both
 Section Title and Subsection Title (e.g., `Git Status`, `Doom Modeline`).
 Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`), lowercase
 for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
+### Blank Lines
+
+Blank lines mark boundaries between delimiter levels and settings.
+
+**Around delimiters** — one blank line before Level 1 opening, one after
+Level 1 closing.  Level 2 has no trailing blank line — settings follow directly.
+
 ```conf
-# Level 0 (file header — shown in File Header section above)
-
-# Level 1 (primary section)
 # -----------------------------------------------------------------------------
-# Section Title
+# Core Settings
 # -----------------------------------------------------------------------------
-# ← blank line required here
 
-# Level 2 (subsection)
-# --- Subsection Title ---
+# --- Identity ---
+[core]
+    pager = delta
+    autocrlf = input
+
+# --- Diff ---
+[diff]
+    tool = vimdiff
 ```
+
+**Between settings within the same subsection** — one blank line between
+unrelated settings.  Related settings (e.g., key-value pairs within an INI
+section) are not separated.
+
+```conf
+# --- Display ---
+font-family = "SauceCodePro Nerd Font"
+font-size = 15
+
+shell-integration-features = cursor,sudo,title
+```
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
 
 ### INI Section Headers vs. Delimiter Hierarchy
 
@@ -129,6 +150,11 @@ font-family = "SauceCodePro Nerd Font"
 ## Line Length
 
 79 characters maximum.
+
+Exceptions:
+
+- URLs and file paths that cannot be wrapped
+- Tool-specific values that cannot be meaningfully split
 
 ## Code Patterns
 

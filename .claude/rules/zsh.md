@@ -41,30 +41,72 @@ must omit the shebang.
 **Level 1** (Primary Section): `# -----------...` (79 chars)
 **Level 2** (Subsection): `# --- Title ---`
 
-Blank line is required after every Level 1 closing line before code.
-
 **Title Case required**: capitalize the first letter of every word in both
 Section Title and Subsection Title (e.g., `Git Status`, `Doom Modeline`).
 Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`), lowercase
 for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
+### Blank Lines
+
+Blank lines mark boundaries between delimiter levels and top-level statements.
+
+**Around delimiters** — one blank line before Level 1 opening, one after
+Level 1 closing.  Level 2 has no trailing blank line — code follows directly.
+
 ```zsh
-# Level 0 (file header — shown in File Header section above)
-
-# Level 1 (primary section)
 # -----------------------------------------------------------------------------
-# Section Title
+# Package Management
 # -----------------------------------------------------------------------------
-# ← blank line required here
 
-# Level 2 (subsection)
-# --- Subsection Title ---
+# --- Core Packages ---
+readonly CORE_PKGS=("git" "vim" "zsh")
+readonly EXTRA_PKGS=("lazygit" "ripgrep")
+
+# --- Optional Packages ---
+readonly OPT_PKGS=("fzf" "bat")
 ```
+
+**Between top-level statements within the same subsection** — one blank line.
+Related statements (e.g., consecutive `export` or `readonly`) are not separated.
+
+```zsh
+# --- Paths ---
+export PATH="$HOME/.local/bin:$PATH"
+export MANPATH="$HOME/.local/share/man:$MANPATH"
+
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+_cleanup() { rm -f "$_tmp_file"; }
+```
+
+**Inside function bodies** — one blank line between logical steps.
+Single-statement functions have no extra blank lines.
+
+```zsh
+# Multi-step body
+_install_package() {
+  local -r pkg="$1"
+  _validate_package "$pkg"
+
+  print "installing $pkg..."
+  sudo apt-get install -y "$pkg"
+}
+
+# Single-statement body — no extra blank lines
+_cleanup() { rm -f "$_tmp_file"; }
+```
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
 
 ## Line Length
 
 79 characters maximum.
+
+Exceptions:
+
+- URLs and file paths that cannot be wrapped
+- Help text strings in `print` / `printf` (user-facing output)
 
 ## Error Handling
 
@@ -179,7 +221,8 @@ Split long pipelines at `|` with each stage on its own line.
 
 ### Section Uniqueness
 
-Each section title must be unique within the file at every delimiter level (Level 1 and Level 2). Group related settings together — do not create multiple sections of the same name.
+Each section title must be unique within the file at every delimiter level (Level 1 and Level 2).
+Group related settings together — do not create multiple sections of the same name.
 
 ```zsh
 # WRONG — duplicate section at Level 2
@@ -417,9 +460,9 @@ eval "$user_input"
 
 # CORRECT — explicit dispatch
 case "$user_input" in
-  install)   _install ;;
+  install) _install ;;
   uninstall) _uninstall ;;
-  *)         print -u2 "error: invalid command: $user_input"; exit 1 ;;
+  *) print -u2 "error: invalid command: $user_input"; exit 1 ;;
 esac
 ```
 
@@ -455,6 +498,39 @@ fi
 if [[ ! -d "$dir" ]]; then
   mkdir -p "$dir"
 fi
+```
+
+### Don't: Inline Explanations
+
+Prefer separate comment lines above the code — inline comments after a
+statement obscure the reasoning and are easily overlooked during review.
+
+```zsh
+# WRONG — inline comment restates the obvious
+export PATH="$HOME/bin:$PATH"  # Add bin to PATH
+
+# CORRECT — separate line explains reasoning
+# Personal builds take precedence over system packages
+export PATH="$HOME/bin:$PATH"
+```
+
+### Don't: Align Values
+
+Do not pad `=` in assignments or align continuation markers with extra
+spaces — it creates noisy diffs when names or values change.
+
+```zsh
+# WRONG — alignment breaks on first rename
+case "$mode" in
+  install)    _install  ;;
+  uninstall)  _remove   ;;
+esac
+
+# CORRECT
+case "$mode" in
+  install) _install ;;
+  uninstall) _remove ;;
+esac
 ```
 
 ## Security
@@ -531,33 +607,6 @@ NN-name.zsh
 - `NN` — two-digit number with leading zero
 - `name` — lowercase, hyphen-separated, descriptive
 - Extension — `.zsh` (never `.sh`)
-
-### conf.d/ File Header
-
-```zsh
-# NN-name.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
-# =============================================================================
-# Section Title
-#
-# Loaded by: .zshrc (interactive shells only)
-# Load order: NN (after XX-previous.zsh, before YY-next.zsh)
-#
-# Prerequisites:
-#   - dependency description
-#
-# Responsibilities:
-#   1. First responsibility
-#   2. Second responsibility
-#
-# Do NOT add: unrelated concerns
-#             → Those belong in appropriate file
-# =============================================================================
-```
-
-The `Loaded by`, `Load order`, `Prerequisites`, `Responsibilities`, and
-`Do NOT add` fields make cross-file dependencies explicit and prevent scope
-creep within individual conf.d files.
 
 ## Plugin Management
 
