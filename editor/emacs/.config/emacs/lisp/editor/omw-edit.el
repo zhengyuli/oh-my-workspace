@@ -38,10 +38,9 @@ Indent, delete trailing whitespace, convert tabs to spaces."
   "Indent region if mark is active; otherwise indent entire buffer."
   (interactive)
   (save-excursion
-    ;; Use region if active, otherwise indent entire buffer
     (if mark-active
-        (call-interactively 'indent-region)
-      (call-interactively 'omw/indent-entire-buffer))))
+        (call-interactively #'indent-region)
+      (call-interactively #'omw/indent-entire-buffer))))
 
 ;; --- Copy Region ---
 (defun omw/copy-region ()
@@ -60,16 +59,16 @@ Indent, delete trailing whitespace, convert tabs to spaces."
   (interactive)
   (save-excursion
     (if mark-active
-        (call-interactively 'omw/copy-region)
-      (call-interactively 'omw/copy-current-line))))
+        (call-interactively #'omw/copy-region)
+      (call-interactively #'omw/copy-current-line))))
 
 ;; --- Smart Kill Region ---
 (defun omw/smart-kill-region ()
   "Kill region if mark is active; otherwise kill entire line."
   (interactive)
   (if mark-active
-      (call-interactively 'kill-region)
-    (call-interactively 'kill-whole-line)))
+      (call-interactively #'kill-region)
+    (call-interactively #'kill-whole-line)))
 
 ;; --- Smart Kill Buffer ---
 (defun omw/smart-kill-buffer ()

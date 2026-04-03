@@ -24,6 +24,7 @@
 ;; YAML Configuration
 ;; ----------------------------------------------------------------------------
 
+;; --- YAML Tool Specs ---
 (defconst omw/yaml-tool-specs
   '(("yaml-language-server" "bun install -g yaml-language-server" "bun"))
   "Tool specs for YAML development.")
@@ -35,7 +36,7 @@
 
 ;; --- YAML Mode Setup ---
 (defun omw/yaml-mode-setup ()
-  "Apply custom settings for yaml mode."
+  "Apply custom settings for YAML mode."
   (apply #'omw/tools-check-and-prompt omw/yaml-tool-specs))
 
 (use-package yaml-mode

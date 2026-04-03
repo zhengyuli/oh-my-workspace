@@ -128,13 +128,16 @@ Returns nil in terminal mode (uses official banner instead)."
         (nth (random (length banners)) banners)))))
 
 ;; --- Dashboard ---
+(defun omw/dashboard-initial-buffer ()
+  "Create and return the dashboard buffer."
+  (get-buffer-create "*dashboard*"))
+
 (use-package dashboard
   :ensure t
   :defer t
   :hook (after-init . dashboard-open)
   :config
-  ;; Dashboard configuration for startup screen
-  ;; Show icons only in GUI mode
+  ;; Icons unavailable in TTY; guard prevents rendering errors
   (setq dashboard-center-content t
         dashboard-set-navigator t
         dashboard-set-heading-icons (display-graphic-p)
@@ -145,7 +148,7 @@ Returns nil in terminal mode (uses official banner instead)."
                           (projects . 5) (agenda . 5) (registers . 5))
         dashboard-projects-switch-function 'project-switch-project
         dashboard-startup-banner (or (omw/get-random-banner) 'official)
-        initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))))
+        initial-buffer-choice #'omw/dashboard-initial-buffer))
 
 ;; ============================================================================
 ;;; Provide features

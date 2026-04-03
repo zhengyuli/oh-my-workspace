@@ -62,14 +62,12 @@
          ("C-x g" . consult-ripgrep)
          ("C-x f" . consult-find))
   :config
-  ;; Async search settings
+  ;; Short delay and min-input reduce flicker on fast typing
   (setq consult-async-min-input 2
         consult-async-refresh-delay 0.15
         consult-preview-key '(:debounce 0.25 any))
 
-  ;; Ripgrep arguments - extend defaults with additional ignore patterns
-  ;; Use --no-config to ignore global ripgrep config
-  ;; and ensure consistent behavior
+  ;; --no-config ignores ~/.ripgreprc so results are reproducible
   ;; See: https://github.com/minad/consult#consult-ripgrep
   (setq consult-ripgrep-args
         '("rg"

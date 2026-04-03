@@ -1,5 +1,5 @@
 ;;; early-init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-03 07:46:04 Friday by zhengyu.li>
+;; Time-stamp: <2026-04-03 15:11:35 Friday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; early-init.el - Early initialization for XDG paths and package dirs.
@@ -29,7 +29,7 @@
 ;; ----------------------------------------------------------------------------
 
 ;; --- XDG Base Directory Configuration ---
-;; Must be set before package system initializes — Emacs 27+ auto-initializes.
+;; Must be set before package system initializes — Emacs 27+ auto-inits.
 (defconst omw/xdg-data-home (or (getenv "XDG_DATA_HOME")
                                 (expand-file-name "~/.local/share/"))
   "XDG data home directory ($XDG_DATA_HOME, defaults to ~/.local/share/).")
@@ -43,18 +43,18 @@
   "XDG state home directory ($XDG_STATE_HOME, defaults to ~/.local/state/).")
 
 ;; --- Builtin Directory Configuration ---
-;; Emacs directory configuration
+;; Keep Emacs state out of ~/.emacs.d; use XDG layout for portability
 (setq user-emacs-directory (expand-file-name "emacs/" omw/xdg-data-home))
 
-;; Package installation directory
+;; Packages under XDG data, not ~/.emacs.d/elpa, for clean separation
 (setq package-user-dir (expand-file-name "emacs/elpa/" omw/xdg-data-home))
 
 ;; --- Frame UI Suppression ---
-;; Suppress UI elements before first frame is displayed
-(dolist (mode '(tool-bar-mode
-                scroll-bar-mode
-                menu-bar-mode
-                tooltip-mode))
+;; Suppress before first frame renders to avoid visible flash
+(dolist (mode (list #'tool-bar-mode
+                    #'scroll-bar-mode
+                    #'menu-bar-mode
+                    #'tooltip-mode))
   (funcall mode -1))
 
 ;; ============================================================================

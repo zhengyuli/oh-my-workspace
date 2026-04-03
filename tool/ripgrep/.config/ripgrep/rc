@@ -31,40 +31,32 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Search behavior
+# Search Behavior
 # -----------------------------------------------------------------------------
 
 --smart-case
 --hidden
 
 # -----------------------------------------------------------------------------
-# Ignore patterns - VCS
+# Ignore Patterns
 # -----------------------------------------------------------------------------
 
+# --- VCS ---
 --glob=!.git/*
 
-# -----------------------------------------------------------------------------
-# Ignore patterns - Build artifacts
-# -----------------------------------------------------------------------------
-
+# --- Build Artifacts ---
 --glob=!target/*
 --glob=!dist/*
 --glob=!build/*
 --glob=!.build/*
 --glob=!node_modules/*
 
-# -----------------------------------------------------------------------------
-# Ignore patterns - Minified/bundled files
-# -----------------------------------------------------------------------------
-
+# --- Minified/Bundled Files ---
 --glob=!*.min.js
 --glob=!*.min.css
 --glob=!*.bundle.js
 
-# -----------------------------------------------------------------------------
-# Ignore patterns - Lock files
-# -----------------------------------------------------------------------------
-
+# --- Lock Files ---
 --glob=!package-lock.json
 --glob=!yarn.lock
 --glob=!pnpm-lock.yaml
@@ -72,10 +64,7 @@
 --glob=!poetry.lock
 --glob=!uv.lock
 
-# -----------------------------------------------------------------------------
-# Ignore patterns - Compiled/binary artifacts
-# -----------------------------------------------------------------------------
-
+# --- Compiled/Binary Artifacts ---
 --glob=!*.elc
 --glob=!*.pyc
 --glob=!*.pyo
@@ -85,36 +74,29 @@
 --glob=!*.dll
 --glob=!*.exe
 
-# -----------------------------------------------------------------------------
-# Ignore patterns - Python environments
-# -----------------------------------------------------------------------------
-
+# --- Python Environments ---
 --glob=!.venv/*
 --glob=!__pycache__/*
 
-# -----------------------------------------------------------------------------
-# Ignore patterns - macOS system files
-# -----------------------------------------------------------------------------
-
+# --- macOS System Files ---
 --glob=!.DS_Store
 --glob=!.Spotlight-V100/*
 --glob=!.Trashes/*
 
-# -----------------------------------------------------------------------------
-# Ignore patterns - Emacs backup/lock files
-# -----------------------------------------------------------------------------
-
+# --- Emacs Backup/Lock Files ---
 --glob=!*~
 --glob=!\#*\#
 
 # -----------------------------------------------------------------------------
-# Output formatting
+# Output Formatting
 # -----------------------------------------------------------------------------
 
+# --- General ---
 --line-number
 --column
 --color=always
 
+# --- Colors ---
 # Line number: yellow bold
 --colors=line:fg:yellow
 --colors=line:style:bold
@@ -123,7 +105,7 @@
 --colors=path:fg:green
 --colors=path:style:bold
 
-# Match highlight: ag-style black-on-yellow (official FAQ example)
+# Match highlight: ag-style black-on-yellow
 # Dark terminals: --colors=match:fg:yellow --colors=match:style:bold
 --colors=match:fg:black
 --colors=match:bg:yellow

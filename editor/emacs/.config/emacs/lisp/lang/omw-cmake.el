@@ -24,7 +24,7 @@
 ;; CMake Configuration
 ;; ----------------------------------------------------------------------------
 
-;; --- Cmake Tool Specs ---
+;; --- CMake Tool Specs ---
 (defconst omw/cmake-tool-specs
   '(("cmake-language-server" "uv tool install cmake-language-server" "uv"))
   "Tool specs for CMake development.")
@@ -34,9 +34,9 @@
   (interactive)
   (apply #'omw/tools-install omw/cmake-tool-specs))
 
-;; --- Cmake Mode Setup ---
+;; --- CMake Mode Setup ---
 (defun omw/cmake-mode-setup ()
-  "Apply custom settings for cmake mode."
+  "Apply custom settings for CMake mode."
   (setq-local cmake-tab-width 2)
   (apply #'omw/tools-check-and-prompt omw/cmake-tool-specs))
 

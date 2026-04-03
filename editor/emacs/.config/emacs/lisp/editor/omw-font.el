@@ -84,7 +84,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
           (var-font (omw/find-available-font omw/font-variable-pitch-list))
           (cjk-font (omw/find-available-font omw/font-chinese-list)))
 
-      ;; Configure default and fixed-pitch faces (for code)
+      ;; fixed-pitch must be set separately; mixed-pitch inherits from it
       (when mono-font
         (set-face-attribute 'default nil
                             :family mono-font
@@ -93,7 +93,7 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
                             :family mono-font
                             :height omw/font-size-default))
 
-      ;; Configure variable-pitch face (for prose and UI)
+      ;; Separate height lets prose scale independently from code
       (when var-font
         (set-face-attribute 'variable-pitch nil
                             :family var-font
@@ -101,14 +101,14 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
                                      (* omw/font-size-default
                                         omw/font-size-variable-multiplier))))
 
-      ;; Configure Chinese font fallback for CJK character ranges
+      ;; Four ranges cover everyday, rare, archaic CJK and punctuation
       (when cjk-font
         (set-fontset-font t omw/font-cjk-unified-range cjk-font nil 'prepend)
         (set-fontset-font t omw/font-cjk-ext-a-range   cjk-font nil 'prepend)
         (set-fontset-font t omw/font-cjk-ext-b-range   cjk-font nil 'prepend)
         (set-fontset-font t omw/font-cjk-symbols-range cjk-font nil 'prepend))
 
-      ;; Log font configuration for debugging
+      ;; Helps diagnose "wrong font" reports when switching monitors
       (when init-file-debug
         (message "Fonts configured: mono=%s, var=%s, cjk=%s"
                  (or mono-font "N/A")

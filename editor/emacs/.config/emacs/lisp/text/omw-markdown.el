@@ -71,7 +71,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
      `(:foreground ,header-color :weight bold :height ,omw/markdown-h5-height))
     (face-remap-add-relative 'markdown-header-face-6
      `(:foreground ,header-color :weight bold :height ,omw/markdown-h6-height))
-    ;; Code block faces - custom background and foreground
+    ;; Override theme defaults for readability on dark backgrounds
     (face-remap-add-relative 'markdown-pre-face
      `(:foreground ,code-fg :background ,code-bg :extend t))
     (face-remap-add-relative 'markdown-code-face
@@ -123,22 +123,18 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
   "Apply custom settings for markdown mode."
   (require 'visual-fill-column)
 
-  ;; Visual fill column configuration
   (setq-local fill-column omw/markdown-fill-column
               visual-fill-column-width omw/markdown-fill-column
               visual-fill-column-center-text t)
 
-  ;; Markdown-specific settings
   (setq-local markdown-enable-math t
               markdown-hide-urls t)
-  ;; Enable auto fill and visual fill column modes
   (auto-fill-mode 1)
   (visual-fill-column-mode 1)
-  ;; Align tables
+  ;; Graphical valign is more accurate; fall back to text alignment in TTY
   (if (display-graphic-p)
       (valign-mode 1)
     (omw/markdown-align-all-tables))
-  ;; Remap markdown faces
   (omw/markdown-faces-remap))
 
 (use-package markdown-mode

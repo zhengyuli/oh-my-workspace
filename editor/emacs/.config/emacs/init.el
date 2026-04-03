@@ -82,7 +82,7 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 ;; Proxy Setup
 ;; ----------------------------------------------------------------------------
 
-;; HTTP Proxy Configuration
+;; Corporate/VPN environments may require proxy for package install
 (require 'omw-proxy)
 (omw/enable-http-proxy)
 
@@ -110,7 +110,7 @@ to more conservative values after the init phase completes.")
   :ensure nil
   :demand t
   :config
-  ;; Version check - Emacs 30.2+ required for modern features
+  ;; Eglot, use-package, and tree-sitter require 30.2+ APIs
   (unless (version<= "30.2" emacs-version)
     (error "The Emacs version must be >= 30.2 (current: %s)" emacs-version))
 
@@ -184,12 +184,14 @@ to more conservative values after the init phase completes.")
 ;; --- Clipboard ---
 ;; GUI frames use native macOS clipboard via NS pasteboard.
 ;; Terminal frames rely on OSC 52 to bridge kill-ring → system clipboard.
+(defun omw/xterm-osc52-cut-function (text)
+  "Copy TEXT to system clipboard via OSC 52 escape sequence."
+  (xterm--set-selection "c" text))
+
 (unless (display-graphic-p)
   (setq xterm-extra-capabilities '(setSelection))
   (when (fboundp 'xterm--set-selection)
-    (setq interprogram-cut-function
-          (lambda (text)
-            (xterm--set-selection "c" text)))))
+    (setq interprogram-cut-function #'omw/xterm-osc52-cut-function)))
 
 ;; --- Post-Init Hooks ---
 ;; Number of recent-file entries persisted across sessions.  200 provides a
@@ -221,15 +223,15 @@ global-auto-revert-mode and midnight-mode."
          (emacs-startup . omw/emacs-startup-setup))
   :bind ("C-x C-b" . ibuffer)
   :config
-  ;; Autosave
+  ;; Keep autosave files out of working directories
   (setq auto-save-list-file-prefix
         (expand-file-name "emacs/auto-save-list/.saves-" omw/xdg-data-home))
 
-  ;; Native compilation
+  ;; Native compilation cache belongs in XDG cache, not config dir
   (setq native-compile-target-directory
         (expand-file-name "emacs/eln-cache/" omw/xdg-cache-home))
 
-  ;; Backup and version control
+  ;; Centralized backups prevent .gitignore noise in every project
   (setq backup-directory-alist
         (list (cons ".*"
                     (expand-file-name "emacs/backup/" omw/xdg-state-home)))
@@ -237,33 +239,33 @@ global-auto-revert-mode and midnight-mode."
         version-control t
         delete-old-versions t)
 
-  ;; Auto buffer revert
+  ;; Dired buffers and process logs should stay current without manual revert
   (setq global-auto-revert-non-file-buffers t)
 
-  ;; File and buffer management
+  ;; Forward-style uniquify reads better in tab bars with deep paths
   (setq recentf-max-saved-items omw/recentf-max-items
         uniquify-buffer-name-style 'forward
         uniquify-separator "/")
 
-  ;; Project management
+  ;; Persist project list under XDG state, not in Emacs dir
   (setq project-list-file
         (expand-file-name "emacs/projects" omw/xdg-state-home))
 
-  ;; User identity and timestamps
+  ;; Time-stamp format matches the convention used across oh-my-workspace
   (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by zhengyu.li"
         user-full-name omw/emacs-user-name
         user-mail-address omw/emacs-user-email)
 
-  ;; Startup behavior
+  ;; Skip startup screens to reach dashboard faster
   (setq inhibit-default-init t
         inhibit-startup-echo-area-message t
         inhibit-startup-screen t)
 
-  ;; UI and interaction
+  ;; Short answers save a keypress on every y-or-n prompt
   (setq use-short-answers t
-        ring-bell-function 'ignore)
+        ring-bell-function #'ignore)
 
-  ;; macOS key modifiers
+  ;; macOS: Cmd for OS shortcuts (s-c/s-v), Option as Meta
   (when (eq system-type 'darwin)
     (setq mac-command-modifier 'super
           mac-option-modifier 'meta)))
@@ -316,7 +318,7 @@ global-auto-revert-mode and midnight-mode."
 ;; Custom Settings
 ;; ----------------------------------------------------------------------------
 
-;; Load custom settings
+;; Custom file loaded last so package defaults take precedence
 (when (file-readable-p custom-file)
   (load custom-file nil 'nomessage))
 
