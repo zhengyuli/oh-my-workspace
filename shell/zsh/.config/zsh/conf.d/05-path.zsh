@@ -23,7 +23,7 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Deduplication (must come first)
+# Deduplication
 # -----------------------------------------------------------------------------
 
 # -g: global scope (affects all contexts)
@@ -31,7 +31,7 @@
 typeset -gU path fpath manpath infopath cdpath
 
 # -----------------------------------------------------------------------------
-# PATH -- executable search path
+# PATH
 # Highest priority first; $path preserves existing system entries
 # -----------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ path=(
   "$BUN_INSTALL/bin"(N-/)
 
   # --- Priority 3: Package manager binaries ---
-  # Homebrew (Apple Silicon - M1/M2/M3)
+  # Homebrew (Apple Silicon)
   /opt/homebrew/bin(N-/)
   # Homebrew (Intel Mac / Linux)
   /usr/local/bin(N-/)
@@ -67,7 +67,7 @@ path=(
 )
 
 # -----------------------------------------------------------------------------
-# FPATH -- function/completion search path
+# FPATH
 # Must be set before compinit (30-completion.zsh)
 # -----------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ fpath=(
 )
 
 # -----------------------------------------------------------------------------
-# MANPATH -- manual page search path
+# MANPATH
 # -----------------------------------------------------------------------------
 
 manpath=(
@@ -103,7 +103,7 @@ manpath=(
 )
 
 # -----------------------------------------------------------------------------
-# INFOPATH -- info page search path (GNU info system)
+# INFOPATH
 # -----------------------------------------------------------------------------
 
 infopath=(
@@ -119,7 +119,7 @@ infopath=(
 )
 
 # -----------------------------------------------------------------------------
-# Autoload custom functions
+# Autoload Custom Functions
 # Must come after fpath is set above
 # (N:t) -- (N)=nullglob silently skip if no matches, (:t)=filename only
 # Guard required: 'autoload -Uz' with no args lists all functions to stdout
