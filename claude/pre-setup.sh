@@ -150,7 +150,7 @@ sys.exit(0 if Version(sys.argv[1]) >= Version(sys.argv[2]) else 1)
 _check_prerequisites() {
   _info "Checking prerequisites..."
 
-  # --- Platform ---
+  # --- Platform Check ---
   if [[ "$(uname -s)" != Darwin ]]; then
     _fail "Not macOS ($(uname -s))"
     return 1

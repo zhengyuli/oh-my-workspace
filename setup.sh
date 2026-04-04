@@ -912,7 +912,6 @@ cmd_uninstall() {
   fi
 
   if "${do_all}"; then
-    # --- All Packages ---
     local -a stowed=()
     local p
 
@@ -943,7 +942,6 @@ cmd_uninstall() {
     return 0
   fi
 
-  # --- Specific Packages ---
   local -a resolved=()
   if ! validate_pkgs resolved "${pkgs[@]}"; then
     return 1
