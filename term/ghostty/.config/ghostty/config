@@ -142,8 +142,6 @@ clipboard-write = allow
 clipboard-trim-trailing-spaces = true
 # Warn before pasting multi-line content that may contain commands
 clipboard-paste-protection = true
-# Trust bracketed paste mode from running programs (default behavior)
-clipboard-paste-bracketed-safe = true
 
 # -----------------------------------------------------------------------------
 # Mouse

@@ -67,7 +67,6 @@
 # Delta Settings
 # -----------------------------------------------------------------------------
 
-# https://github.com/dandavison/delta
 [delta]
     # --- Navigation ---
     # Enable n/N keybindings to navigate between diff hunks
@@ -112,7 +111,6 @@
 [alias]
     # Set user identity in config.local (git set-user "Name" "email")
     set-user = "!f(){ g=~/.config/git/config.local;git config -f \"$g\" user.name \"$1\";git config -f \"$g\" user.email \"$2\";};f"
-    # Show current user identity
     whoami = "!git config user.name && git config user.email"
 
 # -----------------------------------------------------------------------------
@@ -120,7 +118,6 @@
 # -----------------------------------------------------------------------------
 
 [color]
-    # Colorize output when writing to terminal
     ui = auto
 
 # -----------------------------------------------------------------------------
@@ -144,7 +141,6 @@
 # -----------------------------------------------------------------------------
 
 [column]
-    # Display branch/tag lists in columns when space allows
     ui = auto
 
 # -----------------------------------------------------------------------------
@@ -154,7 +150,6 @@
 [push]
     # Only push current branch to its upstream (safest default)
     default = simple
-    # Automatically set upstream when pushing a new branch
     autoSetupRemote = true
 
 [pull]
@@ -166,7 +161,6 @@
 # -----------------------------------------------------------------------------
 
 [fetch]
-    # Remove stale remote-tracking branches
     prune = true
     # Verify object integrity on fetch (security)
     fsckobjects = true
@@ -196,7 +190,6 @@
 # -----------------------------------------------------------------------------
 
 [commit]
-    # Show diff in commit message editor template
     verbose = true
 
 # -----------------------------------------------------------------------------
@@ -206,11 +199,9 @@
 [diff]
     # Use histogram algorithm (better at handling code moves)
     algorithm = histogram
-    # Detect both renames and copies
     renames = copies
     # Highlight relocated code blocks distinctly
     colorMoved = default
-    # Use i/w/c/o prefixes instead of a/b
     mnemonicPrefix = true
 
 # --- Language-Specific Hunk Headers ---
