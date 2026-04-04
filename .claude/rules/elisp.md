@@ -237,14 +237,21 @@ to users.
 
 ```elisp
 ;; User-facing option — appears in Customize
-(defcustom omw/emacs-user-name "Zhengyu Li"
+(defcustom omw/emacs-user-name ""
   "Emacs configuration user name."
   :type 'string
   :group 'omw-emacs)
 
+;; User-facing option — appears in Customize
+(defcustom omw/http-proxy nil
+  "HTTP proxy URL for Emacs network operations."
+  :type '(choice (const :tag "No proxy" nil)
+                 (string :tag "Proxy URL"))
+  :group 'omw-emacs)
+
 ;; Internal state — not for Customize
-(defvar omw/http-proxy nil
-  "HTTP proxy URL loaded from environment.")
+(defvar omw/some-internal-state nil
+  "Internal buffer-local state.")
 ```
 
 ### Key Binding Syntax
