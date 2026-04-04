@@ -43,6 +43,8 @@
               ("+" . pdf-view-enlarge)
               ("-" . pdf-view-shrink))
   :config
+  ;; Compiles the epdfinfo server binary on first run; :no-query skips
+  ;; the interactive confirmation prompt.
   (pdf-tools-install :no-query))
 
 ;; --- PDF View Restore Path ---

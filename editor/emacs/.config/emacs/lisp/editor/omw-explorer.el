@@ -84,6 +84,8 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   :lighter " Omit"
   :group 'omw-emacs
   :init-value t
+  ;; Iterate all existing buffers because dired-mode-hook only fires
+  ;; for newly opened buffers, not for ones already visiting directories.
   (dolist (buf (buffer-list))
     (with-current-buffer buf
       (when (derived-mode-p 'dired-mode)
@@ -144,10 +146,15 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
                ("; p" . dired-get-file-name-only-path)))
 
   :config
+  ;; --- Required Extensions ---
+  ;; dired-x: extra dired commands (find-dired, dired-flag-extension, etc.)
+  ;; dired-async: perform copy/rename/compress operations asynchronously
+  ;; dired-custom-extension: custom dired commands (copy file name/path)
   (require 'dired-x)
   (require 'dired-async)
   (require 'dired-custom-extension)
 
+  ;; --- DWIM Target ---
   ;; dwim-target uses other dired window as copy/move destination
   (setq dired-dwim-target t
         dired-recursive-copies 'always
@@ -155,6 +162,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
         dired-deletion-confirmer 'y-or-n-p
         dired-auto-revert-buffer (not (file-remote-p default-directory)))
 
+  ;; --- Omit Filter ---
   ;; Omit filter rules:
   ;; - dired-omit-files: hidden files/dirs (.), common project dirs,
   ;;   macOS specifics
@@ -168,12 +176,14 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
                                       '(".pyc" ".elc" ".o"
                                         ".class" ".jar" ".log" ".lock")))
 
-  ;; Listing switches
+  ;; --- Listing Switches ---
+  ;; Prefer GNU ls for --group-directories-first; fall back to BSD ls
   (if (executable-find "gls")
       (setq insert-directory-program "gls"
             dired-listing-switches "-alh --group-directories-first")
     (setq dired-listing-switches "-alh"))
 
+  ;; --- Dirvish Activation ---
   ;; Dirvish must be activated after dired config to override defaults
   (dirvish-override-dired-mode 1)
   (dired-async-mode 1))

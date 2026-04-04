@@ -34,6 +34,7 @@
          :map magit-status-mode-map
          ("q" . magit-kill-this-buffer)
          :map magit-section-mode-map
+         ;; Unbind M-1..M-4 to avoid conflict with winum window numbering
          ("M-1" . nil)
          ("M-2" . nil)
          ("M-3" . nil)

@@ -24,6 +24,7 @@
 ;; Utility Functions
 ;; ----------------------------------------------------------------------------
 
+;; --- Tool Spec Helpers ---
 (defun omw/install-tool-spec (spec)
   "Install a single tool described by SPEC (TOOL INSTALL-CMD PACKAGE-MANAGER).
 Skips silently if TOOL is already installed; warns if

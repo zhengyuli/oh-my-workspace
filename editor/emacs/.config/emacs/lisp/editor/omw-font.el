@@ -115,6 +115,8 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
                  (or var-font "N/A")
                  (or cjk-font "N/A"))))))
 
+;; Deferred to after-init so that frames are already created;
+;; setting fonts before the first frame renders can cause flicker.
 (use-package emacs
   :ensure nil
   :demand t

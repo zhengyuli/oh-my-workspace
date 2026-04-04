@@ -25,13 +25,10 @@
 ;; Proxy Configuration
 ;; ----------------------------------------------------------------------------
 
-(defcustom omw/http-proxy nil
-  "Default HTTP/HTTPS proxy for Emacs network operations.
+(defvar omw/http-proxy nil
+  "HTTP proxy URL loaded from environment.
 Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy.
-This affects package installation, HTTP requests, and Git operations."
-  :type '(choice (const :tag "No proxy" nil)
-                 (string :tag "Proxy address"))
-  :group 'omw-emacs)
+This affects package installation, HTTP requests, and Git operations.")
 
 ;; --- Show HTTP Proxy ---
 (defun omw/show-http-proxy ()

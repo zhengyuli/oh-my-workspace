@@ -138,6 +138,7 @@ to more conservative values after the init phase completes.")
 ;; Utility Packages
 ;; ----------------------------------------------------------------------------
 
+;; --- Async & GC ---
 (use-package async
   :ensure t
   :defer t)
@@ -147,12 +148,14 @@ to more conservative values after the init phase completes.")
   :defer t
   :hook (after-init . gcmh-mode))
 
+;; --- Package Update ---
 (use-package auto-package-update
   :ensure t
   :defer t
   :config
   (setq auto-package-update-delete-old-versions t))
 
+;; --- Key Discovery ---
 (use-package which-key
   :ensure t
   :defer t
@@ -160,6 +163,7 @@ to more conservative values after the init phase completes.")
   :config
   (which-key-setup-minibuffer))
 
+;; --- Shell Integration ---
 (use-package exec-path-from-shell
   :ensure t
   :defer t
@@ -168,6 +172,10 @@ to more conservative values after the init phase completes.")
   :config
   (setq exec-path-from-shell-arguments '("-l")))
 
+;; --- Input Method ---
+;; macOS Chinese/English auto-switch: sis detects input context and
+;; restores the correct input method per buffer, preventing manual
+;; switching when moving between code and Chinese text buffers.
 (use-package sis
   :ensure t
   :defer t
@@ -223,6 +231,7 @@ global-auto-revert-mode and midnight-mode."
          (emacs-startup . omw/emacs-startup-setup))
   :bind ("C-x C-b" . ibuffer)
   :config
+  ;; --- File Paths ---
   ;; Keep autosave files out of working directories
   (setq auto-save-list-file-prefix
         (expand-file-name "emacs/auto-save-list/.saves-" omw/xdg-data-home))
@@ -239,6 +248,7 @@ global-auto-revert-mode and midnight-mode."
         version-control t
         delete-old-versions t)
 
+  ;; --- Buffer Management ---
   ;; Dired buffers and process logs should stay current without manual revert
   (setq global-auto-revert-non-file-buffers t)
 
@@ -251,6 +261,7 @@ global-auto-revert-mode and midnight-mode."
   (setq project-list-file
         (expand-file-name "emacs/projects" omw/xdg-state-home))
 
+  ;; --- Editor Preferences ---
   ;; Time-stamp format matches the convention used across oh-my-workspace
   (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %:a by zhengyu.li"
         user-full-name omw/emacs-user-name
@@ -265,6 +276,7 @@ global-auto-revert-mode and midnight-mode."
   (setq use-short-answers t
         ring-bell-function #'ignore)
 
+  ;; --- Platform Specific ---
   ;; macOS: Cmd for OS shortcuts (s-c/s-v), Option as Meta
   (when (eq system-type 'darwin)
     (setq mac-command-modifier 'super

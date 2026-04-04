@@ -81,6 +81,7 @@
           "--with-filename"
           "--line-number"
           "--search-zip"
+          ;; search inside zip archives (e.g., .jar, .egg)
           "--no-config"
           "--hidden"
           ;; build artifacts
@@ -92,7 +93,8 @@
           "--glob=!*.{lock,min.js,min.css,elc,pyc}")))
 
 ;; --- Embark ---
-;; Will be loaded by embark automatically.
+;; embark-consult must be loaded before embark so that consult-based
+;; actions (e.g., consult-grep, consult-line) are available in embark.
 (use-package embark-consult
   :ensure t
   :defer t)
