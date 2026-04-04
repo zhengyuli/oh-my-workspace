@@ -206,6 +206,21 @@ printf '[error] %s() line %d: exit %d\n' "$func" "$line" "$code" >&2
 print -r -- "$untrusted_content"
 ```
 
+### ANSI Escape Sequences
+
+Use `$'...'` (ANSI-C quoting) for strings containing escape sequences
+(`\033`, `\n`, `\t`, etc.).  Single-quoted `'\033'` stores literal text,
+not the actual ESC byte — colors will print as raw text.
+
+```zsh
+# CORRECT — $'...' converts \033 to the actual ESC character
+readonly _RED=$'\033[0;31m'
+print "  ${_RED}error${_RESET} $msg"
+
+# WRONG — single quotes store literal "\033[0;31m" text
+readonly _RED='\033[0;31m'
+```
+
 ### Naming Conventions
 
 Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pre-setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-01 14:02:49 Wednesday by zhengyu.li>
+# Time-stamp: <2026-04-04 13:29:08 Saturday by zhengyu.li>
 # =============================================================================
 # Claude Code Pre-Setup
 #
@@ -28,9 +28,11 @@ set -euo pipefail
 # Constants
 # -----------------------------------------------------------------------------
 
+# --- Timeouts ---
 readonly NETWORK_TIMEOUT=10
 readonly INSTALL_TIMEOUT=120
 
+# --- Platform ---
 readonly MIN_MACOS_VERSION="13.0"
 
 # -----------------------------------------------------------------------------
@@ -40,28 +42,38 @@ readonly MIN_MACOS_VERSION="13.0"
 _err_handler() {
   local -r code=$?
   printf '[error] %s() line %d: exit %d\n' \
-    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+         "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
+
+# -----------------------------------------------------------------------------
+# Colors
+# -----------------------------------------------------------------------------
+
+readonly _RED=$'\033[0;31m'
+readonly _GREEN=$'\033[0;32m'
+readonly _YELLOW=$'\033[0;33m'
+readonly _BLUE=$'\033[0;34m'
+readonly _RESET=$'\033[0m'
 
 # -----------------------------------------------------------------------------
 # Logging
 # -----------------------------------------------------------------------------
 
 _info() {
-  printf '[info] %s\n' "$*"
+  printf '  %s[info]%s %s\n' "$_BLUE" "$_RESET" "$*"
 }
 
 _warn() {
-  printf '[warn] %s\n' "$*" >&2
+  printf '  %s[warn]%s %s\n' "$_YELLOW" "$_RESET" "$*" >&2
 }
 
 _pass() {
-  printf '  ✓ %s\n' "$*"
+  printf '  %s✓%s %s\n' "$_GREEN" "$_RESET" "$*"
 }
 
 _fail() {
-  printf '  ✗ %s\n' "$*" >&2
+  printf '  %s✗%s %s\n' "$_RED" "$_RESET" "$*" >&2
 }
 
 # Check if a command exists and print its version (best-effort).
