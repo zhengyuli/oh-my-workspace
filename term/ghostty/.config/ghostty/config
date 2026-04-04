@@ -69,12 +69,12 @@ window-padding-balance = true
 background-opacity = 0.98
 background-blur-radius = 20
 
-# "tabs" embeds the tab bar in the titlebar; more compact than "transparent"
+# "Tabs" embeds the tab bar in the titlebar; more compact than "transparent"
 # which stacks a separate native tab bar on top of the titlebar.
 # macOS titlebar bugs were fixed in Ghostty 1.2.3; now stable.
 macos-titlebar-style = tabs
-# Hide CWD proxy icon (only effective with native titlebar; tabs style
-# has no proxy icon, but this future-proofs if style changes)
+# Hide CWD proxy icon (only effective with native titlebar; tabs style has no
+# proxy icon, but this future-proofs if style changes)
 macos-titlebar-proxy-icon = hidden
 
 # -----------------------------------------------------------------------------
