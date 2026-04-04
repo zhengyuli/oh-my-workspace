@@ -92,7 +92,7 @@ set matchtime=2
 set laststatus=2
 " Partial command display catches incomplete key sequences early
 set showcmd
-" Built-in ruler as a lightweight alternative to statusline plugins
+" Fallback ruler when custom statusline is not active
 set ruler
 
 " --- Completion ---
@@ -169,7 +169,7 @@ set autoread
 set undofile
 
 " -----------------------------------------------------------------------------
-" Behaviour
+" Behavior
 " -----------------------------------------------------------------------------
 
 " --- Mouse & Splits ---
@@ -225,9 +225,8 @@ nnoremap <silent> <C-l> <C-w>l
 " Disable accidental Ex mode entry
 nnoremap <silent> Q <Nop>
 
-" System clipboard via OSC 52
-" Neovim 0.10+ auto-detects OSC 52 from Ghostty terminal capability.
-" Vim requires +clipboard compile flag (macOS system Vim has this).
+" System clipboard (macOS pbcopy/pbpaste via +clipboard)
+" Neovim 0.10+ can also use OSC 52 from terminals like Ghostty.
 if has('clipboard')
     set clipboard=unnamedplus
 endif
@@ -260,7 +259,7 @@ augroup vimrc
     " Equalize splits when terminal is resized
     autocmd VimResized * wincmd =
 
-    " --- File Reload ---
+    " --- External Reload ---
     " Auto-reload file when gaining focus or on idle (external changes)
     autocmd FocusGained,BufEnter * silent! checktime
     autocmd CursorHold,CursorHoldI * silent! checktime
@@ -377,7 +376,7 @@ hi CursorLine      guifg=NONE     guibg=#44475a  gui=NONE
 hi CursorLineNr    guifg=#f1fa8c  guibg=#44475a  gui=bold
 hi ColorColumn     guifg=NONE     guibg=#21222c  gui=NONE
 
-" --- Line Numbers ---
+" --- Gutter ---
 hi LineNr          guifg=#6272a4  guibg=NONE     gui=NONE
 hi SignColumn      guifg=NONE     guibg=#282a36  gui=NONE
 
