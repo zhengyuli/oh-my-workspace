@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
-# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-04-04 13:30:00 Saturday by zhengyu.li>
 # =============================================================================
 # macOS System Defaults - developer-optimized
 #
@@ -29,7 +29,7 @@
 #
 # Customizations vs. standard mathiasbynens/dotfiles:
 #   - Finder new window defaults to $HOME instead of Desktop
-#   - Keyboard repeat can go to max (KeyRepeat=1, InitialKeyRepeat=10)
+#   - Keyboard repeat set to fast (KeyRepeat=2, InitialKeyRepeat=15)
 #   - Trackpad corner right-click removed (prone to accidental triggers)
 #   - Added: window/QL animation speedup, CrashReporter silence,
 #     spring loading
@@ -53,43 +53,43 @@ trap '_err_handler' ERR
 # Constants
 # -----------------------------------------------------------------------------
 
-# General UI
+# --- General UI ---
 readonly SIDEBAR_ICON_SIZE_MEDIUM=2
 readonly WINDOW_RESIZE_FAST=0.001
 readonly STANDBY_DELAY_24H=86400
 readonly DISABLE_LINE_MARKS=0
 
-# Keyboard
+# --- Keyboard ---
 readonly KEYBOARD_ACCESS_FULL=3
-readonly KEY_REPEAT_FASTEST=1
-readonly INITIAL_KEY_REPEAT_FAST=10
+readonly KEY_REPEAT_FAST=2
+readonly INITIAL_KEY_REPEAT=15
 
-# Trackpad
+# --- Trackpad ---
 readonly TAP_TO_CLICK=1
 readonly SPRING_LOAD_NO_DELAY=0
 
-# Screen / screensaver
+# --- Screen ---
 readonly SCREENSAVER_PASSWORD_REQUIRED=1
 readonly SCREENSAVER_PASSWORD_DELAY_IMMEDIATE=0
 
-# Dock
+# --- Dock ---
 readonly EXPOSE_ANIMATION_FAST=0.1
 readonly DOCK_AUTOHIDE_NO_DELAY=0
 readonly DOCK_AUTOHIDE_NO_ANIMATION=0
 
-# Terminal
+# --- Terminal ---
 readonly STRING_ENCODING_UTF8=4
 
-# TextEdit
+# --- TextEdit ---
 readonly PLAIN_TEXT_MODE=0
 readonly TEXT_ENCODING_UTF8=4
 
-# App Store
+# --- App Store ---
 readonly UPDATE_CHECK_DAILY=1
 readonly AUTO_DOWNLOAD_DISABLED=0
 readonly CRITICAL_UPDATES_AUTO=1
 
-# Finder
+# --- Finder ---
 readonly QUICK_LOOK_NO_ANIMATION=0
 
 # -----------------------------------------------------------------------------
@@ -105,9 +105,10 @@ _general_ui() {
   # Disable startup sound
   sudo nvram StartupMute=1
 
-  # Remove duplicates in the "Open With" menu
-  local -r _lsreg='/System/Library/Frameworks/CoreServices.framework/'\
-'Frameworks/LaunchServices.framework/Support/lsregister'
+  # Rebuild the Launch Services database to remove duplicate entries
+  # from "Open With" menus across all applications.
+  # shellcheck disable=SC2312  # intentional single-line path, exempt from 79-char limit
+  local -r _lsreg='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister'
   "${_lsreg}" -r -domain local -domain system -domain user
 
   # Set sidebar icon size to medium (1=small, 2=medium, 3=large)
@@ -149,10 +150,10 @@ _keyboard() {
   defaults write NSGlobalDomain AppleKeyboardUIMode \
       -int "${KEYBOARD_ACCESS_FULL}"
 
-  # Maximum keyboard repeat rate (faster than original KeyRepeat=2)
-  defaults write NSGlobalDomain KeyRepeat -int "${KEY_REPEAT_FASTEST}"
+  # Fast keyboard repeat (2 ≈ 33ms; 1 is max but causes accidental input)
+  defaults write NSGlobalDomain KeyRepeat -int "${KEY_REPEAT_FAST}"
   defaults write NSGlobalDomain InitialKeyRepeat \
-    -int "${INITIAL_KEY_REPEAT_FAST}"
+    -int "${INITIAL_KEY_REPEAT}"
 
   # Disable press-and-hold in favor of key repeat
   defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false

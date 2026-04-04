@@ -194,6 +194,21 @@ in the format).
 printf 'error: %s not found\n' "$pkg" >&2
 ```
 
+### ANSI Escape Sequences
+
+Use `$'...'` (ANSI-C quoting) for strings containing escape sequences
+(`\033`, `\n`, `\t`, etc.).  Single-quoted `'\033'` stores literal text,
+not the actual ESC byte — colors will print as raw text.
+
+```bash
+# CORRECT — $'...' converts \033 to the actual ESC character
+readonly _RED=$'\033[0;31m'
+printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$msg"
+
+# WRONG — single quotes store literal "\033[0;31m" text
+readonly _RED='\033[0;31m'
+```
+
 ### Naming Conventions
 
 Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`.

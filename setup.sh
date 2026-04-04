@@ -34,13 +34,17 @@ set -euo pipefail
 # Constants
 # -----------------------------------------------------------------------------
 
+# --- Display ---
 readonly LINE_WIDTH=79
 
+# --- Network ---
 readonly NETWORK_TIMEOUT=60
 
+# --- Homebrew Version ---
 readonly MIN_HOMEBREW_MAJOR=4
 readonly MIN_HOMEBREW_MINOR=4
 
+# --- Packages ---
 readonly -a PKG_ALL=(
   shell/zsh
   shell/starship
@@ -55,24 +59,29 @@ readonly -a PKG_ALL=(
   lang/typescript/bun
 )
 
+# --- Paths ---
+# Two-step: assign with default first, then seal as readonly.
+# A single "readonly VAR=${VAR:-default}" would fail if VAR is
+# already exported as readonly from the environment.
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 readonly WORKSPACE_DIR
 
 BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
 readonly BREWFILE
 
+# --- State ---
 dry_run=false
 
 # -----------------------------------------------------------------------------
 # Colors
 # -----------------------------------------------------------------------------
 
-readonly _RED='\033[0;31m'
-readonly _GREEN='\033[0;32m'
-readonly _YELLOW='\033[0;33m'
-readonly _BLUE='\033[0;34m'
-readonly _BOLD='\033[1m'
-readonly _RESET='\033[0m'
+readonly _RED=$'\033[0;31m'
+readonly _GREEN=$'\033[0;32m'
+readonly _YELLOW=$'\033[0;33m'
+readonly _BLUE=$'\033[0;34m'
+readonly _BOLD=$'\033[1m'
+readonly _RESET=$'\033[0m'
 
 # -----------------------------------------------------------------------------
 # Error Handling
@@ -432,6 +441,7 @@ _run_brew_bundle_checked() {
 }
 
 ensure_prerequisites() {
+  # --- Xcode CLI ---
   if ! _has_xcode_cli; then
     if "${dry_run}"; then
       log_info "[dry-run] would install Xcode CLI"
@@ -440,6 +450,7 @@ ensure_prerequisites() {
     fi
   fi
 
+  # --- Homebrew ---
   if ! _bootstrap_homebrew_env; then
     if "${dry_run}"; then
       log_info "[dry-run] would install Homebrew"
@@ -454,6 +465,7 @@ ensure_prerequisites() {
     fi
   fi
 
+  # --- GNU Stow ---
   if ! _has_stow; then
     if "${dry_run}"; then
       log_info "[dry-run] would install GNU Stow"
@@ -805,6 +817,7 @@ cmd_install() {
 
   ensure_prerequisites
 
+  # --- All Packages ---
   if "${do_all}"; then
     if "${dry_run}"; then
       _preview_brew_bundle
@@ -836,6 +849,7 @@ cmd_install() {
     return 0
   fi
 
+  # --- Specific Packages ---
   local -a resolved=()
   if ! validate_pkgs resolved "${pkgs[@]}"; then
     die "No valid packages specified"
@@ -898,6 +912,7 @@ cmd_uninstall() {
   fi
 
   if "${do_all}"; then
+    # --- All Packages ---
     local -a stowed=()
     local p
 
@@ -928,6 +943,7 @@ cmd_uninstall() {
     return 0
   fi
 
+  # --- Specific Packages ---
   local -a resolved=()
   if ! validate_pkgs resolved "${pkgs[@]}"; then
     return 1
@@ -987,6 +1003,7 @@ cmd_status() {
     return 0
   fi
 
+  # --- Package Status ---
   local -A pkg_stowed=()
   local stowed_count=0
   local total_stowed=0
@@ -1001,7 +1018,8 @@ cmd_status() {
     fi
   done
 
-  # Calculate total stowed across all packages (for subset display).
+  # When showing a subset, also count stowed packages outside the
+  # subset to give a complete picture (e.g. "3/5 stowed, 8/11 total").
   if (( ${#pkgs[@]} < ${#PKG_ALL[@]} )); then
     total_stowed="${stowed_count}"
     local other_pkg
