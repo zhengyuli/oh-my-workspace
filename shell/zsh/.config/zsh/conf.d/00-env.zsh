@@ -79,7 +79,7 @@ export VIMINIT="set nocp | "\
 # CLI Tools
 # -----------------------------------------------------------------------------
 
-# ripgrep -- no auto-discovery; requires explicit config path via env var
+# Ripgrep -- no auto-discovery; requires explicit config path via env var
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 
 # Needs to be set before carapace initializes (70-tools.zsh)

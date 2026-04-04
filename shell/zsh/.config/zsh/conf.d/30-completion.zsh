@@ -21,8 +21,8 @@
 # Completion Modules
 # -----------------------------------------------------------------------------
 
-# Must load complist before compinit for menu-select to work
-# -i: suppress error if module already loaded
+# Must load complist before compinit for menu-select to work.
+# -i: no-op for load form (module is silently skipped if already loaded).
 zmodload -i zsh/complist
 
 # -----------------------------------------------------------------------------
@@ -68,6 +68,7 @@ unset _zcompdump _zcompdump_fresh
 # Completion menu is managed entirely by fzf-tab (40-plugins.zsh sets menu no).
 # Do NOT set 'menu select' here — fzf-tab overrides it.
 
+# --- Matcher List ---
 # Matcher list: zsh tries each pattern in order until one matches
 #   1. m:{a-z}={A-Za-z} — smart case (avoids zsh 5.9 cfp_matcher_range bug)
 #   2. r:|[._-]=* r:|=* — partial-word after separators
@@ -77,9 +78,11 @@ zstyle ':completion:*' matcher-list \
   'r:|[._-]=* r:|=*' \
   'l:|=* r:|=*'
 
+# --- List Colors ---
 # Colored completion list (uses LS_COLORS)
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
+# --- Display Format ---
 # Group header format
 zstyle ':completion:*:warnings' format '%F{red}-- no matches for: %d --%f'
 zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
@@ -87,46 +90,55 @@ zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
 # Display completions in named groups
 zstyle ':completion:*' group-name ''
 
+# --- Filtering ---
 # Ignore patterns - reduce noise (object files, bytecode, backups, logs, deps)
 zstyle ':completion:*' ignored-patterns \
   '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
+# --- Process Completion ---
 # Show processes from all users in process completion
 # NOTE: The 'command' style for processes is set in 40-plugins.zsh for fzf-tab
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
-# kill completion — canonical list-colors pattern from zsh Guide (Ch. 6)
+# --- Kill Completion ---
+# Kill completion — canonical list-colors pattern from zsh Guide (Ch. 6)
 zstyle ':completion:*:*:kill:*:processes' list-colors \
   '=(#b) #([0-9]#)*=0=01;31'
 # Fallback menu for kill when fzf-tab is disabled (dead code otherwise)
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*' force-list always
-# insert-ids controls PID insertion behavior (not display)
+# Insert-ids controls PID insertion behavior (not display)
 zstyle ':completion:*:*:kill:*' insert-ids single
 
-# ssh / scp / rsync host completion (from known_hosts)
+# --- SSH / SCP / RSYNC ---
+# SSH / SCP / RSYNC host completion (from known_hosts)
 zstyle ':completion:*:(ssh|scp|rsync):*' tag-order \
   'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
 zstyle ':completion:*:(ssh|scp|rsync):*' group-order \
   users hosts-domain hosts-host hosts-ipaddr
 
+# --- Path Completion ---
 # List directories before files
 zstyle ':completion:*' list-dirs-first true
 
 # Collapse consecutive slashes in path completion (foo//bar → foo/bar)
 zstyle ':completion:*' squeeze-slashes true
 
+# --- Cache ---
 # Completion cache (speeds up completion on large systems)
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/completion-cache"
 
+# --- Completer Order ---
 # Completer order: _approximate omitted — fzf-tab provides superior fuzzy
 # matching; including both causes double-fuzzy degradation.
 zstyle ':completion:*' completer _extensions _complete
 
+# --- CD Completion ---
 # Do not offer current directory when completing cd ../
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
+# --- Rehash ---
 # Auto-detect newly installed commands (brew install, cargo install, etc.)
 # without manual `rehash`. Minimal perf cost on local filesystems.
 zstyle ':completion:*' rehash true

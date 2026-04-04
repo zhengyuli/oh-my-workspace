@@ -27,10 +27,10 @@ if [[ -f "$BUN_INSTALL/_bun" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# Uv
+# UV
 # -----------------------------------------------------------------------------
 
-# uv is a fast native binary, no lazy loading needed.
+# UV is a fast native binary, no lazy loading needed.
 if command -v uv &>/dev/null; then
   _uv_comp="$XDG_CACHE_HOME/zsh/uv-completion.zsh"
 
@@ -64,10 +64,10 @@ fi
 
 # Load key bindings only. Must load AFTER fzf-tab (40-plugins.zsh).
 #
-# fzf ships two integration files:
+# FZF ships two integration files:
 #   key-bindings.zsh — Ctrl-R/Ctrl-T/Alt-C widgets ← load this
 #   completion.zsh — **<Tab> trigger + rebinds ^I ← do NOT load
-# completion.zsh is redundant with fzf-tab which replaces the entire Tab UI.
+# Completion.zsh is redundant with fzf-tab which replaces the entire Tab UI.
 if command -v fzf &>/dev/null; then
   _fzf_prefix="$HOMEBREW_PREFIX/opt/fzf"
 
@@ -92,6 +92,8 @@ fi
 # -----------------------------------------------------------------------------
 # Git
 # -----------------------------------------------------------------------------
+
+# --- Config Classification Helpers ---
 
 # Print 'r' for read flags, 'w' for write flags, empty otherwise.
 _git_check_flag() {
@@ -152,6 +154,8 @@ _git_classify_config_op() {
     print -r -- r
   fi
 }
+
+# --- Config Wrapper ---
 
 # Redirect git config --global writes to config.local (machine-specific,
 # not tracked). Reads use --includes to transparently merge both files.

@@ -67,7 +67,7 @@ typeset -g ZINIT_INITIALIZED=1
 zinit light Aloxaf/fzf-tab
 
 # --- Turbo 0a: Completions ---
-# blockf: skip fpath insertion (avoids triggering compinit rebuild)
+# Blockf: skip fpath insertion (avoids triggering compinit rebuild)
 zinit ice wait"0a" lucid blockf
 zinit light zsh-users/zsh-completions
 
@@ -76,7 +76,7 @@ zinit light zsh-users/zsh-completions
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 
-# disabled: perf cost on large histories
+# Disabled: perf cost on large histories
 # HISTORY_SUBSTRING_SEARCH_FUZZY=1
 # Keybindings via atload: widgets must exist before bindkey can reference them.
 # terminfo keys + CSI/application-mode fallbacks for maximum compatibility.
@@ -98,7 +98,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'
 zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions
 
-# autopair -- auto-close brackets and quotes
+# Autopair -- auto-close brackets and quotes
 zinit ice wait"0b" lucid
 zinit light hlissner/zsh-autopair
 
@@ -114,7 +114,7 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 # Plugin Configuration
 # -----------------------------------------------------------------------------
 
-# fzf-tab owns the Tab UI — disable zsh's default menu.
+# FZF-tab owns the Tab UI — disable zsh's default menu.
 # Do NOT use %F{...} in descriptions format (fzf-tab limitation).
 zstyle ':completion:*' menu no
 zstyle ':completion:*:descriptions' format '[%d]'
@@ -151,7 +151,7 @@ zstyle ':fzf-tab:complete:(-command-|-parameter-'\
   '(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\
   ' print "(hidden)"; else print -r -- "${(P)word}"; fi'
 
-# kill: preview process info (BSD-compatible ps flags for macOS)
+# Kill: preview process info (BSD-compatible ps flags for macOS)
 zstyle ':completion:*:*:*:*:processes' \
   command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
