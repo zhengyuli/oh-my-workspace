@@ -64,8 +64,7 @@
 ;; font is active in the underlying buffer (e.g., variable-pitch in prose).
 (defface omw/centaur-tabs-base
   '((t :family "Monospace" :height 1.0))
-  "Base face for centaur-tabs with fixed-pitch font."
-  :group 'omw-emacs)
+  "Base face for centaur-tabs with fixed-pitch font.")
 
 (use-package centaur-tabs
   :ensure t
