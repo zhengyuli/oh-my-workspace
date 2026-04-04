@@ -42,14 +42,14 @@
 # -----------------------------------------------------------------------------
 
 # --- VCS ---
---glob=!.git/*
+--glob=!.git
 
 # --- Build Artifacts ---
---glob=!target/*
---glob=!dist/*
---glob=!build/*
---glob=!.build/*
---glob=!node_modules/*
+--glob=!target
+--glob=!dist
+--glob=!build
+--glob=!.build
+--glob=!node_modules
 
 # --- Minified/Bundled Files ---
 --glob=!*.min.js
@@ -75,13 +75,13 @@
 --glob=!*.exe
 
 # --- Python Environments ---
---glob=!.venv/*
---glob=!__pycache__/*
+--glob=!.venv
+--glob=!__pycache__
 
 # --- macOS System Files ---
 --glob=!.DS_Store
---glob=!.Spotlight-V100/*
---glob=!.Trashes/*
+--glob=!.Spotlight-V100
+--glob=!.Trashes
 
 # --- Emacs Backup/Lock Files ---
 --glob=!*~
