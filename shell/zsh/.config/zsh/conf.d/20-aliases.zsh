@@ -1,17 +1,13 @@
 # 20-aliases.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-28 22:10:58 Saturday by zhengyu.li>
 # =============================================================================
-# Command Aliases
+# Command Aliases - File, directory, editor, and utility shortcuts
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Loaded by: .zshrc (interactive shells only)
 # Load order: 20 (after 15-history.zsh, before 30-completion.zsh)
-#
-# Prerequisites: None (standalone configuration)
-#
-# Responsibilities:
-#   1. Provide essential file/directory aliases
-#   2. Provide git shortcuts for daily workflow
-#   3. Provide zsh config shortcuts
 #
 # Do NOT add: functions, environment variables, rarely used aliases
 #             → Put functions in functions/ directory (autoloaded)

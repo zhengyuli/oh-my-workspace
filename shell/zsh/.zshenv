@@ -1,14 +1,13 @@
 # .zshenv -*- mode: sh; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
-# Bootstrap -- the only Zsh-related file in $HOME
+# Bootstrap - Set XDG directories and redirect ZDOTDIR
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Loaded by: ALL shell types (interactive, script, cron, SSH)
 # Load order: First (before .zprofile, .zshrc)
-#
-# Responsibilities:
-#   1. Set XDG base directories (prerequisite for all other config)
-#   2. Set ZDOTDIR (redirect Zsh to XDG config directory)
 #
 # Do NOT add: PATH, aliases, functions, plugins
 #             → Put these in .zprofile (login) or .zshrc (interactive)

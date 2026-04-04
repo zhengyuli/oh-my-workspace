@@ -1,32 +1,26 @@
 # 50-prompt.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
 # =============================================================================
-# Prompt Configuration
+# Prompt Configuration - Starship primary, vcs_info fallback
 #
-# Loaded by: Interactive shells (.zshrc)
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
+#
+# Loaded by: .zshrc (interactive shells only)
 # Load order: 50 (after 40-plugins.zsh, before 60-keybinds.zsh)
 #
 # Prerequisites:
-#   - 40-plugins.zsh (Zinit for Pure/P10k async loading)
+#   - 40-plugins.zsh (Zinit); starship optional (falls back to vcs_info)
 #
-# Responsibilities:
-#   1. Initialize prompt theme (Starship/Pure/Powerlevel10k)
-#   2. Configure XDG-compliant paths for prompt tools
-#   3. Provide fallback vcs_info prompt when no external tools available
-#
-# Do NOT add: Aliases, functions, PATH modifications, environment variables
-#             → Aliases: 20-aliases.zsh
-#             → Functions: functions/ directory (autoloaded)
-#             → PATH: 05-path.zsh
-#             → Env vars: 00-env.zsh
+# Do NOT add: aliases, env vars
+#             → Aliases in 20-aliases.zsh
+#             → Env vars in 00-env.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------
 # Starship
 # -----------------------------------------------------------------------------
 
-# Cross-shell prompt written in Rust.
-# Prerequisites: brew install starship
 # Config: $XDG_CONFIG_HOME/starship.toml
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
@@ -45,8 +39,7 @@ if command -v starship &>/dev/null; then
   fi
 else
 # --- Fallback: Native VCS Info Prompt ---
-# Built-in Zsh prompt with git branch display. Used when no external
-# prompt tools are installed. No configuration needed.
+# Used when no external prompt tools are installed. No configuration needed.
   autoload -Uz vcs_info add-zsh-hook
   _omw_vcs_info_precmd() { vcs_info }
   add-zsh-hook precmd _omw_vcs_info_precmd

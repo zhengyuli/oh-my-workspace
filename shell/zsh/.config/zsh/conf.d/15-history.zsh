@@ -1,17 +1,16 @@
 # 15-history.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
-# History Configuration
+# History Configuration - Size limits and behavior options
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Loaded by: .zshrc (interactive shells only)
 # Load order: 15 (after 10-options.zsh, before 20-aliases.zsh)
 #
 # Prerequisites:
 #   - HISTFILE is set in 00-env.zsh ($XDG_STATE_HOME/zsh/history)
-#
-# Responsibilities:
-#   1. Set history size limits (HISTSIZE, SAVEHIST)
-#   2. Configure history behavior options
 #
 # Do NOT add: HISTFILE path
 #             → Put this in 00-env.zsh (environment variables)
@@ -23,10 +22,13 @@
 
 # HISTSIZE: maximum entries kept in memory during session
 # SAVEHIST: maximum entries written to HISTFILE on exit
-# Common practice: 10000-50000 (100000 is excessive)
-readonly HIST_MAX_ENTRIES=50000
-HISTSIZE=$HIST_MAX_ENTRIES
-SAVEHIST=$HIST_MAX_ENTRIES
+readonly HIST_SAVE_MAX=50000
+# HISTSIZE must exceed SAVEHIST so HIST_EXPIRE_DUPS_FIRST has buffer
+# room to keep duplicates in memory until trimming, instead of removing
+# them immediately (which conflicts with SHARE_HISTORY).
+readonly HIST_MEMORY_MAX=60000
+HISTSIZE=$HIST_MEMORY_MAX
+SAVEHIST=$HIST_SAVE_MAX
 
 # -----------------------------------------------------------------------------
 # History Options
@@ -45,8 +47,11 @@ setopt HIST_REDUCE_BLANKS
 # --- Deduplication ---
 # Delete oldest duplicates when HISTSIZE is reached
 setopt HIST_EXPIRE_DUPS_FIRST
-# Delete old duplicate when new one is added
-setopt HIST_IGNORE_ALL_DUPS
+# Ignore consecutive duplicates only (not all-time).
+# HIST_IGNORE_ALL_DUPS conflicts with SHARE_HISTORY: immediate in-memory
+# dedup + real-time file sync creates a feedback loop that progressively
+# loses history across sessions.
+setopt HIST_IGNORE_DUPS
 # Don't write duplicates to history file
 setopt HIST_SAVE_NO_DUPS
 # Skip duplicates when searching with arrow keys

@@ -1,23 +1,16 @@
 # 10-options.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
 # =============================================================================
-# Shell Options
+# Shell Options - Configure zsh behavior and defaults
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Loaded by: .zshrc (interactive shells only)
 # Load order: 10 (after 05-path.zsh, before 15-history.zsh)
 #
-# Prerequisites:
-#   - None (standalone configuration)
-#
-# Responsibilities:
-#   1. Configure directory navigation options (AUTO_CD, PUSHD_*)
-#   2. Configure completion options (AUTO_MENU, COMPLETE_IN_WORD, etc.)
-#   3. Configure globbing options (EXTENDED_GLOB, NULL_GLOB, etc.)
-#   4. Configure input/output options (INTERACTIVE_COMMENTS, BEEP, etc.)
-#   5. Configure job control options (AUTO_RESUME, NOTIFY, etc.)
-#
 # Do NOT add: history options, aliases, key bindings
-#             → History options in 15-history.zsh (dedicated history config)
+#             → History options in 15-history.zsh
 #             → Aliases in 20-aliases.zsh
 #             → Key bindings in 60-keybinds.zsh
 # =============================================================================

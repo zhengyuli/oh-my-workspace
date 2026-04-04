@@ -1,17 +1,13 @@
 # 05-path.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-04-02 11:26:39 Thursday by zhengyu.li>
+# Time-stamp: <2026-04-04 13:09:09 Saturday by zhengyu.li>
 # =============================================================================
-# PATH / FPATH / MANPATH / INFOPATH Management
+# PATH / FPATH / MANPATH / INFOPATH Management - Deduplicated search paths
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Loaded by: .zprofile (login) and .zshrc (interactive)
 # Load order: 05 (after 00-env.zsh sets tool paths)
-#
-# Responsibilities:
-#   1. Configure executable search path (PATH)
-#   2. Configure function search path (FPATH) for completions/autoload
-#   3. Configure manual page search path (MANPATH)
-#   4. Configure info page search path (INFOPATH)
-#   5. Ensure unique entries via typeset -gU (unique, global)
 #
 # Prerequisites:
 #   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL, XDG_* variables
@@ -26,29 +22,21 @@
 # Deduplication
 # -----------------------------------------------------------------------------
 
-# -g: global scope (affects all contexts)
-# -U: unique (remove duplicates, keep first occurrence)
 typeset -gU path fpath manpath infopath cdpath
 
 # -----------------------------------------------------------------------------
 # PATH
-# Highest priority first; $path preserves existing system entries
 # -----------------------------------------------------------------------------
 
 # Glob qualifier (N-/): N=nullglob (no error if missing), -/=<only dirs>
 path=(
   # --- Priority 1: User Local Binaries (Highest) ---
-  # User's explicit local installations, must override everything
   # uv tool install, pip install --user, etc.
   "$HOME/.local/bin"(N-/)
 
   # --- Priority 2: Development Tool Binaries ---
-  # User-installed language/tool binaries
-  # Rust crates (cargo install)
   "$CARGO_HOME/bin"(N-/)
-  # Go packages (go install)
   "$GOPATH/bin"(N-/)
-  # Bun packages (bun install -g)
   "$BUN_INSTALL/bin"(N-/)
 
   # --- Priority 3: Package Manager Binaries ---
@@ -68,17 +56,13 @@ path=(
 
 # -----------------------------------------------------------------------------
 # FPATH
-# Must Be Set Before Compinit
 # -----------------------------------------------------------------------------
 
 fpath=(
-  # Custom completion scripts (highest priority)
   "$ZDOTDIR/completions"(N-/)
 
-  # Autoloaded custom functions
   "$ZDOTDIR/functions"(N-/)
 
-  # Homebrew completions (HOMEBREW_PREFIX from 00-env.zsh; both architectures)
   "$HOMEBREW_PREFIX/share/zsh/site-functions"(N-/)
   "$HOMEBREW_PREFIX/share/zsh-completions"(N-/)
 
@@ -91,7 +75,6 @@ fpath=(
 # -----------------------------------------------------------------------------
 
 manpath=(
-  # Homebrew man pages (HOMEBREW_PREFIX from 00-env.zsh; Apple Silicon + Intel)
   "$HOMEBREW_PREFIX/share/man"(N-/)
 
   # System man pages
@@ -107,7 +90,6 @@ manpath=(
 # -----------------------------------------------------------------------------
 
 infopath=(
-  # Homebrew info pages (HOMEBREW_PREFIX from 00-env.zsh; both architectures)
   "$HOMEBREW_PREFIX/share/info"(N-/)
 
   # System info pages
