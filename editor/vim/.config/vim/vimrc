@@ -1,5 +1,5 @@
 " vimrc -*- mode: vim; -*-
-" Time-stamp: <2026-03-31 19:58:58 Tuesday by zhengyu.li>
+" Time-stamp: <2026-04-04 21:41:23 Saturday by zhengyu.li>
 " =============================================================================
 " Minimal Vim Config — Dracula theme (https://draculatheme.com/vim)
 "
@@ -110,7 +110,7 @@ set signcolumn=yes
 
 " -----------------------------------------------------------------------------
 " Search
-# -----------------------------------------------------------------------------
+" -----------------------------------------------------------------------------
 
 " --- Behavior ---
 " Incremental search gives immediate feedback while typing pattern
@@ -137,15 +137,15 @@ nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 set expandtab
 
 " --- Width ---
-# 4-space width matches Python and most style guides
+" 4-space width matches Python and most style guides
 set tabstop=4
-# Tab key inserts spaces consistent with expandtab
+" Tab key inserts spaces consistent with expandtab
 set softtabstop=4
-# Shiftwidth aligns with tabstop for uniform indentation
+" Shiftwidth aligns with tabstop for uniform indentation
 set shiftwidth=4
 
 " --- Structure ---
-# Autoindent preserves block structure without manual re-indent
+" Autoindent preserves block structure without manual re-indent
 set autoindent
 
 " -----------------------------------------------------------------------------
@@ -164,7 +164,7 @@ set noswapfile
 " Auto-reload saves a :checktime step when files change externally
 set autoread
 
-# --- Undo ---
+" --- Undo ---
 " Persistent undo (directory created in XDG section above)
 set undofile
 
@@ -269,7 +269,7 @@ augroup END
 
 " -----------------------------------------------------------------------------
 " File Type Overrides
-# -----------------------------------------------------------------------------
+" -----------------------------------------------------------------------------
 
 augroup vimrc_ft
     autocmd!
