@@ -104,8 +104,8 @@ Sets up monospace for code, variable-pitch for prose, and CJK fallback."
       ;; Four ranges cover everyday, rare, archaic CJK and punctuation
       (when cjk-font
         (set-fontset-font t omw/font-cjk-unified-range cjk-font nil 'prepend)
-        (set-fontset-font t omw/font-cjk-ext-a-range   cjk-font nil 'prepend)
-        (set-fontset-font t omw/font-cjk-ext-b-range   cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-ext-a-range cjk-font nil 'prepend)
+        (set-fontset-font t omw/font-cjk-ext-b-range cjk-font nil 'prepend)
         (set-fontset-font t omw/font-cjk-symbols-range cjk-font nil 'prepend))
 
       ;; Helps diagnose "wrong font" reports when switching monitors
