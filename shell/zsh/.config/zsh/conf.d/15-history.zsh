@@ -52,9 +52,9 @@ setopt HIST_EXPIRE_DUPS_FIRST
 # dedup + real-time file sync creates a feedback loop that progressively
 # loses history across sessions.
 setopt HIST_IGNORE_DUPS
-# Don't write duplicates to history file
+# Omit older duplicates when writing to history file
 setopt HIST_SAVE_NO_DUPS
-# Skip duplicates when searching with arrow keys
+# Skip duplicate entries when searching history
 setopt HIST_FIND_NO_DUPS
 
 # --- Sharing ---

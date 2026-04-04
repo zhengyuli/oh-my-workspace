@@ -19,73 +19,73 @@
 # Directory Navigation
 # -----------------------------------------------------------------------------
 
-# type a directory name to cd into it
+# Type a directory name to cd into it
 setopt AUTO_CD
-# cd automatically pushes old dir onto the stack
+# Cd automatically pushes old dir onto the stack
 setopt AUTO_PUSHD
-# do not store duplicates in the directory stack
+# Do not store duplicates in the directory stack
 setopt PUSHD_IGNORE_DUPS
-# suppress output of pushd / popd
+# Suppress output of pushd / popd
 setopt PUSHD_SILENT
-# allow cd to use variable names as directories
+# Allow cd to use variable names as directories
 setopt CDABLE_VARS
 
 # -----------------------------------------------------------------------------
 # Completion
 # -----------------------------------------------------------------------------
 
-# move cursor to end after completion
+# Move cursor to end after completion
 setopt ALWAYS_TO_END
-# automatically list choices on ambiguous completion
+# Automatically list choices on ambiguous completion
 setopt AUTO_LIST
-# add trailing slash when completing directories
+# Add trailing slash when completing directories
 setopt AUTO_PARAM_SLASH
-# complete from both ends of a word
+# Complete from cursor position within a word
 setopt COMPLETE_IN_WORD
-# disable Ctrl-S / Ctrl-Q flow control
+# Disable Ctrl-S / Ctrl-Q flow control
 unsetopt FLOW_CONTROL
-# enable menu on repeated Tab press (fallback when fzf-tab is disabled)
+# Enable menu on repeated Tab press (fallback when fzf-tab is disabled)
 setopt AUTO_MENU
 
 # -----------------------------------------------------------------------------
 # Globbing / Expansion
 # -----------------------------------------------------------------------------
 
-# enable extended glob operators: ^, ~, #
+# Enable extended glob operators: ^, ~, #
 setopt EXTENDED_GLOB
-# silently remove patterns with no matches
+# Silently remove patterns with no matches
 setopt NULL_GLOB
-# sort glob results numerically
+# Sort glob results numerically
 setopt NUMERIC_GLOB_SORT
 
 # -----------------------------------------------------------------------------
 # Input / Output
 # -----------------------------------------------------------------------------
 
-# allow # comments in interactive shell
+# Allow # comments in interactive shell
 setopt INTERACTIVE_COMMENTS
-# allow '' inside single-quoted strings
+# Allow '' inside single-quoted strings
 setopt RC_QUOTES
-# handle Unicode combining characters correctly
+# Handle Unicode combining characters correctly
 setopt COMBINING_CHARS
-# no beep on error
+# No beep on error
 unsetopt BEEP
-# require confirmation before rm *
+# Prompt for confirmation before rm * (zsh default)
 unsetopt RM_STAR_SILENT
 
 # -----------------------------------------------------------------------------
 # Job Control
 # -----------------------------------------------------------------------------
 
-# resume a stopped job by typing its name
+# Resume a stopped job by typing its name
 setopt AUTO_RESUME
-# display PID when listing jobs
+# List jobs in long format (PID, state, working directory)
 setopt LONG_LIST_JOBS
-# report background job status immediately
+# Report background job status immediately
 setopt NOTIFY
-# do not run background jobs at lower priority
+# Do not run background jobs at lower priority
 unsetopt BG_NICE
-# do not warn about running jobs on exit
+# Do not warn about running jobs on exit
 unsetopt CHECK_JOBS
-# do not send HUP to background jobs on shell exit
+# Do not send HUP to background jobs on shell exit
 unsetopt HUP

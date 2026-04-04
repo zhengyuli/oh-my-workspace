@@ -19,7 +19,7 @@
 # Emacs Keymap
 # -----------------------------------------------------------------------------
 
-# emacs keymap (replace with 'bindkey -v' for vi mode)
+# Emacs keymap (replace with 'bindkey -v' for vi mode)
 bindkey -e
 
 # Vi mode (uncomment to enable; comment out 'bindkey -e' above)
