@@ -1,7 +1,10 @@
 # 00-env.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-04-02 12:01:02 Thursday by zhengyu.li>
 # =============================================================================
-# Core Environment Variables
+# Core Environment Variables - Editor, pager, locale, tool paths
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Loaded by: .zprofile (login), .zshrc (interactive)
 # Load order: 00 (first conf.d module)
@@ -9,17 +12,9 @@
 # Prerequisites:
 #   - XDG_* variables must be set in ~/.zshenv (loaded before this file)
 #
-# Responsibilities:
-#   1. Set editor and pager preferences (EDITOR, VISUAL, PAGER, LESS)
-#   2. Configure locale settings (LANG)
-#   3. Set Zsh history file location (HISTFILE)
-#   4. Define XDG-compliant paths for developer tools
-#
-# Do NOT add: PATH changes, aliases, functions, tool initialization
-#             → PATH changes in 05-path.zsh (centralized path management)
-#             → Aliases in 20-aliases.zsh (interactive only)
-#             → Functions in functions/ directory (autoloaded)
-#             → Tool initialization in 70-tools.zsh (lazy-loaded)
+# Do NOT add: PATH, aliases, functions, tool init
+#             → PATH in 05-path.zsh
+#             → Aliases in 20-aliases.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -35,7 +30,6 @@ export PAGER=less
 # -----------------------------------------------------------------------------
 
 # Use LANG only; avoid LC_ALL as it overrides all LC_* settings.
-# Set specific LC_* variables if needed (e.g., LC_TIME for date format).
 export LANG=en_US.UTF-8
 
 # -----------------------------------------------------------------------------
@@ -65,13 +59,11 @@ fi
 # Redirect tool data from ~/.toolname to XDG directories.
 # See: https://wiki.archlinux.org/title/XDG_Base_Directory
 
-# Go
 export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
 
-# Bun (JS/TS runtime) -- https://github.com/oven-sh/bun/issues/1678
+# Bun -- https://github.com/oven-sh/bun/issues/1678
 export BUN_INSTALL="${BUN_INSTALL:-$XDG_DATA_HOME/bun}"
 
-# Rust (cargo/rustup)
 export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
 
@@ -90,13 +82,10 @@ export VIMINIT="set nocp | "\
 # ripgrep -- no auto-discovery; requires explicit config path via env var
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
 
-# carapace -- bridge to native shell completions when no carapace spec exists
 # Needs to be set before carapace initializes (70-tools.zsh)
 export CARAPACE_BRIDGES='zsh,fish,bash'
 
-# starship -- both config and cache require explicit XDG paths
 # STARSHIP_CONFIG: no auto-discovery; must point explicitly to config file
-# STARSHIP_CACHE: set explicitly (defaults to $XDG_CACHE_HOME/starship)
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
 
@@ -144,11 +133,10 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# fzf Environment
+# FZF Environment
 # -----------------------------------------------------------------------------
 
 # Must be set before fzf-tab loads in 40-plugins.zsh.
-# Doom Dracula color theme for visual consistency.
 export FZF_DEFAULT_OPTS="
   --color=bg:#292a30,bg+:#1f2024
   --color=fg:#dfdfe0,fg+:#dfdfe0

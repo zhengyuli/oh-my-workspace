@@ -3,10 +3,13 @@
 # =============================================================================
 # Pretty print JSON with syntax highlighting
 #
-# Arguments:
-#   $@ - python3 json.tool flags and/or file paths (optional, reads stdin if none)
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Dependencies: python3, bat
+#
+# Arguments:
+#   $@ - python3 json.tool flags and/or file paths (optional, reads stdin if none)
 #
 # Examples:
 #   jsonpp data.json
@@ -14,4 +17,5 @@
 #   curl -s https://api.example.com | jsonpp
 # =============================================================================
 setopt localoptions pipefail
+emulate -L zsh
 python3 -m json.tool "$@" | bat --language json --style plain

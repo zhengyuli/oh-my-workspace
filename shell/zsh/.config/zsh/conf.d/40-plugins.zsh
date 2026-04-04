@@ -1,18 +1,13 @@
 # 40-plugins.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-28 15:46:57 Saturday by zhengyu.li>
 # =============================================================================
-# Zinit Plugin Management
+# Zinit Plugin Management - Bootstrap, load, and configure plugins
 #
-# Loaded by: Interactive shells (.zshrc)
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
+#
+# Loaded by: .zshrc (interactive shells only)
 # Load order: 40 (after 30-completion.zsh, before 50-prompt.zsh)
-#
-# Responsibilities:
-#   1. Configure plugin behavior variables (autosuggestions, history-search)
-#   2. Bootstrap and configure Zinit plugin manager
-#   3. Load core plugins (syntax highlighting, autosuggestions, etc.)
-#   4. Load utility plugins (autopair)
-#   5. Configure plugin-specific settings
-#   6. Initialize direnv (must load before starship in 50-prompt.zsh)
 #
 # Do NOT add: Tool initialization (pyenv, fnm, etc.)
 #             → Put these in 70-tools.zsh (separate concern)
@@ -62,39 +57,29 @@ typeset -g ZINIT_INITIALIZED=1
 # Plugin Loading Order
 # -----------------------------------------------------------------------------
 
-# Execution timeline:
-#   During startup (sync):
-#     1. fzf-tab - must own ^I before any turbo plugin can override it
-#   After prompt (turbo, by wait suffix letter):
-#     2. zsh-completions  [0a] - register completions early for zicdreplay
-#     3. history-substring-search, autosuggestions, autopair  [0b]
-#     4. fast-syntax-highlighting  [0c, LAST] - wraps all ZLE widgets;
+# Sync: fzf-tab (owns ^I before turbo plugins can override)
+# Turbo 0a: zsh-completions (register early for zicdreplay)
+# Turbo 0b: history-substring-search, autosuggestions, autopair
+# Turbo 0c: fast-syntax-highlighting (LAST — wraps all ZLE widgets)
 
 # --- Sync: FZF Tab ---
-# Load before turbo plugins to ensure ^I ownership is established immediately.
-# fzf's completion.zsh is intentionally NOT loaded (see 70-tools.zsh comment).
+# Must own ^I before any turbo plugin can override it.
 zinit light Aloxaf/fzf-tab
 
 # --- Turbo 0a: Completions ---
-# blockf: tells zinit not to add plugin to fpath (avoids triggering compinit
-# rebuild); completions are still available via zinit's own path management.
+# blockf: skip fpath insertion (avoids triggering compinit rebuild)
 zinit ice wait"0a" lucid blockf
 zinit light zsh-users/zsh-completions
 
 # --- Turbo 0b: Interactive Enhancement Plugins ---
-# History substring search
-# Config vars are read at highlight render time (not at plugin load), so timing
-# is not critical. Set here for co-location with the plugin declaration -
-# mirrors the autosuggestions pattern and keeps future changes in one place.
+# History substring search — config vars set before ice/light for co-location
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=black,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 
 # disabled: perf cost on large histories
 # HISTORY_SUBSTRING_SEARCH_FUZZY=1
-# Keybindings via atload: widgets must exist before bindkey can reference them
-# Use terminfo for maximum terminal compatibility
-# (official README recommendation)
-# plus both normal-mode and application-mode fallbacks.
+# Keybindings via atload: widgets must exist before bindkey can reference them.
+# terminfo keys + CSI/application-mode fallbacks for maximum compatibility.
 zinit ice wait"0b" lucid atload'
   bindkey "$terminfo[kcuu1]" history-substring-search-up
   bindkey "$terminfo[kcud1]" history-substring-search-down
@@ -106,14 +91,9 @@ zinit ice wait"0b" lucid atload'
 zinit light zsh-users/zsh-history-substring-search
 
 # Autosuggestions from history
-# Configuration variables must be set BEFORE this ice/light pair so they are
-# available when _zsh_autosuggest_start reads them (even in turbo, the vars
-# are already in scope because they are set synchronously above).
-# The ! prefix on atload tells zinit to redraw the prompt after activation,
-# so the first suggestion appears without requiring a keypress.
-# Suggest from history first; fall back to completion-based matches
+# Config vars set BEFORE ice/light so they're available at activation time.
+# ! on atload: redraw prompt so first suggestion appears without keypress.
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-# Doom Dracula comment color
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7f8c98'
 zinit ice wait"0b" lucid atload"!_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions
@@ -123,10 +103,8 @@ zinit ice wait"0b" lucid
 zinit light hlissner/zsh-autopair
 
 # --- Turbo 0c: Fast Syntax Highlighting ---
-# atinit runs before the plugin code:
-#   ZINIT[COMPINIT_OPTS]=-C → use cached dump (fast, no security check)
-#   zicompinit → re-run compinit to pick up any new completions
-#   zicdreplay → replay compdef calls captured from turbo plugins
+# atinit: -C (cached dump), zicompinit (pick up new completions),
+#   zicdreplay (replay compdef from turbo plugins)
 zinit ice wait"0c" lucid atinit'\
   ZINIT[COMPINIT_OPTS]=-C;\
   zicompinit; zicdreplay'
@@ -136,9 +114,8 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 # Plugin Configuration
 # -----------------------------------------------------------------------------
 
-# fzf-tab -- disable default completion menu in favor of fzf popup
-# Note: do NOT use escape sequences (%F{red}...%f) in 'descriptions format'
-# (fzf-tab limitation - they appear as literal text, not ANSI color codes).
+# fzf-tab owns the Tab UI — disable zsh's default menu.
+# Do NOT use %F{...} in descriptions format (fzf-tab limitation).
 zstyle ':completion:*' menu no
 zstyle ':completion:*:descriptions' format '[%d]'
 
@@ -146,36 +123,27 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:git-checkout:*' sort false
 
 # --- FZF Tab Preview Configurations ---
-# NOTE: Variable quoting here is intentional:
-#         - Double quotes (command style): $USER expands at source time
-#         - Single quotes (preview): $word/$group expand at completion time
-# Do NOT add extra quoting - it would break fzf-tab's internal substitution.
-
-# Inherit FZF_DEFAULT_OPTS (Doom Dracula colors from 00-env.zsh).
-# Without this, fzf-tab ignores all FZF_DEFAULT_OPTS settings completely.
-# Per-command fzf-flags override conflicting settings from FZF_DEFAULT_OPTS.
+# Variable quoting is intentional: double quotes expand at source time,
+# single quotes (preview) expand at completion time. Do NOT add extra quoting.
+#
+# ${(U)word} normalizes to uppercase for case-insensitive regex matching.
+# Sensitive keywords: TOKEN, KEY, SECRET, PASSWORD, API, CREDENTIAL, PRIVATE,
+#   AUTH, DSN, CERT.
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 
-# Global preview window size - right panel, 55% width, line-wrap enabled
-# Per-command fzf-flags below override this where needed (e.g. kill: down:3)
+# Global preview window — per-command fzf-flags override where needed.
 zstyle ':fzf-tab:*' fzf-flags --preview-window=right:55%:wrap
 
-# cd: preview directory
 zstyle ':fzf-tab:complete:cd:*' fzf-preview \
   'eza -1 --color=always --icons "$realpath"'
 
-# Files: preview content - scoped to argument completion only to avoid
-# triggering on command names, users, hostnames, etc.
+# (scoped to argument completion only)
 zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
   'if ! bat --color=always --style=plain --line-range=:50'\
   ' "$realpath" 2>/dev/null; then eza -1 --color=always'\
   ' --icons "$realpath" 2>/dev/null; fi'
 
-# Environment variables: preview value (hide sensitive variables)
-# Match: -command-, -parameter-, -brace-parameter-, export, unset, expand
-# ${(U)word} normalizes to uppercase so the regex only needs one case variant.
-# Sensitive keywords: TOKEN, KEY, SECRET, PASSWORD, API, CREDENTIAL, PRIVATE,
-#   AUTH, DSN, CERT — covers common secret/credential variable names.
+# (hide sensitive ones)
 zstyle ':fzf-tab:complete:(-command-|-parameter-'\
 '|-brace-parameter-|export|unset|expand):*' \
   fzf-preview \
@@ -183,8 +151,7 @@ zstyle ':fzf-tab:complete:(-command-|-parameter-'\
   '(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\
   ' print "(hidden)"; else print -r -- "${(P)word}"; fi'
 
-# kill: preview process info
-# Use BSD-compatible -p flag (macOS ps does not support --pid)
+# kill: preview process info (BSD-compatible ps flags for macOS)
 zstyle ':completion:*:*:*:*:processes' \
   command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
@@ -193,15 +160,12 @@ zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
   fzf-flags --preview-window=down:3:wrap
 
-# brew: preview package info
 zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' fzf-preview \
   'brew info $word 2>/dev/null'
 
-# man: preview man page
 zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview \
   'MANPAGER=cat man $word 2>/dev/null | head -50'
 
-# git: preview diff/log
 zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
   'git diff --color=always $word'
 zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
@@ -215,19 +179,11 @@ zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
 zstyle ':fzf-tab:*' switch-group ',' '.'
 
 # -----------------------------------------------------------------------------
-# direnv
+# Direnv
 # -----------------------------------------------------------------------------
 
-# Automatically load/unload environment variables when entering/leaving
-# directories with .envrc files. Hook is lightweight (<5ms), no lazy load.
-#
-# IMPORTANT: Must load before starship (50-prompt.zsh) so that .envrc
-# variables are visible to the prompt on first render in a new directory.
-# zoxide (70-tools.zsh) must load AFTER starship per zoxide docs.
-#
-# Prerequisites: brew install direnv
-# Usage: echo 'export API_KEY=xxx' > .envrc && direnv allow
-# Documentation: https://direnv.net/
+# Must load before starship (50-prompt.zsh) so .envrc vars are visible
+# to the prompt on first render.
 if command -v direnv &>/dev/null; then
   # Suppress "direnv: loading..." / "direnv: export..." log clutter
   export DIRENV_LOG_FORMAT=""

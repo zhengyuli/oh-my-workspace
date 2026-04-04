@@ -1,17 +1,15 @@
 # .zshrc -*- mode: sh; -*-
 # Time-stamp: <2026-03-29 21:26:35 Sunday by zhengyu.li>
 # =============================================================================
-# Interactive Shell Orchestrator
+# Interactive Shell Orchestrator - Guard and source all conf.d modules
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
 #
 # Loaded by: Interactive shells only (new terminal tab, zsh invocation)
 # Load order: After .zshenv and .zprofile
 #
-# Responsibilities:
-#   1. Guard against non-interactive execution
-#   2. Source all conf.d fragments in numeric order
-#
 # This file is a pure loader -- all configuration lives in conf.d/
-# One concern per file: options, aliases, completion, plugins, prompt, etc.
 #
 # Do NOT add: environment variables, PATH, direct configuration
 #             → Put env vars in 00-env.zsh
