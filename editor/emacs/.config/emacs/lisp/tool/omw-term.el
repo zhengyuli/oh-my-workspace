@@ -41,6 +41,7 @@
   :defer t
   :hook (vterm-mode . omw/vterm-mode-setup)
   :bind (:map vterm-mode-map
+              ;; Unbind M-1..M-9 to avoid conflict with winum window numbering
               ("M-1" . nil)
               ("M-2" . nil)
               ("M-3" . nil)

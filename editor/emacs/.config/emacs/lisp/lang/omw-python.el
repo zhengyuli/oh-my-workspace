@@ -115,6 +115,8 @@ Returns the formatted string, or nil if formatting fails."
   "Minor mode for Python buffers to run custom before-save hooks."
   :lighter " PySave"
   :global nil
+  ;; Separate minor mode ensures buffer-local hook lifecycle:
+  ;; the hook is removed when the mode is disabled or the buffer is killed.
   (if omw/python-before-save-mode
       (add-hook 'before-save-hook #'omw/python-before-save nil t)
     (remove-hook 'before-save-hook #'omw/python-before-save t)))
