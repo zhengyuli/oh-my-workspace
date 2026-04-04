@@ -175,7 +175,7 @@ _check_prerequisites() {
     fi
   done
 
-  if [[ "$missing" -gt 0 ]]; then
+  if (( missing > 0 )); then
     local workspace_dir
     workspace_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
     _warn "$missing tool(s) missing —" \
@@ -252,7 +252,7 @@ _configure_glm() {
   set -e
   trap '_err_handler' ERR
 
-  if [[ "$rc" -ne 0 ]]; then
+  if (( rc != 0 )); then
     _warn "ZAI helper exited with code $rc (may need re-run later)"
     _warn "Continuing with post-configuration fixes..."
   fi
@@ -379,7 +379,7 @@ _verify() {
     _warn "claude CLI not in PATH (available after new terminal)"
   fi
 
-  if [[ "$failed" -ne 0 ]]; then
+  if (( failed != 0 )); then
     return 1
   fi
 
