@@ -245,8 +245,8 @@ _finder() {
   # Use list view in all Finder windows by default
   defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 
-  # Show the ~/Library and /Volumes folders
-  chflags nohidden ~/Library
+  # Show the ${HOME}/Library and /Volumes folders
+  chflags nohidden "${HOME}/Library"
   sudo chflags nohidden /Volumes
 
   # Expand "General", "Open with", and "Sharing & Permissions" in File Info
