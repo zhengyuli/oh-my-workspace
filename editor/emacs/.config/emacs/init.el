@@ -1,5 +1,5 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-02 23:36:35 Thursday by zhengyu.li>
+;; Time-stamp: <2026-04-04 20:58:28 Saturday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; init.el - Emacs configuration entry point.
@@ -28,15 +28,17 @@
   :group 'convenience
   :prefix "omw/")
 
-(defcustom omw/emacs-user-name "Zhengyu Li"
+(defcustom omw/emacs-user-name ""
   "Emacs configuration user name.
-Used for dashboard banner and setting `user-full-name'."
+Used for dashboard banner and setting `user-full-name'.
+Leave empty to trigger a configuration warning on the dashboard."
   :type 'string
   :group 'omw-emacs)
 
-(defcustom omw/emacs-user-email "lizhengyu419@outlook.com"
+(defcustom omw/emacs-user-email ""
   "Emacs configuration email address.
-Used for setting `user-mail-address'."
+Used for setting `user-mail-address'.
+Leave empty to trigger a configuration warning on the dashboard."
   :type 'string
   :group 'omw-emacs)
 
@@ -71,7 +73,6 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 
 ;; --- Load Path Setup ---
 ;; Set custom file early to prevent Emacs from writing
-;; customizations to init.el
 (setq custom-file omw/emacs-custom-file-path)
 
 ;; Recursively add emacs configuration custom path to load path
@@ -79,10 +80,19 @@ Look up all subdirs under `BASE-DIR' recursively and add them into load path."
 (omw/emacs-add-subdirs-to-load-path omw/emacs-config-site-packages-path)
 
 ;; ----------------------------------------------------------------------------
+;; Custom Configuration
+;; ----------------------------------------------------------------------------
+
+(when (file-readable-p custom-file)
+  (load custom-file nil 'nomessage))
+
+;; ----------------------------------------------------------------------------
 ;; Proxy Setup
 ;; ----------------------------------------------------------------------------
 
-;; Corporate/VPN environments may require proxy for package install
+;; Proxy from environment variables (HTTP_PROXY, HTTPS_PROXY, ALL_PROXY)
+;; takes precedence over Customize.  Runs before package-init so that
+;; corporate/VPN proxies are active during package installation.
 (require 'omw-proxy)
 (omw/enable-http-proxy)
 
@@ -325,14 +335,6 @@ global-auto-revert-mode and midnight-mode."
 
 ;; --- Text Modules ---
 (require 'omw-markdown)
-
-;; ----------------------------------------------------------------------------
-;; Custom Settings
-;; ----------------------------------------------------------------------------
-
-;; Custom file loaded last so package defaults take precedence
-(when (file-readable-p custom-file)
-  (load custom-file nil 'nomessage))
 
 ;; ============================================================================
 ;;; Provide features

@@ -144,7 +144,10 @@ Returns nil in terminal mode (uses official banner instead)."
         dashboard-set-heading-icons (display-graphic-p)
         dashboard-set-file-icons (display-graphic-p)
         dashboard-banner-logo-title
-        (format "Welcome to %s's Emacs" omw/emacs-user-name)
+        (if (or (string= omw/emacs-user-name "")
+                (string= omw/emacs-user-email ""))
+            "Welcome to Emacs — M-x customize-group RET omw-emacs"
+          (format "Welcome to %s's Emacs" omw/emacs-user-name))
         dashboard-items '((recents . 5) (bookmarks . 5)
                           (projects . 5) (agenda . 5) (registers . 5))
         dashboard-projects-switch-function 'project-switch-project

@@ -1,5 +1,5 @@
 ;;; omw-proxy.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-29 14:51:55 Sunday by zhengyu.li>
+;; Time-stamp: <2026-04-04 20:30:40 Saturday by >
 ;;
 ;; ============================================================================
 ;; omw-proxy.el - HTTP/HTTPS proxy configuration for Emacs.
@@ -25,10 +25,16 @@
 ;; Proxy Configuration
 ;; ----------------------------------------------------------------------------
 
-(defvar omw/http-proxy nil
-  "HTTP proxy URL loaded from environment.
-Set to a proxy URL like \"127.0.0.1:7890\" to enable proxy.
-This affects package installation, HTTP requests, and Git operations.")
+(defcustom omw/http-proxy nil
+  "HTTP proxy URL for Emacs network operations.
+When non-nil, used by `omw/enable-http-proxy' if no environment
+variable (HTTP_PROXY, HTTPS_PROXY, ALL_PROXY) is set.
+Affects package installation, HTTP requests, and Git operations.
+Use `M-x omw/set-http-proxy' or `M-x omw/unset-http-proxy' to
+activate changes after customizing this variable."
+  :type '(choice (const :tag "No proxy" nil)
+                 (string :tag "Proxy URL"))
+  :group 'omw-emacs)
 
 ;; --- Show HTTP Proxy ---
 (defun omw/show-http-proxy ()
@@ -104,7 +110,7 @@ If neither source is configured, a warning is displayed."
           (setq omw/http-proxy proxy)
           (omw/set-http-proxy proxy))
       (message
-       "No HTTP proxy.  Set HTTP_PROXY or `omw/http-proxy`."))))
+       "No HTTP proxy.  Set HTTP_PROXY env or `omw/http-proxy` variable."))))
 
 ;; --- Unset HTTP Proxy ---
 (defun omw/unset-http-proxy ()

@@ -1,5 +1,5 @@
 ;;; omw-explorer.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-19 00:00:00 Thursday by zhengyu.li>
+;; Time-stamp: <2026-04-04 20:55:22 Saturday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; omw-explorer.el - File explorer with Dirvish and dired.
@@ -77,13 +77,12 @@
     (dolist (file files)
       (start-process "dired-open" nil command file))))
 
+;; --- Dired Global Omit Mode ---
 (define-minor-mode omw/omit-global-mode
   "Global minor mode to control dired-omit-mode across all dired buffers.
 When enabled, dired-omit-mode is enabled in all dired buffers."
   :global t
   :lighter " Omit"
-  :group 'omw-emacs
-  :init-value t
   ;; Iterate all existing buffers because dired-mode-hook only fires
   ;; for newly opened buffers, not for ones already visiting directories.
   (dolist (buf (buffer-list))
