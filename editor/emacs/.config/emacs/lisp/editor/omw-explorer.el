@@ -1,5 +1,5 @@
 ;;; omw-explorer.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-04 20:55:22 Saturday by zhengyu.li>
+;; Time-stamp: <2026-04-04 21:38:18 Saturday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; omw-explorer.el - File explorer with Dirvish and dired.
@@ -83,6 +83,7 @@
 When enabled, dired-omit-mode is enabled in all dired buffers."
   :global t
   :lighter " Omit"
+  :init-value t
   ;; Iterate all existing buffers because dired-mode-hook only fires
   ;; for newly opened buffers, not for ones already visiting directories.
   (dolist (buf (buffer-list))
