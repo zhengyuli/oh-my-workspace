@@ -36,12 +36,12 @@ font-family = "SauceCodePro Nerd Font"
 font-size = 15
 font-thicken = true
 
-# OpenType features: contextual alternates, ligatures, stylistic set 13
+# --- OpenType Features ---
 font-feature = calt
 font-feature = liga
 font-feature = ss13
 
-# Shaping & weight rendering
+# --- Shaping ---
 font-shaping-break = cursor
 
 # -----------------------------------------------------------------------------
@@ -163,6 +163,11 @@ quick-terminal-animation-duration = 0.2
 
 macos-option-as-alt = left
 macos-icon = retro
+
+# -----------------------------------------------------------------------------
+# Updates
+# -----------------------------------------------------------------------------
+
 auto-update = check
 
 # -----------------------------------------------------------------------------

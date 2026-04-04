@@ -33,12 +33,12 @@
 publish-url = "https://upload.pypi.org/legacy/"
 
 # -----------------------------------------------------------------------------
-# Networking
+# TLS Certificates
 # -----------------------------------------------------------------------------
 
 # Use system trust store (Keychain) instead of bundled webpki-roots.
 # Required for: corporate proxies, self-signed CAs, non-Mozilla certificates.
-native-tls = true
+system-certs = true
 
 # -----------------------------------------------------------------------------
 # Package Index

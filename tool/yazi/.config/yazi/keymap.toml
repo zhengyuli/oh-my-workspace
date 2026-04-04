@@ -23,6 +23,7 @@
 # Plugin Keybindings
 # -----------------------------------------------------------------------------
 
+# --- Smart Enter ---
 [[mgr.prepend_keymap]]
 on = "l"
 run = "plugin smart-enter"
@@ -38,16 +39,19 @@ on = "o"
 run = "plugin smart-enter"
 desc = "Enter directory or open file"
 
+# --- Smart Filter ---
 [[mgr.prepend_keymap]]
 on = "F"
 run = "plugin smart-filter"
 desc = "Smart filter"
 
+# --- Toggle Pane ---
 [[mgr.prepend_keymap]]
 on = "T"
 run = "plugin toggle-pane max-preview"
 desc = "Maximize or restore preview pane"
 
+# --- Zoom ---
 [[mgr.prepend_keymap]]
 on = "+"
 run = "plugin zoom 1"
@@ -58,6 +62,7 @@ on = "-"
 run = "plugin zoom -1"
 desc = "Zoom out preview"
 
+# --- Help ---
 [[mgr.prepend_keymap]]
 on = "?"
 run = "help"

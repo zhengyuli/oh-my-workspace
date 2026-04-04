@@ -44,12 +44,14 @@ symbol = "✕ "
 [time]
 disabled = true
 
+# --- Custom Date ---
 [custom.rdate]
 command = "date '+%Y-%m-%d'"
 format = "[Time:$output/]($style)"
 style = "#bd93f9"
 when = "true"
 
+# --- Custom Time ---
 [custom.rtime]
 command = "date '+%H:%M:%S'"
 format = "[$output]($style)"
@@ -61,69 +63,30 @@ when = "true"
 # -----------------------------------------------------------------------------
 
 [os.symbols]
-Alpaquita = " "
-Alpine = " "
-AlmaLinux = " "
-Amazon = " "
-Android = " "
-AOSC = " "
-Arch = " "
-Artix = " "
-CachyOS = " "
-CentOS = " "
-Debian = " "
-DragonFly = " "
-Elementary = " "
-Emscripten = " "
-EndeavourOS = " "
-Fedora = " "
-FreeBSD = " "
-Garuda = "󰛓 "
-Gentoo = " "
-HardenedBSD = "󰞌 "
-Illumos = "󰈸 "
-Ios = "󰀷 "
-Kali = " "
-Linux = " "
-Mabox = " "
 Macos = " "
-Manjaro = " "
-Mariner = " "
-MidnightBSD = " "
-Mint = " "
-NetBSD = " "
-NixOS = " "
-Nobara = " "
-OpenBSD = "󰈺 "
-openSUSE = " "
-OracleLinux = "󰌷 "
-Pop = " "
-Raspbian = " "
-Redhat = " "
-RedHatEnterprise = " "
-RockyLinux = " "
-Redox = "󰀘 "
-Solus = "󰠳 "
-SUSE = " "
-Ubuntu = " "
-Unknown = " "
-Void = " "
+Linux = " "
 Windows = "󰍲 "
-Zorin = " "
+Ubuntu = " "
+Debian = " "
+Fedora = " "
+Arch = " "
+Alpine = " "
+Android = " "
+Unknown = " "
 
 # -----------------------------------------------------------------------------
-# Cloud Services
+# Cloud & DevOps
 # -----------------------------------------------------------------------------
 
 [aws]
 symbol = " "
 
-# -----------------------------------------------------------------------------
-# Build Tools & Package Managers
-# -----------------------------------------------------------------------------
+[docker_context]
+symbol = " "
 
-[buf]
-symbol = " "
+# -----------------------------------------------------------------------------
+# Runtimes & Package Managers
+# -----------------------------------------------------------------------------
 
 [bun]
 symbol = " "
@@ -131,32 +94,14 @@ symbol = " "
 [cmake]
 symbol = " "
 
-[conda]
-symbol = " "
-
-[deno]
-symbol = " "
-
 [gradle]
 symbol = " "
 
-[guix_shell]
-symbol = " "
-
-[meson]
-symbol = "󰔷 "
-
-[nix_shell]
-symbol = " "
+[nodejs]
+symbol = " "
 
 [package]
 symbol = "󰏗 "
-
-[pixi]
-symbol = "󰏗 "
-
-[xmake]
-symbol = " "
 
 # -----------------------------------------------------------------------------
 # C/C++
@@ -185,18 +130,6 @@ symbol = " "
 # Functional
 # -----------------------------------------------------------------------------
 
-[crystal]
-symbol = " "
-
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
-
-[fennel]
-symbol = " "
-
 [haskell]
 symbol = " "
 
@@ -207,17 +140,14 @@ symbol = " "
 # Systems
 # -----------------------------------------------------------------------------
 
-[fortran]
-symbol = " "
-
 [golang]
 symbol = " "
 
-[nim]
-symbol = "󰆥 "
-
 [rust]
 symbol = "󱘗 "
+
+[swift]
+symbol = " "
 
 [zig]
 symbol = " "
@@ -226,20 +156,8 @@ symbol = " "
 # Scripting
 # -----------------------------------------------------------------------------
 
-[dart]
-symbol = " "
-
-[haxe]
-symbol = " "
-
-[julia]
-symbol = " "
-
 [lua]
 symbol = " "
-
-[nodejs]
-symbol = " "
 
 [perl]
 symbol = " "
@@ -253,41 +171,19 @@ symbol = " "
 [ruby]
 symbol = " "
 
-[swift]
-symbol = " "
-
 # -----------------------------------------------------------------------------
-# Data Science
+# Scientific
 # -----------------------------------------------------------------------------
 
-[rlang]
-symbol = "󰟔 "
+[julia]
+symbol = " "
 
 # -----------------------------------------------------------------------------
 # Version Control
 # -----------------------------------------------------------------------------
-
-[fossil_branch]
-symbol = " "
 
 [git_branch]
 symbol = " "
 
 [git_commit]
 tag_symbol = "  "
-
-[hg_branch]
-symbol = " "
-
-[pijul_channel]
-symbol = " "
-
-# -----------------------------------------------------------------------------
-# Containerization
-# -----------------------------------------------------------------------------
-
-[docker_context]
-symbol = " "
-
-[gcloud]
-symbol = "󰱽 "
