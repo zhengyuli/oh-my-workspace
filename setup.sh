@@ -90,7 +90,9 @@ readonly _RESET=$'\033[0m'
 _err_handler() {
   local -r code=$?
   printf '  %s[error]%s %s() line %d: exit %d\n' \
-         "$_RED" "$_RESET" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+         "$_RED" "$_RESET" \
+         "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" \
+         >&2
 }
 trap '_err_handler' ERR
 
@@ -160,8 +162,12 @@ _status_ok() { printf '  %s[ok]%s       %s\n' "$_GREEN" "$_RESET" "$*"; }
 _status_missing() { printf '  %s[missing]%s  %s\n' "$_RED" "$_RESET" "$*"; }
 
 # --- Package Status Labels ---
-_status_stowed() { printf '  %s %s[stowed]%s    :\n' "$1" "$_GREEN" "$_RESET"; }
-_status_unstowed() { printf '  %s %s[unstowed]%s:\n' "$1" "$_YELLOW" "$_RESET"; }
+_status_stowed() {
+  printf '  %s %s[stowed]%s    :\n' "$1" "$_GREEN" "$_RESET"
+}
+_status_unstowed() {
+  printf '  %s %s[unstowed]%s:\n' "$1" "$_YELLOW" "$_RESET"
+}
 
 # -----------------------------------------------------------------------------
 # Package Path Helpers
@@ -338,8 +344,9 @@ _ensure_homebrew_version() {
   fi
 
   local major minor
-  major=$(echo "${ver}" | cut -d. -f1)
-  minor=$(echo "${ver}" | cut -d. -f2)
+  major="${ver%%.*}"
+  minor="${ver#*.}"
+  minor="${minor%%.*}"
 
   if (( major > MIN_HOMEBREW_MAJOR )) \
        || (( major == MIN_HOMEBREW_MAJOR \
@@ -764,7 +771,8 @@ _offer_shell_switch() {
   fi
 
   if ! grep -qx "${zsh_path}" /etc/shells 2>/dev/null; then
-    if echo "${zsh_path}" | sudo tee -a /etc/shells >/dev/null 2>&1; then
+    if printf '%s\n' "${zsh_path}" \
+       | sudo tee -a /etc/shells >/dev/null 2>&1; then
       log_ok "Added ${zsh_path} to /etc/shells"
     else
       log_warn "Cannot add to /etc/shells (need sudo)"
@@ -989,7 +997,8 @@ cmd_status() {
 
   if _has_stow; then
     local stow_ver
-    stow_ver=$(stow --version 2>/dev/null | head -1 | awk '{print $NF}') || true
+    stow_ver=$(stow --version 2>/dev/null \
+               | head -1 | awk '{print $NF}') || true
     _status_ok "GNU Stow  ${stow_ver}"
   else
     _status_missing "GNU Stow"
@@ -1106,7 +1115,7 @@ main() {
   fi
 
   # Parse args before any dependency installation
-  if [[ $# -eq 0 ]]; then
+  if (( $# == 0 )); then
     show_help
     exit 0
   fi

@@ -39,7 +39,7 @@ let s:data = ($XDG_DATA_HOME != '' ? $XDG_DATA_HOME : $HOME . '/.local/share')
 let s:state = ($XDG_STATE_HOME != ''
              \ ? $XDG_STATE_HOME : $HOME . '/.local/state')
 
-" Redirect runtimepath (VIMINIT skips this; default still points to ~/.vim)
+" Redirect runtimepath (VIMINIT skips default ~/.vim)
 let &runtimepath = s:cfg  . '/vim,'
                \ . s:cfg  . '/vim/after,'
                \ . $VIMRUNTIME
@@ -133,7 +133,7 @@ nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 " -----------------------------------------------------------------------------
 
 " --- Tabs vs Spaces ---
-" Spaces instead of tabs (project convention; avoids mixed-indent issues)
+" Spaces instead of tabs (avoids mixed-indent issues)
 set expandtab
 
 " --- Width ---
@@ -157,7 +157,7 @@ set autoindent
 set hidden
 " No backup files — version control makes them redundant
 set nobackup
-" No swap files — recovery handled by persistent undo and version control
+" No swap — persistent undo and version control suffice
 set noswapfile
 
 " --- File Reload ---
@@ -175,7 +175,7 @@ set undofile
 " --- Mouse & Splits ---
 " Mouse support in all modes (scrolling, resizing splits in terminal)
 set mouse=a
-" Splits open below keep original file in upper pane (natural reading flow)
+" New splits open below (natural reading flow)
 set splitbelow
 " Splits open right mirror editor layout convention (file tree left)
 set splitright
@@ -191,15 +191,15 @@ set t_vb=
 " --- Performance ---
 " Skip redraw during macros for smoother playback on large files
 set lazyredraw
-" 200 ms updatetime balances responsiveness with CPU usage for sign column
+" Balance responsiveness and CPU for sign column updates
 set updatetime=200
 
 " --- Timing ---
-" 500 ms timeoutlen allows comfortable multi-key sequences (e.g., <leader>w)
+" Allow comfortable multi-key sequences (e.g., <leader>w)
 set timeoutlen=500
 
 " --- Navigation ---
-" Cursor keys wrap across line boundaries for smoother paragraph navigation
+" Wrap cursor keys at line boundaries
 set whichwrap+=<,>,h,l
 
 " --- Key Mappings ---
@@ -291,7 +291,8 @@ augroup vimrc_ft
     " --- Git Commits ---
     " Git commits: 72 char width, spell check
     autocmd FileType gitcommit
-                \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
+                \ setlocal spell spelllang=en_us \
+                \ textwidth=72 colorcolumn=73
 
 augroup END
 
@@ -299,9 +300,9 @@ augroup END
 " Status Line
 " -----------------------------------------------------------------------------
 
-" mode | filepath [modified][readonly] | filetype | encoding | col:line %
+" mode | path [modified][readonly] | type | enc | pos %
 
-" Must be global (not s:) — statusline %{expr} evaluates outside script scope
+" Global scope required — statusline evaluates outside script
 function! StatuslineGit() abort
     " Optional: vim-fugitive (https://github.com/tpope/vim-fugitive)
     " Degrades to empty string when plugin is not installed.
@@ -333,7 +334,7 @@ set statusline+=\ %3p%%
 " -----------------------------------------------------------------------------
 
 " Disable treesitter — no parsers installed and Neovim 0.12+ ftplugin
-" unconditionally calls vim.treesitter.start() which errors without them
+" calls vim.treesitter.start() which errors without parsers
 if has('nvim')
     lua vim.treesitter.start = function() end
 endif

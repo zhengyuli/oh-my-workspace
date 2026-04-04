@@ -1,5 +1,5 @@
 ;;; omw-proxy.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-04 20:30:40 Saturday by >
+;; Time-stamp: <2026-04-04 20:30:40 Saturday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; omw-proxy.el - HTTP/HTTPS proxy configuration for Emacs.
