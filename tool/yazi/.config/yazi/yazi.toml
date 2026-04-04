@@ -64,13 +64,13 @@ suppress_preload = false
 # Plugin Fetchers
 # -----------------------------------------------------------------------------
 
-# Git status fetcher for files
+# --- Files ---
 [[plugin.prepend_fetchers]]
 id = "git"
 url = "*"
 run = "git"
 
-# Git status fetcher for directories
+# --- Directories ---
 [[plugin.prepend_fetchers]]
 id = "git"
 url = "*/"
