@@ -63,7 +63,9 @@ gui:
 
 git:
   pagers:
+    # Force color output for delta to render syntax highlighting
     - colorArg: always
+      # Use delta in dark mode without paging (lazygit handles paging)
       pager: 'delta --dark --paging=never'
 
 # -----------------------------------------------------------------------------
@@ -71,8 +73,10 @@ git:
 # -----------------------------------------------------------------------------
 
 os:
+  # Open files in Neovim (spawns a new instance per edit)
   editPreset: nvim
 
+# Ask whether to init a new repo or open the most recent one
 notARepository: prompt
 
 # -----------------------------------------------------------------------------
@@ -81,5 +85,6 @@ notARepository: prompt
 
 keybinding:
   universal:
+    # Vim-style tab navigation with [ and ] (adjacent keys on US keyboard)
     prevTab: '['
     nextTab: ']'

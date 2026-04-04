@@ -49,9 +49,13 @@ font-shaping-break = cursor
 # -----------------------------------------------------------------------------
 
 cursor-style = bar
+# No blinking — reduces visual noise and distraction
 cursor-style-blink = false
+# Bright blue for high visibility against dark backgrounds
 cursor-color = #00BFFF
+# Semi-transparent cursor lets underlying text show through
 cursor-opacity = 0.4
+# 12px thickness for comfortable visibility of the bar cursor
 adjust-cursor-thickness = 12
 
 # -----------------------------------------------------------------------------
@@ -69,6 +73,8 @@ background-blur-radius = 20
 # which stacks a separate native tab bar on top of the titlebar.
 # macOS titlebar bugs were fixed in Ghostty 1.2.3; now stable.
 macos-titlebar-style = tabs
+# Hide CWD proxy icon (only effective with native titlebar; tabs style
+# has no proxy icon, but this future-proofs if style changes)
 macos-titlebar-proxy-icon = hidden
 
 # -----------------------------------------------------------------------------
@@ -76,7 +82,9 @@ macos-titlebar-proxy-icon = hidden
 # -----------------------------------------------------------------------------
 
 window-vsync = true
+# Minimum contrast ratio (1-21) ensures readable text on colored backgrounds
 minimum-contrast = 1.1
+# Use Display P3 color space for wider gamut on supported displays
 window-colorspace = display-p3
 
 # -----------------------------------------------------------------------------
@@ -99,29 +107,42 @@ notify-on-command-finish-action = no-bell,notify
 notify-on-command-finish-after = 30s
 
 # -----------------------------------------------------------------------------
-# Scrollback & Selection
+# Scrollback
 # -----------------------------------------------------------------------------
 
 # Increased from 10000: Claude Code sessions generate substantial output.
 scrollback-limit = 50000
+
+# -----------------------------------------------------------------------------
+# Selection & Clipboard
+# -----------------------------------------------------------------------------
+
+# Copy to both selection and system clipboard for middle-click and Cmd+V
 copy-on-select = clipboard
+# Clear selection on typing to avoid stale highlights interfering with input
 selection-clear-on-typing = true
 
 # -----------------------------------------------------------------------------
 # URL Handling
 # -----------------------------------------------------------------------------
 
+# Detect and open URLs on hover (Cmd+click on macOS)
 link-url = true
+# Show a popup preview of the URL content before opening
 link-previews = true
 
 # -----------------------------------------------------------------------------
 # Clipboard
 # -----------------------------------------------------------------------------
 
+# Allow reads/writes without prompting (personal machine, no secrets risk)
 clipboard-read = allow
 clipboard-write = allow
+# Trim trailing whitespace on copy to avoid invisible characters
 clipboard-trim-trailing-spaces = true
+# Warn before pasting multi-line content that may contain commands
 clipboard-paste-protection = true
+# Trust bracketed paste mode from running programs (default behavior)
 clipboard-paste-bracketed-safe = true
 
 # -----------------------------------------------------------------------------
@@ -134,40 +155,53 @@ mouse-hide-while-typing = true
 # Terminal
 # -----------------------------------------------------------------------------
 
+# Report as xterm-ghostty for accurate TERM detection by remote hosts
 term = xterm-ghostty
+# Unicode standard for grapheme width (correct for emoji, CJK, etc.)
 grapheme-width-method = unicode
+# Route bell to system notification (macOS)
 bell-features = system
 
 # -----------------------------------------------------------------------------
-# Multi-surface Behavior
+# Multi-Surface Behavior
 # -----------------------------------------------------------------------------
 
+# New windows/tabs inherit CWD and font size from the previously focused window
 window-inherit-working-directory = true
 window-inherit-font-size = true
+# Open new tabs adjacent to the current tab (not at the end)
 window-new-tab-position = current
+# Persist window layout (position, size, tabs, splits) across restarts
 window-save-state = always
+# Confirm before closing any terminal surface to prevent accidental loss
 confirm-close-surface = true
+# Dim unfocused splits to 60% opacity for visual focus distinction
 unfocused-split-opacity = 0.6
 
 # -----------------------------------------------------------------------------
 # Quick Terminal
 # -----------------------------------------------------------------------------
 
+# Slide-down overlay from the top of the main screen (like macOS Spotlight)
 quick-terminal-position = top
 quick-terminal-screen = main
+# 0.2s animation for snappy feel without being jarring
 quick-terminal-animation-duration = 0.2
 
 # -----------------------------------------------------------------------------
 # macOS
 # -----------------------------------------------------------------------------
 
+# Treat left Option as Alt key (needed for Emacs-style keybindings in terminal)
 macos-option-as-alt = left
+# Retro-styled app icon in dock (official Ghostty variant by artists)
 macos-icon = retro
 
 # -----------------------------------------------------------------------------
 # Updates
 # -----------------------------------------------------------------------------
 
+# Check for updates periodically and notify (macOS only, via Sparkle)
 auto-update = check
 
 # -----------------------------------------------------------------------------

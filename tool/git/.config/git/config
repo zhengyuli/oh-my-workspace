@@ -69,11 +69,18 @@
 
 # https://github.com/dandavison/delta
 [delta]
+    # --- Navigation ---
     # Enable n/N keybindings to navigate between diff hunks
     navigate = true
-    light = false
+
+    # --- Display ---
+    # Show line numbers alongside diff for precise reference
     line-numbers = true
+    # Unified view: single column (side-by-side is hard to read in narrow
+    # terminals and doesn't integrate well with delta's syntax highlighting)
     side-by-side = false
+    # Explicitly set dark background (matches Dracula terminal theme)
+    light = false
 
 # -----------------------------------------------------------------------------
 # Feature Flags
@@ -218,6 +225,7 @@
 [merge]
     # Show base context in conflicts (Git 2.35+)
     conflictstyle = zdiff3
+    # Use Neovim's built-in 2/3-way diff (falls back to vimdiff if absent)
     tool = nvimdiff
 
 [mergetool]
@@ -235,6 +243,7 @@
 # Credential Helper
 # -----------------------------------------------------------------------------
 
-# macOS Keychain for credential storage
+# macOS Keychain for credential storage (renamed to
+# apple-credential-osxkeychain in Git 2.42+, alias still works)
 [credential]
     helper = osxkeychain
