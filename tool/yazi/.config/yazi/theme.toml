@@ -13,7 +13,8 @@
 #   2026-03-28 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 #
 # Commentary:
-#   Yazi theme overrides using catppuccin-mocha flavor. Install via ya pkg.
+#   Activates the catppuccin-mocha flavor and applies targeted overrides
+#   for improved contrast and reduced visual weight on permission indicators.
 #
 # References:
 #   1. https://yazi-rs.github.io/docs/flavors/overview/
@@ -31,7 +32,6 @@ dark = "catppuccin-mocha"
 # Manager
 # -----------------------------------------------------------------------------
 
-# Border color lacks contrast on dark themes; use explicit color
 [mgr]
 border_style = { fg = "#45475a" }
 
@@ -39,7 +39,6 @@ border_style = { fg = "#45475a" }
 # Indicator
 # -----------------------------------------------------------------------------
 
-# Preview pane indicator is redundant with custom status bar
 [indicator]
 preview = { fg = "#89b4fa" }
 
@@ -47,7 +46,6 @@ preview = { fg = "#89b4fa" }
 # Status
 # -----------------------------------------------------------------------------
 
-# File permissions are informational; reduce visual weight
 [status]
 perm_type = { fg = "#45475a" }
 perm_read = { fg = "#45475a" }

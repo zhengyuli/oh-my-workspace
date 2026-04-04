@@ -59,30 +59,43 @@ endfor
 " Display
 " -----------------------------------------------------------------------------
 
+" --- Line Numbers ---
 " Absolute number on active line aids error message navigation
 set number
 " Relative numbers enable fast vertical motion (e.g., 5j, 12k)
 set relativenumber
+
+" --- Cursor ---
 " Cursor line highlights active context during split editing
 set cursorline
+
+" --- Scrolling ---
 " Keep 8 lines of context above/below cursor
 set scrolloff=8
 " Keep 5 columns of context left/right
 set sidescrolloff=5
+
+" --- Wrapping ---
 " Soft-wrap long lines at word boundaries
 set wrap
 " Wrap at word boundaries, not mid-word
 set linebreak
+
+" --- Matching ---
 " Briefly jump to matching bracket on input
 set showmatch
 " Show match for 0.2 seconds
 set matchtime=2
+
+" --- Status ---
 " Always show status line for consistent split visibility
 set laststatus=2
 " Partial command display catches incomplete key sequences early
 set showcmd
 " Built-in ruler as a lightweight alternative to statusline plugins
 set ruler
+
+" --- Completion ---
 " Wildmenu provides navigable tab-completion suggestions
 set wildmenu
 " Longest:full avoids premature completion; full for disambiguation
@@ -90,22 +103,28 @@ set wildmode=longest:full,full
 " Ignore artifacts that clutter completions (build outputs, VCS dirs)
 set wildignore+=*.o,*.obj,*.pyc,*.class,*.swp,*.bak
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/node_modules/*
+
+" --- Signs ---
 " Always-on sign column prevents horizontal jitter on lint/diag signs
 set signcolumn=yes
 
 " -----------------------------------------------------------------------------
 " Search
-" -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
+" --- Behavior ---
 " Incremental search gives immediate feedback while typing pattern
 set incsearch
 " Persistent highlights help scan all matches at a glance
 set hlsearch
+
+" --- Case ---
 " Case-insensitive by default for fewer keystrokes
 set ignorecase
 " Smart case: uppercase in query signals intentional case-sensitivity
 set smartcase
 
+" --- Key Mapping ---
 " Clear search highlight with double-ESC
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
@@ -113,30 +132,39 @@ nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 " Indentation
 " -----------------------------------------------------------------------------
 
+" --- Tabs vs Spaces ---
 " Spaces instead of tabs (project convention; avoids mixed-indent issues)
 set expandtab
-" 4-space width matches Python and most style guides
+
+" --- Width ---
+# 4-space width matches Python and most style guides
 set tabstop=4
-" Tab key inserts spaces consistent with expandtab
+# Tab key inserts spaces consistent with expandtab
 set softtabstop=4
-" Shiftwidth aligns with tabstop for uniform indentation
+# Shiftwidth aligns with tabstop for uniform indentation
 set shiftwidth=4
-" Autoindent preserves block structure without manual re-indent
+
+" --- Structure ---
+# Autoindent preserves block structure without manual re-indent
 set autoindent
 
 " -----------------------------------------------------------------------------
 " Files & Persistence
 " -----------------------------------------------------------------------------
 
+" --- Buffers ---
 " Hidden buffers allow backgrounding unsaved files without closing
 set hidden
 " No backup files — version control makes them redundant
 set nobackup
 " No swap files — recovery handled by persistent undo and version control
 set noswapfile
+
+" --- File Reload ---
 " Auto-reload saves a :checktime step when files change externally
 set autoread
 
+# --- Undo ---
 " Persistent undo (directory created in XDG section above)
 set undofile
 
@@ -144,27 +172,37 @@ set undofile
 " Behaviour
 " -----------------------------------------------------------------------------
 
+" --- Mouse & Splits ---
 " Mouse support in all modes (scrolling, resizing splits in terminal)
 set mouse=a
 " Splits open below keep original file in upper pane (natural reading flow)
 set splitbelow
 " Splits open right mirror editor layout convention (file tree left)
 set splitright
+
+" --- Safety ---
 " Confirm dialog prevents accidental :qa with unsaved changes
 set confirm
 " Silence audio bell; use visual bell instead (avoids terminal beeps)
 set noerrorbells visualbell
 " Empty t_vb disables visual bell flash entirely
 set t_vb=
+
+" --- Performance ---
 " Skip redraw during macros for smoother playback on large files
 set lazyredraw
 " 200 ms updatetime balances responsiveness with CPU usage for sign column
 set updatetime=200
+
+" --- Timing ---
 " 500 ms timeoutlen allows comfortable multi-key sequences (e.g., <leader>w)
 set timeoutlen=500
+
+" --- Navigation ---
 " Cursor keys wrap across line boundaries for smoother paragraph navigation
 set whichwrap+=<,>,h,l
 
+" --- Key Mappings ---
 " Keep cursor centered when navigating (zz=center, zv=unfold)
 nnoremap <silent> n     nzzzv
 nnoremap <silent> N     Nzzzv
@@ -201,12 +239,14 @@ endif
 augroup vimrc
     autocmd!
 
+    " --- Cursor Position ---
     " Return to last cursor position when reopening a file
     autocmd BufReadPost *
         \ if line("'\"") > 0 && line("'\"") <= line("$") |
         \     execute 'normal! g`"' |
         \ endif
 
+    " --- Whitespace ---
     " Strip trailing whitespace on save (skip binary/diff buffers)
     autocmd BufWritePre *
         \ if &filetype !~# '\v^(diff|xxd)$' |
@@ -216,9 +256,11 @@ augroup vimrc
         \     unlet b:_view |
         \ endif
 
+    " --- Layout ---
     " Equalize splits when terminal is resized
     autocmd VimResized * wincmd =
 
+    " --- File Reload ---
     " Auto-reload file when gaining focus or on idle (external changes)
     autocmd FocusGained,BufEnter * silent! checktime
     autocmd CursorHold,CursorHoldI * silent! checktime
@@ -227,10 +269,12 @@ augroup END
 
 " -----------------------------------------------------------------------------
 " File Type Overrides
-" -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 augroup vimrc_ft
     autocmd!
+
+    " --- Indentation ---
     " Python: 4 spaces
     autocmd FileType python setlocal tabstop=4 shiftwidth=4
     " Web files: 2 spaces
@@ -238,12 +282,17 @@ augroup vimrc_ft
                 \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
     " Go: tabs (convention)
     autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
+
+    " --- Text Modes ---
     " Text files: wrap and spell check
     autocmd FileType markdown,text
                 \ setlocal wrap linebreak nolist
+
+    " --- Git Commits ---
     " Git commits: 72 char width, spell check
     autocmd FileType gitcommit
                 \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
+
 augroup END
 
 " -----------------------------------------------------------------------------

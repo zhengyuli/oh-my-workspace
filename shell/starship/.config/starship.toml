@@ -26,7 +26,8 @@
 # General Settings
 # -----------------------------------------------------------------------------
 
-# Date/time on info line (before line break), input line has only character
+# Place date/time on the info line (above input) to keep the input line
+# minimal — only the prompt character appears on the second line
 format = "$all${custom.rdate}${custom.rtime}$line_break$character"
 
 [directory]
@@ -42,6 +43,7 @@ symbol = "󰍛 "
 symbol = "✕ "
 
 [time]
+# Disabled in favor of custom rdate/rtime modules (below) for precise control
 disabled = true
 
 # --- Custom Date ---

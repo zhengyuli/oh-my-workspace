@@ -94,6 +94,7 @@
 # --- General ---
 --line-number
 --column
+# Preserve colors when piping to fzf, less, or other tools
 --color=always
 
 # --- Colors ---
@@ -117,4 +118,5 @@
 
 # Reduced from default 500 since minified files are filtered by globs
 --max-columns=200
+# Show a preview of lines exceeding max-columns instead of hiding them
 --max-columns-preview

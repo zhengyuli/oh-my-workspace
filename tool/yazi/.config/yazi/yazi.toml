@@ -25,14 +25,21 @@
 # -----------------------------------------------------------------------------
 
 [mgr]
+# Parent:Current:Preview column ratio (wide preview for images/code)
 ratio = [1, 4, 3]
+# Natural sort: alphabetical with number awareness (file2 < file10)
 sort_by = "natural"
 sort_sensitive = false
 sort_reverse = false
+# Directories always appear first regardless of sort order
 sort_dir_first = true
+# Hide linemode metadata to keep the file list clean
 linemode = "none"
+# Hidden files off by default; toggle with . (period) key
 show_hidden = false
+# Show symlink targets for transparency (broken links stand out)
 show_symlink = true
+# Keep 5 lines of context above/below cursor during scroll
 scrolloff = 5
 
 # -----------------------------------------------------------------------------
@@ -40,11 +47,17 @@ scrolloff = 5
 # -----------------------------------------------------------------------------
 
 [preview]
+# Disable word wrap in previews (code and long paths read better unwrapped)
 wrap = "no"
+# 2-space tabs for consistent indentation in previewed code
 tab_size = 2
+# Cap image preview width to avoid pushing the file list off-screen
 max_width = 600
+# Cap image preview height for balanced layout
 max_height = 900
+# Lanczos3 resampling for sharp, high-quality image downscaling
 image_filter = "lanczos3"
+# 75% quality balances file size and visual fidelity
 image_quality = 75
 
 # -----------------------------------------------------------------------------
@@ -52,12 +65,15 @@ image_quality = 75
 # -----------------------------------------------------------------------------
 
 [tasks]
+# 10 concurrent micro-tasks (I/O-bound: file ops, metadata)
 micro_workers = 10
+# 25 concurrent macro-tasks (CPU-bound: image processing, archiving)
 macro_workers = 25
 # 512 MiB limit — sufficient for high-res previews without runaway alloc
 image_alloc = 536870912
-# [0, 0] means no bound on image dimensions (width, height)
+# No dimension cap: allow full-resolution previews on large displays
 image_bound = [0, 0]
+# Show preload tasks in the list for progress visibility
 suppress_preload = false
 
 # -----------------------------------------------------------------------------
