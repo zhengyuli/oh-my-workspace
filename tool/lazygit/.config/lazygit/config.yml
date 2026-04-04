@@ -76,7 +76,7 @@ os:
   # Open files in Neovim (spawns a new instance per edit)
   editPreset: nvim
 
-# Ask whether to init a new repo or open the most recent one
+# Let user choose instead of auto-creating or skipping
 notARepository: prompt
 
 # -----------------------------------------------------------------------------
