@@ -280,12 +280,8 @@ symbols that are not function names (e.g., `'forward` as a direction argument).
 
 ### Lists
 
-Prefer `push` over `add-to-list` in init files.  `push` is a macro that
-prepends in O(1) without duplicate checking; `add-to-list` is a function
-that traverses the entire list in O(n) for a redundant membership test.
-Under `lexical-binding: t`, `push` also behaves predictably with lexical
-variables, whereas `add-to-list` requires a quoted symbol referencing a
-global variable.
+Prefer `push` over `add-to-list` in init files — O(1), no duplicate check,
+lexical-binding safe.  See [Anti-Patterns > Don't: add-to-list in Init Files](#dont-add-to-list-in-init-files).
 
 ```elisp
 ;; CORRECT — direct prepend, no redundant traversal
@@ -476,9 +472,6 @@ making it fragile with lexical bindings.
 ```elisp
 ;; WRONG
 (define-key shell-mode-map "\C-c\C-s" #'omw-shell-sync)
-
-;; CORRECT
-(define-key shell-mode-map (kbd "C-c C-s") #'omw-shell-sync)
 ```
 
 ### Don't: Inline Explanations
@@ -517,15 +510,7 @@ All user-facing commands (key-bound or M-x callable) must declare
 
 ### Parameter Validation
 
-Validate all required parameters at the start of the function body.
-
-```elisp
-(defun omw-load-module (name)
-  "Load module with NAME."
-  (unless (stringp name)
-    (error "omw-load-module: NAME must be a string, got %S" name))
-  ...)
-```
+See [Code Patterns > Validation at Boundaries](#validation-at-boundaries).
 
 ### Optional Dependency Guard
 
