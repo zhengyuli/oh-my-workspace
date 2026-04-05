@@ -30,7 +30,7 @@ bindkey -e
 # History Search
 # -----------------------------------------------------------------------------
 
-# Ctrl-P / Ctrl-N: prefix-based history search (built-in widgets)
+# Prefix-based history search (built-in widgets)
 bindkey '^P' history-search-backward
 bindkey '^N' history-search-forward
 
@@ -41,47 +41,28 @@ bindkey '^N' history-search-forward
 # Word Movement
 # -----------------------------------------------------------------------------
 
-# Ctrl-Right
 bindkey -- '^[[1;5C' forward-word
-# Ctrl-Left
 bindkey -- '^[[1;5D' backward-word
-# Alt-f
 bindkey '^[f' forward-word
-# Alt-b
 bindkey '^[b' backward-word
-# Alt-d   delete word forward
 bindkey '^[d' kill-word
-# Ctrl-Backspace  delete word backward
 # Ghostty sends ^H for Ctrl+Backspace; most other terminals send ^H for
 # plain Backspace, so only bind in Ghostty to avoid breaking Backspace.
 if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
   bindkey '^H' backward-kill-word
 fi
-# Ctrl-Delete     delete word forward
 bindkey '^[[3;5~' kill-word
 
 # -----------------------------------------------------------------------------
 # Line Editing
 # -----------------------------------------------------------------------------
 
-# Ctrl-A  jump to start of line
 bindkey '^A' beginning-of-line
-# Ctrl-E  jump to end of line
 bindkey '^E' end-of-line
-# Ctrl-K  delete from cursor to end
 bindkey '^K' kill-line
-# Ctrl-U  delete from cursor to start
 bindkey '^U' backward-kill-line
-# Ctrl-Y  paste (yank killed text)
 bindkey '^Y' yank
-
-# -----------------------------------------------------------------------------
-# Editing
-# -----------------------------------------------------------------------------
-
-# Delete key
 bindkey '^[[3~' delete-char
-# Alt-Backspace
 bindkey '^[^?' backward-kill-word
 
 # -----------------------------------------------------------------------------
@@ -95,7 +76,6 @@ bindkey '^[^?' backward-kill-word
 # Miscellaneous
 # -----------------------------------------------------------------------------
 
-# Ctrl-L  clear screen
 bindkey '^L' clear-screen
 
 # -----------------------------------------------------------------------------

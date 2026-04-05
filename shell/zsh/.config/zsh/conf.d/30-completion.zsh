@@ -79,24 +79,18 @@ zstyle ':completion:*' matcher-list \
   'l:|=* r:|=*'
 
 # --- List Colors ---
-# Colored completion list (uses LS_COLORS)
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # --- Display Format ---
-# Group header format
 zstyle ':completion:*:warnings' format '%F{red}-- no matches for: %d --%f'
 zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
-
-# Display completions in named groups
 zstyle ':completion:*' group-name ''
 
 # --- Filtering ---
-# Ignore patterns - reduce noise (object files, bytecode, backups, logs, deps)
 zstyle ':completion:*' ignored-patterns \
   '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
 # --- Process Completion ---
-# Show processes from all users in process completion
 # NOTE: The 'command' style for processes is set in 40-plugins.zsh for fzf-tab
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
@@ -118,14 +112,10 @@ zstyle ':completion:*:(ssh|scp|rsync):*' group-order \
   users hosts-domain hosts-host hosts-ipaddr
 
 # --- Path Completion ---
-# List directories before files
 zstyle ':completion:*' list-dirs-first true
-
-# Collapse consecutive slashes in path completion (foo//bar → foo/bar)
 zstyle ':completion:*' squeeze-slashes true
 
 # --- Cache ---
-# Completion cache (speeds up completion on large systems)
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/completion-cache"
 
@@ -135,7 +125,6 @@ zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/completion-cache"
 zstyle ':completion:*' completer _extensions _complete
 
 # --- CD Completion ---
-# Do not offer current directory when completing cd ../
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 # --- Rehash ---
