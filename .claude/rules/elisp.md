@@ -622,7 +622,7 @@ emacs --batch -f batch-byte-compile omw-module.el
 
 # Directory — recompile all
 emacs --batch --eval \
-  "(byte-recompile-directory \"~/.config/emacs/lisp\" 0)"
+  "(byte-recompile-directory (expand-file-name \"emacs/lisp\" (getenv \"XDG_CONFIG_HOME\")) 0)"
 
 # Naming and docstring conventions (install: M-x package-install package-lint)
 emacs --batch -f package-lint-batch-and-exit omw-module.el
