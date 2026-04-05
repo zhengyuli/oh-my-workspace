@@ -461,7 +461,8 @@ API_KEY="${API_KEY:-}"
 For scripts handling sensitive data, set restrictive umask at the top.
 
 ```bash
-umask 077  # Owner-only for new files
+# Prevent sensitive temp files from being read by other users
+umask 077
 ```
 
 ## Comments
