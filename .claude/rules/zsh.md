@@ -157,8 +157,9 @@ immutables.
 
 ```zsh
 _process_file() {
-  local -r input="$1"
-  rm -rf "$dir"
+  local -r src="$1"           # immutable: function arg never reassigned
+  local dest
+  dest="${src%.txt}.out"      # mutable: assigned after declaration
 }
 ```
 
@@ -207,6 +208,7 @@ not the actual ESC byte — colors will print as raw text.
 ```zsh
 # CORRECT — $'...' converts \033 to the actual ESC character
 readonly _RED=$'\033[0;31m'
+readonly _RESET=$'\033[0m'
 print "  ${_RED}error${_RESET} $msg"
 
 # WRONG — single quotes store literal "\033[0;31m" text
@@ -230,8 +232,9 @@ Split long pipelines at `|` with each stage on its own line.
 
 ### Line Continuation
 
-Break long lines with `\`. Align continuation lines at the same indent
-level as the opening construct.
+Break long lines with `\`. For continued conditions, align operators
+(`&&`, `||`) with the opening `[[`. For multi-value arguments (zstyle,
+arrays), use 2-space indent.
 
 ```zsh
 # Long condition
@@ -391,7 +394,9 @@ Use `() { ... }` for temporary scope isolation without naming a function:
 # Isolate local variables to avoid polluting outer scope
 () {
   local -a temp=( *.tmp(N) )
-  (( ${#temp} )) && rm -v "${temp[@]}"
+  if (( ${#temp} )); then
+    rm -v "${temp[@]}"
+  fi
 }
 ```
 
