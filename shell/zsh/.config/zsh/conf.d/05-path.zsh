@@ -66,7 +66,6 @@ fpath=(
   "$HOMEBREW_PREFIX/share/zsh/site-functions"(N-/)
   "$HOMEBREW_PREFIX/share/zsh-completions"(N-/)
 
-  # Preserve existing fpath (fallback)
   $fpath
 )
 
@@ -77,11 +76,9 @@ fpath=(
 manpath=(
   "$HOMEBREW_PREFIX/share/man"(N-/)
 
-  # System man pages
   /usr/local/share/man(N-/)
   /usr/share/man(N-/)
 
-  # Preserve existing manpath
   $manpath
 )
 
@@ -92,11 +89,9 @@ manpath=(
 infopath=(
   "$HOMEBREW_PREFIX/share/info"(N-/)
 
-  # System info pages
   /usr/local/share/info(N-/)
   /usr/share/info(N-/)
 
-  # Preserve existing infopath
   $infopath
 )
 
