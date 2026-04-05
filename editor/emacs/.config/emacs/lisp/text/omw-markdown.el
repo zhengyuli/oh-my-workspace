@@ -26,7 +26,7 @@
 ;; --- Markdown Constants ---
 (defconst omw/markdown-fill-column 150
   "Text fill-column width for Markdown buffers.
-Controls both `fill-column' (hard wrap) and `visual-fill-column-width').")
+Controls both `fill-column' (hard wrap) and `visual-fill-column-width'.")
 
 (defconst omw/markdown-colors '((header . "#46dcb0")
                                 (code-bg . "#293134")

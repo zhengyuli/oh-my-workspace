@@ -32,13 +32,14 @@ PACKAGE-MANAGER is absent."
   (let* ((tool (nth 0 spec))
          (install-cmd (nth 1 spec))
          (pm (nth 2 spec)))
-    (if (executable-find tool)
-        (message "%s is already installed." tool)
-      (if (executable-find pm)
-          (progn
-            (message "Installing %s via: %s" tool install-cmd)
-            (shell-command install-cmd))
-        (message "Cannot install %s: %s not found." tool pm)))))
+    (cond
+     ((executable-find tool)
+      (message "%s is already installed." tool))
+     ((not (executable-find pm))
+      (message "Cannot install %s: %s not found." tool pm))
+     (t
+      (message "Installing %s via: %s" tool install-cmd)
+      (shell-command install-cmd)))))
 
 ;; --- Tools Install ---
 (defun omw/tools-install (&rest tool-specs)
@@ -59,9 +60,9 @@ No-op in batch/non-interactive mode."
   (unless noninteractive
     (dolist (spec tool-specs)
       (let ((tool (nth 0 spec)))
-        (unless (executable-find tool)
-          (when (yes-or-no-p (format "%s not found. Install now? " tool))
-            (omw/install-tool-spec spec)))))))
+        (when (and (not (executable-find tool))
+                   (yes-or-no-p (format "%s not found. Install now? " tool)))
+          (omw/install-tool-spec spec))))))
 
 ;; ============================================================================
 ;;; Provide features
