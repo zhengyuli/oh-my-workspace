@@ -487,7 +487,7 @@ word-splitting safety.
 
 ```bash
 # Indexed array
-local -ra pkgs=("git" "vim" "zsh")
+local -a pkgs=("git" "vim" "zsh")
 for pkg in "${pkgs[@]}"; do
   _install_package "$pkg"
 done
