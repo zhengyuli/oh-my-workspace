@@ -140,7 +140,7 @@ Use `trap ... EXIT` for resource cleanup (temp files, lock files).
 _cleanup() {
   rm -f "$_tmp_file"
 }
-trap _cleanup EXIT
+trap '_cleanup' EXIT
 ```
 
 ### Exit Codes
@@ -479,7 +479,8 @@ main "$@"
 
 Declare and assign on separate lines when RHS is command substitution.
 Unlike bash, zsh preserves the exit code when combining declaration and
-assignment — separate lines are still preferred for portability.
+assignment — separate lines are still preferred for readability and
+consistency with bash conventions.
 
 ```zsh
 local dir
