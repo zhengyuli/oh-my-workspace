@@ -38,8 +38,9 @@ References: [Google Vimscript Style Guide](https://google.github.io/styleguide/v
 
 Vim script uses `"` for line comments (not `#`).
 
-Inline comments after commands are allowed, but discouraged — prefer separate
-lines above the setting to explain WHY.
+End-of-line comments after commands are discouraged — prefer separate lines
+above the setting to explain WHY.  See
+[Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments).
 
 ```vim
 " WRONG — restates the obvious (what the code already says)
@@ -49,9 +50,6 @@ set expandtab
 " CORRECT — explains why (project convention)
 " Use spaces instead of tabs (project convention)
 set expandtab
-
-" ACCEPTABLE — brief inline after short command
-set nocompatible  " not strictly needed in Neovim
 ```
 
 ## Delimiter Hierarchy
@@ -71,7 +69,8 @@ for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 Blank lines mark boundaries between delimiter levels and top-level statements.
 
 **Around delimiters** — one blank line before Level 1 opening, one after
-Level 1 closing.  Level 2 has no trailing blank line — code follows directly.
+Level 1 closing.  Level 2 has no blank line after the delimiter — code follows
+immediately.
 
 ```vim
 " -----------------------------------------------------------------------------
@@ -390,13 +389,14 @@ nnoremap gj j
 nnoremap gj j
 ```
 
-### Don't: Inline Explanations
+### Don't: End-of-Line Comments
 
-Prefer separate comment lines above the setting — inline comments after
-commands obscure the reasoning and are easily overlooked during review.
+Avoid end-of-line `" comment` annotations after a command.  Move the
+explanation to a separate `"` comment line above the setting — end-of-line
+comments are easily missed during review and typically restate the obvious.
 
 ```vim
-" WRONG — inline comment restates the obvious
+" WRONG — end-of-line annotation restates the obvious
 set number  " Show line numbers
 
 " CORRECT — separate line explains reasoning

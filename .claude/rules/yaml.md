@@ -362,13 +362,16 @@ nerdFontsVersion: "3"
 showFileTree: true
 ```
 
-### Don't: Inline Explanations
+### Don't: End-of-Line Comments
+
+Avoid end-of-line `# comment` annotations after a value.  Move the
+explanation to a separate `#` comment line above.
 
 ```yaml
-# WRONG
+# WRONG — end-of-line annotation
 theme: catppuccin  # color scheme
 
-# CORRECT
+# CORRECT — separate line explains reasoning
 # Catppuccin Mocha Blue theme for visual consistency
 theme: catppuccin
 ```

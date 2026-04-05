@@ -73,7 +73,8 @@ for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 Blank lines mark boundaries between delimiter levels and settings.
 
 **Around delimiters** — one blank line before Level 1 opening, one after
-Level 1 closing.  Level 2 has no trailing blank line — settings follow directly.
+Level 1 closing.  Level 2 has no blank line after the delimiter — settings
+follow immediately.
 
 ```conf
 # -----------------------------------------------------------------------------
@@ -236,13 +237,16 @@ editor = vim
 
 ## Anti-Patterns
 
-### Don't: Inline Explanations
+### Don't: End-of-Line Comments
+
+Avoid end-of-line `# comment` annotations after a setting.  Move the
+explanation to a separate `#` comment line above.
 
 ```conf
-# WRONG
+# WRONG — end-of-line annotation
 pager = delta  # syntax highlighting
 
-# CORRECT
+# CORRECT — separate line explains reasoning
 # Use delta for syntax-highlighted diffs
 pager = delta
 ```
