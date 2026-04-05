@@ -562,7 +562,7 @@ at load time, so always delete them after editing and before committing:
 ```bash
 # Pre-commit cleanup — repo and XDG config directory
 find emacs/ -name '*.elc' -delete
-find "$XDG_CONFIG_HOME/emacs/" -name '*.elc' -delete
+find "${XDG_CONFIG_HOME:-$HOME/.config}/emacs/" -name '*.elc' -delete
 ```
 
 ### Secrets Management
@@ -629,5 +629,5 @@ emacs --batch -f package-lint-batch-and-exit omw-module.el
 
 # Pre-commit cleanup (repo + $XDG_CONFIG_HOME/emacs/)
 find emacs/ -name '*.elc' -delete
-find "$XDG_CONFIG_HOME/emacs/" -name '*.elc' -delete
+find "${XDG_CONFIG_HOME:-$HOME/.config}/emacs/" -name '*.elc' -delete
 ```
