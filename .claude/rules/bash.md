@@ -144,7 +144,7 @@ Use `trap ... EXIT` for resource cleanup (temp files, lock files).
 _cleanup() {
   rm -f "$_tmp_file"
 }
-trap _cleanup EXIT
+trap '_cleanup' EXIT
 ```
 
 ### Exit Codes
@@ -204,6 +204,7 @@ not the actual ESC byte — colors will print as raw text.
 ```bash
 # CORRECT — $'...' converts \033 to the actual ESC character
 readonly _RED=$'\033[0;31m'
+readonly _RESET=$'\033[0m'
 printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$msg"
 
 # WRONG — single quotes store literal "\033[0;31m" text
@@ -507,8 +508,9 @@ printf '%s\n' "${defaults["editor"]}"
 
 ## Line Continuation
 
-Break long lines with `\`. Align continuation lines at the same indent
-level as the opening construct.
+Break long lines with `\`. For continued conditions, align operators
+(`&&`, `||`) with the opening `[[`. For multi-value arguments (printf,
+arrays), use 2-space indent.
 
 ```bash
 # Long condition
