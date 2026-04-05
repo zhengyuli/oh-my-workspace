@@ -133,41 +133,34 @@ _err_handler() {
 trap '_err_handler' ERR
 ```
 
+### EXIT Trap (Cleanup)
+
+Use `trap ... EXIT` for resource cleanup (temp files, lock files).
+
+```zsh
+_cleanup() {
+  rm -f "$_tmp_file"
+}
+trap '_cleanup' EXIT
+```
+
 ### Exit Codes
 
 `0` success, `1` error, `2` misuse, `126` not executable, `127` not found
-
-### emulate for Portable Functions
-
-Use `emulate -L zsh` at the top of autoloaded functions and shared library
-functions that may be sourced from different emulation contexts (bash
-compatibility mode, ksh emulation, etc.).
-
-```zsh
-# Autoloaded function — emulation context is unknown at load time
-_my_utility() {
-  emulate -L zsh
-  # Now guaranteed: extended_glob, zsh parameter expansion, zsh globs
-  local -a files=( **/*.md(N) )
-}
-```
-
-**When to use**: autoloaded functions (`autoload -Uz`), functions in shared
-libraries, completion functions.
-
-**When NOT needed**: functions defined within your own conf.d/ files (already
-running in zsh emulation), scripts with `#!/usr/bin/env zsh` shebang.
 
 ## Code Patterns
 
 ### Variable Handling
 
 Quote all variables, use `local` scope in functions.
+Use `readonly` for top-level constants, `local -r` for function-scoped
+immutables.
 
 ```zsh
 _process_file() {
-  local -r input="$1"
-  _validate_input "$input"
+  local -r src="$1"           # immutable: function arg never reassigned
+  local dest
+  dest="${src%.txt}.out"      # mutable: assigned after declaration
 }
 ```
 
@@ -216,6 +209,7 @@ not the actual ESC byte — colors will print as raw text.
 ```zsh
 # CORRECT — $'...' converts \033 to the actual ESC character
 readonly _RED=$'\033[0;31m'
+readonly _RESET=$'\033[0m'
 print "  ${_RED}error${_RESET} $msg"
 
 # WRONG — single quotes store literal "\033[0;31m" text
@@ -224,7 +218,9 @@ readonly _RED='\033[0;31m'
 
 ### Naming Conventions
 
-Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`
+Constants: `UPPER_SNAKE_CASE`, Local: `lower_snake_case`.
+Private/internal functions use `_` prefix; public entry functions (e.g.,
+`main`) have no prefix.
 
 ```zsh
 readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -234,6 +230,27 @@ local temp_file
 ### Formatting
 
 Split long pipelines at `|` with each stage on its own line.
+
+### Line Continuation
+
+Break long lines with `\`. For continued conditions, align operators
+(`&&`, `||`) with the opening `[[`. For multi-value arguments (zstyle,
+arrays), use 2-space indent.
+
+```zsh
+# Long condition
+if [[ "$mode" == "install" ]] \
+   && [[ -n "$pkg" ]] \
+   && [[ -r "$config_file" ]]; then
+  _install_package "$pkg"
+fi
+
+# Long zstyle
+zstyle ':completion:*' matcher-list \
+  'm:{a-z}={A-Za-z}' \
+  'r:|[._-]=* r:|=*' \
+  'l:|=* r:|=*'
+```
 
 ### Section Uniqueness
 
@@ -378,7 +395,9 @@ Use `() { ... }` for temporary scope isolation without naming a function:
 # Isolate local variables to avoid polluting outer scope
 () {
   local -a temp=( *.tmp(N) )
-  (( ${#temp} )) && rm -v "${temp[@]}"
+  if (( ${#temp} )); then
+    rm -v "${temp[@]}"
+  fi
 }
 ```
 
@@ -409,6 +428,27 @@ autoload -Uz compinit
 ```
 
 ## Functions
+
+### emulate for Portable Functions
+
+Use `emulate -L zsh` at the top of autoloaded functions and shared library
+functions that may be sourced from different emulation contexts (bash
+compatibility mode, ksh emulation, etc.).
+
+```zsh
+# Autoloaded function — emulation context is unknown at load time
+_my_utility() {
+  emulate -L zsh
+  # Now guaranteed: extended_glob, zsh parameter expansion, zsh globs
+  local -a files=( **/*.md(N) )
+}
+```
+
+**When to use**: autoloaded functions (`autoload -Uz`), functions in shared
+libraries, completion functions.
+
+**When NOT needed**: functions defined within your own conf.d/ files (already
+running in zsh emulation), scripts with `#!/usr/bin/env zsh` shebang.
 
 ### Single Responsibility
 
@@ -444,6 +484,9 @@ main "$@"
 ### Local Command Substitution
 
 Declare and assign on separate lines when RHS is command substitution.
+Unlike bash, zsh preserves the exit code when combining declaration and
+assignment — separate lines are still preferred for readability and
+consistency with bash conventions.
 
 ```zsh
 local dir
@@ -480,19 +523,6 @@ case "$user_input" in
   uninstall) _uninstall ;;
   *) print -u2 "error: invalid command: $user_input"; exit 1 ;;
 esac
-```
-
-### Don't: local Masks Exit Codes (Bash Only)
-
-**Zsh does not have this problem** — `local` preserves the exit code of
-command substitution in zsh (unlike bash where `local` always returns 0).
-The separate-declaration pattern is still valid zsh but is not required.
-
-```zsh
-# Both are correct in zsh
-local dir="$(dirname "$file")"    # OK in zsh (exit code preserved)
-local dir
-dir="$(dirname "$file")"          # also fine — portable to bash
 ```
 
 ### Don't: Short-Circuit Control Flow
@@ -554,7 +584,7 @@ esac
 
 ### Code Injection Prevention
 
-Never use `eval` to execute user input. Use explicit `case` dispatch.
+See Anti-Patterns: [Don't: eval for User Input](#dont-eval-for-user-input).
 
 ### Permission Management
 
