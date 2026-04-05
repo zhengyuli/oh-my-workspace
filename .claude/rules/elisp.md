@@ -93,7 +93,8 @@ lowercase for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 Blank lines mark boundaries between delimiter levels and top-level forms.
 
 **Around delimiters** — one blank line before Level 1 opening, one after
-Level 1 closing.  Level 2 has no trailing blank line — code follows directly.
+Level 1 closing.  Level 2 has no blank line after the delimiter — code follows
+immediately.
 
 ```elisp
 ;; ----------------------------------------------------------------------------
@@ -116,10 +117,8 @@ Related forms (e.g., consecutive `setq`) are not separated.
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 (add-hook 'prog-mode-hook #'hl-line-mode)
 
-(defvar omw/prog-margin 80
+(defvar-local omw/prog-margin 80
   "Right margin for prog buffers.")
-
-(make-variable-buffer-local 'omw/prog-margin)
 ```
 
 **Inside function bodies** — one blank line between logical paragraphs.
@@ -144,7 +143,7 @@ Single-expression bodies have no extra blank lines.
 **Prohibited**: two or more consecutive blank lines anywhere in the file.
 
 ```elisp
-;; Level 1 / Level 2 — no trailing blank line
+;; Level 2 — no blank line after delimiter
 ;; --- Subsection Title ---
 (code-here)
 ```
@@ -280,8 +279,8 @@ symbols that are not function names (e.g., `'forward` as a direction argument).
 
 ### Lists
 
-Prefer `push` over `add-to-list` in init files — O(1), no duplicate check,
-lexical-binding safe.  See [Anti-Patterns > Don't: add-to-list in Init Files](#dont-add-to-list-in-init-files).
+Prefer `push` over `add-to-list` in init files.
+See [Anti-Patterns > Don't: add-to-list in Init Files](#dont-add-to-list-in-init-files).
 
 ```elisp
 ;; CORRECT — direct prepend, no redundant traversal
@@ -391,8 +390,9 @@ All package configuration must use `use-package`. Follow this keyword order:
 10. `:bind-keymap` / `:bind-keymap*`
 11. `:chords`
 12. `:custom-face`
-13. `:init`
-14. `:config`
+13. `:custom`
+14. `:init`
+15. `:config`
 
 ```elisp
 (use-package magit
@@ -403,6 +403,15 @@ All package configuration must use `use-package`. Follow this keyword order:
   (setq magit-display-buffer-function
         #'magit-display-buffer-same-window-except-diff-v1))
 ```
+
+### :custom vs setq
+
+Prefer `setq` inside `:config` over `:custom` for setting package variables.
+`:custom` routes assignments through `customize-set-variable`, which triggers
+custom setters and marks values as "set by user" — use it only when a
+package's setter side-effect is explicitly needed.  For ordinary variable
+assignments `setq` is simpler and consistent with the project's Variable
+Assignment rule.
 
 ### Lazy Loading
 
@@ -474,16 +483,19 @@ making it fragile with lexical bindings.
 (define-key shell-mode-map "\C-c\C-s" #'omw-shell-sync)
 ```
 
-### Don't: Inline Explanations
+### Don't: End-of-Line Comments
+
+Avoid end-of-line `; comment` annotations.  Move the explanation into a
+docstring (for `defvar`/`defun`) or a separate `;;` comment line above the
+form.
 
 ```elisp
-;; WRONG
+;; WRONG — end-of-line annotation
 (defvar config-dir nil)  ; Store config directory path
 
-;; CORRECT
-;; Store config directory path
+;; CORRECT — explanation lives in the docstring
 (defvar config-dir nil
-  "Config directory")
+  "Root directory for configuration files.")
 ```
 
 ### Don't: Align Values

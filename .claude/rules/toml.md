@@ -298,13 +298,16 @@ name = value
 name = "value"
 ```
 
-### Don't: Inline Explanations
+### Don't: End-of-Line Comments
+
+Avoid end-of-line `# comment` annotations after a value.  Move the
+explanation to a separate `#` comment line above.
 
 ```toml
-# WRONG
+# WRONG — end-of-line annotation
 symbol = " "  # Python icon
 
-# CORRECT
+# CORRECT — separate line explains reasoning
 # Python language icon
 symbol = " "
 ```

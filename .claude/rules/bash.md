@@ -54,7 +54,8 @@ for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 Blank lines mark boundaries between delimiter levels and top-level statements.
 
 **Around delimiters** — one blank line before Level 1 opening, one after
-Level 1 closing.  Level 2 has no trailing blank line — code follows directly.
+Level 1 closing.  Level 2 has no blank line after the delimiter — code follows
+immediately.
 
 ```bash
 # -----------------------------------------------------------------------------
@@ -163,7 +164,7 @@ readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 _process_file() {
   local -r input="$1"
-  rm -rf "$dir"
+  _validate_input "$input"
 }
 ```
 
@@ -397,13 +398,14 @@ if [[ ! -d "$dir" ]]; then
 fi
 ```
 
-### Don't: Inline Explanations
+### Don't: End-of-Line Comments
 
-Prefer separate comment lines above the code — inline comments after a
-statement obscure the reasoning and are easily overlooked during review.
+Avoid end-of-line `# comment` annotations after a statement.  Move the
+explanation to a separate `#` comment line above the code — end-of-line
+comments are easily missed during review and typically restate the obvious.
 
 ```bash
-# WRONG — inline comment restates the obvious
+# WRONG — end-of-line annotation restates the obvious
 export PATH="$HOME/bin:$PATH"  # Add bin to PATH
 
 # CORRECT — separate line explains reasoning
