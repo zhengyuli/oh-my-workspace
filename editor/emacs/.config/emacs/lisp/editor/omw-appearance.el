@@ -56,7 +56,7 @@
   :defer t
   :hook (after-init . pulsar-global-mode))
 
-;; --- Centaur Tabs Height ---
+;; --- Centaur Tabs Constants ---
 (defconst omw/centaur-tabs-height 25
   "Height in pixels for the centaur-tabs tab bar.")
 
@@ -64,7 +64,8 @@
 ;; font is active in the underlying buffer (e.g., variable-pitch in prose).
 (defface omw/centaur-tabs-base
   '((t :family "Monospace" :height 1.0))
-  "Base face for centaur-tabs with fixed-pitch font.")
+  "Base face for centaur-tabs with fixed-pitch font."
+  :group 'omw-emacs)
 
 (use-package centaur-tabs
   :ensure t

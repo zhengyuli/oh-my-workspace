@@ -394,8 +394,9 @@ All package configuration must use `use-package`. Follow this keyword order:
 9. `:bind` / `:bind*`
 10. `:bind-keymap` / `:bind-keymap*`
 11. `:chords`
-12. `:init`
-13. `:config`
+12. `:custom-face`
+13. `:init`
+14. `:config`
 
 ```elisp
 (use-package magit

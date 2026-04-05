@@ -17,7 +17,7 @@
 ;;; Commentary:
 ;;
 ;; C/C++ mode configuration with clangd LSP and Google code style.
-;; LSP server clangd is configured in prog.el.
+;; LSP server clangd is configured in omw-prog.el.
 ;; ============================================================================
 
 ;; ----------------------------------------------------------------------------

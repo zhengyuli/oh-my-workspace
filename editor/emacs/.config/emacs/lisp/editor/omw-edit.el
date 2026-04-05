@@ -45,12 +45,10 @@ Indent, delete trailing whitespace, convert tabs to spaces."
 ;; --- Copy Region ---
 (defun omw/copy-region ()
   "Copy active region to kill ring."
-  (interactive)
   (copy-region-as-kill (region-beginning) (region-end)))
 
 (defun omw/copy-current-line ()
   "Copy current line to kill ring."
-  (interactive)
   (let ((end (line-end-position)))
     (copy-region-as-kill (line-beginning-position) end)))
 
