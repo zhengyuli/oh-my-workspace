@@ -556,7 +556,14 @@ ELPA/MELPA.  Always add a comment explaining why `:vc` is required.
 
 ### Bytecompile Artifacts
 
-Never commit `.elc` files; always delete them before committing.
+Never commit `.elc` files.  Stale `.elc` files override newer `.el` source
+at load time, so always delete them after editing and before committing:
+
+```bash
+# Pre-commit cleanup — repo and XDG config directory
+find emacs/ -name '*.elc' -delete
+find "$XDG_CONFIG_HOME/emacs/" -name '*.elc' -delete
+```
 
 ### Secrets Management
 
@@ -620,6 +627,7 @@ emacs --batch --eval \
 # Naming and docstring conventions (install: M-x package-install package-lint)
 emacs --batch -f package-lint-batch-and-exit omw-module.el
 
-# Pre-commit cleanup
+# Pre-commit cleanup (repo + $XDG_CONFIG_HOME/emacs/)
 find emacs/ -name '*.elc' -delete
+find "$XDG_CONFIG_HOME/emacs/" -name '*.elc' -delete
 ```
