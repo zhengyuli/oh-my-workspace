@@ -1,7 +1,20 @@
 " vimrc -*- mode: vim; -*-
 " Time-stamp: <2026-04-04 21:41:23 Saturday by zhengyu.li>
 " =============================================================================
-" Minimal Vim Config — Dracula theme (https://draculatheme.com/vim)
+" Minimal Vim Config — Dracula Theme
+"
+" Author: zhengyu li <lizhengyu419@outlook.com>
+" Keywords: vim, dracula, xdg
+"
+" Copyright (C) 2026 zhengyu li
+"
+" History:
+"   2026-04-04 zhengyu li <lizhengyu419@outlook.com> created.
+"
+" Commentary:
+"   Minimal Vim configuration using the Dracula color theme. No plugin
+"   manager — Vim is a lightweight fallback editor. XDG paths are
+"   redirected manually via VIMINIT since Vim predates the XDG spec.
 "
 " Location: ~/.config/vim/vimrc
 " Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in 00-env.zsh)
@@ -124,7 +137,7 @@ set ignorecase
 " Smart case: uppercase in query signals intentional case-sensitivity
 set smartcase
 
-" --- Key Mapping ---
+" --- Key Mappings ---
 " Clear search highlight with double-ESC
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
@@ -191,11 +204,11 @@ set t_vb=
 " --- Performance ---
 " Skip redraw during macros for smoother playback on large files
 set lazyredraw
-" Balance responsiveness and CPU for sign column updates
+" 200 ms: fast enough for sign column updates, low enough CPU impact
 set updatetime=200
 
 " --- Timing ---
-" Allow comfortable multi-key sequences (e.g., <leader>w)
+" 500 ms: enough for <leader>w sequences without blocking <Esc> exit
 set timeoutlen=500
 
 " --- Navigation ---
@@ -290,8 +303,7 @@ augroup vimrc_ft
     " --- Git Commits ---
     " Git commits: 72 char width, spell check
     autocmd FileType gitcommit
-                \ setlocal spell spelllang=en_us \
-                \ textwidth=72 colorcolumn=73
+                \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
 
 augroup END
 
