@@ -261,6 +261,8 @@ Consistent spacing between YAML structural elements:
   separated by a comment.
 - **After a block scalar** (`|` or `>`): one blank line before the next key.
 
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
+
 ```yaml
 gui:
   nerdFontsVersion: "3"
