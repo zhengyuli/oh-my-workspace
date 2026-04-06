@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-06 20:57:52 Monday by zhengyu.li>
+# Time-stamp: <2026-04-06 21:54:42 Monday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -43,10 +43,6 @@ readonly NETWORK_TIMEOUT=60
 # --- Homebrew Version ---
 readonly MIN_HOMEBREW_MAJOR=4
 readonly MIN_HOMEBREW_MINOR=4
-
-# --- Xcode CLI ---
-readonly XCODE_POLL_INTERVAL=5
-readonly XCODE_POLL_MAX=600
 
 # --- Packages ---
 readonly -a PKG_ALL=(
@@ -281,23 +277,15 @@ _bootstrap_homebrew_env() {
 # Prerequisite Installation
 # -----------------------------------------------------------------------------
 
-# Install Xcode CLI and poll until available (timeout XCODE_POLL_MAX seconds).
+# Install Xcode CLI (blocks synchronously until complete or cancelled).
 _install_xcode_cli() {
   log_info "Installing Xcode Command Line Tools..."
   log_warn "Complete the dialog that appears."
 
   # xcode-select returns non-zero when already installed
-  xcode-select --install 2>/dev/null || true
-
-  local waited=0
-  while ! _has_xcode_cli; do
-    if (( waited >= XCODE_POLL_MAX )); then
-      log_err "Xcode CLI installation timed out"
-      return 1
-    fi
-    sleep "${XCODE_POLL_INTERVAL}"
-    waited=$(( waited + XCODE_POLL_INTERVAL ))
-  done
+  if ! xcode-select --install 2>/dev/null; then
+    log_info "Xcode CLI already installed"
+  fi
 
   log_ok "Xcode CLI: installed"
 }
@@ -309,8 +297,8 @@ _install_homebrew() {
   installer="$(mktemp)"
 
   if ! curl --fail --silent --show-error \
-       --connect-timeout "${NETWORK_TIMEOUT}" \
-       --output "$installer" "${url}"; then
+    --connect-timeout "${NETWORK_TIMEOUT}" \
+    --output "$installer" "${url}"; then
     rm -f "$installer"
     log_err "Homebrew download failed"
     return 1
@@ -323,7 +311,7 @@ _install_homebrew() {
   fi
 
   rm -f "$installer"
-  if ! _bootstrap_homebrew_env || ! _has_homebrew; then
+  if ! _bootstrap_homebrew_env; then
     log_err "Homebrew not found after installation"
     return 1
   fi
@@ -346,9 +334,8 @@ _ensure_homebrew_version() {
   minor="${ver#*.}"
   minor="${minor%%.*}"
 
-  if (( major > MIN_HOMEBREW_MAJOR )) \
-       || (( major == MIN_HOMEBREW_MAJOR \
-               && minor >= MIN_HOMEBREW_MINOR )); then
+  if (( major > MIN_HOMEBREW_MAJOR )) || \
+    (( major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR )); then
     log_ok "Homebrew version: ${ver}"
     return 0
   fi
@@ -373,8 +360,8 @@ _ensure_homebrew_version() {
   uninstaller="$(mktemp)"
 
   if ! curl --fail --silent --show-error \
-       --connect-timeout "${NETWORK_TIMEOUT}" \
-       --output "$uninstaller" "${uninstall_url}"; then
+    --connect-timeout "${NETWORK_TIMEOUT}" \
+    --output "$uninstaller" "${uninstall_url}"; then
     rm -f "$uninstaller"
     log_err "Homebrew uninstall script download failed"
     return 1
@@ -424,15 +411,15 @@ _run_brew_bundle() {
 }
 
 _preview_brew_bundle() {
-  if _has_homebrew && [[ -f "${BREWFILE}" ]]; then
-    log_info "[dry-run] brew bundle preview:"
-    brew bundle check --file="${BREWFILE}" 2>&1 \
-      | while IFS= read -r line; do
-          log_info "[dry-run]   ${line}"
-        done || true
-  else
+  if ! _has_homebrew || [[ ! -f "${BREWFILE}" ]]; then
     log_info "[dry-run] would run brew bundle"
+    return
   fi
+
+  log_info "[dry-run] brew bundle preview:"
+  while IFS= read -r line; do
+    log_info "[dry-run]   ${line}"
+  done < <(brew bundle check --file="${BREWFILE}" 2>&1)
 }
 
 _run_brew_bundle_checked() {
@@ -498,8 +485,8 @@ is_stowed() {
 
   local output
   if ! output=$(stow -n -v \
-                     -d "${stow_dir}" \
-                     -t "${HOME}" "${pkg_base}" 2>&1); then
+    -d "${stow_dir}" \
+    -t "${HOME}" "${pkg_base}" 2>&1); then
     return 1
   fi
 
@@ -533,7 +520,7 @@ stow_links() {
       if [[ -L "${check}" && -z "${shown[${check}]+set}" ]]; then
         shown[${check}]=1
         printf '      %s -> %s\n' \
-               "${check#"${HOME}"/}" "$(readlink "${check}")"
+          "${check#"${HOME}"/}" "$(readlink "${check}")"
         break
       fi
       check="${check%/*}"
@@ -647,8 +634,8 @@ _stow_exec() {
   # --- State Check ---
   # stow: skip if already fully stowed (rc==0, no LINK: lines).
   if [[ "${mode}" == stow ]] \
-       && (( dry_rc == 0 )) \
-       && ! grep -q '^LINK:' <<< "${dry_output}"; then
+    && (( dry_rc == 0 )) \
+    && ! grep -q '^LINK:' <<< "${dry_output}"; then
     log_info "${pkg_base}: already stowed"
     return 0
   fi
@@ -657,7 +644,7 @@ _stow_exec() {
   # Distinguish between "nothing to unstow" (rc==0) and a genuine stow
   # error (rc!=0) — the latter should not be silently swallowed.
   if [[ "${mode}" == unstow ]] \
-       && ! grep -q '^UNLINK:' <<< "${dry_output}"; then
+    && ! grep -q '^UNLINK:' <<< "${dry_output}"; then
     if (( dry_rc != 0 )); then
       log_err "${pkg_base}: stow dry-run failed"
       return 1
@@ -668,8 +655,8 @@ _stow_exec() {
 
   # restow: skip if already fully stowed with no conflicts.
   if [[ "${mode}" == restow ]] \
-       && ! grep -q 'existing target' <<< "${dry_output}" \
-       && is_stowed "$1"; then
+    && ! grep -q 'existing target' <<< "${dry_output}" \
+    && is_stowed "$1"; then
     log_info "${pkg_base}: already stowed, no changes needed"
     return 0
   fi
@@ -697,9 +684,9 @@ _stow_exec() {
     done <<< "${dry_output}"
 
     if ! "${has_actions}" \
-        && grep -q 'existing target' <<< "${dry_output}"; then
+      && grep -q 'existing target' <<< "${dry_output}"; then
       log_info "[dry-run]   (exact links hidden by conflicts" \
-               "— will be created after removal)"
+        "— will be created after removal)"
     fi
     return 0
   fi
@@ -770,7 +757,7 @@ _offer_shell_switch() {
 
   if ! grep -qx "${zsh_path}" /etc/shells 2>/dev/null; then
     if printf '%s\n' "${zsh_path}" \
-       | sudo tee -a /etc/shells >/dev/null 2>&1; then
+      | sudo tee -a /etc/shells >/dev/null 2>&1; then
       log_ok "Added ${zsh_path} to /etc/shells"
     else
       log_warn "Cannot add to /etc/shells (need sudo)"
@@ -996,14 +983,10 @@ cmd_status() {
   if _has_stow; then
     local stow_ver
     stow_ver=$(stow --version 2>/dev/null \
-               | head -1 | awk '{print $NF}') || true
+      | head -1 | awk '{print $NF}') || true
     _status_ok "GNU Stow  ${stow_ver}"
   else
     _status_missing "GNU Stow"
-  fi
-
-  if ! _has_stow; then
-    log_warn "Cannot check package status — GNU Stow not installed."
     log_info "Run: ./setup.sh install --all"
     return 0
   fi
@@ -1030,7 +1013,7 @@ cmd_status() {
     local other_pkg
     for other_pkg in "${PKG_ALL[@]}"; do
       if [[ -z "${pkg_stowed[${other_pkg}]+set}" ]] \
-           && is_stowed "${other_pkg}"; then
+        && is_stowed "${other_pkg}"; then
         total_stowed=$(( total_stowed + 1 ))
       fi
     done
@@ -1066,39 +1049,39 @@ cmd_status() {
 
 show_help() {
   printf '%b\n' \
-         "${_BOLD}oh-my-workspace setup${_RESET}" '' \
-         'Usage:' \
-         '  ./setup.sh <command> [flags] [packages]' '' \
-         "${_BOLD}Commands:${_RESET}" \
-         '  install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages' \
-         '  uninstall [--all] [--dry-run] [<pkg>...]             Unstow packages' \
-         '  status    [<pkg>...]                                 Show status and symlinks' \
-         '  help                                                 Show this help' '' \
-         "${_BOLD}Flags:${_RESET}" \
-         '  --all      Apply to all packages (install / uninstall)' \
-         '  --force    Restow even if already stowed (install only).' \
-         '             Runs stow -R; conflicts at target paths are deleted.' \
-         '             Use after adding new dotfiles to a package dir.' \
-         '  --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked/unlinked' '' \
-         "${_BOLD}Packages${_RESET} (base name or full category/name):" \
-         '  shell:   zsh  starship' \
-         '  editor:  vim  emacs' \
-         '  term:    ghostty' \
-         '  tool:    git  lazygit  ripgrep  yazi' \
-         '  lang:    uv  bun' '' \
-         "${_BOLD}Examples:${_RESET}" \
-         '  ./setup.sh install --all                    Prereqs + brew + stow all packages' \
-         '  ./setup.sh install zsh git                  Stow specific packages' \
-         '  ./setup.sh install --force zsh              Restow (pick up new dotfiles)' \
-         '  ./setup.sh install --force --all            Restow everything' \
-         '  ./setup.sh install --dry-run zsh            Preview what install would do' \
-         '  ./setup.sh install --force --dry-run --all  Preview a full restow' \
-         '  ./setup.sh uninstall --all                  Unstow all' \
-         '  ./setup.sh uninstall --dry-run zsh          Preview what uninstall would do' \
-         '  ./setup.sh status                           Full status with symlinks' \
-         '  ./setup.sh status zsh                       Status for one package' '' \
-         "${_BOLD}Note:${_RESET}" \
-         '  install without packages or --all shows this help.'
+    "${_BOLD}oh-my-workspace setup${_RESET}" '' \
+    'Usage:' \
+    '  ./setup.sh <command> [flags] [packages]' '' \
+    "${_BOLD}Commands:${_RESET}" \
+    '  install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages' \
+    '  uninstall [--all] [--dry-run] [<pkg>...]             Unstow packages' \
+    '  status    [<pkg>...]                                 Show status and symlinks' \
+    '  help                                                 Show this help' '' \
+    "${_BOLD}Flags:${_RESET}" \
+    '  --all      Apply to all packages (install / uninstall)' \
+    '  --force    Restow even if already stowed (install only).' \
+    '             Runs stow -R; conflicts at target paths are deleted.' \
+    '             Use after adding new dotfiles to a package dir.' \
+    '  --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked/unlinked' '' \
+    "${_BOLD}Packages${_RESET} (base name or full category/name):" \
+    '  shell:   zsh  starship' \
+    '  editor:  vim  emacs' \
+    '  term:    ghostty' \
+    '  tool:    git  lazygit  ripgrep  yazi' \
+    '  lang:    uv  bun' '' \
+    "${_BOLD}Examples:${_RESET}" \
+    '  ./setup.sh install --all                    Prereqs + brew + stow all packages' \
+    '  ./setup.sh install zsh git                  Stow specific packages' \
+    '  ./setup.sh install --force zsh              Restow (pick up new dotfiles)' \
+    '  ./setup.sh install --force --all            Restow everything' \
+    '  ./setup.sh install --dry-run zsh            Preview what install would do' \
+    '  ./setup.sh install --force --dry-run --all  Preview a full restow' \
+    '  ./setup.sh uninstall --all                  Unstow all' \
+    '  ./setup.sh uninstall --dry-run zsh          Preview what uninstall would do' \
+    '  ./setup.sh status                           Full status with symlinks' \
+    '  ./setup.sh status zsh                       Status for one package' '' \
+    "${_BOLD}Note:${_RESET}" \
+    '  install without packages or --all shows this help.'
 }
 
 # -----------------------------------------------------------------------------

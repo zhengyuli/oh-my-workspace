@@ -1,5 +1,5 @@
 # 40-plugins.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-04-06 21:18:15 Monday by zhengyu.li>
+# Time-stamp: <2026-04-06 21:52:21 Monday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management - Bootstrap, load, and configure plugins
 #
@@ -144,8 +144,7 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
   ' --icons "$realpath" 2>/dev/null; fi'
 
 # (hide sensitive ones)
-zstyle ':fzf-tab:complete:(-command-|-parameter-'\
-  '|-brace-parameter-|export|unset|expand):*' \
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
   fzf-preview \
   'if [[ "${(U)word}" =~ '\
   '(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pre-setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-04 13:29:08 Saturday by zhengyu.li>
+# Time-stamp: <2026-04-06 22:13:33 Monday by zhengyu.li>
 # =============================================================================
 # Claude Code Pre-Setup
 #
@@ -296,7 +296,7 @@ _apply_post_fixes() {
     | .env.ENABLE_TOOL_SEARCH = "0"
     | .env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1"
     | .env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"' \
-    "$settings" > "$tmp"; then
+      "$settings" > "$tmp"; then
     _fail "jq failed to process settings.json"
     return 1
   fi
