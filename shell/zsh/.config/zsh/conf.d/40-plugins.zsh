@@ -1,5 +1,5 @@
 # 40-plugins.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-04-06 21:52:21 Monday by zhengyu.li>
+# Time-stamp: <2026-04-06 22:16:45 Monday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management - Bootstrap, load, and configure plugins
 #
@@ -146,8 +146,7 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
 # (hide sensitive ones)
 zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
   fzf-preview \
-  'if [[ "${(U)word}" =~ '\
-  '(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\
+  'if [[ "${(U)word}" =~ (TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\
   ' print "(hidden)"; else print -r -- "${(P)word}"; fi'
 
 # Kill: preview process info (BSD-compatible ps flags for macOS)
