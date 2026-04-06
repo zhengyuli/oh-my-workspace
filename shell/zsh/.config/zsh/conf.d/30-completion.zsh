@@ -98,8 +98,6 @@ zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 # Kill completion — canonical list-colors pattern from zsh Guide (Ch. 6)
 zstyle ':completion:*:*:kill:*:processes' list-colors \
   '=(#b) #([0-9]#)*=0=01;31'
-# Fallback menu for kill when fzf-tab is disabled (dead code otherwise)
-zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*' force-list always
 # Insert-ids controls PID insertion behavior (not display)
 zstyle ':completion:*:*:kill:*' insert-ids single

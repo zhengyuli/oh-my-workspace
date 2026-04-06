@@ -145,7 +145,7 @@ zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
 
 # (hide sensitive ones)
 zstyle ':fzf-tab:complete:(-command-|-parameter-'\
-'|-brace-parameter-|export|unset|expand):*' \
+  '|-brace-parameter-|export|unset|expand):*' \
   fzf-preview \
   'if [[ "${(U)word}" =~ '\
   '(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\
