@@ -319,10 +319,10 @@ Use `defconst` for named constants.
 
 ```elisp
 ;; WRONG
-(if (> length 80)
+(if (> length 79)
 
 ;; CORRECT
-(defconst omw-max-line-length 80
+(defconst omw-max-line-length 79
   "Maximum line length for Emacs Lisp files.")
 (if (> length omw-max-line-length)
 ```
@@ -361,7 +361,7 @@ multiple sections of the same name.
 ;; WRONG — duplicate section at Level 2
 ;; --- Font Setup ---
 (set-face-attribute 'default nil :height 120)
-;; --- Other Config ;;
+;; --- Other Config ---
 (global-display-line-numbers-mode t)
 ;; --- Font Setup ---              ← same name reused
 (set-face-attribute 'default nil :width 'normal)
@@ -370,7 +370,7 @@ multiple sections of the same name.
 ;; --- Font Setup ---
 (set-face-attribute 'default nil :height 120)
 (set-face-attribute 'default nil :width 'normal)
-;; --- Other Config ;;
+;; --- Other Config ---
 (global-display-line-numbers-mode t)
 ```
 

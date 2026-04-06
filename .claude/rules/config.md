@@ -267,7 +267,12 @@ option10 = value10
 
 ### Secrets Management
 
-Never commit sensitive data. Use split-file strategy.
+Never commit sensitive data.
+
+**Prefer environment variables** for secrets — this is the universal approach
+that works regardless of tool.
+
+For git specifically, use the split-file strategy with `[include]`:
 
 ```conf
 # Main config (committed)

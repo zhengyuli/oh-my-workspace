@@ -603,6 +603,8 @@ Read secrets from environment variables with safe defaults.
 API_KEY="${API_KEY:-}"
 ```
 
+**Sensitive types**: API keys, tokens, passwords, private keys, certificates.
+
 ## Shell Options
 
 ### Conventions

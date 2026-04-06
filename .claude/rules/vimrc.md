@@ -18,9 +18,20 @@ References: [Google Vimscript Style Guide](https://google.github.io/styleguide/v
 
 ```
 " filename -*- mode: vim; -*-
-" Time-stamp: <2026-03-31 19:58:58 Tuesday by zhengyu.li>
+" Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
 " =============================================================================
 " Title - Brief description
+"
+" Author: zhengyu li <lizhengyu419@outlook.com>
+" Keywords: keyword1, keyword2
+"
+" Copyright (C) 2026 zhengyu li
+"
+" History:
+"   2026-MM-DD HH:MM zhengyu li <lizhengyu419@outlook.com> created.
+"
+" Commentary:
+"   Detailed description of what this config does.
 "
 " Location: ~/.config/vim/vimrc
 " Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in 00-env.zsh)
@@ -271,6 +282,23 @@ Each section title must be unique within the file at every delimiter level
 (Level 1 and Level 2). Group related settings together — do not create
 multiple sections of the same name.
 
+```vim
+" WRONG — duplicate section at Level 2
+" --- Mappings ---
+nnoremap j gj
+" --- Options ---
+set number
+" --- Mappings ---              ← same name reused
+nnoremap k gk
+
+" CORRECT
+" --- Mappings ---
+nnoremap j gj
+nnoremap k gk
+" --- Options ---
+set number
+```
+
 ### Validation at Boundaries
 
 Validate inputs at system boundaries in script-local functions.
@@ -330,6 +358,11 @@ set timeoutlen=4200
 
 Group by semantic category. Align columns for readability.
 
+**Exception to no-align rule**: Highlight definitions are exempt from the
+"Don't: Align Values" anti-pattern. Column alignment across `guifg`/`guibg`/
+`gui` fields enables visual scanning of the color table — the value here
+outweighs the diff-noise concern.
+
 ```vim
 " --- Core ---
 hi Normal          guifg=#f8f8f2  guibg=#282a36  gui=NONE
@@ -353,6 +386,9 @@ set shiftwidth=4
 set tabstop=4
 set shiftwidth=4
 ```
+
+**Exception**: `hi` (highlight) definitions — see
+[Highlight Definitions](#highlight-definitions).
 
 ### Don't: Use Global Variables for Internal State
 
