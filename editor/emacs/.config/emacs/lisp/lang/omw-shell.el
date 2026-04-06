@@ -38,6 +38,7 @@ if not present."
 (defun omw/sh-mode-setup ()
   "Apply custom settings for shell script mode."
   (setq-local sh-basic-offset 2)
+  (setq-local sh-indent-after-continuation 'always)
   (apply #'omw/tools-check-and-prompt omw/sh-tool-specs))
 
 (use-package sh-script
