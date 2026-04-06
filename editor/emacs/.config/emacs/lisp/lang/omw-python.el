@@ -80,6 +80,11 @@
 (defun omw/ruff-format-string (content filename)
   "Format CONTENT as Python using ruff with stdin-filename FILENAME.
 Returns the formatted string, or nil if formatting fails."
+  (unless (stringp content)
+    (error "omw/ruff-format-string: CONTENT must be a string, got %S" content))
+  (unless (stringp filename)
+    (error "omw/ruff-format-string: FILENAME must be a string, got %S"
+           filename))
   (with-temp-buffer
     (insert content)
     (when (zerop (call-process-region
@@ -90,6 +95,9 @@ Returns the formatted string, or nil if formatting fails."
 
 (defun omw/replace-buffer-content (new-content)
   "Replace current buffer content with NEW-CONTENT using diff-based replace."
+  (unless (stringp new-content)
+    (error "omw/replace-buffer-content: NEW-CONTENT must be a string, got %S"
+           new-content))
   (let ((src (generate-new-buffer " *ruff*")))
     (unwind-protect
         (progn
