@@ -1,5 +1,5 @@
 # starship.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-24 21:30:00 Mon by zhengyu.li>
+# Time-stamp: <2026-03-24 21:30:00 Monday by zhengyu.li>
 #
 # =============================================================================
 # Starship - Cross-shell prompt customization
@@ -26,8 +26,6 @@
 # General Settings
 # -----------------------------------------------------------------------------
 
-format = "$all${custom.rdate}${custom.rtime}$line_break$character"
-
 [directory]
 read_only = " 󰌾"
 
@@ -42,6 +40,12 @@ symbol = "✕ "
 
 [time]
 disabled = true
+
+# -----------------------------------------------------------------------------
+# Custom Modules
+# -----------------------------------------------------------------------------
+
+format = "$all${custom.rdate}${custom.rtime}$line_break$character"
 
 [custom.rdate]
 command = "date '+%Y-%m-%d'"

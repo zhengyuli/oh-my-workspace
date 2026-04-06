@@ -1,5 +1,5 @@
 # 40-plugins.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-28 15:46:57 Saturday by zhengyu.li>
+# Time-stamp: <2026-04-06 21:18:15 Monday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management - Bootstrap, load, and configure plugins
 #

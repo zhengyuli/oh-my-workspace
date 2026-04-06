@@ -42,7 +42,7 @@ readonly MIN_MACOS_VERSION="13.0"
 _err_handler() {
   local -r code=$?
   printf '[error] %s() line %d: exit %d\n' \
-         "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
 

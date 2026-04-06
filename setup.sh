@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-01 13:11:14 Wednesday by zhengyu.li>
+# Time-stamp: <2026-04-06 20:57:52 Monday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -43,6 +43,10 @@ readonly NETWORK_TIMEOUT=60
 # --- Homebrew Version ---
 readonly MIN_HOMEBREW_MAJOR=4
 readonly MIN_HOMEBREW_MINOR=4
+
+# --- Xcode CLI ---
+readonly XCODE_POLL_INTERVAL=5
+readonly XCODE_POLL_MAX=600
 
 # --- Packages ---
 readonly -a PKG_ALL=(
@@ -90,9 +94,7 @@ readonly _RESET=$'\033[0m'
 _err_handler() {
   local -r code=$?
   printf '  %s[error]%s %s() line %d: exit %d\n' \
-         "$_RED" "$_RESET" \
-         "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" \
-         >&2
+    "$_RED" "$_RESET" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
 
@@ -279,17 +281,13 @@ _bootstrap_homebrew_env() {
 # Prerequisite Installation
 # -----------------------------------------------------------------------------
 
-readonly XCODE_POLL_INTERVAL=5
-readonly XCODE_POLL_MAX=600
-
 # Install Xcode CLI and poll until available (timeout XCODE_POLL_MAX seconds).
 _install_xcode_cli() {
   log_info "Installing Xcode Command Line Tools..."
   log_warn "Complete the dialog that appears."
 
-  if ! xcode-select --install 2>/dev/null; then
-    : # already installed — ignore error
-  fi
+  # xcode-select returns non-zero when already installed
+  xcode-select --install 2>/dev/null || true
 
   local waited=0
   while ! _has_xcode_cli; do
