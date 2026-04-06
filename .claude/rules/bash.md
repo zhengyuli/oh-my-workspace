@@ -104,7 +104,7 @@ _cleanup() { rm -f "$_tmp_file"; }
 
 ## Line Length
 
-79 characters maximum. 
+79 characters maximum.
 
 Exceptions:
 
@@ -304,7 +304,7 @@ fi
 readonly DEFAULT_TIMEOUT=30
 readonly MAX_THRESHOLD=100
 sleep "$DEFAULT_TIMEOUT"
-if [[ "$count" -gt "$MAX_THRESHOLD" ]]; then
+if (( count > MAX_THRESHOLD )); then
   ...
 fi
 ```
@@ -455,6 +455,8 @@ Read secrets from environment variables with safe defaults.
 ```bash
 API_KEY="${API_KEY:-}"
 ```
+
+**Sensitive types**: API keys, tokens, passwords, private keys, certificates.
 
 ### Umask
 

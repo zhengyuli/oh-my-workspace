@@ -28,6 +28,9 @@ Standards for TOML configuration files (starship, uv, bun, yazi, etc.).
 #
 # Commentary:
 #   Detailed description of what this config does.
+#
+# References:
+#   1. ...
 # =============================================================================
 ```
 
@@ -182,6 +185,8 @@ Consistent spacing between TOML structural elements:
   comment for logical grouping within a table instead.
 - **Between logical groups** inside a table: one blank line preceded by
   a comment separator.
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
 
 ```toml
 [mgr]
