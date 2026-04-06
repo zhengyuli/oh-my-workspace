@@ -113,7 +113,7 @@ _general_ui() {
 
   # Set sidebar icon size to medium (1=small, 2=medium, 3=large)
   defaults write NSGlobalDomain NSTableViewDefaultSizeMode \
-      -int "${SIDEBAR_ICON_SIZE_MEDIUM}"
+    -int "${SIDEBAR_ICON_SIZE_MEDIUM}"
 
   # Always show scrollbars
   defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
@@ -148,7 +148,7 @@ _keyboard() {
 
   # Enable full keyboard access for all controls (Tab through all UI elements)
   defaults write NSGlobalDomain AppleKeyboardUIMode \
-      -int "${KEYBOARD_ACCESS_FULL}"
+    -int "${KEYBOARD_ACCESS_FULL}"
 
   # Fast keyboard repeat (2 ≈ 33ms; 1 is max but causes accidental input)
   defaults write NSGlobalDomain KeyRepeat -int "${KEY_REPEAT_FAST}"
@@ -167,22 +167,22 @@ _trackpad_mouse() {
 
   # Enable tap to click
   defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
-      Clicking -bool true
+    Clicking -bool true
   defaults -currentHost write NSGlobalDomain \
-      com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
+    com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
   defaults write NSGlobalDomain \
-      com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
+    com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
 
   # Right-click via two-finger tap (corner mapping removed - avoids accidents)
   defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
-      TrackpadRightClick -bool true
+    TrackpadRightClick -bool true
   defaults -currentHost write NSGlobalDomain \
-      com.apple.trackpad.enableSecondaryClick -bool true
+    com.apple.trackpad.enableSecondaryClick -bool true
 
   # Enable spring loading for directories (drag & hover to open)
   defaults write NSGlobalDomain com.apple.springing.enabled -bool true
   defaults write NSGlobalDomain \
-      com.apple.springing.delay -float "${SPRING_LOAD_NO_DELAY}"
+    com.apple.springing.delay -float "${SPRING_LOAD_NO_DELAY}"
 }
 
 # -----------------------------------------------------------------------------
@@ -193,9 +193,9 @@ _screen() {
 
   # Require password immediately after sleep or screen saver begins
   defaults write com.apple.screensaver \
-      askForPassword -int "${SCREENSAVER_PASSWORD_REQUIRED}"
+    askForPassword -int "${SCREENSAVER_PASSWORD_REQUIRED}"
   defaults write com.apple.screensaver \
-      askForPasswordDelay -int "${SCREENSAVER_PASSWORD_DELAY_IMMEDIATE}"
+    askForPasswordDelay -int "${SCREENSAVER_PASSWORD_DELAY_IMMEDIATE}"
 
   # Save screenshots to Desktop in PNG format, without drop shadow
   defaults write com.apple.screencapture location -string "${HOME}/Desktop"
@@ -251,13 +251,13 @@ _finder() {
 
   # Expand "General", "Open with", and "Sharing & Permissions" in File Info
   defaults write com.apple.finder FXInfoPanesExpanded -dict \
-           General -bool true \
-           OpenWith -bool true \
-           Privileges -bool true
+    General -bool true \
+    OpenWith -bool true \
+    Privileges -bool true
 
   # Speed up Quick Look panel animation
   defaults write NSGlobalDomain \
-      QLPanelAnimationDuration -float "${QUICK_LOOK_NO_ANIMATION}"
+    QLPanelAnimationDuration -float "${QUICK_LOOK_NO_ANIMATION}"
 }
 
 # -----------------------------------------------------------------------------
@@ -274,14 +274,14 @@ _dock() {
 
   # Speed up Mission Control animations
   defaults write com.apple.dock \
-      expose-animation-duration -float "${EXPOSE_ANIMATION_FAST}"
+    expose-animation-duration -float "${EXPOSE_ANIMATION_FAST}"
 
   # Auto-hide Dock instantly (no delay, no animation)
   defaults write com.apple.dock autohide -bool true
   defaults write com.apple.dock autohide-delay \
     -float "${DOCK_AUTOHIDE_NO_DELAY}"
   defaults write com.apple.dock \
-      autohide-time-modifier -float "${DOCK_AUTOHIDE_NO_ANIMATION}"
+    autohide-time-modifier -float "${DOCK_AUTOHIDE_NO_ANIMATION}"
 
   # Make Dock icons of hidden applications translucent
   defaults write com.apple.dock showhidden -bool true
@@ -317,7 +317,7 @@ _terminal() {
 
   # Only use UTF-8 (NSStringEncoding 4 = NSUTF8StringEncoding)
   defaults write com.apple.Terminal \
-      StringEncodings -array "${STRING_ENCODING_UTF8}"
+    StringEncodings -array "${STRING_ENCODING_UTF8}"
 
   # Enable Secure Keyboard Entry; blocks other processes reading keystrokes
   # NOTE: may interfere with some tmux attach setups; disable if needed
@@ -346,9 +346,9 @@ _textedit() {
   # Plain text mode + UTF-8 by default
   defaults write com.apple.TextEdit RichText -int "${PLAIN_TEXT_MODE}"
   defaults write com.apple.TextEdit \
-      PlainTextEncoding -int "${TEXT_ENCODING_UTF8}"
+    PlainTextEncoding -int "${TEXT_ENCODING_UTF8}"
   defaults write com.apple.TextEdit \
-      PlainTextEncodingForWrite -int "${TEXT_ENCODING_UTF8}"
+    PlainTextEncodingForWrite -int "${TEXT_ENCODING_UTF8}"
 }
 
 # -----------------------------------------------------------------------------
@@ -360,13 +360,13 @@ _app_store() {
   # Check for updates daily
   defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
   defaults write com.apple.SoftwareUpdate \
-      ScheduleFrequency -int "${UPDATE_CHECK_DAILY}"
+    ScheduleFrequency -int "${UPDATE_CHECK_DAILY}"
 
   # Auto-install security/critical updates only; leave regular updates manual
   defaults write com.apple.SoftwareUpdate \
-      AutomaticDownload -int "${AUTO_DOWNLOAD_DISABLED}"
+    AutomaticDownload -int "${AUTO_DOWNLOAD_DISABLED}"
   defaults write com.apple.SoftwareUpdate \
-      CriticalUpdateInstall -int "${CRITICAL_UPDATES_AUTO}"
+    CriticalUpdateInstall -int "${CRITICAL_UPDATES_AUTO}"
   defaults write com.apple.commerce AutoUpdate -bool false
 }
 
@@ -389,8 +389,8 @@ _messages() {
   # Disable smart quotes and continuous spell checking
   defaults write com.apple.messageshelper.MessageController \
     SOInputLineSettings -dict-add \
-           "automaticQuoteSubstitutionEnabled" -bool false \
-           "continuousSpellCheckingEnabled" -bool false
+    "automaticQuoteSubstitutionEnabled" -bool false \
+    "continuousSpellCheckingEnabled" -bool false
 }
 
 # -----------------------------------------------------------------------------
@@ -401,16 +401,17 @@ _restart_apps() {
 
   local app
   for app in \
-      "cfprefsd" \
-      "Dock" \
-      "Finder" \
-      "Messages" \
-      "Photos" \
-      "SystemUIServer" \
-      "Terminal"; do
-      if ! killall "${app}" 2>/dev/null; then
-          : # Application not running, skip
-      fi
+    "cfprefsd" \
+    "Dock" \
+    "Finder" \
+    "Messages" \
+    "Photos" \
+    "SystemUIServer" \
+    "Terminal"; do
+    if ! killall "${app}" 2>/dev/null; then
+      # Application not running, skip
+      :
+    fi
   done
 }
 
