@@ -70,7 +70,7 @@ wave dashes, and other CJK-specific punctuation marks.")
 
 ;; --- Font Setup ---
 (defun omw/find-available-font (font-list)
-  "Return first available font from FONT-LIST."
+  "Return first available font from FONT-LIST, or nil if none found."
   (cl-find-if (lambda (font)
                 (and font
                      (x-list-fonts font)))

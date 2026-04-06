@@ -51,7 +51,6 @@
   (require 'dirvish-icons)
   (require 'dirvish-collapse)
 
-  ;; Header and mode line configuration
   (setq dirvish-use-header-line 'global
         dirvish-header-line-format '(:left (path) :right (free-space))
         dirvish-mode-line-bar-image-width 0
@@ -59,7 +58,6 @@
         '(:left (sort file-time " " file-size symlink)
           :right (omit yank index)))
 
-  ;; Display attributes and performance
   (setq dirvish-attributes
         '(vc-state subtree-state nerd-icons git-msg
           file-modes file-time file-size)
