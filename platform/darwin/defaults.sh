@@ -107,7 +107,8 @@ _general_ui() {
 
   # Rebuild the Launch Services database to remove duplicate entries
   # from "Open With" menus across all applications.
-  # shellcheck disable=SC2312  # intentional single-line path, exempt from 79-char limit
+  # shellcheck disable=SC2312
+  # intentional single-line path, exempt from 79-char limit
   local -r _lsreg='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister'
   "${_lsreg}" -r -domain local -domain system -domain user
 
