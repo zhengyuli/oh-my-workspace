@@ -207,7 +207,8 @@
 # --- Language-Specific Hunk Headers ---
 [diff "golang"]
     # Go function detection for better diff hunk headers
-    xfuncname = "^func[[:space:]]+\\([^)]+\\)[[:space:]]+([^_(]+)"
+    # Matches both top-level functions and methods with receivers
+    xfuncname = "^func[[:space:]]+(\\([^)]+\\)[[:space:]]+)?([^_(]+)"
 
 # -----------------------------------------------------------------------------
 # Merge Settings

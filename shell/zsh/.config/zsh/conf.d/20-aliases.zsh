@@ -71,7 +71,7 @@ alias e='emacs -nw'
 # Utilities
 # -----------------------------------------------------------------------------
 
-alias path='printf "%s\n" "${path[@]}"'
+alias path='print -l "${path[@]}"'
 
 if command -v bat &>/dev/null; then
   alias cat='bat --style=plain --paging=never'
@@ -80,4 +80,8 @@ fi
 
 alias reload-zsh='exec zsh -l'
 
-alias brew-upgrade='brew update && brew upgrade && brew cleanup'
+brew-upgrade() {
+  brew update
+  brew upgrade
+  brew cleanup
+}

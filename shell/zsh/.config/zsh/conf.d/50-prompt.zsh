@@ -28,7 +28,8 @@ if command -v starship &>/dev/null; then
 # --- Window Title ---
 # Not all terminals support OSC 0 title escapes; check known-good ones.
 # Use add-zsh-hook (NOT precmd() directly) to keep starship's hook.
-  if [[ "$TERM_PROGRAM" == (iTerm.app|WezTerm|ghostty|Apple_Terminal) ]] || \
+  if [[ "$TERM_PROGRAM" == \
+       (iTerm.app|WezTerm|ghostty|Apple_Terminal) ]] || \
      [[ "$TERM_PROGRAM" == tmux ]] || \
      [[ "$TERM" == alacritty* ]] || \
      [[ "$TERM" == kitty* ]] || \
