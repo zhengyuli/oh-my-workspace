@@ -1,5 +1,5 @@
 ;;; omw-edit.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-04-06 20:34:41 Monday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; omw-edit.el - Editing enhancements and smart text operations.
@@ -45,10 +45,12 @@ Indent, delete trailing whitespace, convert tabs to spaces."
 ;; --- Copy Region ---
 (defun omw/copy-region ()
   "Copy active region to kill ring."
+  (interactive)
   (copy-region-as-kill (region-beginning) (region-end)))
 
 (defun omw/copy-current-line ()
   "Copy current line to kill ring."
+  (interactive)
   (let ((end (line-end-position)))
     (copy-region-as-kill (line-beginning-position) end)))
 
