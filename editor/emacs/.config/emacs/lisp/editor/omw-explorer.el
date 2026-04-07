@@ -92,10 +92,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
 
 (defun omw/dired-mode-setup ()
   "Apply custom settings for dired mode."
-  (dired-omit-mode (if omw/omit-global-mode 1 -1))
-  ;; Remote dired buffers should not auto-revert to avoid slow network I/O
-  (setq-local dired-auto-revert-buffer
-              (not (file-remote-p default-directory))))
+  (dired-omit-mode (if omw/omit-global-mode 1 -1)))
 
 ;; --- Dired ---
 (use-package dired
@@ -161,7 +158,8 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   (setq dired-dwim-target t
         dired-recursive-copies 'always
         dired-recursive-deletes 'always
-        dired-deletion-confirmer #'y-or-n-p)
+        dired-deletion-confirmer #'y-or-n-p
+        dired-auto-revert-buffer (not (file-remote-p default-directory)))
 
   ;; --- Omit Filter ---
   ;; Omit filter rules:
