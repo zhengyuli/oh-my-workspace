@@ -1,0 +1,17 @@
+# brew-upgrade -*- mode: sh; -*-
+# Time-stamp: <2026-04-07 00:00:00 Tuesday by zhengyu.li>
+# =============================================================================
+# Brew Upgrade - Update, upgrade, and cleanup Homebrew packages
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Copyright (C) 2026 zhengyu li
+#
+# Dependencies: brew
+#
+# Examples:
+#   brew-upgrade
+# =============================================================================
+emulate -L zsh
+brew update
+brew upgrade
+brew cleanup

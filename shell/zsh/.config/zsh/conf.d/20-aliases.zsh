@@ -1,5 +1,5 @@
 # 20-aliases.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-28 22:10:58 Saturday by zhengyu.li>
+# Time-stamp: <2026-04-07 07:12:22 Tuesday by zhengyu.li>
 # =============================================================================
 # Command Aliases - File, directory, editor, and utility shortcuts
 #
@@ -79,9 +79,3 @@ if command -v bat &>/dev/null; then
 fi
 
 alias reload-zsh='exec zsh -l'
-
-brew-upgrade() {
-  brew update
-  brew upgrade
-  brew cleanup
-}

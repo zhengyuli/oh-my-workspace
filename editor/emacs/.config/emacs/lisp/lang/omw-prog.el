@@ -123,6 +123,7 @@ Updates copyright, timestamp, and untabifies."
   "Minor mode for programming buffers to run custom before-save hooks."
   :lighter " SaveHook"
   :global nil
+  :group 'omw-emacs
   ;; Separate minor mode ensures buffer-local hook lifecycle:
   ;; the hook is removed when the mode is disabled or the buffer is killed.
   (if omw/prog-before-save-mode
