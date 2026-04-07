@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-06 21:54:42 Monday by zhengyu.li>
+# Time-stamp: <2026-04-07 19:58:35 Tuesday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -237,15 +237,15 @@ validate_pkgs() {
 # -----------------------------------------------------------------------------
 
 _has_xcode_cli() {
-  xcode-select -p &>/dev/null
+  xcode-select -p >/dev/null 2>&1
 }
 
 _has_homebrew() {
-  command -v brew &>/dev/null
+  command -v brew >/dev/null 2>&1
 }
 
 _has_stow() {
-  command -v stow &>/dev/null
+  command -v stow >/dev/null 2>&1
 }
 
 # -----------------------------------------------------------------------------
@@ -374,8 +374,8 @@ _ensure_homebrew_version() {
   fi
   rm -f "$uninstaller"
 
-  # Return 1 intentionally so the caller (ensure_prerequisites) proceeds
-  # to re-install Homebrew via _install_homebrew.
+  # Clear the command hash table so command -v brew reflects the current
+  # PATH state rather than a stale cached entry from before uninstall.
   hash -r
 
   # Verify brew is truly gone from PATH after uninstall.
