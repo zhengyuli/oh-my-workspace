@@ -1,5 +1,5 @@
 # 50-prompt.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-04-07 07:15:23 Tuesday by zhengyu.li>
 # =============================================================================
 # Prompt Configuration - Starship primary, vcs_info fallback
 #
@@ -25,11 +25,9 @@
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 
-# --- Window Title ---
-# Not all terminals support OSC 0 title escapes; check known-good ones.
-# Use add-zsh-hook (NOT precmd() directly) to keep starship's hook.
-  if [[ "$TERM_PROGRAM" == \
-       (iTerm.app|WezTerm|ghostty|Apple_Terminal) ]] || \
+  # Not all terminals support OSC 0 title escapes; check known-good ones.
+  local _osc_terms='(iTerm.app|WezTerm|ghostty|Apple_Terminal)'
+  if [[ "$TERM_PROGRAM" == ${~_osc_terms} ]] || \
      [[ "$TERM_PROGRAM" == tmux ]] || \
      [[ "$TERM" == alacritty* ]] || \
      [[ "$TERM" == kitty* ]] || \
@@ -38,9 +36,9 @@ if command -v starship &>/dev/null; then
     _omw_set_window_title() { print -Pn "\e]0;%~\a" }
     add-zsh-hook precmd _omw_set_window_title
   fi
+  unset _osc_terms
 else
-# --- Fallback: Native VCS Info Prompt ---
-# Used when no external prompt tools are installed. No configuration needed.
+  # Used when no external prompt tools are installed. No configuration needed.
   autoload -Uz vcs_info add-zsh-hook
   _omw_vcs_info_precmd() { vcs_info }
   add-zsh-hook precmd _omw_vcs_info_precmd

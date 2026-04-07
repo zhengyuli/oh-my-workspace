@@ -1,5 +1,5 @@
 # 40-plugins.zsh -*- mode: sh; -*-
-# Time-stamp: <2026-04-06 22:16:45 Monday by zhengyu.li>
+# Time-stamp: <2026-04-07 07:53:36 Tuesday by zhengyu.li>
 # =============================================================================
 # Zinit Plugin Management - Bootstrap, load, and configure plugins
 #
@@ -134,45 +134,53 @@ zstyle ':fzf-tab:*' use-fzf-default-opts yes
 # Global preview window — per-command fzf-flags override where needed.
 zstyle ':fzf-tab:*' fzf-flags --preview-window=right:55%:wrap
 
-zstyle ':fzf-tab:complete:cd:*' fzf-preview \
+zstyle ':fzf-tab:complete:cd:*' \
+  fzf-preview \
   'eza -1 --color=always --icons "$realpath"'
 
 # (scoped to argument completion only)
-zstyle ':fzf-tab:complete:*:argument*' fzf-preview \
-  'if ! bat --color=always --style=plain --line-range=:50'\
-  ' "$realpath" 2>/dev/null; then eza -1 --color=always'\
-  ' --icons "$realpath" 2>/dev/null; fi'
+zstyle ':fzf-tab:complete:*:argument*' \
+  fzf-preview \
+  'if ! bat --color=always --style=plain --line-range=:50 "$realpath" 2>/dev/null; then' \
+  ' eza -1 --color=always --icons "$realpath" 2>/dev/null; fi'
 
 # (hide sensitive ones)
-zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-'\
-  '|export|unset|expand):*' \
+# Lines below exceed 79 chars: data-dense regex/preview, folding hurts readability.
+local _sensitive='(TOKEN|KEY|SECRET|PASSWORD|API|CREDENTIAL|PRIVATE|AUTH|DSN|CERT)'
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
   fzf-preview \
-  'if [[ "${(U)word}" =~ (TOKEN|KEY|SECRET|PASSWORD|API|'\
-  'CREDENTIAL|PRIVATE|AUTH|DSN|CERT) ]]; then'\
+  'if [[ ${(U)word} =~ '"${_sensitive}"' ]]; then' \
   ' print "(hidden)"; else print -r -- "${(P)word}"; fi'
+unset _sensitive
 
 # Kill: preview process info (BSD-compatible ps flags for macOS)
 zstyle ':completion:*:*:*:*:processes' \
   command "ps -u $USER -o pid,user,comm -w -w"
-zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-  'if [[ $group == "[process ID]" ]]; then'\
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
+  fzf-preview \
+  'if [[ $group == "[process ID]" ]]; then' \
   ' ps -p $word -o comm= 2>/dev/null; fi'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
   fzf-flags --preview-window=down:3:wrap
 
-zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' fzf-preview \
+zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' \
+  fzf-preview \
   'brew info $word 2>/dev/null'
 
-zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview \
+zstyle ':fzf-tab:complete:(\\|*/|)man:*' \
+  fzf-preview \
   'MANPAGER=cat man $word 2>/dev/null | head -50'
 
-zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' \
+  fzf-preview \
   'git diff --color=always $word'
-zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
+zstyle ':fzf-tab:complete:git-log:*' \
+  fzf-preview \
   'git log --oneline --color=always -20 $word'
-zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
-  'if ! git log --oneline --color=always $word'\
-  ' 2>/dev/null; then git show --color=always'\
+zstyle ':fzf-tab:complete:git-checkout:*' \
+  fzf-preview \
+  'if ! git log --oneline --color=always $word' \
+  ' 2>/dev/null; then git show --color=always' \
   ' $word 2>/dev/null; fi'
 
 # Switch groups with , and .
