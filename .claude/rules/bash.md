@@ -380,23 +380,35 @@ dir="$(dirname "$file")"
 
 ### Don't: Short-Circuit Control Flow
 
-Do not use `&&` or `||` as shorthand for conditionals.
-They obscure control flow intent: `&&` means "proceed only on success"
-and `||` means "proceed only on failure", but neither makes the
-branching logic readable at a glance.
+Do not use `&&` or `||` as shorthand for conditionals on **standalone
+statements**.  They obscure control flow intent: `&&` means "proceed only
+on success" and `||` means "proceed only on failure", but neither makes
+the branching logic readable at a glance.
+
+**This rule applies only to standalone statements** — `&&` / `||` inside
+`if`, `while`, or `until` conditions are boolean expressions and must
+NOT be split.
 
 ```bash
-# WRONG — control flow hidden behind operators
+# WRONG — standalone control flow hidden behind operators
 [[ -f "$file" ]] && cat "$file"
 [[ ! -d "$dir" ]] || mkdir -p "$dir"
 
-# CORRECT — explicit conditionals make intent obvious
+# CORRECT — explicit conditionals for standalone statements
 if [[ -f "$file" ]]; then
   cat "$file"
 fi
 if [[ ! -d "$dir" ]]; then
   mkdir -p "$dir"
 fi
+
+# CORRECT — boolean expressions inside if/while are fine, do NOT split
+if [[ ! -r "$file" ]] || [[ ! -s "$file" ]]; then
+  return 0
+fi
+while [[ -n "$line" ]] && [[ "$line" != "EOF" ]]; do
+  _process_line "$line"
+done
 ```
 
 ### Don't: End-of-Line Comments
