@@ -160,6 +160,8 @@ brew "coreutils"
 # macOS input source manager
 tap "laishulu/homebrew"
 brew "laishulu/homebrew/macism"
+# Deep clean and optimize your Mac
+brew "mole"
 
 # -----------------------------------------------------------------------------
 # Language Runtimes & Modern Toolchain
