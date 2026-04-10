@@ -169,8 +169,8 @@ window-inherit-working-directory = true
 window-inherit-font-size = true
 # Open new tabs adjacent to the current tab (not at the end)
 window-new-tab-position = current
-# Persist window layout (position, size, tabs, splits) across restarts
-window-save-state = always
+# Never persist window layout (position, size, tabs, splits) across restarts
+window-save-state = never
 # Confirm before closing any terminal surface to prevent accidental loss
 confirm-close-surface = true
 # Dim unfocused splits to 60% opacity for visual focus distinction
@@ -183,6 +183,8 @@ unfocused-split-opacity = 0.6
 # Slide-down overlay from the top of the main screen (like macOS Spotlight)
 quick-terminal-position = top
 quick-terminal-screen = mouse
+# 40% screen height, full width (secondary axis for top position)
+quick-terminal-size = 40%
 # 0.2s animation for snappy feel without being jarring
 quick-terminal-animation-duration = 0.2
 
