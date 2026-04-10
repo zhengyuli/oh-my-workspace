@@ -182,7 +182,7 @@ unfocused-split-opacity = 0.6
 
 # Slide-down overlay from the top of the main screen (like macOS Spotlight)
 quick-terminal-position = top
-quick-terminal-screen = main
+quick-terminal-screen = mouse
 # 0.2s animation for snappy feel without being jarring
 quick-terminal-animation-duration = 0.2
 

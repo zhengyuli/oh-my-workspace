@@ -28,7 +28,7 @@ This guide will configure the following components:
 |-------------------------|-------|---------------------------------------------------------------------|
 | **Plugin Marketplaces** | 3     | Official + community + GLM plugin sources                           |
 | **Plugins**             | 15    | Development tools, MCP integration, auxiliary features              |
-| **MCP Servers**         | 6     | Vision, search, web reader, documentation, browser, advanced search |
+| **MCP Servers**         | 7     | Vision, search, web reader, documentation, browser, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 3     | RTK (token savings), claude-hud (status bar), Happy (mobile client) |
 
@@ -172,7 +172,7 @@ claude plugin list
 
 ### Description
 
-MCP (Model Context Protocol) server configuration (6 total):
+MCP (Model Context Protocol) server configuration (7 total):
 
 **Auto-configured MCP (via GLM configuration in pre-setup.sh):**
 - `web-reader` - Web content reader
@@ -184,6 +184,7 @@ MCP (Model Context Protocol) server configuration (6 total):
 - `playwright` - Browser automation (via `playwright` plugin)
 
 **Independent configuration MCP (global):**
+- `markitdown` - Document/file conversion to Markdown (PDF, DOCX, PPTX, XLSX, etc.)
 - `tavily` - Advanced web search (optional)
 
 ### Configure tavily-search (Optional)
@@ -203,6 +204,25 @@ jq '.mcpServers | keys' ~/.claude.json
 ```
 
 **Reference:** [Tavily Official Site](https://tavily.com/)
+
+### Configure markitdown
+
+```bash
+# 1. Install markitdown CLI (standalone file conversion tool)
+uv tool install markitdown
+
+# 2. Install markitdown-mcp (MCP server for Claude Code)
+uv tool install markitdown-mcp
+
+# 3. Add global MCP configuration
+claude mcp add --scope user markitdown markitdown-mcp
+
+# 4. Verify
+markitdown --version
+claude mcp list | grep markitdown
+```
+
+**Reference:** [MarkItDown GitHub](https://github.com/microsoft/markitdown)
 
 ### Verify All MCP
 
@@ -341,7 +361,7 @@ set -euo pipefail
 
 readonly SCRIPT_NAME="Claude Code Environment Verification"
 readonly MIN_PLUGIN_COUNT=15
-readonly MIN_MCP_COUNT=4
+readonly MIN_MCP_COUNT=5
 
 # --- Logging ---
 _pass() { printf '  ✓ %s\n' "$*"; }
@@ -352,7 +372,7 @@ printf ' %s\n' "$SCRIPT_NAME"
 printf '=========================================\n'
 
 # 1. GLM Configuration Check
-printf '\n[1/8] GLM Configuration Check\n'
+printf '\n[1/9] GLM Configuration Check\n'
 if jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "GLM API endpoint configured"
 else
@@ -360,7 +380,7 @@ else
 fi
 
 # 2. Plugin Count Check
-printf '\n[2/8] Plugin Count Check\n'
+printf '\n[2/9] Plugin Count Check\n'
 if command -v claude >/dev/null 2>&1; then
   PLUGIN_COUNT="$(claude plugin list 2>/dev/null | grep -c '✔ enabled')"
   if (( PLUGIN_COUNT >= MIN_PLUGIN_COUNT )); then
@@ -373,7 +393,7 @@ else
 fi
 
 # 3. MCP Check
-printf '\n[3/8] MCP Check\n'
+printf '\n[3/9] MCP Check\n'
 if [[ -f ~/.claude.json ]]; then
   MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)"
   if (( MCP_COUNT >= MIN_MCP_COUNT )); then
@@ -386,7 +406,7 @@ else
 fi
 
 # 4. Hooks Check
-printf '\n[4/8] Hooks Check\n'
+printf '\n[4/9] Hooks Check\n'
 if jq -e '.hooks.PreToolUse' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "Hooks configured"
 else
@@ -394,7 +414,7 @@ else
 fi
 
 # 5. RTK Check
-printf '\n[5/8] RTK Check\n'
+printf '\n[5/9] RTK Check\n'
 if command -v rtk >/dev/null 2>&1; then
   _pass "RTK installed: $(rtk --version 2>&1 | head -1)"
 else
@@ -402,7 +422,7 @@ else
 fi
 
 # 6. Happy Check
-printf '\n[6/8] Happy Check\n'
+printf '\n[6/9] Happy Check\n'
 if command -v happy >/dev/null 2>&1; then
   _pass "Happy installed: $(happy --version 2>&1 | head -1)"
 else
@@ -410,15 +430,23 @@ else
 fi
 
 # 7. claude-hud Check
-printf '\n[7/8] claude-hud Check\n'
+printf '\n[7/9] claude-hud Check\n'
 if jq -e '.statusLine' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "claude-hud configured"
 else
   _fail "claude-hud not configured (run /claude-hud:setup)"
 fi
 
-# 8. Configuration File Format Check
-printf '\n[8/8] Configuration File Format Check\n'
+# 8. MarkItDown Check
+printf '\n[8/9] MarkItDown Check\n'
+if command -v markitdown-mcp >/dev/null 2>&1; then
+  _pass "markitdown-mcp installed"
+else
+  _fail "markitdown-mcp not installed (run: uv tool install markitdown-mcp)"
+fi
+
+# 9. Configuration File Format Check
+printf '\n[9/9] Configuration File Format Check\n'
 if jq empty ~/.claude/settings.json 2>/dev/null; then
   _pass "settings.json OK"
 else
@@ -562,7 +590,7 @@ rm -rf ~/.config/rtk/
 Your Claude Code environment is now fully configured with:
 - GLM model configuration
 - 15 plugins
-- 6 MCP servers
+- 7 MCP servers
 - RTK token optimization
 - claude-hud status bar
 - Happy mobile client
