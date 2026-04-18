@@ -27,7 +27,7 @@ This guide will configure the following components:
 | Component               | Count | Purpose                                                             |
 |-------------------------|-------|---------------------------------------------------------------------|
 | **Plugin Marketplaces** | 3     | Official + community + GLM plugin sources                           |
-| **Plugins**             | 15    | Development tools, MCP integration, auxiliary features              |
+| **Plugins**             | 16    | Development tools, MCP integration, auxiliary features, Obsidian    |
 | **MCP Servers**         | 7     | Vision, search, web reader, documentation, browser, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 3     | RTK (token savings), claude-hud (status bar), Happy (mobile client) |
@@ -44,7 +44,7 @@ This guide will configure the following components:
 
 ```
 Step 1: Plugin Marketplaces    -> Add plugin sources
-Step 2: Install Plugins        -> Install 15 plugins
+Step 2: Install Plugins        -> Install 16 plugins
 Step 3: MCP Servers            -> Configure MCP servers
 Step 4: Hooks                  -> Set up automation hooks
 Step 5: Auxiliary Tools        -> Install auxiliary tools
@@ -59,6 +59,7 @@ Step 7: Troubleshooting        -> Troubleshoot issues
 - **GLM API Documentation**: https://open.bigmodel.cn/dev/api
 - **claude-hud**: https://github.com/jarrodwatts/claude-hud
 - **RTK**: https://github.com/rtk-ai/rtk
+- **Obsidian Skills**: https://github.com/kepano/obsidian-skills
 - **Happy**: https://happy.engineering
 
 ---
@@ -74,6 +75,7 @@ Claude Code supports a plugin system to extend functionality. This guide uses 3 
 | **claude-plugins-official** | Official plugins     | [GitHub](https://github.com/anthropics/claude-plugins-official) |
 | **zai-coding-plugins**      | GLM-specific plugins | Auto-configured by `@z_ai/coding-helper`                        |
 | **claude-hud**              | Status bar display   | [GitHub](https://github.com/jarrodwatts/claude-hud)             |
+| **obsidian-skills**         | Obsidian vault tools | [GitHub](https://github.com/kepano/obsidian-skills)             |
 
 ### Add Plugin Marketplaces
 
@@ -83,6 +85,9 @@ claude plugin marketplace add anthropics/claude-plugins-official
 
 # Add Claude HUD status bar
 claude plugin marketplace add jarrodwatts/claude-hud
+
+# Add Obsidian skills
+claude plugin marketplace add kepano/obsidian-skills
 
 # Note: zai-coding-plugins is auto-configured by bunx @z_ai/coding-helper in pre-setup.sh
 
@@ -96,7 +101,7 @@ claude plugin marketplace list
 
 ### Description
 
-Now install 15 plugins. Each plugin includes installation command and description.
+Now install 16 plugins. Each plugin includes installation command and description.
 
 ### 2.1 GLM Plugin Marketplace (1 plugin)
 
@@ -157,13 +162,20 @@ claude plugin install superpowers@claude-plugins-official
 claude plugin install claude-hud@claude-hud
 ```
 
+### 2.4 Obsidian Skills Marketplace (1 plugin)
+
+```bash
+# obsidian - Obsidian vault skills (markdown, bases, canvas, CLI, defuddle)
+claude plugin install obsidian@obsidian-skills
+```
+
 ### Verify All Plugins
 
 ```bash
 # List all installed plugins
 claude plugin list
 
-# Should see 15 plugins
+# Should see 16 plugins
 ```
 
 ---
@@ -342,7 +354,7 @@ rtk init --show
 
 # 4. Verify Plugin count
 claude plugin list 2>/dev/null | grep -c '✔ enabled'
-printf 'Expected: 15 plugins\n'
+printf 'Expected: 16 plugins\n'
 ```
 
 ---
@@ -360,7 +372,7 @@ After completing all configurations, perform comprehensive verification.
 set -euo pipefail
 
 readonly SCRIPT_NAME="Claude Code Environment Verification"
-readonly MIN_PLUGIN_COUNT=15
+readonly MIN_PLUGIN_COUNT=16
 readonly MIN_MCP_COUNT=5
 
 # --- Logging ---
@@ -589,7 +601,7 @@ rm -rf ~/.config/rtk/
 
 Your Claude Code environment is now fully configured with:
 - GLM model configuration
-- 15 plugins
+- 16 plugins
 - 7 MCP servers
 - RTK token optimization
 - claude-hud status bar
