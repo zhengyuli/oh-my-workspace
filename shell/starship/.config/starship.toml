@@ -26,6 +26,9 @@
 # General Settings
 # -----------------------------------------------------------------------------
 
+# Extend timeout for slow commands (default 500ms)
+command_timeout = 2000
+
 [directory]
 read_only = " 󰌾"
 
