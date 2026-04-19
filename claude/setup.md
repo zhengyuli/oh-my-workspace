@@ -26,8 +26,8 @@ This guide will configure the following components:
 
 | Component               | Count | Purpose                                                             |
 |-------------------------|-------|---------------------------------------------------------------------|
-| **Plugin Marketplaces** | 3     | Official + community + GLM plugin sources                           |
-| **Plugins**             | 16    | Development tools, MCP integration, auxiliary features, Obsidian    |
+| **Plugin Marketplaces** | 4     | Official + community + GLM plugin sources                           |
+| **Plugins**             | 17    | Development tools, MCP integration, auxiliary features, Obsidian    |
 | **MCP Servers**         | 7     | Vision, search, web reader, documentation, browser, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 3     | RTK (token savings), claude-hud (status bar), Happy (mobile client) |
@@ -76,6 +76,7 @@ Claude Code supports a plugin system to extend functionality. This guide uses 3 
 | **zai-coding-plugins**      | GLM-specific plugins | Auto-configured by `@z_ai/coding-helper`                        |
 | **claude-hud**              | Status bar display   | [GitHub](https://github.com/jarrodwatts/claude-hud)             |
 | **obsidian-skills**         | Obsidian vault tools | [GitHub](https://github.com/kepano/obsidian-skills)             |
+| **caveman**                 | Token compression    | [GitHub](https://github.com/JuliusBrussee/caveman)              |
 
 ### Add Plugin Marketplaces
 
@@ -89,6 +90,9 @@ claude plugin marketplace add jarrodwatts/claude-hud
 # Add Obsidian skills
 claude plugin marketplace add kepano/obsidian-skills
 
+# Add Caveman token-compression plugin
+claude plugin marketplace add JuliusBrussee/caveman
+
 # Note: zai-coding-plugins is auto-configured by bunx @z_ai/coding-helper in pre-setup.sh
 
 # Verify all marketplaces are added
@@ -101,7 +105,7 @@ claude plugin marketplace list
 
 ### Description
 
-Now install 16 plugins. Each plugin includes installation command and description.
+Now install 17 plugins. Each plugin includes installation command and description.
 
 ### 2.1 GLM Plugin Marketplace (1 plugin)
 
@@ -169,13 +173,20 @@ claude plugin install claude-hud@claude-hud
 claude plugin install obsidian@obsidian-skills
 ```
 
+### 2.5 Caveman Marketplace (1 plugin)
+
+```bash
+# caveman - Token-efficient terse output (~75% token reduction)
+claude plugin install caveman@caveman
+```
+
 ### Verify All Plugins
 
 ```bash
 # List all installed plugins
 claude plugin list
 
-# Should see 16 plugins
+# Should see 17 plugins
 ```
 
 ---
@@ -354,7 +365,7 @@ rtk init --show
 
 # 4. Verify Plugin count
 claude plugin list 2>/dev/null | grep -c '✔ enabled'
-printf 'Expected: 16 plugins\n'
+printf 'Expected: 17 plugins\n'
 ```
 
 ---
@@ -372,7 +383,7 @@ After completing all configurations, perform comprehensive verification.
 set -euo pipefail
 
 readonly SCRIPT_NAME="Claude Code Environment Verification"
-readonly MIN_PLUGIN_COUNT=16
+readonly MIN_PLUGIN_COUNT=17
 readonly MIN_MCP_COUNT=5
 
 # --- Logging ---
@@ -601,7 +612,7 @@ rm -rf ~/.config/rtk/
 
 Your Claude Code environment is now fully configured with:
 - GLM model configuration
-- 16 plugins
+- 17 plugins
 - 7 MCP servers
 - RTK token optimization
 - claude-hud status bar
