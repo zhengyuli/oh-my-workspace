@@ -733,8 +733,9 @@ unstow_package() {
 # Internal Helpers
 # -----------------------------------------------------------------------------
 
-# After stowing zsh, offer to change the user's default login shell.
-_offer_shell_switch() {
+# --- Shell (zsh) ---
+# Offer to change default login shell to zsh
+_post_install_shell_zsh() {
   if ! is_stowed shell/zsh; then
     return 0
   fi
@@ -773,6 +774,43 @@ _offer_shell_switch() {
     log_warn "chsh failed"
     log_info "Run: chsh -s '${zsh_path}'"
   fi
+}
+
+# --- Yazi ---
+# Install yazi plugins via ya pkg (requires package.toml to be stowed)
+_post_install_yazi() {
+  if ! is_stowed tool/yazi; then
+    return 0
+  fi
+
+  if ! command -v ya >/dev/null 2>&1; then
+    log_info "ya not found — skip yazi plugin install"
+    return 0
+  fi
+
+  local -r yazi_conf="${XDG_CONFIG_HOME:-$HOME/.config}/yazi"
+  if [[ ! -f "${yazi_conf}/package.toml" ]]; then
+    return 0
+  fi
+
+  log_info "Installing yazi plugins..."
+  if ya pkg install; then
+    log_ok "Yazi plugins installed"
+  else
+    log_warn "Yazi plugin install failed — run: ya pkg install"
+  fi
+}
+
+# Dispatch post-install hooks for the given packages.
+# Usage: _run_post_install_hooks pkg1 pkg2 ...
+_run_post_install_hooks() {
+  local _pkg
+  for _pkg in "$@"; do
+    case "${_pkg}" in
+      shell/zsh) _post_install_shell_zsh ;;
+      tool/yazi) _post_install_yazi ;;
+    esac
+  done
 }
 
 # -----------------------------------------------------------------------------
@@ -830,7 +868,7 @@ cmd_install() {
     done
 
     if ! "${dry_run}"; then
-      _offer_shell_switch
+      _run_post_install_hooks "${PKG_ALL[@]}"
     fi
 
     printf '\n'
@@ -858,13 +896,7 @@ cmd_install() {
   done
 
   if ! "${dry_run}"; then
-    local _pkg
-    for _pkg in "${resolved[@]}"; do
-      if [[ "${_pkg}" == "shell/zsh" ]]; then
-        _offer_shell_switch
-        break
-      fi
-    done
+    _run_post_install_hooks "${resolved[@]}"
   fi
 }
 
