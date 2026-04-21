@@ -187,8 +187,17 @@ brew "go"
 # Rustup -- Rust toolchain installer and version manager
 brew "rustup"
 
+# Lua -- lightweight scripting language (yazi plugins, neovim config, etc.)
+brew "lua"
+
 # -----------------------------------------------------------------------------
 # Window Management
 # -----------------------------------------------------------------------------
 # Window management
 cask "rectangle"
+
+# -----------------------------------------------------------------------------
+# Productivity
+# -----------------------------------------------------------------------------
+# Application launcher and productivity tool
+cask "raycast"
