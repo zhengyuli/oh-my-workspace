@@ -29,18 +29,23 @@
 # Extend timeout for slow commands (default 500ms)
 command_timeout = 2000
 
+# Use lock icon to mark read-only directories
 [directory]
 read_only = " 󰌾"
 
+# Use NixOS icon for SSH hostname indicator
 [hostname]
 ssh_symbol = "󰣇 "
 
+# Use memory chip icon for memory usage display
 [memory_usage]
 symbol = "󰍛 "
 
+# Use heavy ballot x for command failure indicator
 [status]
 symbol = "✕ "
 
+# Disable built-in time (replaced by custom rdate/rtime modules)
 [time]
 disabled = true
 
