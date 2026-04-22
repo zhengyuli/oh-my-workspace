@@ -171,3 +171,4 @@ Thumbs.db
 *_secret.toml
 *_secret.yml
 *_secret.yaml
+.gstack/

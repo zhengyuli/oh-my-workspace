@@ -53,8 +53,9 @@ cursor-style = bar
 cursor-style-blink = false
 # Bright blue for high visibility against dark backgrounds
 cursor-color = #00BFFF
-# Semi-transparent cursor lets underlying text show through
-cursor-opacity = 0.4
+# 0.8 opacity keeps cursor visible in active split while dimmed inactive split
+# (via unfocused-split-opacity overlay) remains clearly less prominent
+cursor-opacity = 0.8
 # 12px thickness for comfortable visibility of the bar cursor
 adjust-cursor-thickness = 12
 
