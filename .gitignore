@@ -74,6 +74,9 @@
 # -----------------------------------------------------------------------------
 # Tool-specific cache, state, and local configuration files
 
+# GitHub Copilot
+.github/
+
 # Git
 **/config.local
 **/credentials
