@@ -475,8 +475,7 @@ main() {
     exit 1
   fi
 
-  _phase "Done"
-  log_ok "Pre-setup complete!"
+  _phase "Post Setup"
   log_info "Next steps:"
   log_info "  1. Open a new terminal (reload shell)"
   log_info "  2. Run: claude"
