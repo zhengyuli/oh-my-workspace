@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pre-setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-06 22:13:33 Monday by zhengyu.li>
+# Time-stamp: <2026-04-24 15:48:00 Thursday by zhengyu.li>
 # =============================================================================
 # Claude Code Pre-Setup
 #
@@ -18,6 +18,7 @@
 #   Covers prerequisites check, claude CLI install, and GLM API
 #   configuration via the ZAI helper. After completion, enter
 #   Claude Code and follow setup.md for the rest.
+#   Output uses simple tree-structured log lines with step indicators.
 #
 # Usage: ./claude/pre-setup.sh
 # =============================================================================
@@ -40,64 +41,94 @@ readonly MIN_MACOS_VERSION="13.0"
 readonly DEFAULT_SETTINGS_PERMS=600
 
 # -----------------------------------------------------------------------------
-# Error Handling
+# Color System
 # -----------------------------------------------------------------------------
 
-_err_handler() {
-  local -r code=$?
-  printf '[error] %s() line %d: exit %d\n' \
-    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
-}
-trap '_err_handler' ERR
+# Standard ANSI colors. All constants are empty when NO_COLOR is set
+# or stdout is not a TTY, ensuring no escape codes in piped output.
 
-# -----------------------------------------------------------------------------
-# Colors
-# -----------------------------------------------------------------------------
+_IS_TTY=false
+if [[ -t 1 ]]; then
+  _IS_TTY=true
+fi
+readonly _IS_TTY
 
-# Disable ANSI when stdout is not a terminal or NO_COLOR is set, so piped
-# output and log files stay clean.
-if [[ -n "${NO_COLOR:-}" ]] || [[ ! -t 1 ]]; then
-  readonly _RED=''
-  readonly _GREEN=''
-  readonly _YELLOW=''
-  readonly _BLUE=''
-  readonly _RESET=''
+if [[ -n "${NO_COLOR:-}" ]] || ! "${_IS_TTY}"; then
+  readonly C_R=''
+  readonly C_G=''
+  readonly C_Y=''
+  readonly C_B=''
+  readonly C_BOLD=''
+  readonly C_DIM=''
+  readonly C_RESET=''
 else
-  readonly _RED=$'\033[0;31m'
-  readonly _GREEN=$'\033[0;32m'
-  readonly _YELLOW=$'\033[0;33m'
-  readonly _BLUE=$'\033[0;34m'
-  readonly _RESET=$'\033[0m'
+  readonly C_R=$'\033[0;31m'
+  readonly C_G=$'\033[0;32m'
+  readonly C_Y=$'\033[0;33m'
+  readonly C_B=$'\033[0;34m'
+  readonly C_BOLD=$'\033[1m'
+  readonly C_DIM=$'\033[2m'
+  readonly C_RESET=$'\033[0m'
 fi
 
 # -----------------------------------------------------------------------------
 # Logging
 # -----------------------------------------------------------------------------
 
-_info() {
-  printf '  %s[info]%s %s\n' "$_BLUE" "$_RESET" "$*"
+# Content indent: 4 spaces for items nested under a phase header.
+readonly _LOG_INDENT='    '
+
+_log() {
+  local -r color="$1" tag="$2" stream="$3"
+  shift 3
+  if [[ "${stream}" == err ]]; then
+    printf '%s%b[%s]%b %s\n' "${_LOG_INDENT}" "${color}" "${tag}" "${C_RESET}" "$*" >&2
+  else
+    printf '%s%b[%s]%b %s\n' "${_LOG_INDENT}" "${color}" "${tag}" "${C_RESET}" "$*"
+  fi
 }
 
-_warn() {
-  printf '  %s[warn]%s %s\n' "$_YELLOW" "$_RESET" "$*" >&2
+log_ok()   { _log "${C_G}" ok    out "$*"; }
+log_err()  { _log "${C_R}" error err "$*"; }
+log_warn() { _log "${C_Y}" warn  err "$*"; }
+log_info() { _log "${C_B}" info  out "$*"; }
+
+# Phase header: top-level, bold, with step indicator [N/M].
+# Set _PHASE_TOTAL before the first call. Counter auto-increments.
+_PHASE_TOTAL=1
+_PHASE_INDEX=0
+
+_phase() {
+  _PHASE_INDEX=$(( _PHASE_INDEX + 1 ))
+  printf '\n%b[%d/%d]%b %b%s%b\n' \
+    "${C_DIM}" "${_PHASE_INDEX}" "${_PHASE_TOTAL}" "${C_RESET}" \
+    "${C_BOLD}" "$*" "${C_RESET}"
 }
 
-_pass() {
-  printf '  %s✓%s %s\n' "$_GREEN" "$_RESET" "$*"
-}
-
-_fail() {
-  printf '  %s✗%s %s\n' "$_RED" "$_RESET" "$*" >&2
-}
-
-# Print a warning, restore default ERR trap, and exit 1.
+# Print a warning and exit 1.
 # Used by main() to abort cleanly after each phase failure with a recovery hint.
 _abort() {
   printf '\n'
-  _warn "$*"
+  log_warn "$*"
   trap - ERR
   exit 1
 }
+
+# -----------------------------------------------------------------------------
+# Error Handling
+# -----------------------------------------------------------------------------
+
+_err_handler() {
+  local -r code=$?
+  printf '%s%b[error]%b %s() line %d: exit %d\n' \
+    "${_LOG_INDENT}" "${C_R}" "${C_RESET}" \
+    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+}
+trap '_err_handler' ERR
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
 
 # Check if a command exists and print its version (best-effort).
 # Some tools do not support --version; the version line will be blank.
@@ -114,9 +145,9 @@ _check_cmd() {
     if [[ -z "$ver" ]]; then
       ver="(unknown version)"
     fi
-    _pass "$name: $ver"
+    log_ok "$name: $ver"
   else
-    _fail "$name: NOT INSTALLED"
+    log_err "$name: NOT INSTALLED"
     return 1
   fi
 }
@@ -171,11 +202,9 @@ sys.exit(0 if Version(sys.argv[1]) >= Version(sys.argv[2]) else 1)
 }
 
 _check_prerequisites() {
-  _info "Checking prerequisites..."
-
   # --- Platform Check ---
   if [[ "$(uname -s)" != Darwin ]]; then
-    _fail "Not macOS ($(uname -s))"
+    log_err "Not macOS ($(uname -s))"
     return 1
   fi
 
@@ -183,10 +212,10 @@ _check_prerequisites() {
   os_version="$(sw_vers -productVersion)"
 
   if ! _check_macos_version "$os_version" "$MIN_MACOS_VERSION"; then
-    _fail "macOS $os_version (need $MIN_MACOS_VERSION+)"
+    log_err "macOS $os_version (need $MIN_MACOS_VERSION+)"
     return 1
   fi
-  _pass "macOS $os_version"
+  log_ok "macOS $os_version"
 
   # --- Required Tools ---
   local missing=0
@@ -201,7 +230,7 @@ _check_prerequisites() {
   if (( missing > 0 )); then
     local workspace_dir
     workspace_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-    _warn "$missing tool(s) missing —" \
+    log_warn "$missing tool(s) missing —" \
       "run: brew bundle --file=${workspace_dir}/pkg/homebrew/Brewfile"
     return 1
   fi
@@ -209,9 +238,9 @@ _check_prerequisites() {
   # --- Network ---
   if curl -s --max-time "$NETWORK_TIMEOUT" \
     https://api.github.com >/dev/null 2>&1; then
-    _pass "GitHub API accessible"
+    log_ok "GitHub API accessible"
   else
-    _fail "Cannot reach GitHub API (timeout: ${NETWORK_TIMEOUT}s)"
+    log_err "Cannot reach GitHub API (timeout: ${NETWORK_TIMEOUT}s)"
     return 1
   fi
 }
@@ -222,28 +251,28 @@ _check_prerequisites() {
 
 _install_claude() {
   if command -v claude >/dev/null 2>&1; then
-    _pass "claude CLI already installed: $(claude --version 2>/dev/null)"
+    log_ok "claude CLI already installed: $(claude --version 2>/dev/null)"
     return 0
   fi
 
-  _info "Installing claude CLI..."
+  log_info "Installing claude CLI..."
 
   # Pipe curl output directly to bash — pipefail ensures failure
   # propagates if either curl or bash fails.
   if ! curl -fSL --connect-timeout "$NETWORK_TIMEOUT" \
     --max-time "$INSTALL_TIMEOUT" \
     https://claude.ai/install.sh | bash; then
-    _fail "claude CLI installation failed"
+    log_err "claude CLI installation failed"
     return 1
   fi
 
   # The install script may add claude to a directory not yet in PATH
   # (e.g. ~/.claude/bin); verify availability before declaring success.
   if command -v claude >/dev/null 2>&1; then
-    _pass "claude CLI installed: $(claude --version 2>/dev/null)"
+    log_ok "claude CLI installed: $(claude --version 2>/dev/null)"
   else
-    _warn "claude CLI installed but not yet in PATH"
-    _warn "Will be available after opening a new terminal"
+    log_warn "claude CLI installed but not yet in PATH"
+    log_warn "Will be available after opening a new terminal"
   fi
 }
 
@@ -258,12 +287,12 @@ _configure_glm() {
   if [[ -f "$settings" ]] \
     && jq -e '.env.ANTHROPIC_BASE_URL' "$settings" >/dev/null 2>&1 \
     && jq -e '.env.ANTHROPIC_AUTH_TOKEN' "$settings" >/dev/null 2>&1; then
-    _pass "GLM credentials already configured — skipping ZAI helper"
+    log_ok "GLM credentials already configured — skipping ZAI helper"
     return 0
   fi
 
-  _info "Running GLM configuration helper (interactive)..."
-  _info "Follow the prompts: select language, enter API key, choose plan"
+  log_info "Running GLM configuration helper (interactive)..."
+  log_info "Follow the prompts: select language, enter API key, choose plan"
 
   # Interactive tool — user may cancel (Ctrl+C) or tool may return non-zero.
   # Disable both set -e and the ERR trap so we can inspect the exit code.
@@ -276,8 +305,8 @@ _configure_glm() {
   trap '_err_handler' ERR
 
   if (( rc != 0 )); then
-    _warn "ZAI helper exited with code $rc (may need re-run later)"
-    _warn "Continuing with post-configuration fixes..."
+    log_warn "ZAI helper exited with code $rc (may need re-run later)"
+    log_warn "Continuing with post-configuration fixes..."
   fi
 }
 
@@ -291,11 +320,11 @@ _apply_post_fixes() {
   local -r settings="$HOME/.claude/settings.json"
 
   if [[ ! -f "$settings" ]]; then
-    _fail "settings.json not found at $settings"
+    log_err "settings.json not found at $settings"
     return 1
   fi
 
-  _info "Applying post-ZAI configuration fixes..."
+  log_info "Applying post-ZAI configuration fixes..."
 
   local orig_perms
   orig_perms="$(/usr/bin/stat -f '%Lp' "$settings" 2>/dev/null \
@@ -305,7 +334,7 @@ _apply_post_fixes() {
   tmp="$(mktemp)"
 
   if [[ -z "$tmp" ]]; then
-    _fail "mktemp failed"
+    log_err "mktemp failed"
     return 1
   fi
 
@@ -320,12 +349,12 @@ _apply_post_fixes() {
     | .env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1"
     | .env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"' \
       "$settings" > "$tmp"; then
-    _fail "jq failed to process settings.json"
+    log_err "jq failed to process settings.json"
     return 1
   fi
 
   if ! mv "$tmp" "$settings"; then
-    _fail "mv failed — temp file will be cleaned up: $tmp"
+    log_err "mv failed — temp file will be cleaned up: $tmp"
     return 1
   fi
 
@@ -333,10 +362,10 @@ _apply_post_fixes() {
   trap - RETURN
 
   if ! chmod "$orig_perms" "$settings"; then
-    _warn "Could not restore permissions ($orig_perms) on $settings"
+    log_warn "Could not restore permissions ($orig_perms) on $settings"
   fi
 
-  _pass "Model set to sonnet[1m] with GLM env vars and compatibility flags"
+  log_ok "Model set to sonnet[1m] with GLM env vars and compatibility flags"
 }
 
 # -----------------------------------------------------------------------------
@@ -345,18 +374,14 @@ _apply_post_fixes() {
 
 _verify() {
   local -r settings="$HOME/.claude/settings.json"
-  local failed=0
-
-  printf '\n'
-  _info "Verifying configuration..."
 
   if [[ ! -f "$settings" ]]; then
-    _fail "settings.json not found at $settings"
+    log_err "settings.json not found at $settings"
     return 1
   fi
 
   if ! jq empty "$settings" 2>/dev/null; then
-    _fail "settings.json is not valid JSON"
+    log_err "settings.json is not valid JSON"
     return 1
   fi
 
@@ -372,13 +397,14 @@ _verify() {
     ANTHROPIC_DEFAULT_OPUS_MODEL
   )
 
+  local failed=0
   local var val
   for var in "${required[@]}"; do
     val="$(jq -r ".env.\"$var\"" "$settings")"
     if [[ -n "$val" && "$val" != "null" ]]; then
-      _pass "$var"
+      log_ok "$var"
     else
-      _fail "$var missing or empty"
+      log_err "$var missing or empty"
       failed=1
     fi
   done
@@ -388,18 +414,18 @@ _verify() {
   model="$(jq -r '.model' "$settings")"
 
   if [[ "$model" == "sonnet[1m]" ]]; then
-    _pass "model = $model"
+    log_ok "model = $model"
   else
-    _fail "model = $model (expected sonnet[1m])"
+    log_err "model = $model (expected sonnet[1m])"
     failed=1
   fi
 
   # --- Check Claude CLI ---
   # May need a new terminal if just installed (PATH not yet updated).
   if command -v claude >/dev/null 2>&1; then
-    _pass "claude CLI: $(claude --version 2>/dev/null)"
+    log_ok "claude CLI: $(claude --version 2>/dev/null)"
   else
-    _warn "claude CLI not in PATH (available after new terminal)"
+    log_warn "claude CLI not in PATH (available after new terminal)"
   fi
 
   if (( failed != 0 )); then
@@ -414,53 +440,47 @@ _verify() {
 # -----------------------------------------------------------------------------
 
 main() {
-  printf '=========================================\n'
-  printf ' Claude Code Pre-Setup\n'
-  printf '=========================================\n\n'
+  _PHASE_TOTAL=5
+  _PHASE_INDEX=0
 
+  _phase "Prerequisites"
   if ! _check_prerequisites; then
     _abort "Prerequisites check failed — resolve issues above, then re-run"
   fi
-  printf '\n'
 
+  _phase "Claude CLI"
   if ! _install_claude; then
     _abort "Claude CLI installation failed — check network, then re-run"
   fi
-  printf '\n'
 
+  _phase "GLM Configuration"
   _configure_glm
-  printf '\n'
 
   # Guard: ZAI helper must have created settings.json before post-fixes.
   if [[ ! -f "$HOME/.claude/settings.json" ]]; then
-    _warn "settings.json not created — ZAI helper may have been cancelled"
+    log_warn "settings.json not created — ZAI helper may have been cancelled"
     _abort "Re-run ./claude/pre-setup.sh and complete the ZAI prompts"
   fi
 
   if ! _apply_post_fixes; then
     _abort "Post-configuration failed — check ~/.claude/settings.json"
   fi
-  printf '\n'
 
+  _phase "Verification"
   if ! _verify; then
-    printf '\n'
-    _warn "Verification found issues — review the output above"
-    printf '\nNext steps:\n'
-    printf '  1. Re-run: ./claude/pre-setup.sh\n'
-    printf '  2. Or manually check: ~/.claude/settings.json\n'
+    log_warn "Verification found issues — review the output above"
+    log_info "Re-run: ./claude/pre-setup.sh"
+    log_info "Or manually check: ~/.claude/settings.json"
     trap - ERR
     exit 1
   fi
 
-  printf '\n'
-  printf '=========================================\n'
-  printf ' Pre-Setup Complete!\n'
-  printf '=========================================\n'
-  printf '\nNext steps:\n'
-  printf '  1. Open a new terminal (reload shell)\n'
-  printf '  2. Run: claude\n'
-  printf '  3. In Claude Code, follow claude/setup.md\n'
-  printf '     for plugins, MCP servers, hooks, etc.\n'
+  _phase "Done"
+  log_ok "Pre-setup complete!"
+  log_info "Next steps:"
+  log_info "  1. Open a new terminal (reload shell)"
+  log_info "  2. Run: claude"
+  log_info "  3. In Claude Code, follow claude/setup.md"
 }
 
 main "$@"
