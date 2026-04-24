@@ -34,11 +34,12 @@ set -euo pipefail
 # Constants
 # -----------------------------------------------------------------------------
 
-# --- Display ---
-readonly LINE_WIDTH=79
-
 # --- Network ---
 readonly NETWORK_TIMEOUT=60
+
+# --- Xcode CLI Install Polling ---
+readonly XCODE_POLL_INTERVAL=5
+readonly XCODE_POLL_MAX=600
 
 # --- Homebrew Version ---
 readonly MIN_HOMEBREW_MAJOR=4
@@ -72,16 +73,9 @@ readonly BREWFILE
 # --- State ---
 dry_run=false
 
-# -----------------------------------------------------------------------------
-# Colors
-# -----------------------------------------------------------------------------
-
-readonly _RED=$'\033[0;31m'
-readonly _GREEN=$'\033[0;32m'
-readonly _YELLOW=$'\033[0;33m'
-readonly _BLUE=$'\033[0;34m'
-readonly _BOLD=$'\033[1m'
-readonly _RESET=$'\033[0m'
+# Source TUI library (color system, logging, dashboard, health check).
+# shellcheck source=lib/tui.sh
+source "${WORKSPACE_DIR}/lib/tui.sh"
 
 # -----------------------------------------------------------------------------
 # Error Handling
@@ -89,83 +83,32 @@ readonly _RESET=$'\033[0m'
 
 _err_handler() {
   local -r code=$?
-  printf '  %s[error]%s %s() line %d: exit %d\n' \
-    "$_RED" "$_RESET" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+  printf '  %b[error]%b %s() line %d: exit %d\n' \
+    "${C_R}" "${C_RESET}" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
 
-# -----------------------------------------------------------------------------
-# Logging
-# -----------------------------------------------------------------------------
-
-die() {
-  printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$*" >&2
-  exit 1
+_cleanup() {
+  _tui_cursor_show 2>/dev/null || true
+  _tui_result_cleanup
 }
+trap '_cleanup' EXIT
 
-_misuse() {
-  printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$*" >&2
-  exit 2
-}
-
-log_ok() {
-  printf '  %s[ok]%s %s\n' "$_GREEN" "$_RESET" "$*"
-}
-
-log_err() {
-  printf '  %s[error]%s %s\n' "$_RED" "$_RESET" "$*" >&2
-}
-
-log_warn() {
-  printf '  %s[warn]%s %s\n' "$_YELLOW" "$_RESET" "$*"
-}
-
-log_info() {
-  printf '  %s[info]%s %s\n' "$_BLUE" "$_RESET" "$*"
-}
-
-# -----------------------------------------------------------------------------
-# UI Helpers
-# -----------------------------------------------------------------------------
-
-print_header() {
-  printf '\n%b' "${_BOLD}"
-  printf '=%.0s' $(seq 1 "${LINE_WIDTH}")
-  printf '\n  %s\n' "$1"
-  printf '=%.0s' $(seq 1 "${LINE_WIDTH}")
-  printf '\n%b\n' "${_RESET}"
-}
-
-confirm() {
-  local prompt="$1"
-  local default="${2:-n}"
-  local reply
-
-  if [[ "${default}" == y ]]; then
-    printf '\n  %s [Y/n]: ' "${prompt}"
-  else
-    printf '\n  %s [y/N]: ' "${prompt}"
+# Forward Ctrl-C cleanly: kill any background children (brew bundle,
+# ya pkg install) so they don't outlive the script. Clear EXIT trap
+# first so _cleanup runs exactly once.
+_int_handler() {
+  trap - EXIT
+  _tui_cursor_show 2>/dev/null || true
+  local -a pids=()
+  mapfile -t pids < <(jobs -p)
+  if (( ${#pids[@]} > 0 )); then
+    kill "${pids[@]}" 2>/dev/null || true
   fi
-
-  if ! read -r reply; then
-    reply=''
-  fi
-
-  [[ "${reply:-${default}}" =~ ^[Yy]$ ]]
+  _tui_result_cleanup
+  exit 130
 }
-
-# --- Status Display ---
-# Label widths: "ok" (2) padded to match "missing" (7).
-_status_ok() { printf '  %s[ok]%s       %s\n' "$_GREEN" "$_RESET" "$*"; }
-_status_missing() { printf '  %s[missing]%s  %s\n' "$_RED" "$_RESET" "$*"; }
-
-# --- Package Status Labels ---
-_status_stowed() {
-  printf '  %s %s[stowed]%s    :\n' "$1" "$_GREEN" "$_RESET"
-}
-_status_unstowed() {
-  printf '  %s %s[unstowed]%s:\n' "$1" "$_YELLOW" "$_RESET"
-}
+trap '_int_handler' INT TERM
 
 # -----------------------------------------------------------------------------
 # Package Path Helpers
@@ -201,31 +144,35 @@ validate_pkgs() {
   local -n _out="$1"
   shift
   _out=()
-  local p found pkg
+  local p pkg match
+  declare -A _seen=()
 
   for p in "$@"; do
     if [[ -z "${p}" ]]; then
       continue
     fi
-    found=''
+    match=''
 
-    # Exact "category/name" match
+    # Exact "category/name" match.
     if _is_valid_pkg "${p}"; then
-      _out+=("${p}")
-      continue
+      match="${p}"
+    else
+      # Fallback: match by short name (e.g. "zsh" → "shell/zsh").
+      for pkg in "${PKG_ALL[@]}"; do
+        if [[ "$(pkg_name "${pkg}")" == "${p}" ]]; then
+          match="${pkg}"
+          break
+        fi
+      done
     fi
 
-    # Fallback: match by short name (e.g. "zsh" → "shell/zsh")
-    for pkg in "${PKG_ALL[@]}"; do
-      if [[ "$(pkg_name "${pkg}")" == "${p}" ]]; then
-        _out+=("${pkg}")
-        found=1
-        break
-      fi
-    done
-
-    if [[ -z "${found}" ]]; then
+    if [[ -z "${match}" ]]; then
       log_warn "Unknown package: ${p}"
+      continue
+    fi
+    if [[ -z "${_seen[${match}]:-}" ]]; then
+      _out+=("${match}")
+      _seen[${match}]=1
     fi
   done
 
@@ -263,6 +210,7 @@ _bootstrap_homebrew_env() {
       if ! env_output=$("${b}" shellenv 2>/dev/null); then
         continue
       fi
+      # shellcheck disable=SC1090
       source <(printf '%s\n' "${env_output}")
       if _has_homebrew; then
         return 0
@@ -277,15 +225,30 @@ _bootstrap_homebrew_env() {
 # Prerequisite Installation
 # -----------------------------------------------------------------------------
 
-# Install Xcode CLI (blocks synchronously until complete or cancelled).
+# Install Xcode CLI (blocks until xcode-select -p succeeds or timeout).
+# `xcode-select --install` only spawns the GUI installer and returns
+# immediately; we must poll _has_xcode_cli to know when the user has
+# completed the dialog. Required because Homebrew install needs CLT.
 _install_xcode_cli() {
+  if _has_xcode_cli; then
+    log_info "Xcode CLI already installed"
+    return 0
+  fi
+
   log_info "Installing Xcode Command Line Tools..."
   log_warn "Complete the dialog that appears."
 
-  # xcode-select returns non-zero when already installed
-  if ! xcode-select --install 2>/dev/null; then
-    log_info "Xcode CLI already installed"
-  fi
+  xcode-select --install 2>/dev/null || true
+
+  local waited=0
+  until _has_xcode_cli; do
+    if (( waited >= XCODE_POLL_MAX )); then
+      log_err "Xcode CLI install timed out after ${XCODE_POLL_MAX}s"
+      return 1
+    fi
+    sleep "${XCODE_POLL_INTERVAL}"
+    waited=$(( waited + XCODE_POLL_INTERVAL ))
+  done
 
   log_ok "Xcode CLI: installed"
 }
@@ -334,9 +297,8 @@ _ensure_homebrew_version() {
   minor="${ver#*.}"
   minor="${minor%%.*}"
 
-  if (( major > MIN_HOMEBREW_MAJOR )) || \
-    (( major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR )); then
-    log_ok "Homebrew version: ${ver}"
+  if (( major > MIN_HOMEBREW_MAJOR )) \
+     || (( major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR )); then
     return 0
   fi
 
@@ -400,36 +362,25 @@ _install_stow() {
 }
 
 _run_brew_bundle() {
-  log_info "Running brew bundle..."
-
-  if brew bundle --verbose --file="${BREWFILE}"; then
-    log_ok "brew bundle: complete"
-  else
-    log_err "brew bundle: some packages failed"
+  if ! _tui_brew_run "${BREWFILE}"; then
     return 1
   fi
-}
-
-_preview_brew_bundle() {
-  if ! _has_homebrew || [[ ! -f "${BREWFILE}" ]]; then
-    log_info "[dry-run] would run brew bundle"
-    return
-  fi
-
-  log_info "[dry-run] brew bundle preview:"
-  while IFS= read -r line; do
-    log_info "[dry-run]   ${line}"
-  done < <(brew bundle check --file="${BREWFILE}" 2>&1)
 }
 
 _run_brew_bundle_checked() {
   if _run_brew_bundle; then
     return 0
   fi
+  # confirm() emits 2 newlines on a TTY: one from the printf '\n' and one
+  # from the terminal echoing the user's Enter. Cursor advances 2 lines.
   if ! confirm "brew bundle had failures. Continue with stow?" n; then
+    _TUI_PHASE_SUBLINES=$(( _TUI_PHASE_SUBLINES + 2 ))
     log_info "Cancelled"
+    _TUI_PHASE_SUBLINES=$(( _TUI_PHASE_SUBLINES + 1 ))
     return 1
   fi
+  _TUI_PHASE_SUBLINES=$(( _TUI_PHASE_SUBLINES + 2 ))
+  return 2
 }
 
 ensure_prerequisites() {
@@ -483,6 +434,13 @@ is_stowed() {
     return 1
   fi
 
+  # Empty package dir → nothing to stow; report as not-stowed to avoid
+  # false positives in cmd_status / cmd_uninstall / hook gating.
+  if [[ -z "$(find "${stow_dir}/${pkg_base}" \
+        -mindepth 1 \( -type f -o -type l \) -print -quit 2>/dev/null)" ]]; then
+    return 1
+  fi
+
   local output
   if ! output=$(stow -n -v \
     -d "${stow_dir}" \
@@ -495,37 +453,6 @@ is_stowed() {
   fi
 
   return 0
-}
-
-# Show the stow-managed symlinks for a package.  Walks up from each file
-# in the package dir to find the highest symlinked ancestor, printing
-# one entry per unique symlink (de-duplicated via shown[] hash).
-stow_links() {
-  local pkg="$1"
-  local stow_dir
-  stow_dir=$(pkg_stow_dir "${pkg}")
-
-  local pkg_base
-  pkg_base=$(pkg_name "${pkg}")
-
-  local pkg_dir="${stow_dir}/${pkg_base}"
-  local -A shown=()
-  local src rel check
-
-  while IFS= read -r src; do
-    rel="${src#"${pkg_dir}"/}"
-    check="${HOME}/${rel}"
-
-    while [[ "${check}" != "${HOME}" ]]; do
-      if [[ -L "${check}" && -z "${shown[${check}]+set}" ]]; then
-        shown[${check}]=1
-        printf '      %s -> %s\n' \
-          "${check#"${HOME}"/}" "$(readlink "${check}")"
-        break
-      fi
-      check="${check%/*}"
-    done
-  done < <(find "${pkg_dir}" -not -type d 2>/dev/null)
 }
 
 # -----------------------------------------------------------------------------
@@ -684,7 +611,7 @@ _stow_exec() {
     done <<< "${dry_output}"
 
     if ! "${has_actions}" \
-      && grep -q 'existing target' <<< "${dry_output}"; then
+       && grep -q 'existing target' <<< "${dry_output}"; then
       log_info "[dry-run]   (exact links hidden by conflicts" \
         "— will be created after removal)"
     fi
@@ -734,83 +661,152 @@ unstow_package() {
 # -----------------------------------------------------------------------------
 
 # --- Shell (zsh) ---
-# Offer to change default login shell to zsh
+# Offer to change default login shell to zsh.
+# Return codes (consumed by _run_post_install_hooks):
+#   0  success or no-op (already zsh)
+#   1  attempted but failed (chsh failed, /etc/shells not writable, etc.)
+#   2  user declined or zsh not stowed (mapped to 'skip' in the table)
+# Append a hook error message to the buffered error file (no-op if unset).
+# Stdin → file. Use heredoc / printf | _hook_err_log.
+_hook_err_log() {
+  if [[ -n "${_TUI_HOOK_ERR_FILE:-}" ]]; then
+    cat >> "${_TUI_HOOK_ERR_FILE}"
+  else
+    cat >/dev/null
+  fi
+}
+
 _post_install_shell_zsh() {
   if ! is_stowed shell/zsh; then
-    return 0
+    return 2
   fi
 
+  # Already on zsh — nothing to do, stay silent.
   if [[ -n "${ZSH_VERSION:-}" || "${SHELL##*/}" == zsh ]]; then
-    log_info "Already running zsh"
     return 0
   fi
 
+  # Interactive: ask the user, then attempt chsh.
   if ! confirm "Switch default shell to zsh?" y; then
-    log_info "Skipped — run: chsh -s \"\$(which zsh)\""
-    return 0
+    return 2
   fi
 
   local zsh_path
   if ! zsh_path=$(command -v zsh 2>/dev/null); then
-    log_err "zsh not in PATH"
-    return 0
+    printf 'zsh not in PATH\n' | _hook_err_log
+    return 1
   fi
 
   if ! grep -qx "${zsh_path}" /etc/shells 2>/dev/null; then
-    if printf '%s\n' "${zsh_path}" \
+    if ! printf '%s\n' "${zsh_path}" \
       | sudo tee -a /etc/shells >/dev/null 2>&1; then
-      log_ok "Added ${zsh_path} to /etc/shells"
-    else
-      log_warn "Cannot add to /etc/shells (need sudo)"
-      log_info "Run: echo '${zsh_path}' | sudo tee -a /etc/shells"
-      log_info "Then: chsh -s '${zsh_path}'"
-      return 0
+      {
+        printf 'cannot write /etc/shells — run manually:\n'
+        printf "  echo '%s' | sudo tee -a /etc/shells\n" "${zsh_path}"
+        printf "  chsh -s '%s'\n" "${zsh_path}"
+      } | _hook_err_log
+      return 1
     fi
   fi
 
   if chsh -s "${zsh_path}" 2>/dev/null; then
-    log_ok "Default shell changed to zsh — open a new terminal."
-  else
-    log_warn "chsh failed"
-    log_info "Run: chsh -s '${zsh_path}'"
+    if [[ -n "${_TUI_HOOK_OK_FILE:-}" ]]; then
+      printf 'Default shell → zsh · open a new terminal to apply.\n' \
+        >> "${_TUI_HOOK_OK_FILE}"
+    fi
+    return 0
   fi
+  printf "chsh failed — run: chsh -s '%s'\n" "${zsh_path}" | _hook_err_log
+  return 1
 }
 
 # --- Yazi ---
-# Install yazi plugins via ya pkg (requires package.toml to be stowed)
+# Install yazi plugins via ya pkg (requires package.toml to be stowed).
+# Return codes match _post_install_shell_zsh: 0=ok, 1=fail, 2=skip.
+# Failure output is buffered into _TUI_HOOK_ERR_FILE so the post-install
+# table renders cleanly; the dispatcher prints the buffer afterwards.
 _post_install_yazi() {
   if ! is_stowed tool/yazi; then
-    return 0
+    return 2
   fi
 
   if ! command -v ya >/dev/null 2>&1; then
-    log_info "ya not found — skip yazi plugin install"
-    return 0
+    return 2
   fi
 
   local -r yazi_conf="${XDG_CONFIG_HOME:-$HOME/.config}/yazi"
   if [[ ! -f "${yazi_conf}/package.toml" ]]; then
-    return 0
+    return 2
   fi
 
-  log_info "Installing yazi plugins..."
-  if ya pkg install; then
-    log_ok "Yazi plugins installed"
-  else
-    log_warn "Yazi plugin install failed — run: ya pkg install"
+  local tmp
+  tmp=$(mktemp)
+  local ya_rc=0
+  ya pkg install >"${tmp}" 2>&1 || ya_rc=$?
+
+  if (( ya_rc != 0 )); then
+    {
+      printf 'yazi plugin install failed:\n'
+      tail -n "${_TUI_BREW_ERROR_TAIL}" "${tmp}"
+    } | _hook_err_log
   fi
+  rm -f "${tmp}"
+  if (( ya_rc != 0 )); then
+    return 1
+  fi
+  return 0
 }
 
 # Dispatch post-install hooks for the given packages.
-# Usage: _run_post_install_hooks pkg1 pkg2 ...
+# Updates the named status variables for the post-install table.
+# Hook return codes: 0=ok, 1=fail, 2=skip (declined / not applicable).
+# Failure output is buffered to _TUI_HOOK_ERR_FILE so the table renders
+# cleanly; the buffer is printed by the caller after the table closes.
+# Usage: _run_post_install_hooks zsh_var yazi_var pkg1 pkg2 ...
 _run_post_install_hooks() {
+  local -n _zsh_st_ref="$1"
+  local -n _yazi_st_ref="$2"
+  shift 2
   local _pkg
   for _pkg in "$@"; do
     case "${_pkg}" in
-      shell/zsh) _post_install_shell_zsh ;;
-      tool/yazi) _post_install_yazi ;;
+      shell/zsh) _hook_run _post_install_shell_zsh _zsh_st_ref ;;
+      tool/yazi) _hook_run _post_install_yazi _yazi_st_ref ;;
     esac
   done
+}
+
+# Run a single hook and map its return code to a status string via nameref.
+_hook_run() {
+  local -r fn="$1"
+  local -n _st_ref="$2"
+  local _rc=0
+  "${fn}" || _rc=$?
+  case "${_rc}" in
+    0) _st_ref='ok' ;;
+    2) _st_ref='skip' ;;
+    *) _st_ref='fail' ;;
+  esac
+}
+
+# Render the "Post-Install Hooks" phase: spinner → hook table → flush.
+# Args: phase_num pkg1 pkg2 ...
+_run_post_install_phase() {
+  local -r num="$1"
+  shift
+  _tui_phase_start "${num}" 'Post-Install'
+  if "${dry_run}"; then
+    _tui_hooks_table 'shell/zsh:dry-run' 'tool/yazi:dry-run'
+    _tui_phase_done "${num}" 'Post-Install' 'dry-run'
+    return 0
+  fi
+  local _zsh_hook_st='skip' _yazi_hook_st='skip'
+  _run_post_install_hooks _zsh_hook_st _yazi_hook_st "$@"
+  _tui_hooks_table \
+    "shell/zsh:${_zsh_hook_st}" \
+    "tool/yazi:${_yazi_hook_st}"
+  _tui_phase_done "${num}" 'Post-Install'
+  _tui_hook_msg_flush
 }
 
 # -----------------------------------------------------------------------------
@@ -842,41 +838,125 @@ cmd_install() {
     return 0
   fi
 
-  if "${dry_run}"; then
-    log_info "Dry-run mode: no files will be modified."
-  fi
+  # Initialize result file for tracking per-package outcomes.
+  _tui_result_init
 
   ensure_prerequisites
 
   # --- All Packages ---
   if "${do_all}"; then
+    _TUI_PHASE_TOTAL=5
+    _tui_banner
+
+    # Phase 1: Prerequisites — check current state and render table.
+    _tui_phase_start 1 'Prerequisites'
+    local xcode_st brew_st stow_st
+    if _has_xcode_cli; then xcode_st='ok'; else xcode_st='dry-run'; fi
+    if _has_homebrew; then brew_st='ok'; else brew_st='dry-run'; fi
+    if _has_stow; then stow_st='ok'; else stow_st='dry-run'; fi
+    _tui_prereq_table \
+      "Xcode CLI:${xcode_st}" \
+      "Homebrew:${brew_st}" \
+      "GNU Stow:${stow_st}"
+    _tui_phase_done 1 'Prerequisites' 'ready'
+
+    # Phase 2: Homebrew Bundle.
+    _tui_phase_start 2 'Homebrew Bundle'
+    local _brew_f _brew_c _brew_t
+    _tui_parse_brewfile "${BREWFILE}" _brew_f _brew_c _brew_t
     if "${dry_run}"; then
-      _preview_brew_bundle
+      _tui_brew_table "${_brew_f}" "${_brew_c}" "${_brew_t}"
+      _tui_phase_done 2 'Homebrew Bundle' 'dry-run'
     else
-      if ! _run_brew_bundle_checked; then
-        return 1
-      fi
+      local _brew_rc=0
+      _run_brew_bundle_checked || _brew_rc=$?
+      case "${_brew_rc}" in
+        0)
+          _tui_brew_table "${_brew_f}" "${_brew_c}" "${_brew_t}"
+          _tui_phase_done 2 'Homebrew Bundle' "${_TUI_BREW_DETAIL}"
+          ;;
+        2)
+          # User opted to continue past brew failures — render as failed
+          # phase but proceed to the stow phases below.
+          _tui_phase_fail 2 'Homebrew Bundle' \
+            "${_TUI_BREW_DETAIL} · continued"
+          ;;
+        *)
+          _tui_phase_fail 2 'Homebrew Bundle' "${_TUI_BREW_DETAIL}"
+          return 1
+          ;;
+      esac
     fi
 
-    local pkg
+    # Phase 3: Stow Packages (live dashboard).
+    _tui_phase_start 3 'Stow Packages'
+
+    # shellcheck disable=SC2034  # mutated via nameref in _tui_dash_render
+    declare -A dash_statuses=()
+    local pkg stow_output stow_rc
+    local ok_count=0 fail_count=0
     for pkg in "${PKG_ALL[@]}"; do
+      dash_statuses[${pkg}]=pending
+    done
+    _tui_dash_render dash_statuses "${PKG_ALL[@]}"
+
+    for pkg in "${PKG_ALL[@]}"; do
+      dash_statuses[${pkg}]=run
+      _tui_dash_up
+      _tui_dash_render dash_statuses "${PKG_ALL[@]}"
+
+      stow_rc=0
       if "${force}"; then
-        restow_package "${pkg}"
+        stow_output=$(restow_package "${pkg}" 2>&1) || stow_rc=$?
       else
-        stow_package "${pkg}"
+        stow_output=$(stow_package "${pkg}" 2>&1) || stow_rc=$?
       fi
+
+      if "${dry_run}" && (( stow_rc == 0 )); then
+        dash_statuses[${pkg}]='dry-run'
+        _tui_result_write "${pkg}" 'dry-run'
+        ok_count=$(( ok_count + 1 ))
+      elif is_stowed "${pkg}"; then
+        dash_statuses[${pkg}]=ok
+        _tui_result_write "${pkg}" ok
+        ok_count=$(( ok_count + 1 ))
+      else
+        dash_statuses[${pkg}]=fail
+        _tui_result_write "${pkg}" fail
+        fail_count=$(( fail_count + 1 ))
+        # Buffer stow error to err file; the dashboard renders in-place
+        # via cursor-up math, so writing to stderr here would be
+        # overwritten on the next render. Flushed after phase_done.
+        if [[ -n "${stow_output}" ]] && (( stow_rc != 0 )); then
+          {
+            printf 'stow %s failed:\n' "${pkg}"
+            printf '%s\n' "${stow_output}"
+          } | _hook_err_log
+        fi
+      fi
+
+      _tui_dash_up
+      _tui_dash_render dash_statuses "${PKG_ALL[@]}"
     done
 
+    local stow_detail="${ok_count}/${#PKG_ALL[@]} packages"
+    if (( fail_count > 0 )); then
+      stow_detail+=" · ${fail_count} failed"
+    fi
+    _tui_phase_done 3 'Stow Packages' "${stow_detail}"
+    _tui_hook_msg_flush
+
+    # Phase 4: Post-Install Hooks — table shows hook results.
+    _run_post_install_phase 4 "${PKG_ALL[@]}"
+
+    # Phase 5: Health Check.
     if ! "${dry_run}"; then
-      _run_post_install_hooks "${PKG_ALL[@]}"
+      _tui_health_check "$(_tui_result_path)"
+    else
+      _tui_phase_start 5 'Health Check'
+      _tui_phase_done 5 'Health Check' 'dry-run'
     fi
 
-    printf '\n'
-    if "${dry_run}"; then
-      log_ok "Dry-run complete. No files were modified."
-    else
-      log_ok "Done. Source ~/.zshenv or open a new terminal to apply changes."
-    fi
     return 0
   fi
 
@@ -886,18 +966,59 @@ cmd_install() {
     die "No valid packages specified"
   fi
 
-  local pkg
+  _TUI_PHASE_TOTAL=2
+  _tui_banner
+
+  # Phase 1: Stow packages — mini table.
+  _tui_phase_start 1 'Stow Packages'
+  _tui_result_init
+
+  _tui_tbl_header 'PACKAGE' 'STATUS'
+  local pkg stow_rc stow_output
+  local ok_count=0 fail_count=0
   for pkg in "${resolved[@]}"; do
+    stow_rc=0
     if "${force}"; then
-      restow_package "${pkg}"
+      stow_output=$(restow_package "${pkg}" 2>&1) || stow_rc=$?
     else
-      stow_package "${pkg}"
+      stow_output=$(stow_package "${pkg}" 2>&1) || stow_rc=$?
+    fi
+
+    local pkg_base="${pkg##*/}"
+    if "${dry_run}" && (( stow_rc == 0 )); then
+      _tui_tbl_row "${_ICON_SKIP}" "${pkg_base}" 'dry-run' "${C_DIM}"
+      _tui_result_write "${pkg}" 'dry-run'
+      ok_count=$(( ok_count + 1 ))
+    elif is_stowed "${pkg}"; then
+      _tui_tbl_row "${_ICON_OK}" "${pkg_base}" 'ok' "${C_G}"
+      _tui_result_write "${pkg}" ok
+      ok_count=$(( ok_count + 1 ))
+    else
+      _tui_tbl_row "${_ICON_FAIL}" "${pkg_base}" 'fail' "${C_R}"
+      _tui_result_write "${pkg}" fail
+      fail_count=$(( fail_count + 1 ))
+      if [[ -n "${stow_output}" ]] && (( stow_rc != 0 )); then
+        printf '  %s\n' "${stow_output}" >&2
+      fi
     fi
   done
+  _tui_tbl_footer
 
-  if ! "${dry_run}"; then
-    _run_post_install_hooks "${resolved[@]}"
+  local stow_detail="${ok_count}/${#resolved[@]} packages"
+  if "${dry_run}"; then
+    stow_detail="dry-run · ${stow_detail}"
   fi
+  if (( fail_count > 0 )); then
+    stow_detail+=" · ${fail_count} failed"
+  fi
+  if (( fail_count > 0 )); then
+    _tui_phase_fail 1 'Stow Packages' "${stow_detail}"
+  else
+    _tui_phase_done 1 'Stow Packages' "${stow_detail}"
+  fi
+
+  # Phase 2: Post-Install Hooks.
+  _run_post_install_phase 2 "${resolved[@]}"
 }
 
 cmd_uninstall() {
@@ -924,58 +1045,112 @@ cmd_uninstall() {
     return 1
   fi
 
-  if "${dry_run}"; then
-    log_info "Dry-run mode: no files will be modified."
-  fi
+  _TUI_PHASE_TOTAL=2
+  _tui_banner
 
-  # Uninstall only needs stow — do NOT call ensure_prerequisites (which
-  # would try to *install* missing tools).  Just verify stow is available.
+  # Phase 1: Verify GNU Stow is available.
+  _tui_phase_start 1 'Prerequisites'
   if ! _has_stow; then
-    log_err "GNU Stow is required for uninstall but not found."
-    log_info "Run: ./setup.sh install --all"
+    _tui_prereq_table 'Xcode CLI:skip' 'Homebrew:skip' 'GNU Stow:fail'
+    _tui_phase_fail 1 'Prerequisites' 'GNU Stow not found'
+    printf '\n  %s→%s run: %s./setup.sh install --all%s\n\n' \
+      "${C_Y}" "${C_RESET}" "${C_BOLD}" "${C_RESET}"
     return 1
   fi
+  _tui_prereq_table 'Xcode CLI:skip' 'Homebrew:skip' 'GNU Stow:ok'
+  _tui_phase_done 1 'Prerequisites' 'GNU Stow ready'
 
+  # Phase 2: Unstow packages.
+  _tui_phase_start 2 'Unstow Packages'
+
+  # Resolve the target package list.
+  local -a target_pkgs=()
   if "${do_all}"; then
-    local -a stowed=()
     local p
-
     for p in "${PKG_ALL[@]}"; do
       if is_stowed "${p}"; then
-        stowed+=("${p}")
+        target_pkgs+=("${p}")
       fi
     done
 
-    if (( ${#stowed[@]} == 0 )); then
-      log_info "No packages are currently stowed"
+    if (( ${#target_pkgs[@]} == 0 )); then
+      _tui_tbl_header 'PACKAGE' 'STATUS'
+      _tui_tbl_footer
+      _tui_phase_done 2 'Unstow Packages' 'nothing stowed'
+      printf '\n'
       return 0
     fi
 
-    if "${dry_run}"; then
-      log_info "Would uninstall ${#stowed[@]} stowed packages:"
-      for p in "${stowed[@]}"; do
-        log_info "  $(pkg_name "${p}")"
-      done
-    elif ! confirm "Uninstall all ${#stowed[@]} stowed packages?" n; then
-      log_info "Cancelled"
-      return 0
+    if ! "${dry_run}"; then
+      if ! confirm "Uninstall all ${#target_pkgs[@]} stowed packages?" n; then
+        # confirm() emits 2 newlines on TTY (printf \n + Enter echo).
+        _TUI_PHASE_SUBLINES=$(( _TUI_PHASE_SUBLINES + 2 ))
+        _tui_phase_done 2 'Unstow Packages' 'cancelled'
+        printf '\n'
+        return 0
+      fi
+      _TUI_PHASE_SUBLINES=$(( _TUI_PHASE_SUBLINES + 2 ))
     fi
-
-    for p in "${stowed[@]}"; do
-      unstow_package "${p}"
-    done
-    return 0
+  else
+    local -a resolved=()
+    if ! validate_pkgs resolved "${pkgs[@]}"; then
+      _tui_phase_fail 2 'Unstow Packages' 'no valid packages'
+      return 1
+    fi
+    target_pkgs=("${resolved[@]}")
   fi
 
-  local -a resolved=()
-  if ! validate_pkgs resolved "${pkgs[@]}"; then
-    return 1
-  fi
+  # Run unstow with live dashboard.
+  _tui_result_init
 
+  # shellcheck disable=SC2034  # mutated via nameref in _tui_dash_render
+  declare -A dash_statuses=()
   local pkg
-  for pkg in "${resolved[@]}"; do
-    unstow_package "${pkg}"
+  for pkg in "${target_pkgs[@]}"; do
+    dash_statuses[${pkg}]=pending
   done
+  _tui_dash_render dash_statuses "${target_pkgs[@]}"
+
+  local ok_count=0 fail_count=0
+  local unstow_rc
+  for pkg in "${target_pkgs[@]}"; do
+    dash_statuses[${pkg}]=run
+    _tui_dash_up
+    _tui_dash_render dash_statuses "${target_pkgs[@]}"
+
+    unstow_rc=0
+    unstow_package "${pkg}" >/dev/null 2>&1 || unstow_rc=$?
+
+    # Determine final status: for unstow, check that it's no longer stowed
+    # (or dry_run accepted without error).
+    if (( unstow_rc == 0 )); then
+      dash_statuses[${pkg}]=ok
+      _tui_result_write "${pkg}" ok
+      ok_count=$(( ok_count + 1 ))
+    else
+      # shellcheck disable=SC2034  # mutated via nameref in _tui_dash_render
+      dash_statuses[${pkg}]=fail
+      _tui_result_write "${pkg}" fail
+      fail_count=$(( fail_count + 1 ))
+    fi
+
+    _tui_dash_up
+    _tui_dash_render dash_statuses "${target_pkgs[@]}"
+  done
+
+  local detail="${ok_count}/${#target_pkgs[@]} packages"
+  if "${dry_run}"; then
+    detail="dry-run · ${detail}"
+  fi
+  if (( fail_count > 0 )); then
+    detail+=" · ${fail_count} failed"
+  fi
+
+  if (( fail_count > 0 )); then
+    _tui_phase_fail 2 'Unstow Packages' "${detail}"
+  else
+    _tui_phase_done 2 'Unstow Packages' "${detail}"
+  fi
 }
 
 cmd_status() {
@@ -993,40 +1168,33 @@ cmd_status() {
     pkgs=("${PKG_ALL[@]}")
   fi
 
-  print_header "oh-my-workspace status"
+  _TUI_PHASE_TOTAL=2
+  _tui_banner
 
-  # --- Prerequisites (Read Only Checks) ---
-  printf '  Prerequisites\n\n'
+  # Phase 1: Prerequisites (read-only checks).
+  _tui_phase_start 1 'Prerequisites'
+  local xcode_st='missing' brew_st='missing' stow_st='missing'
+  if _has_xcode_cli; then xcode_st='ok'; fi
+  if _has_homebrew; then brew_st='ok'; fi
+  if _has_stow; then stow_st='ok'; fi
 
-  if _has_xcode_cli; then
-    _status_ok "Xcode CLI"
-  else
-    _status_missing "Xcode CLI"
-  fi
+  _tui_status_prereq_table \
+    "Xcode CLI:${xcode_st}" \
+    "Homebrew:${brew_st}" \
+    "GNU Stow:${stow_st}"
+  _tui_phase_done 1 'Prerequisites'
 
-  if _has_homebrew; then
-    local brew_ver
-    brew_ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}') || true
-    _status_ok "Homebrew  ${brew_ver}"
-  else
-    _status_missing "Homebrew"
-  fi
-
-  if _has_stow; then
-    local stow_ver
-    stow_ver=$(stow --version 2>/dev/null \
-      | head -1 | awk '{print $NF}') || true
-    _status_ok "GNU Stow  ${stow_ver}"
-  else
-    _status_missing "GNU Stow"
-    log_info "Run: ./setup.sh install --all"
+  if [[ "${stow_st}" == missing ]]; then
+    printf '\n  %s→%s run: %s./setup.sh install --all%s\n\n' \
+      "${C_Y}" "${C_RESET}" "${C_BOLD}" "${C_RESET}"
     return 0
   fi
 
-  # --- Package Status ---
+  # Phase 2: Package Status.
+  _tui_phase_start 2 'Package Status'
+
   local -A pkg_stowed=()
   local stowed_count=0
-  local total_stowed=0
   local pkg
 
   for pkg in "${pkgs[@]}"; do
@@ -1038,10 +1206,9 @@ cmd_status() {
     fi
   done
 
-  # When showing a subset, also count stowed packages outside the
-  # subset to give a complete picture (e.g. "3/5 stowed, 8/11 total").
+  # Count stowed packages outside the subset for the summary detail.
+  local total_stowed="${stowed_count}"
   if (( ${#pkgs[@]} < ${#PKG_ALL[@]} )); then
-    total_stowed="${stowed_count}"
     local other_pkg
     for other_pkg in "${PKG_ALL[@]}"; do
       if [[ -z "${pkg_stowed[${other_pkg}]+set}" ]] \
@@ -1049,29 +1216,15 @@ cmd_status() {
         total_stowed=$(( total_stowed + 1 ))
       fi
     done
-  else
-    total_stowed="${stowed_count}"
   fi
 
-  printf '\n  Packages  (%d / %d stowed' "${stowed_count}" "${#pkgs[@]}"
+  _tui_status_pkg_table pkgs pkg_stowed
+
+  local detail="${stowed_count}/${#pkgs[@]} stowed"
   if (( ${#pkgs[@]} < ${#PKG_ALL[@]} )); then
-    printf ', %d / %d total)' "${total_stowed}" "${#PKG_ALL[@]}"
-  else
-    printf ')'
+    detail+=" · ${total_stowed}/${#PKG_ALL[@]} total"
   fi
-  printf '\n'
-
-  local pkg_base
-  for pkg in "${pkgs[@]}"; do
-    pkg_base=$(pkg_name "${pkg}")
-    printf '\n'
-    if (( pkg_stowed[${pkg}] )); then
-      _status_stowed "${pkg_base}"
-      stow_links "${pkg}"
-    else
-      _status_unstowed "${pkg_base}"
-    fi
-  done
+  _tui_phase_done 2 'Package Status' "${detail}"
   printf '\n'
 }
 
@@ -1081,27 +1234,27 @@ cmd_status() {
 
 show_help() {
   printf '%b\n' \
-    "${_BOLD}oh-my-workspace setup${_RESET}" '' \
+    "${C_BOLD}oh-my-workspace setup${C_RESET}" '' \
     'Usage:' \
     '  ./setup.sh <command> [flags] [packages]' '' \
-    "${_BOLD}Commands:${_RESET}" \
+    "${C_BOLD}Commands:${C_RESET}" \
     '  install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages' \
     '  uninstall [--all] [--dry-run] [<pkg>...]             Unstow packages' \
     '  status    [<pkg>...]                                 Show status and symlinks' \
     '  help                                                 Show this help' '' \
-    "${_BOLD}Flags:${_RESET}" \
+    "${C_BOLD}Flags:${C_RESET}" \
     '  --all      Apply to all packages (install / uninstall)' \
     '  --force    Restow even if already stowed (install only).' \
     '             Runs stow -R; conflicts at target paths are deleted.' \
     '             Use after adding new dotfiles to a package dir.' \
     '  --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked/unlinked' '' \
-    "${_BOLD}Packages${_RESET} (base name or full category/name):" \
+    "${C_BOLD}Packages${C_RESET} (base name or full category/name):" \
     '  shell:   zsh  starship' \
     '  editor:  vim  emacs' \
     '  term:    ghostty' \
     '  tool:    git  lazygit  ripgrep  yazi' \
     '  lang:    uv  bun' '' \
-    "${_BOLD}Examples:${_RESET}" \
+    "${C_BOLD}Examples:${C_RESET}" \
     '  ./setup.sh install --all                    Prereqs + brew + stow all packages' \
     '  ./setup.sh install zsh git                  Stow specific packages' \
     '  ./setup.sh install --force zsh              Restow (pick up new dotfiles)' \
@@ -1112,7 +1265,7 @@ show_help() {
     '  ./setup.sh uninstall --dry-run zsh          Preview what uninstall would do' \
     '  ./setup.sh status                           Full status with symlinks' \
     '  ./setup.sh status zsh                       Status for one package' '' \
-    "${_BOLD}Note:${_RESET}" \
+    "${C_BOLD}Note:${C_RESET}" \
     '  install without packages or --all shows this help.'
 }
 

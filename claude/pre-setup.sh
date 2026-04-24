@@ -35,6 +35,10 @@ readonly INSTALL_TIMEOUT=120
 # --- Platform ---
 readonly MIN_MACOS_VERSION="13.0"
 
+# --- Files ---
+# settings.json holds the API token; default to owner-only if stat fails.
+readonly DEFAULT_SETTINGS_PERMS=600
+
 # -----------------------------------------------------------------------------
 # Error Handling
 # -----------------------------------------------------------------------------
@@ -50,11 +54,21 @@ trap '_err_handler' ERR
 # Colors
 # -----------------------------------------------------------------------------
 
-readonly _RED=$'\033[0;31m'
-readonly _GREEN=$'\033[0;32m'
-readonly _YELLOW=$'\033[0;33m'
-readonly _BLUE=$'\033[0;34m'
-readonly _RESET=$'\033[0m'
+# Disable ANSI when stdout is not a terminal or NO_COLOR is set, so piped
+# output and log files stay clean.
+if [[ -n "${NO_COLOR:-}" ]] || [[ ! -t 1 ]]; then
+  readonly _RED=''
+  readonly _GREEN=''
+  readonly _YELLOW=''
+  readonly _BLUE=''
+  readonly _RESET=''
+else
+  readonly _RED=$'\033[0;31m'
+  readonly _GREEN=$'\033[0;32m'
+  readonly _YELLOW=$'\033[0;33m'
+  readonly _BLUE=$'\033[0;34m'
+  readonly _RESET=$'\033[0m'
+fi
 
 # -----------------------------------------------------------------------------
 # Logging
@@ -74,6 +88,15 @@ _pass() {
 
 _fail() {
   printf '  %s✗%s %s\n' "$_RED" "$_RESET" "$*" >&2
+}
+
+# Print a warning, restore default ERR trap, and exit 1.
+# Used by main() to abort cleanly after each phase failure with a recovery hint.
+_abort() {
+  printf '\n'
+  _warn "$*"
+  trap - ERR
+  exit 1
 }
 
 # Check if a command exists and print its version (best-effort).
@@ -276,7 +299,7 @@ _apply_post_fixes() {
 
   local orig_perms
   orig_perms="$(/usr/bin/stat -f '%Lp' "$settings" 2>/dev/null \
-    || printf '%s' "600")"
+    || printf '%s' "$DEFAULT_SETTINGS_PERMS")"
 
   local tmp
   tmp="$(mktemp)"
@@ -396,18 +419,12 @@ main() {
   printf '=========================================\n\n'
 
   if ! _check_prerequisites; then
-    printf '\n'
-    _warn "Prerequisites check failed — resolve issues above, then re-run"
-    trap - ERR
-    exit 1
+    _abort "Prerequisites check failed — resolve issues above, then re-run"
   fi
   printf '\n'
 
   if ! _install_claude; then
-    printf '\n'
-    _warn "Claude CLI installation failed — check network, then re-run"
-    trap - ERR
-    exit 1
+    _abort "Claude CLI installation failed — check network, then re-run"
   fi
   printf '\n'
 
@@ -417,16 +434,11 @@ main() {
   # Guard: ZAI helper must have created settings.json before post-fixes.
   if [[ ! -f "$HOME/.claude/settings.json" ]]; then
     _warn "settings.json not created — ZAI helper may have been cancelled"
-    _warn "Re-run ./claude/pre-setup.sh and complete the ZAI prompts"
-    trap - ERR
-    exit 1
+    _abort "Re-run ./claude/pre-setup.sh and complete the ZAI prompts"
   fi
 
   if ! _apply_post_fixes; then
-    printf '\n'
-    _warn "Post-configuration failed — check ~/.claude/settings.json"
-    trap - ERR
-    exit 1
+    _abort "Post-configuration failed — check ~/.claude/settings.json"
   fi
   printf '\n'
 
