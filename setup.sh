@@ -6,7 +6,7 @@
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
 # Keywords: dotfiles, stow, homebrew, setup
-# Dependencies: bash 4.3+, macOS
+# Dependencies: bash 3.2+, macOS
 #
 # Copyright (C) 2026 zhengyu li
 #
@@ -77,26 +77,7 @@ dry_run=false
 # Standard exit code for SIGINT (128 + signal 2).
 readonly EXIT_SIGINT=130
 
-# --- Bash Version Guard ---
-# setup.sh requires associative arrays (Bash 4.0+) and other features
-# not available in macOS system bash 3.2.  If the current shell is too
-# old, re-exec with Homebrew bash when available; otherwise print
-# bootstrap instructions.
-if (( BASH_VERSINFO[0] < 4 )); then
-  _new_bash=""
-  for _new_bash in /opt/homebrew/bin/bash /usr/local/bin/bash; do
-    if [[ -x "$_new_bash" ]]; then
-      exec "$_new_bash" "$0" "$@"
-    fi
-  done
-  printf 'error: bash 4+ required (current: %s)\n' "$BASH_VERSION" >&2
-  printf '\nOn a fresh Mac:\n' >&2
-  printf '  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"\n' >&2
-  printf '  eval "$(/opt/homebrew/bin/brew shellenv)"\n' >&2
-  printf '  brew install bash\n' >&2
-  printf '  /opt/homebrew/bin/bash %s\n' "$0" >&2
-  exit 1
-fi
+
 
 # -----------------------------------------------------------------------------
 # Color System
@@ -192,7 +173,10 @@ trap '_cleanup' EXIT
 _int_handler() {
   trap - EXIT
   local -a pids=()
-  mapfile -t pids < <(jobs -p)
+  local _pid
+  while IFS= read -r _pid; do
+    pids+=("$_pid")
+  done < <(jobs -p)
   if (( ${#pids[@]} > 0 )); then
     kill "${pids[@]}" 2>/dev/null || true
   fi
@@ -228,14 +212,13 @@ _is_valid_pkg() {
 }
 
 # Resolve package identifiers (short name or category/name) to canonical
-# "category/name" form.  Out-parameter via nameref ($1) to avoid subshell.
+# "category/name" form.  Results stored in global _VALIDATED_PKGS.
 # Returns 0 if at least one package resolved, 1 otherwise.
+_VALIDATED_PKGS=()
+
 validate_pkgs() {
-  local -n _out="$1"
-  shift
-  _out=()
-  local p pkg match
-  declare -A _seen=()
+  _VALIDATED_PKGS=()
+  local p pkg match existing _seen
 
   for p in "$@"; do
     if [[ -z "${p}" ]]; then
@@ -260,13 +243,20 @@ validate_pkgs() {
       log_warn "Unknown package: ${p}"
       continue
     fi
-    if [[ -z "${_seen[${match}]:-}" ]]; then
-      _out+=("${match}")
-      _seen[${match}]=1
+
+    _seen=false
+    for existing in "${_VALIDATED_PKGS[@]}"; do
+      if [[ "${existing}" == "${match}" ]]; then
+        _seen=true
+        break
+      fi
+    done
+    if ! "${_seen}"; then
+      _VALIDATED_PKGS+=("${match}")
     fi
   done
 
-  (( ${#_out[@]} > 0 ))
+  (( ${#_VALIDATED_PKGS[@]} > 0 ))
 }
 
 # -----------------------------------------------------------------------------
@@ -290,25 +280,20 @@ _has_stow() {
 # -----------------------------------------------------------------------------
 
 _bootstrap_homebrew_env() {
-  if _has_homebrew; then
-    return 0
-  fi
-
+  # Always source brew shellenv from known Homebrew locations so the
+  # full PATH (bin, sbin) is available even when brew is reachable
+  # via a partial environment.
   local b env_output
   for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
     if [[ -x "${b}" ]]; then
-      if ! env_output=$("${b}" shellenv 2>/dev/null); then
-        continue
-      fi
-      # shellcheck disable=SC1090
-      source <(printf '%s\n' "${env_output}")
-      if _has_homebrew; then
+      if env_output=$("${b}" shellenv 2>/dev/null); then
+        eval "${env_output}"
         return 0
       fi
     fi
   done
 
-  return 1
+  _has_homebrew
 }
 
 # -----------------------------------------------------------------------------
@@ -348,22 +333,23 @@ _install_homebrew() {
   local -r url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
   local installer
   installer="$(mktemp)"
+  trap 'rm -f "${installer:-}"' RETURN
 
   if ! curl --fail --silent --show-error \
     --connect-timeout "${NETWORK_TIMEOUT}" \
     --output "$installer" "${url}"; then
-    rm -f "$installer"
     log_err "Homebrew download failed"
     return 1
   fi
 
   if ! /bin/bash "$installer"; then
-    rm -f "$installer"
     log_err "Homebrew installation failed"
     return 1
   fi
 
   rm -f "$installer"
+  trap - RETURN
+
   if ! _bootstrap_homebrew_env; then
     log_err "Homebrew not found after installation"
     return 1
@@ -405,21 +391,22 @@ _ensure_homebrew_version() {
   local -r uninstall_url='https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh'
   local uninstaller
   uninstaller="$(mktemp)"
+  trap 'rm -f "${uninstaller:-}"' RETURN
 
   if ! curl --fail --silent --show-error \
     --connect-timeout "${NETWORK_TIMEOUT}" \
     --output "$uninstaller" "${uninstall_url}"; then
-    rm -f "$uninstaller"
     log_err "Homebrew uninstall script download failed"
     return 1
   fi
 
   if ! /bin/bash "$uninstaller"; then
-    rm -f "$uninstaller"
     log_err "Homebrew uninstall failed"
     return 1
   fi
+
   rm -f "$uninstaller"
+  trap - RETURN
 
   # Clear the command hash table so command -v brew reflects the current
   # PATH state rather than a stale cached entry from before uninstall.
@@ -825,41 +812,59 @@ _run_post_install_phase() {
 # Health Check
 # -----------------------------------------------------------------------------
 
-# Declarative package-to-tool mapping for health checks.
-declare -A _HEALTH_TOOL_MAP=(
-  [shell/zsh]='zsh:zsh'
-  [shell/starship]='starship:starship'
-  [editor/vim]='vim:vim'
-  [editor/emacs]='emacs:emacs'
-  [term/ghostty]='ghostty:ghostty'
-  [tool/git]='git:git'
-  [tool/lazygit]='lazygit:lazygit'
-  [tool/ripgrep]='rg:rg'
-  [tool/yazi]='yazi:yazi'
-  [lang/python/uv]='uv:uv'
-  [lang/typescript/bun]='bun:bun'
-)
-readonly _HEALTH_TOOL_MAP
+# Map a package identifier to its "cmd_name:friendly_name" health entry.
+# For cask apps whose binary is not on PATH, append a third field with
+# the known binary path: "cmd:friendly:/path/to/binary".
+# Returns 1 when the package has no health check.
+_health_tool_for() {
+  case "$1" in
+    shell/zsh) printf 'zsh:zsh' ;;
+    shell/starship) printf 'starship:starship' ;;
+    editor/vim) printf 'vim:vim' ;;
+    editor/emacs) printf 'emacs:emacs' ;;
+    term/ghostty)
+      printf 'ghostty:ghostty:/Applications/Ghostty.app/Contents/MacOS/ghostty'
+      ;;
+    tool/git) printf 'git:git' ;;
+    tool/lazygit) printf 'lazygit:lazygit' ;;
+    tool/ripgrep) printf 'rg:rg' ;;
+    tool/yazi) printf 'yazi:yazi' ;;
+    lang/python/uv) printf 'uv:uv' ;;
+    lang/typescript/bun) printf 'bun:bun' ;;
+    *) return 1 ;;
+  esac
+}
 
 # Run health checks for successfully stowed packages.
 # Args: pkg1 pkg2 ...
 _run_health_check() {
   _phase "Health Check"
-  local pkg tool_entry cmd_name friendly resolved
+  local pkg tool_entry cmd_name friendly fallback_path resolved
 
   for pkg in "$@"; do
     if ! is_stowed "${pkg}"; then
       continue
     fi
 
-    tool_entry="${_HEALTH_TOOL_MAP[${pkg}]:-}"
-    if [[ -z "${tool_entry}" ]]; then
+    if ! tool_entry=$(_health_tool_for "${pkg}"); then
       continue
     fi
     cmd_name="${tool_entry%%:*}"
-    friendly="${tool_entry#*:}"
+    # Strip cmd_name prefix, then extract friendly and optional path.
+    tool_entry="${tool_entry#*:}"
+    friendly="${tool_entry%%:*}"
+    fallback_path="${tool_entry#*:}"
+    # When no fallback field exists, friendly == fallback_path.
+    if [[ "${fallback_path}" == "${friendly}" ]]; then
+      fallback_path=''
+    fi
 
     resolved=$(command -v "${cmd_name}" 2>/dev/null) || true
+    if [[ -z "${resolved}" && -n "${fallback_path}" \
+       && -x "${fallback_path}" ]]; then
+      resolved="${fallback_path}"
+    fi
+
     if [[ -n "${resolved}" ]]; then
       log_ok "${friendly}: ${resolved}"
     else
@@ -908,13 +913,11 @@ cmd_install() {
     fi
     _PHASE_INDEX=0
 
-    # Prerequisites status.
     _phase "Prerequisites"
     if _has_xcode_cli; then log_ok "Xcode CLI: ready"; fi
     if _has_homebrew; then log_ok "Homebrew: ready"; fi
     if _has_stow; then log_ok "GNU Stow: ready"; fi
 
-    # Homebrew Bundle.
     _phase "Homebrew Bundle"
     if "${dry_run}"; then
       log_info "[dry-run] would run brew bundle"
@@ -922,7 +925,6 @@ cmd_install() {
       _run_brew_bundle
     fi
 
-    # Stow Packages.
     _phase "Stow Packages"
     local pkg
     for pkg in "${PKG_ALL[@]}"; do
@@ -933,10 +935,8 @@ cmd_install() {
       fi
     done
 
-    # Post-Install Hooks.
     _run_post_install_phase "${PKG_ALL[@]}"
 
-    # Health Check.
     if ! "${dry_run}"; then
       _run_health_check "${PKG_ALL[@]}"
     fi
@@ -945,8 +945,7 @@ cmd_install() {
   fi
 
   # --- Specific Packages ---
-  local -a resolved=()
-  if ! validate_pkgs resolved "${pkgs[@]}"; then
+  if ! validate_pkgs "${pkgs[@]}"; then
     die "No valid packages specified"
   fi
 
@@ -955,7 +954,7 @@ cmd_install() {
 
   _phase "Stow Packages"
   local pkg
-  for pkg in "${resolved[@]}"; do
+  for pkg in "${_VALIDATED_PKGS[@]}"; do
     if "${force}"; then
       restow_package "${pkg}" || true
     else
@@ -963,8 +962,7 @@ cmd_install() {
     fi
   done
 
-  # Post-Install Hooks.
-  _run_post_install_phase "${resolved[@]}"
+  _run_post_install_phase "${_VALIDATED_PKGS[@]}"
 }
 
 cmd_uninstall() {
@@ -997,7 +995,6 @@ cmd_uninstall() {
     return 1
   fi
 
-  # Resolve the target package list.
   local -a target_pkgs=()
   if "${do_all}"; then
     local p
@@ -1012,11 +1009,10 @@ cmd_uninstall() {
       return 0
     fi
   else
-    local -a resolved=()
-    if ! validate_pkgs resolved "${pkgs[@]}"; then
+    if ! validate_pkgs "${pkgs[@]}"; then
       die "No valid packages specified"
     fi
-    target_pkgs=("${resolved[@]}")
+    target_pkgs=("${_VALIDATED_PKGS[@]}")
   fi
 
   _PHASE_TOTAL=1
@@ -1033,13 +1029,11 @@ cmd_status() {
   local -a pkgs
 
   if (( $# > 0 )); then
-    local -a resolved=()
-
-    if ! validate_pkgs resolved "$@"; then
+    if ! validate_pkgs "$@"; then
       return 1
     fi
 
-    pkgs=("${resolved[@]}")
+    pkgs=("${_VALIDATED_PKGS[@]}")
   else
     pkgs=("${PKG_ALL[@]}")
   fi
@@ -1047,7 +1041,6 @@ cmd_status() {
   _PHASE_TOTAL=2
   _PHASE_INDEX=0
 
-  # Prerequisites.
   _phase "Prerequisites"
   if _has_xcode_cli; then log_ok "Xcode CLI"; else log_warn "Xcode CLI: missing"; fi
   if _has_homebrew; then log_ok "Homebrew"; else log_warn "Homebrew: missing"; fi
@@ -1058,7 +1051,6 @@ cmd_status() {
     return 0
   fi
 
-  # Package Status.
   _phase "Packages"
   local pkg
 
