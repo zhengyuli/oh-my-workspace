@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-24 14:59:00 Thursday by zhengyu.li>
+# Time-stamp: <2026-04-24 16:48:16 Friday by zhengyu.li>
 # =============================================================================
 # oh-my-workspace Setup Script
 #
@@ -77,8 +77,6 @@ dry_run=false
 # Standard exit code for SIGINT (128 + signal 2).
 readonly EXIT_SIGINT=130
 
-
-
 # -----------------------------------------------------------------------------
 # Color System
 # -----------------------------------------------------------------------------
@@ -134,8 +132,6 @@ log_err()  { _log "${C_R}" error err "$*"; }
 log_warn() { _log "${C_Y}" warn  err "$*"; }
 log_info() { _log "${C_B}" info  out "$*"; }
 
-# Phase header: top-level, bold, with step indicator [N/M].
-# Set _PHASE_TOTAL before the first call. Counter auto-increments.
 _PHASE_TOTAL=1
 _PHASE_INDEX=0
 
@@ -146,7 +142,6 @@ _phase() {
     "${C_BOLD}" "$*" "${C_RESET}"
 }
 
-# Run a command with stdout/stderr lines indented to match log output.
 _run_indented() {
   "$@" > >( sed "s/^/${_LOG_INDENT}/" ) 2> >( sed "s/^/${_LOG_INDENT}/" >&2 )
 }
@@ -211,9 +206,7 @@ _is_valid_pkg() {
   return 1
 }
 
-# Resolve package identifiers (short name or category/name) to canonical
-# "category/name" form.  Results stored in global _VALIDATED_PKGS.
-# Returns 0 if at least one package resolved, 1 otherwise.
+# Populates global _VALIDATED_PKGS with resolved "category/name" identifiers.
 _VALIDATED_PKGS=()
 
 validate_pkgs() {
@@ -357,8 +350,7 @@ _install_homebrew() {
   log_ok "Homebrew: installed"
 }
 
-# Verify Homebrew meets the minimum version requirement.
-# If too old: remove and return 1 so the caller reinstalls.
+# Returns 1 so the caller can reinstall when Homebrew is too old.
 _ensure_homebrew_version() {
   local ver
   ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}') || true
@@ -481,8 +473,7 @@ ensure_prerequisites() {
 # Stow State Queries
 # -----------------------------------------------------------------------------
 
-# Check if a package is fully stowed by running stow in dry-run mode.
-# Returns 0 when no LINK: lines appear (nothing to link → already stowed).
+# Returns 0 when stow -n -v produces no LINK: lines (already stowed).
 is_stowed() {
   local stow_dir
   stow_dir=$(pkg_stow_dir "$1")
@@ -519,8 +510,7 @@ is_stowed() {
 # Stow Operations
 # -----------------------------------------------------------------------------
 
-# Parse stow dry-run output for planned links and conflicts.
-# Returns absolute target paths, one per line.
+# Extract absolute target paths from stow dry-run output (LINK/conflict lines).
 _parse_stow_targets() {
   local output="$1"
   local -r conflict_owned_pat='existing target is not owned by stow: (.+)'
@@ -540,7 +530,6 @@ _parse_stow_targets() {
   done <<< "${output}"
 }
 
-# Remove a conflicting file/symlink at the stow target path.
 # Refuses to operate outside $HOME or on non-empty directories for safety.
 _resolve_stow_conflict() {
   local -r target="$1"
@@ -591,7 +580,6 @@ _resolve_stow_conflict() {
   rm -rf "${target}"
 }
 
-# Core stow dispatcher for stow_package / restow_package / unstow_package.
 # Flow: dry-run → state check → conflict resolution → execute.
 _stow_exec() {
   local pkg="$1"
@@ -643,7 +631,7 @@ _stow_exec() {
   # restow: skip if already fully stowed with no conflicts.
   if [[ "${mode}" == restow ]] \
     && ! grep -q 'existing target' <<< "${dry_output}" \
-    && is_stowed "$1"; then
+    && is_stowed "${pkg}"; then
     log_info "${pkg_base}: already stowed, no changes needed"
     return 0
   fi
@@ -722,7 +710,7 @@ _post_install_shell_zsh() {
     return 2
   fi
 
-  if [[ -n "${ZSH_VERSION:-}" || "${SHELL##*/}" == zsh ]]; then
+  if [[ -n "${ZSH_VERSION:-}" ]] || [[ "${SHELL:-}" == */zsh ]]; then
     return 0
   fi
 
@@ -774,7 +762,6 @@ _post_install_yazi() {
   return 1
 }
 
-# Run a single hook and log the result.
 _hook_run() {
   local -r name="$1" fn="$2"
   local _rc=0
@@ -786,7 +773,6 @@ _hook_run() {
   esac
 }
 
-# Run post-install hooks for the given packages.
 _run_post_install_hooks() {
   local _pkg
   for _pkg in "$@"; do
@@ -797,8 +783,6 @@ _run_post_install_hooks() {
   done
 }
 
-# Run post-install phase.
-# Args: pkg1 pkg2 ...
 _run_post_install_phase() {
   _phase "Post-Install Hooks"
   if "${dry_run}"; then
@@ -835,8 +819,6 @@ _health_tool_for() {
   esac
 }
 
-# Run health checks for successfully stowed packages.
-# Args: pkg1 pkg2 ...
 _run_health_check() {
   _phase "Health Check"
   local pkg tool_entry cmd_name friendly fallback_path resolved
@@ -850,7 +832,6 @@ _run_health_check() {
       continue
     fi
     cmd_name="${tool_entry%%:*}"
-    # Strip cmd_name prefix, then extract friendly and optional path.
     tool_entry="${tool_entry#*:}"
     friendly="${tool_entry%%:*}"
     fallback_path="${tool_entry#*:}"
@@ -1038,7 +1019,7 @@ cmd_status() {
     pkgs=("${PKG_ALL[@]}")
   fi
 
-  _PHASE_TOTAL=2
+  _PHASE_TOTAL=1
   _PHASE_INDEX=0
 
   _phase "Prerequisites"
@@ -1051,6 +1032,7 @@ cmd_status() {
     return 0
   fi
 
+  _PHASE_TOTAL=2
   _phase "Packages"
   local pkg
 
