@@ -88,7 +88,7 @@ vnoremap < <gv
 vnoremap > >gv
 
 augroup vimrc
-    autocmd!
+  autocmd!
 augroup END
 
 let s:cfg = ($XDG_CONFIG_HOME != '' ? $XDG_CONFIG_HOME : $HOME . '/.config')
@@ -100,15 +100,15 @@ Single-expression functions have no extra blank lines.
 ```vim
 " Multi-step body
 function! s:StatuslineActive() abort
-    let l:git = exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
-    let l:ft = &filetype
+  let l:git = exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+  let l:ft = &filetype
 
-    return l:git . ' ' . l:ft
+  return l:git . ' ' . l:ft
 endfunction
 
 " Single-expression body — no extra blank lines
 function! s:StatuslineGit() abort
-    return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+  return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
 endfunction
 ```
 
@@ -239,13 +239,13 @@ Always wrap in an augroup with `autocmd!` to prevent duplication on re-source.
 
 ```vim
 augroup vimrc
-    autocmd!
+  autocmd!
 
-    " Return to last cursor position when reopening a file
-    autocmd BufReadPost *
-        \ if line("'\"") > 0 && line("'\"") <= line("$") |
-        \     execute 'normal! g`"' |
-        \ endif
+  " Return to last cursor position when reopening a file
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   execute 'normal! g`"' |
+    \ endif
 augroup END
 ```
 
@@ -256,7 +256,7 @@ prefix.
 
 ```vim
 function! s:StatuslineGit() abort
-    return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+  return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
 endfunction
 ```
 
@@ -266,11 +266,11 @@ Use `has('feature')` for capability checks, not version numbers.
 
 ```vim
 if has('clipboard')
-    set clipboard=unnamedplus
+  set clipboard=unnamedplus
 endif
 
 if has('termguicolors')
-    set termguicolors
+  set termguicolors
 endif
 ```
 
@@ -304,7 +304,7 @@ let s:state = ($XDG_STATE_HOME != ''
              \ ? $XDG_STATE_HOME : $HOME . '/.local/state')
 
 for s:dir in [s:state . '/vim', s:data . '/vim/undo']
-    if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
+  if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
 endfor
 ```
 
@@ -337,11 +337,11 @@ Validate inputs at system boundaries in script-local functions.
 
 ```vim
 function! s:LoadConfig(name) abort
-    if a:name !~# '\v^\w+$'
-        echoerr 'Invalid config name: ' . a:name
-        return
-    endif
-    execute 'source' s:cfg . '/vim/' . a:name . '.vim'
+  if a:name !~# '\v^\w+$'
+    echoerr 'Invalid config name: ' . a:name
+    return
+  endif
+  execute 'source' s:cfg . '/vim/' . a:name . '.vim'
 endfunction
 ```
 
@@ -352,23 +352,24 @@ Maximum 3 nesting levels. Use early-return guards to flatten structure.
 ```vim
 " WRONG — 4 levels deep
 function! s:Process(file) abort
-    if filereadable(a:file)
-        if !isdirectory(s:tmp)
-            if mkdir(s:tmp, 'p')
-                if writefile([], a:file) == 0
-                    " process file
-                endif
-            endif
+  if filereadable(a:file)
+    if !isdirectory(s:tmp)
+      if mkdir(s:tmp, 'p')
+        if writefile([], a:file) == 0
+          " process file
         endif
+      endif
     endif
+  endif
 endfunction
 
 " CORRECT — early returns, 2 levels max
 function! s:Process(file) abort
-    if !filereadable(a:file) | return | endif
-    if isdirectory(s:tmp) | return | endif
+  if !filereadable(a:file) | return | endif
+  if !isdirectory(s:tmp)
     call mkdir(s:tmp, 'p')
-    call writefile([], a:file)
+  endif
+  call writefile([], a:file)
 endfunction
 ```
 
@@ -440,24 +441,25 @@ let s:config_path = '/vim'
 ```vim
 " WRONG — continues after error
 function! s:Foo()
-    call s:bar()
+  call s:bar()
 endfunction
 
 " CORRECT — stops on first error
 function! s:Foo() abort
-    call s:bar()
+  call s:bar()
 endfunction
 ```
 
 ### Don't: Use Recursive Mappings Without Reason
 
 ```vim
-" WRONG — potential infinite recursion
-nnoremap j gj
-nnoremap gj j
+" WRONG — recursive maps cause infinite loop (j → gj → j → ...)
+nmap j gj
+nmap gj j
 
-" CORRECT — use noremap to avoid recursion
-nnoremap gj j
+" CORRECT — noremap prevents recursive resolution
+nnoremap j gj
+nnoremap k gk
 ```
 
 ### Don't: End-of-Line Comments

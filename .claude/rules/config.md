@@ -27,7 +27,7 @@ This repository is XDG-compliant. Each tool's config location:
 | ripgrep | `$XDG_CONFIG_HOME/ripgrep/rc`   | Via env    | Set `RIPGREP_CONFIG_PATH` |
 | ghostty | `$XDG_CONFIG_HOME/ghostty/config` | Yes      | No setup needed           |
 
-Tools that require environment variable redirection: set in `shell/zsh/00-env.zsh`.
+Tools that require environment variable redirection: set in `conf.d/00-env.zsh`.
 
 ## File Header
 

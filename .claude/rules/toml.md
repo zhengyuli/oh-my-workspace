@@ -184,7 +184,7 @@ symbol = " "
 - **Booleans**: `enabled = true` (not `"true"`)
 - **Arrays**: single-line for short lists `items = ["a", "b"]`, multiline
   for longer ones
-- **Tables**: see "Table Styles" section above
+- **Tables**: see [TOML Syntax Conventions > Table Styles](#table-styles)
 
 ### Formatting
 
