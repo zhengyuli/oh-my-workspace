@@ -136,6 +136,23 @@ sort_dir_first = true
 show_hidden = false
 ```
 
+## Indentation
+
+TOML has no block-level indentation. All keys sit at column 0 inside their
+table. Inline tables and inline arrays are written on a single line with no
+leading whitespace.
+
+```toml
+# Keys at column 0 inside table
+[manager]
+ratio = [1, 4, 3]
+sort_by = "natural"
+
+# Inline table — no indentation
+[log]
+enabled = { level = "info", file = "/tmp/log" }
+```
+
 ## Line Length
 
 79 characters maximum.

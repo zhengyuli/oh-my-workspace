@@ -185,6 +185,50 @@ theme: catppuccin  # color scheme
 theme: catppuccin
 ```
 
+## Code Patterns
+
+### Value Types
+
+- **Strings**: see [YAML Syntax Conventions > String Quoting](#string-quoting)
+- **Numbers**: `timeout: 30` (int), `ratio: 0.8` (float)
+- **Booleans**: `enabled: true` (not `"true"`) — see anti-pattern below
+- **Lists**: multiline preferred for readability; inline `["a", "b"]` for
+  short, fixed lists of 3 items or fewer
+- **Maps**: nested structure; inline `{x: 1, y: 2}` for compact 2-key maps
+  only
+- **Null**: `timeout: null` (see [Null Values](#null-values))
+
+### Formatting
+
+- One space after `:` in key-value pairs
+- Never align values with spaces (see Anti-Patterns)
+- Trailing spaces forbidden — use yamllint to enforce
+
+### Section Uniqueness
+
+Each section title must be unique within the file at every delimiter level
+(Level 1 and Level 2). Group related settings together — do not create
+multiple sections of the same name.
+
+```yaml
+# WRONG — duplicate section at Level 2
+# --- GUI ---
+nerdFontsVersion: "3"
+# --- Git ---
+paging:
+  colorArg: always
+# --- GUI ---              ← same name reused
+showFileTree: true
+
+# CORRECT
+# --- GUI ---
+nerdFontsVersion: "3"
+showFileTree: true
+# --- Git ---
+paging:
+  colorArg: always
+```
+
 ## YAML Syntax Conventions
 
 ### String Quoting
@@ -283,50 +327,6 @@ production:
 production:
   timeout: 60
   retries: 3
-```
-
-## Code Patterns
-
-### Value Types
-
-- **Strings**: see "String Quoting" section above
-- **Numbers**: `timeout: 30` (int), `ratio: 0.8` (float)
-- **Booleans**: `enabled: true` (not `"true"`) — see anti-pattern below
-- **Lists**: multiline preferred for readability; inline `["a", "b"]` for
-  short, fixed lists of 3 items or fewer
-- **Maps**: nested structure; inline `{x: 1, y: 2}` for compact 2-key maps
-  only
-- **Null**: `timeout: null` (see "Null Values" section above)
-
-### Formatting
-
-- One space after `:` in key-value pairs
-- Never align values with spaces (see Anti-Patterns)
-- Trailing spaces forbidden — use yamllint to enforce
-
-### Section Uniqueness
-
-Each section title must be unique within the file at every delimiter level
-(Level 1 and Level 2). Group related settings together — do not create
-multiple sections of the same name.
-
-```yaml
-# WRONG — duplicate section at Level 2
-# --- GUI ---
-nerdFontsVersion: "3"
-# --- Git ---
-paging:
-  colorArg: always
-# --- GUI ---              ← same name reused
-showFileTree: true
-
-# CORRECT
-# --- GUI ---
-nerdFontsVersion: "3"
-showFileTree: true
-# --- Git ---
-paging:
-  colorArg: always
 ```
 
 ## Per-Tool Notes

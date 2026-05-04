@@ -181,6 +181,39 @@ set expandtab
 set expandtab
 ```
 
+## Error Handling
+
+Always use the `abort` keyword on function definitions so Vim stops
+execution on the first error instead of silently continuing. Functions
+without `abort` can leave the buffer in a partially modified state.
+
+```vim
+" WRONG — continues executing after error
+function! s:Process(file)
+  call s:validate(a:file)
+  call s:transform(a:file)
+endfunction
+
+" CORRECT — stops on first error
+function! s:Process(file) abort
+  call s:validate(a:file)
+  call s:transform(a:file)
+endfunction
+```
+
+Use `echoerr` for non-recoverable errors and early `return` for recoverable
+validation failures.
+
+```vim
+function! s:LoadConfig(name) abort
+  if a:name !~# '\v^\w+$'
+    echoerr 'Invalid config name: ' . a:name
+    return
+  endif
+  execute 'source' s:cfg . '/vim/' . a:name . '.vim'
+endfunction
+```
+
 ## Code Patterns
 
 ### Plugin Management
@@ -247,17 +280,6 @@ augroup vimrc
     \   execute 'normal! g`"' |
     \ endif
 augroup END
-```
-
-### Functions
-
-Use `function!` with `abort` keyword. Name script-local functions with `s:`
-prefix.
-
-```vim
-function! s:StatuslineGit() abort
-  return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
-endfunction
 ```
 
 ### Conditional Logic
@@ -333,17 +355,8 @@ set number
 
 ### Validation at Boundaries
 
-Validate inputs at system boundaries in script-local functions.
-
-```vim
-function! s:LoadConfig(name) abort
-  if a:name !~# '\v^\w+$'
-    echoerr 'Invalid config name: ' . a:name
-    return
-  endif
-  execute 'source' s:cfg . '/vim/' . a:name . '.vim'
-endfunction
-```
+Validate inputs at system boundaries in script-local functions. See
+[Error Handling](#error-handling) for the `echoerr` + early `return` pattern.
 
 ### Nesting Limit
 
@@ -409,6 +422,24 @@ hi Comment         guifg=#6272a4  guibg=NONE     gui=italic
 hi Constant        guifg=#bd93f9  guibg=NONE     gui=NONE
 ```
 
+## Functions
+
+Use `function!` with `abort` keyword. Name script-local functions with `s:`
+prefix. Public functions (rarely needed in vimrc) use a unique namespace
+prefix.
+
+```vim
+" Script-local function
+function! s:StatuslineGit() abort
+  return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+endfunction
+
+" Script-local with arguments
+function! s:LoadConfig(name) abort
+  execute 'source' s:cfg . '/vim/' . a:name . '.vim'
+endfunction
+```
+
 ## Anti-Patterns
 
 ### Don't: Align Option Values with `set`
@@ -437,6 +468,8 @@ let s:config_path = '/vim'
 ```
 
 ### Don't: Omit `abort` on Functions
+
+See also [Error Handling](#error-handling).
 
 ```vim
 " WRONG — continues after error
