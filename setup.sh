@@ -38,6 +38,10 @@ set -euo pipefail
 # --- Network ---
 readonly NETWORK_TIMEOUT=60
 
+# --- Download Retry ---
+readonly DOWNLOAD_MAX_RETRIES=3
+readonly DOWNLOAD_RETRY_DELAY=5
+
 # --- Xcode CLI Install Polling ---
 readonly XCODE_POLL_INTERVAL=5
 readonly XCODE_POLL_MAX=600
@@ -328,12 +332,25 @@ _install_homebrew() {
   installer="$(mktemp)"
   trap 'rm -f "${installer:-}"' RETURN
 
-  if ! curl --fail --silent --show-error \
-    --connect-timeout "${NETWORK_TIMEOUT}" \
-    --output "$installer" "${url}"; then
-    log_err "Homebrew download failed"
-    return 1
-  fi
+  local attempt=1
+  local delay="${DOWNLOAD_RETRY_DELAY}"
+  while (( attempt <= DOWNLOAD_MAX_RETRIES )); do
+    if curl --fail --silent --show-error \
+      --connect-timeout "${NETWORK_TIMEOUT}" \
+      --output "$installer" "${url}"; then
+      break
+    fi
+
+    if (( attempt >= DOWNLOAD_MAX_RETRIES )); then
+      log_err "Homebrew download failed after ${DOWNLOAD_MAX_RETRIES} attempts"
+      return 1
+    fi
+
+    log_warn "Download attempt ${attempt} failed, retrying in ${delay}s..."
+    sleep "${delay}"
+    attempt=$(( attempt + 1 ))
+    delay=$(( delay * 2 ))
+  done
 
   if ! /bin/bash "$installer"; then
     log_err "Homebrew installation failed"
