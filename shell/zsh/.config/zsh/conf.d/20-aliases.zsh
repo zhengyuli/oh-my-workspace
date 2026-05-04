@@ -78,4 +78,15 @@ if command -v bat &>/dev/null; then
   alias cats='bat --style=numbers,changes'
 fi
 
+# --- Grep ---
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+# --- Disk Usage ---
+alias df='df -h'
+alias du='du -sh'
+
+# --- Shell Reload ---
 alias reload-zsh='exec zsh -l'
+alias reload-conf='source "$ZDOTDIR/.zshrc"'
