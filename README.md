@@ -47,7 +47,7 @@ That's it. Your development environment is ready.
 | Requirement | How to Check      | Auto-Installed? |
 |-------------|-------------------|-----------------|
 | macOS       | `uname -s`        | —               |
-| Bash 4.3+   | `bash --version`  | —               |
+| Bash 3.2+   | `bash --version`  | —               |
 | Xcode CLI   | `xcode-select -p` | Yes             |
 | Homebrew    | `brew --version`  | Yes             |
 | GNU Stow    | `stow --version`  | Yes             |

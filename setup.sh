@@ -147,7 +147,10 @@ _phase() {
 }
 
 _run_indented() {
-  "$@" > >( sed "s/^/${_LOG_INDENT}/" ) 2> >( sed "s/^/${_LOG_INDENT}/" >&2 )
+  local rc=0
+  "$@" > >( sed "s/^/${_LOG_INDENT}/" ) 2> >( sed "s/^/${_LOG_INDENT}/" >&2 ) || rc=$?
+  wait
+  return "$rc"
 }
 
 # -----------------------------------------------------------------------------
@@ -163,7 +166,15 @@ _err_handler() {
 trap '_err_handler' ERR
 
 _cleanup() {
-  :
+  local -a tmpfiles=()
+  local saved_nullglob
+  saved_nullglob="$(shopt -p nullglob 2>/dev/null || true)"
+  shopt -s nullglob
+  tmpfiles=(/tmp/omw-setup-*.$$)
+  eval "${saved_nullglob}"
+  if (( ${#tmpfiles[@]} > 0 )); then
+    rm -f "${tmpfiles[@]}" 2>/dev/null
+  fi
 }
 trap '_cleanup' EXIT
 
@@ -411,12 +422,26 @@ _ensure_homebrew_version() {
   uninstaller="$(mktemp)"
   trap 'rm -f "${uninstaller:-}"' RETURN
 
-  if ! curl --fail --silent --show-error \
-    --connect-timeout "${NETWORK_TIMEOUT}" \
-    --output "$uninstaller" "${uninstall_url}"; then
-    log_err "Homebrew uninstall script download failed"
-    return 1
-  fi
+  local attempt=1
+  local delay="${DOWNLOAD_RETRY_DELAY}"
+  while (( attempt <= DOWNLOAD_MAX_RETRIES )); do
+    if curl --fail --silent --show-error \
+      --connect-timeout "${NETWORK_TIMEOUT}" \
+      --output "$uninstaller" "${uninstall_url}"; then
+      break
+    fi
+
+    if (( attempt >= DOWNLOAD_MAX_RETRIES )); then
+      log_err "Homebrew uninstall script download failed after" \
+        "${DOWNLOAD_MAX_RETRIES} attempts"
+      return 1
+    fi
+
+    log_warn "Download attempt ${attempt} failed, retrying in ${delay}s..."
+    sleep "${delay}"
+    attempt=$(( attempt + 1 ))
+    delay=$(( delay * 2 ))
+  done
 
   if ! /bin/bash "$uninstaller"; then
     log_err "Homebrew uninstall failed"
@@ -503,7 +528,9 @@ ensure_prerequisites() {
   fi
 
   # --- Git Filters ---
-  _setup_git_filters
+  if _is_valid_pkg "yazi"; then
+    _setup_git_filters
+  fi
 }
 
 # -----------------------------------------------------------------------------
