@@ -982,11 +982,12 @@ cmd_install() {
 
     _phase "Stow Packages"
     local pkg
+    local _fail_count=0
     for pkg in "${PKG_ALL[@]}"; do
       if "${force}"; then
-        restow_package "${pkg}" || true
+        restow_package "${pkg}" || (( _fail_count += 1 ))
       else
-        stow_package "${pkg}" || true
+        stow_package "${pkg}" || (( _fail_count += 1 ))
       fi
     done
 
@@ -996,7 +997,7 @@ cmd_install() {
       _run_health_check "${PKG_ALL[@]}"
     fi
 
-    return 0
+    return $(( _fail_count > 0 ? 1 : 0 ))
   fi
 
   # --- Specific Packages ---
@@ -1009,15 +1010,18 @@ cmd_install() {
 
   _phase "Stow Packages"
   local pkg
+  local _fail_count=0
   for pkg in "${_VALIDATED_PKGS[@]}"; do
     if "${force}"; then
-      restow_package "${pkg}" || true
+      restow_package "${pkg}" || (( _fail_count += 1 ))
     else
-      stow_package "${pkg}" || true
+      stow_package "${pkg}" || (( _fail_count += 1 ))
     fi
   done
 
   _run_post_install_phase "${_VALIDATED_PKGS[@]}"
+
+  return $(( _fail_count > 0 ? 1 : 0 ))
 }
 
 cmd_uninstall() {
@@ -1087,9 +1091,12 @@ cmd_uninstall() {
 
   _phase "Unstow Packages"
   local pkg
+  local _fail_count=0
   for pkg in "${target_pkgs[@]}"; do
-    unstow_package "${pkg}" || true
+    unstow_package "${pkg}" || (( _fail_count += 1 ))
   done
+
+  return $(( _fail_count > 0 ? 1 : 0 ))
 }
 
 cmd_status() {
