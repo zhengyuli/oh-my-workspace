@@ -100,6 +100,20 @@ _cleanup() { rm -f "$_tmp_file"; }
 
 **Prohibited**: two or more consecutive blank lines anywhere in the file.
 
+## Indentation
+
+2-space indent for block bodies (`if`, `for`, `while`, `case`, functions).
+
+```zsh
+if [[ -f "$file" ]]; then
+  process "$file"
+fi
+
+for pkg in "${pkgs[@]}"; do
+  _install_package "$pkg"
+done
+```
+
 ## Line Length
 
 79 characters maximum.
@@ -108,6 +122,35 @@ Exceptions:
 
 - URLs and file paths that cannot be wrapped
 - Help text strings in `print` / `printf` (user-facing output)
+
+## Comments
+
+Comments explain *why*, not *what*. The code itself should be readable
+enough to show what it does.
+
+**Comment syntax**: `#` followed by a single space.
+
+**When to comment**:
+- Non-obvious logic, workarounds, performance trade-offs
+- Why a particular approach was chosen over alternatives
+- Constraints or assumptions that are not self-evident
+
+**When NOT to comment**:
+- Self-documenting variable/function names
+- Obvious operations (`# Export PATH` before `export PATH=...`)
+
+**No end-of-line comments** — place comments on a separate line above
+the code (see [Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments)).
+
+```zsh
+# WRONG — restates the code
+# Export PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# CORRECT — explains the reasoning
+# Local bin takes precedence over system packages (personal builds)
+export PATH="$HOME/.local/bin:$PATH"
+```
 
 ## Error Handling
 
@@ -336,7 +379,7 @@ if (( count > MAX_THRESHOLD )); then
 fi
 ```
 
-## Zsh Features
+## Zsh-Specific Features
 
 ### Glob Qualifiers
 
@@ -426,196 +469,6 @@ local -A opts=( )              # associative array
 # -z: use zsh-style function loading
 autoload -Uz compinit
 ```
-
-## Functions
-
-### emulate for Portable Functions
-
-Use `emulate -L zsh` at the top of autoloaded functions and shared library
-functions that may be sourced from different emulation contexts (bash
-compatibility mode, ksh emulation, etc.).
-
-```zsh
-# Autoloaded function — emulation context is unknown at load time
-_my_utility() {
-  emulate -L zsh
-  # Now guaranteed: extended_glob, zsh parameter expansion, zsh globs
-  local -a files=( **/*.md(N) )
-}
-```
-
-**When to use**: autoloaded functions (`autoload -Uz`), functions in shared
-libraries, completion functions.
-
-**When NOT needed**: functions defined within your own conf.d/ files (already
-running in zsh emulation), scripts with `#!/usr/bin/env zsh` shebang.
-
-### Single Responsibility
-
-Each function does one thing only.
-
-### Parameter Validation
-
-Validate required parameters at the start.
-
-```zsh
-_validate_package() {
-  local -r pkg="$1"
-  if [[ -z "$pkg" ]]; then
-    print -u2 "error: package required"
-    return 1
-  fi
-}
-```
-
-### Main Function
-
-For scripts longer than ~20 lines, wrap all logic in `main()`.
-
-```zsh
-main() {
-  local -r pkg="$1"
-  _validate_package "$pkg"
-  _install_package "$pkg"
-}
-main "$@"
-```
-
-### Local Command Substitution
-
-Declare and assign on separate lines when RHS is command substitution.
-Unlike bash, zsh preserves the exit code when combining declaration and
-assignment — separate lines are still preferred for readability and
-consistency with bash conventions.
-
-```zsh
-local dir
-dir="$(dirname "$file")"
-```
-
-## Comments
-
-Comments explain *why*, not *what*. The code itself should be readable
-enough to show what it does. Only add comments when the reasoning is
-non-obvious from the code.
-
-```zsh
-# WRONG — restates the code
-# Export PATH
-export PATH="$HOME/.local/bin:$PATH"
-
-# CORRECT — explains the reasoning
-# Local bin takes precedence over system packages (personal builds)
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-## Anti-Patterns
-
-### Don't: eval for User Input
-
-```zsh
-# WRONG
-eval "$user_input"
-
-# CORRECT — explicit dispatch
-case "$user_input" in
-  install) _install ;;
-  uninstall) _uninstall ;;
-  *) print -u2 "error: invalid command: $user_input"; exit 1 ;;
-esac
-```
-
-### Don't: Short-Circuit Control Flow
-
-Do not use `&&` or `||` as shorthand for conditionals on **standalone
-statements**.  They obscure control flow intent: `&&` means "proceed only
-on success" and `||` means "proceed only on failure", but neither makes
-the branching logic readable at a glance.
-
-**This rule applies only to standalone statements** — `&&` / `||` inside
-`if`, `while`, or `until` conditions are boolean expressions and must
-NOT be split.
-
-```zsh
-# WRONG — standalone control flow hidden behind operators
-[[ -f "$file" ]] && cat "$file"
-[[ ! -d "$dir" ]] || mkdir -p "$dir"
-
-# CORRECT — explicit conditionals for standalone statements
-if [[ -f "$file" ]]; then
-  cat "$file"
-fi
-if [[ ! -d "$dir" ]]; then
-  mkdir -p "$dir"
-fi
-
-# CORRECT — boolean expressions inside if/while are fine, do NOT split
-if [[ ! -r "$file" ]] || [[ ! -s "$file" ]]; then
-  return 0
-fi
-while [[ -n "$line" ]] && [[ "$line" != "EOF" ]]; do
-  _process_line "$line"
-done
-```
-
-### Don't: End-of-Line Comments
-
-Avoid end-of-line `# comment` annotations after a statement.  Move the
-explanation to a separate `#` comment line above the code — end-of-line
-comments are easily missed during review and typically restate the obvious.
-
-```zsh
-# WRONG — end-of-line annotation restates the obvious
-export PATH="$HOME/bin:$PATH"  # Add bin to PATH
-
-# CORRECT — separate line explains reasoning
-# Personal builds take precedence over system packages
-export PATH="$HOME/bin:$PATH"
-```
-
-### Don't: Align Values
-
-Do not pad `=` in assignments or align continuation markers with extra
-spaces — it creates noisy diffs when names or values change.
-
-```zsh
-# WRONG — alignment breaks on first rename
-case "$mode" in
-  install)    _install  ;;
-  uninstall)  _remove   ;;
-esac
-
-# CORRECT
-case "$mode" in
-  install) _install ;;
-  uninstall) _remove ;;
-esac
-```
-
-## Security
-
-### Code Injection Prevention
-
-See Anti-Patterns: [Don't: eval for User Input](#dont-eval-for-user-input).
-
-### Permission Management
-
-| File Type    | Mode | Rationale                        |
-|--------------|------|----------------------------------|
-| Scripts      | 755  | Executable by owner/group/other  |
-| Config files | 644  | Readable by all, writable by owner |
-| SSH keys     | 600  | Accessible only by owner         |
-| Secret files | 600  | Accessible only by owner         |
-
-### Secrets Management
-
-Read secrets from environment variables with safe defaults.
-
-```zsh
-API_KEY="${API_KEY:-}"
-```
-
-**Sensitive types**: API keys, tokens, passwords, private keys, certificates.
 
 ## Shell Options
 
@@ -752,6 +605,180 @@ zstyle ':completion:*' matcher-list \
 When using fzf-tab, set `zstyle ':completion:*' menu no` and document that
 fzf-tab owns all Tab completion UI. Do NOT set `menu select` in completion
 config — it creates dead config that fzf-tab overrides.
+
+## Functions
+
+### emulate for Portable Functions
+
+Use `emulate -L zsh` at the top of autoloaded functions and shared library
+functions that may be sourced from different emulation contexts (bash
+compatibility mode, ksh emulation, etc.).
+
+```zsh
+# Autoloaded function — emulation context is unknown at load time
+_my_utility() {
+  emulate -L zsh
+  # Now guaranteed: extended_glob, zsh parameter expansion, zsh globs
+  local -a files=( **/*.md(N) )
+}
+```
+
+**When to use**: autoloaded functions (`autoload -Uz`), functions in shared
+libraries, completion functions.
+
+**When NOT needed**: functions defined within your own conf.d/ files (already
+running in zsh emulation), scripts with `#!/usr/bin/env zsh` shebang.
+
+### Single Responsibility
+
+Each function does one thing only.
+
+### Parameter Validation
+
+Validate required parameters at the start.
+
+```zsh
+_validate_package() {
+  local -r pkg="$1"
+  if [[ -z "$pkg" ]]; then
+    print -u2 "error: package required"
+    return 1
+  fi
+}
+```
+
+### Main Function
+
+For scripts longer than ~20 lines, wrap all logic in `main()`.
+
+```zsh
+main() {
+  local -r pkg="$1"
+  _validate_package "$pkg"
+  _install_package "$pkg"
+}
+main "$@"
+```
+
+### Local Command Substitution
+
+Declare and assign on separate lines when RHS is command substitution.
+Unlike bash, zsh preserves the exit code when combining declaration and
+assignment — separate lines are still preferred for readability and
+consistency with bash conventions.
+
+```zsh
+local dir
+dir="$(dirname "$file")"
+```
+
+## Anti-Patterns
+
+### Don't: eval for User Input
+
+```zsh
+# WRONG
+eval "$user_input"
+
+# CORRECT — explicit dispatch
+case "$user_input" in
+  install) _install ;;
+  uninstall) _uninstall ;;
+  *) print -u2 "error: invalid command: $user_input"; exit 1 ;;
+esac
+```
+
+### Don't: Short-Circuit Control Flow
+
+Do not use `&&` or `||` as shorthand for conditionals on **standalone
+statements**.  They obscure control flow intent: `&&` means "proceed only
+on success" and `||` means "proceed only on failure", but neither makes
+the branching logic readable at a glance.
+
+**This rule applies only to standalone statements** — `&&` / `||` inside
+`if`, `while`, or `until` conditions are boolean expressions and must
+NOT be split.
+
+```zsh
+# WRONG — standalone control flow hidden behind operators
+[[ -f "$file" ]] && cat "$file"
+[[ ! -d "$dir" ]] || mkdir -p "$dir"
+
+# CORRECT — explicit conditionals for standalone statements
+if [[ -f "$file" ]]; then
+  cat "$file"
+fi
+if [[ ! -d "$dir" ]]; then
+  mkdir -p "$dir"
+fi
+
+# CORRECT — boolean expressions inside if/while are fine, do NOT split
+if [[ ! -r "$file" ]] || [[ ! -s "$file" ]]; then
+  return 0
+fi
+while [[ -n "$line" ]] && [[ "$line" != "EOF" ]]; do
+  _process_line "$line"
+done
+```
+
+### Don't: End-of-Line Comments
+
+Avoid end-of-line `# comment` annotations after a statement.  Move the
+explanation to a separate `#` comment line above the code — end-of-line
+comments are easily missed during review and typically restate the obvious.
+
+```zsh
+# WRONG — end-of-line annotation restates the obvious
+export PATH="$HOME/bin:$PATH"  # Add bin to PATH
+
+# CORRECT — separate line explains reasoning
+# Personal builds take precedence over system packages
+export PATH="$HOME/bin:$PATH"
+```
+
+### Don't: Align Values
+
+Do not pad `=` in assignments or align continuation markers with extra
+spaces — it creates noisy diffs when names or values change.
+
+```zsh
+# WRONG — alignment breaks on first rename
+case "$mode" in
+  install)    _install  ;;
+  uninstall)  _remove   ;;
+esac
+
+# CORRECT
+case "$mode" in
+  install) _install ;;
+  uninstall) _remove ;;
+esac
+```
+
+## Security
+
+### Code Injection Prevention
+
+See Anti-Patterns: [Don't: eval for User Input](#dont-eval-for-user-input).
+
+### Permission Management
+
+| File Type    | Mode | Rationale                        |
+|--------------|------|----------------------------------|
+| Scripts      | 755  | Executable by owner/group/other  |
+| Config files | 644  | Readable by all, writable by owner |
+| SSH keys     | 600  | Accessible only by owner         |
+| Secret files | 600  | Accessible only by owner         |
+
+### Secrets Management
+
+Read secrets from environment variables with safe defaults.
+
+```zsh
+API_KEY="${API_KEY:-}"
+```
+
+**Sensitive types**: API keys, tokens, passwords, private keys, certificates.
 
 ## References
 
