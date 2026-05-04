@@ -312,15 +312,24 @@ _install_xcode_cli() {
 
   xcode-select --install 2>/dev/null || true
 
+  printf '%s' "${_LOG_INDENT}"
   local waited=0
   until _has_xcode_cli; do
     if (( waited >= XCODE_POLL_MAX )); then
+      printf '\n'
       log_err "Xcode CLI install timed out after ${XCODE_POLL_MAX}s"
       return 1
     fi
+    printf '.'
     sleep "${XCODE_POLL_INTERVAL}"
     waited=$(( waited + XCODE_POLL_INTERVAL ))
   done
+  printf '\n'
+
+  if ! clang --version >/dev/null 2>&1; then
+    log_err "Xcode CLI path exists but clang is not functional"
+    return 1
+  fi
 
   log_ok "Xcode CLI: installed"
 }
