@@ -120,7 +120,9 @@ zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/completion-cache"
 # --- Completer Order ---
 # Completer order: _approximate omitted — fzf-tab provides superior fuzzy
 # matching; including both causes double-fuzzy degradation.
-zstyle ':completion:*' completer _extensions _complete
+# _ignored: retry completion with normally-ignored patterns (e.g., hidden
+# files excluded by ignored-patterns) when no match is found.
+zstyle ':completion:*' completer _extensions _complete _ignored
 
 # --- CD Completion ---
 zstyle ':completion:*:cd:*' ignore-parents parent pwd

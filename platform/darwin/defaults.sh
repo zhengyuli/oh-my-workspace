@@ -6,7 +6,7 @@
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
 # Keywords: macos, defaults, system-preferences
-# Dependencies: bash 4.3+, macOS
+# Dependencies: bash 3.2+, macOS
 #
 # Copyright (C) 2026 zhengyu li
 #

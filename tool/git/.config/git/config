@@ -165,6 +165,11 @@
     # Verify object integrity on fetch (security)
     fsckobjects = true
 
+[transfer]
+    # Verify object integrity on all transfers (belt-and-suspenders with
+    # fetch.fsckobjects; catches push-side corruption too)
+    fsckobjects = true
+
 # -----------------------------------------------------------------------------
 # Rebase Settings
 # -----------------------------------------------------------------------------
