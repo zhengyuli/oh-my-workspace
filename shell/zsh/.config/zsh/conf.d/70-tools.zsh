@@ -84,7 +84,14 @@ fi
 
 # Fast directory jumping with frecency algorithm. Replaces z, autojump.
 if command -v zoxide &>/dev/null; then
-  eval "$(zoxide init zsh --cmd z)"
+  _zoxide_cache="$XDG_CACHE_HOME/zsh/zoxide-init.zsh"
+  if [[ ! -f "$_zoxide_cache" ]] || \
+     [[ "$(command -v zoxide)" -nt "$_zoxide_cache" ]]; then
+    mkdir -p "${_zoxide_cache:h}"
+    zoxide init zsh --cmd z >! "$_zoxide_cache"
+  fi
+  source "$_zoxide_cache"
+  unset _zoxide_cache
   # zinit's alias zi=zinit shadows zoxide's zi() — remove it.
   unalias zi 2>/dev/null
 fi
