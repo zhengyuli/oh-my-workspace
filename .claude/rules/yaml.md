@@ -47,6 +47,37 @@ Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`), lowercase
 for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
+### Blank Lines
+
+Spacing rules around delimiters and YAML structural elements:
+
+- **Around Level 1 delimiters**: one blank line before the opening
+  delimiter and one blank line after the closing delimiter.
+- **Around Level 2 delimiters**: no blank line after — code follows
+  immediately on the next line.
+- **Between top-level keys**: exactly one blank line.
+- **Within a nested mapping** (between key-value pairs): no blank lines.
+  Use a comment for logical grouping instead.
+- **Between list items** that contain nested mappings: no blank lines
+  unless separated by a comment.
+- **After a block scalar** (`|` or `>`): one blank line before the next
+  key.
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
+
+```yaml
+gui:
+  nerdFontsVersion: "3"
+  showFileTree: true
+  # File tree sorting preferences
+  showRandomMark: false
+
+git:
+  paging:
+    colorArg: always
+    pager: delta
+```
+
 ### YAML Top-Level Keys vs. Delimiter Hierarchy
 
 YAML top-level keys (`gui:`, `git:`, `keybinding:`) are **native structure**
@@ -125,6 +156,34 @@ Exceptions:
 - Long command strings in `run:` fields (GitHub Actions, lazygit custom
   commands)
 - Multiline block scalar content (the `|` / `>` block body is exempt)
+
+## Comments
+
+Comments explain *why*, not *what*. Use separate comment lines above
+the setting — never end-of-line.
+
+**Comment syntax**: `#` followed by a single space.
+
+**When to comment**:
+- Non-obvious values, theme color codes, tool-specific quirks
+- Why a specific configuration was chosen
+- Dependencies between settings
+
+**When NOT to comment**:
+- Self-documenting key names (`quit: "q"` needs no comment)
+- Default values matching the tool's documentation
+
+**No end-of-line comments** — place comments on a separate line above
+the value (see [Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments)).
+
+```yaml
+# WRONG — end-of-line annotation
+theme: catppuccin  # color scheme
+
+# CORRECT — separate line explains reasoning
+# Catppuccin Mocha Blue theme for visual consistency
+theme: catppuccin
+```
 
 ## YAML Syntax Conventions
 
@@ -228,17 +287,6 @@ production:
 
 ## Code Patterns
 
-### Comments
-
-Explain WHY, not WHAT. Use separate comment lines — never inline.
-
-```yaml
-# Catppuccin Mocha Blue theme for visual consistency
-theme:
-  activeBorderColor:
-    - '#89b4fa'
-```
-
 ### Value Types
 
 - **Strings**: see "String Quoting" section above
@@ -249,32 +297,6 @@ theme:
 - **Maps**: nested structure; inline `{x: 1, y: 2}` for compact 2-key maps
   only
 - **Null**: `timeout: null` (see "Null Values" section above)
-
-### Blank Line Rules
-
-Consistent spacing between YAML structural elements:
-
-- **Between top-level keys**: exactly one blank line.
-- **Within a nested mapping** (between key-value pairs): no blank lines. Use
-  a comment for logical grouping instead.
-- **Between list items** that contain nested mappings: no blank lines unless
-  separated by a comment.
-- **After a block scalar** (`|` or `>`): one blank line before the next key.
-
-**Prohibited**: two or more consecutive blank lines anywhere in the file.
-
-```yaml
-gui:
-  nerdFontsVersion: "3"
-  showFileTree: true
-  # File tree sorting preferences
-  showRandomMark: false
-
-git:
-  paging:
-    colorArg: always
-    pager: delta
-```
 
 ### Formatting
 
