@@ -294,6 +294,8 @@ Second line continues here.
 - `[custom.*]` tables define custom modules — group them under a shared
   Level 1 block.
 - Schema: `"$schema" = 'https://starship.rs/config-schema.json'`
+- Validate `format` strings carefully — unmatched `$` or brackets cause
+  silent rendering failures with no error message.
 
 ### Yazi
 
@@ -303,6 +305,8 @@ Second line continues here.
   syntax — each entry is a separate `[[ ]]` block.
 - Tables like `[mgr]`, `[preview]`, `[tasks]` map to yazi's internal modules
   — each gets its own Level 1 block.
+- `[[plugin.prepend_*]]` entries are order-sensitive — yazi evaluates
+  them top-to-bottom and uses the first match.
 
 ### UV
 
@@ -310,6 +314,8 @@ Second line continues here.
 - `uv.toml` is the global config; project-specific settings go in
   `pyproject.toml` under `[tool.uv]`.
 - Flat key-value pairs at top level are common — no table header needed.
+- UV does NOT support environment variable interpolation in `uv.toml` —
+  use `pyproject.toml` `[tool.uv]` section for project-specific config.
 
 ### Bun
 

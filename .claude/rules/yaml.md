@@ -343,6 +343,16 @@ paging:
   environment variables for machine-specific overrides.
 - Schema: `# yaml-language-server: $schema=https://json.schemastore.org/lazygit`
 
+### GitHub Actions
+
+- Workflow files live at `.github/workflows/*.yml` (or `.yaml`)
+- Top-level keys (`on:`, `jobs:`, `steps:`) map to workflow structure
+- Use block scalars (`|-`) for multi-line shell commands in `run:` fields
+- Always quote branch/tag names in `on:` triggers to avoid YAML boolean
+  parsing (e.g., `on: [push]` is fine, but branch `NO` would be parsed
+  as `false` without quoting)
+- Schema: `# yaml-language-server: $schema=https://json.schemastore.org/github-workflow`
+
 ## Anti-Patterns
 
 ### Don't: Unquoted Special Characters
@@ -447,12 +457,13 @@ Add to `.gitignore`: `*.local.yml`, `*.local.yaml`, `*_secret.yml`
 ## Validation
 
 ```bash
-# Python validator
+# Syntax check — catches structural errors (requires: pip install pyyaml)
 python3 -c "import yaml; yaml.safe_load(open('config.yml'))"
 
-# Yamllint (if installed)
+# Style lint — enforces indentation, line length, quoting rules
+# (requires: pip install yamllint)
 yamllint config.yml
 
-# Lazygit — print current config
+# Tool-specific — verify lazygit can parse the config
 lazygit --print-config
 ```
