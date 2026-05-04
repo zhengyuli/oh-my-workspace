@@ -41,6 +41,7 @@ setopt AUTO_MENU
 # -----------------------------------------------------------------------------
 
 setopt EXTENDED_GLOB
+setopt GLOB_DOTS
 setopt NULL_GLOB
 setopt NUMERIC_GLOB_SORT
 
@@ -52,6 +53,7 @@ setopt INTERACTIVE_COMMENTS
 setopt RC_QUOTES
 setopt COMBINING_CHARS
 unsetopt BEEP
+unsetopt CLOBBER
 unsetopt RM_STAR_SILENT
 
 # -----------------------------------------------------------------------------
