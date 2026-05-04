@@ -148,6 +148,21 @@ Single-expression bodies have no extra blank lines.
 (code-here)
 ```
 
+## Indentation
+
+2-space standard Lisp indent.  Let Emacs handle indentation via
+`lisp-indent-function` — do not manually override indent levels.
+
+Special forms (`defun`, `let`, `if`, `when`, `unless`, `condition-case`)
+use their built-in indent rules.  For custom macros, declare indent with:
+
+```elisp
+(declare (indent defun))   ; body forms indent like defun
+(declare (indent 1))       ; first arg is special, rest are body
+```
+
+Never use tabs in Emacs Lisp files — `indent-tabs-mode` must be `nil`.
+
 ## Line Length
 
 79 characters maximum.
@@ -156,6 +171,42 @@ Exceptions:
 
 - URLs and file paths that cannot be wrapped
 - Symbol names and docstrings that cannot be meaningfully split
+
+## Comments
+
+Comments explain *why*, not *what*. The code itself should be readable
+enough to show what it does.
+
+**Comment syntax**:
+- `;;` — standard inline comment (above a form)
+- `;;;` — file-level section headers (recognized by `outline-minor-mode`)
+- `;` — end-of-line (discouraged, see Anti-Patterns)
+
+**When to comment**:
+- Non-obvious logic, workarounds, Emacs quirks
+- Why a particular approach was chosen over alternatives
+- Package configuration rationale
+
+**When NOT to comment**:
+- Self-documenting function/variable names
+- Obvious operations (`;; Set tab width` before `(setq tab-width 4)`)
+
+**Docstrings vs comments**: docstrings describe public API contracts
+(see Code Patterns > Docstrings). Do not duplicate docstring content
+in inline comments.
+
+**No end-of-line comments** — place comments on a separate `;;` line
+above the form (see [Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments)).
+
+```elisp
+;; WRONG — restates the code
+;; Set tab width to 4
+(setq tab-width 4)
+
+;; CORRECT — explains the reasoning
+;; Match project convention (Go, Python default indent)
+(setq tab-width 4)
+```
 
 ## Error Handling
 
@@ -439,25 +490,56 @@ is redundant.
   :config ...)
 ```
 
-## Comments
+## LSP Configuration (eglot)
 
-Comments explain *why*, not *what*. The code itself should be readable
-enough to show what it does. Only add comments when the reasoning is
-non-obvious from the code.
+This project uses `eglot` as the LSP client — never generate `lsp-mode` code.
+
+### Server Registration
+
+Register language servers via the `:hook` keyword in `use-package eglot`.
+Server programs are configured with `eglot-server-programs` in the `:config`
+section when the default entry needs customization.
 
 ```elisp
-;; WRONG — restates the code
-;; Set tab width to 4
-(setq tab-width 4)
-
-;; CORRECT — explains the reasoning
-;; Match project convention (Go, Python default indent)
-(setq tab-width 4)
+(use-package eglot
+  :ensure t
+  :defer t
+  :hook ((python-mode . eglot-ensure)
+         (typescript-mode . eglot-ensure))
+  :config
+  (setq eglot-sync-connect nil
+        eglot-autoshutdown t))
 ```
 
-Docstrings serve a different purpose — they describe public API contracts
-(see Docstrings under Code Patterns). Do not duplicate docstring content
-in inline comments.
+### Per-language Server Setup
+
+Language-specific server configuration (e.g., `basedpyright` for Python,
+`typescript-language-server` for TypeScript) lives in the corresponding
+language module (`omw-python.el`, `omw-typescript.el`), not in `omw-prog.el`.
+Tool installation is managed via `omw/tools-install` with declarative specs.
+
+## Functions
+
+### Interactive Declaration
+
+All user-facing commands (key-bound or M-x callable) must declare
+`(interactive)`; internal helpers must not.
+
+### Parameter Validation
+
+See [Code Patterns > Validation at Boundaries](#validation-at-boundaries).
+
+### Optional Dependency Guard
+
+Always check existence before calling into optional features.
+
+```elisp
+(when (featurep 'magit)
+  (magit-auto-revert-mode -1))
+
+(when (fboundp 'eglot-ensure)
+  (eglot-ensure))
+```
 
 ## Anti-Patterns
 
@@ -513,29 +595,6 @@ it produces noisy diffs when variable names or values change.
               fill-column 80)
 ```
 
-## Functions
-
-### Interactive Declaration
-
-All user-facing commands (key-bound or M-x callable) must declare
-`(interactive)`; internal helpers must not.
-
-### Parameter Validation
-
-See [Code Patterns > Validation at Boundaries](#validation-at-boundaries).
-
-### Optional Dependency Guard
-
-Always check existence before calling into optional features.
-
-```elisp
-(when (featurep 'magit)
-  (magit-auto-revert-mode -1))
-
-(when (fboundp 'eglot-ensure)
-  (eglot-ensure))
-```
-
 ## Security
 
 ### Package Sources
@@ -577,34 +636,6 @@ sensitive values from environment variables via `getenv`.
 ```
 
 **Sensitive types**: API keys, tokens, passwords, private keys, certificates.
-
-## LSP Configuration (eglot)
-
-This project uses `eglot` as the LSP client — never generate `lsp-mode` code.
-
-### Server Registration
-
-Register language servers via the `:hook` keyword in `use-package eglot`.
-Server programs are configured with `eglot-server-programs` in the `:config`
-section when the default entry needs customization.
-
-```elisp
-(use-package eglot
-  :ensure t
-  :defer t
-  :hook ((python-mode . eglot-ensure)
-         (typescript-mode . eglot-ensure))
-  :config
-  (setq eglot-sync-connect nil
-        eglot-autoshutdown t))
-```
-
-### Per-language Server Setup
-
-Language-specific server configuration (e.g., `basedpyright` for Python,
-`typescript-language-server` for TypeScript) lives in the corresponding
-language module (`omw-python.el`, `omw-typescript.el`), not in `omw-prog.el`.
-Tool installation is managed via `omw/tools-install` with declarative specs.
 
 ## References
 
