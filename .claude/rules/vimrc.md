@@ -395,6 +395,9 @@ Group by semantic category. Align columns for readability.
 `gui` fields enables visual scanning of the color table — the value here
 outweighs the diff-noise concern.
 
+This exception applies **only** to `hi` (highlight) definitions — never
+use alignment for `set`, `let`, `map`, or any other Vim commands.
+
 ```vim
 " --- Core ---
 hi Normal          guifg=#f8f8f2  guibg=#282a36  gui=NONE
