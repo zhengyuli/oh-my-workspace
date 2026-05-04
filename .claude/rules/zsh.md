@@ -201,9 +201,11 @@ immutables.
 
 ```zsh
 _process_file() {
-  local -r src="$1"           # immutable: function arg never reassigned
+  # Immutable: function arg never reassigned
+  local -r src="$1"
+  # Mutable: assigned after declaration
   local dest
-  dest="${src%.txt}.out"      # mutable: assigned after declaration
+  dest="${src%.txt}.out"
 }
 ```
 
