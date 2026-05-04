@@ -624,6 +624,10 @@ umask 077
 ## Validation
 
 ```bash
-bash -n script.sh      # Syntax check
-shellcheck script.sh   # Lint (if installed)
+# Syntax check — catches parse errors early (built-in, no install needed)
+bash -n script.sh
+
+# Lint for style, quoting, and portability issues
+# (requires: brew install shellcheck)
+shellcheck script.sh
 ```

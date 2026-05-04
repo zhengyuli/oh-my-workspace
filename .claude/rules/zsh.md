@@ -814,7 +814,9 @@ umask 077
 ## Validation
 
 ```zsh
-zsh -n script.zsh      # Syntax check (primary — handles all zsh syntax)
+# Syntax check — the only reliable checker for zsh-specific syntax
+# (built-in, no install needed)
+zsh -n script.zsh
 ```
 
 **Note**: `shellcheck` has limited zsh support — it does not recognize
