@@ -134,7 +134,14 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 # format used by zsh completion (list-colors in 30-completion.zsh) and eza.
 # gdircolors is provided by coreutils (brew install coreutils, in Brewfile).
 if command -v gdircolors &>/dev/null; then
-  eval "$(gdircolors -b)"
+  _gdircolors_cache="$XDG_CACHE_HOME/zsh/gdircolors.zsh"
+  if [[ ! -f "$_gdircolors_cache" ]] || \
+     [[ "$(command -v gdircolors)" -nt "$_gdircolors_cache" ]]; then
+    mkdir -p "${_gdircolors_cache:h}"
+    gdircolors -b >! "$_gdircolors_cache"
+  fi
+  source "$_gdircolors_cache"
+  unset _gdircolors_cache
 else
   # Minimal fallback: dir=bold blue, symlink=bold cyan, exec=bold green
   export LS_COLORS='di=1;34:ln=1;36:ex=1;32:fi=0:mi=0;31'
