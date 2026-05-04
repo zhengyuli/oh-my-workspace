@@ -49,6 +49,35 @@ Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`), lowercase
 for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
+### Blank Lines
+
+**Around delimiters**:
+- Level 1: one blank line before the opening delimiter, one blank line after
+  the closing delimiter.
+- Level 2: no blank line after — code follows immediately.
+
+**Between top-level tables**: exactly one blank line.
+
+**Between `[[array_of_tables]]` entries**: exactly one blank line.
+
+**Within a table** (between key-value pairs): no blank lines. Use a
+comment for logical grouping within a table instead.
+
+**Between logical groups** inside a table: one blank line preceded by
+a comment separator.
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
+
+```toml
+[mgr]
+ratio = [1, 4, 3]
+sort_by = "natural"
+sort_reverse = false
+# Directory-specific sorting
+sort_dir_first = true
+show_hidden = false
+```
+
 ### TOML Table Headers vs. Delimiter Hierarchy
 
 TOML `[table]` headers are **syntax-level structure** defined by the format —
@@ -105,35 +134,6 @@ sort_by = "natural"
 [preview]
 wrap = "no"
 tab_size = 2
-```
-
-### Blank Lines
-
-**Around delimiters**:
-- Level 1: one blank line before the opening delimiter, one blank line after
-  the closing delimiter.
-- Level 2: no blank line after — code follows immediately.
-
-**Between top-level tables**: exactly one blank line.
-
-**Between `[[array_of_tables]]` entries**: exactly one blank line.
-
-**Within a table** (between key-value pairs): no blank lines. Use a
-comment for logical grouping within a table instead.
-
-**Between logical groups** inside a table: one blank line preceded by
-a comment separator.
-
-**Prohibited**: two or more consecutive blank lines anywhere in the file.
-
-```toml
-[mgr]
-ratio = [1, 4, 3]
-sort_by = "natural"
-sort_reverse = false
-# Directory-specific sorting
-sort_dir_first = true
-show_hidden = false
 ```
 
 ## Indentation
