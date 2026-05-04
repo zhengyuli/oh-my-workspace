@@ -45,24 +45,6 @@ References: [Google Vimscript Style Guide](https://google.github.io/styleguide/v
 " =============================================================================
 ```
 
-## Comment Style
-
-Vim script uses `"` for line comments (not `#`).
-
-End-of-line comments after commands are discouraged — prefer separate lines
-above the setting to explain WHY.  See
-[Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments).
-
-```vim
-" WRONG — restates the obvious (what the code already says)
-" Set expandtab to use spaces
-set expandtab
-
-" CORRECT — explains why (project convention)
-" Use spaces instead of tabs (project convention)
-set expandtab
-```
-
 ## Delimiter Hierarchy
 
 **Level 0** (File Header): `" ============...` (79 chars)
@@ -132,6 +114,27 @@ endfunction
 
 **Prohibited**: two or more consecutive blank lines anywhere in the file.
 
+## Indentation
+
+2-space indent for Vim script block bodies (`if`, `for`, `while`,
+`function`, `augroup`).  Continuation lines (`\`) align under the
+opening statement.
+
+```vim
+if has('termguicolors')
+  set termguicolors
+endif
+
+augroup vimrc
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 0 | execute 'normal! g`"' | endif
+augroup END
+
+let &runtimepath = s:cfg  . '/vim,'
+               \ . s:cfg  . '/vim/after,'
+               \ . $VIMRUNTIME
+```
+
 ## Line Length
 
 79 characters maximum. Use line continuation (`\`) aligned under the opening
@@ -147,6 +150,35 @@ Exceptions:
 let &runtimepath = s:cfg  . '/vim,'
                \ . s:cfg  . '/vim/after,'
                \ . $VIMRUNTIME
+```
+
+## Comments
+
+Vim script uses `"` for line comments (not `#`).
+
+Comments explain *why*, not *what*. The code itself should be readable
+enough to show what it does.
+
+**When to comment**:
+- Non-obvious option values (what does `timeoutlen=4200` mean?)
+- Why a specific approach was chosen over alternatives
+- Constraints from Vim's limited XDG support
+
+**When NOT to comment**:
+- Self-documenting options (`set number`, `set expandtab`)
+- Obvious operations
+
+**No end-of-line comments** — place comments on a separate `"` line above
+the setting (see [Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments)).
+
+```vim
+" WRONG — restates the obvious (what the code already says)
+" Set expandtab to use spaces
+set expandtab
+
+" CORRECT — explains why (project convention)
+" Use spaces instead of tabs (project convention)
+set expandtab
 ```
 
 ## Code Patterns
