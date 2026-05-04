@@ -107,6 +107,114 @@ wrap = "no"
 tab_size = 2
 ```
 
+### Blank Lines
+
+**Around delimiters**:
+- Level 1: one blank line before the opening delimiter, one blank line after
+  the closing delimiter.
+- Level 2: no blank line after — code follows immediately.
+
+**Between top-level tables**: exactly one blank line.
+
+**Between `[[array_of_tables]]` entries**: exactly one blank line.
+
+**Within a table** (between key-value pairs): no blank lines. Use a
+comment for logical grouping within a table instead.
+
+**Between logical groups** inside a table: one blank line preceded by
+a comment separator.
+
+**Prohibited**: two or more consecutive blank lines anywhere in the file.
+
+```toml
+[mgr]
+ratio = [1, 4, 3]
+sort_by = "natural"
+sort_reverse = false
+# Directory-specific sorting
+sort_dir_first = true
+show_hidden = false
+```
+
+## Line Length
+
+79 characters maximum.
+
+Exceptions:
+
+- Format strings and template values that cannot be meaningfully wrapped
+  (e.g., starship `format = "..."` with long `$variable` chains)
+- URLs and file paths that cannot be wrapped
+
+## Comments
+
+Comments explain *why*, not *what*. Use separate comment lines above
+the setting — never end-of-line.
+
+**Comment syntax**: `#` followed by a single space.
+
+**When to comment**:
+- Non-obvious values, format string syntax, workarounds
+- Why a specific configuration was chosen
+- Tool-specific quirks or limitations
+
+**When NOT to comment**:
+- Self-documenting key names (`symbol = " "` with a Nerd Font icon)
+- Default values matching the tool's documentation
+
+**No end-of-line comments** — place comments on a separate line above
+the value (see [Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments)).
+
+```toml
+# WRONG — end-of-line annotation
+symbol = " "  # Python icon
+
+# CORRECT — separate line explains reasoning
+# Python language icon (Nerd Font)
+symbol = " "
+```
+
+## Code Patterns
+
+### Value Types
+
+- **Strings**: Always quoted `"value"` (single quotes `'value'` for literal
+  strings where escapes must not be interpreted)
+- **Numbers**: `timeout = 30` (int), `ratio = 0.8` (float)
+- **Booleans**: `enabled = true` (not `"true"`)
+- **Arrays**: single-line for short lists `items = ["a", "b"]`, multiline
+  for longer ones
+- **Tables**: see "Table Styles" section above
+
+### Formatting
+
+- Never align values with spaces
+- One space around `=` in key-value pairs
+- Trailing commas are NOT allowed in TOML — omit them
+
+### Section Uniqueness
+
+Each section title must be unique within the file at every delimiter level
+(Level 1 and Level 2). Group related settings together — do not create
+multiple sections of the same name.
+
+```toml
+# WRONG — duplicate section at Level 2
+# --- Style ---
+symbol = " "
+# --- Other Config ---
+disabled = false
+# --- Style ---              ← same name reused
+style = "bold"
+
+# CORRECT
+# --- Style ---
+symbol = " "
+style = "bold"
+# --- Other Config ---
+disabled = false
+```
+
 ## TOML Syntax Conventions
 
 ### Table Styles
@@ -173,89 +281,6 @@ description = """
 First line of description.
 Second line continues here.
 """
-```
-
-## Blank Line Rules
-
-Consistent spacing between TOML structural elements:
-
-- **Between top-level tables**: exactly one blank line.
-- **Between `[[array_of_tables]]` entries**: exactly one blank line.
-- **Within a table** (between key-value pairs): no blank lines. Use a
-  comment for logical grouping within a table instead.
-- **Between logical groups** inside a table: one blank line preceded by
-  a comment separator.
-
-**Prohibited**: two or more consecutive blank lines anywhere in the file.
-
-```toml
-[mgr]
-ratio = [1, 4, 3]
-sort_by = "natural"
-sort_reverse = false
-# Directory-specific sorting
-sort_dir_first = true
-show_hidden = false
-```
-
-## Line Length
-
-79 characters maximum.
-
-Exceptions:
-
-- Format strings and template values that cannot be meaningfully wrapped
-  (e.g., starship `format = "..."` with long `$variable` chains)
-- URLs and file paths that cannot be wrapped
-
-## Code Patterns
-
-### Comments
-
-Explain WHY, not WHAT. Use separate comment lines — never inline.
-
-```toml
-# Use Nerd Font symbols for better visual identification
-symbol = " "
-```
-
-### Value Types
-
-- **Strings**: Always quoted `"value"` (single quotes `'value'` for literal
-  strings where escapes must not be interpreted)
-- **Numbers**: `timeout = 30` (int), `ratio = 0.8` (float)
-- **Booleans**: `enabled = true` (not `"true"`)
-- **Arrays**: single-line for short lists `items = ["a", "b"]`, multiline
-  for longer ones
-- **Tables**: see "Table Styles" section above
-
-### Formatting
-
-- Never align values with spaces
-- One space around `=` in key-value pairs
-- Trailing commas are NOT allowed in TOML — omit them
-
-### Section Uniqueness
-
-Each section title must be unique within the file at every delimiter level
-(Level 1 and Level 2). Group related settings together — do not create
-multiple sections of the same name.
-
-```toml
-# WRONG — duplicate section at Level 2
-# --- Style ---
-symbol = " "
-# --- Other Config ---
-disabled = false
-# --- Style ---              ← same name reused
-style = "bold"
-
-# CORRECT
-# --- Style ---
-symbol = " "
-style = "bold"
-# --- Other Config ---
-disabled = false
 ```
 
 ## Per-Tool Notes
