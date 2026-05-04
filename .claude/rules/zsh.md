@@ -214,8 +214,11 @@ _process_file() {
 Use `[[ ]]` for strings and `(( ))` for arithmetic.
 
 ```zsh
-if [[ "$var" == "value" ]]; then  # String
-if (( count > 0 )); then          # Arithmetic
+# String comparison
+if [[ "$var" == "value" ]]; then
+
+# Arithmetic comparison
+if (( count > 0 )); then
 ```
 
 ### Default Values
