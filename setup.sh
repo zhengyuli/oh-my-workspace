@@ -636,12 +636,22 @@ _resolve_stow_conflict() {
   fi
 
   if "${dry_run}"; then
-    log_info "[dry-run] would remove conflicting path: ${target}"
+    log_info "[dry-run] would back up and remove conflicting path: ${target}"
     return 0
   fi
 
-  log_warn "Removing conflicting path: ${target}"
-  rm -rf "${target}"
+  local backup="${target}.pre-stow-backup"
+  if [[ -e "${backup}" ]]; then
+    local i=1
+    while [[ -e "${backup}.${i}" ]]; do
+      i=$(( i + 1 ))
+    done
+    backup="${backup}.${i}"
+  fi
+
+  log_warn "Backing up conflicting path:"
+  log_warn "  ${target} -> ${backup}"
+  mv "${target}" "${backup}"
 }
 
 # Flow: dry-run → state check → conflict resolution → execute.
