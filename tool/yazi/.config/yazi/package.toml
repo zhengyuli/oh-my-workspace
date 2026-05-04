@@ -1,23 +1,3 @@
-# package.toml -*- mode: toml; -*-
-# Time-stamp: <2026-05-04 00:00:00 Sun by zhengyu.li>
-#
-# =============================================================================
-# Yazi Plugin Dependencies
-#
-# Author: zhengyu li <lizhengyu419@outlook.com>
-# Keywords: yazi, file-manager, plugins, dependencies
-#
-# Copyright (C) 2026 zhengyu li
-#
-# History:
-#   2026-05-04 00:00 zhengyu li <lizhengyu419@outlook.com> created.
-#
-# Commentary:
-#   Defines Yazi plugin and flavor dependencies managed by `ya pack`.
-#   Plugin hashes are normalized by the yazi-package git clean filter
-#   so that `ya pack` updates do not create noisy diffs.
-# =============================================================================
-
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
 rev = "pinned"
