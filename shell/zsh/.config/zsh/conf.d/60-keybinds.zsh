@@ -22,9 +22,13 @@
 # Emacs keymap (replace with 'bindkey -v' for vi mode)
 bindkey -e
 
+# Reduce Esc-sequence detection delay from 400ms (default 40) to 100ms.
+# Affects all multi-key sequences starting with Esc (e.g., \e\e sudo toggle).
+KEYTIMEOUT=10
+
 # Vi mode (uncomment to enable; comment out 'bindkey -e' above)
 # bindkey -v
-# export KEYTIMEOUT=1   # reduce mode-switch delay to 0.1s
+# KEYTIMEOUT=1   # vi mode: reduce mode-switch delay to 10ms
 
 # -----------------------------------------------------------------------------
 # History Search
