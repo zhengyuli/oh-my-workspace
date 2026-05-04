@@ -1,76 +1,54 @@
 # package.toml -*- mode: toml; -*-
-# Time-stamp: <2026-03-28 00:00:00 Friday by zhengyu.li>
+# Time-stamp: <2026-05-04 00:00:00 Sun by zhengyu.li>
 #
 # =============================================================================
-# Yazi - Plugin and Flavor Dependencies
+# Yazi Plugin Dependencies
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
-# Keywords: yazi, plugins, flavors, toml
+# Keywords: yazi, file-manager, plugins, dependencies
 #
 # Copyright (C) 2026 zhengyu li
 #
 # History:
-#   2026-03-28 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#   2026-05-04 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 #
 # Commentary:
-#   Plugin and flavor dependencies for Yazi. Install with: ya pkg install
-#
-# References:
-#   1. https://yazi-rs.github.io/docs/cli/
+#   Defines Yazi plugin and flavor dependencies managed by `ya pack`.
+#   Plugin hashes are normalized by the yazi-package git clean filter
+#   so that `ya pack` updates do not create noisy diffs.
 # =============================================================================
 
-# -----------------------------------------------------------------------------
-# Plugins
-# -----------------------------------------------------------------------------
-
-# --- Smart Enter ---
-# Enter directories or open files with l/Enter/o (vim-style navigation)
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
-rev = "1962818"
-hash = "187cc58ba7ac3befd49c342129e6f1b6"
+rev = "pinned"
+hash = "0"
 
-# --- Smart Filter ---
-# Fuzzy search to filter visible files (more flexible than glob patterns)
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-filter"
-rev = "1962818"
-hash = "c887903a63a2ff520081b6d90a4b3392"
+rev = "pinned"
+hash = "0"
 
-# --- Full Border ---
-# Draw borders around all panels for clearer visual separation
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "1962818"
-hash = "6fa6a05a81c98dd000fbca3cca6e9682"
+rev = "pinned"
+hash = "0"
 
-# --- Toggle Pane ---
-# Maximize/restore the preview pane (useful for reading long files)
 [[plugin.deps]]
 use = "yazi-rs/plugins:toggle-pane"
-rev = "1962818"
-hash = "4c0260feb50ea2437380690ffc241da7"
+rev = "pinned"
+hash = "0"
 
-# --- Zoom ---
-# Zoom in/out of image and text previews with +/- keys
 [[plugin.deps]]
 use = "yazi-rs/plugins:zoom"
-rev = "1962818"
-hash = "fa268cb59989a87780605fdcfb8d99a9"
+rev = "pinned"
+hash = "0"
 
-# --- Git ---
-# Show git status icons and file modifications in the file list
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "1962818"
-hash = "26db011a778f261d730d4f5f8bf24b3f"
+rev = "pinned"
+hash = "0"
 
-# -----------------------------------------------------------------------------
-# Flavors
-# -----------------------------------------------------------------------------
-
-# Catppuccin Mocha: dark theme with warm, pastel colors for comfortable viewing
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
-rev = "9511cb0"
-hash = "7dfe41c9c3d9be76da8a844263d0bbed"
+rev = "pinned"
+hash = "0"
