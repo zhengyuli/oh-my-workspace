@@ -102,6 +102,31 @@ _cleanup() { rm -f "$_tmp_file"; }
 
 **Prohibited**: two or more consecutive blank lines anywhere in the file.
 
+## Indentation
+
+2-space indent for block bodies (`if`, `for`, `while`, `case`, functions).
+4-space indent for continuation lines that do not align to an opening
+delimiter.
+
+```bash
+# Block indent — 2 spaces
+if [[ -f "$file" ]]; then
+  process "$file"
+fi
+
+# Continuation — align under opening [[ when possible
+if [[ "$mode" == "install" ]] \
+   && [[ -n "$pkg" ]]; then
+  _install_package "$pkg"
+fi
+
+# Continuation — 2-space indent when no alignment anchor
+printf 'error: cannot install %s — missing dependency %s\n' \
+  "$pkg" \
+  "$dep" \
+  >&2
+```
+
 ## Line Length
 
 79 characters maximum.
@@ -110,6 +135,35 @@ Exceptions:
 
 - URLs and file paths that cannot be wrapped
 - Help text strings in `printf` / `echo` (user-facing output)
+
+## Comments
+
+Comments explain *why*, not *what*. The code itself should be readable
+enough to show what it does.
+
+**Comment syntax**: `#` followed by a single space.
+
+**When to comment**:
+- Non-obvious logic, workarounds, performance trade-offs
+- Why a particular approach was chosen over alternatives
+- Constraints or assumptions that are not self-evident
+
+**When NOT to comment**:
+- Self-documenting variable/function names
+- Obvious operations (`# Increment count` before `(( count += 1 ))`)
+
+**No end-of-line comments** — place comments on a separate line above
+the code (see [Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments)).
+
+```bash
+# WRONG — restates the code
+# Increment count by 1
+(( count += 1 ))
+
+# CORRECT — explains the reasoning
+# Retries are capped at 3 to avoid hammering a down service
+(( count += 1 ))
+```
 
 ## Error Handling
 
@@ -309,6 +363,72 @@ if (( count > MAX_THRESHOLD )); then
 fi
 ```
 
+## Bash-Specific Patterns
+
+### Arrays
+
+Declare arrays explicitly. Always quote `"${arr[@]}"` to preserve
+word-splitting safety.
+
+```bash
+# Indexed array
+local -a pkgs=("git" "vim" "zsh")
+for pkg in "${pkgs[@]}"; do
+  _install_package "$pkg"
+done
+
+# Array length
+local -r count="${#pkgs[@]}"
+
+# Appending
+pkgs+=("lazygit")
+
+# Associative array (bash 4.3+)
+declare -A defaults=(
+  ["editor"]="vim"
+  ["pager"]="less"
+)
+printf '%s\n' "${defaults["editor"]}"
+```
+
+### Line Continuation
+
+Break long lines with `\`. For continued conditions, align operators
+(`&&`, `||`) with the opening `[[`. For multi-value arguments (printf,
+arrays), use 2-space indent.
+
+```bash
+# Long condition
+if [[ "$mode" == "install" ]] \
+   && [[ -n "$pkg" ]] \
+   && [[ -r "$config_file" ]]; then
+  _install_package "$pkg"
+fi
+
+# Long printf
+printf 'error: cannot install %s — missing dependency %s\n' \
+  "$pkg" \
+  "$dep" \
+  >&2
+```
+
+### Dry-Run Pattern
+
+When a script supports dry-run, check the flag at the point of action,
+not at the call site.
+
+```bash
+readonly DRY_RUN="${DRY_RUN:-0}"
+
+_run() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    printf '[dry-run] %s\n' "$*"
+    return 0
+  fi
+  "$@"
+}
+```
+
 ## Functions
 
 ### Single Responsibility
@@ -477,86 +597,6 @@ For scripts handling sensitive data, set restrictive umask at the top.
 ```bash
 # Prevent sensitive temp files from being read by other users
 umask 077
-```
-
-## Comments
-
-Comments explain *why*, not *what*. The code itself should be readable
-enough to show what it does. Only add comments when the reasoning is
-non-obvious from the code.
-
-```bash
-# WRONG — restates the code
-# Increment count by 1
-(( count += 1 ))
-
-# CORRECT — explains the reasoning
-# Retries are capped at 3 to avoid hammering a down service
-(( count += 1 ))
-```
-
-## Arrays
-
-Declare arrays explicitly. Always quote `"${arr[@]}"` to preserve
-word-splitting safety.
-
-```bash
-# Indexed array
-local -a pkgs=("git" "vim" "zsh")
-for pkg in "${pkgs[@]}"; do
-  _install_package "$pkg"
-done
-
-# Array length
-local -r count="${#pkgs[@]}"
-
-# Appending
-pkgs+=("lazygit")
-
-# Associative array (bash 4.3+)
-declare -A defaults=(
-  ["editor"]="vim"
-  ["pager"]="less"
-)
-printf '%s\n' "${defaults["editor"]}"
-```
-
-## Line Continuation
-
-Break long lines with `\`. For continued conditions, align operators
-(`&&`, `||`) with the opening `[[`. For multi-value arguments (printf,
-arrays), use 2-space indent.
-
-```bash
-# Long condition
-if [[ "$mode" == "install" ]] \
-   && [[ -n "$pkg" ]] \
-   && [[ -r "$config_file" ]]; then
-  _install_package "$pkg"
-fi
-
-# Long printf
-printf 'error: cannot install %s — missing dependency %s\n' \
-  "$pkg" \
-  "$dep" \
-  >&2
-```
-
-## Dry-Run Pattern
-
-When a script supports dry-run, check the flag at the point of action,
-not at the call site.
-
-```bash
-readonly DRY_RUN="${DRY_RUN:-0}"
-
-_run() {
-  if [[ "$DRY_RUN" -eq 1 ]]; then
-    printf '[dry-run] %s\n' "$*"
-    return 0
-  fi
-  "$@"
-}
 ```
 
 ## References
