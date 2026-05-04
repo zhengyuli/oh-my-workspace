@@ -157,6 +157,58 @@ Each package directory follows the [GNU Stow][stow] convention: files are placed
 
 [stow]: https://www.gnu.org/software/stow/manual/
 
+## Shell Architecture
+
+### Zsh Configuration Loading Order
+
+All Zsh configuration lives under `shell/zsh/.config/zsh/conf.d/`. Files load in numeric order:
+
+| Range | File | Purpose |
+|-------|------|---------|
+| 00–09 | `00-env.zsh` | Environment variables, tool paths, FZF, Homebrew |
+| 05 | `05-path.zsh` | PATH, FPATH, MANPATH, autoload functions |
+| 10–19 | `10-options.zsh` | Shell options (`setopt`/`unsetopt`) |
+| 15 | `15-history.zsh` | History size, dedup, sharing, safety options |
+| 20–29 | `20-aliases.zsh` | Command aliases |
+| 30–39 | `30-completion.zsh` | `compinit`, matcher list, completion styles |
+| 40–49 | `40-plugins.zsh` | Zinit bootstrap, plugin loading, fzf-tab, direnv |
+| 50–59 | `50-prompt.zsh` | Starship prompt (with vcs_info fallback) |
+| 60–69 | `60-keybinds.zsh` | Key bindings (emacs keymap, word movement, sudo toggle) |
+| 70–89 | `70-tools.zsh` | Tool integrations (bun, uv, carapace, fzf, zoxide, git) |
+| 90–99 | `99-local.zsh` | Machine-specific overrides (gitignored) |
+
+### Startup Cache System
+
+Tool initialization commands are cached to `$XDG_CACHE_HOME/zsh/` (~`~/.cache/zsh/`) to avoid subprocess spawns on every shell start:
+
+| Cache File | Source Command | Managed In |
+|------------|---------------|------------|
+| `gdircolors.zsh` | `gdircolors -b` | `00-env.zsh` |
+| `uv-completion.zsh` | `uv generate-shell-completion zsh` | `70-tools.zsh` |
+| `carapace-completion.zsh` | `carapace _carapace zsh` | `70-tools.zsh` |
+| `direnv-hook.zsh` | `direnv hook zsh` | `40-plugins.zsh` |
+| `starship-init.zsh` | `starship init zsh` | `50-prompt.zsh` |
+| `zoxide-init.zsh` | `zoxide init zsh --cmd z` | `70-tools.zsh` |
+
+**Cache invalidation:** Each cache auto-regenerates when its tool binary is newer than the cached file (e.g., after `brew upgrade`).
+
+**Clear all caches manually:**
+```bash
+rm -f ~/.cache/zsh/*.zsh
+# Caches will regenerate on next shell start
+```
+
+**Profile startup time:**
+```bash
+# Quick benchmark (3 runs)
+for i in 1 2 3; do time zsh -i -c exit; done
+
+# Detailed profiling (add to top of ~/.zshenv, remove after)
+zmodload zsh/zprof    # add this line
+# ... then at the end of .zshrc:
+zprof                 # add this line
+```
+
 ## Customization
 
 ### Fork and Adapt
@@ -347,7 +399,50 @@ stow -D -v -d "$WORKSPACE_DIR/shell" -t ~ zsh
 
 ## Troubleshooting
 
-### Common Issues
+### Stow Conflicts
+
+**"Stow conflict: existing target is not a symlink"**
+
+This is the most common error. It means a real file exists where Stow wants to create a symlink.
+
+```bash
+# 1. See exactly what conflicts
+./setup.sh install --dry-run zsh
+
+# 2. Backup and remove the conflicting file
+cp ~/.config/zsh/conf.d/99-local.zsh ~/.config/zsh/conf.d/99-local.zsh.bak
+rm ~/.config/zsh/conf.d/99-local.zsh
+
+# 3. Stow now succeeds
+./setup.sh install zsh
+
+# 4. Restore your customizations to the new symlinked location
+cp ~/.config/zsh/conf.d/99-local.zsh.bak ~/.config/zsh/conf.d/99-local.zsh
+```
+
+**"Stow conflict: existing symlink points elsewhere"**
+
+Another dotfiles manager (or manual symlink) left a stale link.
+
+```bash
+# Force restow replaces existing symlinks
+./setup.sh install --force zsh
+```
+
+**"Changes not appearing after editing a stowed file"**
+
+Stow creates symlinks, so changes in the repo are immediately reflected. If changes don't appear:
+
+```bash
+# Verify the symlink exists and points to the repo
+ls -la ~/.config/zsh/conf.d/00-env.zsh
+# Should show: ... -> /path/to/oh-my-workspace/shell/zsh/.config/zsh/conf.d/00-env.zsh
+
+# If the symlink is broken, restow
+./setup.sh install --force zsh
+```
+
+### Shell Issues
 
 **"Xcode CLI installation failed"**
 ```bash
@@ -361,22 +456,31 @@ xcode-select --install
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-**"Stow conflict: existing file"**
-```bash
-# Option 1: Preview what would be linked
-./setup.sh install --dry-run zsh
-
-# Option 2: Force restow (replaces conflicting symlinks)
-./setup.sh install --force zsh
-```
-
 **"Changes not appearing in new terminal"**
 ```bash
-# Source zshenv manually
-source ~/.zshenv
+# Re-source without replacing the shell process
+source "$ZDOTDIR/.zshrc"
+
+# Or replace the entire shell (picks up .zshenv changes too)
+exec zsh -l
 
 # Or verify symlinks exist
 ./setup.sh status
+```
+
+**"Slow shell startup"**
+
+See [Startup Cache System](#startup-cache-system). If startup is still slow:
+
+```bash
+# Clear all caches and let them regenerate
+rm -f ~/.cache/zsh/*.zsh
+exec zsh -l
+
+# Profile to find the bottleneck
+# Add 'zmodload zsh/zprof' to top of ~/.zshenv
+# Add 'zprof' to bottom of .zshrc
+# Open new shell — zprof output shows time per function
 ```
 
 ### Getting Help
