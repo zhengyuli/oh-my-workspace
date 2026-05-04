@@ -1053,6 +1053,18 @@ cmd_uninstall() {
       log_info "Nothing stowed"
       return 0
     fi
+
+    if ! "${dry_run}"; then
+      log_warn "This will unstow ${#target_pkgs[@]} packages:" \
+        "${target_pkgs[*]}"
+      printf '%s' "${_LOG_INDENT}Continue? [y/N] "
+      local answer
+      read -r answer
+      if [[ "${answer}" != [yY] ]]; then
+        log_info "Aborted"
+        return 0
+      fi
+    fi
   else
     if ! validate_pkgs "${pkgs[@]}"; then
       die "No valid packages specified"
