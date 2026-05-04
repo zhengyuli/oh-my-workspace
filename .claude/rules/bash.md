@@ -105,7 +105,7 @@ _cleanup() { rm -f "$_tmp_file"; }
 ## Indentation
 
 2-space indent for block bodies (`if`, `for`, `while`, `case`, functions).
-4-space indent for continuation lines that do not align to an opening
+2-space indent for continuation lines that do not align to an opening
 delimiter.
 
 ```bash
