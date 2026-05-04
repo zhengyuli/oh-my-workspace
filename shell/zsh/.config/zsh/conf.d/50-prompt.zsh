@@ -23,7 +23,14 @@
 
 # Config: $XDG_CONFIG_HOME/starship.toml
 if command -v starship &>/dev/null; then
-  eval "$(starship init zsh)"
+  _starship_cache="$XDG_CACHE_HOME/zsh/starship-init.zsh"
+  if [[ ! -f "$_starship_cache" ]] || \
+     [[ "$(command -v starship)" -nt "$_starship_cache" ]]; then
+    mkdir -p "${_starship_cache:h}"
+    starship init zsh >! "$_starship_cache"
+  fi
+  source "$_starship_cache"
+  unset _starship_cache
 
   # Not all terminals support OSC 0 title escapes; check known-good ones.
   local _osc_terms='(iTerm.app|WezTerm|ghostty|Apple_Terminal)'
