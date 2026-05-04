@@ -460,6 +460,14 @@ _run_brew_bundle() {
   return 0
 }
 
+_setup_git_filters() {
+  git config --local filter.yazi-package.clean \
+    "sed -e 's/^rev = .*/rev = \"pinned\"/' -e 's/^hash = .*/hash = \"0\"/'"
+  git config --local filter.yazi-package.smudge cat
+  git config --local filter.yazi-package.required true
+  log_ok "Git filter: yazi-package configured"
+}
+
 ensure_prerequisites() {
   # --- Xcode CLI ---
   if ! _has_xcode_cli; then
@@ -493,6 +501,9 @@ ensure_prerequisites() {
       return 1
     fi
   fi
+
+  # --- Git Filters ---
+  _setup_git_filters
 }
 
 # -----------------------------------------------------------------------------
