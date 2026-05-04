@@ -77,12 +77,9 @@
 # GitHub Copilot
 .github/
 
-# Git
+# Git / Ghostty (both use config.local for machine-specific overrides)
 **/config.local
 **/credentials
-
-# Ghostty
-**/config.local
 
 # Yazi
 **/plugins/
@@ -163,9 +160,8 @@ Thumbs.db
 **/*.backup
 **/*.orig
 
-# Editor lock files (generic)
-**/.#*
-**/#*#
+# (Editor lock files already covered by .#* and \#*\# in Editor/IDE section —
+# gitignore patterns without / match at any directory depth per gitignore(5).)
 
 # Local and secret config overrides (TOML/YAML split-file strategy)
 *.local.toml
