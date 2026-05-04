@@ -3,7 +3,6 @@
 -- =============================================================================
 -- Yazi - Initialization Script
 --
--- Location: ~/.config/yazi/init.lua
 -- Usage:    Automatically loaded by yazi on startup
 --
 -- Plugins (installed via ya pkg):

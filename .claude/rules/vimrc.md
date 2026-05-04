@@ -33,7 +33,6 @@ References: [Google Vimscript Style Guide](https://google.github.io/styleguide/v
 " Commentary:
 "   Detailed description of what this config does.
 "
-" Location: ~/.config/vim/vimrc
 " Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in 00-env.zsh)
 " XDG: Manually redirected (Vim predates XDG; VIMINIT bypasses default loader)
 "      - Data:  $XDG_DATA_HOME/vim/undo  (~/.local/share/vim/undo)
