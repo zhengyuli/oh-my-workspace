@@ -272,7 +272,24 @@ local temp_file
 
 ### Formatting
 
-Split long pipelines at `|` with each stage on its own line.
+Split long pipelines at `|` with each stage on its own line. This
+improves readability, simplifies debugging (test each stage
+independently), and produces cleaner diffs when stages are added or
+removed.
+
+```zsh
+# WRONG — single line, hard to read and debug
+cat /var/log/syslog | grep "error" | cut -d: -f2 | sort | uniq -c | sort -rn | head -10
+
+# CORRECT — one stage per line, 2-space indent for continuation
+cat /var/log/syslog \
+  | grep "error" \
+  | cut -d: -f2 \
+  | sort \
+  | uniq -c \
+  | sort -rn \
+  | head -10
+```
 
 ### Line Continuation
 
@@ -779,6 +796,15 @@ API_KEY="${API_KEY:-}"
 ```
 
 **Sensitive types**: API keys, tokens, passwords, private keys, certificates.
+
+### Umask
+
+For scripts handling sensitive data, set restrictive umask at the top.
+
+```zsh
+# Prevent sensitive temp files from being read by other users
+umask 077
+```
 
 ## References
 
