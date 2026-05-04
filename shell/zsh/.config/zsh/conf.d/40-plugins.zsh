@@ -195,5 +195,12 @@ zstyle ':fzf-tab:*' switch-group ',' '.'
 if command -v direnv &>/dev/null; then
   # Suppress "direnv: loading..." / "direnv: export..." log clutter
   export DIRENV_LOG_FORMAT=""
-  eval "$(direnv hook zsh)"
+  _direnv_cache="$XDG_CACHE_HOME/zsh/direnv-hook.zsh"
+  if [[ ! -f "$_direnv_cache" ]] || \
+     [[ "$(command -v direnv)" -nt "$_direnv_cache" ]]; then
+    mkdir -p "${_direnv_cache:h}"
+    direnv hook zsh >! "$_direnv_cache"
+  fi
+  source "$_direnv_cache"
+  unset _direnv_cache
 fi
