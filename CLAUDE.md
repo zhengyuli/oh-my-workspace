@@ -136,6 +136,7 @@ Detailed conventions in `.claude/rules/`:
 - `config.md` — Configuration files (no extension)
 - `toml.md` — TOML configuration files
 - `yaml.md` — YAML configuration files
+- `vimrc.md` — Vim script conventions
 
 ## Quick Reference
 
