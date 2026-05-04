@@ -157,16 +157,35 @@ Exceptions:
 - URLs and file paths that cannot be wrapped
 - Tool-specific values that cannot be meaningfully split
 
-## Code Patterns
+## Comments
 
-### Comments
+Comments explain *why*, not *what*. Use separate comment lines above
+the setting — never end-of-line.
 
-Explain WHY, not WHAT. Use separate comment lines.
+**Comment syntax**: `#` followed by a single space (all three tools use `#`).
+
+**When to comment**:
+- Non-obvious setting values, workarounds, tool quirks
+- Why a specific value was chosen over the default
+- Dependencies between settings
+
+**When NOT to comment**:
+- Self-documenting key names (`pager = delta` needs no "set pager")
+- Default values that match the tool's documented defaults
+
+**No end-of-line comments** — place comments on a separate line above
+the setting (see [Anti-Patterns > Don't: End-of-Line Comments](#dont-end-of-line-comments)).
 
 ```conf
+# WRONG — restates the setting
+pager = delta  # set pager to delta
+
+# CORRECT — explains reasoning
 # Use delta for syntax-highlighted diffs (falls back to less)
 pager = delta
 ```
+
+## Code Patterns
 
 ### Value Types
 
