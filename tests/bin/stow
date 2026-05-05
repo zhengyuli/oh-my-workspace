@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+echo "$*" >> "${MOCK_STOW_LOG:-/dev/null}"
+if [[ -n "${MOCK_STOW_OUTPUT:-}" ]]; then
+  printf '%s\n' "${MOCK_STOW_OUTPUT}"
+fi
+if [[ -n "${MOCK_STOW_STDERR:-}" ]]; then
+  printf '%s\n' "${MOCK_STOW_STDERR}" >&2
+fi
+exit "${MOCK_STOW_RC:-0}"
