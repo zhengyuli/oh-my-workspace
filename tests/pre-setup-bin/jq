@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+echo "$*" >> "${MOCK_JQ_LOG:-/dev/null}"
+if [[ "${MOCK_JQ_RC:-0}" != "0" ]]; then
+  exit "${MOCK_JQ_RC}"
+fi
+# -e flag: check if key exists
+if [[ "$1" == "-e" ]]; then
+  exit "${MOCK_JQ_KEY_EXISTS:-0}"
+fi
+# -r flag: raw output
+if [[ "$1" == "-r" ]]; then
+  echo "${MOCK_JQ_VALUE:-null}"
+  exit 0
+fi
+# Default: echo 'empty' for validation
+if [[ "$1" == "empty" ]]; then
+  exit 0
+fi
+# Filter mode: write to stdout (for post-fixes)
+if [[ -n "${MOCK_JQ_OUTPUT_FILE:-}" ]]; then
+  cat "$2" > "${MOCK_JQ_OUTPUT_FILE}"
+else
+  cat "$2" 2>/dev/null || echo '{}'
+fi
+exit 0

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "$*" >> "${MOCK_BUNX_LOG:-/dev/null}"
+exit "${MOCK_BUNX_RC:-0}"

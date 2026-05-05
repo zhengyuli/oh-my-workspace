@@ -497,4 +497,6 @@ main() {
   log_info "  3. In Claude Code, follow claude/setup.md"
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi

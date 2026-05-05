@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+if [[ "$1" == "--version" ]]; then
+  echo "${MOCK_CLAUDE_VERSION:-claude 1.0.0}"
+fi
+exit "${MOCK_CLAUDE_RC:-0}"
