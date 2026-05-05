@@ -159,6 +159,12 @@ _run_indented() {
   local tmp_err
   tmp_out=$(mktemp)
   tmp_err=$(mktemp)
+
+  if [[ -z "${tmp_out}" || -z "${tmp_err}" ]]; then
+    log_err "mktemp failed in _run_indented"
+    return 1
+  fi
+
   "$@" >"${tmp_out}" 2>"${tmp_err}" || rc=$?
   sed "s/^/${_LOG_INDENT}/" "${tmp_out}"
   sed "s/^/${_LOG_INDENT}/" "${tmp_err}" >&2
@@ -398,6 +404,12 @@ _install_homebrew() {
   local -r url='https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh'
   local installer
   installer="$(mktemp)"
+
+  if [[ -z "${installer}" ]]; then
+    log_err "mktemp failed"
+    return 1
+  fi
+
   trap 'rm -f "${installer:-}"' RETURN
 
   if ! _download "${url}" "${installer}"; then
@@ -440,6 +452,11 @@ _ensure_homebrew_version() {
   minor="${ver#*.}"
   minor="${minor%%.*}"
 
+  if [[ ! "${major}" =~ ^[0-9]+$ ]] || [[ ! "${minor}" =~ ^[0-9]+$ ]]; then
+    log_err "Cannot parse Homebrew version components: '${ver}'"
+    return 1
+  fi
+
   if (( major > MIN_HOMEBREW_MAJOR || (major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR) )); then
     return 0
   fi
@@ -457,6 +474,12 @@ _ensure_homebrew_version() {
   local -r uninstall_url='https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh'
   local uninstaller
   uninstaller="$(mktemp)"
+
+  if [[ -z "${uninstaller}" ]]; then
+    log_err "mktemp failed"
+    return 1
+  fi
+
   trap 'rm -f "${uninstaller:-}"' RETURN
 
   if ! _download "${uninstall_url}" "${uninstaller}"; then
@@ -631,6 +654,13 @@ _resolve_conflict() {
 
   if [[ "${target}" != "${HOME}"/* ]]; then
     log_err "Refusing to remove path outside HOME: ${target}"
+    return 1
+  fi
+
+  local canonical
+  canonical="$(cd "$(dirname "${target}")" 2>/dev/null && pwd -P)/$(basename "${target}")" || true
+  if [[ -z "${canonical}" || "${canonical}" != "${HOME}"/* ]]; then
+    log_err "Refusing to remove path that resolves outside HOME: ${target}"
     return 1
   fi
 
