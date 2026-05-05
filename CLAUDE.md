@@ -64,11 +64,12 @@ oh-my-workspace/
 │
 ├── docs/              # Documentation
 │
-├── tests/             # BATS test suite (165 tests)
-│   ├── zsh_helper.bash # Shared zsh test utilities
-│   ├── bin/           # Mock scripts for bash tests
+├── tests/             # BATS test suite (183 tests)
+│   ├── zsh-helper.bash # Shared zsh test utilities
+│   ├── setup-bin/     # Mock scripts for setup.sh tests
+│   ├── pre-setup-bin/ # Mock scripts for pre-setup.sh tests
 │   ├── zsh-bin/       # Mock scripts for zsh tests
-│   └── *.bats        # Test files (15 files)
+│   └── *.bats        # Test files (16 files)
 │
 ├── shell/             # Shell configurations
 │   ├── starship/      # Starship prompt config (~/.config/starship.toml)
@@ -126,7 +127,7 @@ oh-my-workspace/
 **Test framework**: [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System)
 
 ```bash
-# Run full suite (165 tests)
+# Run full suite (183 tests)
 bats tests/
 
 # Run specific module
@@ -139,13 +140,14 @@ bats --verbose-run tests/
 **Test architecture**: BATS orchestrates; zsh modules run via `zsh -c` subprocesses for native zsh feature support. All tests use isolated `$HOME`, mock PATH, and no network access.
 
 **Key files**:
-- `tests/zsh_helper.bash` — shared utilities (`run_zsh`, `setup_zsh_env`, `teardown_zsh_env`)
-- `tests/zsh-bin/` — mock scripts (brew, starship, fzf, uv, zoxide, defaults, etc.)
-- `tests/bin/` — mock scripts for bash tests (curl, stow, jq, etc.)
+- `tests/zsh-helper.bash` — shared utilities (`run_zsh`, `setup_zsh_env`, `teardown_zsh_env`)
+- `tests/zsh-bin/` — mock scripts for zsh tests (brew, starship, fzf, uv, zoxide, defaults, etc.)
+- `tests/setup-bin/` — mock scripts for setup.sh tests (curl, stow, uname, etc.)
+- `tests/pre-setup-bin/` — mock scripts for pre-setup.sh tests (bunx, claude, jq, sw_vers)
 
 **Adding tests for a new zsh module**:
 1. Create `tests/zsh-<NN>-<name>.bats`
-2. Use `load zsh_helper` + `setup() { setup_zsh_env; }` + `teardown() { teardown_zsh_env; }`
+2. Use `load zsh-helper` + `setup() { setup_zsh_env; }` + `teardown() { teardown_zsh_env; }`
 3. Test with `run_zsh "$MODULE" '<zsh expression>'` — gives `$status` and `$output`
 4. Add mock scripts to `tests/zsh-bin/` if the module calls external tools
 5. Run with `bats tests/zsh-<NN>-<name>.bats`
@@ -155,7 +157,7 @@ bats --verbose-run tests/
 2. Source the script in `setup()`, test individual functions with `run <function_name>`
 3. Mock external commands in `tests/bin/`
 
-**Test coverage**: 165 tests across 15 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, and darwin defaults.
+**Test coverage**: 183 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
 
 ## Validation
 

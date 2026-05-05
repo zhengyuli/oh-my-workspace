@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 165](https://img.shields.io/badge/Tests-165%20passing-brightgreen.svg)]()
+[![Tests: 183](https://img.shields.io/badge/Tests-183%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -127,11 +127,12 @@ oh-my-workspace/
 │
 ├── docs/                 # Documentation
 │
-├── tests/                # BATS test suite (165 tests)
-│   ├── zsh_helper.bash   # Shared zsh test utilities
-│   ├── bin/              # Mock scripts for bash tests
+├── tests/                # BATS test suite (183 tests)
+│   ├── zsh-helper.bash   # Shared zsh test utilities
+│   ├── setup-bin/        # Mock scripts for setup.sh tests
+│   ├── pre-setup-bin/    # Mock scripts for pre-setup.sh tests
 │   ├── zsh-bin/          # Mock scripts for zsh tests
-│   └── *.bats           # Test files (15 files)
+│   └── *.bats           # Test files (16 files)
 │
 ├── shell/                # Shell configuration
 │   ├── zsh/              # ~/.config/zsh/, ~/.zshenv
@@ -508,7 +509,7 @@ The repository includes a comprehensive [BATS](https://github.com/bats-core/bats
 ### Running Tests
 
 ```bash
-# Run the full test suite (165 tests)
+# Run the full test suite (183 tests)
 bats tests/
 
 # Run tests for a specific module
@@ -544,6 +545,7 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 | `zsh-70-tools.bats` | 9 | `70-tools.zsh` (tool integrations, git wrapper) |
 | `zsh-functions.bats` | 5 | `functions/` (brew-upgrade, jsonpp) |
 | `darwin-defaults.bats` | 8 | `platform/darwin/defaults.sh` (macOS prefs) |
+| `config-validation.bats` | 18 | All config files (TOML, YAML, git, ghostty, shell syntax) |
 
 ### Writing New Tests
 
@@ -571,7 +573,7 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/<NN>-<name>.zsh"
 }
 ```
 
-See `tests/zsh_helper.bash` for shared utilities and `tests/zsh-bin/` for mock scripts.
+See `tests/zsh-helper.bash` for shared utilities and `tests/zsh-bin/` for mock scripts.
 
 ## Contributing
 
