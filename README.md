@@ -558,7 +558,7 @@ Minimal test file template for a new zsh module:
 #!/usr/bin/env bats
 # zsh-<NN>-<name>.bats — tests for conf.d/<NN>-<name>.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
@@ -571,7 +571,7 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/<NN>-<name>.zsh"
 }
 ```
 
-See `tests/zsh-helper.bash` for shared utilities and `tests/zsh-bin/` for mock scripts.
+See `tests/zsh-helper.bash` for shared utilities and `tests/mocks/zsh/` for mock scripts.
 
 ## Contributing
 
