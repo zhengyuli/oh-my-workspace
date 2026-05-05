@@ -129,9 +129,7 @@ oh-my-workspace/
 │
 ├── tests/                # BATS test suite (183 tests)
 │   ├── zsh-helper.bash   # Shared zsh test utilities
-│   ├── setup-bin/        # Mock scripts for setup.sh tests
-│   ├── pre-setup-bin/    # Mock scripts for pre-setup.sh tests
-│   ├── zsh-bin/          # Mock scripts for zsh tests
+│   ├── mocks/            # Mock scripts (setup/, pre-setup/, zsh/)
 │   └── *.bats           # Test files (16 files)
 │
 ├── shell/                # Shell configuration
