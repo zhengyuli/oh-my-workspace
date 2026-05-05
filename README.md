@@ -493,6 +493,67 @@ exec zsh -l
 ./setup.sh help
 ```
 
+## Testing
+
+The repository includes a comprehensive [BATS](https://github.com/bats-core/bats-core) test suite covering all shell modules, the setup script, and platform configuration.
+
+### Running Tests
+
+```bash
+# Run the full test suite (165 tests)
+bats tests/
+
+# Run tests for a specific module
+bats tests/zsh-00-env.bats
+
+# Run with verbose output
+bats --verbose-run tests/
+```
+
+### Test Architecture
+
+Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific modules. All tests run in isolation with:
+- Temporary `$HOME` directory per test
+- Mock scripts for external tools (brew, starship, fzf, etc.)
+- No network access or real tool execution
+
+### Test Files
+
+| File | Tests | Module |
+|------|-------|--------|
+| `setup.bats` | 36 | `setup.sh` (stow operations, validation) |
+| `pre-setup.bats` | 42 | `claude/pre-setup.sh` (Claude Code setup) |
+| `zsh-env.bats` | 6 | `.zshenv` (XDG bootstrap) |
+| `zsh-00-env.bats` | 14 | `00-env.zsh` (environment variables) |
+| `zsh-05-path.bats` | 5 | `05-path.zsh` (PATH/FPATH) |
+| `zsh-10-options.bats` | 8 | `10-options.zsh` (shell options) |
+| `zsh-15-history.bats` | 8 | `15-history.zsh` (history config) |
+| `zsh-20-aliases.bats` | 8 | `20-aliases.zsh` (command aliases) |
+| `zsh-30-completion.bats` | 5 | `30-completion.zsh` (compinit) |
+| `zsh-40-plugins.bats` | 3 | `40-plugins.zsh` (zinit bootstrap) |
+| `zsh-50-prompt.bats` | 4 | `50-prompt.zsh` (starship/vcs_info) |
+| `zsh-60-keybinds.bats` | 4 | `60-keybinds.zsh` (key bindings) |
+| `zsh-70-tools.bats` | 9 | `70-tools.zsh` (tool integrations, git wrapper) |
+| `zsh-functions.bats` | 5 | `functions/` (brew-upgrade, jsonpp) |
+| `darwin-defaults.bats` | 8 | `platform/darwin/defaults.sh` (macOS prefs) |
+
+### Writing New Tests
+
+```bash
+# Install BATS (if not already installed)
+brew install bats-core
+
+# Create a new test file following the pattern:
+# tests/zsh-<module>.bats
+
+# Use the shared helper for zsh modules:
+# load zsh_helper
+# setup() { setup_zsh_env; }
+# teardown() { teardown_zsh_env; }
+```
+
+See `tests/zsh_helper.bash` for shared utilities and `tests/zsh-bin/` for mock scripts.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

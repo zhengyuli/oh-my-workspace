@@ -64,6 +64,12 @@ oh-my-workspace/
 │
 ├── docs/              # Documentation
 │
+├── tests/             # BATS test suite (165 tests)
+│   ├── zsh_helper.bash # Shared zsh test utilities
+│   ├── zsh-bin/       # Mock scripts for zsh tests
+│   ├── bin/           # Mock scripts for bash tests
+│   └── *.bats        # Test files (15 files)
+│
 ├── shell/             # Shell configurations
 │   ├── starship/      # Starship prompt config (~/.config/starship.toml)
 │   └── zsh/           # Zsh config (~/.config/zsh/, ~/.zshenv)
@@ -115,6 +121,36 @@ oh-my-workspace/
 
 **Dependencies**: Managed via `pkg/homebrew/Brewfile`
 
+## Testing
+
+**Test framework**: [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System)
+
+```bash
+# Run full suite (165 tests)
+bats tests/
+
+# Run specific module
+bats tests/zsh-00-env.bats
+
+# Run with verbose output
+bats --verbose-run tests/
+```
+
+**Test architecture**: BATS orchestrates; zsh modules run via `zsh -c` subprocesses for native zsh feature support. All tests use isolated `$HOME`, mock PATH, and no network access.
+
+**Key files**:
+- `tests/zsh_helper.bash` — shared utilities (`run_zsh`, `setup_zsh_env`, `teardown_zsh_env`)
+- `tests/zsh-bin/` — mock scripts (brew, starship, fzf, uv, zoxide, defaults, etc.)
+- `tests/bin/` — mock scripts for bash tests (curl, stow, jq, etc.)
+
+**Adding tests for a new zsh module**:
+1. Create `tests/zsh-<NN>-<name>.bats`
+2. Use `load zsh_helper` + `setup() { setup_zsh_env; }` + `teardown() { teardown_zsh_env; }`
+3. Add mock scripts to `tests/zsh-bin/` if the module calls external tools
+4. Run with `bats tests/zsh-<NN>-<name>.bats`
+
+**Test coverage**: 165 tests across 15 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, and darwin defaults.
+
 ## GLM API Configuration
 
 This environment uses Zhipu GLM API instead of Anthropic. The following env vars in `~/.claude/settings.json` are critical for GLM compatibility — do NOT remove:
@@ -151,6 +187,8 @@ Detailed conventions in `.claude/rules/`:
 | Preview           | `./setup.sh install --dry-run <package>` |
 | Status            | `./setup.sh status`                      |
 | Unstow            | `./setup.sh uninstall <package>`         |
+| Run all tests     | `bats tests/`                            |
+| Run one test file | `bats tests/<file>.bats`                 |
 
 ## Troubleshooting
 
