@@ -107,11 +107,9 @@ _log() {
   local -r color="$1" tag="$2" stream="$3"
   shift 3
   if [[ "${stream}" == err ]]; then
-    printf '%s%b[%s]%b %s\n' \
-      "${_LOG_INDENT}" "${color}" "${tag}" "${_RESET}" "$*" >&2
+    printf '%s%b[%s]%b %s\n' "${_LOG_INDENT}" "${color}" "${tag}" "${_RESET}" "$*" >&2
   else
-    printf '%s%b[%s]%b %s\n' \
-      "${_LOG_INDENT}" "${color}" "${tag}" "${_RESET}" "$*"
+    printf '%s%b[%s]%b %s\n' "${_LOG_INDENT}" "${color}" "${tag}" "${_RESET}" "$*"
   fi
 }
 
@@ -135,9 +133,7 @@ _phase_index=0
 
 _phase() {
   _phase_index=$(( _phase_index + 1 ))
-  printf '\n%b[%d/%d]%b %b%s%b\n' \
-    "${_DIM}" "${_phase_index}" "${_phase_total}" "${_RESET}" \
-    "${_BOLD}" "$*" "${_RESET}"
+  printf '\n%b[%d/%d]%b %b%s%b\n' "${_DIM}" "${_phase_index}" "${_phase_total}" "${_RESET}" "${_BOLD}" "$*" "${_RESET}"
 }
 
 # Uses temp files instead of process substitution because >() is not
@@ -161,9 +157,7 @@ _run_indented() {
 
 _err_handler() {
   local -r code=$?
-  printf '%s%b[error]%b %s() line %d: exit %d\n' \
-    "${_LOG_INDENT}" "${_RED}" "${_RESET}" \
-    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
+  printf '%s%b[error]%b %s() line %d: exit %d\n' "${_LOG_INDENT}" "${_RED}" "${_RESET}" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
 }
 trap '_err_handler' ERR
 
@@ -304,20 +298,16 @@ _download() {
   local delay="${DOWNLOAD_RETRY_DELAY}"
 
   while (( attempt <= DOWNLOAD_MAX_RETRIES )); do
-    if curl --fail --silent --show-error \
-      --connect-timeout "${NETWORK_TIMEOUT}" \
-      --output "${dest}" "${url}"; then
+    if curl --fail --silent --show-error --connect-timeout "${NETWORK_TIMEOUT}" --output "${dest}" "${url}"; then
       return 0
     fi
 
     if (( attempt >= DOWNLOAD_MAX_RETRIES )); then
-      log_err \
-        "Download failed after ${DOWNLOAD_MAX_RETRIES} attempts: ${url}"
+      log_err "Download failed after ${DOWNLOAD_MAX_RETRIES} attempts: ${url}"
       return 1
     fi
 
-    log_warn \
-      "Download attempt ${attempt} failed, retrying in ${delay}s..."
+    log_warn "Download attempt ${attempt} failed, retrying in ${delay}s..."
     sleep "${delay}"
     attempt=$(( attempt + 1 ))
     delay=$(( delay * 2 ))
@@ -387,8 +377,7 @@ _install_homebrew() {
 
 _ensure_homebrew_version() {
   local ver
-  ver=$(brew --version 2>/dev/null \
-    | head -1 | awk '{print $2}') || true
+  ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}') || true
 
   if [[ -z "${ver}" || ! "${ver}" =~ ^[0-9]+\.[0-9]+ ]]; then
     log_err "Cannot determine Homebrew version (got: '${ver}')"
@@ -400,8 +389,7 @@ _ensure_homebrew_version() {
   minor="${ver#*.}"
   minor="${minor%%.*}"
 
-  if (( major > MIN_HOMEBREW_MAJOR )) \
-    || (( major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR )); then
+  if (( major > MIN_HOMEBREW_MAJOR || (major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR) )); then
     return 0
   fi
 
@@ -465,8 +453,7 @@ _run_brew_bundle() {
 }
 
 _setup_git_filters() {
-  git config --local filter.yazi-package.clean \
-    "sed -e 's/^rev = .*/rev = \"pinned\"/' -e 's/^hash = .*/hash = \"0\"/'"
+  git config --local filter.yazi-package.clean "sed -e 's/^rev = .*/rev = \"pinned\"/' -e 's/^hash = .*/hash = \"0\"/'"
   git config --local filter.yazi-package.smudge cat
   git config --local filter.yazi-package.required true
   log_ok "Git filter: yazi-package configured"
@@ -528,16 +515,12 @@ is_stowed() {
 
   # Empty package dir → nothing to stow; treat as not-stowed to avoid
   # false positives in status / uninstall / hook gating.
-  if [[ -z "$(find "${stow_dir}/${pkg_base}" \
-    -mindepth 1 \( -type f -o -type l \) \
-    -print -quit 2>/dev/null)" ]]; then
+  if [[ -z "$(find "${stow_dir}/${pkg_base}" -mindepth 1 \( -type f -o -type l \) -print -quit 2>/dev/null)" ]]; then
     return 1
   fi
 
   local output
-  if ! output=$(stow -n -v \
-    -d "${stow_dir}" \
-    -t "${HOME}" "${pkg_base}" 2>&1); then
+  if ! output=$(stow -n -v -d "${stow_dir}" -t "${HOME}" "${pkg_base}" 2>&1); then
     return 1
   fi
 
@@ -599,15 +582,13 @@ _resolve_conflict() {
     fi
     if [[ -n "$(ls -A "${target}")" ]]; then
       log_err "Refusing to remove non-empty directory: ${target}"
-      log_info \
-        "Move it aside manually: mv '${target}' '${target}.bak'"
+      log_info "Move it aside manually: mv '${target}' '${target}.bak'"
       return 1
     fi
   fi
 
   if "${dry_run}"; then
-    log_info \
-      "[dry-run] would back up and remove conflicting path: ${target}"
+    log_info "[dry-run] would back up and remove conflicting path: ${target}"
     return 0
   fi
 
@@ -650,16 +631,13 @@ _stow_exec() {
   dry_output=$(stow "${dry_flags[@]}" "${pkg_base}" 2>&1) || dry_rc=$?
 
   # --- State Check ---
-  if [[ "${mode}" == stow ]] \
-    && (( dry_rc == 0 )) \
-    && ! grep -q '^LINK:' <<< "${dry_output}"; then
+  if [[ "${mode}" == stow ]] && (( dry_rc == 0 )) && ! grep -q '^LINK:' <<< "${dry_output}"; then
     log_info "${pkg_base}: already stowed"
     return 0
   fi
 
   # Distinguish "nothing to unstow" (rc==0) from a genuine error.
-  if [[ "${mode}" == unstow ]] \
-    && ! grep -q '^UNLINK:' <<< "${dry_output}"; then
+  if [[ "${mode}" == unstow ]] && ! grep -q '^UNLINK:' <<< "${dry_output}"; then
     if (( dry_rc != 0 )); then
       log_err "${pkg_base}: stow dry-run failed"
       return 1
@@ -668,9 +646,7 @@ _stow_exec() {
     return 0
   fi
 
-  if [[ "${mode}" == restow ]] \
-    && ! grep -q 'existing target' <<< "${dry_output}" \
-    && is_stowed "${pkg}"; then
+  if [[ "${mode}" == restow ]] && ! grep -q 'existing target' <<< "${dry_output}" && is_stowed "${pkg}"; then
     log_info "${pkg_base}: already stowed, no changes needed"
     return 0
   fi
@@ -697,10 +673,8 @@ _stow_exec() {
       fi
     done <<< "${dry_output}"
 
-    if ! "${has_actions}" \
-      && grep -q 'existing target' <<< "${dry_output}"; then
-      log_info "[dry-run]   (exact links hidden by conflicts" \
-        "— will be created after removal)"
+    if ! "${has_actions}" && grep -q 'existing target' <<< "${dry_output}"; then
+      log_info "[dry-run]   (exact links hidden by conflicts — will be created after removal)"
     fi
     return 0
   fi
@@ -751,8 +725,7 @@ _post_install_shell_zsh() {
   fi
 
   if ! grep -qx "${zsh_path}" /etc/shells 2>/dev/null; then
-    if ! printf '%s\n' "${zsh_path}" \
-      | sudo tee -a /etc/shells >/dev/null 2>&1; then
+    if ! printf '%s\n' "${zsh_path}" | sudo tee -a /etc/shells >/dev/null 2>&1; then
       log_err "cannot write /etc/shells — run manually:"
       log_err "  echo '${zsh_path}' | sudo tee -a /etc/shells"
       log_err "  chsh -s '${zsh_path}'"
@@ -867,8 +840,7 @@ _run_health_check() {
     fi
 
     resolved=$(command -v "${cmd_name}" 2>/dev/null) || true
-    if [[ -z "${resolved}" && -n "${fallback_path}" \
-      && -x "${fallback_path}" ]]; then
+    if [[ -z "${resolved}" && -n "${fallback_path}" && -x "${fallback_path}" ]]; then
       resolved="${fallback_path}"
     fi
 
@@ -1029,8 +1001,7 @@ cmd_uninstall() {
     fi
 
     if ! "${dry_run}"; then
-      log_warn "This will unstow ${#target_pkgs[@]} packages:" \
-        "${target_pkgs[*]}"
+      log_warn "This will unstow ${#target_pkgs[@]} packages: ${target_pkgs[*]}"
       printf '%s' "${_LOG_INDENT}Continue? [y/N] "
       local answer
       read -r answer
