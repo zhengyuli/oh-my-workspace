@@ -26,7 +26,7 @@ _run_path() {
     export GOPATH=\"${HOME}/.local/share/go\"
     export BUN_INSTALL=\"${HOME}/.local/share/bun\"
     export HOMEBREW_PREFIX=\"/opt/homebrew\"
-    export PATH=\"${BATS_TEST_DIRNAME}/zsh-bin:/usr/bin:/bin\"
+    export PATH=\"${BATS_TEST_DIRNAME}/mocks/zsh:/usr/bin:/bin\"
     mkdir -p \"\$XDG_CACHE_HOME/zsh\" \"\$XDG_STATE_HOME/zsh\"
     source \"${MODULE}\"
     ${expr}
@@ -70,7 +70,7 @@ _run_path() {
     export GOPATH=\"${HOME}/.local/share/go\"
     export BUN_INSTALL=\"${HOME}/.local/share/bun\"
     export HOMEBREW_PREFIX=\"/nonexistent_homebrew\"
-    export PATH=\"${BATS_TEST_DIRNAME}/zsh-bin:/usr/bin:/bin\"
+    export PATH=\"${BATS_TEST_DIRNAME}/mocks/zsh:/usr/bin:/bin\"
     mkdir -p \"\$XDG_CACHE_HOME/zsh\" \"\$XDG_STATE_HOME/zsh\"
     source \"${MODULE}\"
     print -l \"\${path[@]}\"

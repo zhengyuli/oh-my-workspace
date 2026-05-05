@@ -24,7 +24,7 @@ run_zsh() {
     export XDG_STATE_HOME=\"${HOME}/.local/state\"
     export ZDOTDIR=\"${HOME}/.config/zsh\"
     export NO_COLOR=1
-    export PATH=\"${BATS_TEST_DIRNAME}/zsh-bin:${BATS_TEST_DIRNAME}/setup-bin:/usr/bin:/bin\"
+    export PATH=\"${BATS_TEST_DIRNAME}/mocks/zsh:${BATS_TEST_DIRNAME}/mocks/setup:/usr/bin:/bin\"
     export HOMEBREW_PREFIX=\"/opt/homebrew\"
 
     mkdir -p \"\$XDG_CACHE_HOME/zsh\" \"\$XDG_STATE_HOME/zsh\"
@@ -45,7 +45,7 @@ setup_zsh_env() {
   mkdir -p "${HOME}/.local/state/zsh"
 
   export ORIG_PATH="${PATH}"
-  export PATH="${BATS_TEST_DIRNAME}/zsh-bin:${BATS_TEST_DIRNAME}/setup-bin:/usr/bin:/bin"
+  export PATH="${BATS_TEST_DIRNAME}/mocks/zsh:${BATS_TEST_DIRNAME}/mocks/setup:/usr/bin:/bin"
 
   export MOCK_BREW_LOG="${BATS_TEST_TMPDIR}/brew.log"
   export MOCK_DEFAULTS_LOG="${BATS_TEST_TMPDIR}/defaults.log"
