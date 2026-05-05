@@ -8,7 +8,8 @@ teardown() { teardown_zsh_env; }
 
 MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/30-completion.zsh"
 
-@test "compinit runs without error" {
+_run_comp() {
+  local expr="$1"
   run zsh -c "
     export HOME=\"${HOME}\"
     export XDG_CONFIG_HOME=\"${HOME}/.config\"
@@ -18,66 +19,31 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/30-completion.zsh"
     export ZDOTDIR=\"${HOME}/.config/zsh\"
     mkdir -p \"\$XDG_CACHE_HOME/zsh\"
     source \"${MODULE}\"
+    ${expr}
   "
+}
+
+@test "compinit runs without error" {
+  _run_comp 'true'
   (( status == 0 ))
 }
 
 @test "zcompdump created in XDG cache" {
-  run zsh -c "
-    export HOME=\"${HOME}\"
-    export XDG_CONFIG_HOME=\"${HOME}/.config\"
-    export XDG_CACHE_HOME=\"${HOME}/.cache\"
-    export XDG_DATA_HOME=\"${HOME}/.local/share\"
-    export XDG_STATE_HOME=\"${HOME}/.local/state\"
-    export ZDOTDIR=\"${HOME}/.config/zsh\"
-    mkdir -p \"\$XDG_CACHE_HOME/zsh\"
-    source \"${MODULE}\"
-    [[ -f \"\$XDG_CACHE_HOME/zsh/zcompdump\" ]]
-  "
+  _run_comp '[[ -f "$XDG_CACHE_HOME/zsh/zcompdump" ]]'
   (( status == 0 ))
 }
 
 @test "COMPDUMP_MAX_AGE_HOURS defaults to 20" {
-  run zsh -c "
-    export HOME=\"${HOME}\"
-    export XDG_CONFIG_HOME=\"${HOME}/.config\"
-    export XDG_CACHE_HOME=\"${HOME}/.cache\"
-    export XDG_DATA_HOME=\"${HOME}/.local/share\"
-    export XDG_STATE_HOME=\"${HOME}/.local/state\"
-    export ZDOTDIR=\"${HOME}/.config/zsh\"
-    mkdir -p \"\$XDG_CACHE_HOME/zsh\"
-    source \"${MODULE}\"
-    print \$COMPDUMP_MAX_AGE_HOURS
-  "
+  _run_comp 'print $COMPDUMP_MAX_AGE_HOURS'
   [[ "$output" == "20" ]]
 }
 
 @test "completion cache path uses XDG" {
-  run zsh -c "
-    export HOME=\"${HOME}\"
-    export XDG_CONFIG_HOME=\"${HOME}/.config\"
-    export XDG_CACHE_HOME=\"${HOME}/.cache\"
-    export XDG_DATA_HOME=\"${HOME}/.local/share\"
-    export XDG_STATE_HOME=\"${HOME}/.local/state\"
-    export ZDOTDIR=\"${HOME}/.config/zsh\"
-    mkdir -p \"\$XDG_CACHE_HOME/zsh\"
-    source \"${MODULE}\"
-    zstyle -L ':completion:*' cache-path
-  "
+  _run_comp 'zstyle -L ":completion:*" cache-path'
   [[ "$output" == *"/.cache/zsh/completion-cache"* ]]
 }
 
 @test "matcher-list includes smart case" {
-  run zsh -c "
-    export HOME=\"${HOME}\"
-    export XDG_CONFIG_HOME=\"${HOME}/.config\"
-    export XDG_CACHE_HOME=\"${HOME}/.cache\"
-    export XDG_DATA_HOME=\"${HOME}/.local/share\"
-    export XDG_STATE_HOME=\"${HOME}/.local/state\"
-    export ZDOTDIR=\"${HOME}/.config/zsh\"
-    mkdir -p \"\$XDG_CACHE_HOME/zsh\"
-    source \"${MODULE}\"
-    zstyle -L ':completion:*' matcher-list
-  "
+  _run_comp 'zstyle -L ":completion:*" matcher-list'
   [[ "$output" == *"m:{a-z}={A-Za-z}"* ]]
 }

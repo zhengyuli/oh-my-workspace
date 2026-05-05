@@ -3,7 +3,14 @@ if [[ "$1" == "-c" ]]; then
   exit "${MOCK_PYTHON3_RC:-0}"
 fi
 if [[ "$1" == "-m" && "$2" == "json.tool" ]]; then
-  /usr/bin/python3 "$@"
-  exit $?
+  # Use system python3 - try common locations
+  for _py in /usr/bin/python3 /opt/homebrew/bin/python3 /usr/local/bin/python3; do
+    if [[ -x "$_py" ]]; then
+      "$_py" "$@"
+      exit $?
+    fi
+  done
+  echo "python3 not found" >&2
+  exit 1
 fi
 exit 0
