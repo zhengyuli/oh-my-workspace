@@ -125,6 +125,12 @@ oh-my-workspace/
 │
 ├── docs/                 # Documentation
 │
+├── tests/                # BATS test suite (165 tests)
+│   ├── zsh_helper.bash   # Shared zsh test utilities
+│   ├── bin/              # Mock scripts for bash tests
+│   ├── zsh-bin/          # Mock scripts for zsh tests
+│   └── *.bats           # Test files (15 files)
+│
 ├── shell/                # Shell configuration
 │   ├── zsh/              # ~/.config/zsh/, ~/.zshenv
 │   └── starship/         # ~/.config/starship.toml
