@@ -73,13 +73,13 @@ dry_run=false
 
 # Empty when NO_COLOR is set or stdout is not a TTY, so piped output
 # never contains escape codes.
-_is_tty=false
+_IS_TTY=false
 if [[ -t 1 ]]; then
-  _is_tty=true
+  _IS_TTY=true
 fi
-readonly _is_tty
+readonly _IS_TTY
 
-if [[ -n "${NO_COLOR:-}" ]] || ! "${_is_tty}"; then
+if [[ -n "${NO_COLOR:-}" ]] || ! "${_IS_TTY}"; then
   readonly _RED=''
   readonly _GREEN=''
   readonly _YELLOW=''
@@ -125,8 +125,8 @@ _misuse() {
   exit 2
 }
 
-log_ok()   { _log "${_GREEN}" ok out "$*"; }
-log_err()  { _log "${_RED}" error err "$*"; }
+log_ok() { _log "${_GREEN}" ok out "$*"; }
+log_err() { _log "${_RED}" error err "$*"; }
 log_warn() { _log "${_YELLOW}" warn err "$*"; }
 log_info() { _log "${_BLUE}" info out "$*"; }
 
@@ -140,13 +140,18 @@ _phase() {
     "${_BOLD}" "$*" "${_RESET}"
 }
 
+# Uses temp files instead of process substitution because >() is not
+# tracked by wait in bash < 4.4, causing output truncation races.
 _run_indented() {
   local rc=0
-  "$@" \
-    > >(sed "s/^/${_LOG_INDENT}/") \
-    2> >(sed "s/^/${_LOG_INDENT}/" >&2) \
-    || rc=$?
-  wait
+  local tmp_out
+  local tmp_err
+  tmp_out=$(mktemp)
+  tmp_err=$(mktemp)
+  "$@" >"${tmp_out}" 2>"${tmp_err}" || rc=$?
+  sed "s/^/${_LOG_INDENT}/" "${tmp_out}"
+  sed "s/^/${_LOG_INDENT}/" "${tmp_err}" >&2
+  rm -f "${tmp_out}" "${tmp_err}"
   return "${rc}"
 }
 
@@ -246,12 +251,14 @@ validate_pkgs() {
     fi
 
     seen=false
-    for existing in "${_VALIDATED_PKGS[@]}"; do
-      if [[ "${existing}" == "${match}" ]]; then
-        seen=true
-        break
-      fi
-    done
+    if (( ${#_VALIDATED_PKGS[@]} > 0 )); then
+      for existing in "${_VALIDATED_PKGS[@]}"; do
+        if [[ "${existing}" == "${match}" ]]; then
+          seen=true
+          break
+        fi
+      done
+    fi
     if ! "${seen}"; then
       _VALIDATED_PKGS+=("${match}")
     fi
@@ -718,7 +725,7 @@ _stow_exec() {
   fi
 }
 
-stow_package()   { _stow_exec "$1" stow; }
+stow_package() { _stow_exec "$1" stow; }
 restow_package() { _stow_exec "$1" restow; }
 unstow_package() { _stow_exec "$1" unstow; }
 
@@ -915,8 +922,8 @@ cmd_install() {
 
     _phase "Prerequisites"
     if _has_xcode_cli; then log_ok "Xcode CLI: ready"; fi
-    if _has_homebrew; then  log_ok "Homebrew: ready"; fi
-    if _has_stow; then      log_ok "GNU Stow: ready"; fi
+    if _has_homebrew; then log_ok "Homebrew: ready"; fi
+    if _has_stow; then log_ok "GNU Stow: ready"; fi
 
     _phase "Homebrew Bundle"
     if "${dry_run}"; then
@@ -930,9 +937,13 @@ cmd_install() {
     local fail_count=0
     for pkg in "${PKG_ALL[@]}"; do
       if "${force}"; then
-        restow_package "${pkg}" || (( fail_count += 1 ))
+        if ! restow_package "${pkg}"; then
+          (( fail_count += 1 ))
+        fi
       else
-        stow_package "${pkg}" || (( fail_count += 1 ))
+        if ! stow_package "${pkg}"; then
+          (( fail_count += 1 ))
+        fi
       fi
     done
 
@@ -958,9 +969,13 @@ cmd_install() {
   local fail_count=0
   for pkg in "${_VALIDATED_PKGS[@]}"; do
     if "${force}"; then
-      restow_package "${pkg}" || (( fail_count += 1 ))
+      if ! restow_package "${pkg}"; then
+        (( fail_count += 1 ))
+      fi
     else
-      stow_package "${pkg}" || (( fail_count += 1 ))
+      if ! stow_package "${pkg}"; then
+        (( fail_count += 1 ))
+      fi
     fi
   done
 
@@ -1038,7 +1053,9 @@ cmd_uninstall() {
   local pkg
   local fail_count=0
   for pkg in "${target_pkgs[@]}"; do
-    unstow_package "${pkg}" || (( fail_count += 1 ))
+    if ! unstow_package "${pkg}"; then
+      (( fail_count += 1 ))
+    fi
   done
 
   return $(( fail_count > 0 ? 1 : 0 ))
