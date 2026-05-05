@@ -6,7 +6,7 @@ macOS dotfiles repository using GNU Stow for XDG-compliant configuration managem
 
 **This is a configuration management repository**, not a code repository.
 
-**Contains**: Configuration files (`.toml`, `.yml`, `.conf`, `.el`, `.sh`, `.zsh`)
+**Contains**: Configuration files (`.toml`, `.yml`, `.conf`, `.el`, `.sh`, `.zsh`), setup scripts, and a BATS test suite
 **Purpose**: Manage dotfiles and tool configurations across machines
 
 ## Getting Started
@@ -150,6 +150,27 @@ bats --verbose-run tests/
 4. Run with `bats tests/zsh-<NN>-<name>.bats`
 
 **Test coverage**: 165 tests across 15 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, and darwin defaults.
+
+## Validation
+
+```bash
+# Bash syntax check
+bash -n setup.sh
+bash -n platform/darwin/defaults.sh
+
+# Bash lint (POSIX-compatible scripts only)
+shellcheck setup.sh claude/pre-setup.sh platform/darwin/defaults.sh
+
+# Zsh syntax check (shellcheck has poor zsh support)
+zsh -n shell/zsh/.config/zsh/conf.d/*.zsh
+
+# TOML validation (Python 3.11+)
+python3 -c "import tomllib; tomllib.load(open('file.toml','rb'))"
+
+# Tool-specific
+ghostty +validate-config
+git config --list --show-origin
+```
 
 ## GLM API Configuration
 
