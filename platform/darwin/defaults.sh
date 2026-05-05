@@ -449,4 +449,6 @@ main() {
   printf 'Done. Some changes require a logout/restart to take effect.\n'
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi
