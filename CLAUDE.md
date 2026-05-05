@@ -147,13 +147,13 @@ bats --verbose-run tests/
 1. Create `tests/zsh-<NN>-<name>.bats`
 2. Use `load zsh-helper` + `setup() { setup_zsh_env; }` + `teardown() { teardown_zsh_env; }`
 3. Test with `run_zsh "$MODULE" '<zsh expression>'` — gives `$status` and `$output`
-4. Add mock scripts to `tests/zsh-bin/` if the module calls external tools
+4. Add mock scripts to `tests/mocks/zsh/` if the module calls external tools
 5. Run with `bats tests/zsh-<NN>-<name>.bats`
 
 **Adding tests for bash scripts** (setup.sh, defaults.sh):
 1. Add source guard (`if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi`)
 2. Source the script in `setup()`, test individual functions with `run <function_name>`
-3. Mock external commands in `tests/bin/`
+3. Mock external commands in `tests/mocks/setup/`
 
 **Test coverage**: 183 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
 
