@@ -13,7 +13,8 @@ teardown() { teardown_zsh_env; }
 
 MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/05-path.zsh"
 
-@test "HOME/.local/bin is in PATH" {
+_run_path() {
+  local expr="$1"
   run zsh -c "
     export HOME=\"${HOME}\"
     export XDG_CONFIG_HOME=\"${HOME}/.config\"
@@ -25,9 +26,15 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/05-path.zsh"
     export GOPATH=\"${HOME}/.local/share/go\"
     export BUN_INSTALL=\"${HOME}/.local/share/bun\"
     export HOMEBREW_PREFIX=\"/opt/homebrew\"
+    export PATH=\"${BATS_TEST_DIRNAME}/zsh-bin:/usr/bin:/bin\"
+    mkdir -p \"\$XDG_CACHE_HOME/zsh\" \"\$XDG_STATE_HOME/zsh\"
     source \"${MODULE}\"
-    print -l \"\${path[@]}\"
+    ${expr}
   "
+}
+
+@test "HOME/.local/bin is in PATH" {
+  _run_path 'print -l "${path[@]}"'
   [[ "$output" == *"${HOME}/.local/bin"* ]]
 }
 
@@ -44,6 +51,7 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/05-path.zsh"
     export BUN_INSTALL=\"${HOME}/.local/share/bun\"
     export HOMEBREW_PREFIX=\"/opt/homebrew\"
     export PATH=\"/usr/bin:/usr/bin:/bin\"
+    mkdir -p \"\$XDG_CACHE_HOME/zsh\" \"\$XDG_STATE_HOME/zsh\"
     source \"${MODULE}\"
     print -l \"\${path[@]}\" | grep -c '^/usr/bin\$'
   "
@@ -62,6 +70,8 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/05-path.zsh"
     export GOPATH=\"${HOME}/.local/share/go\"
     export BUN_INSTALL=\"${HOME}/.local/share/bun\"
     export HOMEBREW_PREFIX=\"/nonexistent_homebrew\"
+    export PATH=\"${BATS_TEST_DIRNAME}/zsh-bin:/usr/bin:/bin\"
+    mkdir -p \"\$XDG_CACHE_HOME/zsh\" \"\$XDG_STATE_HOME/zsh\"
     source \"${MODULE}\"
     print -l \"\${path[@]}\"
   "
@@ -69,38 +79,12 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/05-path.zsh"
 }
 
 @test "FPATH includes custom functions dir" {
-  run zsh -c "
-    export HOME=\"${HOME}\"
-    export XDG_CONFIG_HOME=\"${HOME}/.config\"
-    export XDG_CACHE_HOME=\"${HOME}/.cache\"
-    export XDG_DATA_HOME=\"${HOME}/.local/share\"
-    export XDG_STATE_HOME=\"${HOME}/.local/state\"
-    export ZDOTDIR=\"${HOME}/.config/zsh\"
-    export CARGO_HOME=\"${HOME}/.local/share/cargo\"
-    export GOPATH=\"${HOME}/.local/share/go\"
-    export BUN_INSTALL=\"${HOME}/.local/share/bun\"
-    export HOMEBREW_PREFIX=\"/opt/homebrew\"
-    source \"${MODULE}\"
-    print -l \"\${fpath[@]}\"
-  "
+  _run_path 'print -l "${fpath[@]}"'
   [[ "$output" == *"/.config/zsh/functions"* ]]
 }
 
 @test "autoload registers functions from functions dir" {
   echo 'echo hello' > "${HOME}/.config/zsh/functions/testfunc"
-  run zsh -c "
-    export HOME=\"${HOME}\"
-    export XDG_CONFIG_HOME=\"${HOME}/.config\"
-    export XDG_CACHE_HOME=\"${HOME}/.cache\"
-    export XDG_DATA_HOME=\"${HOME}/.local/share\"
-    export XDG_STATE_HOME=\"${HOME}/.local/state\"
-    export ZDOTDIR=\"${HOME}/.config/zsh\"
-    export CARGO_HOME=\"${HOME}/.local/share/cargo\"
-    export GOPATH=\"${HOME}/.local/share/go\"
-    export BUN_INSTALL=\"${HOME}/.local/share/bun\"
-    export HOMEBREW_PREFIX=\"/opt/homebrew\"
-    source \"${MODULE}\"
-    whence -w testfunc
-  "
+  _run_path 'whence -w testfunc'
   [[ "$output" == *"function"* ]]
 }

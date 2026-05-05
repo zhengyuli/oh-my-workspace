@@ -5,6 +5,12 @@ ZSH_CONF_DIR="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh"
 
 # Source a zsh module in an isolated environment and evaluate an expression.
 # Usage: run_zsh <module_path> [zsh_expression]
+#
+# IMPORTANT: The expression parameter is interpolated in a bash double-quoted
+# string before being passed to zsh. Callers MUST use single-quoted strings
+# for the expression (e.g., run_zsh "$MODULE" 'print $FOO'). Double-quoted
+# strings with $variables will be expanded by bash, not zsh.
+#
 # Uses BATS `run` internally so $status and $output are available after call.
 run_zsh() {
   local module="$1"

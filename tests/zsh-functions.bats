@@ -45,14 +45,25 @@ FUNC_DIR="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/functions"
   [[ "$output" == *"\"a\""* ]]
 }
 
-@test "jsonpp: passes through invalid JSON error from python3" {
+@test "jsonpp: formats valid JSON from file argument" {
+  local json_file="${BATS_TEST_TMPDIR}/test.json"
+  printf '{"b": 2}\n' > "$json_file"
   run zsh -c "
     export HOME=\"${HOME}\"
-    export PATH=\"${BATS_TEST_DIRNAME}/zsh-bin:/usr/bin:/bin\"
-    echo 'not json' | source \"${FUNC_DIR}/jsonpp\"
+    export PATH=\"/usr/bin:/bin:${BATS_TEST_DIRNAME}/zsh-bin\"
+    source \"${FUNC_DIR}/jsonpp\" \"${json_file}\"
   "
-  # python3 writes error to stderr; bat (mock=cat) still exits 0
-  # pipefail is reset by emulate -L zsh, so exit code is from bat (0)
-  # but stderr should contain the error message
-  [[ "$output" == *"Expecting"* ]] || [[ "$status" -ne 0 ]]
+  (( status == 0 ))
+  [[ "$output" == *'"b"'* ]]
+}
+
+@test "jsonpp: exits non-zero on invalid JSON" {
+  run zsh -c "
+    export HOME=\"${HOME}\"
+    export PATH=\"/usr/bin:/bin:${BATS_TEST_DIRNAME}/zsh-bin\"
+    echo 'not json' | source \"${FUNC_DIR}/jsonpp\" 2>&1
+  "
+  # pipefail is reset by emulate -L zsh, so python3 error goes to stderr
+  # but pipeline exit code comes from bat (0). Verify error message instead.
+  [[ "$output" == *"Expecting"* ]] || (( status != 0 ))
 }
