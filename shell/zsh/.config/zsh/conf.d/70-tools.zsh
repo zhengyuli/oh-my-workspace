@@ -147,7 +147,7 @@ _git_classify_config_op() {
       continue
     fi
     case "$_a" in
-      --*) ;;
+      -*) ;;
       *) _pos+=("$_a") ;;
     esac
   done
@@ -175,6 +175,21 @@ git() {
 
   if [[ "$_mode" == w ]]; then
     command git config -f "$XDG_CONFIG_HOME/git/config.local" "${_args[@]}"
+    local _rc=$?
+
+    # Warn if unset/remove targeted config.local but key still exists in
+    # tracked config (included via --includes).
+    local _destructive=0
+    local _a
+    for _a in "${_args[@]}"; do
+      case "$_a" in
+        --unset|--unset-all|--remove-section) _destructive=1; break ;;
+      esac
+    done
+    if (( _destructive && _rc != 0 )); then
+      print -u2 "warning: key may exist in tracked config (~/.config/git/config); edit manually"
+    fi
+    return $_rc
   else
     command git config --global --includes "${_args[@]}"
   fi

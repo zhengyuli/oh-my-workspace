@@ -70,6 +70,12 @@ _source_with_compinit() {
   [ "$output" = "r" ]
 }
 
+@test "_git_classify_config_op: single-dash flag not counted as positional" {
+  _source_with_compinit 'print $(_git_classify_config_op -z user.name)'
+  [ "$status" -eq 0 ]
+  [ "$output" = "r" ]
+}
+
 @test "uv completion cache created" {
   _source_with_compinit '[[ -f "$XDG_CACHE_HOME/zsh/uv-completion.zsh" ]]'
   [ "$status" -eq 0 ]
