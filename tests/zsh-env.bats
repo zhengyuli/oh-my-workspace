@@ -9,22 +9,42 @@ teardown() { teardown_zsh_env; }
 MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.zshenv"
 
 @test "XDG_CONFIG_HOME defaults to HOME/.config" {
-  run_zsh "$MODULE" 'print $XDG_CONFIG_HOME'
+  run zsh -c "
+    unset XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME ZDOTDIR
+    export HOME=\"${HOME}\"
+    source \"${MODULE}\"
+    print \$XDG_CONFIG_HOME
+  "
   [[ "$output" == "${HOME}/.config" ]]
 }
 
 @test "XDG_CACHE_HOME defaults to HOME/.cache" {
-  run_zsh "$MODULE" 'print $XDG_CACHE_HOME'
+  run zsh -c "
+    unset XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME ZDOTDIR
+    export HOME=\"${HOME}\"
+    source \"${MODULE}\"
+    print \$XDG_CACHE_HOME
+  "
   [[ "$output" == "${HOME}/.cache" ]]
 }
 
 @test "XDG_DATA_HOME defaults to HOME/.local/share" {
-  run_zsh "$MODULE" 'print $XDG_DATA_HOME'
+  run zsh -c "
+    unset XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME ZDOTDIR
+    export HOME=\"${HOME}\"
+    source \"${MODULE}\"
+    print \$XDG_DATA_HOME
+  "
   [[ "$output" == "${HOME}/.local/share" ]]
 }
 
 @test "XDG_STATE_HOME defaults to HOME/.local/state" {
-  run_zsh "$MODULE" 'print $XDG_STATE_HOME'
+  run zsh -c "
+    unset XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME ZDOTDIR
+    export HOME=\"${HOME}\"
+    source \"${MODULE}\"
+    print \$XDG_STATE_HOME
+  "
   [[ "$output" == "${HOME}/.local/state" ]]
 }
 
@@ -39,6 +59,11 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.zshenv"
 }
 
 @test "ZDOTDIR set to XDG_CONFIG_HOME/zsh" {
-  run_zsh "$MODULE" 'print $ZDOTDIR'
+  run zsh -c "
+    unset XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME XDG_STATE_HOME ZDOTDIR
+    export HOME=\"${HOME}\"
+    source \"${MODULE}\"
+    print \$ZDOTDIR
+  "
   [[ "$output" == "${HOME}/.config/zsh" ]]
 }
