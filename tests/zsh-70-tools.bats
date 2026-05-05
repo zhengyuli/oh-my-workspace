@@ -20,7 +20,7 @@ _source_with_compinit() {
     export ZDOTDIR=\"${HOME}/.config/zsh\"
     export BUN_INSTALL=\"${HOME}/.local/share/bun\"
     export HOMEBREW_PREFIX=\"/opt/homebrew\"
-    export PATH=\"${BATS_TEST_DIRNAME}/zsh-bin:/usr/bin:/bin\"
+    export PATH=\"${BATS_TEST_DIRNAME}/mocks/zsh:/usr/bin:/bin\"
     mkdir -p \"\$XDG_CACHE_HOME/zsh\"
     autoload -Uz compinit && compinit -C -d \"\$XDG_CACHE_HOME/zsh/zcompdump\"
     source \"${MODULE}\"
