@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+echo "${MOCK_MACOS_VERSION:-14.0}"
