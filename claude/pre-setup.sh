@@ -101,8 +101,7 @@ _PHASE_INDEX=0
 _phase() {
   _PHASE_INDEX=$(( _PHASE_INDEX + 1 ))
   printf '\n%b[%d/%d]%b %b%s%b\n' \
-    "${C_DIM}" "${_PHASE_INDEX}" "${_PHASE_TOTAL}" "${C_RESET}" \
-    "${C_BOLD}" "$*" "${C_RESET}"
+    "${C_DIM}" "${_PHASE_INDEX}" "${_PHASE_TOTAL}" "${C_RESET}" "${C_BOLD}" "$*" "${C_RESET}"
 }
 
 # Print a warning and exit 1.
@@ -121,8 +120,7 @@ _abort() {
 _err_handler() {
   local -r code=$?
   printf '%s%b[error]%b %s() line %d: exit %d\n' \
-    "${_LOG_INDENT}" "${C_R}" "${C_RESET}" \
-    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+    "${_LOG_INDENT}" "${C_R}" "${C_RESET}" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
 
@@ -230,14 +228,12 @@ _check_prerequisites() {
   if (( missing > 0 )); then
     local workspace_dir
     workspace_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-    log_warn "$missing tool(s) missing —" \
-      "run: brew bundle --file=${workspace_dir}/pkg/homebrew/Brewfile"
+    log_warn "$missing tool(s) missing — run: brew bundle --file=${workspace_dir}/pkg/homebrew/Brewfile"
     return 1
   fi
 
   # --- Network ---
-  if curl -s --max-time "$NETWORK_TIMEOUT" \
-    https://api.github.com >/dev/null 2>&1; then
+  if curl -s --max-time "$NETWORK_TIMEOUT" https://api.github.com >/dev/null 2>&1; then
     log_ok "GitHub API accessible"
   else
     log_err "Cannot reach GitHub API (timeout: ${NETWORK_TIMEOUT}s)"
@@ -259,8 +255,7 @@ _install_claude() {
 
   # Pipe curl output directly to bash — pipefail ensures failure
   # propagates if either curl or bash fails.
-  if ! curl -fSL --connect-timeout "$NETWORK_TIMEOUT" \
-    --max-time "$INSTALL_TIMEOUT" \
+  if ! curl -fSL --connect-timeout "$NETWORK_TIMEOUT" --max-time "$INSTALL_TIMEOUT" \
     https://claude.ai/install.sh | bash; then
     log_err "claude CLI installation failed"
     return 1
@@ -327,8 +322,7 @@ _apply_post_fixes() {
   log_info "Applying post-ZAI configuration fixes..."
 
   local orig_perms
-  orig_perms="$(/usr/bin/stat -f '%Lp' "$settings" 2>/dev/null \
-    || printf '%s' "$DEFAULT_SETTINGS_PERMS")"
+  orig_perms="$(/usr/bin/stat -f '%Lp' "$settings" 2>/dev/null || printf '%s' "$DEFAULT_SETTINGS_PERMS")"
 
   local tmp
   tmp="$(mktemp)"
