@@ -116,12 +116,21 @@ done
 
 ## Line Length
 
-79 characters maximum.
+120 characters soft limit.  Avoid gratuitous wrapping that hurts readability —
+a clear one-liner is better than a three-line continuation.
 
-Exceptions:
+**When to wrap**: Lines over 120 characters should be wrapped.  For `printf`
+and similar multi-argument calls, break after the format string and place
+all arguments on the next line with 2-space indent.
+
+**When NOT to wrap**: Single commands or conditionals in the 100–120 range
+that read as one logical unit — wrapping mid-flag or mid-expression hurts
+more than the length does.
+
+Hard exceptions (no limit):
 
 - URLs and file paths that cannot be wrapped
-- Help text strings in `print` / `printf` (user-facing output)
+- Heredoc body lines (they are literal content, not code)
 
 ## Comments
 
@@ -151,6 +160,45 @@ export PATH="$HOME/.local/bin:$PATH"
 # Local bin takes precedence over system packages (personal builds)
 export PATH="$HOME/.local/bin:$PATH"
 ```
+
+## Function Documentation
+
+Document every function.  Use plain `#` comment blocks — do **not** use
+`#######################################` delimiter boxes around docstrings.
+
+**Simple functions** (one-line predicates, trivial helpers): a single comment
+line above the function is sufficient.
+
+```zsh
+# True if command exists on PATH.
+_has_cmd() {
+  command -v "$1" >/dev/null 2>&1
+}
+```
+
+**Complex functions**: use a structured block with `Description`, and
+whichever of `Globals`, `Arguments`, `Outputs`, `Returns` are relevant.
+Omit sections that don't apply.
+
+```zsh
+# Load and cache tool environment to avoid repeated eval overhead.
+# Arguments:
+#   tool_name  - Name of the tool (used for cache file naming).
+#   cache_file - Path to the cache file.
+#   eval_cmd   - Command to generate the environment script.
+# Outputs:
+#   Sources the cached environment into the current shell.
+_cached_eval() {
+  local -r tool_name="$1" cache_file="$2" eval_cmd="$3"
+  ...
+}
+```
+
+**Do not** document with `#######################################` borders
+or any other box-drawing style — the project uses its own delimiter
+hierarchy (Level 0 `===`, Level 1 `---`, Level 2 `--- Title ---`) for
+structural grouping; function docstrings are a different concern and use
+plain comments.
 
 ## Error Handling
 
