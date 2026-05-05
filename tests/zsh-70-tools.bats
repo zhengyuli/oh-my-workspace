@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-70-tools.bats — tests for conf.d/70-tools.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }

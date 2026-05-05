@@ -12,7 +12,7 @@ setup() {
   mkdir -p "${HOME}/.config"
 
   export ORIG_PATH="${PATH}"
-  export PATH="${BATS_TEST_DIRNAME}/bin:${PATH}"
+  export PATH="${BATS_TEST_DIRNAME}/setup-bin:${PATH}"
 
   export MOCK_STOW_LOG="${BATS_TEST_TMPDIR}/stow.log"
   export MOCK_STOW_OUTPUT=""

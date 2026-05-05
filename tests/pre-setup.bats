@@ -7,7 +7,7 @@
 
 _source_pre_setup() {
   export NO_COLOR=1
-  export PATH="${BATS_TEST_DIRNAME}/pre-setup-bin:${BATS_TEST_DIRNAME}/bin:${PATH}"
+  export PATH="${BATS_TEST_DIRNAME}/pre-setup-bin:${BATS_TEST_DIRNAME}/setup-bin:${PATH}"
   source "${BATS_TEST_DIRNAME}/../claude/pre-setup.sh"
 }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-00-env.bats — tests for conf.d/00-env.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }

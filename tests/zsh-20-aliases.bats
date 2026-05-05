@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-20-aliases.bats — tests for conf.d/20-aliases.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }

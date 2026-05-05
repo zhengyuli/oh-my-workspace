@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-40-plugins.bats — tests for conf.d/40-plugins.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }

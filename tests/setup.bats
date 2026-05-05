@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # setup.bats — BATS test suite for setup.sh
 
-load test_helper
+load test-helper
 
 # =============================================================================
 # Package Model Tests

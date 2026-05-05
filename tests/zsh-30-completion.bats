@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-30-completion.bats — tests for conf.d/30-completion.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
