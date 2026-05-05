@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if [[ "$1" == "-c" ]]; then
+  exit "${MOCK_PYTHON3_RC:-0}"
+fi
+if [[ "$1" == "-m" && "$2" == "json.tool" ]]; then
+  /usr/bin/python3 "$@"
+  exit $?
+fi
+exit 0

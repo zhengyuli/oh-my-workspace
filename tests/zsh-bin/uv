@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+if [[ "$1" == "generate-shell-completion" ]]; then
+  echo '# uv completion stub'
+fi
+exit 0
