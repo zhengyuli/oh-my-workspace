@@ -63,7 +63,6 @@ FUNC_DIR="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/functions"
     export PATH=\"/usr/bin:/bin:${BATS_TEST_DIRNAME}/mocks/zsh\"
     echo 'not json' | source \"${FUNC_DIR}/jsonpp\" 2>&1
   "
-  # pipefail is reset by emulate -L zsh, so python3 error goes to stderr
-  # but pipeline exit code comes from bat (0). Verify error message instead.
-  [[ "$output" == *"Expecting"* ]] || (( status != 0 ))
+  (( status != 0 ))
+  [[ "$output" == *"Expecting"* ]]
 }
