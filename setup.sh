@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
-# Time-stamp: <2026-04-24 16:48:16 Friday by zhengyu.li>
+# Time-stamp: <2026-05-05 12:37:36 Tuesday by zhengyu.li>
 #
 # =============================================================================
 # oh-my-workspace Setup — Dotfile Management via GNU Stow
@@ -103,6 +103,12 @@ fi
 
 readonly _LOG_INDENT='    '
 
+# Log a colored, tagged message to stdout or stderr.
+# Arguments:
+#   color  - ANSI escape sequence.
+#   tag    - Label shown in brackets.
+#   stream - "out" for stdout, "err" for stderr.
+#   ...    - Message text.
 _log() {
   local -r color="$1" tag="$2" stream="$3"
   shift 3
@@ -113,16 +119,19 @@ _log() {
   fi
 }
 
+# Log error and exit 1 (runtime failure).
 die() {
   _log "${_RED}" error err "$*"
   exit 1
 }
 
+# Log error and exit 2 (usage/argument error).
 _misuse() {
   _log "${_RED}" error err "$*"
   exit 2
 }
 
+# Convenience log wrappers: colored output at various severity levels.
 log_ok() { _log "${_GREEN}" ok out "$*"; }
 log_err() { _log "${_RED}" error err "$*"; }
 log_warn() { _log "${_YELLOW}" warn err "$*"; }
@@ -131,13 +140,19 @@ log_info() { _log "${_BLUE}" info out "$*"; }
 _phase_total=1
 _phase_index=0
 
+# Print a phase progress header: [N/Total] Title.
 _phase() {
   _phase_index=$(( _phase_index + 1 ))
   printf '\n%b[%d/%d]%b %b%s%b\n' "${_DIM}" "${_phase_index}" "${_phase_total}" "${_RESET}" "${_BOLD}" "$*" "${_RESET}"
 }
 
-# Uses temp files instead of process substitution because >() is not
-# tracked by wait in bash < 4.4, causing output truncation races.
+# Run a command with its output indented by _LOG_INDENT.
+# Uses temp files instead of process substitution because >()
+# is not tracked by wait in bash < 4.4.
+# Arguments:
+#   ... - Command and arguments to execute.
+# Returns:
+#   The exit code of the wrapped command.
 _run_indented() {
   local rc=0
   local tmp_out
@@ -155,12 +170,15 @@ _run_indented() {
 # Signal Handling
 # -----------------------------------------------------------------------------
 
+# ERR trap: log failing function, line number, and exit code.
 _err_handler() {
   local -r code=$?
-  printf '%s%b[error]%b %s() line %d: exit %d\n' "${_LOG_INDENT}" "${_RED}" "${_RESET}" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
+  printf '%s%b[error]%b %s() line %d: exit %d\n' \
+    "${_LOG_INDENT}" "${_RED}" "${_RESET}" "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
 }
 trap '_err_handler' ERR
 
+# EXIT trap: remove temp files matching /tmp/omw-setup-*.$$.
 _cleanup() {
   local -a tmpfiles=()
   shopt -s nullglob
@@ -172,8 +190,7 @@ _cleanup() {
 }
 trap '_cleanup' EXIT
 
-# Kill background children (e.g. brew bundle) so they don't outlive
-# the script on Ctrl-C.
+# INT/TERM trap: kill background children then exit 130.
 _int_handler() {
   trap - EXIT
   local -a pids=()
@@ -192,18 +209,22 @@ trap '_int_handler' INT TERM
 # Package Model
 # -----------------------------------------------------------------------------
 
+# Extract category from a package path (e.g., "shell" from "shell/zsh").
 pkg_category() {
   printf '%s' "${1%/*}"
 }
 
+# Extract base name from a package path (e.g., "zsh" from "shell/zsh").
 pkg_name() {
   printf '%s' "${1##*/}"
 }
 
+# Return the stow source directory for a given package.
 pkg_stow_dir() {
   printf '%s/%s' "${WORKSPACE_DIR}" "$(pkg_category "$1")"
 }
 
+# Check if a package path is in PKG_ALL.
 _is_valid_pkg() {
   local p
   for p in "${PKG_ALL[@]}"; do
@@ -216,6 +237,16 @@ _is_valid_pkg() {
 
 _VALIDATED_PKGS=()
 
+# Resolve user-provided package names to full paths.
+# Accepts both short names ("zsh") and full paths ("shell/zsh").
+# Deduplicates results into the global _VALIDATED_PKGS array.
+# Globals:
+#   PKG_ALL (read)
+#   _VALIDATED_PKGS (write)
+# Arguments:
+#   ... - One or more package names or paths.
+# Returns:
+#   0 if at least one valid package resolved, 1 otherwise.
 validate_pkgs() {
   _VALIDATED_PKGS=()
   local p pkg match existing seen
@@ -263,21 +294,27 @@ validate_pkgs() {
 # Prerequisites
 # -----------------------------------------------------------------------------
 
+# True if Xcode Command Line Tools are installed.
 _has_xcode_cli() {
   xcode-select -p >/dev/null 2>&1
 }
 
+# True if Homebrew is on PATH.
 _has_homebrew() {
   command -v brew >/dev/null 2>&1
 }
 
+# True if GNU Stow is on PATH.
 _has_stow() {
   command -v stow >/dev/null 2>&1
 }
 
+# Source brew shellenv from well-known Homebrew prefixes.
+# Ensures PATH is fully configured even when brew isn't
+# on the default PATH.
+# Returns:
+#   0 if brew is now available, 1 otherwise.
 _bootstrap_homebrew_env() {
-  # Source brew shellenv from known locations so the full PATH is
-  # available even when brew is only partially on PATH.
   local b env_output
   for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
     if [[ -x "${b}" ]]; then
@@ -290,6 +327,12 @@ _bootstrap_homebrew_env() {
   _has_homebrew
 }
 
+# Download a file via curl with exponential-backoff retry.
+# Arguments:
+#   url  - Remote URL to fetch.
+#   dest - Local file path to save to.
+# Returns:
+#   0 on success, 1 after all retries exhausted.
 _download() {
   local -r url="$1" dest="$2"
   local attempt=1
@@ -312,8 +355,11 @@ _download() {
   done
 }
 
-# xcode-select --install only spawns the GUI dialog; we must poll
-# until the tools are actually present or a timeout is hit.
+# Spawn the Xcode CLI installer dialog and poll until ready.
+# xcode-select --install only opens a GUI dialog; we must
+# poll until the tools are present or the timeout is hit.
+# Returns:
+#   0 on success, 1 on timeout or verification failure.
 _install_xcode_cli() {
   if _has_xcode_cli; then
     log_info "Xcode CLI already installed"
@@ -373,6 +419,13 @@ _install_homebrew() {
   log_ok "Homebrew: installed"
 }
 
+# Verify Homebrew version meets minimum requirements.
+# If too old, uninstall it and signal a fresh install is needed.
+# Globals:
+#   MIN_HOMEBREW_MAJOR, MIN_HOMEBREW_MINOR (read)
+#   dry_run (read)
+# Returns:
+#   0 if version is acceptable, 1 if reinstall needed.
 _ensure_homebrew_version() {
   local ver
   ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}') || true
@@ -430,6 +483,7 @@ _ensure_homebrew_version() {
   return 1
 }
 
+# Install GNU Stow via Homebrew.
 _install_stow() {
   log_info "Installing GNU Stow..."
 
@@ -441,6 +495,7 @@ _install_stow() {
   fi
 }
 
+# Run brew bundle. Always returns 0; partial failures are warnings.
 _run_brew_bundle() {
   if _run_indented brew bundle --file="${BREWFILE}"; then
     log_ok "brew bundle: done"
@@ -450,6 +505,7 @@ _run_brew_bundle() {
   return 0
 }
 
+# Configure git clean/smudge filters for yazi package.toml.
 _setup_git_filters() {
   git config --local filter.yazi-package.clean "sed -e 's/^rev = .*/rev = \"pinned\"/' -e 's/^hash = .*/hash = \"0\"/'"
   git config --local filter.yazi-package.smudge cat
@@ -457,6 +513,9 @@ _setup_git_filters() {
   log_ok "Git filter: yazi-package configured"
 }
 
+# Install prerequisites: Xcode CLI → Homebrew → Stow → git filters.
+# Globals:
+#   dry_run (read)
 ensure_prerequisites() {
   # --- Xcode CLI ---
   if ! _has_xcode_cli; then
@@ -501,6 +560,12 @@ ensure_prerequisites() {
 # Stow Engine
 # -----------------------------------------------------------------------------
 
+# Test whether a package is currently stowed.
+# Uses stow's dry-run to check if any LINK actions remain.
+# Arguments:
+#   $1 - Full package path (e.g., "shell/zsh").
+# Returns:
+#   0 if fully stowed, 1 otherwise.
 is_stowed() {
   local stow_dir
   stow_dir=$(pkg_stow_dir "$1")
@@ -529,6 +594,12 @@ is_stowed() {
   return 0
 }
 
+# Parse stow dry-run output to extract target paths.
+# Emits one absolute path per line for links and conflicts.
+# Arguments:
+#   output - Captured text from `stow -n -v`.
+# Outputs:
+#   Writes absolute file paths to stdout.
 _parse_stow_targets() {
   local output="$1"
   local -r conflict_owned_pat='existing target is not owned by stow: (.+)'
@@ -547,6 +618,14 @@ _parse_stow_targets() {
   done <<< "${output}"
 }
 
+# Resolve a conflicting file before stow can proceed.
+# Handles foreign symlinks (remove), missing files (no-op),
+# non-empty dirs (refuse), and regular files (back up to
+# *.pre-stow-backup with incrementing suffix).
+# Arguments:
+#   target - Absolute path of the conflicting file.
+# Returns:
+#   0 if resolved, 1 if manual action needed.
 _resolve_conflict() {
   local -r target="$1"
 
@@ -604,6 +683,14 @@ _resolve_conflict() {
   mv "${target}" "${backup}"
 }
 
+# Core stow execution engine.
+# Probes state with dry-run, resolves conflicts, displays
+# dry-run previews, then executes stow/restow/unstow.
+# Arguments:
+#   pkg  - Full package path (e.g., "shell/zsh").
+#   mode - One of: "stow", "restow", "unstow".
+# Returns:
+#   0 on success or already-stowed skip, 1 on failure.
 _stow_exec() {
   local pkg="$1"
   local mode="${2:-stow}"
@@ -697,6 +784,7 @@ _stow_exec() {
   fi
 }
 
+# Public stow wrappers.
 stow_package() { _stow_exec "$1" stow; }
 restow_package() { _stow_exec "$1" restow; }
 unstow_package() { _stow_exec "$1" unstow; }
@@ -707,6 +795,9 @@ unstow_package() { _stow_exec "$1" unstow; }
 
 # --- Shell (zsh) ---
 
+# Set default shell to zsh if not already active.
+# Returns:
+#   0 on success, 1 on failure, 2 if skipped.
 _post_install_shell_zsh() {
   if ! is_stowed shell/zsh; then
     return 2
@@ -741,6 +832,9 @@ _post_install_shell_zsh() {
 
 # --- Yazi ---
 
+# Install yazi plugins from package.toml.
+# Returns:
+#   0 on success, 1 on failure, 2 if skipped.
 _post_install_yazi() {
   if ! is_stowed tool/yazi; then
     return 2
@@ -762,6 +856,11 @@ _post_install_yazi() {
   return 1
 }
 
+# Execute a hook function and log its result.
+# Hook convention: 0=success, 1=failure, 2=skipped.
+# Arguments:
+#   name - Human-readable label for logging.
+#   fn   - Function name to call.
 _hook_run() {
   local -r name="$1" fn="$2"
   local rc=0
@@ -775,6 +874,7 @@ _hook_run() {
   esac
 }
 
+# Dispatch post-install hooks for packages that have one.
 _run_post_install_hooks() {
   local pkg
   for pkg in "$@"; do
@@ -785,6 +885,7 @@ _run_post_install_hooks() {
   done
 }
 
+# Phase wrapper: print header, skip in dry-run, else run hooks.
 _run_post_install_phase() {
   _phase "Post-Install Hooks"
   if "${dry_run}"; then
@@ -798,8 +899,11 @@ _run_post_install_phase() {
 # Health Check
 # -----------------------------------------------------------------------------
 
-# Returns "cmd:friendly" or "cmd:friendly:/fallback/path" for cask apps
-# whose binary is not on PATH. Returns 1 for unknown packages.
+# Map a package path to its health-check descriptor.
+# Outputs:
+#   Writes "cmd:friendly[:fallback_path]" to stdout.
+# Returns:
+#   1 if the package has no known binary.
 _health_tool_for() {
   case "$1" in
     shell/zsh) printf 'zsh:zsh' ;;
@@ -819,6 +923,7 @@ _health_tool_for() {
   esac
 }
 
+# Verify each stowed package's binary is reachable.
 _run_health_check() {
   _phase "Health Check"
   local pkg cmd_name friendly fallback_path resolved
@@ -852,16 +957,20 @@ _run_health_check() {
 # Commands
 # -----------------------------------------------------------------------------
 
+# Stow or restow a single package based on the force flag.
 _stow_one() {
   local -r pkg="$1" force="$2"
   if "${force}"; then
-    restow_package "${pkg}" && return 0
+    restow_package "${pkg}"
   else
-    stow_package "${pkg}" && return 0
+    stow_package "${pkg}"
   fi
-  return 1
 }
 
+# Command: install packages.
+# Handles prerequisites, brew bundle, stowing, post-install
+# hooks, and health check. With --all installs everything;
+# otherwise accepts specific package names.
 cmd_install() {
   local do_all=false
   local force=false
@@ -950,6 +1059,8 @@ cmd_install() {
   return $(( fail_count > 0 ? 1 : 0 ))
 }
 
+# Command: remove symlinks for specified packages.
+# With --all, prompts for confirmation (unless dry-run).
 cmd_uninstall() {
   local do_all=false
   local -a pkgs=()
@@ -1026,6 +1137,7 @@ cmd_uninstall() {
   return $(( fail_count > 0 ? 1 : 0 ))
 }
 
+# Command: display prerequisite health and stow status.
 cmd_status() {
   local -a pkgs
 
