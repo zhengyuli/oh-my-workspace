@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # setup.sh -*- mode: sh; -*-
 # Time-stamp: <2026-04-24 16:48:16 Friday by zhengyu.li>
+#
 # =============================================================================
-# oh-my-workspace Setup Script
+# oh-my-workspace Setup — Dotfile Management via GNU Stow
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
 # Keywords: dotfiles, stow, homebrew, setup
@@ -14,13 +15,10 @@
 #   2026-04-01 13:11 zhengyu li <lizhengyu419@outlook.com> created.
 #
 # Commentary:
-#   Main setup script for managing dotfiles via GNU Stow.
-#   Handles prerequisites, Homebrew bundle, and package stowing.
-#   Uses stow -n -v to simulate operations, delegating all ignore
-#   rules, tree-folding logic, and edge cases to stow itself.
-#   Output uses simple colored log lines with passthrough tool output.
-#
-# Usage:    ./setup.sh help
+#   Manages dotfiles via GNU Stow with prerequisite bootstrapping
+#   (Xcode CLI, Homebrew, Stow), Homebrew bundle, and per-package
+#   post-install hooks. Uses stow -n -v to probe state, delegating
+#   ignore rules and tree-folding to stow itself.
 #
 # References:
 #   1. GNU Stow Manual:
@@ -35,22 +33,14 @@ set -euo pipefail
 # Constants
 # -----------------------------------------------------------------------------
 
-# --- Network ---
 readonly NETWORK_TIMEOUT=60
-
-# --- Download Retry ---
 readonly DOWNLOAD_MAX_RETRIES=3
 readonly DOWNLOAD_RETRY_DELAY=5
-
-# --- Xcode CLI Install Polling ---
 readonly XCODE_POLL_INTERVAL=5
 readonly XCODE_POLL_MAX=600
-
-# --- Homebrew Version ---
 readonly MIN_HOMEBREW_MAJOR=4
 readonly MIN_HOMEBREW_MINOR=4
 
-# --- Packages ---
 readonly -a PKG_ALL=(
   shell/zsh
   shell/starship
@@ -65,9 +55,7 @@ readonly -a PKG_ALL=(
   lang/typescript/bun
 )
 
-# --- Paths ---
-# Two-step: assign with default first, then seal as readonly.
-# A single "readonly VAR=${VAR:-default}" would fail if VAR is
+# Two-step assign-then-seal avoids failure when the variable is
 # already exported as readonly from the environment.
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 readonly WORKSPACE_DIR
@@ -75,93 +63,102 @@ readonly WORKSPACE_DIR
 BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
 readonly BREWFILE
 
-# --- State ---
-dry_run=false
-
-# Standard exit code for SIGINT (128 + signal 2).
 readonly EXIT_SIGINT=130
+
+dry_run=false
 
 # -----------------------------------------------------------------------------
 # Color System
 # -----------------------------------------------------------------------------
 
-# Standard ANSI colors. All constants are empty when NO_COLOR is set
-# or stdout is not a TTY, ensuring no escape codes in piped output.
-
-_IS_TTY=false
+# Empty when NO_COLOR is set or stdout is not a TTY, so piped output
+# never contains escape codes.
+_is_tty=false
 if [[ -t 1 ]]; then
-  _IS_TTY=true
+  _is_tty=true
 fi
-readonly _IS_TTY
+readonly _is_tty
 
-if [[ -n "${NO_COLOR:-}" ]] || ! "${_IS_TTY}"; then
-  readonly C_R=''
-  readonly C_G=''
-  readonly C_Y=''
-  readonly C_B=''
-  readonly C_BOLD=''
-  readonly C_DIM=''
-  readonly C_RESET=''
+if [[ -n "${NO_COLOR:-}" ]] || ! "${_is_tty}"; then
+  readonly _RED=''
+  readonly _GREEN=''
+  readonly _YELLOW=''
+  readonly _BLUE=''
+  readonly _BOLD=''
+  readonly _DIM=''
+  readonly _RESET=''
 else
-  readonly C_R=$'\033[0;31m'
-  readonly C_G=$'\033[0;32m'
-  readonly C_Y=$'\033[0;33m'
-  readonly C_B=$'\033[0;34m'
-  readonly C_BOLD=$'\033[1m'
-  readonly C_DIM=$'\033[2m'
-  readonly C_RESET=$'\033[0m'
+  readonly _RED=$'\033[0;31m'
+  readonly _GREEN=$'\033[0;32m'
+  readonly _YELLOW=$'\033[0;33m'
+  readonly _BLUE=$'\033[0;34m'
+  readonly _BOLD=$'\033[1m'
+  readonly _DIM=$'\033[2m'
+  readonly _RESET=$'\033[0m'
 fi
 
 # -----------------------------------------------------------------------------
 # Logging
 # -----------------------------------------------------------------------------
 
-# Content indent: 4 spaces for items nested under a phase header.
 readonly _LOG_INDENT='    '
 
 _log() {
   local -r color="$1" tag="$2" stream="$3"
   shift 3
   if [[ "${stream}" == err ]]; then
-    printf '%s%b[%s]%b %s\n' "${_LOG_INDENT}" "${color}" "${tag}" "${C_RESET}" "$*" >&2
+    printf '%s%b[%s]%b %s\n' \
+      "${_LOG_INDENT}" "${color}" "${tag}" "${_RESET}" "$*" >&2
   else
-    printf '%s%b[%s]%b %s\n' "${_LOG_INDENT}" "${color}" "${tag}" "${C_RESET}" "$*"
+    printf '%s%b[%s]%b %s\n' \
+      "${_LOG_INDENT}" "${color}" "${tag}" "${_RESET}" "$*"
   fi
 }
 
-die()      { _log "${C_R}" error err "$*"; exit 1; }
-_misuse()  { _log "${C_R}" error err "$*"; exit 2; }
-log_ok()   { _log "${C_G}" ok    out "$*"; }
-log_err()  { _log "${C_R}" error err "$*"; }
-log_warn() { _log "${C_Y}" warn  err "$*"; }
-log_info() { _log "${C_B}" info  out "$*"; }
+die() {
+  _log "${_RED}" error err "$*"
+  exit 1
+}
 
-_PHASE_TOTAL=1
-_PHASE_INDEX=0
+_misuse() {
+  _log "${_RED}" error err "$*"
+  exit 2
+}
+
+log_ok()   { _log "${_GREEN}" ok out "$*"; }
+log_err()  { _log "${_RED}" error err "$*"; }
+log_warn() { _log "${_YELLOW}" warn err "$*"; }
+log_info() { _log "${_BLUE}" info out "$*"; }
+
+_phase_total=1
+_phase_index=0
 
 _phase() {
-  _PHASE_INDEX=$(( _PHASE_INDEX + 1 ))
+  _phase_index=$(( _phase_index + 1 ))
   printf '\n%b[%d/%d]%b %b%s%b\n' \
-    "${C_DIM}" "${_PHASE_INDEX}" "${_PHASE_TOTAL}" "${C_RESET}" \
-    "${C_BOLD}" "$*" "${C_RESET}"
+    "${_DIM}" "${_phase_index}" "${_phase_total}" "${_RESET}" \
+    "${_BOLD}" "$*" "${_RESET}"
 }
 
 _run_indented() {
   local rc=0
-  "$@" > >( sed "s/^/${_LOG_INDENT}/" ) 2> >( sed "s/^/${_LOG_INDENT}/" >&2 ) || rc=$?
+  "$@" \
+    > >(sed "s/^/${_LOG_INDENT}/") \
+    2> >(sed "s/^/${_LOG_INDENT}/" >&2) \
+    || rc=$?
   wait
-  return "$rc"
+  return "${rc}"
 }
 
 # -----------------------------------------------------------------------------
-# Error Handling
+# Signal Handling
 # -----------------------------------------------------------------------------
 
 _err_handler() {
   local -r code=$?
   printf '%s%b[error]%b %s() line %d: exit %d\n' \
-    "${_LOG_INDENT}" "${C_R}" "${C_RESET}" \
-    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+    "${_LOG_INDENT}" "${_RED}" "${_RESET}" \
+    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
 }
 trap '_err_handler' ERR
 
@@ -178,14 +175,14 @@ _cleanup() {
 }
 trap '_cleanup' EXIT
 
-# Forward Ctrl-C cleanly: kill any background children (e.g. brew
-# bundle) so they don't outlive the script.
+# Kill background children (e.g. brew bundle) so they don't outlive
+# the script on Ctrl-C.
 _int_handler() {
   trap - EXIT
   local -a pids=()
   local _pid
   while IFS= read -r _pid; do
-    pids+=("$_pid")
+    pids+=("${_pid}")
   done < <(jobs -p)
   if (( ${#pids[@]} > 0 )); then
     kill "${pids[@]}" 2>/dev/null || true
@@ -195,7 +192,7 @@ _int_handler() {
 trap '_int_handler' INT TERM
 
 # -----------------------------------------------------------------------------
-# Package Path Helpers
+# Package Model
 # -----------------------------------------------------------------------------
 
 pkg_category() {
@@ -212,7 +209,6 @@ pkg_stow_dir() {
 
 _is_valid_pkg() {
   local p
-
   for p in "${PKG_ALL[@]}"; do
     if [[ "$1" == "${p}" ]]; then
       return 0
@@ -221,12 +217,11 @@ _is_valid_pkg() {
   return 1
 }
 
-# Populates global _VALIDATED_PKGS with resolved "category/name" identifiers.
 _VALIDATED_PKGS=()
 
 validate_pkgs() {
   _VALIDATED_PKGS=()
-  local p pkg match existing _seen
+  local p pkg match existing seen
 
   for p in "$@"; do
     if [[ -z "${p}" ]]; then
@@ -234,11 +229,9 @@ validate_pkgs() {
     fi
     match=''
 
-    # Exact "category/name" match.
     if _is_valid_pkg "${p}"; then
       match="${p}"
     else
-      # Fallback: match by short name (e.g. "zsh" → "shell/zsh").
       for pkg in "${PKG_ALL[@]}"; do
         if [[ "$(pkg_name "${pkg}")" == "${p}" ]]; then
           match="${pkg}"
@@ -252,14 +245,14 @@ validate_pkgs() {
       continue
     fi
 
-    _seen=false
+    seen=false
     for existing in "${_VALIDATED_PKGS[@]}"; do
       if [[ "${existing}" == "${match}" ]]; then
-        _seen=true
+        seen=true
         break
       fi
     done
-    if ! "${_seen}"; then
+    if ! "${seen}"; then
       _VALIDATED_PKGS+=("${match}")
     fi
   done
@@ -268,7 +261,7 @@ validate_pkgs() {
 }
 
 # -----------------------------------------------------------------------------
-# Prerequisite Probes
+# Prerequisites
 # -----------------------------------------------------------------------------
 
 _has_xcode_cli() {
@@ -283,12 +276,21 @@ _has_stow() {
   command -v stow >/dev/null 2>&1
 }
 
-# -----------------------------------------------------------------------------
-# Bootstrap
-# -----------------------------------------------------------------------------
+_bootstrap_homebrew_env() {
+  # Source brew shellenv from known locations so the full PATH is
+  # available even when brew is only partially on PATH.
+  local b env_output
+  for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [[ -x "${b}" ]]; then
+      if env_output=$("${b}" shellenv 2>/dev/null); then
+        eval "${env_output}"
+        return 0
+      fi
+    fi
+  done
+  _has_homebrew
+}
 
-# Download a URL to a local file with exponential-backoff retry.
-# Usage: _download url dest
 _download() {
   local -r url="$1" dest="$2"
   local attempt=1
@@ -302,42 +304,21 @@ _download() {
     fi
 
     if (( attempt >= DOWNLOAD_MAX_RETRIES )); then
-      log_err "Download failed after ${DOWNLOAD_MAX_RETRIES} attempts: ${url}"
+      log_err \
+        "Download failed after ${DOWNLOAD_MAX_RETRIES} attempts: ${url}"
       return 1
     fi
 
-    log_warn "Download attempt ${attempt} failed, retrying in ${delay}s..."
+    log_warn \
+      "Download attempt ${attempt} failed, retrying in ${delay}s..."
     sleep "${delay}"
     attempt=$(( attempt + 1 ))
     delay=$(( delay * 2 ))
   done
 }
 
-_bootstrap_homebrew_env() {
-  # Always source brew shellenv from known Homebrew locations so the
-  # full PATH (bin, sbin) is available even when brew is reachable
-  # via a partial environment.
-  local b env_output
-  for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
-    if [[ -x "${b}" ]]; then
-      if env_output=$("${b}" shellenv 2>/dev/null); then
-        eval "${env_output}"
-        return 0
-      fi
-    fi
-  done
-
-  _has_homebrew
-}
-
-# -----------------------------------------------------------------------------
-# Prerequisite Installation
-# -----------------------------------------------------------------------------
-
-# Install Xcode CLI (blocks until xcode-select -p succeeds or timeout).
-# `xcode-select --install` only spawns the GUI installer and returns
-# immediately; we must poll _has_xcode_cli to know when the user has
-# completed the dialog. Required because Homebrew install needs CLT.
+# xcode-select --install only spawns the GUI dialog; we must poll
+# until the tools are actually present or a timeout is hit.
 _install_xcode_cli() {
   if _has_xcode_cli; then
     log_info "Xcode CLI already installed"
@@ -382,12 +363,12 @@ _install_homebrew() {
     return 1
   fi
 
-  if ! /bin/bash "$installer"; then
+  if ! /bin/bash "${installer}"; then
     log_err "Homebrew installation failed"
     return 1
   fi
 
-  rm -f "$installer"
+  rm -f "${installer}"
   trap - RETURN
 
   if ! _bootstrap_homebrew_env; then
@@ -397,10 +378,10 @@ _install_homebrew() {
   log_ok "Homebrew: installed"
 }
 
-# Returns 1 so the caller can reinstall when Homebrew is too old.
 _ensure_homebrew_version() {
   local ver
-  ver=$(brew --version 2>/dev/null | head -1 | awk '{print $2}') || true
+  ver=$(brew --version 2>/dev/null \
+    | head -1 | awk '{print $2}') || true
 
   if [[ -z "${ver}" || ! "${ver}" =~ ^[0-9]+\.[0-9]+ ]]; then
     log_err "Cannot determine Homebrew version (got: '${ver}')"
@@ -413,7 +394,7 @@ _ensure_homebrew_version() {
   minor="${minor%%.*}"
 
   if (( major > MIN_HOMEBREW_MAJOR )) \
-     || (( major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR )); then
+    || (( major == MIN_HOMEBREW_MAJOR && minor >= MIN_HOMEBREW_MINOR )); then
     return 0
   fi
 
@@ -436,22 +417,20 @@ _ensure_homebrew_version() {
     return 1
   fi
 
-  if ! /bin/bash "$uninstaller"; then
+  if ! /bin/bash "${uninstaller}"; then
     log_err "Homebrew uninstall failed"
     return 1
   fi
 
-  rm -f "$uninstaller"
+  rm -f "${uninstaller}"
   trap - RETURN
 
-  # Clear the command hash table so command -v brew reflects the current
-  # PATH state rather than a stale cached entry from before uninstall.
+  # Flush the command hash so `command -v brew` reflects reality.
   hash -r
 
-  # Verify brew is truly gone from PATH after uninstall.
-  local _brew_residual
-  if _brew_residual=$(command -v brew 2>/dev/null); then
-    log_warn "Homebrew still found at ${_brew_residual} after uninstall"
+  local brew_residual
+  if brew_residual=$(command -v brew 2>/dev/null); then
+    log_warn "Homebrew still found at ${brew_residual} after uninstall"
     log_info "PATH may contain stale entries"
   fi
 
@@ -527,10 +506,9 @@ ensure_prerequisites() {
 }
 
 # -----------------------------------------------------------------------------
-# Stow State Queries
+# Stow Engine
 # -----------------------------------------------------------------------------
 
-# Returns 0 when stow -n -v produces no LINK: lines (already stowed).
 is_stowed() {
   local stow_dir
   stow_dir=$(pkg_stow_dir "$1")
@@ -541,11 +519,11 @@ is_stowed() {
     return 1
   fi
 
-  # Empty package dir → nothing to stow; report as not-stowed to avoid
-  # false positives in cmd_status / cmd_uninstall / hook gating.
+  # Empty package dir → nothing to stow; treat as not-stowed to avoid
+  # false positives in status / uninstall / hook gating.
   if [[ -z "$(find "${stow_dir}/${pkg_base}" \
-        -mindepth 1 \( -type f -o -type l \) \
-        -print -quit 2>/dev/null)" ]]; then
+    -mindepth 1 \( -type f -o -type l \) \
+    -print -quit 2>/dev/null)" ]]; then
     return 1
   fi
 
@@ -563,22 +541,16 @@ is_stowed() {
   return 0
 }
 
-# -----------------------------------------------------------------------------
-# Stow Operations
-# -----------------------------------------------------------------------------
-
-# Extract absolute target paths from stow dry-run output (LINK/conflict lines).
 _parse_stow_targets() {
   local output="$1"
   local -r conflict_owned_pat='existing target is not owned by stow: (.+)'
   local -r conflict_file_pat='existing target (.+) since'
-  local line _rest
+  local line rest
 
   while IFS= read -r line; do
     if [[ "${line}" == LINK:* ]]; then
-      # Split on first " => " to extract the link target path.
-      _rest="${line#LINK: }"
-      printf '%s\n' "${HOME}/${_rest%% => *}"
+      rest="${line#LINK: }"
+      printf '%s\n' "${HOME}/${rest%% => *}"
     elif [[ "${line}" =~ ${conflict_owned_pat} ]]; then
       printf '%s\n' "${HOME}/${BASH_REMATCH[1]}"
     elif [[ "${line}" =~ ${conflict_file_pat} ]]; then
@@ -587,11 +559,9 @@ _parse_stow_targets() {
   done <<< "${output}"
 }
 
-# Refuses to operate outside $HOME or on non-empty directories for safety.
-_resolve_stow_conflict() {
+_resolve_conflict() {
   local -r target="$1"
 
-  # Safety: refuse to operate outside $HOME (check before any other logic).
   if [[ "${target}" != "${HOME}"/* ]]; then
     log_err "Refusing to remove path outside HOME: ${target}"
     return 1
@@ -614,7 +584,6 @@ _resolve_stow_conflict() {
     return 0
   fi
 
-  # Safety: refuse to remove non-empty directories (e.g. ~/.config).
   if [[ -d "${target}" ]]; then
     if [[ ! -r "${target}" ]]; then
       log_err "Cannot read directory (permission denied): ${target}"
@@ -623,13 +592,15 @@ _resolve_stow_conflict() {
     fi
     if [[ -n "$(ls -A "${target}")" ]]; then
       log_err "Refusing to remove non-empty directory: ${target}"
-      log_info "Move it aside manually: mv '${target}' '${target}.bak'"
+      log_info \
+        "Move it aside manually: mv '${target}' '${target}.bak'"
       return 1
     fi
   fi
 
   if "${dry_run}"; then
-    log_info "[dry-run] would back up and remove conflicting path: ${target}"
+    log_info \
+      "[dry-run] would back up and remove conflicting path: ${target}"
     return 0
   fi
 
@@ -647,13 +618,11 @@ _resolve_stow_conflict() {
   mv "${target}" "${backup}"
 }
 
-# Flow: dry-run → state check → conflict resolution → execute.
 _stow_exec() {
   local pkg="$1"
   local mode="${2:-stow}"
   local stow_dir
   stow_dir=$(pkg_stow_dir "${pkg}")
-
   local pkg_base
   pkg_base=$(pkg_name "${pkg}")
 
@@ -662,7 +631,7 @@ _stow_exec() {
     return 1
   fi
 
-  # --- Single Stow Dry Run For All Decisions ---
+  # Single dry-run drives all skip/conflict/display decisions.
   local -a dry_flags=(-n -v -d "${stow_dir}" -t "${HOME}")
   case "${mode}" in
     restow) dry_flags+=(-R) ;;
@@ -674,7 +643,6 @@ _stow_exec() {
   dry_output=$(stow "${dry_flags[@]}" "${pkg_base}" 2>&1) || dry_rc=$?
 
   # --- State Check ---
-  # stow: skip if already fully stowed (rc==0, no LINK: lines).
   if [[ "${mode}" == stow ]] \
     && (( dry_rc == 0 )) \
     && ! grep -q '^LINK:' <<< "${dry_output}"; then
@@ -682,9 +650,7 @@ _stow_exec() {
     return 0
   fi
 
-  # unstow: skip if nothing is stowed (no UNLINK: lines).
-  # Distinguish between "nothing to unstow" (rc==0) and a genuine stow
-  # error (rc!=0) — the latter should not be silently swallowed.
+  # Distinguish "nothing to unstow" (rc==0) from a genuine error.
   if [[ "${mode}" == unstow ]] \
     && ! grep -q '^UNLINK:' <<< "${dry_output}"; then
     if (( dry_rc != 0 )); then
@@ -695,7 +661,6 @@ _stow_exec() {
     return 0
   fi
 
-  # restow: skip if already fully stowed with no conflicts.
   if [[ "${mode}" == restow ]] \
     && ! grep -q 'existing target' <<< "${dry_output}" \
     && is_stowed "${pkg}"; then
@@ -703,17 +668,17 @@ _stow_exec() {
     return 0
   fi
 
-  # --- Conflict Resolution (Stow/Restow Only) ---
+  # --- Conflict Resolution ---
   if [[ "${mode}" != unstow ]]; then
     local target
     while IFS= read -r target; do
-      if ! _resolve_stow_conflict "${target}"; then
+      if ! _resolve_conflict "${target}"; then
         return 1
       fi
     done < <(_parse_stow_targets "${dry_output}")
   fi
 
-  # --- Dry Run Display ---
+  # --- Dry-Run Display ---
   if "${dry_run}"; then
     log_info "[dry-run] would ${mode}: ${pkg_base}"
     local line has_actions=false
@@ -726,14 +691,14 @@ _stow_exec() {
     done <<< "${dry_output}"
 
     if ! "${has_actions}" \
-       && grep -q 'existing target' <<< "${dry_output}"; then
+      && grep -q 'existing target' <<< "${dry_output}"; then
       log_info "[dry-run]   (exact links hidden by conflicts" \
         "— will be created after removal)"
     fi
     return 0
   fi
 
-  # --- Actual Execution ---
+  # --- Execute ---
   if [[ "${mode}" != unstow ]]; then
     mkdir -p "${HOME}/.config"
   fi
@@ -753,25 +718,16 @@ _stow_exec() {
   fi
 }
 
-stow_package() {
-  _stow_exec "$1" stow
-}
-
-restow_package() {
-  _stow_exec "$1" restow
-}
-
-unstow_package() {
-  _stow_exec "$1" unstow
-}
+stow_package()   { _stow_exec "$1" stow; }
+restow_package() { _stow_exec "$1" restow; }
+unstow_package() { _stow_exec "$1" unstow; }
 
 # -----------------------------------------------------------------------------
-# Internal Helpers
+# Post-Install Hooks
 # -----------------------------------------------------------------------------
 
 # --- Shell (zsh) ---
-# Change default login shell to zsh if not already.
-# Return codes: 0=ok, 1=fail, 2=skip (not applicable).
+
 _post_install_shell_zsh() {
   if ! is_stowed shell/zsh; then
     return 2
@@ -806,8 +762,7 @@ _post_install_shell_zsh() {
 }
 
 # --- Yazi ---
-# Install yazi plugins via ya pkg (requires package.toml to be stowed).
-# Return codes: 0=ok, 1=fail, 2=skip.
+
 _post_install_yazi() {
   if ! is_stowed tool/yazi; then
     return 2
@@ -831,9 +786,9 @@ _post_install_yazi() {
 
 _hook_run() {
   local -r name="$1" fn="$2"
-  local _rc=0
-  "${fn}" || _rc=$?
-  case "${_rc}" in
+  local rc=0
+  "${fn}" || rc=$?
+  case "${rc}" in
     0) log_ok "${name}: done" ;;
     2) log_info "${name}: skipped" ;;
     *) log_err "${name}: failed" ;;
@@ -841,9 +796,9 @@ _hook_run() {
 }
 
 _run_post_install_hooks() {
-  local _pkg
-  for _pkg in "$@"; do
-    case "${_pkg}" in
+  local pkg
+  for pkg in "$@"; do
+    case "${pkg}" in
       shell/zsh) _hook_run 'zsh shell switch' _post_install_shell_zsh ;;
       tool/yazi) _hook_run 'yazi plugins' _post_install_yazi ;;
     esac
@@ -863,10 +818,8 @@ _run_post_install_phase() {
 # Health Check
 # -----------------------------------------------------------------------------
 
-# Map a package identifier to its "cmd_name:friendly_name" health entry.
-# For cask apps whose binary is not on PATH, append a third field with
-# the known binary path: "cmd:friendly:/path/to/binary".
-# Returns 1 when the package has no health check.
+# Returns "cmd:friendly" or "cmd:friendly:/fallback/path" for cask apps
+# whose binary is not on PATH. Returns 1 for unknown packages.
 _health_tool_for() {
   case "$1" in
     shell/zsh) printf 'zsh:zsh' ;;
@@ -902,14 +855,13 @@ _run_health_check() {
     tool_entry="${tool_entry#*:}"
     friendly="${tool_entry%%:*}"
     fallback_path="${tool_entry#*:}"
-    # When no fallback field exists, friendly == fallback_path.
     if [[ "${fallback_path}" == "${friendly}" ]]; then
       fallback_path=''
     fi
 
     resolved=$(command -v "${cmd_name}" 2>/dev/null) || true
     if [[ -z "${resolved}" && -n "${fallback_path}" \
-       && -x "${fallback_path}" ]]; then
+      && -x "${fallback_path}" ]]; then
       resolved="${fallback_path}"
     fi
 
@@ -946,7 +898,7 @@ cmd_install() {
   fi
 
   if ! "${do_all}" && (( ${#pkgs[@]} == 0 )); then
-    show_help
+    cmd_help
     return 0
   fi
 
@@ -955,16 +907,16 @@ cmd_install() {
   # --- All Packages ---
   if "${do_all}"; then
     if "${dry_run}"; then
-      _PHASE_TOTAL=4
+      _phase_total=4
     else
-      _PHASE_TOTAL=5
+      _phase_total=5
     fi
-    _PHASE_INDEX=0
+    _phase_index=0
 
     _phase "Prerequisites"
     if _has_xcode_cli; then log_ok "Xcode CLI: ready"; fi
-    if _has_homebrew; then log_ok "Homebrew: ready"; fi
-    if _has_stow; then log_ok "GNU Stow: ready"; fi
+    if _has_homebrew; then  log_ok "Homebrew: ready"; fi
+    if _has_stow; then      log_ok "GNU Stow: ready"; fi
 
     _phase "Homebrew Bundle"
     if "${dry_run}"; then
@@ -975,12 +927,12 @@ cmd_install() {
 
     _phase "Stow Packages"
     local pkg
-    local _fail_count=0
+    local fail_count=0
     for pkg in "${PKG_ALL[@]}"; do
       if "${force}"; then
-        restow_package "${pkg}" || (( _fail_count += 1 ))
+        restow_package "${pkg}" || (( fail_count += 1 ))
       else
-        stow_package "${pkg}" || (( _fail_count += 1 ))
+        stow_package "${pkg}" || (( fail_count += 1 ))
       fi
     done
 
@@ -990,7 +942,7 @@ cmd_install() {
       _run_health_check "${PKG_ALL[@]}"
     fi
 
-    return $(( _fail_count > 0 ? 1 : 0 ))
+    return $(( fail_count > 0 ? 1 : 0 ))
   fi
 
   # --- Specific Packages ---
@@ -998,23 +950,23 @@ cmd_install() {
     die "No valid packages specified"
   fi
 
-  _PHASE_TOTAL=2
-  _PHASE_INDEX=0
+  _phase_total=2
+  _phase_index=0
 
   _phase "Stow Packages"
   local pkg
-  local _fail_count=0
+  local fail_count=0
   for pkg in "${_VALIDATED_PKGS[@]}"; do
     if "${force}"; then
-      restow_package "${pkg}" || (( _fail_count += 1 ))
+      restow_package "${pkg}" || (( fail_count += 1 ))
     else
-      stow_package "${pkg}" || (( _fail_count += 1 ))
+      stow_package "${pkg}" || (( fail_count += 1 ))
     fi
   done
 
   _run_post_install_phase "${_VALIDATED_PKGS[@]}"
 
-  return $(( _fail_count > 0 ? 1 : 0 ))
+  return $(( fail_count > 0 ? 1 : 0 ))
 }
 
 cmd_uninstall() {
@@ -1079,17 +1031,17 @@ cmd_uninstall() {
     target_pkgs=("${_VALIDATED_PKGS[@]}")
   fi
 
-  _PHASE_TOTAL=1
-  _PHASE_INDEX=0
+  _phase_total=1
+  _phase_index=0
 
   _phase "Unstow Packages"
   local pkg
-  local _fail_count=0
+  local fail_count=0
   for pkg in "${target_pkgs[@]}"; do
-    unstow_package "${pkg}" || (( _fail_count += 1 ))
+    unstow_package "${pkg}" || (( fail_count += 1 ))
   done
 
-  return $(( _fail_count > 0 ? 1 : 0 ))
+  return $(( fail_count > 0 ? 1 : 0 ))
 }
 
 cmd_status() {
@@ -1099,26 +1051,37 @@ cmd_status() {
     if ! validate_pkgs "$@"; then
       return 1
     fi
-
     pkgs=("${_VALIDATED_PKGS[@]}")
   else
     pkgs=("${PKG_ALL[@]}")
   fi
 
-  _PHASE_TOTAL=1
-  _PHASE_INDEX=0
+  _phase_total=1
+  _phase_index=0
 
   _phase "Prerequisites"
-  if _has_xcode_cli; then log_ok "Xcode CLI"; else log_warn "Xcode CLI: missing"; fi
-  if _has_homebrew; then log_ok "Homebrew"; else log_warn "Homebrew: missing"; fi
-  if _has_stow; then log_ok "GNU Stow"; else log_warn "GNU Stow: missing"; fi
+  if _has_xcode_cli; then
+    log_ok "Xcode CLI"
+  else
+    log_warn "Xcode CLI: missing"
+  fi
+  if _has_homebrew; then
+    log_ok "Homebrew"
+  else
+    log_warn "Homebrew: missing"
+  fi
+  if _has_stow; then
+    log_ok "GNU Stow"
+  else
+    log_warn "GNU Stow: missing"
+  fi
 
   if ! _has_stow; then
     log_info "run: ./setup.sh install --all"
     return 0
   fi
 
-  _PHASE_TOTAL=2
+  _phase_total=2
   _phase "Packages"
   local pkg
 
@@ -1131,33 +1094,29 @@ cmd_status() {
   done
 }
 
-# -----------------------------------------------------------------------------
-# Help
-# -----------------------------------------------------------------------------
-
-show_help() {
+cmd_help() {
   printf '%b\n' \
-    "${C_BOLD}oh-my-workspace setup${C_RESET}" '' \
+    "${_BOLD}oh-my-workspace setup${_RESET}" '' \
     'Usage:' \
     '  ./setup.sh <command> [flags] [packages]' '' \
-    "${C_BOLD}Commands:${C_RESET}" \
+    "${_BOLD}Commands:${_RESET}" \
     '  install   [--all] [--force] [--dry-run] [<pkg>...]   Stow packages' \
     '  uninstall [--all] [--dry-run] [<pkg>...]             Unstow packages' \
     '  status    [<pkg>...]                                 Show status and symlinks' \
     '  help                                                 Show this help' '' \
-    "${C_BOLD}Flags:${C_RESET}" \
+    "${_BOLD}Flags:${_RESET}" \
     '  --all      Apply to all packages (install / uninstall)' \
     '  --force    Restow even if already stowed (install only).' \
     '             Runs stow -R; conflicting files are backed up to *.pre-stow-backup.' \
     '             Use after adding new dotfiles to a package dir.' \
     '  --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked/unlinked' '' \
-    "${C_BOLD}Packages${C_RESET} (base name or full category/name):" \
+    "${_BOLD}Packages${_RESET} (base name or full category/name):" \
     '  shell:   zsh  starship' \
     '  editor:  vim  emacs' \
     '  term:    ghostty' \
     '  tool:    git  lazygit  ripgrep  yazi' \
     '  lang:    uv  bun' '' \
-    "${C_BOLD}Examples:${C_RESET}" \
+    "${_BOLD}Examples:${_RESET}" \
     '  ./setup.sh install --all                    Prereqs + brew + stow all packages' \
     '  ./setup.sh install zsh git                  Stow specific packages' \
     '  ./setup.sh install --force zsh              Restow (pick up new dotfiles)' \
@@ -1168,7 +1127,7 @@ show_help() {
     '  ./setup.sh uninstall --dry-run zsh          Preview what uninstall would do' \
     '  ./setup.sh status                           Full status with symlinks' \
     '  ./setup.sh status zsh                       Status for one package' '' \
-    "${C_BOLD}Note:${C_RESET}" \
+    "${_BOLD}Note:${_RESET}" \
     '  install without packages or --all shows this help.'
 }
 
@@ -1177,28 +1136,27 @@ show_help() {
 # -----------------------------------------------------------------------------
 
 main() {
-  # Platform check (fast, no side effects)
   if [[ "$(uname -s)" != Darwin ]]; then
     printf 'error: macOS required\n' >&2
     exit 1
   fi
 
-  # Parse args before any dependency installation
   if (( $# == 0 )); then
-    show_help
+    cmd_help
     exit 0
   fi
+
   local cmd="$1"
   shift
   case "${cmd}" in
     install) cmd_install "$@" ;;
     uninstall) cmd_uninstall "$@" ;;
     status) cmd_status "$@" ;;
-    help|-h|--help) show_help ;;
+    help|-h|--help) cmd_help ;;
     *)
       log_err "Unknown command: ${cmd}"
       printf '\n'
-      show_help
+      cmd_help
       exit 2
       ;;
   esac
