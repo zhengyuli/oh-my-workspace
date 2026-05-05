@@ -163,11 +163,9 @@ trap '_err_handler' ERR
 
 _cleanup() {
   local -a tmpfiles=()
-  local saved_nullglob
-  saved_nullglob="$(shopt -p nullglob 2>/dev/null || true)"
   shopt -s nullglob
   tmpfiles=(/tmp/omw-setup-*.$$)
-  eval "${saved_nullglob}"
+  shopt -u nullglob
   if (( ${#tmpfiles[@]} > 0 )); then
     rm -f "${tmpfiles[@]}" 2>/dev/null
   fi
@@ -767,7 +765,9 @@ _post_install_yazi() {
 _hook_run() {
   local -r name="$1" fn="$2"
   local rc=0
-  "${fn}" || rc=$?
+  if ! "${fn}"; then
+    rc=$?
+  fi
   case "${rc}" in
     0) log_ok "${name}: done" ;;
     2) log_info "${name}: skipped" ;;
@@ -821,23 +821,19 @@ _health_tool_for() {
 
 _run_health_check() {
   _phase "Health Check"
-  local pkg tool_entry cmd_name friendly fallback_path resolved
+  local pkg cmd_name friendly fallback_path resolved
 
   for pkg in "$@"; do
     if ! is_stowed "${pkg}"; then
       continue
     fi
 
+    local tool_entry
     if ! tool_entry=$(_health_tool_for "${pkg}"); then
       continue
     fi
-    cmd_name="${tool_entry%%:*}"
-    tool_entry="${tool_entry#*:}"
-    friendly="${tool_entry%%:*}"
-    fallback_path="${tool_entry#*:}"
-    if [[ "${fallback_path}" == "${friendly}" ]]; then
-      fallback_path=''
-    fi
+
+    IFS=: read -r cmd_name friendly fallback_path <<< "${tool_entry}"
 
     resolved=$(command -v "${cmd_name}" 2>/dev/null) || true
     if [[ -z "${resolved}" && -n "${fallback_path}" && -x "${fallback_path}" ]]; then
@@ -855,6 +851,16 @@ _run_health_check() {
 # -----------------------------------------------------------------------------
 # Commands
 # -----------------------------------------------------------------------------
+
+_stow_one() {
+  local -r pkg="$1" force="$2"
+  if "${force}"; then
+    restow_package "${pkg}" && return 0
+  else
+    stow_package "${pkg}" && return 0
+  fi
+  return 1
+}
 
 cmd_install() {
   local do_all=false
@@ -908,14 +914,8 @@ cmd_install() {
     local pkg
     local fail_count=0
     for pkg in "${PKG_ALL[@]}"; do
-      if "${force}"; then
-        if ! restow_package "${pkg}"; then
-          (( fail_count += 1 ))
-        fi
-      else
-        if ! stow_package "${pkg}"; then
-          (( fail_count += 1 ))
-        fi
+      if ! _stow_one "${pkg}" "${force}"; then
+        (( fail_count += 1 ))
       fi
     done
 
@@ -940,14 +940,8 @@ cmd_install() {
   local pkg
   local fail_count=0
   for pkg in "${_VALIDATED_PKGS[@]}"; do
-    if "${force}"; then
-      if ! restow_package "${pkg}"; then
-        (( fail_count += 1 ))
-      fi
-    else
-      if ! stow_package "${pkg}"; then
-        (( fail_count += 1 ))
-      fi
+    if ! _stow_one "${pkg}" "${force}"; then
+      (( fail_count += 1 ))
     fi
   done
 
@@ -1048,21 +1042,9 @@ cmd_status() {
   _phase_index=0
 
   _phase "Prerequisites"
-  if _has_xcode_cli; then
-    log_ok "Xcode CLI"
-  else
-    log_warn "Xcode CLI: missing"
-  fi
-  if _has_homebrew; then
-    log_ok "Homebrew"
-  else
-    log_warn "Homebrew: missing"
-  fi
-  if _has_stow; then
-    log_ok "GNU Stow"
-  else
-    log_warn "GNU Stow: missing"
-  fi
+  if _has_xcode_cli; then log_ok "Xcode CLI"; else log_warn "Xcode CLI: missing"; fi
+  if _has_homebrew; then log_ok "Homebrew"; else log_warn "Homebrew: missing"; fi
+  if _has_stow; then log_ok "GNU Stow"; else log_warn "GNU Stow: missing"; fi
 
   if ! _has_stow; then
     log_info "run: ./setup.sh install --all"
