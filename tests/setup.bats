@@ -311,6 +311,32 @@ load setup-helper
 }
 
 # =============================================================================
+# Hook Run Tests
+# =============================================================================
+
+@test "_hook_run: reports done on success (rc=0)" {
+  _source_setup
+  _test_hook_ok() { return 0; }
+  run _hook_run "test hook" _test_hook_ok
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"done"* ]]
+}
+
+@test "_hook_run: reports failed on rc=1" {
+  _source_setup
+  _test_hook_fail() { return 1; }
+  run _hook_run "test hook" _test_hook_fail
+  [[ "$output" == *"failed"* ]]
+}
+
+@test "_hook_run: reports skipped on rc=2" {
+  _source_setup
+  _test_hook_skip() { return 2; }
+  run _hook_run "test hook" _test_hook_skip
+  [[ "$output" == *"skipped"* ]]
+}
+
+# =============================================================================
 # Command/Entry Tests
 # =============================================================================
 
