@@ -75,8 +75,8 @@ _phase_index=0
 _phase() {
   (( _phase_index += 1 ))
   printf '\n%b[%d/%d]%b %b%s%b\n' \
-    "${_CLR_DIM}" "${_phase_index}" "${_phase_total}" "${_CLR_RESET}" \
-    "${_CLR_BOLD}" "$*" "${_CLR_RESET}"
+    "${_DIM}" "${_phase_index}" "${_phase_total}" "${_RESET}" \
+    "${_BOLD}" "$*" "${_RESET}"
 }
 ```
 
@@ -149,7 +149,7 @@ BATS (Bash Automated Testing System). Install via Homebrew: `brew install bats-c
 - Fake `$HOME` in per-test tmpdir
 - Mock external tools (`stow`, `brew`, `xcode-select`, `curl`) via PATH prepend
 - Source functions without running main: guard `main` call with
-  `[[ "${BASH_SOURCE[0]}" == "$0" ]] && main "$@"`
+  `if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi`
 - Fresh tmpdir per test via BATS `setup()` / `teardown()`
 
 ### Test Categories
