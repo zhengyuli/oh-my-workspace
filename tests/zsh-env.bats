@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-env.bats — tests for shell/zsh/.zshenv
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }

@@ -7,7 +7,7 @@ setup() {
   mkdir -p "${HOME}"
 
   export ORIG_PATH="${PATH}"
-  export PATH="${BATS_TEST_DIRNAME}/zsh-bin:${BATS_TEST_DIRNAME}/bin:/usr/bin:/bin"
+  export PATH="${BATS_TEST_DIRNAME}/zsh-bin:${BATS_TEST_DIRNAME}/setup-bin:/usr/bin:/bin"
 
   export MOCK_DEFAULTS_LOG="${BATS_TEST_TMPDIR}/defaults.log"
   export MOCK_OSASCRIPT_LOG="${BATS_TEST_TMPDIR}/osascript.log"

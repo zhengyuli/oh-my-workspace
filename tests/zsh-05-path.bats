@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-05-path.bats — tests for conf.d/05-path.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() {
   setup_zsh_env

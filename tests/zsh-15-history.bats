@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # zsh-15-history.bats — tests for conf.d/15-history.zsh
 
-load zsh_helper
+load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
