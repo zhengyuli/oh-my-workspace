@@ -44,8 +44,7 @@ set -euo pipefail
 
 _err_handler() {
   local -r code=$?
-  printf '[error] %s() line %d: exit %d\n' \
-    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+  printf '[error] %s() line %d: exit %d\n' "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
 }
 trap '_err_handler' ERR
 
@@ -108,13 +107,11 @@ _general_ui() {
   # Rebuild the Launch Services database to remove duplicate entries
   # from "Open With" menus across all applications.
   # shellcheck disable=SC2312
-  # intentional single-line path, exempt from 79-char limit
   local -r _lsreg='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister'
   "${_lsreg}" -r -domain local -domain system -domain user
 
   # Set sidebar icon size to medium (1=small, 2=medium, 3=large)
-  defaults write NSGlobalDomain NSTableViewDefaultSizeMode \
-    -int "${SIDEBAR_ICON_SIZE_MEDIUM}"
+  defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int "${SIDEBAR_ICON_SIZE_MEDIUM}"
 
   # Always show scrollbars
   defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
@@ -134,8 +131,7 @@ _general_ui() {
   defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
   # Speed up window resize animation
-  defaults write NSGlobalDomain NSWindowResizeTime \
-    -float "${WINDOW_RESIZE_FAST}"
+  defaults write NSGlobalDomain NSWindowResizeTime -float "${WINDOW_RESIZE_FAST}"
 
   # Silence crash reporter dialogs
   defaults write com.apple.CrashReporter DialogType -string "none"
@@ -148,13 +144,11 @@ _keyboard() {
   printf 'Setting Keyboard preferences...\n'
 
   # Enable full keyboard access for all controls (Tab through all UI elements)
-  defaults write NSGlobalDomain AppleKeyboardUIMode \
-    -int "${KEYBOARD_ACCESS_FULL}"
+  defaults write NSGlobalDomain AppleKeyboardUIMode -int "${KEYBOARD_ACCESS_FULL}"
 
   # Fast keyboard repeat (2 ≈ 33ms; 1 is max but causes accidental input)
   defaults write NSGlobalDomain KeyRepeat -int "${KEY_REPEAT_FAST}"
-  defaults write NSGlobalDomain InitialKeyRepeat \
-    -int "${INITIAL_KEY_REPEAT}"
+  defaults write NSGlobalDomain InitialKeyRepeat -int "${INITIAL_KEY_REPEAT}"
 
   # Disable press-and-hold in favor of key repeat
   defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
@@ -167,23 +161,17 @@ _trackpad_mouse() {
   printf 'Setting Trackpad/Mouse preferences...\n'
 
   # Enable tap to click
-  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
-    Clicking -bool true
-  defaults -currentHost write NSGlobalDomain \
-    com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
-  defaults write NSGlobalDomain \
-    com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
+  defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int "${TAP_TO_CLICK}"
 
   # Right-click via two-finger tap (corner mapping removed - avoids accidents)
-  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
-    TrackpadRightClick -bool true
-  defaults -currentHost write NSGlobalDomain \
-    com.apple.trackpad.enableSecondaryClick -bool true
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
 
   # Enable spring loading for directories (drag & hover to open)
   defaults write NSGlobalDomain com.apple.springing.enabled -bool true
-  defaults write NSGlobalDomain \
-    com.apple.springing.delay -float "${SPRING_LOAD_NO_DELAY}"
+  defaults write NSGlobalDomain com.apple.springing.delay -float "${SPRING_LOAD_NO_DELAY}"
 }
 
 # -----------------------------------------------------------------------------
@@ -193,10 +181,8 @@ _screen() {
   printf 'Setting Screen preferences...\n'
 
   # Require password immediately after sleep or screen saver begins
-  defaults write com.apple.screensaver \
-    askForPassword -int "${SCREENSAVER_PASSWORD_REQUIRED}"
-  defaults write com.apple.screensaver \
-    askForPasswordDelay -int "${SCREENSAVER_PASSWORD_DELAY_IMMEDIATE}"
+  defaults write com.apple.screensaver askForPassword -int "${SCREENSAVER_PASSWORD_REQUIRED}"
+  defaults write com.apple.screensaver askForPasswordDelay -int "${SCREENSAVER_PASSWORD_DELAY_IMMEDIATE}"
 
   # Save screenshots to Desktop in PNG format, without drop shadow
   defaults write com.apple.screencapture location -string "${HOME}/Desktop"
@@ -257,8 +243,7 @@ _finder() {
     Privileges -bool true
 
   # Speed up Quick Look panel animation
-  defaults write NSGlobalDomain \
-    QLPanelAnimationDuration -float "${QUICK_LOOK_NO_ANIMATION}"
+  defaults write NSGlobalDomain QLPanelAnimationDuration -float "${QUICK_LOOK_NO_ANIMATION}"
 }
 
 # -----------------------------------------------------------------------------
@@ -274,15 +259,12 @@ _dock() {
   defaults write com.apple.dock show-process-indicators -bool true
 
   # Speed up Mission Control animations
-  defaults write com.apple.dock \
-    expose-animation-duration -float "${EXPOSE_ANIMATION_FAST}"
+  defaults write com.apple.dock expose-animation-duration -float "${EXPOSE_ANIMATION_FAST}"
 
   # Auto-hide Dock instantly (no delay, no animation)
   defaults write com.apple.dock autohide -bool true
-  defaults write com.apple.dock autohide-delay \
-    -float "${DOCK_AUTOHIDE_NO_DELAY}"
-  defaults write com.apple.dock \
-    autohide-time-modifier -float "${DOCK_AUTOHIDE_NO_ANIMATION}"
+  defaults write com.apple.dock autohide-delay -float "${DOCK_AUTOHIDE_NO_DELAY}"
+  defaults write com.apple.dock autohide-time-modifier -float "${DOCK_AUTOHIDE_NO_ANIMATION}"
 
   # Make Dock icons of hidden applications translucent
   defaults write com.apple.dock showhidden -bool true
@@ -317,8 +299,7 @@ _terminal() {
   printf 'Setting Terminal preferences...\n'
 
   # Only use UTF-8 (NSStringEncoding 4 = NSUTF8StringEncoding)
-  defaults write com.apple.Terminal \
-    StringEncodings -array "${STRING_ENCODING_UTF8}"
+  defaults write com.apple.Terminal StringEncodings -array "${STRING_ENCODING_UTF8}"
 
   # Enable Secure Keyboard Entry; blocks other processes reading keystrokes
   # NOTE: may interfere with some tmux attach setups; disable if needed
@@ -346,10 +327,8 @@ _textedit() {
 
   # Plain text mode + UTF-8 by default
   defaults write com.apple.TextEdit RichText -int "${PLAIN_TEXT_MODE}"
-  defaults write com.apple.TextEdit \
-    PlainTextEncoding -int "${TEXT_ENCODING_UTF8}"
-  defaults write com.apple.TextEdit \
-    PlainTextEncodingForWrite -int "${TEXT_ENCODING_UTF8}"
+  defaults write com.apple.TextEdit PlainTextEncoding -int "${TEXT_ENCODING_UTF8}"
+  defaults write com.apple.TextEdit PlainTextEncodingForWrite -int "${TEXT_ENCODING_UTF8}"
 }
 
 # -----------------------------------------------------------------------------
@@ -360,14 +339,11 @@ _app_store() {
 
   # Check for updates daily
   defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
-  defaults write com.apple.SoftwareUpdate \
-    ScheduleFrequency -int "${UPDATE_CHECK_DAILY}"
+  defaults write com.apple.SoftwareUpdate ScheduleFrequency -int "${UPDATE_CHECK_DAILY}"
 
   # Auto-install security/critical updates only; leave regular updates manual
-  defaults write com.apple.SoftwareUpdate \
-    AutomaticDownload -int "${AUTO_DOWNLOAD_DISABLED}"
-  defaults write com.apple.SoftwareUpdate \
-    CriticalUpdateInstall -int "${CRITICAL_UPDATES_AUTO}"
+  defaults write com.apple.SoftwareUpdate AutomaticDownload -int "${AUTO_DOWNLOAD_DISABLED}"
+  defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int "${CRITICAL_UPDATES_AUTO}"
   defaults write com.apple.commerce AutoUpdate -bool false
 }
 
