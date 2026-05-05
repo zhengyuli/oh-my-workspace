@@ -10,6 +10,14 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
+# Development & Testing
+# -----------------------------------------------------------------------------
+# Bash/Zsh test framework
+brew "bats-core"
+# Shell script static analysis tool
+brew "shellcheck"
+
+# -----------------------------------------------------------------------------
 # Fonts
 # -----------------------------------------------------------------------------
 # Monospace font with icons
@@ -147,6 +155,8 @@ cask "emacs-app"
 brew "jq"
 # YAML processor
 brew "yq"
+# Interactive JSON viewer
+brew "fx"
 
 # -----------------------------------------------------------------------------
 # System Utilities
@@ -157,6 +167,8 @@ brew "wget"
 brew "btop"
 # GNU core utilities (gls, etc.)
 brew "coreutils"
+# Simplified man pages
+brew "tldr"
 # macOS input source manager
 tap "laishulu/homebrew"
 brew "laishulu/homebrew/macism"
