@@ -80,8 +80,7 @@ export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
 # -----------------------------------------------------------------------------
 
 # Vim -- no native XDG support, must redirect via VIMINIT
-export VIMINIT="set nocp | "\
-"execute 'source' fnameescape('${XDG_CONFIG_HOME}/vim/vimrc')"
+export VIMINIT="set nocp | execute 'source' fnameescape('${XDG_CONFIG_HOME}/vim/vimrc')"
 
 # -----------------------------------------------------------------------------
 # CLI Tools

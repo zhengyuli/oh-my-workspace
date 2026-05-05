@@ -105,11 +105,9 @@ fi
 # Print 'r' for read flags, 'w' for write flags, empty otherwise.
 _git_check_flag() {
   case "$1" in
-    --get|--get-all|--get-regexp|--get-urlmatch|--list|\
-      --show-origin|--show-scope)
+    --get|--get-all|--get-regexp|--get-urlmatch|--list|--show-origin|--show-scope)
       print -r -- r ;;
-    --add|--unset|--unset-all|--rename-section|\
-      --remove-section|--replace-all|--edit|-e|--comment)
+    --add|--unset|--unset-all|--rename-section|--remove-section|--replace-all|--edit|-e|--comment)
       print -r -- w ;;
   esac
 }
@@ -117,8 +115,7 @@ _git_check_flag() {
 # Return 0 if the flag takes a value argument.
 _git_flag_takes_value() {
   case "$1" in
-    --default|--type|--value-type|--fixed-value|--pattern|\
-      --expires-after)
+    --default|--type|--value-type|--fixed-value|--pattern|--expires-after)
       return 0 ;;
     *) return 1 ;;
   esac
@@ -177,8 +174,7 @@ git() {
   _mode="$(_git_classify_config_op "${_args[@]}")"
 
   if [[ "$_mode" == w ]]; then
-    command git config -f "$XDG_CONFIG_HOME/git/config.local" \
-      "${_args[@]}"
+    command git config -f "$XDG_CONFIG_HOME/git/config.local" "${_args[@]}"
   else
     command git config --global --includes "${_args[@]}"
   fi
