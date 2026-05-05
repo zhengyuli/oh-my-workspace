@@ -31,8 +31,7 @@ if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
     print -P -u2 "%F{red}Failed to create Zinit directory%f"
     return 1
   fi
-  if ! git clone \
-    https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"; then
+  if ! git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"; then
     print -P -u2 "%F{red}Failed to clone Zinit%f"
     return 1
   fi
@@ -134,9 +133,7 @@ zstyle ':fzf-tab:*' use-fzf-default-opts yes
 # Global preview window — per-command fzf-flags override where needed.
 zstyle ':fzf-tab:*' fzf-flags --preview-window=right:55%:wrap
 
-zstyle ':fzf-tab:complete:cd:*' \
-  fzf-preview \
-  'eza -1 --color=always --icons "$realpath"'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always --icons "$realpath"'
 
 # (scoped to argument completion only)
 zstyle ':fzf-tab:complete:*:argument*' \
@@ -154,29 +151,19 @@ zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|
 unset _sensitive
 
 # Kill: preview process info (BSD-compatible ps flags for macOS)
-zstyle ':completion:*:*:*:*:processes' \
-  command "ps -u $USER -o pid,user,comm -w -w"
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
   fzf-preview \
   'if [[ $group == "[process ID]" ]]; then' \
   ' ps -p $word -o comm= 2>/dev/null; fi'
-zstyle ':fzf-tab:complete:(kill|ps):argument-rest' \
-  fzf-flags --preview-window=down:3:wrap
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
 
-zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' \
-  fzf-preview \
-  'brew info $word 2>/dev/null'
+zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*' fzf-preview 'brew info $word 2>/dev/null'
 
-zstyle ':fzf-tab:complete:(\\|*/|)man:*' \
-  fzf-preview \
-  'MANPAGER=cat man $word 2>/dev/null | head -50'
+zstyle ':fzf-tab:complete:(\\|*/|)man:*' fzf-preview 'MANPAGER=cat man $word 2>/dev/null | head -50'
 
-zstyle ':fzf-tab:complete:git-(add|diff|restore):*' \
-  fzf-preview \
-  'git diff --color=always $word'
-zstyle ':fzf-tab:complete:git-log:*' \
-  fzf-preview \
-  'git log --oneline --color=always -20 $word'
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview 'git diff --color=always $word'
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --oneline --color=always -20 $word'
 zstyle ':fzf-tab:complete:git-checkout:*' \
   fzf-preview \
   'if ! git log --oneline --color=always $word' \

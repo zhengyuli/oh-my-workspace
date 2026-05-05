@@ -87,8 +87,7 @@ zstyle ':completion:*:messages' format '%F{purple}-- %d --%f'
 zstyle ':completion:*' group-name ''
 
 # --- Filtering ---
-zstyle ':completion:*' ignored-patterns \
-  '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
+zstyle ':completion:*' ignored-patterns '*?.o' '*?.pyc' '*?.class' '*?~' '*.log' '*.tmp' 'node_modules'
 
 # --- Process Completion ---
 # NOTE: The 'command' style for processes is set in 40-plugins.zsh for fzf-tab
@@ -96,18 +95,15 @@ zstyle ':completion:*:processes-names' command 'ps -e -o comm='
 
 # --- Kill Completion ---
 # Kill completion — canonical list-colors pattern from zsh Guide (Ch. 6)
-zstyle ':completion:*:*:kill:*:processes' list-colors \
-  '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:*:kill:*' force-list always
 # Insert-ids controls PID insertion behavior (not display)
 zstyle ':completion:*:*:kill:*' insert-ids single
 
 # --- SSH / SCP / RSYNC ---
 # SSH / SCP / RSYNC host completion (from known_hosts)
-zstyle ':completion:*:(ssh|scp|rsync):*' tag-order \
-  'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
-zstyle ':completion:*:(ssh|scp|rsync):*' group-order \
-  users hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:(ssh|scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:(ssh|scp|rsync):*' group-order users hosts-domain hosts-host hosts-ipaddr
 
 # --- Path Completion ---
 zstyle ':completion:*' list-dirs-first true
