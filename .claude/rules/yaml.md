@@ -148,9 +148,9 @@ customCommands:
 
 ## Line Length
 
-79 characters maximum.
+120 characters soft limit.
 
-Exceptions:
+Exceptions (no limit):
 
 - URLs and file paths that cannot be wrapped
 - Long command strings in `run:` fields (GitHub Actions, lazygit custom

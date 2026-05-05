@@ -155,9 +155,9 @@ enabled = { level = "info", file = "/tmp/log" }
 
 ## Line Length
 
-79 characters maximum.
+120 characters soft limit.
 
-Exceptions:
+Exceptions (no limit):
 
 - Format strings and template values that cannot be meaningfully wrapped
   (e.g., starship `format = "..."` with long `$variable` chains)
@@ -305,7 +305,7 @@ Second line continues here.
 ### Starship
 
 - `format` values are template strings using `$variable` syntax. These
-  routinely exceed 79 characters and are exempt from line length limits.
+  routinely exceed 120 characters and are exempt from line length limits.
 - `[os.symbols]` is a single large table — it gets its own Level 1 block
   without per-entry Level 2 headers.
 - `[custom.*]` tables define custom modules — group them under a shared

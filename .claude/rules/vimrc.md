@@ -136,10 +136,10 @@ let &runtimepath = s:cfg  . '/vim,'
 
 ## Line Length
 
-79 characters maximum. Use line continuation (`\`) aligned under the opening
-statement.
+120 characters soft limit.  Use line continuation (`\`) aligned under the
+opening statement for lines that exceed the limit.
 
-Exceptions:
+Exceptions (no limit):
 
 - URLs and file paths that cannot be wrapped
 - Option values that cannot be meaningfully split
