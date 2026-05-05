@@ -150,9 +150,9 @@ font-family = "SauceCodePro Nerd Font"
 
 ## Line Length
 
-79 characters maximum.
+120 characters soft limit.
 
-Exceptions:
+Exceptions (no limit):
 
 - URLs and file paths that cannot be wrapped
 - Tool-specific values that cannot be meaningfully split

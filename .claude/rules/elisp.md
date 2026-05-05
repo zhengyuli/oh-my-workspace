@@ -165,9 +165,9 @@ Never use tabs in Emacs Lisp files — `indent-tabs-mode` must be `nil`.
 
 ## Line Length
 
-79 characters maximum.
+120 characters soft limit.
 
-Exceptions:
+Exceptions (no limit):
 
 - URLs and file paths that cannot be wrapped
 - Symbol names and docstrings that cannot be meaningfully split
@@ -370,10 +370,10 @@ Use `defconst` for named constants.
 
 ```elisp
 ;; WRONG
-(if (> length 79)
+(if (> length 120)
 
 ;; CORRECT
-(defconst omw-max-line-length 79
+(defconst omw-max-line-length 120
   "Maximum line length for Emacs Lisp files.")
 (if (> length omw-max-line-length)
 ```
