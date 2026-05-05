@@ -75,6 +75,15 @@
     (dolist (file files)
       (start-process "dired-open" nil command file))))
 
+;; --- Dired Single Buffer or View ---
+(defun omw/dired-single-buffer-or-view ()
+  "Enter directory with `dired-single-buffer', open file in `view-mode'."
+  (interactive)
+  (let ((file (dired-get-file-for-visit)))
+    (if (file-directory-p file)
+        (dired-single-buffer)
+      (view-file file))))
+
 ;; --- Dired Global Omit Mode ---
 (define-minor-mode omw/omit-global-mode
   "Global minor mode to control dired-omit-mode across all dired buffers.
@@ -109,7 +118,7 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
                ("h" . dired-up-directory-single)
                ("j" . dired-hacks-next-file)
                ("k" . dired-hacks-previous-file)
-               ("l" . dired-single-buffer)
+               ("l" . omw/dired-single-buffer-or-view)
                ("p" . dired-hacks-previous-file)
                ("n" . dired-hacks-next-file)
                ("M-<" . dired-goto-first-line)
@@ -186,6 +195,24 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
   ;; Dirvish must be activated after dired config to override defaults
   (dirvish-override-dired-mode 1)
   (dired-async-mode 1))
+
+;; --- View Mode (Vim Keybindings) ---
+(use-package view
+  :ensure nil
+  :defer t
+  :bind (:map view-mode-map
+              ("h" . backward-char)
+              ("j" . next-line)
+              ("k" . previous-line)
+              ("l" . forward-char)
+              ("w" . forward-word)
+              ("b" . backward-word)
+              ("0" . beginning-of-line)
+              ("$" . end-of-line)
+              ("/" . isearch-forward)
+              ("?" . isearch-backward)
+              ("n" . isearch-repeat-forward)
+              ("N" . isearch-repeat-backward)))
 
 ;; ============================================================================
 ;;; Provide features
