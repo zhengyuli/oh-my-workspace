@@ -129,12 +129,14 @@ printf 'error: cannot install %s — missing dependency %s\n' \
 
 ## Line Length
 
-79 characters maximum.
+120 characters soft limit. Avoid gratuitous wrapping that hurts readability —
+a clear one-liner is better than a three-line continuation.
 
-Exceptions:
+Hard exceptions (no limit):
 
 - URLs and file paths that cannot be wrapped
 - Help text strings in `printf` / `echo` (user-facing output)
+- Format strings with many interpolated variables
 
 ## Comments
 
