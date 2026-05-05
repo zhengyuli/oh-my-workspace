@@ -78,6 +78,12 @@ fi
 # Content indent: 4 spaces for items nested under a phase header.
 readonly _LOG_INDENT='    '
 
+# Log a colored, tagged message to stdout or stderr.
+# Arguments:
+#   color  - ANSI escape sequence.
+#   tag    - Label shown in brackets.
+#   stream - "out" for stdout, "err" for stderr.
+#   ...    - Message text.
 _log() {
   local -r color="$1" tag="$2" stream="$3"
   shift 3
@@ -88,6 +94,7 @@ _log() {
   fi
 }
 
+# Convenience log wrappers: colored output at various severity levels.
 log_ok()   { _log "${C_G}" ok    out "$*"; }
 log_err()  { _log "${C_R}" error err "$*"; }
 log_warn() { _log "${C_Y}" warn  err "$*"; }
@@ -117,6 +124,7 @@ _abort() {
 # Error Handling
 # -----------------------------------------------------------------------------
 
+# ERR trap: log failing function, line number, and exit code.
 _err_handler() {
   local -r code=$?
   printf '%s%b[error]%b %s() line %d: exit %d\n' \
@@ -199,6 +207,9 @@ sys.exit(0 if Version(sys.argv[1]) >= Version(sys.argv[2]) else 1)
   return 1
 }
 
+# Verify platform, required tools, and network connectivity.
+# Returns:
+#   0 if all checks pass, 1 on the first critical failure.
 _check_prerequisites() {
   # --- Platform Check ---
   if [[ "$(uname -s)" != Darwin ]]; then
@@ -245,6 +256,8 @@ _check_prerequisites() {
 # CLI Installation
 # -----------------------------------------------------------------------------
 
+# Install the claude CLI via the official installer script.
+# Skips installation if the CLI is already on PATH.
 _install_claude() {
   if command -v claude >/dev/null 2>&1; then
     log_ok "claude CLI already installed: $(claude --version 2>/dev/null)"
@@ -275,6 +288,9 @@ _install_claude() {
 # GLM Configuration
 # -----------------------------------------------------------------------------
 
+# Run the ZAI coding-helper to configure GLM API credentials.
+# Skips if ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN are
+# already present in ~/.claude/settings.json.
 _configure_glm() {
   local -r settings="$HOME/.claude/settings.json"
 
@@ -309,8 +325,9 @@ _configure_glm() {
 # Post-Install Fixes
 # -----------------------------------------------------------------------------
 
-# Rewrite settings.json atomically: jq writes to a temp file, then mv
-# replaces the original.  A RETURN trap ensures cleanup on early return.
+# Apply post-ZAI fixes to settings.json (model defaults, compatibility flags).
+# Rewrites atomically: jq writes to a temp file, then mv replaces the original.
+# A RETURN trap ensures cleanup on early return.
 _apply_post_fixes() {
   local -r settings="$HOME/.claude/settings.json"
 
@@ -366,6 +383,9 @@ _apply_post_fixes() {
 # Verification
 # -----------------------------------------------------------------------------
 
+# Verify settings.json contains all required env vars and correct model.
+# Returns:
+#   0 if all checks pass, 1 if any required value is missing.
 _verify() {
   local -r settings="$HOME/.claude/settings.json"
 
@@ -433,6 +453,7 @@ _verify() {
 # Main
 # -----------------------------------------------------------------------------
 
+# Entry point: run all setup phases in sequence.
 main() {
   _PHASE_TOTAL=5
   _PHASE_INDEX=0
