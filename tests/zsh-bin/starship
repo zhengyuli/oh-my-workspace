@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+if [[ "$1" == "init" && "$2" == "zsh" ]]; then
+  echo '# starship init stub'
+fi
+exit 0

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+if [[ "$1" == "_carapace" ]]; then
+  echo '# carapace stub'
+fi
+exit 0

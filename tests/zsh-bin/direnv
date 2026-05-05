@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+if [[ "$1" == "hook" ]]; then
+  echo '# direnv hook stub'
+fi
+exit 0
