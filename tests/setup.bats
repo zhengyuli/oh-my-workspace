@@ -264,6 +264,52 @@ load setup-helper
   [[ ! -f "${target}.pre-stow-backup" ]]
 }
 
+@test "_resolve_conflict: refuses path traversal via .." {
+  _source_setup
+  dry_run=false
+  # Create a path that starts with HOME but resolves outside via ..
+  mkdir -p "${HOME}/subdir"
+  local target="${HOME}/subdir/../../etc/passwd"
+  run _resolve_conflict "${target}"
+  [[ "$status" -eq 1 ]]
+  [[ "$output" == *"resolves outside HOME"* ]] || [[ "$output" == *"Refusing"* ]]
+}
+
+# =============================================================================
+# Homebrew Version Tests
+# =============================================================================
+
+@test "_ensure_homebrew_version: accepts valid version above minimum" {
+  _source_setup
+  export MOCK_BREW_VERSION="4.4.0"
+  run _ensure_homebrew_version
+  [[ "$status" -eq 0 ]]
+}
+
+@test "_ensure_homebrew_version: rejects version below minimum" {
+  _source_setup
+  export MOCK_BREW_VERSION="3.9.0"
+  dry_run=false
+  run _ensure_homebrew_version
+  [[ "$status" -ne 0 ]]
+}
+
+@test "_ensure_homebrew_version: rejects non-numeric minor version" {
+  _source_setup
+  export MOCK_BREW_VERSION="4.4beta"
+  run _ensure_homebrew_version
+  [[ "$status" -eq 1 ]]
+  [[ "$output" == *"Cannot parse"* ]]
+}
+
+@test "_ensure_homebrew_version: rejects unparseable version" {
+  _source_setup
+  export MOCK_BREW_VERSION="invalid"
+  run _ensure_homebrew_version
+  [[ "$status" -eq 1 ]]
+  [[ "$output" == *"Cannot determine"* ]]
+}
+
 # =============================================================================
 # Command/Entry Tests
 # =============================================================================
