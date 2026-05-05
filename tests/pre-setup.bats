@@ -49,6 +49,12 @@ teardown() {
   [[ -z "$C_RESET" ]]
 }
 
+@test "NO_COLOR also clears bold and dim" {
+  _source_pre_setup
+  [[ -z "$C_BOLD" ]]
+  [[ -z "$C_DIM" ]]
+}
+
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
@@ -87,6 +93,15 @@ teardown() {
   (( _PHASE_INDEX == 1 ))
   _phase "Phase 2" >/dev/null
   (( _PHASE_INDEX == 2 ))
+}
+
+@test "_phase prints step indicator" {
+  _source_pre_setup
+  _PHASE_TOTAL=5
+  _PHASE_INDEX=0
+  run _phase "Prerequisites"
+  [[ "$output" == *"[1/5]"* ]]
+  [[ "$output" == *"Prerequisites"* ]]
 }
 
 # ---------------------------------------------------------------------------
@@ -230,4 +245,185 @@ teardown() {
   _source_pre_setup
   # If main ran, _PHASE_INDEX would be > 0
   (( _PHASE_INDEX == 0 ))
+}
+
+# ---------------------------------------------------------------------------
+# _check_macos_version Edge Cases
+# ---------------------------------------------------------------------------
+
+@test "_check_macos_version: 3-segment 14.2.1 >= 13.0" {
+  _source_pre_setup
+  run _check_macos_version "14.2.1" "13.0"
+  (( status == 0 ))
+}
+
+@test "_check_macos_version: 13.0.1 >= 13.0" {
+  _source_pre_setup
+  run _check_macos_version "13.0.1" "13.0"
+  (( status == 0 ))
+}
+
+@test "_check_macos_version: 12.7.3 < 13.0" {
+  _source_pre_setup
+  run _check_macos_version "12.7.3" "13.0"
+  (( status == 1 ))
+}
+
+@test "_check_macos_version: exact match 15.0 >= 15.0" {
+  _source_pre_setup
+  run _check_macos_version "15.0" "15.0"
+  (( status == 0 ))
+}
+
+@test "_check_macos_version: empty min_version fails" {
+  _source_pre_setup
+  run _check_macos_version "14.0" ""
+  (( status == 1 ))
+}
+
+@test "_check_macos_version: both empty fails" {
+  _source_pre_setup
+  run _check_macos_version "" ""
+  (( status == 1 ))
+}
+
+# ---------------------------------------------------------------------------
+# _check_prerequisites Edge Cases
+# ---------------------------------------------------------------------------
+
+@test "_check_prerequisites: non-Darwin platform fails" {
+  _source_pre_setup
+  export MOCK_UNAME="Linux"
+  run _check_prerequisites
+  (( status == 1 ))
+  [[ "$output" == *"Not macOS"* ]]
+}
+
+@test "_check_prerequisites: old macOS fails" {
+  _source_pre_setup
+  export MOCK_MACOS_VERSION="11.0"
+  run _check_prerequisites
+  (( status == 1 ))
+  [[ "$output" == *"need ${MIN_MACOS_VERSION}+"* ]]
+}
+
+@test "_check_prerequisites: network failure" {
+  _source_pre_setup
+  # Set high fail count: _check_cmd "curl" consumes one call
+  # (via --version), then the actual network check gets another.
+  echo "99" > "${MOCK_CURL_FAIL_FILE}"
+  run _check_prerequisites
+  (( status == 1 ))
+  [[ "$output" == *"Cannot reach GitHub API"* ]]
+}
+
+# ---------------------------------------------------------------------------
+# _install_claude Edge Cases
+# ---------------------------------------------------------------------------
+
+@test "_install_claude: installs when not present" {
+  _source_pre_setup
+  # Hide the mock claude from PATH so it looks "not installed"
+  # Create a temp bin dir without claude
+  local tmpbin="${BATS_TEST_TMPDIR}/nobin"
+  mkdir -p "$tmpbin"
+  # Only keep mocks that _install_claude needs (curl)
+  cp "${BATS_TEST_DIRNAME}/bin/curl" "$tmpbin/"
+  export PATH="$tmpbin:/usr/bin:/bin"
+  run _install_claude
+  # Should attempt install (curl piped to bash)
+  [[ "$output" == *"Installing claude CLI"* ]]
+}
+
+# ---------------------------------------------------------------------------
+# _configure_glm Edge Cases
+# ---------------------------------------------------------------------------
+
+@test "_configure_glm: skips when already configured" {
+  _source_pre_setup
+  echo '{"env":{"ANTHROPIC_BASE_URL":"x","ANTHROPIC_AUTH_TOKEN":"y"}}' \
+    > "${HOME}/.claude/settings.json"
+  export MOCK_JQ_KEY_EXISTS=0
+  run _configure_glm
+  (( status == 0 ))
+  [[ "$output" == *"already configured"* ]]
+}
+
+@test "_configure_glm: bunx failure logs warning" {
+  _source_pre_setup
+  # No settings.json means credentials not present — ZAI will run
+  rm -f "${HOME}/.claude/settings.json"
+  export MOCK_JQ_KEY_EXISTS=1
+  export MOCK_BUNX_RC=42
+  run _configure_glm
+  [[ "$output" == *"exited with code 42"* ]]
+}
+
+# ---------------------------------------------------------------------------
+# _verify Edge Cases
+# ---------------------------------------------------------------------------
+
+@test "_verify: wrong model fails" {
+  _source_pre_setup
+  echo '{}' > "${HOME}/.claude/settings.json"
+  export MOCK_JQ_RC=0
+  export MOCK_JQ_VALUE="opus"
+  run _verify
+  (( status == 1 ))
+  [[ "$output" == *"expected sonnet"* ]]
+}
+
+@test "_verify: null env var fails" {
+  _source_pre_setup
+  echo '{}' > "${HOME}/.claude/settings.json"
+  export MOCK_JQ_RC=0
+  export MOCK_JQ_VALUE="null"
+  run _verify
+  (( status == 1 ))
+  [[ "$output" == *"missing or empty"* ]]
+}
+
+@test "_verify: empty env var fails" {
+  _source_pre_setup
+  echo '{}' > "${HOME}/.claude/settings.json"
+  export MOCK_JQ_RC=0
+  export MOCK_JQ_VALUE=""
+  run _verify
+  (( status == 1 ))
+  [[ "$output" == *"missing or empty"* ]]
+}
+
+# ---------------------------------------------------------------------------
+# _apply_post_fixes Edge Cases
+# ---------------------------------------------------------------------------
+
+@test "_apply_post_fixes: jq failure reports error" {
+  _source_pre_setup
+  echo '{}' > "${HOME}/.claude/settings.json"
+  export MOCK_JQ_RC=1
+  run _apply_post_fixes
+  (( status == 1 ))
+}
+
+# ---------------------------------------------------------------------------
+# _check_cmd Edge Cases
+# ---------------------------------------------------------------------------
+
+@test "_check_cmd: shows version when available" {
+  _source_pre_setup
+  run _check_cmd "claude"
+  (( status == 0 ))
+  [[ "$output" == *"claude"* ]]
+}
+
+# ---------------------------------------------------------------------------
+# _err_handler
+# ---------------------------------------------------------------------------
+
+@test "_err_handler prints function and line info" {
+  _source_pre_setup
+  run _err_handler
+  [[ "$output" == *"[error]"* ]]
+  [[ "$output" == *"line"* ]]
+  [[ "$output" == *"exit"* ]]
 }
