@@ -42,6 +42,7 @@ set -euo pipefail
 # Error Handling
 # -----------------------------------------------------------------------------
 
+# ERR trap: log failing function, line number, and exit code.
 _err_handler() {
   local -r code=$?
   printf '[error] %s() line %d: exit %d\n' "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
@@ -94,6 +95,8 @@ readonly QUICK_LOOK_NO_ANIMATION=0
 # -----------------------------------------------------------------------------
 # General UI/UX
 # -----------------------------------------------------------------------------
+
+# Configure General UI/UX system preferences.
 _general_ui() {
   printf 'Setting General UI/UX preferences...\n'
 
@@ -140,6 +143,8 @@ _general_ui() {
 # -----------------------------------------------------------------------------
 # Keyboard
 # -----------------------------------------------------------------------------
+
+# Configure keyboard behavior and repeat rate.
 _keyboard() {
   printf 'Setting Keyboard preferences...\n'
 
@@ -157,6 +162,8 @@ _keyboard() {
 # -----------------------------------------------------------------------------
 # Trackpad & Mouse
 # -----------------------------------------------------------------------------
+
+# Configure trackpad tap behavior, right-click, and spring loading.
 _trackpad_mouse() {
   printf 'Setting Trackpad/Mouse preferences...\n'
 
@@ -177,6 +184,8 @@ _trackpad_mouse() {
 # -----------------------------------------------------------------------------
 # Screen
 # -----------------------------------------------------------------------------
+
+# Configure screen saver security and screenshot settings.
 _screen() {
   printf 'Setting Screen preferences...\n'
 
@@ -193,6 +202,8 @@ _screen() {
 # -----------------------------------------------------------------------------
 # Finder
 # -----------------------------------------------------------------------------
+
+# Configure Finder display, search, and window behavior.
 _finder() {
   printf 'Setting Finder preferences...\n'
 
@@ -249,6 +260,8 @@ _finder() {
 # -----------------------------------------------------------------------------
 # Dock
 # -----------------------------------------------------------------------------
+
+# Configure Dock auto-hide, animation speed, and appearance.
 _dock() {
   printf 'Setting Dock preferences...\n'
 
@@ -276,6 +289,8 @@ _dock() {
 # -----------------------------------------------------------------------------
 # Mission Control & Spaces
 # -----------------------------------------------------------------------------
+
+# Configure Mission Control Spaces ordering and grouping.
 _mission_control() {
   printf 'Setting Mission Control & Spaces preferences...\n'
 
@@ -295,6 +310,8 @@ _mission_control() {
 # -----------------------------------------------------------------------------
 # Terminal
 # -----------------------------------------------------------------------------
+
+# Configure Terminal.app encoding and security settings.
 _terminal() {
   printf 'Setting Terminal preferences...\n'
 
@@ -312,6 +329,8 @@ _terminal() {
 # -----------------------------------------------------------------------------
 # Time Machine
 # -----------------------------------------------------------------------------
+
+# Configure Time Machine backup prompts.
 _time_machine() {
   printf 'Setting Time Machine preferences...\n'
 
@@ -322,6 +341,8 @@ _time_machine() {
 # -----------------------------------------------------------------------------
 # TextEdit
 # -----------------------------------------------------------------------------
+
+# Configure TextEdit to default to plain text with UTF-8 encoding.
 _textedit() {
   printf 'Setting TextEdit preferences...\n'
 
@@ -334,6 +355,8 @@ _textedit() {
 # -----------------------------------------------------------------------------
 # Mac App Store
 # -----------------------------------------------------------------------------
+
+# Configure Mac App Store update schedule and auto-install policy.
 _app_store() {
   printf 'Setting Mac App Store preferences...\n'
 
@@ -350,6 +373,8 @@ _app_store() {
 # -----------------------------------------------------------------------------
 # Photos
 # -----------------------------------------------------------------------------
+
+# Disable Photos auto-launch when devices are connected.
 _photos() {
   printf 'Setting Photos preferences...\n'
 
@@ -360,6 +385,8 @@ _photos() {
 # -----------------------------------------------------------------------------
 # Messages
 # -----------------------------------------------------------------------------
+
+# Disable smart quotes and spell checking in Messages.
 _messages() {
   printf 'Setting Messages preferences...\n'
 
@@ -373,6 +400,8 @@ _messages() {
 # -----------------------------------------------------------------------------
 # App Restart
 # -----------------------------------------------------------------------------
+
+# Restart applications that need it to pick up changed defaults.
 _restart_apps() {
   printf 'Restarting affected applications...\n'
 
@@ -393,9 +422,10 @@ _restart_apps() {
 }
 
 # -----------------------------------------------------------------------------
-# Main
+# Entry Point
 # -----------------------------------------------------------------------------
 
+# Apply all macOS system defaults and restart affected applications.
 main() {
   # Close System Preferences/Settings to avoid conflicts
   osascript -e 'tell application "System Preferences" to quit' 2>/dev/null
