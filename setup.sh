@@ -178,8 +178,8 @@ _cleanup() {
 }
 trap '_cleanup' EXIT
 
-# Forward Ctrl-C cleanly: kill any background children (brew bundle,
-# ya pkg install) so they don't outlive the script.
+# Forward Ctrl-C cleanly: kill any background children (e.g. brew
+# bundle) so they don't outlive the script.
 _int_handler() {
   trap - EXIT
   local -a pids=()
@@ -287,6 +287,32 @@ _has_stow() {
 # Bootstrap
 # -----------------------------------------------------------------------------
 
+# Download a URL to a local file with exponential-backoff retry.
+# Usage: _download url dest
+_download() {
+  local -r url="$1" dest="$2"
+  local attempt=1
+  local delay="${DOWNLOAD_RETRY_DELAY}"
+
+  while (( attempt <= DOWNLOAD_MAX_RETRIES )); do
+    if curl --fail --silent --show-error \
+      --connect-timeout "${NETWORK_TIMEOUT}" \
+      --output "${dest}" "${url}"; then
+      return 0
+    fi
+
+    if (( attempt >= DOWNLOAD_MAX_RETRIES )); then
+      log_err "Download failed after ${DOWNLOAD_MAX_RETRIES} attempts: ${url}"
+      return 1
+    fi
+
+    log_warn "Download attempt ${attempt} failed, retrying in ${delay}s..."
+    sleep "${delay}"
+    attempt=$(( attempt + 1 ))
+    delay=$(( delay * 2 ))
+  done
+}
+
 _bootstrap_homebrew_env() {
   # Always source brew shellenv from known Homebrew locations so the
   # full PATH (bin, sbin) is available even when brew is reachable
@@ -352,25 +378,9 @@ _install_homebrew() {
   installer="$(mktemp)"
   trap 'rm -f "${installer:-}"' RETURN
 
-  local attempt=1
-  local delay="${DOWNLOAD_RETRY_DELAY}"
-  while (( attempt <= DOWNLOAD_MAX_RETRIES )); do
-    if curl --fail --silent --show-error \
-      --connect-timeout "${NETWORK_TIMEOUT}" \
-      --output "$installer" "${url}"; then
-      break
-    fi
-
-    if (( attempt >= DOWNLOAD_MAX_RETRIES )); then
-      log_err "Homebrew download failed after ${DOWNLOAD_MAX_RETRIES} attempts"
-      return 1
-    fi
-
-    log_warn "Download attempt ${attempt} failed, retrying in ${delay}s..."
-    sleep "${delay}"
-    attempt=$(( attempt + 1 ))
-    delay=$(( delay * 2 ))
-  done
+  if ! _download "${url}" "${installer}"; then
+    return 1
+  fi
 
   if ! /bin/bash "$installer"; then
     log_err "Homebrew installation failed"
@@ -422,26 +432,9 @@ _ensure_homebrew_version() {
   uninstaller="$(mktemp)"
   trap 'rm -f "${uninstaller:-}"' RETURN
 
-  local attempt=1
-  local delay="${DOWNLOAD_RETRY_DELAY}"
-  while (( attempt <= DOWNLOAD_MAX_RETRIES )); do
-    if curl --fail --silent --show-error \
-      --connect-timeout "${NETWORK_TIMEOUT}" \
-      --output "$uninstaller" "${uninstall_url}"; then
-      break
-    fi
-
-    if (( attempt >= DOWNLOAD_MAX_RETRIES )); then
-      log_err "Homebrew uninstall script download failed after" \
-        "${DOWNLOAD_MAX_RETRIES} attempts"
-      return 1
-    fi
-
-    log_warn "Download attempt ${attempt} failed, retrying in ${delay}s..."
-    sleep "${delay}"
-    attempt=$(( attempt + 1 ))
-    delay=$(( delay * 2 ))
-  done
+  if ! _download "${uninstall_url}" "${uninstaller}"; then
+    return 1
+  fi
 
   if ! /bin/bash "$uninstaller"; then
     log_err "Homebrew uninstall failed"
@@ -528,7 +521,7 @@ ensure_prerequisites() {
   fi
 
   # --- Git Filters ---
-  if _is_valid_pkg "yazi"; then
+  if _is_valid_pkg "tool/yazi"; then
     _setup_git_filters
   fi
 }
@@ -1155,7 +1148,7 @@ show_help() {
     "${C_BOLD}Flags:${C_RESET}" \
     '  --all      Apply to all packages (install / uninstall)' \
     '  --force    Restow even if already stowed (install only).' \
-    '             Runs stow -R; conflicts at target paths are deleted.' \
+    '             Runs stow -R; conflicting files are backed up to *.pre-stow-backup.' \
     '             Use after adding new dotfiles to a package dir.' \
     '  --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked/unlinked' '' \
     "${C_BOLD}Packages${C_RESET} (base name or full category/name):" \
