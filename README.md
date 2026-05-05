@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
+[![Tests: 165](https://img.shields.io/badge/Tests-165%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -39,6 +40,7 @@ That's it. Your development environment is ready.
 - **Git Workflow** — git + lazygit + git-delta + GPG signing support
 - **One-Command Setup** — `./setup.sh install --all` handles everything
 - **Clean Symlinks** — GNU Stow manages dotfiles without cluttering `$HOME`
+- **Fully Tested** — 165 BATS tests verify all shell modules and setup scripts
 
 ## Installation
 
@@ -548,14 +550,25 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 ```bash
 # Install BATS (if not already installed)
 brew install bats-core
+```
 
-# Create a new test file following the pattern:
-# tests/zsh-<module>.bats
+Minimal test file template for a new zsh module:
 
-# Use the shared helper for zsh modules:
-# load zsh_helper
-# setup() { setup_zsh_env; }
-# teardown() { teardown_zsh_env; }
+```bash
+#!/usr/bin/env bats
+# zsh-<NN>-<name>.bats — tests for conf.d/<NN>-<name>.zsh
+
+load zsh_helper
+
+setup() { setup_zsh_env; }
+teardown() { teardown_zsh_env; }
+
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/<NN>-<name>.zsh"
+
+@test "my feature works" {
+  run_zsh "$MODULE" 'print $MY_VAR'
+  [[ "$output" == "expected_value" ]]
+}
 ```
 
 See `tests/zsh_helper.bash` for shared utilities and `tests/zsh-bin/` for mock scripts.

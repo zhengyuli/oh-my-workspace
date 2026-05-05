@@ -66,8 +66,8 @@ oh-my-workspace/
 │
 ├── tests/             # BATS test suite (165 tests)
 │   ├── zsh_helper.bash # Shared zsh test utilities
-│   ├── zsh-bin/       # Mock scripts for zsh tests
 │   ├── bin/           # Mock scripts for bash tests
+│   ├── zsh-bin/       # Mock scripts for zsh tests
 │   └── *.bats        # Test files (15 files)
 │
 ├── shell/             # Shell configurations
@@ -146,8 +146,14 @@ bats --verbose-run tests/
 **Adding tests for a new zsh module**:
 1. Create `tests/zsh-<NN>-<name>.bats`
 2. Use `load zsh_helper` + `setup() { setup_zsh_env; }` + `teardown() { teardown_zsh_env; }`
-3. Add mock scripts to `tests/zsh-bin/` if the module calls external tools
-4. Run with `bats tests/zsh-<NN>-<name>.bats`
+3. Test with `run_zsh "$MODULE" '<zsh expression>'` — gives `$status` and `$output`
+4. Add mock scripts to `tests/zsh-bin/` if the module calls external tools
+5. Run with `bats tests/zsh-<NN>-<name>.bats`
+
+**Adding tests for bash scripts** (setup.sh, defaults.sh):
+1. Add source guard (`if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi`)
+2. Source the script in `setup()`, test individual functions with `run <function_name>`
+3. Mock external commands in `tests/bin/`
 
 **Test coverage**: 165 tests across 15 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, and darwin defaults.
 
