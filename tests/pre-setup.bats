@@ -7,7 +7,7 @@
 
 _source_pre_setup() {
   export NO_COLOR=1
-  export PATH="${BATS_TEST_DIRNAME}/pre-mocks/setup:${BATS_TEST_DIRNAME}/mocks/setup:${PATH}"
+  export PATH="${BATS_TEST_DIRNAME}/mocks/pre-setup:${BATS_TEST_DIRNAME}/mocks/setup:${PATH}"
   source "${BATS_TEST_DIRNAME}/../claude/pre-setup.sh"
 }
 
@@ -328,7 +328,7 @@ teardown() {
   local tmpbin="${BATS_TEST_TMPDIR}/nobin"
   mkdir -p "$tmpbin"
   # Only keep mocks that _install_claude needs (curl)
-  cp "${BATS_TEST_DIRNAME}/bin/curl" "$tmpbin/"
+  cp "${BATS_TEST_DIRNAME}/mocks/setup/curl" "$tmpbin/"
   export PATH="$tmpbin:/usr/bin:/bin"
   run _install_claude
   # Should attempt install (curl piped to bash)
