@@ -894,9 +894,7 @@ _post_install_yazi() {
 _hook_run() {
   local -r name="$1" fn="$2"
   local rc=0
-  if ! "${fn}"; then
-    rc=$?
-  fi
+  "${fn}" || rc=$?
   case "${rc}" in
     0) log_ok "${name}: done" ;;
     2) log_info "${name}: skipped" ;;
