@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+case "$1" in
+  -p) exit "${MOCK_XCODE_RC:-0}" ;;
+  --install) exit 0 ;;
+  *) exit 0 ;;
+esac
