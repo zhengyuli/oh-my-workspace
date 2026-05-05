@@ -87,13 +87,13 @@ load test_helper
 @test "NO_COLOR=1 makes color vars empty" {
   export NO_COLOR=1
   _source_setup
-  [[ -z "${C_R}" ]]
-  [[ -z "${C_G}" ]]
-  [[ -z "${C_Y}" ]]
-  [[ -z "${C_B}" ]]
-  [[ -z "${C_BOLD}" ]]
-  [[ -z "${C_DIM}" ]]
-  [[ -z "${C_RESET}" ]]
+  [[ -z "${_RED}" ]]
+  [[ -z "${_GREEN}" ]]
+  [[ -z "${_YELLOW}" ]]
+  [[ -z "${_BLUE}" ]]
+  [[ -z "${_BOLD}" ]]
+  [[ -z "${_DIM}" ]]
+  [[ -z "${_RESET}" ]]
 }
 
 @test "die exits 1 with error tag and message" {
@@ -132,8 +132,8 @@ load test_helper
 
 @test "_phase outputs phase counter and title" {
   _source_setup
-  _PHASE_TOTAL=3
-  _PHASE_INDEX=0
+  _phase_total=3
+  _phase_index=0
   run _phase "Test Phase"
   [[ "$output" == *"[1/3]"* ]]
   [[ "$output" == *"Test Phase"* ]]
@@ -203,62 +203,62 @@ load test_helper
   [[ "$status" -eq 1 ]]
 }
 
-@test "_resolve_stow_conflict: refuses path outside HOME" {
+@test "_resolve_conflict: refuses path outside HOME" {
   _source_setup
   dry_run=false
-  run _resolve_stow_conflict "/etc/passwd"
+  run _resolve_conflict "/etc/passwd"
   [[ "$status" -eq 1 ]]
   [[ "$output" == *"outside HOME"* ]] || [[ "$output" == *"Refusing"* ]]
 }
 
-@test "_resolve_stow_conflict: removes symlink" {
+@test "_resolve_conflict: removes symlink" {
   _source_setup
   dry_run=false
   local target="${HOME}/testlink"
   ln -s "/some/target" "${target}"
-  run _resolve_stow_conflict "${target}"
+  run _resolve_conflict "${target}"
   [[ "$status" -eq 0 ]]
   [[ ! -e "${target}" ]]
 }
 
-@test "_resolve_stow_conflict: backs up regular file" {
+@test "_resolve_conflict: backs up regular file" {
   _source_setup
   dry_run=false
   local target="${HOME}/testfile"
   echo "content" > "${target}"
-  run _resolve_stow_conflict "${target}"
+  run _resolve_conflict "${target}"
   [[ "$status" -eq 0 ]]
   [[ -f "${target}.pre-stow-backup" ]]
 }
 
-@test "_resolve_stow_conflict: increments backup suffix" {
+@test "_resolve_conflict: increments backup suffix" {
   _source_setup
   dry_run=false
   local target="${HOME}/testfile"
   echo "content" > "${target}"
   touch "${target}.pre-stow-backup"
-  run _resolve_stow_conflict "${target}"
+  run _resolve_conflict "${target}"
   [[ "$status" -eq 0 ]]
   [[ -f "${target}.pre-stow-backup.1" ]]
 }
 
-@test "_resolve_stow_conflict: refuses non-empty directory" {
+@test "_resolve_conflict: refuses non-empty directory" {
   _source_setup
   dry_run=false
   local target="${HOME}/testdir"
   mkdir -p "${target}"
   touch "${target}/somefile"
-  run _resolve_stow_conflict "${target}"
+  run _resolve_conflict "${target}"
   [[ "$status" -eq 1 ]]
   [[ "$output" == *"non-empty"* ]]
 }
 
-@test "_resolve_stow_conflict: dry-run does not modify filesystem" {
+@test "_resolve_conflict: dry-run does not modify filesystem" {
   _source_setup
   dry_run=true
   local target="${HOME}/testfile"
   echo "content" > "${target}"
-  run _resolve_stow_conflict "${target}"
+  run _resolve_conflict "${target}"
   [[ "$status" -eq 0 ]]
   [[ -f "${target}" ]]
   [[ ! -f "${target}.pre-stow-backup" ]]
