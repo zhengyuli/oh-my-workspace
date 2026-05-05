@@ -66,9 +66,7 @@ oh-my-workspace/
 │
 ├── tests/             # BATS test suite (183 tests)
 │   ├── zsh-helper.bash # Shared zsh test utilities
-│   ├── setup-bin/     # Mock scripts for setup.sh tests
-│   ├── pre-setup-bin/ # Mock scripts for pre-setup.sh tests
-│   ├── zsh-bin/       # Mock scripts for zsh tests
+│   ├── mocks/         # Mock scripts (setup/, pre-setup/, zsh/)
 │   └── *.bats        # Test files (16 files)
 │
 ├── shell/             # Shell configurations
@@ -141,9 +139,9 @@ bats --verbose-run tests/
 
 **Key files**:
 - `tests/zsh-helper.bash` — shared utilities (`run_zsh`, `setup_zsh_env`, `teardown_zsh_env`)
-- `tests/zsh-bin/` — mock scripts for zsh tests (brew, starship, fzf, uv, zoxide, defaults, etc.)
-- `tests/setup-bin/` — mock scripts for setup.sh tests (curl, stow, uname, etc.)
-- `tests/pre-setup-bin/` — mock scripts for pre-setup.sh tests (bunx, claude, jq, sw_vers)
+- `tests/mocks/zsh/` — mock scripts for zsh tests (brew, starship, fzf, uv, zoxide, defaults, etc.)
+- `tests/mocks/setup/` — mock scripts for setup.sh tests (curl, stow, uname, etc.)
+- `tests/mocks/pre-setup/` — mock scripts for pre-setup.sh tests (bunx, claude, jq, sw_vers)
 
 **Adding tests for a new zsh module**:
 1. Create `tests/zsh-<NN>-<name>.bats`
