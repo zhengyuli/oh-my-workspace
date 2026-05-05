@@ -1,5 +1,5 @@
 ;;; omw-explorer.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-04-04 21:38:18 Saturday by zhengyu.li>
+;; Time-stamp: <2026-05-05 14:20:34 Tuesday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; omw-explorer.el - File explorer with Dirvish and dired.
@@ -205,10 +205,6 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
               ("j" . next-line)
               ("k" . previous-line)
               ("l" . forward-char)
-              ("w" . forward-word)
-              ("b" . backward-word)
-              ("0" . beginning-of-line)
-              ("$" . end-of-line)
               ("/" . isearch-forward)
               ("?" . isearch-backward)
               ("n" . isearch-repeat-forward)
