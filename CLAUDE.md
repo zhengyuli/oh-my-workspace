@@ -168,7 +168,7 @@ bash -n platform/darwin/defaults.sh
 shellcheck setup.sh agent/claude/pre-setup.sh platform/darwin/defaults.sh
 
 # Zsh syntax check (shellcheck has poor zsh support)
-zsh -n shell/zsh/zsh/conf.d/*.zsh
+zsh -n shell/zsh/conf.d/*.zsh
 
 # TOML validation (Python 3.11+)
 python3 -c "import tomllib; tomllib.load(open('file.toml','rb'))"
