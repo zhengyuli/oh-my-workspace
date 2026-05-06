@@ -86,7 +86,6 @@ readonly PLAIN_TEXT_MODE=0
 readonly TEXT_ENCODING_UTF8=4
 
 # --- App Store ---
-readonly UPDATE_CHECK_DAILY=1
 readonly AUTO_DOWNLOAD_DISABLED=0
 readonly CRITICAL_UPDATES_AUTO=1
 
@@ -110,9 +109,10 @@ _general_ui() {
 
   # Rebuild the Launch Services database to remove duplicate entries
   # from "Open With" menus across all applications.
-  # shellcheck disable=SC2312
   local -r _lsreg='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister'
-  "${_lsreg}" -r -domain local -domain system -domain user
+  if [[ -x "${_lsreg}" ]]; then
+    "${_lsreg}" -r -domain local -domain system -domain user
+  fi
 
   # Set sidebar icon size to medium (1=small, 2=medium, 3=large)
   defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int "${SIDEBAR_ICON_SIZE_MEDIUM}"
@@ -191,8 +191,15 @@ _screen() {
   printf 'Setting Screen preferences...\n'
 
   # Require password immediately after sleep or screen saver begins
-  defaults write com.apple.screensaver askForPassword -int "${SCREENSAVER_PASSWORD_REQUIRED}"
-  defaults write com.apple.screensaver askForPasswordDelay -int "${SCREENSAVER_PASSWORD_DELAY_IMMEDIATE}"
+  # (Ignored on macOS 14+ where Lock Screen manages this)
+  local macos_major
+  macos_major="$(sw_vers -productVersion | cut -d. -f1)"
+  if (( macos_major < 14 )); then
+    defaults write com.apple.screensaver askForPassword \
+      -int "${SCREENSAVER_PASSWORD_REQUIRED}"
+    defaults write com.apple.screensaver askForPasswordDelay \
+      -int "${SCREENSAVER_PASSWORD_DELAY_IMMEDIATE}"
+  fi
 
   # Save screenshots to Desktop in PNG format, without drop shadow
   defaults write com.apple.screencapture location -string "${HOME}/Desktop"
@@ -361,26 +368,15 @@ _textedit() {
 _app_store() {
   printf 'Setting Mac App Store preferences...\n'
 
-  # Check for updates daily
+  # Enable automatic update checking
   defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
-  defaults write com.apple.SoftwareUpdate ScheduleFrequency -int "${UPDATE_CHECK_DAILY}"
 
   # Auto-install security/critical updates only; leave regular updates manual
-  defaults write com.apple.SoftwareUpdate AutomaticDownload -int "${AUTO_DOWNLOAD_DISABLED}"
-  defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int "${CRITICAL_UPDATES_AUTO}"
+  defaults write com.apple.SoftwareUpdate AutomaticDownload \
+    -int "${AUTO_DOWNLOAD_DISABLED}"
+  defaults write com.apple.SoftwareUpdate CriticalUpdateInstall \
+    -int "${CRITICAL_UPDATES_AUTO}"
   defaults write com.apple.commerce AutoUpdate -bool false
-}
-
-# -----------------------------------------------------------------------------
-# Photos
-# -----------------------------------------------------------------------------
-
-# Disable Photos auto-launch when devices are connected.
-_photos() {
-  printf 'Setting Photos preferences...\n'
-
-  # Prevent Photos from opening automatically when devices are plugged in
-  defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 }
 
 # -----------------------------------------------------------------------------
@@ -414,7 +410,6 @@ _restart_apps() {
     "Dock" \
     "Finder" \
     "Messages" \
-    "Photos" \
     "SystemUIServer" \
     "Terminal"; do
     if ! killall "${app}" 2>/dev/null; then
@@ -445,7 +440,6 @@ main() {
   _time_machine
   _textedit
   _app_store
-  _photos
   _messages
   _restart_apps
 
