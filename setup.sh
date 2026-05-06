@@ -656,7 +656,9 @@ _resolve_conflict() {
 
   local canonical
   canonical="$(cd "$(dirname "${target}")" 2>/dev/null && pwd -P)/$(basename "${target}")" || true
-  if [[ -z "${canonical}" || "${canonical}" != "${HOME}"/* ]]; then
+  local canonical_home
+  canonical_home="$(cd "${HOME}" 2>/dev/null && pwd -P)" || true
+  if [[ -z "${canonical}" || "${canonical}" != "${canonical_home}"/* ]]; then
     log_err "Refusing to remove path that resolves outside HOME: ${target}"
     return 1
   fi

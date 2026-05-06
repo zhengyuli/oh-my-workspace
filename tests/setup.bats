@@ -170,8 +170,7 @@ load setup-helper
 # =============================================================================
 
 @test "is_linked: returns 0 when directory symlink exists" {
-  _source_setup
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "test" > "${pkg_dir}/config"
@@ -187,8 +186,7 @@ load setup-helper
 }
 
 @test "is_linked: returns 1 when symlink is missing" {
-  _source_setup
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "test" > "${pkg_dir}/config"
@@ -296,8 +294,7 @@ load setup-helper
 }
 
 @test "is_linked: file-level mapping (starship)" {
-  _source_setup
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/starship/starship.toml"
   local target="${HOME}/.config/starship.toml"
   mkdir -p "$(dirname "${src}")" "$(dirname "${target}")"
@@ -312,9 +309,8 @@ load setup-helper
 # =============================================================================
 
 @test "_create_link: creates symlink" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/git/config"
   local dest="${HOME}/.config/git/config"
   mkdir -p "$(dirname "${src}")"
@@ -325,9 +321,8 @@ load setup-helper
 }
 
 @test "_create_link: skips when symlink already correct" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/git/config"
   local dest="${HOME}/.config/git/config"
   mkdir -p "$(dirname "${src}")" "$(dirname "${dest}")"
@@ -339,9 +334,8 @@ load setup-helper
 }
 
 @test "_create_link: force replaces existing symlink" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/git/config"
   local dest="${HOME}/.config/git/config"
   mkdir -p "$(dirname "${src}")" "$(dirname "${dest}")"
@@ -353,9 +347,8 @@ load setup-helper
 }
 
 @test "_create_link: dry-run does not create symlink" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=true
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/git/config"
   local dest="${HOME}/.config/git/config"
   mkdir -p "$(dirname "${src}")"
@@ -367,9 +360,8 @@ load setup-helper
 }
 
 @test "_create_link: creates parent directories" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/git/config"
   local dest="${HOME}/.config/deep/nested/dir/config"
   mkdir -p "$(dirname "${src}")"
@@ -384,9 +376,8 @@ load setup-helper
 # =============================================================================
 
 @test "link_package: creates directory symlink" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "content" > "${pkg_dir}/config"
@@ -396,9 +387,8 @@ load setup-helper
 }
 
 @test "link_package: idempotent when already linked" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "content" > "${pkg_dir}/config"
@@ -409,9 +399,8 @@ load setup-helper
 }
 
 @test "relink_package: replaces existing symlink" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}" "${HOME}/.config"
   echo "content" > "${pkg_dir}/config"
@@ -422,9 +411,8 @@ load setup-helper
 }
 
 @test "unlink_package: removes directory symlink" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "content" > "${pkg_dir}/config"
@@ -434,9 +422,8 @@ load setup-helper
 }
 
 @test "unlink_package: cleans empty parent directories" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/starship/starship.toml"
   local dest="${HOME}/.config/starship.toml"
   mkdir -p "$(dirname "${src}")" "$(dirname "${dest}")"
@@ -447,9 +434,8 @@ load setup-helper
 }
 
 @test "unlink_package: skips symlinks owned by others" {
-  _source_setup
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   dry_run=false
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}" "${HOME}/.config"
   echo "content" > "${pkg_dir}/config"
@@ -567,8 +553,7 @@ load setup-helper
 # =============================================================================
 
 @test "cmd_status: lists all packages" {
-  _source_setup
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   run cmd_status
   [[ "$status" -eq 0 ]]
   [[ "$output" == *"Prerequisites"* ]]
@@ -576,8 +561,7 @@ load setup-helper
 }
 
 @test "cmd_status: filters to specific package" {
-  _source_setup
-  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
   run cmd_status "zsh"
   [[ "$status" -eq 0 ]]
   [[ "$output" == *"shell/zsh"* ]]

@@ -1,9 +1,14 @@
 # test_helper.bash — shared BATS setup/teardown
 
+# Source setup.sh with an optional workspace directory override.
+# Usage:
+#   _source_setup                   # Uses real repo as workspace
+#   _source_setup "/tmp/workspace"  # Uses custom workspace (for isolation)
 _source_setup() {
-  export WORKSPACE_DIR="${BATS_TEST_DIRNAME}/.."
+  local ws="${1:-${BATS_TEST_DIRNAME}/..}"
+  export WORKSPACE_DIR="${ws}"
   export BREWFILE="${WORKSPACE_DIR}/pkg-manager/homebrew/Brewfile"
-  source "${WORKSPACE_DIR}/setup.sh"
+  source "${BATS_TEST_DIRNAME}/../setup.sh"
 }
 
 setup() {
