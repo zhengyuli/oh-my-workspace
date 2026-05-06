@@ -1,20 +1,27 @@
 # 70-tools.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+#
 # =============================================================================
 # Tool Shell Integrations - Completions, shell hooks, and git wrapper
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: tools, bun, uv, fzf, zoxide, integration
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 70 (after 60-keybinds.zsh, before 99-local.zsh)
+# History:
+#   2026-03-20 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Prerequisites:
-#   - compinit (30-completion.zsh), Zinit (40-plugins.zsh)
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 70 (after 60-keybinds.zsh, before 99-local.zsh)
 #
-# Do NOT add: env vars, aliases
-#             → Env vars in 00-env.zsh
-#             → Aliases in 20-aliases.zsh
+#   Prerequisites:
+#     - compinit (30-completion.zsh), Zinit (40-plugins.zsh)
+#
+#   Do NOT add: env vars, aliases
+#               → Env vars in 00-env.zsh
+#               → Aliases in 20-aliases.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------

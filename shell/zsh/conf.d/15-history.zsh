@@ -1,19 +1,26 @@
 # 15-history.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-17 00:00:00 Tuesday by zhengyu.li>
+#
 # =============================================================================
 # History Configuration - Size limits and behavior options
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: history, histsize, savehist, zsh
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 15 (after 10-options.zsh, before 20-aliases.zsh)
+# History:
+#   2026-03-17 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Prerequisites:
-#   - HISTFILE is set in 00-env.zsh ($XDG_STATE_HOME/zsh/history)
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 15 (after 10-options.zsh, before 20-aliases.zsh)
 #
-# Do NOT add: HISTFILE path
-#             → Put this in 00-env.zsh (environment variables)
+#   Prerequisites:
+#     - HISTFILE is set in 00-env.zsh ($XDG_STATE_HOME/zsh/history)
+#
+#   Do NOT add: HISTFILE path
+#               → Put this in 00-env.zsh (environment variables)
 # =============================================================================
 
 # -----------------------------------------------------------------------------

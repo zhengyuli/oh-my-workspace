@@ -1,17 +1,24 @@
 # 20-aliases.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-04-07 07:12:22 Tuesday by zhengyu.li>
+#
 # =============================================================================
 # Command Aliases - File, directory, editor, and utility shortcuts
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: aliases, ls, grep, editor, shortcuts
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 20 (after 15-history.zsh, before 30-completion.zsh)
+# History:
+#   2026-04-07 07:12 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Do NOT add: functions, environment variables, rarely used aliases
-#             → Put functions in functions/ directory (autoloaded)
-#             → Put env vars in 00-env.zsh
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 20 (after 15-history.zsh, before 30-completion.zsh)
+#
+#   Do NOT add: functions, environment variables, rarely used aliases
+#               → Put functions in functions/ directory (autoloaded)
+#               → Put env vars in 00-env.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------

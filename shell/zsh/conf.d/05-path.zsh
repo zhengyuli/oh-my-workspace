@@ -1,21 +1,28 @@
 # 05-path.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-04-04 13:09:09 Saturday by zhengyu.li>
+#
 # =============================================================================
 # PATH / FPATH / MANPATH / INFOPATH Management - Deduplicated search paths
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: path, fpath, manpath, infopath, deduplication
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zprofile (login) and .zshrc (interactive)
-# Load order: 05 (after 00-env.zsh sets tool paths)
+# History:
+#   2026-04-04 13:09 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Prerequisites:
-#   - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL, XDG_* variables
+# Commentary:
+#   Loaded by: .zprofile (login) and .zshrc (interactive)
+#   Load order: 05 (after 00-env.zsh sets tool paths)
 #
-# Do NOT add: tool initialization, aliases, environment variables
-#             → Tool initialization in 70-tools.zsh
-#             → Aliases in 20-aliases.zsh
-#             → Environment variables in 00-env.zsh
+#   Prerequisites:
+#     - 00-env.zsh must set: CARGO_HOME, GOPATH, BUN_INSTALL, XDG_* variables
+#
+#   Do NOT add: tool initialization, aliases, environment variables
+#               → Tool initialization in 70-tools.zsh
+#               → Aliases in 20-aliases.zsh
+#               → Environment variables in 00-env.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------

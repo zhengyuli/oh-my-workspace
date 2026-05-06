@@ -1,20 +1,27 @@
 # 00-env.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-04-02 12:01:02 Thursday by zhengyu.li>
+#
 # =============================================================================
 # Core Environment Variables - Editor, pager, locale, tool paths
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: env, xdg, editor, pager, locale
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zprofile (login), .zshrc (interactive)
-# Load order: 00 (first conf.d module)
+# History:
+#   2026-04-02 12:01 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Prerequisites:
-#   - XDG_* variables must be set in ~/.zshenv (loaded before this file)
+# Commentary:
+#   Loaded by: .zprofile (login), .zshrc (interactive)
+#   Load order: 00 (first conf.d module)
 #
-# Do NOT add: PATH, aliases, functions, tool init
-#             → PATH in 05-path.zsh
-#             → Aliases in 20-aliases.zsh
+#   Prerequisites:
+#     - XDG_* variables must be set in ~/.zshenv (loaded before this file)
+#
+#   Do NOT add: PATH, aliases, functions, tool init
+#               → PATH in 05-path.zsh
+#               → Aliases in 20-aliases.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -61,7 +68,7 @@ if [[ ! -d "$XDG_CACHE_HOME/zsh" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# Build And Development Tools
+# Build and Development Tools
 # -----------------------------------------------------------------------------
 
 # Redirect tool data from ~/.toolname to XDG directories.

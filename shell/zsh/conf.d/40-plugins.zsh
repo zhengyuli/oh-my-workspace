@@ -1,16 +1,23 @@
 # 40-plugins.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-04-07 07:53:36 Tuesday by zhengyu.li>
+#
 # =============================================================================
 # Zinit Plugin Management - Bootstrap, load, and configure plugins
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: zinit, plugins, syntax-highlighting, autosuggestions
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 40 (after 30-completion.zsh, before 50-prompt.zsh)
+# History:
+#   2026-04-07 07:53 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Do NOT add: Tool initialization (pyenv, fnm, etc.)
-#             → Put these in 70-tools.zsh (separate concern)
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 40 (after 30-completion.zsh, before 50-prompt.zsh)
+#
+#   Do NOT add: Tool initialization (pyenv, fnm, etc.)
+#               → Put these in 70-tools.zsh (separate concern)
 # =============================================================================
 
 # -----------------------------------------------------------------------------
