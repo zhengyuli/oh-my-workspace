@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# pre-setup.bats — tests for claude/pre-setup.sh
+# pre-setup.bats — tests for ai-agent/pre-setup.sh
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -8,7 +8,7 @@
 _source_pre_setup() {
   export NO_COLOR=1
   export PATH="${BATS_TEST_DIRNAME}/mocks/pre-setup:${BATS_TEST_DIRNAME}/mocks/setup:${PATH}"
-  source "${BATS_TEST_DIRNAME}/../claude/pre-setup.sh"
+  source "${BATS_TEST_DIRNAME}/../ai-agent/pre-setup.sh"
 }
 
 setup() {

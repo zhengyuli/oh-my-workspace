@@ -59,7 +59,7 @@ oh-my-workspace/
 ├── LICENSE
 ├── README.md
 │
-├── claude/            # Claude Code environment
+├── ai-agent/          # AI coding agent configs (Claude Code, etc.)
 │   └── setup.md       # Setup guide for Claude Code
 │
 ├── docs/              # Documentation
@@ -165,7 +165,7 @@ bash -n setup.sh
 bash -n platform/darwin/defaults.sh
 
 # Bash lint (POSIX-compatible scripts only)
-shellcheck setup.sh claude/pre-setup.sh platform/darwin/defaults.sh
+shellcheck setup.sh ai-agent/pre-setup.sh platform/darwin/defaults.sh
 
 # Zsh syntax check (shellcheck has poor zsh support)
 zsh -n shell/zsh/.config/zsh/conf.d/*.zsh
@@ -187,7 +187,7 @@ This environment uses Zhipu GLM API instead of Anthropic. The following env vars
 
 Model mapping: Haiku → glm-4.5-air, Sonnet → glm-5-turbo, Opus → glm-5.1
 
-See `claude/setup.md` for full environment setup guide.
+See `ai-agent/setup.md` for full environment setup guide.
 
 ## Coding Conventions
 
@@ -207,7 +207,7 @@ Detailed conventions in `.claude/rules/`:
 |-------------------|------------------------------------------|
 | First-time setup  | See Getting Started section above        |
 | Prerequisites     | `brew install stow`                      |
-| Claude Code setup | See `claude/setup.md` (15 plugins, 6 MCP servers, RTK, claude-hud) |
+| Claude Code setup | See `ai-agent/setup.md` (15 plugins, 6 MCP servers, RTK, claude-hud) |
 | Full setup        | `./setup.sh install --all`               |
 | Stow package      | `./setup.sh install <package>`           |
 | Restow            | `./setup.sh install --force <package>`   |

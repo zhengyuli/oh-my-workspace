@@ -145,7 +145,7 @@ with open(sys.argv[1]) as f:
 }
 
 @test "pre-setup.sh passes bash -n syntax check" {
-  run bash -n "${REPO_ROOT}/claude/pre-setup.sh"
+  run bash -n "${REPO_ROOT}/ai-agent/pre-setup.sh"
   (( status == 0 ))
 }
 
