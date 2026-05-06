@@ -579,6 +579,40 @@ declare -A _PKG_FILE_MAP=(
 
 # --- Conflict Resolution ---
 
+# Check recursively if a directory contains only workspace-owned content.
+# A directory is "all ours" if every entry is either a symlink pointing into
+# WORKSPACE_DIR, or a subdirectory that is itself "all ours".
+# Arguments:
+#   $1 - Absolute path of directory to check.
+# Returns:
+#   0 if all contents belong to this workspace, 1 otherwise.
+_dir_all_ours() {
+  local -r dir="$1"
+  local item
+
+  for item in "${dir}"/* "${dir}"/.*; do
+    case "$(basename "${item}")" in
+      .|..) continue ;;
+    esac
+    [[ ! -e "${item}" && ! -L "${item}" ]] && continue
+
+    if [[ -L "${item}" ]]; then
+      local link_target
+      link_target="$(readlink "${item}")"
+      if [[ "${link_target}" != "${WORKSPACE_DIR}"/* ]]; then
+        return 1
+      fi
+    elif [[ -d "${item}" ]]; then
+      if ! _dir_all_ours "${item}"; then
+        return 1
+      fi
+    else
+      return 1
+    fi
+  done
+  return 0
+}
+
 # Resolve a conflicting file before linking.
 # Handles foreign symlinks (remove), missing files (no-op),
 # non-empty dirs (refuse), and regular files (back up to
@@ -626,9 +660,18 @@ _resolve_conflict() {
       return 1
     fi
     if [[ -n "$(ls -A "${target}")" ]]; then
-      log_err "Refusing to remove non-empty directory: ${target}"
-      log_info "Move it aside manually: mv '${target}' '${target}.bak'"
-      return 1
+      # Check if all contents are workspace-owned (symlinks to us or dirs of symlinks)
+      if _dir_all_ours "${target}"; then
+        if "${dry_run}"; then
+          log_info "[dry-run] would replace directory of symlinks: ${target}"
+          return 0
+        fi
+        rm -rf "${target}"
+        return 0
+      fi
+
+      log_warn "Non-empty directory with non-workspace content: ${target}"
+      # Back up the directory (same logic as file backup below)
     fi
   fi
 
@@ -721,51 +764,30 @@ _create_link() {
 #   0 if at least one file found, 1 if package has no linkable files.
 _collect_links() {
   local -r pkg="$1"
-  local -r pkg_abs="${WORKSPACE_DIR}/${pkg}"
   _LINK_SRCS=()
   _LINK_DESTS=()
 
-  local key src_rel src_abs dest
+  local key
 
-  # File-level mappings (highest priority, checked first)
-  for key in "${!_PKG_FILE_MAP[@]}"; do
-    if [[ "${key}" == "${pkg}/"* ]]; then
-      src_abs="${WORKSPACE_DIR}/${key}"
-      if [[ -f "${src_abs}" ]]; then
-        _LINK_SRCS+=("${src_abs}")
-        _LINK_DESTS+=("${_PKG_FILE_MAP[${key}]}")
+  # Directory-level mappings (single symlink per directory)
+  for key in "${!_PKG_DIR_MAP[@]}"; do
+    if [[ "${key}" == "${pkg}" || "${key}" == "${pkg}/"* ]]; then
+      local src_dir="${WORKSPACE_DIR}/${key}"
+      if [[ -d "${src_dir}" ]]; then
+        _LINK_SRCS+=("${src_dir}")
+        _LINK_DESTS+=("${_PKG_DIR_MAP[${key}]}")
       fi
     fi
   done
 
-  # Directory-level mappings
-  for key in "${!_PKG_DIR_MAP[@]}"; do
-    if [[ "${key}" == "${pkg}" || "${key}" == "${pkg}/"* ]]; then
-      local src_dir="${WORKSPACE_DIR}/${key}"
-      local target_dir="${_PKG_DIR_MAP[${key}]}"
-
-      if [[ ! -d "${src_dir}" ]]; then
-        continue
-      fi
-
-      while IFS= read -r src_abs; do
-        # Skip example/template files
-        case "${src_abs}" in
-          *.example) continue ;;
-        esac
-
-        src_rel="${src_abs#${src_dir}/}"
-        dest="${target_dir}/${src_rel}"
-
-        # Skip if already handled by a file-level mapping
-        local file_key="${key}/${src_rel}"
-        if [[ -v _PKG_FILE_MAP["${file_key}"] ]]; then
-          continue
-        fi
-
+  # File-level mappings
+  for key in "${!_PKG_FILE_MAP[@]}"; do
+    if [[ "${key}" == "${pkg}/"* ]]; then
+      local src_abs="${WORKSPACE_DIR}/${key}"
+      if [[ -f "${src_abs}" ]]; then
         _LINK_SRCS+=("${src_abs}")
-        _LINK_DESTS+=("${dest}")
-      done < <(find "${src_dir}" -type f ! -name '*.example' 2>/dev/null | sort)
+        _LINK_DESTS+=("${_PKG_FILE_MAP[${key}]}")
+      fi
     fi
   done
 
@@ -805,7 +827,7 @@ is_linked() {
   return 0
 }
 
-# Link a package: create symlinks for all files.
+# Link a package: create symlinks (directory-level or file-level).
 # Skips if already fully linked (idempotent).
 # Arguments:
 #   $1 - Full package path (e.g., "tool/git").
@@ -887,8 +909,8 @@ relink_package() {
 }
 
 # Unlink a package: remove symlinks pointing to this repo.
-# Only removes symlinks whose target is inside WORKSPACE_DIR.
-# Cleans up empty parent directories afterward.
+# For directory-level links, removes the single directory symlink.
+# For file-level links, removes the file symlink.
 # Arguments:
 #   $1 - Full package path.
 # Returns:
@@ -945,9 +967,9 @@ unlink_package() {
   fi
 
   if "${dry_run}"; then
-    log_info "[dry-run] would unlink ${unlinked} files from ${pkg_base}"
+    log_info "[dry-run] would unlink ${unlinked} links from ${pkg_base}"
   else
-    log_ok "${pkg_base}: unlinked (${unlinked} files)"
+    log_ok "${pkg_base}: unlinked (${unlinked} links)"
   fi
 }
 

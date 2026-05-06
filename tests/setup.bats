@@ -169,16 +169,14 @@ load setup-helper
 # Symlink Engine Tests
 # =============================================================================
 
-@test "is_linked: returns 0 when all symlinks exist" {
+@test "is_linked: returns 0 when directory symlink exists" {
   _source_setup
-  # Create a package dir with a file and its expected symlink target
+  # Create a package dir with a file
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "test" > "${pkg_dir}/config"
-  # Create the symlink at target
-  local target_dir="${XDG_CONFIG_HOME}/git"
-  mkdir -p "${target_dir}"
-  ln -sf "${pkg_dir}/config" "${target_dir}/config"
+  # Create the directory-level symlink at target
+  ln -sf "${pkg_dir}" "${XDG_CONFIG_HOME}/git"
   run is_linked "tool/git"
   [[ "$status" -eq 0 ]]
 }
@@ -189,7 +187,7 @@ load setup-helper
   [[ "$status" -eq 1 ]]
 }
 
-@test "is_linked: returns 1 when symlinks are missing" {
+@test "is_linked: returns 1 when symlink is missing" {
   _source_setup
   # Create a package dir with a file but no symlink at target
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
