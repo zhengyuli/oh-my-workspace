@@ -71,11 +71,15 @@ with open(sys.argv[1], 'rb') as f:
 }
 
 @test "yazi/catppuccin-mocha flavor.toml is valid TOML" {
+  local flavor_file="${REPO_ROOT}/tool/yazi/flavors/catppuccin-mocha.yazi/flavor.toml"
+  if [[ ! -f "${flavor_file}" ]]; then
+    skip "flavor not installed (run: ya pack -i)"
+  fi
   run python3 -c "
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/tool/yazi/flavors/catppuccin-mocha.yazi/flavor.toml"
+" "${flavor_file}"
   (( status == 0 ))
 }
 
