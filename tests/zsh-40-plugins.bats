@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/40-plugins.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/40-plugins.zsh"
 
 @test "ZINIT_INITIALIZED guard prevents double load" {
   run zsh -c "

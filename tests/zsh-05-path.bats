@@ -11,7 +11,7 @@ setup() {
 }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/05-path.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/05-path.zsh"
 
 _run_path() {
   local expr="$1"

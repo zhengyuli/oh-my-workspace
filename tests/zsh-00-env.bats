@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/00-env.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/00-env.zsh"
 
 @test "EDITOR set to nvim" {
   run_zsh "$MODULE" 'print $EDITOR'

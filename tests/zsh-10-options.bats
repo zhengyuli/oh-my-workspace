@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/10-options.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/10-options.zsh"
 
 @test "AUTO_CD enabled" {
   run_zsh "$MODULE" '[[ -o AUTO_CD ]]'

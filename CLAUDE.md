@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-macOS dotfiles repository using GNU Stow for XDG-compliant configuration management.
+macOS dotfiles repository with a built-in symlink engine for XDG-compliant configuration management.
 
 ## Project Scope
 
@@ -46,7 +46,7 @@ Organized by category in repository root:
 - `prog-lang/` — Language runtimes (python/uv, typescript/bun)
 - `platform/` — Platform-specific configs (darwin)
 
-Files follow GNU Stow convention: placed as they appear in `$HOME`.
+Files map directly to their targets under `$XDG_CONFIG_HOME` via the built-in symlink engine.
 
 **XDG Base Directory compliance**: Use `$XDG_CONFIG_HOME` (`~/.config`), `$XDG_DATA_HOME`, `$XDG_CACHE_HOME`, `$XDG_STATE_HOME` for all paths — never hardcode user-specific directories.
 
@@ -103,10 +103,10 @@ oh-my-workspace/
 # Full setup (prerequisites + packages + symlinks)
 ./setup.sh install --all
 
-# Stow specific packages
+# Link specific packages
 ./setup.sh install zsh git vim
 
-# Restow after changes
+# Relink after changes
 ./setup.sh install --force zsh
 
 # Preview changes
@@ -140,7 +140,7 @@ bats --verbose-run tests/
 **Key files**:
 - `tests/zsh-helper.bash` — shared utilities (`run_zsh`, `setup_zsh_env`, `teardown_zsh_env`)
 - `tests/mocks/zsh/` — mock scripts for zsh tests (brew, starship, fzf, uv, zoxide, defaults, etc.)
-- `tests/mocks/setup/` — mock scripts for setup.sh tests (curl, stow, uname, etc.)
+- `tests/mocks/setup/` — mock scripts for setup.sh tests (curl, uname, etc.)
 - `tests/mocks/pre-setup/` — mock scripts for pre-setup.sh tests (bunx, claude, jq, sw_vers)
 
 **Adding tests for a new zsh module**:
@@ -168,7 +168,7 @@ bash -n platform/darwin/defaults.sh
 shellcheck setup.sh ai-agent/pre-setup.sh platform/darwin/defaults.sh
 
 # Zsh syntax check (shellcheck has poor zsh support)
-zsh -n shell/zsh/.config/zsh/conf.d/*.zsh
+zsh -n shell/zsh/zsh/conf.d/*.zsh
 
 # TOML validation (Python 3.11+)
 python3 -c "import tomllib; tomllib.load(open('file.toml','rb'))"
@@ -206,14 +206,14 @@ Detailed conventions in `.claude/rules/`:
 | Task              | Command                                  |
 |-------------------|------------------------------------------|
 | First-time setup  | See Getting Started section above        |
-| Prerequisites     | `brew install stow`                      |
+| Prerequisites     | `brew install bash`                      |
 | Claude Code setup | See `ai-agent/setup.md` (15 plugins, 6 MCP servers, RTK, claude-hud) |
 | Full setup        | `./setup.sh install --all`               |
-| Stow package      | `./setup.sh install <package>`           |
-| Restow            | `./setup.sh install --force <package>`   |
+| Link package      | `./setup.sh install <package>`           |
+| Relink            | `./setup.sh install --force <package>`   |
 | Preview           | `./setup.sh install --dry-run <package>` |
 | Status            | `./setup.sh status`                      |
-| Unstow            | `./setup.sh uninstall <package>`         |
+| Unlink            | `./setup.sh uninstall <package>`         |
 | Run all tests     | `bats tests/`                            |
 | Run one test file | `bats tests/<file>.bats`                 |
 
@@ -221,16 +221,17 @@ Detailed conventions in `.claude/rules/`:
 
 ### Common Issues
 
-**Stow conflict: file already exists**
+**Link conflict: file already exists**
 
-GNU Stow refuses to create a symlink if the target already exists as a real file.
+The symlink engine refuses to overwrite an existing real file. Use `--force` to back it up automatically, or remove it manually:
 
 ```bash
-# Backup and remove conflicting file
+# Option 1: force relink (backs up to *.pre-link-backup)
+./setup.sh install --force zsh
+
+# Option 2: manual backup and remove
 cp ~/.zshrc ~/.zshrc.bak
 rm ~/.zshrc
-
-# Now stow succeeds
 ./setup.sh install zsh
 ```
 
