@@ -694,7 +694,19 @@ _create_link() {
     return 0
   fi
 
-  mkdir -p "$(dirname "${dest}")"
+  # Remove broken directory-level symlinks blocking mkdir (stow migration).
+  local parent
+  parent="$(dirname "${dest}")"
+  local path_component="${parent}"
+  while [[ "${path_component}" != "/" && "${path_component}" != "${HOME}" ]]; do
+    if [[ -L "${path_component}" && ! -e "${path_component}" ]]; then
+      rm -f "${path_component}"
+      break
+    fi
+    path_component="$(dirname "${path_component}")"
+  done
+
+  mkdir -p "${parent}"
   ln -sf "${src}" "${dest}"
 }
 
