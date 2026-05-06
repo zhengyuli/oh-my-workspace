@@ -162,6 +162,14 @@ Each package directory maps directly to its target under `$XDG_CONFIG_HOME` (`~/
 
 ## Shell Architecture
 
+### Zsh Initialization Files
+
+| File | When Loaded | Purpose |
+|------|-------------|---------|
+| `~/.zshenv` | Always (every shell) | Set `ZDOTDIR`, XDG directories |
+| `~/.config/zsh/.zprofile` | Login shells only | Source `conf.d/` modules |
+| `~/.config/zsh/.zshrc` | Interactive shells | Source `conf.d/` modules |
+
 ### Zsh Configuration Loading Order
 
 All Zsh configuration lives under `shell/zsh/conf.d/`. Files load in numeric order:
