@@ -14,10 +14,6 @@ setup() {
   export ORIG_PATH="${PATH}"
   export PATH="${BATS_TEST_DIRNAME}/mocks/setup:${PATH}"
 
-  export MOCK_STOW_LOG="${BATS_TEST_TMPDIR}/stow.log"
-  export MOCK_STOW_OUTPUT=""
-  export MOCK_STOW_STDERR=""
-  export MOCK_STOW_RC=0
   export MOCK_BREW_LOG="${BATS_TEST_TMPDIR}/brew.log"
   export MOCK_BREW_VERSION="4.4.0"
   export MOCK_BREW_BUNDLE_RC=0

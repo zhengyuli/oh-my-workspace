@@ -561,3 +561,85 @@ load setup-helper
   _cleanup
   [[ ! -f "${tmpfile}" ]]
 }
+
+# =============================================================================
+# cmd_status Tests
+# =============================================================================
+
+@test "cmd_status: lists all packages" {
+  _source_setup
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  run cmd_status
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"Prerequisites"* ]]
+  [[ "$output" == *"Packages"* ]]
+}
+
+@test "cmd_status: filters to specific package" {
+  _source_setup
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  run cmd_status "zsh"
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"shell/zsh"* ]]
+}
+
+@test "cmd_status: rejects invalid package" {
+  _source_setup
+  run cmd_status "nonexistent"
+  [[ "$status" -eq 1 ]]
+}
+
+# =============================================================================
+# cmd_uninstall Tests
+# =============================================================================
+
+@test "cmd_uninstall: no args shows error" {
+  _source_setup
+  run cmd_uninstall
+  [[ "$status" -eq 1 ]]
+  [[ "$output" == *"No packages specified"* ]]
+}
+
+@test "cmd_uninstall: --all and pkg name exits 2" {
+  _source_setup
+  run cmd_uninstall --all zsh
+  [[ "$status" -eq 2 ]]
+}
+
+# =============================================================================
+# _health_tool_for Tests
+# =============================================================================
+
+@test "_health_tool_for: known package returns descriptor" {
+  _source_setup
+  run _health_tool_for "tool/git"
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == "git:git" ]]
+}
+
+@test "_health_tool_for: unknown package returns 1" {
+  _source_setup
+  run _health_tool_for "unknown/pkg"
+  [[ "$status" -eq 1 ]]
+}
+
+@test "_health_tool_for: ghostty includes fallback path" {
+  _source_setup
+  run _health_tool_for "terminal/ghostty"
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"/Applications/Ghostty.app"* ]]
+}
+
+# =============================================================================
+# cmd_help Tests
+# =============================================================================
+
+@test "cmd_help: shows usage information" {
+  _source_setup
+  run cmd_help
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"Usage"* ]]
+  [[ "$output" == *"install"* ]]
+  [[ "$output" == *"uninstall"* ]]
+  [[ "$output" == *"status"* ]]
+}
