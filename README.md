@@ -121,7 +121,7 @@ oh-my-workspace/
 ├── README.md
 │
 ├── ai-agent/             # AI coding agent configs
-│   └── setup.md          # Setup guide for Claude Code
+│   └── claude/           # Claude Code setup (pre-setup.sh, setup.md)
 │
 ├── docs/                 # Documentation
 │
@@ -526,7 +526,7 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 | File | Tests | Module |
 |------|-------|--------|
 | `setup.bats` | 36 | `setup.sh` (stow operations, validation) |
-| `pre-setup.bats` | 42 | `ai-agent/pre-setup.sh` (Claude Code setup) |
+| `pre-setup.bats` | 42 | `ai-agent/claude/pre-setup.sh` (Claude Code setup) |
 | `zsh-env.bats` | 6 | `.zshenv` (XDG bootstrap) |
 | `zsh-00-env.bats` | 14 | `00-env.zsh` (environment variables) |
 | `zsh-05-path.bats` | 5 | `05-path.zsh` (PATH/FPATH) |
