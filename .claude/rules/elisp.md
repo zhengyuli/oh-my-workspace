@@ -1,6 +1,6 @@
 ---
 paths:
-  - "editor/emacs/.config/emacs/**/*.el"
+  - "editor/emacs/**/*.el"
 ---
 
 # Emacs Lisp Conventions
