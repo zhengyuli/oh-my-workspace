@@ -1,1 +1,241 @@
-test
+# config -*- mode: gitconfig; -*-
+# Time-stamp: <2026-03-28 00:00:00 Saturday by zhengyu.li>
+#
+# =============================================================================
+# Git Configuration
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: git, vcs, config
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-28 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Global Git configuration for all repositories. User identity is
+#   intentionally omitted; set machine-specific config in config.local.
+#   Local override: ~/.config/git/config.local (identity, proxy, etc.)
+#
+# References:
+#   1. Git Config Docs: https://git-scm.com/docs/git-config
+#   2. Julia Evans: https://jvns.ca/blog/2024/02/16/popular-git-config-options/
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Local Overrides
+# -----------------------------------------------------------------------------
+
+# Identity omitted by default; override in ~/.config/git/config.local
+
+[include]
+    path = ~/.config/git/config.local
+
+# -----------------------------------------------------------------------------
+# Core Settings
+# -----------------------------------------------------------------------------
+
+[core]
+    # Use delta for syntax-highlighted, line-numbered diff output
+    pager = delta
+    # Convert CRLF to LF on commit (Unix-style line endings)
+    autocrlf = input
+    # Display non-ASCII filenames correctly (e.g., Chinese characters)
+    quotepath = false
+    # Require exact case matching for reliable cross-platform behavior
+    ignorecase = false
+    # Normalize Unicode filenames on macOS for consistency
+    precomposeunicode = true
+    # Enable parallel index loading for better performance
+    preloadindex = true
+    # Cache untracked files for faster git status
+    untrackedCache = true
+    # macOS FSMonitor daemon for faster status (requires Git 2.37+)
+    fsmonitor = true
+    # Global ignore patterns (OS/editor artifacts; repo-specific in .gitignore)
+    excludesfile = ~/.config/git/ignore
+
+# -----------------------------------------------------------------------------
+# Interactive Settings
+# -----------------------------------------------------------------------------
+
+[interactive]
+    # Pipe interactive diff through delta for consistent highlighting
+    diffFilter = delta --color-only
+
+# -----------------------------------------------------------------------------
+# Delta Settings
+# -----------------------------------------------------------------------------
+
+[delta]
+    # --- Navigation ---
+    # Enable n/N keybindings to navigate between diff hunks
+    navigate = true
+
+    # --- Display ---
+    # Show line numbers alongside diff for precise reference
+    line-numbers = true
+    # Unified view: single column (side-by-side is hard to read in narrow
+    # terminals and doesn't integrate well with delta's syntax highlighting)
+    side-by-side = false
+    # Explicitly set dark background (matches Dracula terminal theme)
+    light = false
+
+# -----------------------------------------------------------------------------
+# Feature Flags
+# -----------------------------------------------------------------------------
+
+[feature]
+    # Optimize for repositories with many files
+    manyFiles = true
+
+# -----------------------------------------------------------------------------
+# Help Settings
+# -----------------------------------------------------------------------------
+
+[help]
+    # Confirm before running autocorrected command (Git 2.36+)
+    autocorrect = prompt
+
+# -----------------------------------------------------------------------------
+# Init Settings
+# -----------------------------------------------------------------------------
+
+[init]
+    defaultBranch = main
+
+# -----------------------------------------------------------------------------
+# Alias Definitions
+# -----------------------------------------------------------------------------
+
+[alias]
+    # Set user identity in config.local (git set-user "Name" "email")
+    set-user = "!f(){ g=~/.config/git/config.local;git config -f \"$g\" user.name \"$1\";git config -f \"$g\" user.email \"$2\";};f"
+    whoami = "!git config user.name && git config user.email"
+
+# -----------------------------------------------------------------------------
+# Color Settings
+# -----------------------------------------------------------------------------
+
+[color]
+    ui = auto
+
+# -----------------------------------------------------------------------------
+# Branch Settings
+# -----------------------------------------------------------------------------
+
+[branch]
+    # Sort branches by most recent commit (newest first)
+    sort = -committerdate
+
+# -----------------------------------------------------------------------------
+# Tag Settings
+# -----------------------------------------------------------------------------
+
+[tag]
+    # Sort tags by semantic version (descending)
+    sort = -version:refname
+
+# -----------------------------------------------------------------------------
+# Column Settings
+# -----------------------------------------------------------------------------
+
+[column]
+    ui = auto
+
+# -----------------------------------------------------------------------------
+# Push & Pull Settings
+# -----------------------------------------------------------------------------
+
+[push]
+    # Only push current branch to its upstream (safest default)
+    default = simple
+    autoSetupRemote = true
+
+[pull]
+    # Rebase instead of merge for cleaner history
+    rebase = true
+
+# -----------------------------------------------------------------------------
+# Fetch Settings
+# -----------------------------------------------------------------------------
+
+[fetch]
+    prune = true
+    # Verify object integrity on fetch (security)
+    fsckobjects = true
+
+# -----------------------------------------------------------------------------
+# Rebase Settings
+# -----------------------------------------------------------------------------
+
+[rebase]
+    # Auto-squash fixup!/squash! commits during interactive rebase
+    autosquash = true
+    # Stash and restore uncommitted changes around rebase
+    autostash = true
+    # Auto-update stacked branch refs (Git 2.38+)
+    updateRefs = true
+
+# -----------------------------------------------------------------------------
+# Rerere
+# -----------------------------------------------------------------------------
+
+# Reuse Recorded Resolution — remember and replay conflict resolutions
+[rerere]
+    enabled = true
+
+# -----------------------------------------------------------------------------
+# Commit Settings
+# -----------------------------------------------------------------------------
+
+[commit]
+    verbose = true
+
+# -----------------------------------------------------------------------------
+# Diff Settings
+# -----------------------------------------------------------------------------
+
+[diff]
+    # Use histogram algorithm (better at handling code moves)
+    algorithm = histogram
+    renames = copies
+    # Highlight relocated code blocks distinctly
+    colorMoved = default
+    mnemonicPrefix = true
+
+# --- Language-Specific Hunk Headers ---
+[diff "golang"]
+    # Go function detection for better diff hunk headers
+    # Matches both top-level functions and methods with receivers
+    xfuncname = "^func[[:space:]]+(\\([^)]+\\)[[:space:]]+)?([^_(]+)"
+
+# -----------------------------------------------------------------------------
+# Merge Settings
+# -----------------------------------------------------------------------------
+
+[merge]
+    # Show base context in conflicts (Git 2.35+)
+    conflictstyle = zdiff3
+    # Use Neovim's built-in 2/3-way diff (falls back to vimdiff if absent)
+    tool = nvimdiff
+
+[mergetool]
+    prompt = false
+
+# -----------------------------------------------------------------------------
+# Transfer Settings
+# -----------------------------------------------------------------------------
+
+# Security: verify object integrity during transfer
+[transfer]
+    fsckobjects = true
+
+# -----------------------------------------------------------------------------
+# Credential Helper
+# -----------------------------------------------------------------------------
+
+# macOS Keychain for credential storage (renamed to
+# apple-credential-osxkeychain in Git 2.42+, alias still works)
+[credential]
+    helper = osxkeychain
