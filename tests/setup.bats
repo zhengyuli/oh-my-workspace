@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bats
 # setup.bats — BATS test suite for setup.sh
 
 load setup-helper
