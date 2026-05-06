@@ -1,7 +1,7 @@
 # zsh_helper.bash — shared utilities for zsh BATS tests
 
 # Root of the zsh config in the dotfiles repo
-ZSH_CONF_DIR="${BATS_TEST_DIRNAME}/../shell/zsh/zsh"
+ZSH_CONF_DIR="${BATS_TEST_DIRNAME}/../shell/zsh"
 
 # Source a zsh module in an isolated environment and evaluate an expression.
 # Usage: run_zsh <module_path> [zsh_expression]

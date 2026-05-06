@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/50-prompt.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/50-prompt.zsh"
 
 @test "starship cache file created" {
   run zsh -c "

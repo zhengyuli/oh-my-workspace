@@ -160,7 +160,7 @@ with open(sys.argv[1]) as f:
 
 @test "all zsh conf.d files pass zsh -n syntax check" {
   local failed=0
-  for f in "${REPO_ROOT}"/shell/zsh/zsh/conf.d/*.zsh; do
+  for f in "${REPO_ROOT}"/shell/zsh/conf.d/*.zsh; do
     if ! zsh -n "$f" 2>/dev/null; then
       echo "FAIL: $f" >&2
       failed=1
