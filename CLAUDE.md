@@ -39,7 +39,7 @@ For new users setting up the dotfiles repository:
 ### Package Structure
 
 Organized by category in repository root:
-- `shell/` — Shell configs (zsh, starship)
+- `shell/` — Shell configs (zsh)
 - `editor/` — Text editors (vim, emacs)
 - `term/` — Terminal emulators (ghostty)
 - `tool/` — CLI utilities (git, lazygit, ripgrep, yazi)
@@ -70,7 +70,6 @@ oh-my-workspace/
 │   └── *.bats        # Test files (16 files)
 │
 ├── shell/             # Shell configurations
-│   ├── starship/      # Starship prompt config (~/.config/starship.toml)
 │   └── zsh/           # Zsh config (~/.config/zsh/, ~/.zshenv)
 │
 ├── editor/            # Text editors
@@ -84,6 +83,7 @@ oh-my-workspace/
 │   ├── git/           # Git config (~/.config/git/)
 │   ├── lazygit/       # Lazygit config (~/.config/lazygit/)
 │   ├── ripgrep/       # Ripgrep config (~/.config/ripgrep/)
+│   ├── starship/      # Starship prompt (~/.config/starship.toml)
 │   └── yazi/          # Yazi file manager (~/.config/yazi/)
 │
 ├── lang/              # Language runtimes

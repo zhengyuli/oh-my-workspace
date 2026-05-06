@@ -133,8 +133,7 @@ oh-my-workspace/
 │   └── *.bats           # Test files (16 files)
 │
 ├── shell/                # Shell configuration
-│   ├── zsh/              # ~/.config/zsh/, ~/.zshenv
-│   └── starship/         # ~/.config/starship.toml
+│   └── zsh/              # ~/.config/zsh/, ~/.zshenv
 │
 ├── editor/               # Text editors
 │   ├── vim/              # ~/.config/vim/
@@ -147,6 +146,7 @@ oh-my-workspace/
 │   ├── git/              # ~/.config/git/
 │   ├── lazygit/          # ~/.config/lazygit/
 │   ├── ripgrep/          # ~/.config/ripgrep/
+│   ├── starship/         # ~/.config/starship.toml
 │   └── yazi/             # ~/.config/yazi/
 │
 ├── lang/                 # Language runtimes
@@ -249,10 +249,10 @@ echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
 
 | Category    | Purpose            | Examples                  |
 |-------------|--------------------|---------------------------|
-| `shell/`    | Shell and prompt   | zsh, starship             |
+| `shell/`    | Shell interpreters | zsh                       |
 | `editor/`   | Text editors       | vim, emacs                |
 | `term/`     | Terminal emulators | ghostty                   |
-| `tool/`     | CLI utilities      | git, ripgrep, yazi        |
+| `tool/`     | CLI utilities      | git, ripgrep, starship, yazi |
 | `lang/`     | Language runtimes  | python/uv, typescript/bun |
 | `platform/` | Platform-specific  | darwin                    |
 

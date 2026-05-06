@@ -43,7 +43,7 @@ readonly MIN_HOMEBREW_MINOR=4
 
 readonly -a PKG_ALL=(
   shell/zsh
-  shell/starship
+  tool/starship
   editor/vim
   editor/emacs
   term/ghostty
@@ -935,7 +935,7 @@ _run_post_install_phase() {
 _health_tool_for() {
   case "$1" in
     shell/zsh) printf 'zsh:zsh' ;;
-    shell/starship) printf 'starship:starship' ;;
+    tool/starship) printf 'starship:starship' ;;
     editor/vim) printf 'vim:vim' ;;
     editor/emacs) printf 'emacs:emacs' ;;
     term/ghostty)
@@ -1225,10 +1225,10 @@ ${_BOLD}Flags:${_RESET}
   --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked/unlinked
 
 ${_BOLD}Packages${_RESET} (base name or full category/name):
-  shell:   zsh  starship
+  shell:   zsh
   editor:  vim  emacs
   term:    ghostty
-  tool:    git  lazygit  ripgrep  yazi
+  tool:    git  lazygit  ripgrep  starship  yazi
   lang:    uv  bun
 
 ${_BOLD}Examples:${_RESET}
