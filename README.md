@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 191](https://img.shields.io/badge/Tests-191%20passing-brightgreen.svg)]()
+[![Tests: 192](https://img.shields.io/badge/Tests-192%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -507,7 +507,7 @@ The repository includes a comprehensive [BATS](https://github.com/bats-core/bats
 ### Running Tests
 
 ```bash
-# Run the full test suite (191 tests)
+# Run the full test suite (192 tests)
 bats tests/
 
 # Run tests for a specific module
