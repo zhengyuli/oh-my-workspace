@@ -164,7 +164,7 @@ Each package directory maps directly to its target under `$XDG_CONFIG_HOME` (`~/
 
 ### Zsh Configuration Loading Order
 
-All Zsh configuration lives under `shell/zsh/zsh/conf.d/`. Files load in numeric order:
+All Zsh configuration lives under `shell/zsh/conf.d/`. Files load in numeric order:
 
 | Range | File | Purpose |
 |-------|------|---------|
