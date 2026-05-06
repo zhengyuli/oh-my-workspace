@@ -125,7 +125,7 @@ oh-my-workspace/
 │
 ├── docs/                 # Documentation
 │
-├── tests/                # BATS test suite (269 tests)
+├── tests/                # BATS test suite (286 tests)
 │   ├── zsh-helper.bash   # Shared zsh test utilities
 │   ├── mocks/            # Mock scripts (setup/, pre-setup/, zsh/, bin/)
 │   └── *.bats           # Test files
@@ -487,7 +487,7 @@ The repository includes a comprehensive [BATS](https://github.com/bats-core/bats
 ### Running Tests
 
 ```bash
-# Run the full test suite (269 tests)
+# Run the full test suite (286 tests)
 bats tests/
 
 # Run tests for a specific module
