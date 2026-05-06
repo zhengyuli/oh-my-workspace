@@ -83,8 +83,58 @@ _run_path() {
   [[ "$output" == *"/.config/zsh/functions"* ]]
 }
 
+@test "FPATH includes custom completions dir" {
+  _run_path 'print -l "${fpath[@]}"'
+  [[ "$output" == *"/.config/zsh/completions"* ]]
+}
+
 @test "autoload registers functions from functions dir" {
   echo 'echo hello' > "${HOME}/.config/zsh/functions/testfunc"
   _run_path 'whence -w testfunc'
   [[ "$output" == *"function"* ]]
+}
+
+@test "CARGO_HOME/bin in PATH when exists" {
+  mkdir -p "${HOME}/.local/share/cargo/bin"
+  _run_path 'print -l "${path[@]}"'
+  [[ "$output" == *"/.local/share/cargo/bin"* ]]
+}
+
+@test "GOPATH/bin in PATH when exists" {
+  mkdir -p "${HOME}/.local/share/go/bin"
+  _run_path 'print -l "${path[@]}"'
+  [[ "$output" == *"/.local/share/go/bin"* ]]
+}
+
+@test "BUN_INSTALL/bin in PATH when exists" {
+  mkdir -p "${HOME}/.local/share/bun/bin"
+  _run_path 'print -l "${path[@]}"'
+  [[ "$output" == *"/.local/share/bun/bin"* ]]
+}
+
+@test "MANPATH includes system man dirs" {
+  _run_path 'print -l "${manpath[@]}"'
+  [[ "$output" == *"/usr/share/man"* ]]
+}
+
+@test "path array is unique typed" {
+  _run_path 'print ${(t)path}'
+  [[ "$output" == *"unique"* ]]
+}
+
+@test "fpath array is unique typed" {
+  _run_path 'print ${(t)fpath}'
+  [[ "$output" == *"unique"* ]]
+}
+
+@test "HOME/.local/bin has highest priority" {
+  mkdir -p "${HOME}/.local/share/cargo/bin"
+  _run_path 'print "${path[1]}"'
+  [[ "$output" == *"/.local/bin" ]]
+}
+
+@test "empty functions dir does not error" {
+  rm -f "${HOME}/.config/zsh/functions/"*
+  _run_path 'true'
+  (( status == 0 ))
 }
