@@ -1091,15 +1091,19 @@ _post_install_yazi() {
     "yazi-rs/flavors:catppuccin-mocha"
   )
 
-  local pkg
+  local pkg output
   for pkg in "${_YAZI_PLUGINS[@]}" "${_YAZI_FLAVORS[@]}"; do
-    if ! ya pack -a "${pkg}" >/dev/null 2>&1; then
+    output="$(ya pkg add "${pkg}" 2>&1)" || {
+      # "already exists" is not a real error — idempotent
+      if [[ "${output}" == *"already exists"* ]]; then
+        continue
+      fi
       log_err "yazi: failed to add ${pkg}"
       return 1
-    fi
+    }
   done
 
-  if ! ya pack -i >/dev/null 2>&1; then
+  if ! ya pkg install >/dev/null 2>&1; then
     log_err "yazi plugin install failed"
     return 1
   fi
