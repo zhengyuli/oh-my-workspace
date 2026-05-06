@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 192](https://img.shields.io/badge/Tests-192%20passing-brightgreen.svg)]()
+[![Tests: 185](https://img.shields.io/badge/Tests-185%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -25,9 +25,9 @@ source ~/.zshenv
 That's it. Your development environment is ready.
 
 **What this does:**
-- Installs Xcode CLI, Homebrew, and GNU Stow
+- Installs Xcode CLI and Homebrew
 - Installs all packages from `Brewfile` (see [Package Reference](#package-reference))
-- Creates symlinks for all dotfiles using GNU Stow
+- Creates symlinks for all dotfiles via a built-in symlink engine
 - Offers to switch your default shell to Zsh
 
 ## Features
@@ -39,8 +39,8 @@ That's it. Your development environment is ready.
 - **Language Runtimes** — Pre-configured for Python (uv), TypeScript (bun), Go, and Rust
 - **Git Workflow** — git + lazygit + git-delta + GPG signing support
 - **One-Command Setup** — `./setup.sh install --all` handles everything
-- **Clean Symlinks** — GNU Stow manages dotfiles without cluttering `$HOME`
-- **Fully Tested** — 165 BATS tests verify all shell modules and setup scripts
+- **Clean Symlinks** — Built-in symlink engine manages dotfiles without cluttering `$HOME`
+- **Fully Tested** — 185 BATS tests verify all shell modules and setup scripts
 
 ## Installation
 
@@ -52,7 +52,6 @@ That's it. Your development environment is ready.
 | Bash 3.2+   | `bash --version`  | —               |
 | Xcode CLI   | `xcode-select -p` | Yes             |
 | Homebrew    | `brew --version`  | Yes             |
-| GNU Stow    | `stow --version`  | Yes             |
 
 ### Full Installation
 
@@ -63,17 +62,16 @@ That's it. Your development environment is ready.
 This command:
 1. Installs Xcode Command Line Tools (prompts for confirmation)
 2. Installs Homebrew (if not present)
-3. Installs GNU Stow via Homebrew
-4. Runs `brew bundle` to install all packages from `Brewfile`
-5. Stows all dotfile packages using GNU Stow
-6. Offers to switch your default shell to Zsh
+3. Runs `brew bundle` to install all packages from `Brewfile`
+4. Creates symlinks for all dotfile packages
+5. Offers to switch your default shell to Zsh
 
 ### Partial Installation
 
 Install specific packages only (prerequisites must already be installed):
 
 ```bash
-# Stow specific packages
+# Link specific packages
 ./setup.sh install zsh git vim
 
 # Preview changes without modifying files
@@ -85,10 +83,10 @@ Install specific packages only (prerequisites must already be installed):
 After adding new dotfiles to a package:
 
 ```bash
-# Restow a specific package to pick up changes
+# Relink a specific package to pick up changes
 ./setup.sh install --force zsh
 
-# Restow everything
+# Relink everything
 ./setup.sh install --force --all
 ```
 
@@ -110,8 +108,8 @@ After adding new dotfiles to a package:
 
 Output shows:
 - Prerequisites status (installed/missing)
-- Which packages are stowed
-- Symlink paths for each stowed package
+- Which packages are linked
+- Symlink paths for each linked package
 
 ## Directory Structure
 
@@ -127,7 +125,7 @@ oh-my-workspace/
 │
 ├── docs/                 # Documentation
 │
-├── tests/                # BATS test suite (183 tests)
+├── tests/                # BATS test suite (185 tests)
 │   ├── zsh-helper.bash   # Shared zsh test utilities
 │   ├── mocks/            # Mock scripts (setup/, pre-setup/, zsh/)
 │   └── *.bats           # Test files (16 files)
@@ -160,15 +158,13 @@ oh-my-workspace/
     └── homebrew/         # Brewfile
 ```
 
-Each package directory follows the [GNU Stow][stow] convention: files are placed as they would appear in `$HOME`.
-
-[stow]: https://www.gnu.org/software/stow/manual/
+Each package directory maps directly to its target under `$XDG_CONFIG_HOME` (`~/.config/`). The built-in symlink engine handles the mapping — no external tools required.
 
 ## Shell Architecture
 
 ### Zsh Configuration Loading Order
 
-All Zsh configuration lives under `shell/zsh/.config/zsh/conf.d/`. Files load in numeric order:
+All Zsh configuration lives under `shell/zsh/zsh/conf.d/`. Files load in numeric order:
 
 | Range | File | Purpose |
 |-------|------|---------|
@@ -233,15 +229,16 @@ zprof                 # add this line
 
 ```bash
 # Create package directory structure
-mkdir -p tool/mytool/.config/mytool
+mkdir -p tool/mytool
 
 # Add your config files
-echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
+echo "my-setting = value" > tool/mytool/config.conf
 
 # Register in setup.sh
 # Add "tool/mytool" to PKG_ALL array
+# Add mapping to _PKG_DIR_MAP in the Symlink Engine section
 
-# Stow the new package
+# Link the new package
 ./setup.sh install mytool
 ```
 
@@ -258,7 +255,7 @@ echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
 
 ### Overriding Defaults
 
-To override a specific config without modifying the stowed file:
+To override a specific config without modifying the linked file:
 
 ```bash
 # Create a local override (not tracked by git)

@@ -12,7 +12,7 @@ REPO_ROOT="${BATS_TEST_DIRNAME}/.."
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/tool/starship/.config/starship.toml"
+" "${REPO_ROOT}/tool/starship/starship.toml"
   (( status == 0 ))
 }
 
@@ -21,7 +21,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/prog-lang/python/uv/.config/uv/uv.toml"
+" "${REPO_ROOT}/prog-lang/python/uv/uv.toml"
   (( status == 0 ))
 }
 
@@ -30,7 +30,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/prog-lang/typescript/bun/.config/.bunfig.toml"
+" "${REPO_ROOT}/prog-lang/typescript/bun/bunfig.toml"
   (( status == 0 ))
 }
 
@@ -39,7 +39,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/tool/yazi/.config/yazi/yazi.toml"
+" "${REPO_ROOT}/tool/yazi/yazi.toml"
   (( status == 0 ))
 }
 
@@ -48,7 +48,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/tool/yazi/.config/yazi/keymap.toml"
+" "${REPO_ROOT}/tool/yazi/keymap.toml"
   (( status == 0 ))
 }
 
@@ -57,7 +57,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/tool/yazi/.config/yazi/theme.toml"
+" "${REPO_ROOT}/tool/yazi/theme.toml"
   (( status == 0 ))
 }
 
@@ -66,7 +66,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/tool/yazi/.config/yazi/package.toml"
+" "${REPO_ROOT}/tool/yazi/package.toml"
   (( status == 0 ))
 }
 
@@ -75,7 +75,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/tool/yazi/.config/yazi/flavors/catppuccin-mocha.yazi/flavor.toml"
+" "${REPO_ROOT}/tool/yazi/flavors/catppuccin-mocha.yazi/flavor.toml"
   (( status == 0 ))
 }
 
@@ -88,7 +88,7 @@ with open(sys.argv[1], 'rb') as f:
 import yaml, sys
 with open(sys.argv[1]) as f:
     yaml.safe_load(f)
-" "${REPO_ROOT}/tool/lazygit/.config/lazygit/config.yml"
+" "${REPO_ROOT}/tool/lazygit/config.yml"
   (( status == 0 ))
 }
 
@@ -97,17 +97,17 @@ with open(sys.argv[1]) as f:
 # ---------------------------------------------------------------------------
 
 @test "git/config is parseable by git" {
-  run git config --file "${REPO_ROOT}/tool/git/.config/git/config" --list
+  run git config --file "${REPO_ROOT}/tool/git/config" --list
   (( status == 0 ))
 }
 
 @test "git/config.local is parseable by git" {
-  run git config --file "${REPO_ROOT}/tool/git/.config/git/config.local" --list
+  run git config --file "${REPO_ROOT}/tool/git/config.local" --list
   (( status == 0 ))
 }
 
 @test "git/ignore contains common patterns" {
-  run cat "${REPO_ROOT}/tool/git/.config/git/ignore"
+  run cat "${REPO_ROOT}/tool/git/ignore"
   (( status == 0 ))
   [[ "$output" == *".DS_Store"* ]]
 }
@@ -118,7 +118,7 @@ with open(sys.argv[1]) as f:
 
 @test "ghostty/config has no empty key assignments" {
   # Ghostty uses 'key = value' format. Empty values are invalid.
-  run grep -nE '^[a-z_-]+ *= *$' "${REPO_ROOT}/terminal/ghostty/.config/ghostty/config"
+  run grep -nE '^[a-z_-]+ *= *$' "${REPO_ROOT}/terminal/ghostty/config"
   # grep returns 1 when no matches (good — means no empty assignments)
   (( status == 1 ))
 }
@@ -126,7 +126,7 @@ with open(sys.argv[1]) as f:
 @test "ghostty/config has no duplicate keys (excluding repeatable)" {
   # font-feature and keybind are intentionally repeated (array-like syntax)
   run bash -c "
-    grep -E '^[a-z_-]+ *=' '${REPO_ROOT}/terminal/ghostty/.config/ghostty/config' |
+    grep -E '^[a-z_-]+ *=' '${REPO_ROOT}/terminal/ghostty/config' |
     sed 's/ *=.*//' |
     grep -v -E '^(keybind|font-feature|palette)$' |
     sort |
@@ -156,7 +156,7 @@ with open(sys.argv[1]) as f:
 
 @test "all zsh conf.d files pass zsh -n syntax check" {
   local failed=0
-  for f in "${REPO_ROOT}"/shell/zsh/.config/zsh/conf.d/*.zsh; do
+  for f in "${REPO_ROOT}"/shell/zsh/zsh/conf.d/*.zsh; do
     if ! zsh -n "$f" 2>/dev/null; then
       echo "FAIL: $f" >&2
       failed=1

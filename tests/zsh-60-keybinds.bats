@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/60-keybinds.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/60-keybinds.zsh"
 
 _run_keys() {
   local expr="$1"

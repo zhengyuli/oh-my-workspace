@@ -1,12 +1,12 @@
 #!/usr/bin/env bats
-# zsh-env.bats — tests for shell/zsh/.zshenv
+# zsh-env.bats — tests for shell/zsh/zshenv
 
 load zsh-helper
 
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.zshenv"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zshenv"
 
 @test "XDG_CONFIG_HOME defaults to HOME/.config" {
   run zsh -c "

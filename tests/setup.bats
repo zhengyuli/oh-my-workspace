@@ -31,12 +31,6 @@ load setup-helper
   [[ "$output" == "uv" ]]
 }
 
-@test "pkg_stow_dir: shell/zsh → WORKSPACE_DIR/shell" {
-  _source_setup
-  run pkg_stow_dir "shell/zsh"
-  [[ "$output" == "${WORKSPACE_DIR}/shell" ]]
-}
-
 @test "_is_valid_pkg: shell/zsh returns 0" {
   _source_setup
   run _is_valid_pkg "shell/zsh"
@@ -172,34 +166,36 @@ load setup-helper
 }
 
 # =============================================================================
-# Stow Engine Tests
+# Symlink Engine Tests
 # =============================================================================
 
-@test "is_stowed: returns 0 when pkg is fully stowed" {
+@test "is_linked: returns 0 when all symlinks exist" {
   _source_setup
-  # Create the package directory with a file
-  local stow_dir="${WORKSPACE_DIR}/shell"
-  mkdir -p "${stow_dir}/zsh/.config/zsh"
-  touch "${stow_dir}/zsh/.config/zsh/conf"
-  # Mock stow outputs no LINK lines (package already stowed)
-  export MOCK_STOW_OUTPUT=""
-  run is_stowed "shell/zsh"
+  # Create a package dir with a file and its expected symlink target
+  local pkg_dir="${WORKSPACE_DIR}/tool/git"
+  mkdir -p "${pkg_dir}"
+  echo "test" > "${pkg_dir}/config"
+  # Create the symlink at target
+  local target_dir="${XDG_CONFIG_HOME}/git"
+  mkdir -p "${target_dir}"
+  ln -sf "${pkg_dir}/config" "${target_dir}/config"
+  run is_linked "tool/git"
   [[ "$status" -eq 0 ]]
 }
 
-@test "is_stowed: returns 1 for nonexistent package dir" {
+@test "is_linked: returns 1 for nonexistent package dir" {
   _source_setup
-  run is_stowed "shell/nonexistent"
+  run is_linked "shell/nonexistent"
   [[ "$status" -eq 1 ]]
 }
 
-@test "is_stowed: returns 1 when stow outputs LINK lines" {
+@test "is_linked: returns 1 when symlinks are missing" {
   _source_setup
-  local stow_dir="${WORKSPACE_DIR}/shell"
-  mkdir -p "${stow_dir}/zsh/.config/zsh"
-  touch "${stow_dir}/zsh/.config/zsh/conf"
-  export MOCK_STOW_OUTPUT="LINK: .config/zsh => ../../shell/zsh/.config/zsh"
-  run is_stowed "shell/zsh"
+  # Create a package dir with a file but no symlink at target
+  local pkg_dir="${WORKSPACE_DIR}/tool/git"
+  mkdir -p "${pkg_dir}"
+  echo "test" > "${pkg_dir}/config"
+  run is_linked "tool/git"
   [[ "$status" -eq 1 ]]
 }
 
@@ -228,7 +224,7 @@ load setup-helper
   echo "content" > "${target}"
   run _resolve_conflict "${target}"
   [[ "$status" -eq 0 ]]
-  [[ -f "${target}.pre-stow-backup" ]]
+  [[ -f "${target}.pre-link-backup" ]]
 }
 
 @test "_resolve_conflict: increments backup suffix" {
@@ -236,10 +232,10 @@ load setup-helper
   dry_run=false
   local target="${HOME}/testfile"
   echo "content" > "${target}"
-  touch "${target}.pre-stow-backup"
+  touch "${target}.pre-link-backup"
   run _resolve_conflict "${target}"
   [[ "$status" -eq 0 ]]
-  [[ -f "${target}.pre-stow-backup.1" ]]
+  [[ -f "${target}.pre-link-backup.1" ]]
 }
 
 @test "_resolve_conflict: refuses non-empty directory" {
@@ -261,7 +257,7 @@ load setup-helper
   run _resolve_conflict "${target}"
   [[ "$status" -eq 0 ]]
   [[ -f "${target}" ]]
-  [[ ! -f "${target}.pre-stow-backup" ]]
+  [[ ! -f "${target}.pre-link-backup" ]]
 }
 
 @test "_resolve_conflict: refuses path traversal via .." {

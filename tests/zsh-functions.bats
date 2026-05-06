@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-FUNC_DIR="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/functions"
+FUNC_DIR="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/functions"
 
 @test "brew-upgrade: calls update, upgrade, cleanup in order" {
   run zsh -c "
