@@ -552,31 +552,62 @@ ensure_prerequisites() {
 # Symlink Engine
 # -----------------------------------------------------------------------------
 
-# --- Package Mapping ---
+# --- Package Link Registry ---
 
-# Directory-level mapping: package path → target directory.
-# Creates a single directory symlink: target → source.
-declare -A _PKG_DIR_MAP=(
-  ["editor/vim"]="${HOME}/.config/vim"
-  ["editor/emacs"]="${HOME}/.config/emacs"
-  ["terminal/ghostty"]="${HOME}/.config/ghostty"
-  ["tool/git"]="${HOME}/.config/git"
-  ["tool/lazygit"]="${HOME}/.config/lazygit"
-  ["tool/ripgrep"]="${HOME}/.config/ripgrep"
-  ["tool/yazi"]="${HOME}/.config/yazi"
-  ["prog-lang/python/uv"]="${HOME}/.config/uv"
-  ["shell/zsh/conf.d"]="${HOME}/.config/zsh/conf.d"
-  ["shell/zsh/functions"]="${HOME}/.config/zsh/functions"
+# Each package declares its links as an array of "type:source:target" entries.
+#   type   = "dir" (directory symlink) or "file" (file symlink)
+#   source = relative path within the package directory ("." for package root)
+#   target = absolute destination path
+#
+# Variable naming: _LINKS_<pkg> where slashes/hyphens become underscores.
+# Engine resolves via nameref: shell/zsh → _LINKS_shell_zsh
+
+readonly -a _LINKS_shell_zsh=(
+  "dir:conf.d:${HOME}/.config/zsh/conf.d"
+  "dir:functions:${HOME}/.config/zsh/functions"
+  "file:zshenv:${HOME}/.zshenv"
+  "file:zshrc:${HOME}/.config/zsh/.zshrc"
+  "file:zprofile:${HOME}/.config/zsh/.zprofile"
 )
 
-# File-level mapping: source path → target path.
-# Creates individual file symlinks with optional name transformation.
-declare -A _PKG_FILE_MAP=(
-  ["shell/zsh/zshenv"]="${HOME}/.zshenv"
-  ["shell/zsh/zshrc"]="${HOME}/.config/zsh/.zshrc"
-  ["shell/zsh/zprofile"]="${HOME}/.config/zsh/.zprofile"
-  ["tool/starship/starship.toml"]="${HOME}/.config/starship.toml"
-  ["prog-lang/typescript/bun/bunfig.toml"]="${HOME}/.config/.bunfig.toml"
+readonly -a _LINKS_tool_starship=(
+  "file:starship.toml:${HOME}/.config/starship.toml"
+)
+
+readonly -a _LINKS_editor_vim=(
+  "dir:.:${HOME}/.config/vim"
+)
+
+readonly -a _LINKS_editor_emacs=(
+  "dir:.:${HOME}/.config/emacs"
+)
+
+readonly -a _LINKS_terminal_ghostty=(
+  "dir:.:${HOME}/.config/ghostty"
+)
+
+readonly -a _LINKS_tool_git=(
+  "dir:.:${HOME}/.config/git"
+)
+
+readonly -a _LINKS_tool_lazygit=(
+  "dir:.:${HOME}/.config/lazygit"
+)
+
+readonly -a _LINKS_tool_ripgrep=(
+  "dir:.:${HOME}/.config/ripgrep"
+)
+
+readonly -a _LINKS_tool_yazi=(
+  "dir:.:${HOME}/.config/yazi"
+)
+
+readonly -a _LINKS_prog_lang_python_uv=(
+  "dir:.:${HOME}/.config/uv"
+)
+
+readonly -a _LINKS_prog_lang_typescript_bun=(
+  "file:bunfig.toml:${HOME}/.config/.bunfig.toml"
 )
 
 # --- Conflict Resolution ---
@@ -755,7 +786,20 @@ _create_link() {
   ln -sf "${src}" "${dest}"
 }
 
-# Collect all linkable files for a package.
+# Resolve the link registry array name for a package.
+# Converts "shell/zsh" → "_LINKS_shell_zsh", "prog-lang/python/uv" → "_LINKS_prog_lang_python_uv".
+# Arguments:
+#   $1 - Package path (e.g., "shell/zsh").
+# Output:
+#   Prints the array variable name.
+_pkg_links_var() {
+  local name="$1"
+  name="${name//\//_}"
+  name="${name//-/_}"
+  printf '_LINKS_%s' "${name}"
+}
+
+# Collect all links for a package from its registry array.
 # Populates two parallel arrays: source paths and dest paths.
 # Arguments:
 #   $1 - Full package path (e.g., "shell/zsh").
@@ -763,34 +807,47 @@ _create_link() {
 #   _LINK_SRCS (write) - Array of absolute source paths.
 #   _LINK_DESTS (write) - Array of absolute destination paths.
 # Returns:
-#   0 if at least one file found, 1 if package has no linkable files.
+#   0 if at least one link found, 1 if package has no registry.
 _collect_links() {
   local -r pkg="$1"
   _LINK_SRCS=()
   _LINK_DESTS=()
 
-  local key
+  local var_name
+  var_name="$(_pkg_links_var "${pkg}")"
 
-  # Directory-level mappings (single symlink per directory)
-  for key in "${!_PKG_DIR_MAP[@]}"; do
-    if [[ "${key}" == "${pkg}" || "${key}" == "${pkg}/"* ]]; then
-      local src_dir="${WORKSPACE_DIR}/${key}"
-      if [[ -d "${src_dir}" ]]; then
-        _LINK_SRCS+=("${src_dir}")
-        _LINK_DESTS+=("${_PKG_DIR_MAP[${key}]}")
-      fi
-    fi
-  done
+  local -n links="${var_name}" 2>/dev/null || return 1
+  if (( ${#links[@]} == 0 )); then
+    return 1
+  fi
 
-  # File-level mappings
-  for key in "${!_PKG_FILE_MAP[@]}"; do
-    if [[ "${key}" == "${pkg}/"* ]]; then
-      local src_abs="${WORKSPACE_DIR}/${key}"
-      if [[ -f "${src_abs}" ]]; then
-        _LINK_SRCS+=("${src_abs}")
-        _LINK_DESTS+=("${_PKG_FILE_MAP[${key}]}")
-      fi
+  local entry type rel_path target src_abs
+  for entry in "${links[@]}"; do
+    type="${entry%%:*}"
+    local rest="${entry#*:}"
+    rel_path="${rest%%:*}"
+    target="${rest#*:}"
+
+    if [[ "${rel_path}" == "." ]]; then
+      src_abs="${WORKSPACE_DIR}/${pkg}"
+    else
+      src_abs="${WORKSPACE_DIR}/${pkg}/${rel_path}"
     fi
+
+    case "${type}" in
+      dir)
+        if [[ -d "${src_abs}" ]]; then
+          _LINK_SRCS+=("${src_abs}")
+          _LINK_DESTS+=("${target}")
+        fi
+        ;;
+      file)
+        if [[ -f "${src_abs}" ]]; then
+          _LINK_SRCS+=("${src_abs}")
+          _LINK_DESTS+=("${target}")
+        fi
+        ;;
+    esac
   done
 
   (( ${#_LINK_SRCS[@]} > 0 ))
