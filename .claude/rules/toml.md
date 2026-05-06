@@ -1,6 +1,6 @@
 ---
 paths:
-  - "shell/starship/**/*.toml"
+  - "tool/starship/**/*.toml"
   - "tool/yazi/**/*.toml"
   - "lang/**/*.toml"
 ---

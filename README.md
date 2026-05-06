@@ -370,7 +370,7 @@ If you're migrating from another dotfiles setup:
 You don't have to use everything. Install only what you need:
 
 ```bash
-# Just the shell setup
+# Shell and prompt setup
 ./setup.sh install zsh starship
 
 # Just git configuration

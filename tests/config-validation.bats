@@ -12,7 +12,7 @@ REPO_ROOT="${BATS_TEST_DIRNAME}/.."
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/shell/starship/.config/starship.toml"
+" "${REPO_ROOT}/tool/starship/.config/starship.toml"
   (( status == 0 ))
 }
 
