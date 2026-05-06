@@ -7,7 +7,7 @@
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
 # Keywords: dotfiles, symlink, homebrew, setup
-# Dependencies: bash 3.2+, macOS
+# Dependencies: bash 4.3+, macOS
 #
 # Copyright (C) 2026 zhengyu li
 #
