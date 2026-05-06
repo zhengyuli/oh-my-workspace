@@ -139,7 +139,7 @@ oh-my-workspace/
 │   ├── vim/              # ~/.config/vim/
 │   └── emacs/            # ~/.config/emacs/
 │
-├── term/                 # Terminal emulators
+├── terminal/             # Terminal emulators
 │   └── ghostty/          # ~/.config/ghostty/
 │
 ├── tool/                 # CLI tools
@@ -149,14 +149,14 @@ oh-my-workspace/
 │   ├── starship/         # ~/.config/starship.toml
 │   └── yazi/             # ~/.config/yazi/
 │
-├── lang/                 # Language runtimes
+├── prog-lang/            # Language runtimes
 │   ├── python/uv/        # ~/.config/uv/
 │   └── typescript/bun/   # ~/.config/bun/
 │
 ├── platform/             # Platform-specific configs
 │   └── darwin/           # Darwin/macOS preferences
 │
-└── pkg/                  # Package management
+└── pkg-manager/          # Package management
     └── homebrew/         # Brewfile
 ```
 
@@ -227,7 +227,7 @@ zprof                 # add this line
    ```
 3. **Remove packages you don't need** — delete directories from `PKG_ALL` in `setup.sh`
 4. **Add your own dotfiles** — create new package directories following the structure
-5. **Customize the Brewfile** — edit `pkg/homebrew/Brewfile` to add/remove packages
+5. **Customize the Brewfile** — edit `pkg-manager/homebrew/Brewfile` to add/remove packages
 
 ### Adding a New Package
 
@@ -251,9 +251,9 @@ echo "my-setting = value" > tool/mytool/.config/mytool/config.conf
 |-------------|--------------------|---------------------------|
 | `shell/`    | Shell interpreters | zsh                       |
 | `editor/`   | Text editors       | vim, emacs                |
-| `term/`     | Terminal emulators | ghostty                   |
+| `terminal/`   | Terminal emulators | ghostty                   |
 | `tool/`     | CLI utilities      | git, ripgrep, starship, yazi |
-| `lang/`     | Language runtimes  | python/uv, typescript/bun |
+| `prog-lang/`  | Language runtimes  | python/uv, typescript/bun |
 | `platform/` | Platform-specific  | darwin                    |
 
 ### Overriding Defaults

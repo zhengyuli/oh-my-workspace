@@ -21,7 +21,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/lang/python/uv/.config/uv/uv.toml"
+" "${REPO_ROOT}/prog-lang/python/uv/.config/uv/uv.toml"
   (( status == 0 ))
 }
 
@@ -30,7 +30,7 @@ with open(sys.argv[1], 'rb') as f:
 import tomllib, sys
 with open(sys.argv[1], 'rb') as f:
     tomllib.load(f)
-" "${REPO_ROOT}/lang/typescript/bun/.config/.bunfig.toml"
+" "${REPO_ROOT}/prog-lang/typescript/bun/.config/.bunfig.toml"
   (( status == 0 ))
 }
 
@@ -118,7 +118,7 @@ with open(sys.argv[1]) as f:
 
 @test "ghostty/config has no empty key assignments" {
   # Ghostty uses 'key = value' format. Empty values are invalid.
-  run grep -nE '^[a-z_-]+ *= *$' "${REPO_ROOT}/term/ghostty/.config/ghostty/config"
+  run grep -nE '^[a-z_-]+ *= *$' "${REPO_ROOT}/terminal/ghostty/.config/ghostty/config"
   # grep returns 1 when no matches (good — means no empty assignments)
   (( status == 1 ))
 }
@@ -126,7 +126,7 @@ with open(sys.argv[1]) as f:
 @test "ghostty/config has no duplicate keys (excluding repeatable)" {
   # font-feature and keybind are intentionally repeated (array-like syntax)
   run bash -c "
-    grep -E '^[a-z_-]+ *=' '${REPO_ROOT}/term/ghostty/.config/ghostty/config' |
+    grep -E '^[a-z_-]+ *=' '${REPO_ROOT}/terminal/ghostty/.config/ghostty/config' |
     sed 's/ *=.*//' |
     grep -v -E '^(keybind|font-feature|palette)$' |
     sort |

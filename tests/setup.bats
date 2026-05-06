@@ -13,10 +13,10 @@ load setup-helper
   [[ "$output" == "shell" ]]
 }
 
-@test "pkg_category: lang/python/uv → lang/python" {
+@test "pkg_category: prog-lang/python/uv → prog-lang/python" {
   _source_setup
-  run pkg_category "lang/python/uv"
-  [[ "$output" == "lang/python" ]]
+  run pkg_category "prog-lang/python/uv"
+  [[ "$output" == "prog-lang/python" ]]
 }
 
 @test "pkg_name: shell/zsh → zsh" {
@@ -25,9 +25,9 @@ load setup-helper
   [[ "$output" == "zsh" ]]
 }
 
-@test "pkg_name: lang/python/uv → uv" {
+@test "pkg_name: prog-lang/python/uv → uv" {
   _source_setup
-  run pkg_name "lang/python/uv"
+  run pkg_name "prog-lang/python/uv"
   [[ "$output" == "uv" ]]
 }
 
