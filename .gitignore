@@ -32,11 +32,36 @@
 **/desktop/
 **/projects
 
+# Emacs native compilation, tree-sitter grammars, package managers
+**/eln-cache/
+**/tree-sitter/
+**/straight/
+**/quelpa/
+
+# Emacs transient state and history files
+**/transient/
+**/recentf
+**/bookmarks
+**/tramp
+**/savehist
+**/places
+**/abbrev_defs
+**/org-id-locations
+**/network-security.data
+**/.mc-lists.el
+**/.last-package-update-day
+**/custom.el
+
+# Emacs miscellaneous runtime directories
+**/games/
+**/request/
+**/snippets/
+
 # VS Code
 .vscode/
 
 # Vim
-# Swap files, undo history, sessions, views
+# Swap files, undo history, sessions, views, plugin directories
 *.swp
 *.swo
 **/viminfo
@@ -44,6 +69,9 @@
 **/session/
 **/view/
 **/spell/
+**/pack/
+**/autoload/plug.vim
+**/.netrwhist
 
 # Claude Code (track rules and project settings, ignore local settings)
 .claude/settings.local.json
@@ -81,9 +109,22 @@
 **/config.local
 **/credentials
 
+# Git recursive symlink artifact (created when tools resolve ~/.config/git/)
+tool/git/git
+
+# Ghostty runtime (downloaded themes)
+**/themes/
+
 # Yazi
 **/plugins/
 **/flavors/
+**/package.toml
+
+# Lazygit (state written to config dir on some systems)
+**/state.yml
+
+# Starship (debug log)
+**/starship.log
 
 # -----------------------------------------------------------------------------
 # Language Runtime Files
@@ -106,6 +147,7 @@ dist-info/
 .coverage
 coverage.xml
 *.cover
+**/uv.lock
 
 # TypeScript/Node
 node_modules/
