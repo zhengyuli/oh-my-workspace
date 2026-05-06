@@ -506,13 +506,7 @@ _run_brew_bundle() {
   return 0
 }
 
-# Configure git clean/smudge filters for yazi package.toml.
-_setup_git_filters() {
-  git config --local filter.yazi-package.clean "sed -e 's/^rev = .*/rev = \"pinned\"/' -e 's/^hash = .*/hash = \"0\"/'"
-  git config --local filter.yazi-package.smudge cat
-  git config --local filter.yazi-package.required true
-  log_ok "Git filter: yazi-package configured"
-}
+
 
 # Install prerequisites: Xcode CLI → Homebrew → git filters.
 # Globals:
@@ -543,9 +537,7 @@ ensure_prerequisites() {
   fi
 
   # --- Git Filters ---
-  if _is_valid_pkg "tool/yazi"; then
-    _setup_git_filters
-  fi
+  # (none currently needed)
 }
 
 # -----------------------------------------------------------------------------
@@ -1075,7 +1067,8 @@ _post_install_shell_zsh() {
 
 # --- Yazi ---
 
-# Install yazi plugins from package.toml.
+# Install yazi plugins via ya pack.
+# Plugin list kept in sync with tool/yazi/init.lua.
 # Returns:
 #   0 on success, 1 on failure, 2 if skipped.
 _post_install_yazi() {
@@ -1087,16 +1080,31 @@ _post_install_yazi() {
     return 2
   fi
 
-  local -r yazi_conf="${XDG_CONFIG_HOME:-$HOME/.config}/yazi"
-  if [[ ! -f "${yazi_conf}/package.toml" ]]; then
-    return 2
-  fi
+  readonly -a _YAZI_PLUGINS=(
+    "yazi-rs/plugins:smart-enter"
+    "yazi-rs/plugins:smart-filter"
+    "yazi-rs/plugins:full-border"
+    "yazi-rs/plugins:toggle-pane"
+    "yazi-rs/plugins:zoom"
+    "yazi-rs/plugins:git"
+  )
+  readonly -a _YAZI_FLAVORS=(
+    "yazi-rs/flavors:catppuccin-mocha"
+  )
 
-  if ya pkg install >/dev/null 2>&1; then
-    return 0
+  local pkg
+  for pkg in "${_YAZI_PLUGINS[@]}" "${_YAZI_FLAVORS[@]}"; do
+    if ! ya pack -a "${pkg}" >/dev/null 2>&1; then
+      log_err "yazi: failed to add ${pkg}"
+      return 1
+    fi
+  done
+
+  if ! ya pack -i >/dev/null 2>&1; then
+    log_err "yazi plugin install failed"
+    return 1
   fi
-  log_err "yazi plugin install failed"
-  return 1
+  return 0
 }
 
 # Execute a hook function and log its result.
