@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/70-tools.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/70-tools.zsh"
 
 # Helper that loads compinit before the module (required by 70-tools)
 _source_with_compinit() {

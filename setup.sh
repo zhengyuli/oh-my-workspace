@@ -555,8 +555,7 @@ ensure_prerequisites() {
 # --- Package Mapping ---
 
 # Directory-level mapping: package path → target directory.
-# All files within the source directory are recursively symlinked
-# into the target directory, preserving relative paths.
+# Creates a single directory symlink: target → source.
 declare -A _PKG_DIR_MAP=(
   ["editor/vim"]="${HOME}/.config/vim"
   ["editor/emacs"]="${HOME}/.config/emacs"
@@ -566,13 +565,16 @@ declare -A _PKG_DIR_MAP=(
   ["tool/ripgrep"]="${HOME}/.config/ripgrep"
   ["tool/yazi"]="${HOME}/.config/yazi"
   ["prog-lang/python/uv"]="${HOME}/.config/uv"
-  ["shell/zsh/zsh"]="${HOME}/.config/zsh"
+  ["shell/zsh/conf.d"]="${HOME}/.config/zsh/conf.d"
+  ["shell/zsh/functions"]="${HOME}/.config/zsh/functions"
 )
 
 # File-level mapping: source path → target path.
-# Takes precedence over directory-level mapping.
+# Creates individual file symlinks with optional name transformation.
 declare -A _PKG_FILE_MAP=(
   ["shell/zsh/zshenv"]="${HOME}/.zshenv"
+  ["shell/zsh/zshrc"]="${HOME}/.config/zsh/.zshrc"
+  ["shell/zsh/zprofile"]="${HOME}/.config/zsh/.zprofile"
   ["tool/starship/starship.toml"]="${HOME}/.config/starship.toml"
   ["prog-lang/typescript/bun/bunfig.toml"]="${HOME}/.config/.bunfig.toml"
 )

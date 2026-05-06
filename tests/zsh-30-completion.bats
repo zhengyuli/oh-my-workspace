@@ -6,7 +6,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/zsh/conf.d/30-completion.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/30-completion.zsh"
 
 _run_comp() {
   local expr="$1"
