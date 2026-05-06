@@ -1,18 +1,25 @@
 # 60-keybinds.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-28 14:45:08 Saturday by zhengyu.li>
+#
 # =============================================================================
 # Key Bindings - Emacs keymap, history, word movement, and widgets
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: keybinds, bindkey, emacs, widgets
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 60 (after 50-prompt.zsh, before 70-tools.zsh)
+# History:
+#   2026-03-28 14:45 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Do NOT add: aliases, plugin key bindings, tool initialization
-#             → Aliases in 20-aliases.zsh
-#             → Plugin key bindings in 40-plugins.zsh (plugin-specific)
-#             → Tool initialization in 70-tools.zsh
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 60 (after 50-prompt.zsh, before 70-tools.zsh)
+#
+#   Do NOT add: aliases, plugin key bindings, tool initialization
+#               → Aliases in 20-aliases.zsh
+#               → Plugin key bindings in 40-plugins.zsh (plugin-specific)
+#               → Tool initialization in 70-tools.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------

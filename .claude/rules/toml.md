@@ -60,11 +60,9 @@ for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 
 **Between `[[array_of_tables]]` entries**: exactly one blank line.
 
-**Within a table** (between key-value pairs): no blank lines. Use a
-comment for logical grouping within a table instead.
-
-**Between logical groups** inside a table: one blank line preceded by
-a comment separator.
+**Within a table**: one blank line between logical groups of related
+keys is allowed for readability.  Two or more consecutive blank lines
+within a table are still prohibited.
 
 **Prohibited**: two or more consecutive blank lines anywhere in the file.
 

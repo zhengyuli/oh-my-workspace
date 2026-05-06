@@ -1,20 +1,27 @@
 # 30-completion.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-20 00:00:00 Friday by zhengyu.li>
+#
 # =============================================================================
 # Completion System - compinit, zstyle, and caching
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: completion, compinit, zstyle, caching
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 30 (after 05-path.zsh sets fpath, before 40-plugins.zsh)
+# History:
+#   2026-03-20 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Prerequisites:
-#   - 05-path.zsh (fpath with completion directories)
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 30 (after 05-path.zsh sets fpath, before 40-plugins.zsh)
 #
-# Do NOT add: custom completion functions, tool init
-#             → Custom functions in completions/
-#             → Tool init in 70-tools.zsh
+#   Prerequisites:
+#     - 05-path.zsh (fpath with completion directories)
+#
+#   Do NOT add: custom completion functions, tool init
+#               → Custom functions in completions/
+#               → Tool init in 70-tools.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------

@@ -1,21 +1,28 @@
 # 99-local.example.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-03-30 13:47:02 Monday by zhengyu.li>
+#
 # =============================================================================
 # Machine-Local Configuration Template - Overrides for specific machines
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: local, template, machine-specific, overrides
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only, loaded last)
-# Load order: 99 (after all other conf.d modules)
+# History:
+#   2026-03-30 13:47 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Usage:
-#   cp 99-local.example.zsh 99-local.zsh
-#   Edit 99-local.zsh with machine-specific settings
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only, loaded last)
+#   Load order: 99 (after all other conf.d modules)
 #
-# Note:
-#   99-local.zsh is listed in .gitignore and must never be committed.
-#   This template file (.example) is committed to the repo as a reference.
+#   Usage:
+#     cp 99-local.example.zsh 99-local.zsh
+#     Edit 99-local.zsh with machine-specific settings
+#
+#   Note:
+#     99-local.zsh is listed in .gitignore and must never be committed.
+#     This template file (.example) is committed to the repo as a reference.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -33,7 +40,7 @@
 # path+=("/opt/custom-tool/bin")
 
 # -----------------------------------------------------------------------------
-# Secrets And API Keys
+# Secrets and API Keys
 # -----------------------------------------------------------------------------
 
 # export GITHUB_TOKEN=""

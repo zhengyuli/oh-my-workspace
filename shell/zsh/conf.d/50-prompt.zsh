@@ -1,20 +1,27 @@
 # 50-prompt.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-04-07 07:15:23 Tuesday by zhengyu.li>
+#
 # =============================================================================
 # Prompt Configuration - Starship primary, vcs_info fallback
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: prompt, starship, vcs_info, PS1
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 50 (after 40-plugins.zsh, before 60-keybinds.zsh)
+# History:
+#   2026-04-07 07:15 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Prerequisites:
-#   - 40-plugins.zsh (Zinit); starship optional (falls back to vcs_info)
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 50 (after 40-plugins.zsh, before 60-keybinds.zsh)
 #
-# Do NOT add: aliases, env vars
-#             → Aliases in 20-aliases.zsh
-#             → Env vars in 00-env.zsh
+#   Prerequisites:
+#     - 40-plugins.zsh (Zinit); starship optional (falls back to vcs_info)
+#
+#   Do NOT add: aliases, env vars
+#               → Aliases in 20-aliases.zsh
+#               → Env vars in 00-env.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------

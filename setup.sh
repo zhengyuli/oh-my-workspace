@@ -614,7 +614,9 @@ _dir_all_ours() {
     case "$(basename "${item}")" in
       .|..) continue ;;
     esac
-    [[ ! -e "${item}" && ! -L "${item}" ]] && continue
+    if [[ ! -e "${item}" && ! -L "${item}" ]]; then
+      continue
+    fi
 
     if [[ -L "${item}" ]]; then
       local link_target

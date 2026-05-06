@@ -1,18 +1,25 @@
 # 10-options.zsh -*- mode: sh; -*-
 # Time-stamp: <2026-04-06 20:22:11 Monday by zhengyu.li>
+#
 # =============================================================================
 # Shell Options - Configure zsh behavior and defaults
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: options, setopt, zsh, behavior
+#
 # Copyright (C) 2026 zhengyu li
 #
-# Loaded by: .zshrc (interactive shells only)
-# Load order: 10 (after 05-path.zsh, before 15-history.zsh)
+# History:
+#   2026-04-06 20:22 zhengyu li <lizhengyu419@outlook.com> created.
 #
-# Do NOT add: history options, aliases, key bindings
-#             → History options in 15-history.zsh
-#             → Aliases in 20-aliases.zsh
-#             → Key bindings in 60-keybinds.zsh
+# Commentary:
+#   Loaded by: .zshrc (interactive shells only)
+#   Load order: 10 (after 05-path.zsh, before 15-history.zsh)
+#
+#   Do NOT add: history options, aliases, key bindings
+#               → History options in 15-history.zsh
+#               → Aliases in 20-aliases.zsh
+#               → Key bindings in 60-keybinds.zsh
 # =============================================================================
 
 # -----------------------------------------------------------------------------
