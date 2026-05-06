@@ -171,12 +171,11 @@ load setup-helper
 
 @test "is_linked: returns 0 when directory symlink exists" {
   _source_setup
-  # Create a package dir with a file
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "test" > "${pkg_dir}/config"
-  # Create the directory-level symlink at target
-  ln -sf "${pkg_dir}" "${XDG_CONFIG_HOME}/git"
+  ln -sf "${pkg_dir}" "${HOME}/.config/git"
   run is_linked "tool/git"
   [[ "$status" -eq 0 ]]
 }
@@ -189,7 +188,7 @@ load setup-helper
 
 @test "is_linked: returns 1 when symlink is missing" {
   _source_setup
-  # Create a package dir with a file but no symlink at target
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local pkg_dir="${WORKSPACE_DIR}/tool/git"
   mkdir -p "${pkg_dir}"
   echo "test" > "${pkg_dir}/config"
@@ -298,6 +297,7 @@ load setup-helper
 
 @test "is_linked: file-level mapping (starship)" {
   _source_setup
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
   local src="${WORKSPACE_DIR}/tool/starship/starship.toml"
   local target="${HOME}/.config/starship.toml"
   mkdir -p "$(dirname "${src}")" "$(dirname "${target}")"
@@ -305,6 +305,161 @@ load setup-helper
   ln -sf "${src}" "${target}"
   run is_linked "tool/starship"
   [[ "$status" -eq 0 ]]
+}
+
+# =============================================================================
+# _create_link Tests
+# =============================================================================
+
+@test "_create_link: creates symlink" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local src="${WORKSPACE_DIR}/tool/git/config"
+  local dest="${HOME}/.config/git/config"
+  mkdir -p "$(dirname "${src}")"
+  echo "content" > "${src}"
+  _create_link "${src}" "${dest}" false
+  [[ -L "${dest}" ]]
+  [[ "$(readlink "${dest}")" == "${src}" ]]
+}
+
+@test "_create_link: skips when symlink already correct" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local src="${WORKSPACE_DIR}/tool/git/config"
+  local dest="${HOME}/.config/git/config"
+  mkdir -p "$(dirname "${src}")" "$(dirname "${dest}")"
+  echo "content" > "${src}"
+  ln -sf "${src}" "${dest}"
+  run _create_link "${src}" "${dest}" false
+  [[ "$status" -eq 0 ]]
+  [[ -L "${dest}" ]]
+}
+
+@test "_create_link: force replaces existing symlink" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local src="${WORKSPACE_DIR}/tool/git/config"
+  local dest="${HOME}/.config/git/config"
+  mkdir -p "$(dirname "${src}")" "$(dirname "${dest}")"
+  echo "content" > "${src}"
+  ln -sf "/some/old/path" "${dest}"
+  _create_link "${src}" "${dest}" true
+  [[ -L "${dest}" ]]
+  [[ "$(readlink "${dest}")" == "${src}" ]]
+}
+
+@test "_create_link: dry-run does not create symlink" {
+  _source_setup
+  dry_run=true
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local src="${WORKSPACE_DIR}/tool/git/config"
+  local dest="${HOME}/.config/git/config"
+  mkdir -p "$(dirname "${src}")"
+  echo "content" > "${src}"
+  run _create_link "${src}" "${dest}" false
+  [[ "$status" -eq 0 ]]
+  [[ ! -L "${dest}" ]]
+  [[ "$output" == *"dry-run"* ]]
+}
+
+@test "_create_link: creates parent directories" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local src="${WORKSPACE_DIR}/tool/git/config"
+  local dest="${HOME}/.config/deep/nested/dir/config"
+  mkdir -p "$(dirname "${src}")"
+  echo "content" > "${src}"
+  _create_link "${src}" "${dest}" false
+  [[ -L "${dest}" ]]
+  [[ -d "${HOME}/.config/deep/nested/dir" ]]
+}
+
+# =============================================================================
+# link_package / relink_package / unlink_package Tests
+# =============================================================================
+
+@test "link_package: creates directory symlink" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local pkg_dir="${WORKSPACE_DIR}/tool/git"
+  mkdir -p "${pkg_dir}"
+  echo "content" > "${pkg_dir}/config"
+  link_package "tool/git"
+  [[ -L "${HOME}/.config/git" ]]
+  [[ "$(readlink "${HOME}/.config/git")" == "${pkg_dir}" ]]
+}
+
+@test "link_package: idempotent when already linked" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local pkg_dir="${WORKSPACE_DIR}/tool/git"
+  mkdir -p "${pkg_dir}"
+  echo "content" > "${pkg_dir}/config"
+  ln -sf "${pkg_dir}" "${HOME}/.config/git"
+  run link_package "tool/git"
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"already linked"* ]]
+}
+
+@test "relink_package: replaces existing symlink" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local pkg_dir="${WORKSPACE_DIR}/tool/git"
+  mkdir -p "${pkg_dir}" "${HOME}/.config"
+  echo "content" > "${pkg_dir}/config"
+  ln -sf "/old/path" "${HOME}/.config/git"
+  relink_package "tool/git"
+  [[ -L "${HOME}/.config/git" ]]
+  [[ "$(readlink "${HOME}/.config/git")" == "${pkg_dir}" ]]
+}
+
+@test "unlink_package: removes directory symlink" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local pkg_dir="${WORKSPACE_DIR}/tool/git"
+  mkdir -p "${pkg_dir}"
+  echo "content" > "${pkg_dir}/config"
+  ln -sf "${pkg_dir}" "${HOME}/.config/git"
+  unlink_package "tool/git"
+  [[ ! -L "${HOME}/.config/git" ]]
+}
+
+@test "unlink_package: cleans empty parent directories" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local src="${WORKSPACE_DIR}/tool/starship/starship.toml"
+  local dest="${HOME}/.config/starship.toml"
+  mkdir -p "$(dirname "${src}")" "$(dirname "${dest}")"
+  echo "content" > "${src}"
+  ln -sf "${src}" "${dest}"
+  unlink_package "tool/starship"
+  [[ ! -L "${dest}" ]]
+}
+
+@test "unlink_package: skips symlinks owned by others" {
+  _source_setup
+  dry_run=false
+  WORKSPACE_DIR="${BATS_TEST_TMPDIR}/workspace"
+  local pkg_dir="${WORKSPACE_DIR}/tool/git"
+  mkdir -p "${pkg_dir}" "${HOME}/.config"
+  echo "content" > "${pkg_dir}/config"
+  # Symlink points elsewhere, not to our workspace
+  ln -sf "/other/repo/git" "${HOME}/.config/git"
+  run unlink_package "tool/git"
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"not linked"* ]]
+  # Foreign symlink should still exist
+  [[ -L "${HOME}/.config/git" ]]
 }
 
 # =============================================================================
