@@ -18,6 +18,11 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/15-history.zsh"
   [[ "$output" == "50000" ]]
 }
 
+@test "HISTSIZE exceeds SAVEHIST for dup buffer" {
+  run_zsh "$MODULE" '(( HISTSIZE > SAVEHIST )) && print yes'
+  [[ "$output" == "yes" ]]
+}
+
 @test "SHARE_HISTORY enabled" {
   run_zsh "$MODULE" '[[ -o SHARE_HISTORY ]]'
   (( status == 0 ))
@@ -45,5 +50,25 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/15-history.zsh"
 
 @test "HIST_VERIFY enabled" {
   run_zsh "$MODULE" '[[ -o HIST_VERIFY ]]'
+  (( status == 0 ))
+}
+
+@test "HIST_REDUCE_BLANKS enabled" {
+  run_zsh "$MODULE" '[[ -o HIST_REDUCE_BLANKS ]]'
+  (( status == 0 ))
+}
+
+@test "HIST_SAVE_NO_DUPS enabled" {
+  run_zsh "$MODULE" '[[ -o HIST_SAVE_NO_DUPS ]]'
+  (( status == 0 ))
+}
+
+@test "HIST_FIND_NO_DUPS enabled" {
+  run_zsh "$MODULE" '[[ -o HIST_FIND_NO_DUPS ]]'
+  (( status == 0 ))
+}
+
+@test "HIST_FCNTL_LOCK enabled" {
+  run_zsh "$MODULE" '[[ -o HIST_FCNTL_LOCK ]]'
   (( status == 0 ))
 }
