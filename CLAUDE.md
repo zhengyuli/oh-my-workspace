@@ -41,9 +41,9 @@ For new users setting up the dotfiles repository:
 Organized by category in repository root:
 - `shell/` — Shell configs (zsh)
 - `editor/` — Text editors (vim, emacs)
-- `term/` — Terminal emulators (ghostty)
+- `terminal/` — Terminal emulators (ghostty)
 - `tool/` — CLI utilities (git, lazygit, ripgrep, yazi)
-- `lang/` — Language runtimes (python/uv, typescript/bun)
+- `prog-lang/` — Language runtimes (python/uv, typescript/bun)
 - `platform/` — Platform-specific configs (darwin)
 
 Files follow GNU Stow convention: placed as they appear in `$HOME`.
@@ -76,7 +76,7 @@ oh-my-workspace/
 │   ├── emacs/         # Emacs modular config (~/.config/emacs/)
 │   └── vim/           # Vim config (~/.config/vim/)
 │
-├── term/              # Terminal emulators
+├── terminal/          # Terminal emulators
 │   └── ghostty/       # Ghostty config (~/.config/ghostty/)
 │
 ├── tool/              # CLI utilities
@@ -86,14 +86,14 @@ oh-my-workspace/
 │   ├── starship/      # Starship prompt (~/.config/starship.toml)
 │   └── yazi/          # Yazi file manager (~/.config/yazi/)
 │
-├── lang/              # Language runtimes
+├── prog-lang/         # Language runtimes
 │   ├── python/uv/     # uv config (~/.config/uv/)
 │   └── typescript/bun/# bun config (~/.config/bun/)
 │
 ├── platform/          # Platform-specific
 │   └── darwin/        # macOS scripts (defaults.sh)
 │
-└── pkg/               # Package management
+└── pkg-manager/       # Package management
     └── homebrew/      # Brewfile
 ```
 
@@ -118,7 +118,7 @@ oh-my-workspace/
 
 **Package Registry**: See `PKG_ALL` array in `setup.sh`
 
-**Dependencies**: Managed via `pkg/homebrew/Brewfile`
+**Dependencies**: Managed via `pkg-manager/homebrew/Brewfile`
 
 ## Testing
 

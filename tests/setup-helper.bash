@@ -2,7 +2,7 @@
 
 _source_setup() {
   export WORKSPACE_DIR="${BATS_TEST_DIRNAME}/.."
-  export BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
+  export BREWFILE="${WORKSPACE_DIR}/pkg-manager/homebrew/Brewfile"
   source "${WORKSPACE_DIR}/setup.sh"
 }
 

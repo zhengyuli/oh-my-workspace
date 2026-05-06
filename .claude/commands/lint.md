@@ -27,7 +27,7 @@ zsh:    shell/zsh/**/*.zsh, shell/zsh/**/.zshenv
 elisp:  editor/emacs/.config/emacs/**/*.el
 vim:    editor/vim/**/vimrc, editor/vim/**/*.vim
 config: **/git/config, **/ripgrep/rc, **/ghostty/config
-toml:   tool/starship/**/*.toml, tool/yazi/**/*.toml, lang/**/*.toml
+toml:   tool/starship/**/*.toml, tool/yazi/**/*.toml, prog-lang/**/*.toml
 yaml:   tool/**/*.yml, tool/**/*.yaml
 ```
 
@@ -607,7 +607,7 @@ them. `RIPGREP_CONFIG_PATH` must be an absolute path set in shell env.
 ### 3.5 TOML Checks
 
 Apply to files matching: `tool/starship/**/*.toml`, `tool/yazi/**/*.toml`,
-`lang/**/*.toml`
+`prog-lang/**/*.toml`
 
 **String quoting** [ERROR]:
 All string values must be quoted (`"value"` or `'value'`). Numbers and

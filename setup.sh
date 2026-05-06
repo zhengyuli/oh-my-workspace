@@ -46,13 +46,13 @@ readonly -a PKG_ALL=(
   tool/starship
   editor/vim
   editor/emacs
-  term/ghostty
+  terminal/ghostty
   tool/git
   tool/lazygit
   tool/ripgrep
   tool/yazi
-  lang/python/uv
-  lang/typescript/bun
+  prog-lang/python/uv
+  prog-lang/typescript/bun
 )
 
 # Two-step assign-then-seal avoids failure when the variable is
@@ -60,7 +60,7 @@ readonly -a PKG_ALL=(
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 readonly WORKSPACE_DIR
 
-BREWFILE="${WORKSPACE_DIR}/pkg/homebrew/Brewfile"
+BREWFILE="${WORKSPACE_DIR}/pkg-manager/homebrew/Brewfile"
 readonly BREWFILE
 
 readonly EXIT_SIGINT=130
@@ -938,15 +938,15 @@ _health_tool_for() {
     tool/starship) printf 'starship:starship' ;;
     editor/vim) printf 'vim:vim' ;;
     editor/emacs) printf 'emacs:emacs' ;;
-    term/ghostty)
+    terminal/ghostty)
       printf 'ghostty:ghostty:/Applications/Ghostty.app/Contents/MacOS/ghostty'
       ;;
     tool/git) printf 'git:git' ;;
     tool/lazygit) printf 'lazygit:lazygit' ;;
     tool/ripgrep) printf 'rg:rg' ;;
     tool/yazi) printf 'yazi:yazi' ;;
-    lang/python/uv) printf 'uv:uv' ;;
-    lang/typescript/bun) printf 'bun:bun' ;;
+    prog-lang/python/uv) printf 'uv:uv' ;;
+    prog-lang/typescript/bun) printf 'bun:bun' ;;
     *) return 1 ;;
   esac
 }
@@ -1225,11 +1225,11 @@ ${_BOLD}Flags:${_RESET}
   --dry-run  Preview stow changes; brew bundle is skipped, nothing is linked/unlinked
 
 ${_BOLD}Packages${_RESET} (base name or full category/name):
-  shell:   zsh
-  editor:  vim  emacs
-  term:    ghostty
-  tool:    git  lazygit  ripgrep  starship  yazi
-  lang:    uv  bun
+  shell:       zsh
+  editor:      vim  emacs
+  terminal:    ghostty
+  tool:        git  lazygit  ripgrep  starship  yazi
+  prog-lang:   uv  bun
 
 ${_BOLD}Examples:${_RESET}
   ./setup.sh install --all                    Prereqs + brew + stow all packages
