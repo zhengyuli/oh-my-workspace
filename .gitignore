@@ -118,7 +118,7 @@ tool/git/git
 # Yazi
 **/plugins/
 **/flavors/
-**/package.toml
+tool/yazi/package.toml
 
 # Lazygit (state written to config dir on some systems)
 **/state.yml
