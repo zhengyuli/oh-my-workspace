@@ -44,8 +44,9 @@ set -euo pipefail
 
 # ERR trap: log failing function, line number, and exit code.
 _err_handler() {
-  local -r code=$?
-  printf '[error] %s() line %d: exit %d\n' "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "$code" >&2
+  local code=$?
+  printf '[error] %s() line %d: exit %d\n' \
+    "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
 }
 trap '_err_handler' ERR
 
@@ -393,7 +394,9 @@ _messages() {
   # Disable smart quotes and continuous spell checking
   defaults write com.apple.messageshelper.MessageController \
     SOInputLineSettings -dict-add \
-    "automaticQuoteSubstitutionEnabled" -bool false \
+    "automaticQuoteSubstitutionEnabled" -bool false
+  defaults write com.apple.messageshelper.MessageController \
+    SOInputLineSettings -dict-add \
     "continuousSpellCheckingEnabled" -bool false
 }
 

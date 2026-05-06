@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 185](https://img.shields.io/badge/Tests-185%20passing-brightgreen.svg)]()
+[![Tests: 227](https://img.shields.io/badge/Tests-227%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -40,7 +40,7 @@ That's it. Your development environment is ready.
 - **Git Workflow** — git + lazygit + git-delta + GPG signing support
 - **One-Command Setup** — `./setup.sh install --all` handles everything
 - **Clean Symlinks** — Built-in symlink engine manages dotfiles without cluttering `$HOME`
-- **Fully Tested** — 185 BATS tests verify all shell modules and setup scripts
+- **Fully Tested** — 227 BATS tests verify all shell modules and setup scripts
 
 ## Installation
 
@@ -125,10 +125,10 @@ oh-my-workspace/
 │
 ├── docs/                 # Documentation
 │
-├── tests/                # BATS test suite (185 tests)
+├── tests/                # BATS test suite (227 tests)
 │   ├── zsh-helper.bash   # Shared zsh test utilities
-│   ├── mocks/            # Mock scripts (setup/, pre-setup/, zsh/)
-│   └── *.bats           # Test files (16 files)
+│   ├── mocks/            # Mock scripts (setup/, pre-setup/, zsh/, bin/)
+│   └── *.bats           # Test files
 │
 ├── shell/                # Shell configuration
 │   └── zsh/              # ~/.config/zsh/, ~/.zshenv
@@ -234,9 +234,10 @@ mkdir -p tool/mytool
 # Add your config files
 echo "my-setting = value" > tool/mytool/config.conf
 
-# Register in setup.sh
-# Add "tool/mytool" to PKG_ALL array
-# Add mapping to _PKG_DIR_MAP in the Symlink Engine section
+# Register in setup.sh:
+# 1. Add a _LINKS_mytool array entry in the registry section:
+#    readonly -a _LINKS_mytool=("tool/mytool" "$XDG_CONFIG_HOME/mytool")
+# 2. Add "tool/mytool" to PKG_ALL array
 
 # Link the new package
 ./setup.sh install mytool
@@ -386,63 +387,37 @@ The installer runs `brew bundle`, which:
 
 Your existing Homebrew packages are safe.
 
-### Manual Symlink Management
-
-If you prefer manual control over symlinks:
-
-```bash
-# Check what a package would link
-stow -n -v -d "$WORKSPACE_DIR/shell" -t ~ zsh
-
-# Stow manually
-stow -v -d "$WORKSPACE_DIR/shell" -t ~ zsh
-
-# Unstow manually
-stow -D -v -d "$WORKSPACE_DIR/shell" -t ~ zsh
-```
-
 ## Troubleshooting
 
-### Stow Conflicts
+### Symlink Conflicts
 
-**"Stow conflict: existing target is not a symlink"**
+**"Conflict: existing target is not a symlink"**
 
-This is the most common error. It means a real file exists where Stow wants to create a symlink.
+This means a real file or directory exists where the symlink engine wants to create a link.
 
 ```bash
 # 1. See exactly what conflicts
 ./setup.sh install --dry-run zsh
 
-# 2. Backup and remove the conflicting file
-cp ~/.config/zsh/conf.d/99-local.zsh ~/.config/zsh/conf.d/99-local.zsh.bak
-rm ~/.config/zsh/conf.d/99-local.zsh
-
-# 3. Stow now succeeds
-./setup.sh install zsh
-
-# 4. Restore your customizations to the new symlinked location
-cp ~/.config/zsh/conf.d/99-local.zsh.bak ~/.config/zsh/conf.d/99-local.zsh
-```
-
-**"Stow conflict: existing symlink points elsewhere"**
-
-Another dotfiles manager (or manual symlink) left a stale link.
-
-```bash
-# Force restow replaces existing symlinks
+# 2. Force install — backs up conflicting files to *.pre-link-backup
 ./setup.sh install --force zsh
+
+# 3. Review backups if needed
+ls ~/.config/zsh*.pre-link-backup
 ```
 
-**"Changes not appearing after editing a stowed file"**
+Without `--force`, the installer reports the conflict and skips the package. Use `--dry-run` to preview conflicts before acting.
 
-Stow creates symlinks, so changes in the repo are immediately reflected. If changes don't appear:
+**"Changes not appearing after editing a linked file"**
+
+Symlinks are directory-level, so changes in the repo are immediately reflected. If changes don't appear:
 
 ```bash
 # Verify the symlink exists and points to the repo
-ls -la ~/.config/zsh/conf.d/00-env.zsh
-# Should show: ... -> /path/to/oh-my-workspace/shell/zsh/.config/zsh/conf.d/00-env.zsh
+ls -la ~/.config/zsh
+# Should show: ... -> /path/to/oh-my-workspace/shell/zsh
 
-# If the symlink is broken, restow
+# If the symlink is broken, relink
 ./setup.sh install --force zsh
 ```
 
@@ -504,7 +479,7 @@ The repository includes a comprehensive [BATS](https://github.com/bats-core/bats
 ### Running Tests
 
 ```bash
-# Run the full test suite (192 tests)
+# Run the full test suite (227 tests)
 bats tests/
 
 # Run tests for a specific module
@@ -525,7 +500,7 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 
 | File | Tests | Module |
 |------|-------|--------|
-| `setup.bats` | 36 | `setup.sh` (stow operations, validation) |
+| `setup.bats` | 67 | `setup.sh` (symlink engine, commands, validation) |
 | `pre-setup.bats` | 42 | `agent/claude/pre-setup.sh` (Claude Code setup) |
 | `zsh-env.bats` | 6 | `.zshenv` (XDG bootstrap) |
 | `zsh-00-env.bats` | 14 | `00-env.zsh` (environment variables) |
@@ -560,7 +535,7 @@ load zsh-helper
 setup() { setup_zsh_env; }
 teardown() { teardown_zsh_env; }
 
-MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/.config/zsh/conf.d/<NN>-<name>.zsh"
+MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/<NN>-<name>.zsh"
 
 @test "my feature works" {
   run_zsh "$MODULE" 'print $MY_VAR'

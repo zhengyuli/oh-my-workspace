@@ -627,3 +627,128 @@ load setup-helper
   [[ "$output" == *"uninstall"* ]]
   [[ "$output" == *"status"* ]]
 }
+
+# =============================================================================
+# Dry-Run Tests
+# =============================================================================
+
+@test "cmd_install --dry-run: no filesystem mutations" {
+  local ws="${BATS_TEST_TMPDIR}/workspace"
+  mkdir -p "${ws}/shell/zsh/conf.d"
+  touch "${ws}/shell/zsh/conf.d/00-env.zsh"
+  _source_setup "${ws}"
+  run cmd_install --dry-run zsh
+  [[ "$status" -eq 0 ]]
+  [[ "$output" == *"dry-run"* ]]
+  [[ ! -L "${HOME}/.config/zsh" ]]
+}
+
+@test "cmd_install --dry-run --all: skips brew bundle" {
+  local ws="${BATS_TEST_TMPDIR}/workspace"
+  mkdir -p "${ws}/shell/zsh"
+  _source_setup "${ws}"
+  dry_run=true
+  run cmd_install --dry-run --all
+  [[ "$output" == *"dry-run"* ]]
+}
+
+@test "cmd_uninstall --dry-run: no symlinks removed" {
+  local ws="${BATS_TEST_TMPDIR}/workspace"
+  mkdir -p "${ws}/tool/git"
+  touch "${ws}/tool/git/config"
+  _source_setup "${ws}"
+  link_package "tool/git"
+  [[ -L "${HOME}/.config/git" ]]
+  run cmd_uninstall --dry-run git
+  [[ "$status" -eq 0 ]]
+  [[ -L "${HOME}/.config/git" ]]
+}
+
+# =============================================================================
+# Post-Install Hook Tests
+# =============================================================================
+
+@test "_hook_run: success logs ok" {
+  _source_setup
+  _test_hook() { return 0; }
+  run _hook_run "test hook" _test_hook
+  [[ "$output" == *"done"* ]]
+}
+
+@test "_hook_run: failure logs err" {
+  _source_setup
+  _test_hook() { return 1; }
+  run _hook_run "test hook" _test_hook
+  [[ "$output" == *"failed"* ]]
+}
+
+@test "_hook_run: skip (rc=2) logs info" {
+  _source_setup
+  _test_hook() { return 2; }
+  run _hook_run "test hook" _test_hook
+  [[ "$output" == *"skipped"* ]]
+}
+
+@test "_run_post_install_hooks: dispatches yazi hook" {
+  _source_setup
+  _post_install_yazi() { printf 'yazi_hook_called'; return 0; }
+  run _run_post_install_hooks "tool/yazi"
+  [[ "$output" == *"yazi_hook_called"* ]]
+}
+
+@test "_run_post_install_hooks: skips unknown packages" {
+  _source_setup
+  run _run_post_install_hooks "tool/git"
+  [[ "$status" -eq 0 ]]
+  [[ -z "$output" ]]
+}
+
+# =============================================================================
+# Health Check Tests
+# =============================================================================
+
+@test "_run_health_check: reports found binary" {
+  local ws="${BATS_TEST_TMPDIR}/workspace"
+  mkdir -p "${ws}/tool/git"
+  touch "${ws}/tool/git/config"
+  _source_setup "${ws}"
+  link_package "tool/git"
+  run _run_health_check "tool/git"
+  [[ "$output" == *"git:"* ]]
+}
+
+@test "_run_health_check: skips unlinked packages" {
+  local ws="${BATS_TEST_TMPDIR}/workspace"
+  mkdir -p "${ws}/tool/git"
+  touch "${ws}/tool/git/config"
+  _source_setup "${ws}"
+  # tool/git is NOT linked, so health check should produce no output
+  run _run_health_check "tool/git"
+  [[ "$status" -eq 0 ]]
+  [[ "$output" != *"git:"* ]]
+}
+
+# =============================================================================
+# _link_one Tests
+# =============================================================================
+
+@test "_link_one: links without force" {
+  local ws="${BATS_TEST_TMPDIR}/workspace"
+  mkdir -p "${ws}/tool/ripgrep"
+  touch "${ws}/tool/ripgrep/rc"
+  _source_setup "${ws}"
+  run _link_one "tool/ripgrep" "false"
+  [[ "$status" -eq 0 ]]
+  [[ -L "${HOME}/.config/ripgrep" ]]
+}
+
+@test "_link_one: relinks with force" {
+  local ws="${BATS_TEST_TMPDIR}/workspace"
+  mkdir -p "${ws}/tool/ripgrep"
+  touch "${ws}/tool/ripgrep/rc"
+  _source_setup "${ws}"
+  link_package "tool/ripgrep"
+  run _link_one "tool/ripgrep" "true"
+  [[ "$status" -eq 0 ]]
+  [[ -L "${HOME}/.config/ripgrep" ]]
+}
