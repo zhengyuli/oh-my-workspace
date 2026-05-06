@@ -506,9 +506,7 @@ _run_brew_bundle() {
   return 0
 }
 
-
-
-# Install prerequisites: Xcode CLI → Homebrew → git filters.
+# Install prerequisites: Xcode CLI → Homebrew.
 # Globals:
 #   dry_run (read)
 ensure_prerequisites() {
@@ -535,9 +533,6 @@ ensure_prerequisites() {
       return 1
     fi
   fi
-
-  # --- Git Filters ---
-  # (none currently needed)
 }
 
 # -----------------------------------------------------------------------------
@@ -1082,7 +1077,7 @@ _post_install_yazi() {
     return 2
   fi
 
-  readonly -a _YAZI_PLUGINS=(
+  local -ra _YAZI_PLUGINS=(
     "yazi-rs/plugins:smart-enter"
     "yazi-rs/plugins:smart-filter"
     "yazi-rs/plugins:full-border"
@@ -1090,7 +1085,7 @@ _post_install_yazi() {
     "yazi-rs/plugins:zoom"
     "yazi-rs/plugins:git"
   )
-  readonly -a _YAZI_FLAVORS=(
+  local -ra _YAZI_FLAVORS=(
     "yazi-rs/flavors:catppuccin-mocha"
   )
 
