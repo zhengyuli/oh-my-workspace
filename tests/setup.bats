@@ -236,15 +236,16 @@ load setup-helper
   [[ -f "${target}.pre-link-backup.1" ]]
 }
 
-@test "_resolve_conflict: refuses non-empty directory" {
+@test "_resolve_conflict: backs up non-workspace directory" {
   _source_setup
   dry_run=false
   local target="${HOME}/testdir"
   mkdir -p "${target}"
   touch "${target}/somefile"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 1 ]]
-  [[ "$output" == *"non-empty"* ]]
+  [[ "$status" -eq 0 ]]
+  [[ -d "${target}.pre-link-backup" ]]
+  [[ -f "${target}.pre-link-backup/somefile" ]]
 }
 
 @test "_resolve_conflict: dry-run does not modify filesystem" {
@@ -267,6 +268,43 @@ load setup-helper
   run _resolve_conflict "${target}"
   [[ "$status" -eq 1 ]]
   [[ "$output" == *"resolves outside HOME"* ]] || [[ "$output" == *"Refusing"* ]]
+}
+
+@test "_resolve_conflict: removes workspace-owned directory" {
+  _source_setup
+  dry_run=false
+  local target="${HOME}/testdir"
+  mkdir -p "${target}"
+  ln -sf "${WORKSPACE_DIR}/some/file" "${target}/link1"
+  ln -sf "${WORKSPACE_DIR}/other/file" "${target}/link2"
+  run _resolve_conflict "${target}"
+  [[ "$status" -eq 0 ]]
+  [[ ! -e "${target}" ]]
+}
+
+@test "_collect_links: resolves per-package nameref" {
+  _source_setup
+  local -a _LINK_SRCS _LINK_DESTS
+  run _collect_links "tool/git"
+  [[ "$status" -eq 0 ]]
+}
+
+@test "_collect_links: returns 1 for unknown package" {
+  _source_setup
+  local -a _LINK_SRCS _LINK_DESTS
+  run _collect_links "nonexistent/pkg"
+  [[ "$status" -eq 1 ]]
+}
+
+@test "is_linked: file-level mapping (starship)" {
+  _source_setup
+  local src="${WORKSPACE_DIR}/tool/starship/starship.toml"
+  local target="${HOME}/.config/starship.toml"
+  mkdir -p "$(dirname "${src}")" "$(dirname "${target}")"
+  echo "test" > "${src}"
+  ln -sf "${src}" "${target}"
+  run is_linked "tool/starship"
+  [[ "$status" -eq 0 ]]
 }
 
 # =============================================================================
