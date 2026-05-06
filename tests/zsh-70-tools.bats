@@ -34,6 +34,22 @@ _source_with_compinit() {
   [[ "$output" == *"function"* ]]
 }
 
+@test "git wrapper: write redirects to config.local" {
+  mkdir -p "${HOME}/.config/git"
+  _source_with_compinit 'git config --global user.test "hello" && cat "$XDG_CONFIG_HOME/git/config.local"'
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"hello"* ]]
+}
+
+@test "git wrapper: read uses --includes" {
+  mkdir -p "${HOME}/.config/git"
+  printf '[include]\n\tpath = config.local\n' > "${HOME}/.config/git/config"
+  printf '[user]\n\ttest = world\n' > "${HOME}/.config/git/config.local"
+  _source_with_compinit 'git config --global user.test'
+  [ "$status" -eq 0 ]
+  [[ "$output" == "world" ]]
+}
+
 @test "_git_check_flag: --get returns r" {
   _source_with_compinit 'print $(_git_check_flag --get)'
   [ "$status" -eq 0 ]
@@ -50,6 +66,18 @@ _source_with_compinit() {
   _source_with_compinit 'print $(_git_check_flag --unknown)'
   [ "$status" -eq 0 ]
   [ "$output" = "" ]
+}
+
+@test "_git_check_flag: --list returns r" {
+  _source_with_compinit 'print $(_git_check_flag --list)'
+  [ "$status" -eq 0 ]
+  [ "$output" = "r" ]
+}
+
+@test "_git_check_flag: --unset returns w" {
+  _source_with_compinit 'print $(_git_check_flag --unset)'
+  [ "$status" -eq 0 ]
+  [ "$output" = "w" ]
 }
 
 @test "_git_classify_config_op: two positional args = write" {
@@ -76,12 +104,32 @@ _source_with_compinit() {
   [ "$output" = "r" ]
 }
 
+@test "_git_flag_takes_value: --type returns 0" {
+  _source_with_compinit '_git_flag_takes_value --type'
+  [ "$status" -eq 0 ]
+}
+
+@test "_git_flag_takes_value: --unknown returns 1" {
+  _source_with_compinit '! _git_flag_takes_value --unknown'
+  [ "$status" -eq 0 ]
+}
+
 @test "uv completion cache created" {
   _source_with_compinit '[[ -f "$XDG_CACHE_HOME/zsh/uv-completion.zsh" ]]'
   [ "$status" -eq 0 ]
 }
 
+@test "carapace completion cache created" {
+  _source_with_compinit '[[ -f "$XDG_CACHE_HOME/zsh/carapace-completion.zsh" ]]'
+  [ "$status" -eq 0 ]
+}
+
 @test "zoxide cache created" {
   _source_with_compinit '[[ -f "$XDG_CACHE_HOME/zsh/zoxide-init.zsh" ]]'
+  [ "$status" -eq 0 ]
+}
+
+@test "zi alias removed after zoxide init" {
+  _source_with_compinit '! alias zi 2>/dev/null'
   [ "$status" -eq 0 ]
 }

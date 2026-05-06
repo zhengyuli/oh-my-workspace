@@ -47,3 +47,49 @@ _run_comp() {
   _run_comp 'zstyle -L ":completion:*" matcher-list'
   [[ "$output" == *"m:{a-z}={A-Za-z}"* ]]
 }
+
+@test "use-cache enabled" {
+  _run_comp 'zstyle -L ":completion:*" use-cache'
+  [[ "$output" == *"yes"* ]]
+}
+
+@test "rehash enabled" {
+  _run_comp 'zstyle -L ":completion:*" rehash'
+  [[ "$output" == *"true"* ]]
+}
+
+@test "list-dirs-first enabled" {
+  _run_comp 'zstyle -L ":completion:*" list-dirs-first'
+  [[ "$output" == *"true"* ]]
+}
+
+@test "squeeze-slashes enabled" {
+  _run_comp 'zstyle -L ":completion:*" squeeze-slashes'
+  [[ "$output" == *"true"* ]]
+}
+
+@test "ignored-patterns includes node_modules" {
+  _run_comp 'zstyle -L ":completion:*" ignored-patterns'
+  [[ "$output" == *"node_modules"* ]]
+}
+
+@test "completer order includes _complete and _ignored" {
+  _run_comp 'zstyle -L ":completion:*" completer'
+  [[ "$output" == *"_complete"* ]]
+  [[ "$output" == *"_ignored"* ]]
+}
+
+@test "warnings format shows no matches" {
+  _run_comp 'zstyle -L ":completion:*:warnings" format'
+  [[ "$output" == *"no matches"* ]]
+}
+
+@test "list-colors includes directory coloring" {
+  _run_comp 'zstyle -L ":completion:*" list-colors'
+  [[ "$output" == *"di="* ]]
+}
+
+@test "cd ignores parent" {
+  _run_comp 'zstyle -L ":completion:*:cd:*" ignore-parents'
+  [[ "$output" == *"parent pwd"* ]]
+}

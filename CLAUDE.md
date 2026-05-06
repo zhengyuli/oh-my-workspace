@@ -64,7 +64,7 @@ oh-my-workspace/
 │
 ├── docs/              # Documentation
 │
-├── tests/             # BATS test suite (297 tests)
+├── tests/             # BATS test suite (324 tests)
 │   ├── zsh-helper.bash # Shared zsh test utilities
 │   ├── mocks/         # Mock scripts (setup/, pre-setup/, zsh/)
 │   └── *.bats        # Test files (16 files)
@@ -125,7 +125,7 @@ oh-my-workspace/
 **Test framework**: [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System)
 
 ```bash
-# Run full suite (297 tests)
+# Run full suite (324 tests)
 bats tests/
 
 # Run specific module
@@ -155,7 +155,7 @@ bats --verbose-run tests/
 2. Source the script in `setup()`, test individual functions with `run <function_name>`
 3. Mock external commands in `tests/mocks/setup/`
 
-**Test coverage**: 297 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
+**Test coverage**: 324 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
 
 ## Validation
 

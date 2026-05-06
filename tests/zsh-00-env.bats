@@ -13,6 +13,11 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/00-env.zsh"
   [[ "$output" == "nvim" ]]
 }
 
+@test "VISUAL set to nvim" {
+  run_zsh "$MODULE" 'print $VISUAL'
+  [[ "$output" == "nvim" ]]
+}
+
 @test "PAGER set to less" {
   run_zsh "$MODULE" 'print $PAGER'
   [[ "$output" == "less" ]]
@@ -21,6 +26,11 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/00-env.zsh"
 @test "LANG set to en_US.UTF-8" {
   run_zsh "$MODULE" 'print $LANG'
   [[ "$output" == "en_US.UTF-8" ]]
+}
+
+@test "umask set to 022" {
+  run_zsh "$MODULE" 'umask'
+  [[ "$output" == "022" ]]
 }
 
 @test "HISTFILE points to XDG_STATE_HOME" {
@@ -55,9 +65,24 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/00-env.zsh"
   [[ "$output" == *"/.config/starship.toml" ]]
 }
 
+@test "STARSHIP_CACHE points to XDG cache" {
+  run_zsh "$MODULE" 'print $STARSHIP_CACHE'
+  [[ "$output" == *"/.cache/starship" ]]
+}
+
 @test "FZF_DEFAULT_OPTS contains layout=reverse" {
   run_zsh "$MODULE" 'print $FZF_DEFAULT_OPTS'
   [[ "$output" == *"--layout=reverse"* ]]
+}
+
+@test "FZF_DEFAULT_COMMAND uses fd" {
+  run_zsh "$MODULE" 'print $FZF_DEFAULT_COMMAND'
+  [[ "$output" == *"fd --type f"* ]]
+}
+
+@test "FZF_ALT_C_COMMAND uses fd for directories" {
+  run_zsh "$MODULE" 'print $FZF_ALT_C_COMMAND'
+  [[ "$output" == *"fd --type d"* ]]
 }
 
 @test "gdircolors cache created when gdircolors available" {
@@ -88,4 +113,29 @@ MODULE="${BATS_TEST_DIRNAME}/../shell/zsh/conf.d/00-env.zsh"
 @test "BUN_INSTALL defaults to XDG_DATA_HOME/bun" {
   run_zsh "$MODULE" 'print $BUN_INSTALL'
   [[ "$output" == *"/.local/share/bun" ]]
+}
+
+@test "CARGO_HOME defaults to XDG_DATA_HOME/cargo" {
+  run_zsh "$MODULE" 'print $CARGO_HOME'
+  [[ "$output" == *"/.local/share/cargo" ]]
+}
+
+@test "RUSTUP_HOME defaults to XDG_DATA_HOME/rustup" {
+  run_zsh "$MODULE" 'print $RUSTUP_HOME'
+  [[ "$output" == *"/.local/share/rustup" ]]
+}
+
+@test "VIMINIT redirects to XDG config" {
+  run_zsh "$MODULE" 'print $VIMINIT'
+  [[ "$output" == *"/.config/vim/vimrc"* ]]
+}
+
+@test "CARAPACE_BRIDGES includes zsh" {
+  run_zsh "$MODULE" 'print $CARAPACE_BRIDGES'
+  [[ "$output" == *"zsh"* ]]
+}
+
+@test "LESS includes color passthrough -R" {
+  run_zsh "$MODULE" 'print -r -- $LESS'
+  [[ "$output" == *"-R"* ]]
 }
