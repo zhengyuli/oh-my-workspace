@@ -87,18 +87,18 @@ teardown() {
 
 @test "_phase increments counter" {
   _source_pre_setup
-  _PHASE_TOTAL=3
-  _PHASE_INDEX=0
+  _phase_total=3
+  _phase_index=0
   _phase "Test Phase" >/dev/null
-  (( _PHASE_INDEX == 1 ))
+  (( _phase_index == 1 ))
   _phase "Phase 2" >/dev/null
-  (( _PHASE_INDEX == 2 ))
+  (( _phase_index == 2 ))
 }
 
 @test "_phase prints step indicator" {
   _source_pre_setup
-  _PHASE_TOTAL=5
-  _PHASE_INDEX=0
+  _phase_total=5
+  _phase_index=0
   run _phase "Prerequisites"
   [[ "$output" == *"[1/5]"* ]]
   [[ "$output" == *"Prerequisites"* ]]
@@ -243,8 +243,8 @@ teardown() {
 
 @test "sourcing does not run main" {
   _source_pre_setup
-  # If main ran, _PHASE_INDEX would be > 0
-  (( _PHASE_INDEX == 0 ))
+  # If main ran, _phase_index would be > 0
+  (( _phase_index == 0 ))
 }
 
 # ---------------------------------------------------------------------------

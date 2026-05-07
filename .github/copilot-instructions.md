@@ -84,7 +84,7 @@ Every file requires this header block:
 - **Level 1** (primary section): `# ---...---` (79 chars), one blank line before opening, one after closing
 - **Level 2** (subsection): `# --- Title ---`, no blank line after — code follows immediately
 
-Section titles use **Title Case**. Standard abbreviations are ALL CAPS (`FZF`, `PDF`); established lowercase names stay lowercase (`cc Mode`, `xref`). Each title must be **unique** within its file at its delimiter level.
+Section titles use **Title Case**. Short conjunctions, articles, and prepositions (and, or, the, a, an, in, on, of, for, to, with) stay lowercase unless first word. Standard abbreviations are ALL CAPS (`FZF`, `PDF`); established lowercase names stay lowercase (`cc Mode`, `xref`). Each title must be **unique** within its file at its delimiter level.
 
 No end-of-line comments. No value alignment with extra spaces. No magic numbers (use `readonly` named constants). Max 120-char lines (URLs and format strings exempt). Max 3 nesting levels — use early-return guards to flatten.
 

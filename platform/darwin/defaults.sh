@@ -44,7 +44,7 @@ set -euo pipefail
 
 # ERR trap: log failing function, line number, and exit code.
 _err_handler() {
-  local code=$?
+  local -r code=$?
   printf '[error] %s() line %d: exit %d\n' \
     "${FUNCNAME[1]:-main}" "${BASH_LINENO[0]}" "${code}" >&2
 }
