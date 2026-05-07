@@ -43,13 +43,13 @@ readonly MIN_HOMEBREW_MINOR=4
 
 readonly -a PKG_ALL=(
   shell/zsh
-  tool/starship
   editor/vim
   editor/emacs
   terminal/ghostty
   tool/git
   tool/lazygit
   tool/ripgrep
+  tool/starship
   tool/yazi
   prog-lang/python/uv
   prog-lang/typescript/bun
@@ -556,10 +556,6 @@ readonly -a _LINKS_shell_zsh=(
   "file:zprofile:${HOME}/.config/zsh/.zprofile"
 )
 
-readonly -a _LINKS_tool_starship=(
-  "file:starship.toml:${HOME}/.config/starship.toml"
-)
-
 readonly -a _LINKS_editor_vim=(
   "dir:.:${HOME}/.config/vim"
 )
@@ -582,6 +578,10 @@ readonly -a _LINKS_tool_lazygit=(
 
 readonly -a _LINKS_tool_ripgrep=(
   "dir:.:${HOME}/.config/ripgrep"
+)
+
+readonly -a _LINKS_tool_starship=(
+  "file:starship.toml:${HOME}/.config/starship.toml"
 )
 
 readonly -a _LINKS_tool_yazi=(
