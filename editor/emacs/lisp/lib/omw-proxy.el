@@ -63,8 +63,7 @@ Bypass rules (no_proxy): localhost, 127.0.0.1, 10.*, 192.168.*"
   (when (string-empty-p proxy)
     (user-error "Proxy cannot be empty"))
   (condition-case err
-      (let* (;; url-generic-parse-url requires a scheme prefix
-             (proxy-url (if (string-match-p "\\`https?://" proxy)
+      (let* ((proxy-url (if (string-match-p "\\`https?://" proxy)
                             proxy
                           (concat "http://" proxy)))
              (parsed (url-generic-parse-url proxy-url))
@@ -129,7 +128,7 @@ Useful for switching between proxy and direct connections."
   (omw/show-http-proxy))
 
 ;; Alias for convenience: M-x omw/disable-http-proxy
-(defalias 'omw/disable-http-proxy 'omw/unset-http-proxy)
+(defalias 'omw/disable-http-proxy #'omw/unset-http-proxy)
 
 ;; ============================================================================
 ;;; Provide features

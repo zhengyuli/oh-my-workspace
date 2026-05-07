@@ -207,7 +207,7 @@ Detailed conventions in `.claude/rules/`:
 |-------------------|------------------------------------------|
 | First-time setup  | See Getting Started section above        |
 | Prerequisites     | `brew install bash`                      |
-| Claude Code setup | See `agent/claude/setup.md` (15 plugins, 6 MCP servers, RTK, claude-hud) |
+| Claude Code setup | See `agent/claude/setup.md` (20 plugins, 7 MCP servers, RTK, claude-hud) |
 | Full setup        | `./setup.sh install --all`               |
 | Link package      | `./setup.sh install <package>`           |
 | Relink            | `./setup.sh install --force <package>`   |

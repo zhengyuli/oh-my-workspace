@@ -17,7 +17,7 @@
 "   manager — Vim is a lightweight fallback editor. XDG paths are
 "   redirected manually via VIMINIT since Vim predates the XDG spec.
 "
-" Loaded via: VIMINIT=source\ $XDG_CONFIG_HOME/vim/vimrc (set in 00-env.zsh)
+" Loaded via: VIMINIT="set nocp | execute 'source' ..." (set in 00-env.zsh)
 " XDG: Manually redirected (Vim predates XDG; VIMINIT bypasses default loader)
 "      - Data:  $XDG_DATA_HOME/vim/undo  (~/.local/share/vim/undo)
 "      - State: $XDG_STATE_HOME/vim/viminfo  (~/.local/state/vim/viminfo)

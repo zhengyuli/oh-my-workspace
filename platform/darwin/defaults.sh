@@ -109,7 +109,8 @@ _general_ui() {
 
   # Rebuild the Launch Services database to remove duplicate entries
   # from "Open With" menus across all applications.
-  local -r _lsreg='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister'
+  local _lsreg_base='/System/Library/Frameworks/CoreServices.framework'
+  local -r _lsreg="${_lsreg_base}/Frameworks/LaunchServices.framework/Support/lsregister"
   if [[ -x "${_lsreg}" ]]; then
     "${_lsreg}" -r -domain local -domain system -domain user
   fi
