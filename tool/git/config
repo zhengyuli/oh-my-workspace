@@ -14,7 +14,8 @@
 #
 # Commentary:
 #   Global Git configuration for all repositories. User identity is
-#   intentionally omitted; set machine-specific config in config.local.
+#   intentionally omitted; the zsh git wrapper (70-tools.zsh) redirects
+#   `git config --global` writes to config.local automatically.
 #   Local override: ~/.config/git/config.local (identity, proxy, etc.)
 #
 # References:
@@ -92,15 +93,6 @@
 
 [init]
     defaultBranch = main
-
-# -----------------------------------------------------------------------------
-# Alias Definitions
-# -----------------------------------------------------------------------------
-
-[alias]
-    # Set user identity in config.local (git set-user "Name" "email")
-    set-user = "!f(){ g=~/.config/git/config.local;git config -f \"$g\" user.name \"$1\";git config -f \"$g\" user.email \"$2\";};f"
-    whoami = "!git config user.name && git config user.email"
 
 # -----------------------------------------------------------------------------
 # Branch Settings
