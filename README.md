@@ -147,7 +147,7 @@ oh-my-workspace/
 │
 ├── prog-lang/            # Language runtimes
 │   ├── python/uv/        # ~/.config/uv/
-│   └── typescript/bun/   # ~/.config/bun/
+│   └── typescript/bun/   # ~/.config/.bunfig.toml
 │
 ├── platform/             # Platform-specific configs
 │   └── darwin/           # Darwin/macOS preferences
