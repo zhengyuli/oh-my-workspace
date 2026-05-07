@@ -54,7 +54,7 @@ Set early so Emacs writes customizations here instead of init.el.")
         (file-name-directory (file-chase-links config-file))
       default-directory))
   "Absolute path to the Emacs configuration directory.
-Resolved through symlinks so stow-managed configs point to the real source.")
+Resolved through symlinks so symlink-managed configs point to the real source.")
 
 (defconst omw/emacs-config-lisp-path
   (expand-file-name "lisp/" omw/emacs-config-root-path)

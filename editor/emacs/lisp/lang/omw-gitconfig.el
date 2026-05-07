@@ -31,8 +31,7 @@
          ("/git/config\\.local\\'" . gitconfig-mode)
          ("/git/ignore\\'" . gitignore-mode)
          ("\\.gitignore_global\\'" . gitignore-mode)
-         ("\\.dockerignore\\'" . gitignore-mode)
-         ("\\.stow-local-ignore\\'" . gitignore-mode)))
+         ("\\.dockerignore\\'" . gitignore-mode)))
 
 ;; ============================================================================
 ;;; Provide features
