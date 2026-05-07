@@ -42,7 +42,7 @@ Organized by category in repository root:
 - `shell/` — Shell configs (zsh)
 - `editor/` — Text editors (vim, emacs)
 - `terminal/` — Terminal emulators (ghostty)
-- `tool/` — CLI utilities (git, lazygit, ripgrep, yazi)
+- `tool/` — CLI utilities (git, lazygit, ripgrep, starship, yazi)
 - `prog-lang/` — Language runtimes (python/uv, typescript/bun)
 - `platform/` — Platform-specific configs (darwin)
 
@@ -64,7 +64,7 @@ oh-my-workspace/
 │
 ├── docs/              # Documentation
 │
-├── tests/             # BATS test suite (333 tests)
+├── tests/             # BATS test suite (329 tests)
 │   ├── zsh-helper.bash # Shared zsh test utilities
 │   ├── mocks/         # Mock scripts (setup/, pre-setup/, zsh/)
 │   └── *.bats        # Test files (16 files)
@@ -125,7 +125,7 @@ oh-my-workspace/
 **Test framework**: [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System)
 
 ```bash
-# Run full suite (333 tests)
+# Run full suite (329 tests)
 bats tests/
 
 # Run specific module
@@ -155,7 +155,7 @@ bats --verbose-run tests/
 2. Source the script in `setup()`, test individual functions with `run <function_name>`
 3. Mock external commands in `tests/mocks/setup/`
 
-**Test coverage**: 333 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
+**Test coverage**: 329 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
 
 ## Validation
 
