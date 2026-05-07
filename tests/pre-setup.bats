@@ -30,7 +30,7 @@ setup() {
   export MOCK_CLAUDE_RC=0
   export MOCK_CURL_LOG="${BATS_TEST_TMPDIR}/curl.log"
   export MOCK_CURL_FAIL_FILE="${BATS_TEST_TMPDIR}/curl_fail_count"
-  echo "0" > "${MOCK_CURL_FAIL_FILE}"
+  printf '0' > "${MOCK_CURL_FAIL_FILE}"
 }
 
 teardown() {
@@ -311,7 +311,7 @@ teardown() {
   _source_pre_setup
   # Set high fail count: _check_cmd "curl" consumes one call
   # (via --version), then the actual network check gets another.
-  echo "99" > "${MOCK_CURL_FAIL_FILE}"
+  printf '%s' "99" > "${MOCK_CURL_FAIL_FILE}"
   run _check_prerequisites
   (( status == 1 ))
   [[ "$output" == *"Cannot reach GitHub API"* ]]

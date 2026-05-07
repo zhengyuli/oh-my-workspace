@@ -25,7 +25,7 @@ setup() {
   export MOCK_BREW_INSTALL_RC=0
   export MOCK_CURL_LOG="${BATS_TEST_TMPDIR}/curl.log"
   export MOCK_CURL_FAIL_FILE="${BATS_TEST_TMPDIR}/curl_fail_count"
-  echo "0" > "${MOCK_CURL_FAIL_FILE}"
+  printf '0' > "${MOCK_CURL_FAIL_FILE}"
   export MOCK_XCODE_RC=0
   export MOCK_UNAME="Darwin"
 

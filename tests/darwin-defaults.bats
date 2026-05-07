@@ -22,48 +22,48 @@ teardown() {
 }
 
 @test "sourcing does not run main" {
-  [ ! -s "${MOCK_DEFAULTS_LOG}" ]
+  [[ ! -s "${MOCK_DEFAULTS_LOG}" ]]
 }
 
 @test "_general_ui calls defaults write NSGlobalDomain" {
   run _general_ui
-  [ "$status" -eq 0 ]
+  (( status == 0 ))
   grep -q "NSGlobalDomain" "${MOCK_DEFAULTS_LOG}"
 }
 
 @test "_keyboard sets KeyRepeat" {
   run _keyboard
-  [ "$status" -eq 0 ]
+  (( status == 0 ))
   grep -q "KeyRepeat" "${MOCK_DEFAULTS_LOG}"
 }
 
 @test "_trackpad_mouse enables tap to click" {
   run _trackpad_mouse
-  [ "$status" -eq 0 ]
+  (( status == 0 ))
   grep -q "Clicking" "${MOCK_DEFAULTS_LOG}"
 }
 
 @test "_finder shows all extensions" {
   run _finder
-  [ "$status" -eq 0 ]
+  (( status == 0 ))
   grep -q "AppleShowAllExtensions" "${MOCK_DEFAULTS_LOG}"
 }
 
 @test "_dock enables autohide" {
   run _dock
-  [ "$status" -eq 0 ]
+  (( status == 0 ))
   grep -q "autohide" "${MOCK_DEFAULTS_LOG}"
 }
 
 @test "_time_machine disables new disk prompt" {
   run _time_machine
-  [ "$status" -eq 0 ]
+  (( status == 0 ))
   grep -q "DoNotOfferNewDisksForBackup" "${MOCK_DEFAULTS_LOG}"
 }
 
 @test "_restart_apps calls osascript" {
   # main() calls osascript to quit System Preferences/Settings before config
   run main
-  [ "$status" -eq 0 ]
+  (( status == 0 ))
   grep -qi "quit" "${MOCK_OSASCRIPT_LOG}"
 }
