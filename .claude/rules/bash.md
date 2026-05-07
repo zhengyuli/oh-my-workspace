@@ -1,7 +1,7 @@
 ---
 paths:
   - "setup.sh"
-  - "claude/**/*.sh"
+  - "agent/**/*.sh"
   - "platform/**/*.sh"
 ---
 

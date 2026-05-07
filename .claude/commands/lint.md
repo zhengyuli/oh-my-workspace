@@ -22,7 +22,7 @@ Interpret `$ARGUMENTS` as the target to lint:
 Use Glob to discover files. Only include files that match these path patterns:
 
 ```
-bash:   setup.sh, claude/**/*.sh, platform/**/*.sh
+bash:   setup.sh, agent/**/*.sh, platform/**/*.sh
 zsh:    shell/zsh/**/*.zsh, shell/zsh/**/.zshenv
 elisp:  editor/emacs/.config/emacs/**/*.el
 vim:    editor/vim/**/vimrc, editor/vim/**/*.vim

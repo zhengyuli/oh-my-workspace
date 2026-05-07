@@ -26,7 +26,7 @@ This guide will configure the following components:
 
 | Component               | Count | Purpose                                                             |
 |-------------------------|-------|---------------------------------------------------------------------|
-| **Plugin Marketplaces** | 5     | Official + community + GLM plugin sources                           |
+| **Plugin Marketplaces** | 6     | Official + community + GLM plugin sources                           |
 | **Plugins**             | 20    | Development tools, MCP integration, auxiliary features, Obsidian    |
 | **MCP Servers**         | 7     | Vision, search, web reader, documentation, browser, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
@@ -69,7 +69,7 @@ Step 7: Troubleshooting        -> Troubleshoot issues
 
 ### Description
 
-Claude Code supports a plugin system to extend functionality. This guide uses 5 plugin marketplaces (+ 1 auto-configured):
+Claude Code supports a plugin system to extend functionality. This guide uses 6 plugin marketplaces (1 auto-configured by GLM helper, 5 added manually):
 
 | Marketplace                 | Purpose              | Source                                                          |
 |-----------------------------|----------------------|-----------------------------------------------------------------|
