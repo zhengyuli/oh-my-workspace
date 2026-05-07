@@ -29,11 +29,16 @@
 
 # HISTSIZE: maximum entries kept in memory during session
 # SAVEHIST: maximum entries written to HISTFILE on exit
-readonly HIST_SAVE_MAX=50000
+# Guard: readonly fails on reload-conf (re-source); skip if already set.
+if (( ! ${+HIST_SAVE_MAX} )); then
+  readonly HIST_SAVE_MAX=50000
+fi
 # HISTSIZE must exceed SAVEHIST so HIST_EXPIRE_DUPS_FIRST has buffer
 # room to keep duplicates in memory until trimming, instead of removing
 # them immediately (which conflicts with SHARE_HISTORY).
-readonly HIST_MEMORY_MAX=60000
+if (( ! ${+HIST_MEMORY_MAX} )); then
+  readonly HIST_MEMORY_MAX=60000
+fi
 HISTSIZE=$HIST_MEMORY_MAX
 SAVEHIST=$HIST_SAVE_MAX
 

@@ -1,15 +1,25 @@
 # jsonpp -*- mode: sh; -*-
 # Time-stamp: <2026-03-19 21:00:00 Thursday by zhengyu.li>
+#
 # =============================================================================
-# Pretty print JSON with syntax highlighting
+# Pretty Print JSON With Syntax Highlighting
 #
 # Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: json, pretty-print, bat, python
+#
 # Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-19 21:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Autoloaded function. Pipes python3 json.tool through bat for
+#   formatted, syntax-highlighted JSON output.
 #
 # Dependencies: python3, bat
 #
 # Arguments:
-#   $@ - python3 json.tool flags and/or file paths (optional, reads stdin if none)
+#   $@ - python3 json.tool flags and/or file paths (reads stdin if none)
 #
 # Examples:
 #   jsonpp data.json
