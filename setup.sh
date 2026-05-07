@@ -758,7 +758,7 @@ _create_link() {
     return 0
   fi
 
-  # Remove broken directory-level symlinks blocking mkdir (stow migration).
+  # Remove broken directory-level symlinks blocking mkdir.
   local parent
   parent="$(dirname "${dest}")"
   local path_component="${parent}"
