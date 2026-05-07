@@ -71,6 +71,9 @@ when = "true"
 # OS Symbols
 # -----------------------------------------------------------------------------
 
+[os]
+disabled = false
+
 [os.symbols]
 Macos = " "
 Linux = " "
