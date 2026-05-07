@@ -65,7 +65,7 @@ let &undodir = s:data . '/vim/undo'
 
 " Ensure dirs exist (Vim will error on first write if they don't)
 for s:dir in [s:state . '/vim', s:data . '/vim/undo']
-    if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
+  if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
 endfor
 
 " -----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ set ignorecase
 " Smart case: uppercase in query signals intentional case-sensitivity
 set smartcase
 
-" --- Key Mappings ---
+" --- Search Mappings ---
 " Clear search highlight with double-ESC
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
@@ -215,7 +215,7 @@ set timeoutlen=500
 " Wrap cursor keys at line boundaries
 set whichwrap+=<,>,h,l
 
-" --- Key Mappings ---
+" --- Navigation Mappings ---
 " Keep cursor centered when navigating (zz=center, zv=unfold)
 nnoremap <silent> n     nzzzv
 nnoremap <silent> N     Nzzzv
@@ -241,7 +241,7 @@ nnoremap <silent> Q <Nop>
 " System clipboard (macOS pbcopy/pbpaste via +clipboard)
 " Neovim 0.10+ can also use OSC 52 from terminals like Ghostty.
 if has('clipboard')
-    set clipboard=unnamedplus
+  set clipboard=unnamedplus
 endif
 
 " -----------------------------------------------------------------------------
@@ -249,33 +249,33 @@ endif
 " -----------------------------------------------------------------------------
 
 augroup vimrc
-    autocmd!
+  autocmd!
 
-    " --- Cursor Position ---
-    " Return to last cursor position when reopening a file
-    autocmd BufReadPost *
-        \ if line("'\"") > 0 && line("'\"") <= line("$") |
-        \     execute 'normal! g`"' |
-        \ endif
+  " --- Cursor Position ---
+  " Return to last cursor position when reopening a file
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   execute 'normal! g`"' |
+    \ endif
 
-    " --- Whitespace ---
-    " Strip trailing whitespace on save (skip binary/diff buffers)
-    autocmd BufWritePre *
-        \ if &filetype !~# '\v^(diff|xxd)$' |
-        \     let b:_view = winsaveview() |
-        \     silent! %s/\s\+$//e |
-        \     call winrestview(b:_view) |
-        \     unlet b:_view |
-        \ endif
+  " --- Whitespace ---
+  " Strip trailing whitespace on save (skip binary/diff buffers)
+  autocmd BufWritePre *
+    \ if &filetype !~# '\v^(diff|xxd)$' |
+    \   let b:_view = winsaveview() |
+    \   silent! %s/\s\+$//e |
+    \   call winrestview(b:_view) |
+    \   unlet b:_view |
+    \ endif
 
-    " --- Layout ---
-    " Equalize splits when terminal is resized
-    autocmd VimResized * wincmd =
+  " --- Layout ---
+  " Equalize splits when terminal is resized
+  autocmd VimResized * wincmd =
 
-    " --- External Reload ---
-    " Auto-reload file when gaining focus or on idle (external changes)
-    autocmd FocusGained,BufEnter * silent! checktime
-    autocmd CursorHold,CursorHoldI * silent! checktime
+  " --- External Reload ---
+  " Auto-reload file when gaining focus or on idle (external changes)
+  autocmd FocusGained,BufEnter * silent! checktime
+  autocmd CursorHold,CursorHoldI * silent! checktime
 
 augroup END
 
@@ -284,26 +284,26 @@ augroup END
 " -----------------------------------------------------------------------------
 
 augroup vimrc_ft
-    autocmd!
+  autocmd!
 
-    " --- Indentation ---
-    " Python: 4 spaces
-    autocmd FileType python setlocal tabstop=4 shiftwidth=4
-    " Web files: 2 spaces
-    autocmd FileType javascript,typescript,json,yaml,html,css,scss
-                \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
-    " Go: tabs (convention)
-    autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
+  " --- Indentation ---
+  " Python: 4 spaces
+  autocmd FileType python setlocal tabstop=4 shiftwidth=4
+  " Web files: 2 spaces
+  autocmd FileType javascript,typescript,json,yaml,html,css,scss
+    \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
+  " Go: tabs (convention)
+  autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
 
-    " --- Text Modes ---
-    " Text files: wrap and spell check
-    autocmd FileType markdown,text
-                \ setlocal wrap linebreak nolist
+  " --- Text Modes ---
+  " Text files: wrap and spell check
+  autocmd FileType markdown,text
+    \ setlocal wrap linebreak nolist
 
-    " --- Git Commits ---
-    " Git commits: 72 char width, spell check
-    autocmd FileType gitcommit
-                \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
+  " --- Git Commits ---
+  " Git commits: 72 char width, spell check
+  autocmd FileType gitcommit
+    \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
 
 augroup END
 
@@ -315,9 +315,9 @@ augroup END
 
 " Global scope required — statusline evaluates outside script
 function! StatuslineGit() abort
-    " Optional: vim-fugitive (https://github.com/tpope/vim-fugitive)
-    " Degrades to empty string when plugin is not installed.
-    return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+  " Optional: vim-fugitive (https://github.com/tpope/vim-fugitive)
+  " Degrades to empty string when plugin is not installed.
+  return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
 endfunction
 
 set statusline=
@@ -347,7 +347,7 @@ set statusline+=\ %3p%%
 " Disable treesitter — no parsers installed and Neovim 0.12+ ftplugin
 " calls vim.treesitter.start() which errors without parsers
 if has('nvim')
-    lua vim.treesitter.start = function() end
+  lua vim.treesitter.start = function() end
 endif
 
 " Enable syntax highlighting (keeps current colors)
@@ -369,7 +369,7 @@ set background=dark
 
 " Enable true color support in terminal (24-bit colors)
 if has('termguicolors')
-    set termguicolors
+  set termguicolors
 endif
 
 " Clear existing highlights before applying theme
