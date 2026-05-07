@@ -6,7 +6,7 @@
 
 ## Prerequisite
 
-**IMPORTANT**: Run `claude/pre-setup.sh` manually in your terminal BEFORE entering Claude Code. Claude Code MUST NOT execute this script — it requires interactive input (API key, plan selection) that only a human can provide.
+**IMPORTANT**: Run `agent/claude/pre-setup.sh` manually in your terminal BEFORE entering Claude Code. Claude Code MUST NOT execute this script — it requires interactive input (API key, plan selection) that only a human can provide.
 
 It handles:
 - System prerequisites check (macOS 13+, git, jq, curl, bun, uv)
@@ -15,7 +15,7 @@ It handles:
 
 ```bash
 # Run this in your terminal, NOT inside Claude Code
-./claude/pre-setup.sh
+./agent/claude/pre-setup.sh
 ```
 
 After `pre-setup.sh` completes successfully, open Claude Code and follow Steps 1–7 below.
@@ -174,7 +174,6 @@ claude plugin install pr-review-toolkit@claude-plugins-official
 
 ```bash
 # last30days - Research topics across Reddit, X, YouTube, HN, Polymarket, GitHub etc.
-claude plugin marketplace add mvanhorn/last30days-skill
 claude plugin install last30days@last30days-skill
 ```
 
@@ -532,8 +531,8 @@ GLM_KEY="<YOUR_API_KEY>"  # ← Replace with your actual key
 curl -H "Authorization: Bearer ${GLM_KEY}" https://open.bigmodel.cn/api/anthropic
 
 # Solution
-# Re-run pre-setup.sh
-./claude/pre-setup.sh
+# Re-run agent/claude/pre-setup.sh
+./agent/claude/pre-setup.sh
 ```
 
 ### 7.2 Plugin Issues
@@ -620,7 +619,7 @@ rm -rf ~/.claude/
 rm -rf ~/.config/rtk/
 
 # 3. Reinstall CLI + GLM config
-./claude/pre-setup.sh
+./agent/claude/pre-setup.sh
 
 # 4. Re-apply all setup steps (from Step 1)
 ```
