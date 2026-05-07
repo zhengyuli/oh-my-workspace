@@ -34,13 +34,13 @@ load setup-helper
 @test "_is_valid_pkg: shell/zsh returns 0" {
   _source_setup
   run _is_valid_pkg "shell/zsh"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
 }
 
 @test "_is_valid_pkg: unknown/pkg returns 1" {
   _source_setup
   run _is_valid_pkg "unknown/pkg"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
 }
 
 @test "validate_pkgs: short name zsh resolves to shell/zsh" {
@@ -58,19 +58,19 @@ load setup-helper
 @test "validate_pkgs: deduplicates zsh shell/zsh zsh → 1 entry" {
   _source_setup
   validate_pkgs "zsh" "shell/zsh" "zsh"
-  [[ "${#_VALIDATED_PKGS[@]}" -eq 1 ]]
+  (( ${#_VALIDATED_PKGS[@]} == 1 ))
 }
 
 @test "validate_pkgs: nonexistent returns 1" {
   _source_setup
   run validate_pkgs "nonexistent"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
 }
 
 @test "validate_pkgs: mixed valid and invalid keeps valid, skips unknown" {
   _source_setup
   validate_pkgs "zsh" "nonexistent"
-  [[ "${#_VALIDATED_PKGS[@]}" -eq 1 ]]
+  (( ${#_VALIDATED_PKGS[@]} == 1 ))
   [[ "${_VALIDATED_PKGS[0]}" == "shell/zsh" ]]
 }
 
@@ -93,7 +93,7 @@ load setup-helper
 @test "die exits 1 with error tag and message" {
   _source_setup
   run die "something broke"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
   [[ "$output" == *"[error]"* ]]
   [[ "$output" == *"something broke"* ]]
 }
@@ -101,7 +101,7 @@ load setup-helper
 @test "_misuse exits 2 with error tag" {
   _source_setup
   run _misuse "bad usage"
-  [[ "$status" -eq 2 ]]
+  (( status == 2 ))
   [[ "$output" == *"[error]"* ]]
 }
 
@@ -140,9 +140,9 @@ load setup-helper
 @test "_download succeeds and creates file" {
   _source_setup
   local dest="${BATS_TEST_TMPDIR}/downloaded_file"
-  echo "0" > "${MOCK_CURL_FAIL_FILE}"
+  printf '%s' "0" > "${MOCK_CURL_FAIL_FILE}"
   run _download "http://example.com/file" "${dest}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -f "${dest}" ]]
 }
 
@@ -150,18 +150,18 @@ load setup-helper
   _source_setup
   local dest="${BATS_TEST_TMPDIR}/downloaded_file"
   # Fail 2 times then succeed
-  echo "2" > "${MOCK_CURL_FAIL_FILE}"
+  printf '%s' "2" > "${MOCK_CURL_FAIL_FILE}"
   run _download "http://example.com/file" "${dest}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
 }
 
 @test "_download fails after max retries" {
   _source_setup
   local dest="${BATS_TEST_TMPDIR}/downloaded_file"
   # Fail more times than max retries (3)
-  echo "10" > "${MOCK_CURL_FAIL_FILE}"
+  printf '%s' "10" > "${MOCK_CURL_FAIL_FILE}"
   run _download "http://example.com/file" "${dest}"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
   [[ "$output" == *"failed"* ]] || [[ "$output" == *"Download failed"* ]]
 }
 
@@ -176,13 +176,13 @@ load setup-helper
   echo "test" > "${pkg_dir}/config"
   ln -sf "${pkg_dir}" "${HOME}/.config/git"
   run is_linked "tool/git"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
 }
 
 @test "is_linked: returns 1 for nonexistent package dir" {
   _source_setup
   run is_linked "shell/nonexistent"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
 }
 
 @test "is_linked: returns 1 when symlink is missing" {
@@ -191,14 +191,14 @@ load setup-helper
   mkdir -p "${pkg_dir}"
   echo "test" > "${pkg_dir}/config"
   run is_linked "tool/git"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
 }
 
 @test "_resolve_conflict: refuses path outside HOME" {
   _source_setup
   dry_run=false
   run _resolve_conflict "/etc/passwd"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
   [[ "$output" == *"outside HOME"* ]] || [[ "$output" == *"Refusing"* ]]
 }
 
@@ -208,7 +208,7 @@ load setup-helper
   local target="${HOME}/testlink"
   ln -s "/some/target" "${target}"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ ! -e "${target}" ]]
 }
 
@@ -218,7 +218,7 @@ load setup-helper
   local target="${HOME}/testfile"
   echo "content" > "${target}"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -f "${target}.pre-link-backup" ]]
 }
 
@@ -229,7 +229,7 @@ load setup-helper
   echo "content" > "${target}"
   touch "${target}.pre-link-backup"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -f "${target}.pre-link-backup.1" ]]
 }
 
@@ -240,7 +240,7 @@ load setup-helper
   mkdir -p "${target}"
   touch "${target}/somefile"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -d "${target}.pre-link-backup" ]]
   [[ -f "${target}.pre-link-backup/somefile" ]]
 }
@@ -251,7 +251,7 @@ load setup-helper
   local target="${HOME}/testfile"
   echo "content" > "${target}"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -f "${target}" ]]
   [[ ! -f "${target}.pre-link-backup" ]]
 }
@@ -263,7 +263,7 @@ load setup-helper
   mkdir -p "${HOME}/subdir"
   local target="${HOME}/subdir/../../etc/passwd"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
   [[ "$output" == *"resolves outside HOME"* ]] || [[ "$output" == *"Refusing"* ]]
 }
 
@@ -275,7 +275,7 @@ load setup-helper
   ln -sf "${WORKSPACE_DIR}/some/file" "${target}/link1"
   ln -sf "${WORKSPACE_DIR}/other/file" "${target}/link2"
   run _resolve_conflict "${target}"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ ! -e "${target}" ]]
 }
 
@@ -283,14 +283,14 @@ load setup-helper
   _source_setup
   local -a _LINK_SRCS _LINK_DESTS
   run _collect_links "tool/git"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
 }
 
 @test "_collect_links: returns 1 for unknown package" {
   _source_setup
   local -a _LINK_SRCS _LINK_DESTS
   run _collect_links "nonexistent/pkg"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
 }
 
 @test "is_linked: file-level mapping (starship)" {
@@ -301,7 +301,7 @@ load setup-helper
   echo "test" > "${src}"
   ln -sf "${src}" "${target}"
   run is_linked "tool/starship"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
 }
 
 # =============================================================================
@@ -329,7 +329,7 @@ load setup-helper
   echo "content" > "${src}"
   ln -sf "${src}" "${dest}"
   run _create_link "${src}" "${dest}" false
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -L "${dest}" ]]
 }
 
@@ -354,7 +354,7 @@ load setup-helper
   mkdir -p "$(dirname "${src}")"
   echo "content" > "${src}"
   run _create_link "${src}" "${dest}" false
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ ! -L "${dest}" ]]
   [[ "$output" == *"dry-run"* ]]
 }
@@ -394,7 +394,7 @@ load setup-helper
   echo "content" > "${pkg_dir}/config"
   ln -sf "${pkg_dir}" "${HOME}/.config/git"
   run link_package "tool/git"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"already linked"* ]]
 }
 
@@ -442,7 +442,7 @@ load setup-helper
   # Symlink points elsewhere, not to our workspace
   ln -sf "/other/repo/git" "${HOME}/.config/git"
   run unlink_package "tool/git"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"not linked"* ]]
   # Foreign symlink should still exist
   [[ -L "${HOME}/.config/git" ]]
@@ -456,7 +456,7 @@ load setup-helper
   _source_setup
   export MOCK_BREW_VERSION="4.4.0"
   run _ensure_homebrew_version
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
 }
 
 @test "_ensure_homebrew_version: rejects version below minimum" {
@@ -464,14 +464,14 @@ load setup-helper
   export MOCK_BREW_VERSION="3.9.0"
   dry_run=false
   run _ensure_homebrew_version
-  [[ "$status" -ne 0 ]]
+  (( status != 0 ))
 }
 
 @test "_ensure_homebrew_version: rejects non-numeric minor version" {
   _source_setup
   export MOCK_BREW_VERSION="4.4beta"
   run _ensure_homebrew_version
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
   [[ "$output" == *"Cannot parse"* ]]
 }
 
@@ -479,7 +479,7 @@ load setup-helper
   _source_setup
   export MOCK_BREW_VERSION="invalid"
   run _ensure_homebrew_version
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
   [[ "$output" == *"Cannot determine"* ]]
 }
 
@@ -491,7 +491,7 @@ load setup-helper
   _source_setup
   _test_hook_ok() { return 0; }
   run _hook_run "test hook" _test_hook_ok
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"done"* ]]
 }
 
@@ -516,27 +516,27 @@ load setup-helper
 @test "cmd_install with no args shows help" {
   _source_setup
   run cmd_install
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"Usage"* ]]
 }
 
 @test "cmd_install --all with pkg name exits 2" {
   _source_setup
   run cmd_install --all zsh
-  [[ "$status" -eq 2 ]]
+  (( status == 2 ))
 }
 
 @test "main with no args shows help" {
   _source_setup
   run main
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"Usage"* ]]
 }
 
 @test "main with unknown command exits 2" {
   _source_setup
   run main "bogus"
-  [[ "$status" -eq 2 ]]
+  (( status == 2 ))
   [[ "$output" == *"Unknown command"* ]]
 }
 
@@ -555,7 +555,7 @@ load setup-helper
 @test "cmd_status: lists all packages" {
   _source_setup "${BATS_TEST_TMPDIR}/workspace"
   run cmd_status
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"Prerequisites"* ]]
   [[ "$output" == *"Packages"* ]]
 }
@@ -563,14 +563,14 @@ load setup-helper
 @test "cmd_status: filters to specific package" {
   _source_setup "${BATS_TEST_TMPDIR}/workspace"
   run cmd_status "zsh"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"shell/zsh"* ]]
 }
 
 @test "cmd_status: rejects invalid package" {
   _source_setup
   run cmd_status "nonexistent"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
 }
 
 # =============================================================================
@@ -580,14 +580,14 @@ load setup-helper
 @test "cmd_uninstall: no args shows error" {
   _source_setup
   run cmd_uninstall
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
   [[ "$output" == *"No packages specified"* ]]
 }
 
 @test "cmd_uninstall: --all and pkg name exits 2" {
   _source_setup
   run cmd_uninstall --all zsh
-  [[ "$status" -eq 2 ]]
+  (( status == 2 ))
 }
 
 # =============================================================================
@@ -597,20 +597,20 @@ load setup-helper
 @test "_health_tool_for: known package returns descriptor" {
   _source_setup
   run _health_tool_for "tool/git"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == "git:git" ]]
 }
 
 @test "_health_tool_for: unknown package returns 1" {
   _source_setup
   run _health_tool_for "unknown/pkg"
-  [[ "$status" -eq 1 ]]
+  (( status == 1 ))
 }
 
 @test "_health_tool_for: ghostty includes fallback path" {
   _source_setup
   run _health_tool_for "terminal/ghostty"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"/Applications/Ghostty.app"* ]]
 }
 
@@ -621,7 +621,7 @@ load setup-helper
 @test "cmd_help: shows usage information" {
   _source_setup
   run cmd_help
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"Usage"* ]]
   [[ "$output" == *"install"* ]]
   [[ "$output" == *"uninstall"* ]]
@@ -638,7 +638,7 @@ load setup-helper
   touch "${ws}/shell/zsh/conf.d/00-env.zsh"
   _source_setup "${ws}"
   run cmd_install --dry-run zsh
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" == *"dry-run"* ]]
   [[ ! -L "${HOME}/.config/zsh" ]]
 }
@@ -660,34 +660,13 @@ load setup-helper
   link_package "tool/git"
   [[ -L "${HOME}/.config/git" ]]
   run cmd_uninstall --dry-run git
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -L "${HOME}/.config/git" ]]
 }
 
 # =============================================================================
 # Post-Install Hook Tests
 # =============================================================================
-
-@test "_hook_run: success logs ok" {
-  _source_setup
-  _test_hook() { return 0; }
-  run _hook_run "test hook" _test_hook
-  [[ "$output" == *"done"* ]]
-}
-
-@test "_hook_run: failure logs err" {
-  _source_setup
-  _test_hook() { return 1; }
-  run _hook_run "test hook" _test_hook
-  [[ "$output" == *"failed"* ]]
-}
-
-@test "_hook_run: skip (rc=2) logs info" {
-  _source_setup
-  _test_hook() { return 2; }
-  run _hook_run "test hook" _test_hook
-  [[ "$output" == *"skipped"* ]]
-}
 
 @test "_run_post_install_hooks: dispatches yazi hook" {
   _source_setup
@@ -699,7 +678,7 @@ load setup-helper
 @test "_run_post_install_hooks: skips unknown packages" {
   _source_setup
   run _run_post_install_hooks "tool/git"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -z "$output" ]]
 }
 
@@ -724,7 +703,7 @@ load setup-helper
   _source_setup "${ws}"
   # tool/git is NOT linked, so health check should produce no output
   run _run_health_check "tool/git"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ "$output" != *"git:"* ]]
 }
 
@@ -738,7 +717,7 @@ load setup-helper
   touch "${ws}/tool/ripgrep/rc"
   _source_setup "${ws}"
   run _link_one "tool/ripgrep" "false"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -L "${HOME}/.config/ripgrep" ]]
 }
 
@@ -749,6 +728,6 @@ load setup-helper
   _source_setup "${ws}"
   link_package "tool/ripgrep"
   run _link_one "tool/ripgrep" "true"
-  [[ "$status" -eq 0 ]]
+  (( status == 0 ))
   [[ -L "${HOME}/.config/ripgrep" ]]
 }
