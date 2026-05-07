@@ -102,7 +102,7 @@
 # -----------------------------------------------------------------------------
 # Tool-specific cache, state, and local configuration files
 
-# GitHub Copilot
+# GitHub Copilot (copilot-instructions.md is grandfathered — tracked before rule)
 .github/
 
 # Git / Ghostty (both use config.local for machine-specific overrides)

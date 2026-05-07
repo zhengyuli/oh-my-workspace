@@ -6,7 +6,7 @@
 # References:
 #   1. Homebrew Bundle Docs: https://github.com/Homebrew/homebrew-bundle
 #   2. brew bundle usage: https://docs.brew.sh/Manpage#bundle-subcommand
-# Note: Run with: brew bundle --file=$WORKSPACE_DIR/pkg/homebrew/Brewfile
+# Note: Run with: brew bundle --file=$WORKSPACE_DIR/pkg-manager/homebrew/Brewfile
 # =============================================================================
 
 # -----------------------------------------------------------------------------
