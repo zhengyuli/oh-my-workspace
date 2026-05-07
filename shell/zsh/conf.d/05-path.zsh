@@ -66,8 +66,6 @@ path=(
 # -----------------------------------------------------------------------------
 
 fpath=(
-  "$ZDOTDIR/completions"(N-/)
-
   "$ZDOTDIR/functions"(N-/)
 
   "$HOMEBREW_PREFIX/share/zsh/site-functions"(N-/)
