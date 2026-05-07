@@ -39,7 +39,6 @@ setup_zsh_env() {
   export HOME="${BATS_TEST_TMPDIR}/home"
   mkdir -p "${HOME}/.config/zsh/conf.d"
   mkdir -p "${HOME}/.config/zsh/functions"
-  mkdir -p "${HOME}/.config/zsh/completions"
   mkdir -p "${HOME}/.cache/zsh"
   mkdir -p "${HOME}/.local/share"
   mkdir -p "${HOME}/.local/state/zsh"
