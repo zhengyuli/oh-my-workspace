@@ -1,6 +1,6 @@
 # oh-my-workspace
 
-> A curated macOS development environment with Zsh, Neovim/Emacs, and modern CLI tools.
+> A curated macOS development environment with Zsh, Vim/Emacs, and modern CLI tools.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
@@ -33,8 +33,8 @@ That's it. Your development environment is ready.
 ## Features
 
 - **Modern Shell** — Zsh with Starship prompt, zoxide (smart cd), direnv, and carapace completions
-- **Dual Editor Setup** — Neovim and Emacs configurations included
-- **Fast Terminal** — Ghostty with tmux multiplexing
+- **Dual Editor Setup** — Vim and Emacs configurations included
+- **Fast Terminal** — Ghostty terminal emulator
 - **Powerful Search** — ripgrep, fd, fzf, and eza for file operations
 - **Language Runtimes** — Pre-configured for Python (uv), TypeScript (bun), Go, and Rust
 - **Git Workflow** — git + lazygit + git-delta + GPG signing support
@@ -123,11 +123,9 @@ oh-my-workspace/
 ├── agent/             # AI coding agent configs
 │   └── claude/           # Claude Code setup (pre-setup.sh, setup.md)
 │
-├── docs/                 # Documentation
-│
 ├── tests/                # BATS test suite (329 tests)
 │   ├── zsh-helper.bash   # Shared zsh test utilities
-│   ├── mocks/            # Mock scripts (setup/, pre-setup/, zsh/, bin/)
+│   ├── mocks/            # Mock dirs (setup/, pre-setup/, zsh/)
 │   └── *.bats           # Test files
 │
 ├── shell/                # Shell configuration
@@ -291,7 +289,7 @@ The `99-local.zsh` file is sourced last in the conf.d loading order and is liste
 
 | Package                                      | Description                          |
 |----------------------------------------------|--------------------------------------|
-| [neovim](https://neovim.io/)                 | Hyperextensible Vim-based editor     |
+| [vim](https://www.vim.org/)                  | Highly configurable text editor  |
 | [emacs](https://www.gnu.org/software/emacs/) | Extensible, customizable text editor |
 
 ### Terminal
@@ -299,7 +297,6 @@ The `99-local.zsh` file is sourced last in the conf.d loading order and is liste
 | Package                              | Description                    |
 |--------------------------------------|--------------------------------|
 | [ghostty](https://ghostty.org/)      | Fast, native terminal emulator |
-| [tmux](https://github.com/tmux/tmux) | Terminal multiplexer           |
 
 ### File Operations
 
