@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 333](https://img.shields.io/badge/Tests-333%20passing-brightgreen.svg)]()
+[![Tests: 329](https://img.shields.io/badge/Tests-329%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -40,7 +40,7 @@ That's it. Your development environment is ready.
 - **Git Workflow** — git + lazygit + git-delta + GPG signing support
 - **One-Command Setup** — `./setup.sh install --all` handles everything
 - **Clean Symlinks** — Built-in symlink engine manages dotfiles without cluttering `$HOME`
-- **Fully Tested** — 333 BATS tests verify all shell modules and setup scripts
+- **Fully Tested** — 329 BATS tests verify all shell modules and setup scripts
 
 ## Installation
 
@@ -125,7 +125,7 @@ oh-my-workspace/
 │
 ├── docs/                 # Documentation
 │
-├── tests/                # BATS test suite (333 tests)
+├── tests/                # BATS test suite (329 tests)
 │   ├── zsh-helper.bash   # Shared zsh test utilities
 │   ├── mocks/            # Mock scripts (setup/, pre-setup/, zsh/, bin/)
 │   └── *.bats           # Test files
@@ -264,13 +264,16 @@ echo "my-setting = value" > tool/mytool/config.conf
 
 ### Overriding Defaults
 
-To override a specific config without modifying the linked file:
+To override a specific config without modifying tracked files:
 
 ```bash
-# Create a local override (not tracked by git)
-mkdir -p ~/.config/zsh/local
-echo "alias mycmd='echo hello'" > ~/.config/zsh/local/aliases.zsh
+# Edit the local override file (gitignored, sourced automatically)
+cat >> ~/.config/zsh/conf.d/99-local.zsh << 'EOF'
+alias mycmd='echo hello'
+EOF
 ```
+
+The `99-local.zsh` file is sourced last in the conf.d loading order and is listed in `.gitignore`, so local changes won't pollute the repository.
 
 ## Package Reference
 
@@ -487,7 +490,7 @@ The repository includes a comprehensive [BATS](https://github.com/bats-core/bats
 ### Running Tests
 
 ```bash
-# Run the full test suite (333 tests)
+# Run the full test suite (329 tests)
 bats tests/
 
 # Run tests for a specific module
@@ -508,11 +511,11 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 
 | File | Tests | Module |
 |------|-------|--------|
-| `setup.bats` | 79 | `setup.sh` (symlink engine, commands, validation) |
+| `setup.bats` | 76 | `setup.sh` (symlink engine, commands, validation) |
 | `pre-setup.bats` | 42 | `agent/claude/pre-setup.sh` (Claude Code setup) |
 | `zsh-env.bats` | 6 | `.zshenv` (XDG bootstrap) |
 | `zsh-00-env.bats` | 24 | `00-env.zsh` (environment variables) |
-| `zsh-05-path.bats` | 14 | `05-path.zsh` (PATH/FPATH) |
+| `zsh-05-path.bats` | 13 | `05-path.zsh` (PATH/FPATH) |
 | `zsh-10-options.bats` | 27 | `10-options.zsh` (shell options) |
 | `zsh-15-history.bats` | 13 | `15-history.zsh` (history config) |
 | `zsh-20-aliases.bats` | 26 | `20-aliases.zsh` (command aliases) |
