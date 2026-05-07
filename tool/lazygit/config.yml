@@ -29,7 +29,6 @@
 
 gui:
   nerdFontsVersion: '3'
-  showFileTree: true
   showRandomTip: false
   showCommandLog: false
   # Catppuccin Mocha Blue theme for visual consistency with terminal
@@ -76,9 +75,6 @@ git:
 os:
   # Open files in Neovim (spawns a new instance per edit)
   editPreset: nvim
-
-# Let user choose instead of auto-creating or skipping
-notARepository: prompt
 
 # -----------------------------------------------------------------------------
 # Keybindings
