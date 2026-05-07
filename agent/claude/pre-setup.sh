@@ -100,15 +100,15 @@ log_err() { _log "${C_R}" error err "$*"; }
 log_warn() { _log "${C_Y}" warn err "$*"; }
 log_info() { _log "${C_B}" info out "$*"; }
 
-# Phase header: top-level, bold, with step indicator [N/M].
-# Set _PHASE_TOTAL before the first call. Counter auto-increments.
-_PHASE_TOTAL=1
-_PHASE_INDEX=0
+# Phase header: top-level, dim step indicator [N/M] with bold title.
+# Set _phase_total before the first call. Counter auto-increments.
+_phase_total=1
+_phase_index=0
 
 _phase() {
-  _PHASE_INDEX=$(( _PHASE_INDEX + 1 ))
+  _phase_index=$(( _phase_index + 1 ))
   printf '\n%b[%d/%d]%b %b%s%b\n' \
-    "${C_DIM}" "${_PHASE_INDEX}" "${_PHASE_TOTAL}" "${C_RESET}" "${C_BOLD}" "$*" "${C_RESET}"
+    "${C_DIM}" "${_phase_index}" "${_phase_total}" "${C_RESET}" "${C_BOLD}" "$*" "${C_RESET}"
 }
 
 # Print a warning and exit 1.
@@ -455,8 +455,8 @@ _verify() {
 
 # Entry point: run all setup phases in sequence.
 main() {
-  _PHASE_TOTAL=5
-  _PHASE_INDEX=0
+  _phase_total=5
+  _phase_index=0
 
   _phase "Prerequisites"
   if ! _check_prerequisites; then

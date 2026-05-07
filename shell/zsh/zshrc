@@ -46,4 +46,3 @@ for _conf in "$ZDOTDIR"/conf.d/*.zsh(N); do
   source "$_conf"
 done
 unset _conf
-

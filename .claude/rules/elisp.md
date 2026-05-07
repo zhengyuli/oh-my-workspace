@@ -84,6 +84,8 @@ the file body:
 
 **Title Case required**: capitalize the first letter of every word in both
 Section Title and Subsection Title (e.g., `GC Tuning`, `Doom Modeline`).
+Short conjunctions, articles, and prepositions (and, or, the, a, an, in, on,
+of, for, to, with) stay lowercase unless they are the first word.
 Abbreviations follow their established convention: ALL CAPS for standard
 abbreviations (e.g., `FZF Preview`, `PDF Tools`, `JSON Mode`, `VTERM`),
 lowercase for established lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
