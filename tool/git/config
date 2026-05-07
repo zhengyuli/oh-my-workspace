@@ -23,15 +23,6 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Local Overrides
-# -----------------------------------------------------------------------------
-
-# Identity omitted by default; override in ~/.config/git/config.local
-
-[include]
-    path = ~/.config/git/config.local
-
-# -----------------------------------------------------------------------------
 # Core Settings
 # -----------------------------------------------------------------------------
 
@@ -42,8 +33,6 @@
     autocrlf = input
     # Display non-ASCII filenames correctly (e.g., Chinese characters)
     quotepath = false
-    # Require exact case matching for reliable cross-platform behavior
-    ignorecase = false
     # Normalize Unicode filenames on macOS for consistency
     precomposeunicode = true
     # Enable parallel index loading for better performance
@@ -239,3 +228,13 @@
 # apple-credential-osxkeychain in Git 2.42+, alias still works)
 [credential]
     helper = osxkeychain
+
+# -----------------------------------------------------------------------------
+# Local Overrides
+# -----------------------------------------------------------------------------
+
+# Machine-specific config (identity, proxy, etc.) loaded last so it can
+# override any setting above.
+
+[include]
+    path = ~/.config/git/config.local
