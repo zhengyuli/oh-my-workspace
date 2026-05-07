@@ -87,7 +87,7 @@ lowercase names (e.g., `cc Mode`, `sh Mode`, `xref`).
 - **Prohibited**: two or more consecutive blank lines anywhere
 
 **Line length** [WARN]:
-79 characters maximum. Per-type exceptions:
+120 characters soft limit. Per-type exceptions:
 - bash/zsh: URLs, file paths, help text in printf/print/echo
 - elisp: URLs, symbol names, docstrings that cannot split
 - vim: URLs, option values that cannot split; line continuation with `\`
@@ -374,7 +374,7 @@ Cache at `$XDG_CACHE_HOME/zsh/zcompdump` with freshness check using glob
 qualifiers (not `find` or `stat`).
 
 **zstyle formatting** [WARN]:
-- Continuation lines (`\`) when value exceeds 79 chars
+- Continuation lines (`\`) when value exceeds 120 chars
 - Group zstyle by context (`:completion:*`, `:fzf-tab:*`)
 
 **fzf-tab coexistence** [WARN]:
