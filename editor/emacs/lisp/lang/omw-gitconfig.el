@@ -29,7 +29,6 @@
   :defer t
   :mode (("/git/config\\'" . gitconfig-mode)
          ("/git/config\\.local\\'" . gitconfig-mode)
-         ("/git/config\\.local\\.example\\'" . gitconfig-mode)
          ("/git/ignore\\'" . gitignore-mode)
          ("\\.gitignore_global\\'" . gitignore-mode)
          ("\\.dockerignore\\'" . gitignore-mode)
