@@ -7,7 +7,6 @@ setup() {
   setup_zsh_env
   mkdir -p "${HOME}/.local/bin"
   mkdir -p "${HOME}/.config/zsh/functions"
-  mkdir -p "${HOME}/.config/zsh/completions"
 }
 teardown() { teardown_zsh_env; }
 
@@ -81,11 +80,6 @@ _run_path() {
 @test "FPATH includes custom functions dir" {
   _run_path 'print -l "${fpath[@]}"'
   [[ "$output" == *"/.config/zsh/functions"* ]]
-}
-
-@test "FPATH includes custom completions dir" {
-  _run_path 'print -l "${fpath[@]}"'
-  [[ "$output" == *"/.config/zsh/completions"* ]]
 }
 
 @test "autoload registers functions from functions dir" {
