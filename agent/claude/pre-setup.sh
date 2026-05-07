@@ -95,10 +95,10 @@ _log() {
 }
 
 # Convenience log wrappers: colored output at various severity levels.
-log_ok()   { _log "${C_G}" ok    out "$*"; }
-log_err()  { _log "${C_R}" error err "$*"; }
-log_warn() { _log "${C_Y}" warn  err "$*"; }
-log_info() { _log "${C_B}" info  out "$*"; }
+log_ok() { _log "${C_G}" ok out "$*"; }
+log_err() { _log "${C_R}" error err "$*"; }
+log_warn() { _log "${C_Y}" warn err "$*"; }
+log_info() { _log "${C_B}" info out "$*"; }
 
 # Phase header: top-level, bold, with step indicator [N/M].
 # Set _PHASE_TOTAL before the first call. Counter auto-increments.
@@ -239,7 +239,7 @@ _check_prerequisites() {
   if (( missing > 0 )); then
     local workspace_dir
     workspace_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-    log_warn "$missing tool(s) missing — run: brew bundle --file=${workspace_dir}/pkg/homebrew/Brewfile"
+    log_warn "$missing tool(s) missing — run: brew bundle --file=${workspace_dir}/pkg-manager/homebrew/Brewfile"
     return 1
   fi
 

@@ -540,7 +540,6 @@ ensure_prerequisites() {
 # -----------------------------------------------------------------------------
 
 # --- Package Link Registry ---
-
 # Each package declares its links as an array of "type:source:target" entries.
 #   type   = "dir" (directory symlink) or "file" (file symlink)
 #   source = relative path within the package directory ("." for package root)
@@ -598,7 +597,6 @@ readonly -a _LINKS_prog_lang_typescript_bun=(
 )
 
 # --- Conflict Resolution ---
-
 # Check recursively if a directory contains only workspace-owned content.
 # A directory is "all ours" if every entry is either a symlink pointing into
 # WORKSPACE_DIR, or a subdirectory that is itself "all ours".
@@ -719,7 +717,6 @@ _resolve_conflict() {
 }
 
 # --- Link Helpers ---
-
 # Create a single symlink from source to destination.
 # Handles conflict detection, dry-run mode, and force mode.
 # Arguments:
@@ -845,7 +842,6 @@ _collect_links() {
 }
 
 # --- Public Interface ---
-
 # Test whether a package is currently linked.
 # Checks that all expected symlinks exist and point to correct targets.
 # Arguments:
@@ -1028,7 +1024,6 @@ unlink_package() {
 # -----------------------------------------------------------------------------
 
 # --- Shell (zsh) ---
-
 # Set default shell to zsh if not already active.
 # Returns:
 #   0 on success, 1 on failure, 2 if skipped.
@@ -1065,7 +1060,6 @@ _post_install_shell_zsh() {
 }
 
 # --- Yazi ---
-
 # Install yazi plugins via ya pack.
 # Plugin list kept in sync with tool/yazi/init.lua.
 # Returns:

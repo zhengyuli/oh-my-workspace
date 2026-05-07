@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 227](https://img.shields.io/badge/Tests-227%20passing-brightgreen.svg)]()
+[![Tests: 333](https://img.shields.io/badge/Tests-333%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -40,7 +40,7 @@ That's it. Your development environment is ready.
 - **Git Workflow** — git + lazygit + git-delta + GPG signing support
 - **One-Command Setup** — `./setup.sh install --all` handles everything
 - **Clean Symlinks** — Built-in symlink engine manages dotfiles without cluttering `$HOME`
-- **Fully Tested** — 227 BATS tests verify all shell modules and setup scripts
+- **Fully Tested** — 333 BATS tests verify all shell modules and setup scripts
 
 ## Installation
 
@@ -508,19 +508,19 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 
 | File | Tests | Module |
 |------|-------|--------|
-| `setup.bats` | 67 | `setup.sh` (symlink engine, commands, validation) |
+| `setup.bats` | 79 | `setup.sh` (symlink engine, commands, validation) |
 | `pre-setup.bats` | 42 | `agent/claude/pre-setup.sh` (Claude Code setup) |
 | `zsh-env.bats` | 6 | `.zshenv` (XDG bootstrap) |
-| `zsh-00-env.bats` | 14 | `00-env.zsh` (environment variables) |
-| `zsh-05-path.bats` | 5 | `05-path.zsh` (PATH/FPATH) |
-| `zsh-10-options.bats` | 8 | `10-options.zsh` (shell options) |
-| `zsh-15-history.bats` | 8 | `15-history.zsh` (history config) |
-| `zsh-20-aliases.bats` | 8 | `20-aliases.zsh` (command aliases) |
-| `zsh-30-completion.bats` | 5 | `30-completion.zsh` (compinit) |
-| `zsh-40-plugins.bats` | 3 | `40-plugins.zsh` (zinit bootstrap) |
-| `zsh-50-prompt.bats` | 4 | `50-prompt.zsh` (starship/vcs_info) |
-| `zsh-60-keybinds.bats` | 4 | `60-keybinds.zsh` (key bindings) |
-| `zsh-70-tools.bats` | 9 | `70-tools.zsh` (tool integrations, git wrapper) |
+| `zsh-00-env.bats` | 24 | `00-env.zsh` (environment variables) |
+| `zsh-05-path.bats` | 14 | `05-path.zsh` (PATH/FPATH) |
+| `zsh-10-options.bats` | 27 | `10-options.zsh` (shell options) |
+| `zsh-15-history.bats` | 13 | `15-history.zsh` (history config) |
+| `zsh-20-aliases.bats` | 26 | `20-aliases.zsh` (command aliases) |
+| `zsh-30-completion.bats` | 14 | `30-completion.zsh` (compinit) |
+| `zsh-40-plugins.bats` | 9 | `40-plugins.zsh` (zinit bootstrap) |
+| `zsh-50-prompt.bats` | 9 | `50-prompt.zsh` (starship/vcs_info) |
+| `zsh-60-keybinds.bats` | 21 | `60-keybinds.zsh` (key bindings) |
+| `zsh-70-tools.bats` | 18 | `70-tools.zsh` (tool integrations, git wrapper) |
 | `zsh-functions.bats` | 5 | `functions/` (brew-upgrade, jsonpp) |
 | `darwin-defaults.bats` | 8 | `platform/darwin/defaults.sh` (macOS prefs) |
 | `config-validation.bats` | 18 | All config files (TOML, YAML, git, ghostty, shell syntax) |

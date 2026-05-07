@@ -108,7 +108,6 @@ fi
 # -----------------------------------------------------------------------------
 
 # --- Config Classification Helpers ---
-
 # Print 'r' for read flags, 'w' for write flags, empty otherwise.
 _git_check_flag() {
   case "$1" in
@@ -167,7 +166,6 @@ _git_classify_config_op() {
 }
 
 # --- Config Wrapper ---
-
 # Redirect git config --global writes to config.local (machine-specific,
 # not tracked). Reads use --includes to transparently merge both files.
 git() {

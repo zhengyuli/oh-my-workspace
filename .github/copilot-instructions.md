@@ -15,7 +15,7 @@ macOS dotfiles repository with a built-in symlink engine. Each subdirectory is a
 
 ## Validation / Lint
 
-There is no test suite. Validate files by type:
+The repository includes a comprehensive [BATS](https://github.com/bats-core/bats-core) test suite (333 tests). Validate files by type:
 
 ```bash
 bash -n setup.sh           # Bash syntax check
@@ -41,15 +41,15 @@ Use the `/lint` slash command inside Claude Code to check convention compliance 
 <category>/<tool>/        # Package root — files map to ~/.config/<tool>/
 ```
 
-`PKG_ALL` in `setup.sh` is the authoritative list of all managed packages. To add a new package: create the directory structure, add the entry to `PKG_ALL`, add a mapping to `_PKG_DIR_MAP`, then run `./setup.sh install <pkg>`.
+`PKG_ALL` in `setup.sh` is the authoritative list of all managed packages. To add a new package: create the directory structure, add the entry to `PKG_ALL`, add a `_LINKS_<pkg>` array, then run `./setup.sh install <pkg>`.
 
 ### XDG Compliance
 
 All configs live under `$XDG_CONFIG_HOME` (`~/.config`). Never hardcode `~/.toolname` paths. Tools that don't natively support XDG (e.g., ripgrep) are redirected via environment variables set in `shell/zsh/conf.d/00-env.zsh`.
 
-### lib/tui.sh
+### Color System and Logging
 
-`setup.sh` sources `lib/tui.sh` for the color system, logging utilities, and health-check dashboard. All UI output in the setup script goes through `tui.sh` functions.
+`setup.sh` contains inline color constants, logging utilities (`_log_info`, `_log_warn`, `_log_error`), and health-check dashboard functions. All UI output goes through these functions.
 
 ## Coding Conventions
 
