@@ -25,55 +25,24 @@
 # -----------------------------------------------------------------------------
 
 [mgr]
-# Wide preview for images and code readability
-ratio = [1, 4, 3]
-
-# Natural sort: case-insensitive, directories first
+# Natural sort: case-insensitive, e.g. 1.md < 2.md < 10.md
 sort_by = "natural"
-sort_sensitive = false
-sort_reverse = false
-sort_dir_first = true
-
-# Minimal display: no linemode, hidden files off, symlink targets visible
-linemode = "none"
-show_hidden = false
-show_symlink = true
-
-# 5 lines of scroll context above/below cursor
-scrolloff = 5
 
 # -----------------------------------------------------------------------------
 # Preview
 # -----------------------------------------------------------------------------
 
 [preview]
-# Unwrapped text and 2-space tabs for readable code previews
-wrap = "no"
-tab_size = 2
-
-# Cap dimensions to avoid pushing the file list off-screen
-max_width = 600
-max_height = 900
-
-# Lanczos3 resampling at 75% quality for sharp downscaling
+# Lanczos3 resampling for sharp image downscaling (highest quality)
 image_filter = "lanczos3"
-image_quality = 75
 
 # -----------------------------------------------------------------------------
 # Tasks
 # -----------------------------------------------------------------------------
 
 [tasks]
-# 10 I/O-bound + 25 CPU-bound workers for parallel processing
-micro_workers = 10
-macro_workers = 25
-
-# 512 MiB image budget with no dimension cap for full-resolution previews
-image_alloc = 536870912
+# No dimension cap for full-resolution image previews
 image_bound = [0, 0]
-
-# Show preload tasks for progress visibility
-suppress_preload = false
 
 # -----------------------------------------------------------------------------
 # Plugin Fetchers
