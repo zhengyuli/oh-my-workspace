@@ -62,11 +62,9 @@ oh-my-workspace/
 ├── agent/          # AI coding agent configs (Claude Code, etc.)
 │   └── claude/        # Claude Code setup (pre-setup.sh, setup.md)
 │
-├── docs/              # Documentation
-│
 ├── tests/             # BATS test suite (329 tests)
 │   ├── zsh-helper.bash # Shared zsh test utilities
-│   ├── mocks/         # Mock scripts (setup/, pre-setup/, zsh/)
+│   ├── mocks/         # Mock dirs (setup/, pre-setup/, zsh/)
 │   └── *.bats        # Test files (16 files)
 │
 ├── shell/             # Shell configurations
@@ -88,7 +86,7 @@ oh-my-workspace/
 │
 ├── prog-lang/         # Language runtimes
 │   ├── python/uv/     # uv config (~/.config/uv/)
-│   └── typescript/bun/# bun config (~/.config/bun/)
+│   └── typescript/bun/# bun config (~/.config/.bunfig.toml)
 │
 ├── platform/          # Platform-specific
 │   └── darwin/        # macOS scripts (defaults.sh)
@@ -206,7 +204,7 @@ Detailed conventions in `.claude/rules/`:
 | Task              | Command                                  |
 |-------------------|------------------------------------------|
 | First-time setup  | See Getting Started section above        |
-| Prerequisites     | `brew install bash`                      |
+| Prerequisites     | Xcode CLI Tools + Homebrew               |
 | Claude Code setup | See `agent/claude/setup.md` (20 plugins, 7 MCP servers, RTK, claude-hud) |
 | Full setup        | `./setup.sh install --all`               |
 | Link package      | `./setup.sh install <package>`           |
