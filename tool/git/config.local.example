@@ -16,55 +16,15 @@
 # -----------------------------------------------------------------------------
 # User Identity (REQUIRED)
 # -----------------------------------------------------------------------------
-# Your name and email for commit authorship
-# This is required for Git to work properly
 
 [user]
     # name = Your Name
     # email = your.email@example.com
-
-    # Optional: Set signing key for GPG-signed commits
     # signingkey = ABC123DEF456
 
 # -----------------------------------------------------------------------------
 # HTTP Proxy (Optional)
 # -----------------------------------------------------------------------------
-# Configure proxy for Git HTTP operations (clone, fetch, push)
-# Uncomment and adjust if you need to use a proxy
 
 # [http]
-#     # Proxy for both HTTP and HTTPS operations (no separate [https] section)
 #     proxy = http://127.0.0.1:7890
-
-# -----------------------------------------------------------------------------
-# GPG Signing (Optional)
-# -----------------------------------------------------------------------------
-# Enable GPG signing for commits and tags
-# Requires GPG key to be set up
-
-# [commit]
-#     gpgsign = true
-#
-# [tag]
-#     gpgsign = true
-#
-# [gpg]
-#     program = gpg
-
-# -----------------------------------------------------------------------------
-# URL Rewrites (Optional)
-# -----------------------------------------------------------------------------
-# Useful for switching between HTTPS and SSH
-# Example: Use SSH instead of HTTPS for GitHub
-
-# [url "git@github.com:"]
-#     insteadOf = https://github.com/
-
-# -----------------------------------------------------------------------------
-# Work-Specific Settings (Optional)
-# -----------------------------------------------------------------------------
-# Override settings for work repositories
-# Example: Use different email for work projects
-
-# [includeIf "gitdir:~/work/"]
-#     path = ~/.config/git/config.work
