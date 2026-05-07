@@ -1,12 +1,25 @@
 # Brewfile -*- mode: ruby; -*-
 # Time-stamp: <2026-03-22 10:25:04 Sunday by zhengyuli>
+#
 # =============================================================================
 # Homebrew Bundle - oh-my-workspace Package List
 #
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: homebrew, packages, dependencies
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-03-22 10:25 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Declarative package manifest for all tools managed by this dotfiles
+#   repository.  Run with:
+#     brew bundle --file=$WORKSPACE_DIR/pkg-manager/homebrew/Brewfile
+#
 # References:
-#   1. Homebrew Bundle Docs: https://github.com/Homebrew/homebrew-bundle
+#   1. Homebrew Bundle: https://github.com/Homebrew/homebrew-bundle
 #   2. brew bundle usage: https://docs.brew.sh/Manpage#bundle-subcommand
-# Note: Run with: brew bundle --file=$WORKSPACE_DIR/pkg-manager/homebrew/Brewfile
 # =============================================================================
 
 # -----------------------------------------------------------------------------
