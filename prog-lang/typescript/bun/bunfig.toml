@@ -21,8 +21,20 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Install Cache
+# Telemetry
 # -----------------------------------------------------------------------------
+
+# Disable anonymous crash report telemetry
+telemetry = false
+
+# -----------------------------------------------------------------------------
+# Install Behavior
+# -----------------------------------------------------------------------------
+
+# Pin exact versions in package.json (no ^ or ~ ranges).
+# Ensures reproducible installs without relying solely on lockfile.
+[install]
+exact = true
 
 # Redirect to XDG cache dir so ~/.bun stays clean and follows XDG spec
 [install.cache]

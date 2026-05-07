@@ -33,3 +33,19 @@
 # Use system trust store (Keychain) instead of bundled webpki-roots.
 # Required for: corporate proxies, self-signed CAs, non-Mozilla certificates.
 system-certs = true
+
+# -----------------------------------------------------------------------------
+# Python Resolution
+# -----------------------------------------------------------------------------
+
+# Prefer uv-managed Python installations over system Python.
+# Avoids accidentally using a stale system Python or Homebrew-upgraded version.
+python-preference = "managed"
+
+# -----------------------------------------------------------------------------
+# Bytecode Compilation
+# -----------------------------------------------------------------------------
+
+# Pre-compile .py → .pyc after install for faster CLI tool startup.
+# Tradeoff: slightly slower install, but eliminates first-run compilation lag.
+compile-bytecode = true
