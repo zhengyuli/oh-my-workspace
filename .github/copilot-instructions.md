@@ -86,9 +86,9 @@ Every file requires this header block:
 
 Section titles use **Title Case**. Standard abbreviations are ALL CAPS (`FZF`, `PDF`); established lowercase names stay lowercase (`cc Mode`, `xref`). Each title must be **unique** within its file at its delimiter level.
 
-No end-of-line comments. No value alignment with extra spaces. No magic numbers (use `readonly` named constants). Max 79-char lines (URLs and format strings exempt). Max 3 nesting levels — use early-return guards to flatten.
+No end-of-line comments. No value alignment with extra spaces. No magic numbers (use `readonly` named constants). Max 120-char lines (URLs and format strings exempt). Max 3 nesting levels — use early-return guards to flatten.
 
-### Bash (`setup.sh`, `platform/**/*.sh`)
+### Bash (`setup.sh`, `agent/**/*.sh`, `platform/**/*.sh`)
 
 - Shebang `#!/usr/bin/env bash` only on directly executable scripts; sourced files omit it
 - `set -euo pipefail` mandatory in all scripts (not in interactive `.bashrc`)

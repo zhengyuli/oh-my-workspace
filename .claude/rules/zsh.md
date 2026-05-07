@@ -658,7 +658,7 @@ fi
 
 ### zstyle Formatting
 
-- Use continuation lines (`\`) when zstyle value exceeds 79 chars
+- Use continuation lines (`\`) when zstyle value exceeds 120 chars
 - Comment complex matcher-list or list-colors patterns
 - Group zstyle by context (`:completion:*`, `:fzf-tab:*`)
 
