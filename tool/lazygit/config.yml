@@ -62,6 +62,7 @@ gui:
 # -----------------------------------------------------------------------------
 
 git:
+  # NOTE: `pagers` (list) is the v0.56+ format replacing the old `paging` (object)
   pagers:
     # Force color output for delta to render syntax highlighting
     - colorArg: always

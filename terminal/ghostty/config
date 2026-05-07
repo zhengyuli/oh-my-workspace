@@ -121,6 +121,7 @@ scrollback-limit = 50000
 # Copy to both selection and system clipboard for middle-click and Cmd+V
 copy-on-select = clipboard
 # Clear selection on typing to avoid stale highlights interfering with input
+# NOTE: valid option since Ghostty 1.1+; default is true but set explicitly
 selection-clear-on-typing = true
 
 # -----------------------------------------------------------------------------
