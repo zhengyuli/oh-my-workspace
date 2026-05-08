@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # defaults.sh -*- mode: sh; -*-
 # Time-stamp: <2026-04-04 13:30:00 Saturday by zhengyu.li>
+#
 # =============================================================================
 # macOS System Defaults - developer-optimized
 #

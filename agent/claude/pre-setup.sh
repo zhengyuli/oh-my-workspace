@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # pre-setup.sh -*- mode: sh; -*-
 # Time-stamp: <2026-04-24 15:48:00 Thursday by zhengyu.li>
+#
 # =============================================================================
 # Claude Code Pre-Setup
 #
