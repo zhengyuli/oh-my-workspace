@@ -64,6 +64,7 @@ Step 8: Troubleshooting        -> Troubleshoot issues
 - **Obsidian Skills**: https://github.com/kepano/obsidian-skills
 - **Happy**: https://happy.engineering
 - **last30days**: https://github.com/mvanhorn/last30days-skill
+- **gstack**: https://github.com/garrytan/gstack
 
 ---
 
