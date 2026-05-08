@@ -18,7 +18,7 @@ It handles:
 ./agent/claude/pre-setup.sh
 ```
 
-After `pre-setup.sh` completes successfully, open Claude Code and follow Steps 1–7 below.
+After `pre-setup.sh` completes successfully, open Claude Code and follow Steps 1–8 below.
 
 ## Configuration Overview
 
@@ -31,6 +31,7 @@ This guide will configure the following components:
 | **MCP Servers**         | 7     | Vision, search, web reader, documentation, browser, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 3     | RTK (token savings), claude-hud (status bar), Happy (mobile client) |
+| **Skills**              | 30+   | gstack slash-command skills (QA, review, security, design)          |
 
 ## Execution Order
 
@@ -40,7 +41,7 @@ This guide will configure the following components:
 > Plugin marketplace add, plugin install, and MCP add skip or overwrite
 > existing entries without error.
 
-**Claude Code starts here** — execute Steps 1–7 sequentially:
+**Claude Code starts here** — execute Steps 1–8 sequentially:
 
 ```
 Step 1: Plugin Marketplaces    -> Add plugin sources
@@ -48,8 +49,9 @@ Step 2: Install Plugins        -> Install 20 plugins
 Step 3: MCP Servers            -> Configure MCP servers
 Step 4: Hooks                  -> Set up automation hooks
 Step 5: Auxiliary Tools        -> Install auxiliary tools
-Step 6: Verification           -> Verify all configurations
-Step 7: Troubleshooting        -> Troubleshoot issues
+Step 6: Skills                 -> Install gstack skill pack
+Step 7: Verification           -> Verify all configurations
+Step 8: Troubleshooting        -> Troubleshoot issues
 ```
 
 ## Official Reference Resources
@@ -388,7 +390,53 @@ printf 'Expected: 20 plugins\n'
 
 ---
 
-## Step 6: Verification
+## Step 6: Skills
+
+### Description
+
+Skills are specialized Claude Code capabilities installed as SKILL.md
+files in `~/.claude/skills/`.
+
+| Skill Pack | Skills | Purpose                                                  | Source                                                     |
+|------------|--------|----------------------------------------------------------|------------------------------------------------------------|
+| **gstack** | 30+    | QA, code review, security audit, design review, shipping | [garrytan/gstack](https://github.com/garrytan/gstack)      |
+
+### Install gstack
+
+```bash
+# Clone into Claude Code skills directory
+git clone --single-branch --depth 1 \
+  https://github.com/garrytan/gstack.git \
+  ~/.claude/skills/gstack
+
+# Build browser binary and register skills
+cd ~/.claude/skills/gstack && ./setup
+```
+
+During setup, choose skill naming:
+- **Short names** (recommended): `/qa`, `/ship`, `/review`
+- **Namespaced**: `/gstack-qa`, `/gstack-ship`, `/gstack-review`
+
+### Verify Skills
+
+```bash
+# Count installed skills
+ls -d ~/.claude/skills/*/SKILL.md 2>/dev/null | wc -l
+
+# Should show 30+ skills
+```
+
+### Update
+
+```bash
+cd ~/.claude/skills/gstack && git pull && ./setup -q
+```
+
+Or use `/gstack-upgrade` inside Claude Code.
+
+---
+
+## Step 7: Verification
 
 ### Description
 
@@ -413,7 +461,7 @@ printf ' %s\n' "$SCRIPT_NAME"
 printf '=========================================\n'
 
 # 1. GLM Configuration Check
-printf '\n[1/9] GLM Configuration Check\n'
+printf '\n[1/10] GLM Configuration Check\n'
 if jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "GLM API endpoint configured"
 else
@@ -421,7 +469,7 @@ else
 fi
 
 # 2. Plugin Count Check
-printf '\n[2/9] Plugin Count Check\n'
+printf '\n[2/10] Plugin Count Check\n'
 if command -v claude >/dev/null 2>&1; then
   PLUGIN_COUNT="$(claude plugin list 2>/dev/null | grep -c '✔ enabled')"
   if (( PLUGIN_COUNT >= MIN_PLUGIN_COUNT )); then
@@ -434,7 +482,7 @@ else
 fi
 
 # 3. MCP Check
-printf '\n[3/9] MCP Check\n'
+printf '\n[3/10] MCP Check\n'
 if [[ -f ~/.claude.json ]]; then
   MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)"
   if (( MCP_COUNT >= MIN_MCP_COUNT )); then
@@ -447,7 +495,7 @@ else
 fi
 
 # 4. Hooks Check
-printf '\n[4/9] Hooks Check\n'
+printf '\n[4/10] Hooks Check\n'
 if jq -e '.hooks.PreToolUse' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "Hooks configured"
 else
@@ -455,7 +503,7 @@ else
 fi
 
 # 5. RTK Check
-printf '\n[5/9] RTK Check\n'
+printf '\n[5/10] RTK Check\n'
 if command -v rtk >/dev/null 2>&1; then
   _pass "RTK installed: $(rtk --version 2>&1 | head -1)"
 else
@@ -463,7 +511,7 @@ else
 fi
 
 # 6. Happy Check
-printf '\n[6/9] Happy Check\n'
+printf '\n[6/10] Happy Check\n'
 if command -v happy >/dev/null 2>&1; then
   _pass "Happy installed: $(happy --version 2>&1 | head -1)"
 else
@@ -471,23 +519,32 @@ else
 fi
 
 # 7. claude-hud Check
-printf '\n[7/9] claude-hud Check\n'
+printf '\n[7/10] claude-hud Check\n'
 if jq -e '.statusLine' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "claude-hud configured"
 else
   _fail "claude-hud not configured (run /claude-hud:setup)"
 fi
 
-# 8. MarkItDown Check
-printf '\n[8/9] MarkItDown Check\n'
+# 8. gstack Skills Check
+printf '\n[8/10] gstack Skills Check\n'
+if [[ -d ~/.claude/skills/gstack ]]; then
+  SKILL_COUNT="$(ls -d ~/.claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
+  _pass "gstack installed: $SKILL_COUNT skills"
+else
+  _fail "gstack not installed (see Step 6)"
+fi
+
+# 9. MarkItDown Check
+printf '\n[9/10] MarkItDown Check\n'
 if command -v markitdown-mcp >/dev/null 2>&1; then
   _pass "markitdown-mcp installed"
 else
   _fail "markitdown-mcp not installed (run: uv tool install markitdown-mcp)"
 fi
 
-# 9. Configuration File Format Check
-printf '\n[9/9] Configuration File Format Check\n'
+# 10. Configuration File Format Check
+printf '\n[10/10] Configuration File Format Check\n'
 if jq empty ~/.claude/settings.json 2>/dev/null; then
   _pass "settings.json OK"
 else
@@ -520,9 +577,9 @@ chmod +x /tmp/verify-claude-env.sh
 
 ---
 
-## Step 7: Troubleshooting
+## Step 8: Troubleshooting
 
-### 7.1 GLM Configuration Issues
+### 8.1 GLM Configuration Issues
 
 **Problem: Invalid GLM API Key**
 ```bash
@@ -535,7 +592,7 @@ curl -H "Authorization: Bearer ${GLM_KEY}" https://open.bigmodel.cn/api/anthropi
 ./agent/claude/pre-setup.sh
 ```
 
-### 7.2 Plugin Issues
+### 8.2 Plugin Issues
 
 **Problem: Plugin Installation Failed**
 ```bash
@@ -563,7 +620,7 @@ fi
 claude plugin install plugin-name@marketplace
 ```
 
-### 7.3 MCP Issues
+### 8.3 MCP Issues
 
 **Problem: MCP Servers Not Showing**
 ```bash
@@ -576,7 +633,7 @@ jq '.mcpServers' ~/.claude.json
 # Restart Claude Code
 ```
 
-### 7.4 Hooks Issues
+### 8.4 Hooks Issues
 
 **Problem: Hooks Not Working**
 ```bash
@@ -588,7 +645,7 @@ rtk --version
 rtk init --show
 ```
 
-### 7.5 Network Issues
+### 8.5 Network Issues
 
 **Problem: Cannot Access GitHub**
 ```bash
@@ -599,7 +656,7 @@ curl -I https://github.com
 export HTTPS_PROXY="http://your-proxy:port"
 ```
 
-### 7.6 Complete Reset
+### 8.6 Complete Reset
 
 **Problem: All Configuration Failed**
 
