@@ -26,8 +26,8 @@ This guide will configure the following components:
 
 | Component               | Count | Purpose                                                             |
 |-------------------------|-------|---------------------------------------------------------------------|
-| **Plugin Marketplaces** | 6     | Official + community + GLM plugin sources                           |
-| **Plugins**             | 12    | Development tools, MCP integration, auxiliary features, Obsidian    |
+| **Plugin Marketplaces** | 7     | Official + community + GLM plugin sources                           |
+| **Plugins**             | 13    | Development tools, MCP integration, auxiliary features, Obsidian    |
 | **MCP Servers**         | 6     | Vision, search, web reader, documentation, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 2     | RTK (token savings), claude-hud (status bar)                        |
@@ -45,7 +45,7 @@ This guide will configure the following components:
 
 ```
 Step 1: Plugin Marketplaces    -> Add plugin sources
-Step 2: Install Plugins        -> Install 12 plugins
+Step 2: Install Plugins        -> Install 13 plugins
 Step 3: MCP Servers            -> Configure MCP servers
 Step 4: Hooks                  -> Set up automation hooks
 Step 5: Auxiliary Tools        -> Install auxiliary tools
@@ -63,6 +63,7 @@ Step 8: Troubleshooting        -> Troubleshoot issues
 - **RTK**: https://github.com/rtk-ai/rtk
 - **Obsidian Skills**: https://github.com/kepano/obsidian-skills
 - **Caveman**: https://github.com/JuliusBrussee/caveman
+- **UI/UX Pro Max**: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
 - **superpowers**: https://github.com/anthropics/claude-plugins-official/tree/main/superpowers
 - **last30days**: https://github.com/mvanhorn/last30days-skill
 - **gstack**: https://github.com/garrytan/gstack
@@ -73,7 +74,7 @@ Step 8: Troubleshooting        -> Troubleshoot issues
 
 ### Description
 
-Claude Code supports a plugin system to extend functionality. This guide uses 6 plugin marketplaces (1 auto-configured by GLM helper, 5 added manually):
+Claude Code supports a plugin system to extend functionality. This guide uses 7 plugin marketplaces (1 auto-configured by GLM helper, 6 added manually):
 
 | Marketplace                 | Purpose              | Source                                                          |
 |-----------------------------|----------------------|-----------------------------------------------------------------|
@@ -83,6 +84,7 @@ Claude Code supports a plugin system to extend functionality. This guide uses 6 
 | **obsidian-skills**         | Obsidian vault tools | [GitHub](https://github.com/kepano/obsidian-skills)             |
 | **caveman**                 | Token compression    | [GitHub](https://github.com/JuliusBrussee/caveman)              |
 | **last30days-skill**        | Topic research       | [GitHub](https://github.com/mvanhorn/last30days-skill)          |
+| **ui-ux-pro-max-skill**    | UI/UX design system  | [GitHub](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
 
 ### Add Plugin Marketplaces
 
@@ -102,6 +104,9 @@ claude plugin marketplace add JuliusBrussee/caveman
 # Add last30days research skill
 claude plugin marketplace add mvanhorn/last30days-skill
 
+# Add UI/UX Pro Max design system
+claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
+
 # Note: zai-coding-plugins is auto-configured by bunx @z_ai/coding-helper in pre-setup.sh
 
 # Verify all marketplaces are added
@@ -114,7 +119,7 @@ claude plugin marketplace list
 
 ### Description
 
-Now install 12 plugins. Each plugin includes installation command and description.
+Now install 13 plugins. Each plugin includes installation command and description.
 
 ### 2.1 GLM Plugin Marketplace (1 plugin)
 
@@ -178,13 +183,20 @@ claude plugin install obsidian@obsidian-skills
 claude plugin install caveman@caveman
 ```
 
+### 2.7 UI/UX Pro Max Marketplace (1 plugin)
+
+```bash
+# ui-ux-pro-max - AI design intelligence (67 styles, 161 reasoning rules)
+claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill
+```
+
 ### Verify All Plugins
 
 ```bash
 # List all installed plugins
 claude plugin list
 
-# Should see 12 plugins
+# Should see 13 plugins
 ```
 
 ---
@@ -336,7 +348,7 @@ rtk init --show
 
 # 3. Verify Plugin count
 claude plugin list 2>/dev/null | grep -c '✔ enabled'
-printf 'Expected: 12 plugins\n'
+printf 'Expected: 13 plugins\n'
 ```
 
 ---
@@ -400,7 +412,7 @@ After completing all configurations, perform comprehensive verification.
 set -euo pipefail
 
 readonly SCRIPT_NAME="Claude Code Environment Verification"
-readonly MIN_PLUGIN_COUNT=12
+readonly MIN_PLUGIN_COUNT=13
 readonly MIN_MCP_COUNT=5
 
 # --- Logging ---
@@ -624,7 +636,7 @@ rm -rf ~/.config/rtk/
 
 Your Claude Code environment is now fully configured with:
 - GLM model configuration
-- 12 plugins
+- 13 plugins
 - 6 MCP servers
 - RTK token optimization
 - claude-hud status bar

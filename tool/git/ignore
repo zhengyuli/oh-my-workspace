@@ -39,3 +39,5 @@
 *.orig
 .vscode/
 .idea/
+
+**/.claude/settings.local.json
