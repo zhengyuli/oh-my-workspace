@@ -27,8 +27,8 @@ This guide will configure the following components:
 | Component               | Count | Purpose                                                             |
 |-------------------------|-------|---------------------------------------------------------------------|
 | **Plugin Marketplaces** | 6     | Official + community + GLM plugin sources                           |
-| **Plugins**             | 20    | Development tools, MCP integration, auxiliary features, Obsidian    |
-| **MCP Servers**         | 7     | Vision, search, web reader, documentation, browser, advanced search, document conversion |
+| **Plugins**             | 12    | Development tools, MCP integration, auxiliary features, Obsidian    |
+| **MCP Servers**         | 6     | Vision, search, web reader, documentation, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 3     | RTK (token savings), claude-hud (status bar), Happy (mobile client) |
 | **Skills**              | 30+   | gstack slash-command skills (QA, review, security, design)          |
@@ -45,7 +45,7 @@ This guide will configure the following components:
 
 ```
 Step 1: Plugin Marketplaces    -> Add plugin sources
-Step 2: Install Plugins        -> Install 20 plugins
+Step 2: Install Plugins        -> Install 12 plugins
 Step 3: MCP Servers            -> Configure MCP servers
 Step 4: Hooks                  -> Set up automation hooks
 Step 5: Auxiliary Tools        -> Install auxiliary tools
@@ -113,7 +113,7 @@ claude plugin marketplace list
 
 ### Description
 
-Now install 20 plugins. Each plugin includes installation command and description.
+Now install 12 plugins. Each plugin includes installation command and description.
 
 ### 2.1 GLM Plugin Marketplace (1 plugin)
 
@@ -124,12 +124,9 @@ Now install 20 plugins. Each plugin includes installation command and descriptio
 claude plugin install glm-plan-usage@zai-coding-plugins
 ```
 
-### 2.2 Official Plugin Marketplace (15 plugins)
+### 2.2 Official Plugin Marketplace (7 plugins)
 
 ```bash
-# playwright - Browser automation
-claude plugin install playwright@claude-plugins-official
-
 # context7 - Document query
 claude plugin install context7@claude-plugins-official
 
@@ -148,29 +145,8 @@ claude plugin install plugin-dev@claude-plugins-official
 # hookify - Hook management
 claude plugin install hookify@claude-plugins-official
 
-# skill-creator - Skill creation tool
-claude plugin install skill-creator@claude-plugins-official
-
-# code-review - Code review
-claude plugin install code-review@claude-plugins-official
-
-# feature-dev - Feature development
-claude plugin install feature-dev@claude-plugins-official
-
-# code-simplifier - Code simplification
-claude plugin install code-simplifier@claude-plugins-official
-
-# frontend-design - Frontend design
-claude plugin install frontend-design@claude-plugins-official
-
 # superpowers - Core skill library
 claude plugin install superpowers@claude-plugins-official
-
-# security-guidance - Security risk detection on file edits (XSS, injection, etc.)
-claude plugin install security-guidance@claude-plugins-official
-
-# pr-review-toolkit - Comprehensive PR review (comments, tests, error handling, code quality)
-claude plugin install pr-review-toolkit@claude-plugins-official
 ```
 
 ### 2.3 last30days Marketplace (1 plugin)
@@ -207,7 +183,7 @@ claude plugin install caveman@caveman
 # List all installed plugins
 claude plugin list
 
-# Should see 20 plugins
+# Should see 12 plugins
 ```
 
 ---
@@ -216,7 +192,7 @@ claude plugin list
 
 ### Description
 
-MCP (Model Context Protocol) server configuration (7 total):
+MCP (Model Context Protocol) server configuration (6 total):
 
 **Auto-configured MCP (via GLM configuration in pre-setup.sh):**
 - `web-reader` - Web content reader
@@ -225,7 +201,6 @@ MCP (Model Context Protocol) server configuration (7 total):
 
 **Plugin auto-configured MCP:**
 - `context7` - Library documentation query (via `context7` plugin)
-- `playwright` - Browser automation (via `playwright` plugin)
 
 **Independent configuration MCP (global):**
 - `markitdown` - Document/file conversion to Markdown (PDF, DOCX, PPTX, XLSX, etc.)
@@ -386,7 +361,7 @@ rtk init --show
 
 # 4. Verify Plugin count
 claude plugin list 2>/dev/null | grep -c '✔ enabled'
-printf 'Expected: 20 plugins\n'
+printf 'Expected: 12 plugins\n'
 ```
 
 ---
@@ -688,8 +663,8 @@ rm -rf ~/.config/rtk/
 
 Your Claude Code environment is now fully configured with:
 - GLM model configuration
-- 20 plugins
-- 7 MCP servers
+- 12 plugins
+- 6 MCP servers
 - RTK token optimization
 - claude-hud status bar
 - Happy mobile client
