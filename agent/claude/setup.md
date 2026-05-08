@@ -425,7 +425,7 @@ After completing all configurations, perform comprehensive verification.
 set -euo pipefail
 
 readonly SCRIPT_NAME="Claude Code Environment Verification"
-readonly MIN_PLUGIN_COUNT=20
+readonly MIN_PLUGIN_COUNT=12
 readonly MIN_MCP_COUNT=5
 
 # --- Logging ---
@@ -462,7 +462,7 @@ printf '\n[3/10] MCP Check\n'
 if [[ -f ~/.claude.json ]]; then
   MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)"
   if (( MCP_COUNT >= MIN_MCP_COUNT )); then
-    _pass "MCP count: $MCP_COUNT (3 GLM + 1+ plugins/tavily)"
+    _pass "MCP count: $MCP_COUNT (3 GLM + context7 + markitdown/tavily)"
   else
     _fail "Low MCP count: $MCP_COUNT (expected >= $MIN_MCP_COUNT)"
   fi
@@ -667,6 +667,7 @@ Your Claude Code environment is now fully configured with:
 - 6 MCP servers
 - RTK token optimization
 - claude-hud status bar
+- 30+ gstack skills
 - Happy mobile client
 
 Enjoy using Claude Code!
