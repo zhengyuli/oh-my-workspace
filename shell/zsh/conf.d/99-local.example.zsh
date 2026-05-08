@@ -75,8 +75,8 @@
 # -----------------------------------------------------------------------------
 
 # --- Proxy Settings (edit these three values) ---
-# readonly _PROXY_URL="http://proxy.example.com:8080"
-# readonly _PROXY_BYPASS_COMPANY=".example.com,example.com"
+# readonly _PROXY_URL="http://proxy.company.com:8080"
+# readonly _PROXY_BYPASS_COMPANY=".company.com,company.com"
 # readonly _PROXY_BYPASS_PRIVATE="localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 
 # set_proxy() {
