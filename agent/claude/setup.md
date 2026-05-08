@@ -18,7 +18,7 @@ It handles:
 ./agent/claude/pre-setup.sh
 ```
 
-After `pre-setup.sh` completes successfully, open Claude Code and follow Steps 1–8 below.
+After `pre-setup.sh` completes successfully, open Claude Code and follow Steps 1–7 below.
 
 ## Configuration Overview
 
@@ -27,8 +27,8 @@ This guide will configure the following components:
 | Component               | Count | Purpose                                                             |
 |-------------------------|-------|---------------------------------------------------------------------|
 | **Plugin Marketplaces** | 7     | Official + community + GLM plugin sources                           |
-| **Plugins**             | 8     | Token tools, research, design, vault skills, Obsidian              |
-| **MCP Servers**         | 6     | Vision, search, web reader, documentation, advanced search, document conversion |
+| **Plugins**             | 8     | Quota tracking, docs, research, design, workflow, compression     |
+| **MCP Servers**         | 6     | Vision, web search, documentation, document conversion            |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 2     | RTK (token savings), claude-hud (status bar)                        |
 | **Skills**              | 30+   | gstack slash-command skills (QA, review, security, design)          |
@@ -41,7 +41,7 @@ This guide will configure the following components:
 > Plugin marketplace add, plugin install, and MCP add skip or overwrite
 > existing entries without error.
 
-**Claude Code starts here** — execute Steps 1–8 sequentially:
+**Claude Code starts here** — execute Steps 1–7 sequentially:
 
 ```
 Step 1: Plugin Marketplaces    -> Add plugin sources
@@ -51,8 +51,9 @@ Step 4: Hooks                  -> Set up automation hooks
 Step 5: Auxiliary Tools        -> Install auxiliary tools
 Step 6: Skills                 -> Install gstack skill pack
 Step 7: Verification           -> Verify all configurations
-Step 8: Troubleshooting        -> Troubleshoot issues
 ```
+
+Appendix: Troubleshooting (reference only — not an execution step)
 
 ## Official Reference Resources
 
@@ -64,7 +65,7 @@ Step 8: Troubleshooting        -> Troubleshoot issues
 - **Obsidian Skills**: https://github.com/kepano/obsidian-skills
 - **Caveman**: https://github.com/JuliusBrussee/caveman
 - **UI/UX Pro Max**: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
-- **superpowers**: https://github.com/anthropics/claude-plugins-official/tree/main/superpowers
+- **superpowers**: https://github.com/obra/superpowers-marketplace
 - **last30days**: https://github.com/mvanhorn/last30days-skill
 - **gstack**: https://github.com/garrytan/gstack
 
@@ -302,13 +303,9 @@ Auxiliary tools were installed in previous steps, only need verification and con
 
 ### Configure claude-hud Statusline
 
-Inside Claude Code interactive session:
+Run the following slash commands inside Claude Code:
 
 ```
-# Start Claude Code
-claude
-
-# Then run the slash command inside the session
 /claude-hud:setup
 
 # Optional: Configure HUD display options
@@ -434,7 +431,7 @@ printf '\n[3/9] MCP Check\n'
 if [[ -f ~/.claude.json ]]; then
   MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null || true)"
   if (( MCP_COUNT >= MIN_MCP_COUNT )); then
-    _pass "MCP count: $MCP_COUNT (3 GLM + context7 + markitdown/tavily)"
+    _pass "MCP count: $MCP_COUNT"
   else
     _fail "Low MCP count: $MCP_COUNT (expected >= $MIN_MCP_COUNT)"
   fi
@@ -511,9 +508,9 @@ chmod +x /tmp/verify-claude-env.sh
 
 ---
 
-## Step 8: Troubleshooting
+## Appendix: Troubleshooting
 
-### 8.1 GLM Configuration Issues
+### GLM Configuration Issues
 
 **Problem: Invalid GLM API Key**
 ```bash
@@ -526,7 +523,7 @@ curl -H "Authorization: Bearer ${GLM_KEY}" https://open.bigmodel.cn/api/anthropi
 ./agent/claude/pre-setup.sh
 ```
 
-### 8.2 Plugin Issues
+### Plugin Issues
 
 **Problem: Plugin Installation Failed**
 ```bash
@@ -554,7 +551,7 @@ fi
 claude plugin install plugin-name@marketplace
 ```
 
-### 8.3 MCP Issues
+### MCP Issues
 
 **Problem: MCP Servers Not Showing**
 ```bash
@@ -567,7 +564,7 @@ jq '.mcpServers' ~/.claude.json
 # Restart Claude Code
 ```
 
-### 8.4 Hooks Issues
+### Hooks Issues
 
 **Problem: Hooks Not Working**
 ```bash
@@ -579,7 +576,7 @@ rtk --version
 rtk init --show
 ```
 
-### 8.5 Network Issues
+### Network Issues
 
 **Problem: Cannot Access GitHub**
 ```bash
@@ -590,7 +587,7 @@ curl -I https://github.com
 export HTTPS_PROXY="http://proxy.company.com:port"
 ```
 
-### 8.6 Complete Reset
+### Complete Reset
 
 **Problem: All Configuration Failed**
 
