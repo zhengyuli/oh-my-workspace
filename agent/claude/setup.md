@@ -422,7 +422,7 @@ fi
 # 2. Plugin Count Check
 printf '\n[2/9] Plugin Count Check\n'
 if command -v claude >/dev/null 2>&1; then
-  PLUGIN_COUNT="$(claude plugin list 2>/dev/null | grep -c '✔ enabled')"
+  PLUGIN_COUNT="$(claude plugin list 2>/dev/null | grep -c '✔ enabled' || true)"
   if (( PLUGIN_COUNT >= MIN_PLUGIN_COUNT )); then
     _pass "Plugin count: $PLUGIN_COUNT"
   else
