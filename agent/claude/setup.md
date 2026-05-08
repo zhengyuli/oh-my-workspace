@@ -30,7 +30,7 @@ This guide will configure the following components:
 | **Plugins**             | 12    | Development tools, MCP integration, auxiliary features, Obsidian    |
 | **MCP Servers**         | 6     | Vision, search, web reader, documentation, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
-| **Auxiliary Tools**     | 3     | RTK (token savings), claude-hud (status bar), Happy (mobile client) |
+| **Auxiliary Tools**     | 2     | RTK (token savings), claude-hud (status bar)                        |
 | **Skills**              | 30+   | gstack slash-command skills (QA, review, security, design)          |
 
 ## Execution Order
@@ -62,7 +62,6 @@ Step 8: Troubleshooting        -> Troubleshoot issues
 - **claude-hud**: https://github.com/jarrodwatts/claude-hud
 - **RTK**: https://github.com/rtk-ai/rtk
 - **Obsidian Skills**: https://github.com/kepano/obsidian-skills
-- **Happy**: https://happy.engineering
 - **last30days**: https://github.com/mvanhorn/last30days-skill
 - **gstack**: https://github.com/garrytan/gstack
 
@@ -299,31 +298,8 @@ jq '.hooks' ~/.claude/settings.json
 
 Auxiliary tools were installed in previous steps, only need verification and configuration:
 
-- **Happy** - Claude Code mobile/web client
 - **claude-hud** - Installed in Step 2.4
 - **RTK** - Installed in Step 4
-
-### Install Happy
-
-```bash
-# Install Happy CLI globally via bun
-bun install -g happy
-
-# Trust the package (required by bun for global packages)
-# Uses XDG_DATA_HOME (falls back to ~/.local/share) to locate bun global dir
-BUN_GLOBAL_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/bun/install/global"
-if [[ -d "$BUN_GLOBAL_DIR" ]]; then
-  cd "$BUN_GLOBAL_DIR" && bun pm trust happy
-else
-  echo "Warning: bun global dir not found at $BUN_GLOBAL_DIR"
-  echo "Please run manually: cd <bun-global-dir> && bun pm trust happy"
-fi
-
-# Verify installation
-happy --version
-```
-
-> **Note**: `bun pm trust` is required because bun restricts lifecycle scripts for globally installed packages. Without this step, Happy may fail to run properly. If the automatic trust fails (e.g. non-standard bun install path), run `bun pm -g bin` to find your global directory, then `cd` into it and run `bun pm trust happy`.
 
 ### Configure claude-hud Statusline
 
@@ -348,18 +324,15 @@ claude
 ### Verify All Tools
 
 ```bash
-# 1. Verify Happy
-happy --version
-
-# 2. Verify claude-hud
+# 1. Verify claude-hud
 claude plugin list | grep claude-hud
 jq '.statusLine' ~/.claude/settings.json
 
-# 3. Verify RTK
+# 2. Verify RTK
 rtk --version
 rtk init --show
 
-# 4. Verify Plugin count
+# 3. Verify Plugin count
 claude plugin list 2>/dev/null | grep -c '✔ enabled'
 printf 'Expected: 12 plugins\n'
 ```
@@ -437,7 +410,7 @@ printf ' %s\n' "$SCRIPT_NAME"
 printf '=========================================\n'
 
 # 1. GLM Configuration Check
-printf '\n[1/10] GLM Configuration Check\n'
+printf '\n[1/9] GLM Configuration Check\n'
 if jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "GLM API endpoint configured"
 else
@@ -445,7 +418,7 @@ else
 fi
 
 # 2. Plugin Count Check
-printf '\n[2/10] Plugin Count Check\n'
+printf '\n[2/9] Plugin Count Check\n'
 if command -v claude >/dev/null 2>&1; then
   PLUGIN_COUNT="$(claude plugin list 2>/dev/null | grep -c '✔ enabled')"
   if (( PLUGIN_COUNT >= MIN_PLUGIN_COUNT )); then
@@ -458,7 +431,7 @@ else
 fi
 
 # 3. MCP Check
-printf '\n[3/10] MCP Check\n'
+printf '\n[3/9] MCP Check\n'
 if [[ -f ~/.claude.json ]]; then
   MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)"
   if (( MCP_COUNT >= MIN_MCP_COUNT )); then
@@ -471,7 +444,7 @@ else
 fi
 
 # 4. Hooks Check
-printf '\n[4/10] Hooks Check\n'
+printf '\n[4/9] Hooks Check\n'
 if jq -e '.hooks.PreToolUse' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "Hooks configured"
 else
@@ -479,31 +452,23 @@ else
 fi
 
 # 5. RTK Check
-printf '\n[5/10] RTK Check\n'
+printf '\n[5/9] RTK Check\n'
 if command -v rtk >/dev/null 2>&1; then
   _pass "RTK installed: $(rtk --version 2>&1 | head -1)"
 else
   _fail "RTK not installed"
 fi
 
-# 6. Happy Check
-printf '\n[6/10] Happy Check\n'
-if command -v happy >/dev/null 2>&1; then
-  _pass "Happy installed: $(happy --version 2>&1 | head -1)"
-else
-  _fail "Happy not installed"
-fi
-
-# 7. claude-hud Check
-printf '\n[7/10] claude-hud Check\n'
+# 6. claude-hud Check
+printf '\n[6/9] claude-hud Check\n'
 if jq -e '.statusLine' ~/.claude/settings.json >/dev/null 2>&1; then
   _pass "claude-hud configured"
 else
   _fail "claude-hud not configured (run /claude-hud:setup)"
 fi
 
-# 8. gstack Skills Check
-printf '\n[8/10] gstack Skills Check\n'
+# 7. gstack Skills Check
+printf '\n[7/9] gstack Skills Check\n'
 if [[ -d ~/.claude/skills/gstack ]]; then
   SKILL_COUNT="$(ls -d ~/.claude/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
   _pass "gstack installed: $SKILL_COUNT skills"
@@ -511,16 +476,16 @@ else
   _fail "gstack not installed (see Step 6)"
 fi
 
-# 9. MarkItDown Check
-printf '\n[9/10] MarkItDown Check\n'
+# 8. MarkItDown Check
+printf '\n[8/9] MarkItDown Check\n'
 if command -v markitdown-mcp >/dev/null 2>&1; then
   _pass "markitdown-mcp installed"
 else
   _fail "markitdown-mcp not installed (run: uv tool install markitdown-mcp)"
 fi
 
-# 10. Configuration File Format Check
-printf '\n[10/10] Configuration File Format Check\n'
+# 9. Configuration File Format Check
+printf '\n[9/9] Configuration File Format Check\n'
 if jq empty ~/.claude/settings.json 2>/dev/null; then
   _pass "settings.json OK"
 else
@@ -668,6 +633,5 @@ Your Claude Code environment is now fully configured with:
 - RTK token optimization
 - claude-hud status bar
 - 30+ gstack skills
-- Happy mobile client
 
 Enjoy using Claude Code!
