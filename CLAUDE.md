@@ -205,7 +205,7 @@ Detailed conventions in `.claude/rules/`:
 |-------------------|------------------------------------------|
 | First-time setup  | See Getting Started section above        |
 | Prerequisites     | Xcode CLI Tools + Homebrew               |
-| Claude Code setup | See `agent/claude/setup.md` (13 plugins, 6 MCP servers, 30+ gstack skills, RTK, claude-hud) |
+| Claude Code setup | See `agent/claude/setup.md` (8 plugins, 6 MCP servers, 30+ gstack skills, RTK, claude-hud) |
 | Full setup        | `./setup.sh install --all`               |
 | Link package      | `./setup.sh install <package>`           |
 | Relink            | `./setup.sh install --force <package>`   |

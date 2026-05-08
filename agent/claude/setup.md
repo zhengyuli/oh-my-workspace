@@ -27,7 +27,7 @@ This guide will configure the following components:
 | Component               | Count | Purpose                                                             |
 |-------------------------|-------|---------------------------------------------------------------------|
 | **Plugin Marketplaces** | 7     | Official + community + GLM plugin sources                           |
-| **Plugins**             | 13    | Development tools, MCP integration, auxiliary features, Obsidian    |
+| **Plugins**             | 8     | Token tools, research, design, vault skills, Obsidian              |
 | **MCP Servers**         | 6     | Vision, search, web reader, documentation, advanced search, document conversion |
 | **Hooks**               | 1     | Token optimization (RTK)                                            |
 | **Auxiliary Tools**     | 2     | RTK (token savings), claude-hud (status bar)                        |
@@ -45,7 +45,7 @@ This guide will configure the following components:
 
 ```
 Step 1: Plugin Marketplaces    -> Add plugin sources
-Step 2: Install Plugins        -> Install 13 plugins
+Step 2: Install Plugins        -> Install 8 plugins
 Step 3: MCP Servers            -> Configure MCP servers
 Step 4: Hooks                  -> Set up automation hooks
 Step 5: Auxiliary Tools        -> Install auxiliary tools
@@ -119,7 +119,7 @@ claude plugin marketplace list
 
 ### Description
 
-Now install 13 plugins. Each plugin includes installation command and description.
+Now install 8 plugins. Each plugin includes installation command and description.
 
 ### 2.1 GLM Plugin Marketplace (1 plugin)
 
@@ -130,28 +130,13 @@ Now install 13 plugins. Each plugin includes installation command and descriptio
 claude plugin install glm-plan-usage@zai-coding-plugins
 ```
 
-### 2.2 Official Plugin Marketplace (7 plugins)
+### 2.2 Official Plugin Marketplace (2 plugins)
 
 ```bash
 # context7 - Document query
 claude plugin install context7@claude-plugins-official
 
-# ralph-loop - Loop execution
-claude plugin install ralph-loop@claude-plugins-official
-
-# commit-commands - Git commit commands
-claude plugin install commit-commands@claude-plugins-official
-
-# claude-md-management - CLAUDE.md management
-claude plugin install claude-md-management@claude-plugins-official
-
-# plugin-dev - Plugin development tools
-claude plugin install plugin-dev@claude-plugins-official
-
-# hookify - Hook management
-claude plugin install hookify@claude-plugins-official
-
-# superpowers - Core skill library
+# superpowers - Core skill library (14 engineering workflow skills)
 claude plugin install superpowers@claude-plugins-official
 ```
 
@@ -196,7 +181,7 @@ claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill
 # List all installed plugins
 claude plugin list
 
-# Should see 13 plugins
+# Should see 8 plugins
 ```
 
 ---
@@ -348,7 +333,7 @@ rtk init --show
 
 # 3. Verify Plugin count
 claude plugin list 2>/dev/null | grep -c '✔ enabled'
-printf 'Expected: 13 plugins\n'
+printf 'Expected: 8 plugins\n'
 ```
 
 ---
@@ -412,7 +397,7 @@ After completing all configurations, perform comprehensive verification.
 set -euo pipefail
 
 readonly SCRIPT_NAME="Claude Code Environment Verification"
-readonly MIN_PLUGIN_COUNT=13
+readonly MIN_PLUGIN_COUNT=8
 readonly MIN_MCP_COUNT=5
 
 # --- Logging ---
@@ -636,7 +621,7 @@ rm -rf ~/.config/rtk/
 
 Your Claude Code environment is now fully configured with:
 - GLM model configuration
-- 13 plugins
+- 8 plugins
 - 6 MCP servers
 - RTK token optimization
 - claude-hud status bar
