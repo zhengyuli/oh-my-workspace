@@ -4,7 +4,7 @@
 >
 > **For Claude Code**: This is an executable configuration document. Please execute the command blocks in each Step sequentially. Refer to the Troubleshooting section if you encounter errors.
 
-## Prerequisite
+## Prerequisites
 
 **IMPORTANT**: Run `agent/claude/pre-setup.sh` manually in your terminal BEFORE entering Claude Code. Claude Code MUST NOT execute this script — it requires interactive input (API key, plan selection) that only a human can provide.
 
@@ -212,8 +212,9 @@ MCP (Model Context Protocol) server configuration (6 total):
 # Visit: https://tavily.com/
 # Register account and get API Key
 
-# 2. Add global MCP configuration (replace <YOUR_KEY> with actual key)
-TAVILY_KEY="<YOUR_TAVILY_KEY>"  # ← Replace with your actual key
+# 2. Add global MCP configuration
+# Replace <YOUR_TAVILY_KEY> with your actual API key
+TAVILY_KEY="<YOUR_TAVILY_KEY>"
 claude mcp add --transport http --scope user tavily \
   "https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_KEY}"
 
@@ -329,7 +330,7 @@ rtk --version
 rtk init --show
 
 # 3. Verify Plugin count
-claude plugin list 2>/dev/null | grep -c '✔ enabled'
+claude plugin list 2>/dev/null | grep -c '✔ enabled' || true
 printf 'Expected: 8 plugins\n'
 ```
 
@@ -514,8 +515,8 @@ chmod +x /tmp/verify-claude-env.sh
 
 **Problem: Invalid GLM API Key**
 ```bash
-# Diagnose (replace <YOUR_API_KEY> with actual key)
-GLM_KEY="<YOUR_API_KEY>"  # ← Replace with your actual key
+# Diagnose: replace <YOUR_API_KEY> with your actual key
+GLM_KEY="<YOUR_API_KEY>"
 curl -H "Authorization: Bearer ${GLM_KEY}" https://open.bigmodel.cn/api/anthropic
 
 # Solution
