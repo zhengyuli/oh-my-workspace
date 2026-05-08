@@ -297,7 +297,7 @@ jq '.hooks' ~/.claude/settings.json
 
 ### Description
 
-Auxiliary tools were installed in previous steps, only need verification and configuration:
+Auxiliary tools were installed in previous steps and only need verification and configuration:
 
 - **claude-hud** - Installed in Step 2.4
 - **RTK** - Installed in Step 4
