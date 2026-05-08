@@ -160,6 +160,8 @@ brew "poppler"
 brew "neovim"
 # Emacs text editor
 cask "emacs-app"
+# High-performance code editor written in Rust
+cask "zed"
 
 # -----------------------------------------------------------------------------
 # Data Processing
