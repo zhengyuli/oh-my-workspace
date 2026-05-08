@@ -26,11 +26,12 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Project Directory Shortcuts
+# Secrets and API Keys
 # -----------------------------------------------------------------------------
 
-# alias work='cd ~/Projects/mycompany'
-# alias proj='cd ~/Projects/myproject'
+# export GITHUB_TOKEN=""
+# export ANTHROPIC_API_KEY=""
+# export AWS_PROFILE="default"
 
 # -----------------------------------------------------------------------------
 # Machine-Specific PATH Additions
@@ -40,14 +41,6 @@
 # path+=("/opt/custom-tool/bin")
 
 # -----------------------------------------------------------------------------
-# Secrets and API Keys
-# -----------------------------------------------------------------------------
-
-# export GITHUB_TOKEN=""
-# export ANTHROPIC_API_KEY=""
-# export AWS_PROFILE="default"
-
-# -----------------------------------------------------------------------------
 # Machine-Specific Tool Configuration
 # -----------------------------------------------------------------------------
 
@@ -55,23 +48,47 @@
 # export ANDROID_HOME="$HOME/Library/Android/sdk"
 
 # -----------------------------------------------------------------------------
-# Corporate Proxy
+# Project Directory Shortcuts
 # -----------------------------------------------------------------------------
 
+# alias work='cd ~/Projects/mycompany'
+# alias proj='cd ~/Projects/myproject'
+
+# -----------------------------------------------------------------------------
+# Machine-Specific Aliases
+# -----------------------------------------------------------------------------
+
+# alias deploy='cd ~/work/deploy && ./run.sh'
+# alias k='kubectl'
+# alias tf='terraform'
+
+# -----------------------------------------------------------------------------
+# SSH Agent
+# -----------------------------------------------------------------------------
+
+# Ensure SSH key is loaded in macOS keychain on shell start
+# ssh-add -l &>/dev/null \
+#   || ssh-add --apple-use-keychain ~/.ssh/id_ed25519 2>/dev/null
+
+# -----------------------------------------------------------------------------
+# Network Proxy
+# -----------------------------------------------------------------------------
+
+# --- Proxy Settings (edit these three values) ---
+# readonly _PROXY_URL="http://proxy.example.com:8080"
+# readonly _PROXY_BYPASS_COMPANY=".example.com,example.com"
+# readonly _PROXY_BYPASS_PRIVATE="localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+
 # set_proxy() {
-#   local -r _PROXY_URL="http://proxy.company.com:8080"
-#   local -r _NO_PROXY_LIST=\
-#     "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,\
-#192.168.0.0/16,.company.com,company.com"
-#
+#   local -r bypass="${_PROXY_BYPASS_PRIVATE},${_PROXY_BYPASS_COMPANY}"
 #   # Uppercase — Go, npm, bun, Java, etc.
 #   export HTTP_PROXY="$_PROXY_URL"
 #   export HTTPS_PROXY="$_PROXY_URL"
-#   export NO_PROXY="$_NO_PROXY_LIST"
+#   export NO_PROXY="$bypass"
 #   # Lowercase — curl, wget, Python requests, etc.
 #   export http_proxy="$_PROXY_URL"
 #   export https_proxy="$_PROXY_URL"
-#   export no_proxy="$_NO_PROXY_LIST"
+#   export no_proxy="$bypass"
 #   # Catch-all for tools that only read ALL_PROXY
 #   export ALL_PROXY="$_PROXY_URL"
 #   export all_proxy="$_PROXY_URL"
