@@ -435,7 +435,7 @@ fi
 # 3. MCP Check
 printf '\n[3/9] MCP Check\n'
 if [[ -f ~/.claude.json ]]; then
-  MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null)"
+  MCP_COUNT="$(jq '.mcpServers | length' ~/.claude.json 2>/dev/null || true)"
   if (( MCP_COUNT >= MIN_MCP_COUNT )); then
     _pass "MCP count: $MCP_COUNT (3 GLM + context7 + markitdown/tavily)"
   else
@@ -507,12 +507,6 @@ printf '=========================================\n'
 **Save and Execute:**
 
 ```bash
-# Option 1: Copy the script above and pipe to bash
-# (select the verification script block, copy to clipboard, then run)
-pbpaste | bash
-
-# Option 2: Save to file and execute
-# (copy the script block, then save and run)
 pbpaste > /tmp/verify-claude-env.sh
 chmod +x /tmp/verify-claude-env.sh
 /tmp/verify-claude-env.sh
