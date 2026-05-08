@@ -2,7 +2,7 @@
 
 > **For Human Readers**: This is a configuration guide for setting up Claude Code plugins, MCP servers, hooks, and auxiliary tools.
 >
-> **For Claude Code**: This is an executable configuration document. Please execute the command blocks in each Phase sequentially. Refer to the Troubleshooting section if you encounter errors.
+> **For Claude Code**: This is an executable configuration document. Please execute the command blocks in each Step sequentially. Refer to the Troubleshooting section if you encounter errors.
 
 ## Prerequisite
 
@@ -62,6 +62,8 @@ Step 8: Troubleshooting        -> Troubleshoot issues
 - **claude-hud**: https://github.com/jarrodwatts/claude-hud
 - **RTK**: https://github.com/rtk-ai/rtk
 - **Obsidian Skills**: https://github.com/kepano/obsidian-skills
+- **Caveman**: https://github.com/JuliusBrussee/caveman
+- **superpowers**: https://github.com/anthropics/claude-plugins-official/tree/main/superpowers
 - **last30days**: https://github.com/mvanhorn/last30days-skill
 - **gstack**: https://github.com/garrytan/gstack
 
@@ -594,14 +596,14 @@ rtk init --show
 curl -I https://github.com
 
 # Set proxy (if needed)
-export HTTPS_PROXY="http://your-proxy:port"
+export HTTPS_PROXY="http://proxy.company.com:port"
 ```
 
 ### 8.6 Complete Reset
 
 **Problem: All Configuration Failed**
 
-> **Warning**: This deletes ALL Claude Code data — CLI binary, plugins, MCP servers, hooks, and settings. You must re-run `pre-setup.sh` and all setup steps from scratch.
+> **Warning**: This deletes ALL Claude Code data — CLI binary, plugins, MCP servers, hooks, skills (including gstack), and settings. You must re-run `pre-setup.sh` and all setup steps from scratch.
 
 ```bash
 # 1. Backup important files (if still readable)
