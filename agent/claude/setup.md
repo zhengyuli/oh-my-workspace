@@ -402,7 +402,7 @@ files in `~/.claude/skills/`.
 |------------|--------|----------------------------------------------------------|------------------------------------------------------------|
 | **gstack** | 30+    | QA, code review, security audit, design review, shipping | [garrytan/gstack](https://github.com/garrytan/gstack)      |
 
-### Install gstack
+### gstack
 
 ```bash
 # Clone into Claude Code skills directory
@@ -418,7 +418,7 @@ During setup, choose skill naming:
 - **Short names** (recommended): `/qa`, `/ship`, `/review`
 - **Namespaced**: `/gstack-qa`, `/gstack-ship`, `/gstack-review`
 
-### Verify Skills
+#### Verify
 
 ```bash
 # Count installed skills
@@ -427,7 +427,7 @@ ls -d ~/.claude/skills/*/SKILL.md 2>/dev/null | wc -l
 # Should show 30+ skills
 ```
 
-### Update
+#### Update
 
 ```bash
 cd ~/.claude/skills/gstack && git pull && ./setup -q
