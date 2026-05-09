@@ -50,12 +50,12 @@ image_bound = [0, 0]
 
 # --- Files ---
 [[plugin.prepend_fetchers]]
-id = "git"
+group = "git"
 url = "*"
 run = "git"
 
 # --- Directories ---
 [[plugin.prepend_fetchers]]
-id = "git"
+group = "git"
 url = "*/"
 run = "git"
