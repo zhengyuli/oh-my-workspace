@@ -1060,7 +1060,7 @@ _post_install_shell_zsh() {
 }
 
 # --- Yazi ---
-# Install yazi plugins via ya pack.
+# Install yazi plugins via ya pkg.
 # Plugin list kept in sync with tool/yazi/init.lua.
 # Returns:
 #   0 on success, 1 on failure, 2 if skipped.
@@ -1073,32 +1073,34 @@ _post_install_yazi() {
     return 2
   fi
 
-  local -ra _YAZI_PLUGINS=(
+  local -ra _YAZI_PACKAGES=(
     "yazi-rs/plugins:smart-enter"
     "yazi-rs/plugins:smart-filter"
     "yazi-rs/plugins:full-border"
     "yazi-rs/plugins:toggle-pane"
     "yazi-rs/plugins:zoom"
     "yazi-rs/plugins:git"
-  )
-  local -ra _YAZI_FLAVORS=(
     "yazi-rs/flavors:catppuccin-mocha"
   )
 
-  local pkg output
-  for pkg in "${_YAZI_PLUGINS[@]}" "${_YAZI_FLAVORS[@]}"; do
+  local pkg output failed=0
+  for pkg in "${_YAZI_PACKAGES[@]}"; do
     output="$(ya pkg add "${pkg}" 2>&1)" || {
-      # "already exists" is not a real error — idempotent
-      if [[ "${output}" == *"already exists"* ]]; then
+      if [[ "${output}" == *"already exists"* ]] \
+         || [[ "${output}" == *"aborted"* ]]; then
         continue
       fi
-      log_err "yazi: failed to add ${pkg}"
-      return 1
+      log_warn "yazi: ${pkg} failed (continuing)"
+      (( failed++ )) || true
+      continue
     }
   done
 
-  if ! ya pkg install >/dev/null 2>&1; then
-    log_err "yazi plugin install failed"
+  ya pkg install >/dev/null 2>&1 \
+    || log_warn "yazi: pkg install failed — plugins may not be synced"
+
+  if (( failed > 0 )); then
+    log_err "yazi: ${failed} plugin(s) failed to add"
     return 1
   fi
   return 0
