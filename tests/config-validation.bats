@@ -144,6 +144,67 @@ with open(sys.argv[1]) as f:
 }
 
 # ---------------------------------------------------------------------------
+# Bat Config
+# ---------------------------------------------------------------------------
+
+@test "bat/config has no empty flag lines" {
+  # Flags start with --; an empty flag line would be just "--" or "-- "
+  run grep -nE '^--\s*$' "${REPO_ROOT}/tool/bat/config"
+  # grep returns 1 when no matches (good)
+  (( status == 1 ))
+}
+
+@test "bat/config references Dracula theme" {
+  run grep -F 'Dracula' "${REPO_ROOT}/tool/bat/config"
+  (( status == 0 ))
+  [[ "$output" == *'--theme="Dracula"'* ]]
+}
+
+# ---------------------------------------------------------------------------
+# Tmux Config
+# ---------------------------------------------------------------------------
+
+@test "tmux.conf has valid syntax" {
+  if ! command -v tmux >/dev/null 2>&1; then
+    skip "tmux not installed"
+  fi
+  # Start a temporary server to parse the config without affecting running sessions
+  run tmux -f "${REPO_ROOT}/tool/tmux/tmux.conf" -L bats-test start-server \; kill-server
+  (( status == 0 ))
+}
+
+@test "tmux.conf sets Ctrl+A prefix" {
+  run grep -F 'prefix C-a' "${REPO_ROOT}/tool/tmux/tmux.conf"
+  (( status == 0 ))
+}
+
+# ---------------------------------------------------------------------------
+# Btop Config
+# ---------------------------------------------------------------------------
+
+@test "btop.conf contains required keys" {
+  local conf="${REPO_ROOT}/tool/btop/btop.conf"
+  local missing=()
+  local key
+  for key in color_theme vim_keys truecolor; do
+    if ! grep -qE "^${key} *= *" "$conf"; then
+      missing+=("$key")
+    fi
+  done
+  if (( ${#missing[@]} > 0 )); then
+    printf 'missing keys: %s\n' "${missing[*]}" >&2
+    return 1
+  fi
+}
+
+@test "btop.conf has no empty key assignments" {
+  # btop uses 'key = value' format; empty values are invalid
+  run grep -nE '^[a-z_]+ *= *$' "${REPO_ROOT}/tool/btop/btop.conf"
+  # grep returns 1 when no matches (good)
+  (( status == 1 ))
+}
+
+# ---------------------------------------------------------------------------
 # Shell Syntax
 # ---------------------------------------------------------------------------
 
