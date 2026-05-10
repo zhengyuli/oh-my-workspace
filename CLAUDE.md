@@ -42,7 +42,7 @@ Organized by category in repository root:
 - `shell/` — Shell configs (zsh)
 - `editor/` — Text editors (vim, emacs)
 - `terminal/` — Terminal emulators (ghostty)
-- `tool/` — CLI utilities (git, lazygit, ripgrep, starship, yazi)
+- `tool/` — CLI utilities (git, bat, tmux, btop, lazygit, ripgrep, starship, yazi)
 - `prog-lang/` — Language runtimes (python/uv, typescript/bun)
 - `platform/` — Platform-specific configs (darwin)
 
@@ -62,7 +62,7 @@ oh-my-workspace/
 ├── agent/          # AI coding agent configs (Claude Code, etc.)
 │   └── claude/        # Claude Code setup (pre-setup.sh, setup.md)
 │
-├── tests/             # BATS test suite (329 tests)
+├── tests/             # BATS test suite (335 tests)
 │   ├── zsh-helper.bash # Shared zsh test utilities
 │   ├── mocks/         # Mock dirs (setup/, pre-setup/, zsh/)
 │   └── *.bats        # Test files (16 files)
@@ -78,10 +78,13 @@ oh-my-workspace/
 │   └── ghostty/       # Ghostty config (~/.config/ghostty/)
 │
 ├── tool/              # CLI utilities
+│   ├── bat/           # Bat config (~/.config/bat/)
+│   ├── btop/          # Btop config (~/.config/btop/)
 │   ├── git/           # Git config (~/.config/git/)
 │   ├── lazygit/       # Lazygit config (~/.config/lazygit/)
 │   ├── ripgrep/       # Ripgrep config (~/.config/ripgrep/)
 │   ├── starship/      # Starship prompt (~/.config/starship.toml)
+│   ├── tmux/          # Tmux config (~/.config/tmux/)
 │   └── yazi/          # Yazi file manager (~/.config/yazi/)
 │
 ├── prog-lang/         # Language runtimes
@@ -123,7 +126,7 @@ oh-my-workspace/
 **Test framework**: [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System)
 
 ```bash
-# Run full suite (329 tests)
+# Run full suite (335 tests)
 bats tests/
 
 # Run specific module
@@ -153,7 +156,7 @@ bats --verbose-run tests/
 2. Source the script in `setup()`, test individual functions with `run <function_name>`
 3. Mock external commands in `tests/mocks/setup/`
 
-**Test coverage**: 329 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
+**Test coverage**: 335 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
 
 ## Validation
 
