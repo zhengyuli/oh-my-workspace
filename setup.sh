@@ -53,7 +53,6 @@ readonly -a PKG_ALL=(
   tool/yazi
   tool/bat
   tool/tmux
-  tool/btop
   prog-lang/python/uv
   prog-lang/typescript/bun
 )
@@ -599,10 +598,6 @@ readonly -a _LINKS_tool_bat=(
 
 readonly -a _LINKS_tool_tmux=(
   "dir:.:${HOME}/.config/tmux"
-)
-
-readonly -a _LINKS_tool_btop=(
-  "dir:.:${HOME}/.config/btop"
 )
 
 readonly -a _LINKS_prog_lang_python_uv=(

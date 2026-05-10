@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 335](https://img.shields.io/badge/Tests-335%20passing-brightgreen.svg)]()
+[![Tests: 333](https://img.shields.io/badge/Tests-333%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -35,7 +35,7 @@ That's it. Your development environment is ready.
 - **Modern Shell** — Zsh with Starship prompt, zoxide (smart cd), direnv, and carapace completions
 - **Dual Editor Setup** — Vim and Emacs configurations included
 - **Fast Terminal** — Ghostty terminal emulator with Dracula theme
-- **Dracula Everywhere** — Consistent Dracula theming across Ghostty, bat, tmux, and btop
+- **Dracula Everywhere** — Consistent Dracula theming across Ghostty, bat, and tmux
 - **Terminal Multiplexer** — tmux with Ctrl+A prefix, mouse support, vi-mode, and Dracula status bar
 - **Powerful Search** — ripgrep, fd, fzf, and eza for file operations
 - **Language Runtimes** — Pre-configured for Python (uv), TypeScript (bun), Go, and Rust
@@ -43,7 +43,7 @@ That's it. Your development environment is ready.
 - **AI Agent Configs** — Claude Code setup with pre-setup automation
 - **One-Command Setup** — `./setup.sh install --all` handles everything
 - **Clean Symlinks** — Built-in symlink engine manages dotfiles without cluttering `$HOME`
-- **Fully Tested** — 335 BATS tests verify all shell modules and setup scripts
+- **Fully Tested** — 333 BATS tests verify all shell modules and setup scripts
 
 ## Installation
 
@@ -143,7 +143,6 @@ oh-my-workspace/
 │
 ├── tool/                 # CLI tools
 │   ├── bat/              # ~/.config/bat/
-│   ├── btop/             # ~/.config/btop/
 │   ├── git/              # ~/.config/git/
 │   ├── lazygit/          # ~/.config/lazygit/
 │   ├── ripgrep/          # ~/.config/ripgrep/
@@ -262,7 +261,7 @@ echo "my-setting = value" > tool/mytool/config.conf
 | `shell/`    | Shell interpreters | zsh                       |
 | `editor/`   | Text editors       | vim, emacs                |
 | `terminal/`   | Terminal emulators | ghostty                   |
-| `tool/`     | CLI utilities      | git, bat, tmux, btop, ripgrep, starship, yazi |
+| `tool/`     | CLI utilities      | git, bat, tmux, ripgrep, starship, yazi |
 | `prog-lang/`  | Language runtimes  | python/uv, typescript/bun |
 | `platform/` | Platform-specific  | darwin                    |
 
@@ -344,7 +343,6 @@ The `99-local.zsh` file is sourced last in the conf.d loading order and is liste
 | [jq](https://stedolan.github.io/jq/)       | Command-line JSON processor  |
 | [yq](https://github.com/mikefarah/yq)      | Command-line YAML processor  |
 | [wget](https://www.gnu.org/software/wget/) | Network downloader           |
-| [btop](https://github.com/aristocratos/btop) | System resource monitor     |
 | [coreutils](https://www.gnu.org/software/coreutils/) | GNU core utilities (gls, etc.) |
 | [pandoc](https://pandoc.org/)              | Universal document converter |
 
@@ -494,7 +492,7 @@ The repository includes a comprehensive [BATS](https://github.com/bats-core/bats
 ### Running Tests
 
 ```bash
-# Run the full test suite (335 tests)
+# Run the full test suite (333 tests)
 bats tests/
 
 # Run tests for a specific module
@@ -530,7 +528,7 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 | `zsh-70-tools.bats` | 18 | `70-tools.zsh` (tool integrations, git wrapper) |
 | `zsh-functions.bats` | 5 | `functions/` (brew-upgrade, jsonpp) |
 | `darwin-defaults.bats` | 8 | `platform/darwin/defaults.sh` (macOS prefs) |
-| `config-validation.bats` | 24 | All config files (TOML, YAML, git, ghostty, bat, tmux, btop, shell syntax) |
+| `config-validation.bats` | 22 | All config files (TOML, YAML, git, ghostty, bat, tmux, shell syntax) |
 
 ### Writing New Tests
 

@@ -179,32 +179,6 @@ with open(sys.argv[1]) as f:
 }
 
 # ---------------------------------------------------------------------------
-# Btop Config
-# ---------------------------------------------------------------------------
-
-@test "btop.conf contains required keys" {
-  local conf="${REPO_ROOT}/tool/btop/btop.conf"
-  local missing=()
-  local key
-  for key in color_theme vim_keys truecolor; do
-    if ! grep -qE "^${key} *= *" "$conf"; then
-      missing+=("$key")
-    fi
-  done
-  if (( ${#missing[@]} > 0 )); then
-    printf 'missing keys: %s\n' "${missing[*]}" >&2
-    return 1
-  fi
-}
-
-@test "btop.conf has no empty key assignments" {
-  # btop uses 'key = value' format; empty values are invalid
-  run grep -nE '^[a-z_]+ *= *$' "${REPO_ROOT}/tool/btop/btop.conf"
-  # grep returns 1 when no matches (good)
-  (( status == 1 ))
-}
-
-# ---------------------------------------------------------------------------
 # Shell Syntax
 # ---------------------------------------------------------------------------
 
