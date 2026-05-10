@@ -3,6 +3,8 @@ paths:
   - "**/git/config"
   - "**/ripgrep/rc"
   - "**/ghostty/config"
+  - "**/bat/config"
+  - "**/tmux/tmux.conf"
 ---
 
 # Configuration Files (No Extension)
