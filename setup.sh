@@ -51,6 +51,9 @@ readonly -a PKG_ALL=(
   tool/ripgrep
   tool/starship
   tool/yazi
+  tool/bat
+  tool/tmux
+  tool/btop
   prog-lang/python/uv
   prog-lang/typescript/bun
 )
@@ -588,6 +591,18 @@ readonly -a _LINKS_tool_starship=(
 
 readonly -a _LINKS_tool_yazi=(
   "dir:.:${HOME}/.config/yazi"
+)
+
+readonly -a _LINKS_tool_bat=(
+  "dir:.:${HOME}/.config/bat"
+)
+
+readonly -a _LINKS_tool_tmux=(
+  "dir:.:${HOME}/.config/tmux"
+)
+
+readonly -a _LINKS_tool_btop=(
+  "dir:.:${HOME}/.config/btop"
 )
 
 readonly -a _LINKS_prog_lang_python_uv=(
