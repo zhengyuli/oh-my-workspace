@@ -1,0 +1,54 @@
+# config -*- mode: conf; -*-
+# Time-stamp: <2026-05-10 00:00:00 Saturday by zhengyu.li>
+#
+# =============================================================================
+# Bat Configuration - Syntax-Highlighted Cat Replacement
+#
+# Author: zhengyu li <lizhengyu419@outlook.com>
+# Keywords: bat, syntax-highlighting, pager
+#
+# Copyright (C) 2026 zhengyu li
+#
+# History:
+#   2026-05-10 00:00 zhengyu li <lizhengyu419@outlook.com> created.
+#
+# Commentary:
+#   Default flags for bat. Loaded automatically from
+#   $XDG_CONFIG_HOME/bat/config (bat is XDG-native).
+#
+# References:
+#   1. Config Docs: https://github.com/sharkdp/bat#configuration-file
+#   2. Themes:      bat --list-themes
+#   3. Styles:      bat --help (--style section)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Theme
+# -----------------------------------------------------------------------------
+
+# Match Ghostty's Dracula theme for visual consistency
+--theme="Dracula"
+
+# -----------------------------------------------------------------------------
+# Display
+# -----------------------------------------------------------------------------
+
+# Show line numbers and git change markers; omit header/grid/snip
+--style="numbers,changes"
+
+# Allow italic escape sequences (e.g., comments in Dracula theme)
+--italic-text=always
+
+# -----------------------------------------------------------------------------
+# Pager
+# -----------------------------------------------------------------------------
+
+# -F exits if content fits one screen; -R passes ANSI colors through
+--pager="less -FR"
+
+# -----------------------------------------------------------------------------
+# Syntax Mapping
+# -----------------------------------------------------------------------------
+
+# Treat .conf files as INI for syntax highlighting
+--map-syntax "*.conf:INI"
