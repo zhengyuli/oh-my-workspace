@@ -199,6 +199,13 @@ Detailed conventions in `.claude/rules/`:
 - `yaml.md` — YAML configuration files
 - `vimrc.md` — Vim script conventions
 
+## Health Stack
+
+- shell: shellcheck setup.sh platform/darwin/defaults.sh agent/claude/pre-setup.sh
+- test: bats tests/
+- bash-syntax: bash -n setup.sh platform/darwin/defaults.sh agent/claude/pre-setup.sh
+- zsh-syntax: zsh -n shell/zsh/conf.d/*.zsh
+
 ## Quick Reference
 
 | Task              | Command                                  |

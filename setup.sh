@@ -503,6 +503,8 @@ _run_brew_bundle() {
     return 0
   fi
   log_warn "brew bundle had failures, continuing..."
+  log_warn "Some formulae may require newer Homebrew metadata."
+  log_warn "Try: brew update && ./setup.sh install --all"
   return 0
 }
 
