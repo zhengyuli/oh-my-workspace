@@ -1447,7 +1447,7 @@ ${_BOLD}Packages${_RESET} (base name or full category/name):
   shell:       zsh
   editor:      vim  emacs
   terminal:    ghostty
-  tool:        git  lazygit  ripgrep  starship  yazi
+  tool:        git  lazygit  ripgrep  starship  bat  tmux  yazi
   prog-lang:   uv  bun
 
 ${_BOLD}Examples:${_RESET}

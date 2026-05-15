@@ -74,6 +74,12 @@ load setup-helper
   [[ "${_VALIDATED_PKGS[0]}" == "shell/zsh" ]]
 }
 
+@test "_pkg_links_var: nested package path resolves to link registry name" {
+  _source_setup
+  run _pkg_links_var "prog-lang/python/uv"
+  [[ "$output" == "_LINKS_prog_lang_python_uv" ]]
+}
+
 # =============================================================================
 # Color/Logging Tests
 # =============================================================================
@@ -371,6 +377,25 @@ load setup-helper
   [[ -d "${HOME}/.config/deep/nested/dir" ]]
 }
 
+@test "_create_link: removes broken parent symlink before mkdir" {
+  _source_setup "${BATS_TEST_TMPDIR}/workspace"
+  dry_run=false
+  local src="${WORKSPACE_DIR}/tool/git/config"
+  local dest="${HOME}/.config/git/config"
+  mkdir -p "$(dirname "${src}")"
+  echo "content" > "${src}"
+  rm -rf "${HOME}/.config"
+  ln -s "${BATS_TEST_TMPDIR}/missing-config" "${HOME}/.config"
+  [[ -L "${HOME}/.config" ]]
+  [[ ! -e "${HOME}/.config" ]]
+
+  _create_link "${src}" "${dest}" false
+
+  [[ -d "${HOME}/.config/git" ]]
+  [[ -L "${dest}" ]]
+  [[ "$(readlink "${dest}")" == "${src}" ]]
+}
+
 # =============================================================================
 # link_package / relink_package / unlink_package Tests
 # =============================================================================
@@ -626,6 +651,13 @@ load setup-helper
   [[ "$output" == *"install"* ]]
   [[ "$output" == *"uninstall"* ]]
   [[ "$output" == *"status"* ]]
+}
+
+@test "cmd_help: lists all tool packages" {
+  _source_setup
+  run cmd_help
+  (( status == 0 ))
+  [[ "$output" == *"tool:        git  lazygit  ripgrep  starship  bat  tmux  yazi"* ]]
 }
 
 # =============================================================================

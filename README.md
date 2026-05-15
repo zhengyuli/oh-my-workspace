@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-green.svg)]()
-[![Tests: 333](https://img.shields.io/badge/Tests-333%20passing-brightgreen.svg)]()
+[![Tests: 336](https://img.shields.io/badge/Tests-336%20passing-brightgreen.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
 ## Quick Start
@@ -43,7 +43,7 @@ That's it. Your development environment is ready.
 - **AI Agent Configs** — Claude Code setup with pre-setup automation
 - **One-Command Setup** — `./setup.sh install --all` handles everything
 - **Clean Symlinks** — Built-in symlink engine manages dotfiles without cluttering `$HOME`
-- **Fully Tested** — 333 BATS tests verify all shell modules and setup scripts
+- **Fully Tested** — 336 BATS tests verify all shell modules and setup scripts
 
 ## Installation
 
@@ -126,7 +126,7 @@ oh-my-workspace/
 ├── agent/             # AI coding agent configs
 │   └── claude/           # Claude Code setup (pre-setup.sh, setup.md)
 │
-├── tests/                # BATS test suite (329 tests)
+├── tests/                # BATS test suite (336 tests)
 │   ├── zsh-helper.bash   # Shared zsh test utilities
 │   ├── mocks/            # Mock dirs (setup/, pre-setup/, zsh/)
 │   └── *.bats           # Test files
@@ -492,7 +492,7 @@ The repository includes a comprehensive [BATS](https://github.com/bats-core/bats
 ### Running Tests
 
 ```bash
-# Run the full test suite (333 tests)
+# Run the full test suite (336 tests)
 bats tests/
 
 # Run tests for a specific module
@@ -513,7 +513,7 @@ Tests use BATS as the orchestrator with zsh subprocesses for zsh-specific module
 
 | File | Tests | Module |
 |------|-------|--------|
-| `setup.bats` | 76 | `setup.sh` (symlink engine, commands, validation) |
+| `setup.bats` | 79 | `setup.sh` (symlink engine, commands, validation) |
 | `pre-setup.bats` | 42 | `agent/claude/pre-setup.sh` (Claude Code setup) |
 | `zsh-env.bats` | 6 | `.zshenv` (XDG bootstrap) |
 | `zsh-00-env.bats` | 24 | `00-env.zsh` (environment variables) |

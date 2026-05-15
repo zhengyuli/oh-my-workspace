@@ -15,7 +15,7 @@ macOS dotfiles repository with a built-in symlink engine. Each subdirectory is a
 
 ## Validation / Lint
 
-The repository includes a comprehensive [BATS](https://github.com/bats-core/bats-core) test suite (333 tests). Validate files by type:
+The repository includes a comprehensive [BATS](https://github.com/bats-core/bats-core) test suite (336 tests). Validate files by type:
 
 ```bash
 bash -n setup.sh           # Bash syntax check
