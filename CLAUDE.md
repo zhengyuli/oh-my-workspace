@@ -52,50 +52,7 @@ Files map directly to their targets under `$XDG_CONFIG_HOME` via the built-in sy
 
 ### Directory Structure
 
-```
-oh-my-workspace/
-├── setup.sh           # Main setup script
-├── CLAUDE.md
-├── LICENSE
-├── README.md
-│
-├── agent/          # AI coding agent configs (Claude Code, etc.)
-│   └── claude/        # Claude Code setup (pre-setup.sh, setup.md)
-│
-├── tests/             # BATS test suite (333 tests)
-│   ├── zsh-helper.bash # Shared zsh test utilities
-│   ├── mocks/         # Mock dirs (setup/, pre-setup/, zsh/)
-│   └── *.bats        # Test files (16 files)
-│
-├── shell/             # Shell configurations
-│   └── zsh/           # Zsh config (~/.config/zsh/, ~/.zshenv)
-│
-├── editor/            # Text editors
-│   ├── emacs/         # Emacs modular config (~/.config/emacs/)
-│   └── vim/           # Vim config (~/.config/vim/)
-│
-├── terminal/          # Terminal emulators
-│   └── ghostty/       # Ghostty config (~/.config/ghostty/)
-│
-├── tool/              # CLI utilities
-│   ├── bat/           # Bat config (~/.config/bat/)
-│   ├── git/           # Git config (~/.config/git/)
-│   ├── lazygit/       # Lazygit config (~/.config/lazygit/)
-│   ├── ripgrep/       # Ripgrep config (~/.config/ripgrep/)
-│   ├── starship/      # Starship prompt (~/.config/starship.toml)
-│   ├── tmux/          # Tmux config (~/.config/tmux/)
-│   └── yazi/          # Yazi file manager (~/.config/yazi/)
-│
-├── prog-lang/         # Language runtimes
-│   ├── python/uv/     # uv config (~/.config/uv/)
-│   └── typescript/bun/# bun config (~/.config/.bunfig.toml)
-│
-├── platform/          # Platform-specific
-│   └── darwin/        # macOS scripts (defaults.sh)
-│
-└── pkg-manager/       # Package management
-    └── homebrew/      # Brewfile
-```
+See [Directory Structure](README.md#directory-structure) in README for the full tree.
 
 ## Development Workflow
 
@@ -125,7 +82,7 @@ oh-my-workspace/
 **Test framework**: [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System)
 
 ```bash
-# Run full suite (333 tests)
+# Run full suite (336 tests)
 bats tests/
 
 # Run specific module
@@ -155,7 +112,7 @@ bats --verbose-run tests/
 2. Source the script in `setup()`, test individual functions with `run <function_name>`
 3. Mock external commands in `tests/mocks/setup/`
 
-**Test coverage**: 333 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
+**Test coverage**: 336 tests across 16 files covering setup.sh, pre-setup.sh, all zsh conf.d modules (00-70), autoloaded functions, darwin defaults, and config file validation.
 
 ## Validation
 
