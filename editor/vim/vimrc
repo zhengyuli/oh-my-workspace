@@ -245,6 +245,107 @@ if has('clipboard')
 endif
 
 " -----------------------------------------------------------------------------
+" Code Navigation
+" -----------------------------------------------------------------------------
+
+" --- Grep ---
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
+
+" --- Shared ---
+" Populate quickfix with word occurrences (ripgrep via grepprg)
+function! s:FindReferences() abort
+  let l:word = expand('<cword>')
+  if empty(l:word) | return | endif
+  try
+    silent execute 'grep! -w ' . shellescape(l:word, 1)
+  catch /^Vim\%((\a\+)\)\=:E480/
+    cexpr []
+  endtry
+  cwindow
+endfunction
+
+if has('nvim-0.11')
+  " --- LSP (Neovim 0.11+) ---
+  " Built-in LSP client — no plugin needed. Configures servers that match
+  " the Emacs eglot setup (see editor/emacs/lisp/lang/).
+  "
+  " Neovim 0.11 default LSP keymaps (set automatically on LspAttach):
+  "   grr  → references    gri  → implementation    grn  → rename
+  "   gr@  → code action    gO   → document symbol   Ctrl-S → signature help
+  "   ]d   → next diag      [d   → prev diag
+  "
+  " Our custom keymaps supplement these defaults with shorter, Emacs xref-like
+  " bindings. They intentionally override some default prefix sequences.
+  lua << EOF
+  local servers = {
+    clangd       = { cmd = {'clangd'},
+                     filetypes = {'c', 'cpp', 'objc', 'objcpp'},
+                     root_markers = {'compile_commands.json', 'compile_flags.txt', '.clangd', '.git'} },
+    basedpyright = { cmd = {'basedpyright-langserver', '--stdio'},
+                     filetypes = {'python'},
+                     root_markers = {'pyproject.toml', 'setup.py', 'setup.cfg',
+                                     'requirements.txt', 'Pipfile', 'pyrightconfig.json', '.git'},
+                     settings = { basedpyright = {
+                       analysis = { autoSearchPaths = true, useLibraryCodeForTypes = true } } } },
+    ts_ls        = { cmd = {'typescript-language-server', '--stdio'},
+                     filetypes = {'typescript', 'javascript', 'typescriptreact', 'javascriptreact'},
+                     root_markers = {'tsconfig.json', 'package.json', '.git'} },
+    gopls        = { cmd = {'gopls'},
+                     filetypes = {'go', 'gomod', 'gowork'},
+                     root_markers = {'go.mod', 'go.sum', '.git'} },
+    rust_analyzer = { cmd = {'rust-analyzer'},
+                      filetypes = {'rust'},
+                      root_markers = {'Cargo.toml', '.git'} },
+  }
+  for name, config in pairs(servers) do
+    vim.lsp.config(name, config)
+  end
+  vim.lsp.enable(vim.tbl_keys(servers))
+EOF
+
+  " Buffer-local keymaps on LspAttach — override defaults where desired.
+  augroup vimrc_lsp
+    autocmd!
+    autocmd LspAttach * nnoremap <buffer> <silent> gd  <Cmd>lua vim.lsp.buf.definition()<CR>
+    autocmd LspAttach * nnoremap <buffer> <silent> gD  <Cmd>lua vim.lsp.buf.declaration()<CR>
+    autocmd LspAttach * nnoremap <buffer> <silent> gr  <Cmd>lua vim.lsp.buf.references()<CR>
+    autocmd LspAttach * nnoremap <buffer> <silent> gi  <Cmd>lua vim.lsp.buf.implementation()<CR>
+    autocmd LspAttach * nnoremap <buffer> <silent> gy  <Cmd>lua vim.lsp.buf.type_definition()<CR>
+    autocmd LspAttach * nnoremap <buffer> <silent> ga  <Cmd>lua vim.lsp.buf.code_action()<CR>
+    autocmd LspAttach * nnoremap <buffer> <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
+    autocmd LspAttach * inoremap <buffer> <silent> <C-s> <Cmd>lua vim.lsp.buf.signature_help()<CR>
+    if &keywordprg ==# ''
+      autocmd LspAttach * nnoremap <buffer> <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
+    endif
+  augroup END
+
+  " Fallback for non-LSP buffers: grep-based reference search
+  nnoremap <silent> gr :call <SID>FindReferences()<CR>
+else
+  " --- Definition & References (Vim) ---
+  " ctags :tjump if tags file exists, else built-in gd (local word search)
+  function! s:JumpToDefinition() abort
+    if filereadable('tags')
+      try
+        execute 'tjump' expand('<cword>')
+        return
+      catch /^Vim\%((\a\+)\)\=:E426/
+      endtry
+    endif
+    normal! gd
+  endfunction
+  nnoremap <silent> gd :call <SID>JumpToDefinition()<CR>
+  nnoremap <silent> gr :call <SID>FindReferences()<CR>
+endif
+
+" --- Jumplist ---
+" Ctrl-O: jump back (xref-go-back)  — built-in
+" Ctrl-I: jump forward (xref-go-forward) — built-in
+
+" -----------------------------------------------------------------------------
 " Auto Commands
 " -----------------------------------------------------------------------------
 
