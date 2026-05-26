@@ -141,6 +141,7 @@ This environment uses Zhipu GLM API instead of Anthropic. The following env vars
 - `ENABLE_TOOL_SEARCH: "0"` — prevents tool search conflicts
 - `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS: "1"` — prevents unsupported API calls
 - `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"` — stops Anthropic telemetry
+- `CLAUDE_CODE_ATTRIBUTION_HEADER: "0"` — disables attribution header for GLM API compatibility
 
 Model mapping: Haiku → glm-4.5-air, Sonnet → glm-5-turbo, Opus → glm-5.1
 

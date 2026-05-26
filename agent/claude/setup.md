@@ -413,6 +413,11 @@ if jq -e '.env.ANTHROPIC_BASE_URL' ~/.claude/settings.json >/dev/null 2>&1; then
 else
   _fail "GLM configuration missing"
 fi
+if jq -e '.env.CLAUDE_CODE_ATTRIBUTION_HEADER' ~/.claude/settings.json >/dev/null 2>&1; then
+  _pass "Attribution header disabled"
+else
+  _fail "CLAUDE_CODE_ATTRIBUTION_HEADER not set (add \"CLAUDE_CODE_ATTRIBUTION_HEADER\": \"0\" to env)"
+fi
 
 # 2. Plugin Count Check
 printf '\n[2/9] Plugin Count Check\n'
