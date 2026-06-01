@@ -101,7 +101,10 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
 
 (defun omw/dired-mode-setup ()
   "Apply custom settings for dired mode."
-  (dired-omit-mode (if omw/omit-global-mode 1 -1)))
+  (dired-omit-mode (if omw/omit-global-mode 1 -1))
+  ;; Read-only buffers default to hollow cursor; force solid box to match
+  ;; normal editing buffers under doom-dracula.
+  (setq-local cursor-type 'box))
 
 ;; --- Dired ---
 (use-package dired

@@ -304,6 +304,13 @@ if has('nvim-0.11')
     vim.lsp.config(name, config)
   end
   vim.lsp.enable(vim.tbl_keys(servers))
+
+  -- Remove default 'gr'-prefix LSP keymaps (grr/gri/grn/gra/grt/grx) to avoid
+  -- ambiguity timeout with our shorter 'gr' binding.
+  for _, key in ipairs({ 'grr', 'gri', 'grn', 'gra', 'grt', 'grx' }) do
+    pcall(vim.keymap.del, 'n', key)
+    pcall(vim.keymap.del, 'x', key)
+  end
 EOF
 
   " Buffer-local keymaps on LspAttach — override defaults where desired.
