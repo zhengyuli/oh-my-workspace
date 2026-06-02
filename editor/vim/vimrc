@@ -272,64 +272,99 @@ if has('nvim-0.11')
   " Built-in LSP client — no plugin needed. Configures servers that match
   " the Emacs eglot setup (see editor/emacs/lisp/lang/).
   "
-  " Neovim 0.11 default LSP keymaps (set automatically on LspAttach):
-  "   grr  → references    gri  → implementation    grn  → rename
-  "   gr@  → code action    gO   → document symbol   Ctrl-S → signature help
-  "   ]d   → next diag      [d   → prev diag
+  " Keymaps (buffer-local on LspAttach, Emacs xref-like):
+  "   gd/gD  definition/declaration    gi  implementation
+  "   gr     references                 gy  type definition
+  "   ga     code action                K   hover (when keywordprg unset)
+  "   <F2>   rename                     <C-s>  signature help (insert)
   "
-  " Our custom keymaps supplement these defaults with shorter, Emacs xref-like
-  " bindings. They intentionally override some default prefix sequences.
+  " Defaults we do NOT override (set by Neovim 0.11 on LspAttach):
+  "   ]d  → next diag    [d  → prev diag
   lua << EOF
   local servers = {
-    clangd       = { cmd = {'clangd'},
-                     filetypes = {'c', 'cpp', 'objc', 'objcpp'},
-                     root_markers = {'compile_commands.json', 'compile_flags.txt', '.clangd', '.git'} },
-    basedpyright = { cmd = {'basedpyright-langserver', '--stdio'},
-                     filetypes = {'python'},
-                     root_markers = {'pyproject.toml', 'setup.py', 'setup.cfg',
-                                     'requirements.txt', 'Pipfile', 'pyrightconfig.json', '.git'},
-                     settings = { basedpyright = {
-                       analysis = { autoSearchPaths = true, useLibraryCodeForTypes = true } } } },
-    ts_ls        = { cmd = {'typescript-language-server', '--stdio'},
-                     filetypes = {'typescript', 'javascript', 'typescriptreact', 'javascriptreact'},
-                     root_markers = {'tsconfig.json', 'package.json', '.git'} },
-    gopls        = { cmd = {'gopls'},
-                     filetypes = {'go', 'gomod', 'gowork'},
-                     root_markers = {'go.mod', 'go.sum', '.git'} },
-    rust_analyzer = { cmd = {'rust-analyzer'},
-                      filetypes = {'rust'},
-                      root_markers = {'Cargo.toml', '.git'} },
+    clangd = {
+      cmd = { 'clangd' },
+      filetypes = { 'c', 'cpp', 'objc', 'objcpp' },
+      root_markers = { 'compile_commands.json', 'compile_flags.txt', '.clangd', '.git' },
+    },
+    basedpyright = {
+      cmd = { 'basedpyright-langserver', '--stdio' },
+      filetypes = { 'python' },
+      root_markers = {
+        'pyproject.toml', 'setup.py', 'setup.cfg',
+        'requirements.txt', 'Pipfile', 'pyrightconfig.json', '.git',
+      },
+      settings = {
+        basedpyright = {
+          analysis = {
+            autoSearchPaths = true,
+            useLibraryCodeForTypes = true,
+          },
+        },
+      },
+    },
+    ts_ls = {
+      cmd = { 'typescript-language-server', '--stdio' },
+      filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' },
+      root_markers = { 'tsconfig.json', 'package.json', '.git' },
+    },
+    gopls = {
+      cmd = { 'gopls' },
+      filetypes = { 'go', 'gomod', 'gowork' },
+      root_markers = { 'go.mod', 'go.sum', '.git' },
+    },
+    rust_analyzer = {
+      cmd = { 'rust-analyzer' },
+      filetypes = { 'rust' },
+      root_markers = { 'Cargo.toml', '.git' },
+    },
   }
+
   for name, config in pairs(servers) do
     vim.lsp.config(name, config)
   end
   vim.lsp.enable(vim.tbl_keys(servers))
 
-  -- Remove default 'gr'-prefix LSP keymaps (grr/gri/grn/gra/grt/grx) to avoid
-  -- ambiguity timeout with our shorter 'gr' binding.
+  -- Delete default gr-prefix keymaps (grr/gri/grn/gra/grt/grx) to avoid
+  -- timeout ambiguity with our shorter gr → references binding.
   for _, key in ipairs({ 'grr', 'gri', 'grn', 'gra', 'grt', 'grx' }) do
     pcall(vim.keymap.del, 'n', key)
     pcall(vim.keymap.del, 'x', key)
   end
+
+  local lsp_keymaps = {
+    { 'n', 'gd',   vim.lsp.buf.definition },
+    { 'n', 'gD',   vim.lsp.buf.declaration },
+    { 'n', 'gr',   vim.lsp.buf.references },
+    { 'n', 'gi',   vim.lsp.buf.implementation },
+    { 'n', 'gy',   vim.lsp.buf.type_definition },
+    { 'n', 'ga',   vim.lsp.buf.code_action },
+    { 'n', '<F2>', vim.lsp.buf.rename },
+  }
+
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('vimrc_lsp', {}),
+    callback = function(e)
+      local buf = e.buf
+      local opts = { buffer = buf, silent = true }
+
+      for _, map in ipairs(lsp_keymaps) do
+        vim.keymap.set(map[1], map[2], map[3], opts)
+      end
+
+      vim.keymap.set('i', '<C-s>', vim.lsp.buf.signature_help, opts)
+
+      -- Hover: only when keywordprg is unset (respects filetype overrides
+      -- like Python's pydoc that set keywordprg after FileType autocmd)
+      if vim.bo[buf].keywordprg == '' then
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      end
+    end,
+  })
 EOF
 
-  " Buffer-local keymaps on LspAttach — override defaults where desired.
-  augroup vimrc_lsp
-    autocmd!
-    autocmd LspAttach * nnoremap <buffer> <silent> gd  <Cmd>lua vim.lsp.buf.definition()<CR>
-    autocmd LspAttach * nnoremap <buffer> <silent> gD  <Cmd>lua vim.lsp.buf.declaration()<CR>
-    autocmd LspAttach * nnoremap <buffer> <silent> gr  <Cmd>lua vim.lsp.buf.references()<CR>
-    autocmd LspAttach * nnoremap <buffer> <silent> gi  <Cmd>lua vim.lsp.buf.implementation()<CR>
-    autocmd LspAttach * nnoremap <buffer> <silent> gy  <Cmd>lua vim.lsp.buf.type_definition()<CR>
-    autocmd LspAttach * nnoremap <buffer> <silent> ga  <Cmd>lua vim.lsp.buf.code_action()<CR>
-    autocmd LspAttach * nnoremap <buffer> <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
-    autocmd LspAttach * inoremap <buffer> <silent> <C-s> <Cmd>lua vim.lsp.buf.signature_help()<CR>
-    if &keywordprg ==# ''
-      autocmd LspAttach * nnoremap <buffer> <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
-    endif
-  augroup END
-
   " Fallback for non-LSP buffers: grep-based reference search
+  " (buffer-local gr from LspAttach shadows this in LSP buffers)
   nnoremap <silent> gr :call <SID>FindReferences()<CR>
 else
   " --- Definition & References (Vim) ---
