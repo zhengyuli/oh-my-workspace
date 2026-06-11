@@ -816,7 +816,8 @@ _collect_links() {
   local var_name
   var_name="$(_pkg_links_var "${pkg}")"
 
-  local -n links="${var_name}" 2>/dev/null || return 1
+  local -a links
+  eval "links=(\"\${${var_name}[@]}\")" 2>/dev/null || return 1
   if (( ${#links[@]} == 0 )); then
     return 1
   fi
