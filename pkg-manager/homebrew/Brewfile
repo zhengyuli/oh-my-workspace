@@ -217,6 +217,9 @@ brew "rustup"
 # Lua -- lightweight scripting language (yazi plugins, neovim config, etc.)
 brew "lua"
 
+# utftex -- LaTeX-to-unicode converter for render-markdown.nvim
+brew "utftex"
+
 # -----------------------------------------------------------------------------
 # Window Management
 # -----------------------------------------------------------------------------

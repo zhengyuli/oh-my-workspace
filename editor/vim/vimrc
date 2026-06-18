@@ -697,6 +697,7 @@ EOF
       config = function()
         require("nvim-treesitter").install({
           "markdown", "markdown_inline",
+          "latex", "html", "yaml",
         }):wait(300000)
       end,
     },
