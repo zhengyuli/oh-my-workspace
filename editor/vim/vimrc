@@ -70,141 +70,152 @@ for s:dir in [s:state . '/vim', s:data . '/vim/undo']
 endfor
 
 " -----------------------------------------------------------------------------
-" Plugins (Neovim Only)
+" Colors
 " -----------------------------------------------------------------------------
 
-if has('nvim')
-  " --- Lazy.nvim Bootstrap ---
-  " Auto-clones from GitHub on first launch. Plugins live in
-  " $XDG_DATA_HOME/nvim/lazy (respects XDG).
-  lua << EOF
-  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-  if not vim.uv.fs_stat(lazypath) then
-    vim.fn.system({
-      "git", "clone", "--filter=blob:none", "--branch=stable",
-      "https://github.com/folke/lazy.nvim.git", lazypath,
-    })
-  end
-  vim.opt.rtp:prepend(lazypath)
-EOF
+" Enable syntax highlighting (keeps current colors)
+syntax enable
+" Enable filetype detection, plugins, and indent rules
+filetype plugin indent on
 
-  " Leader must be set before loading lazy.nvim
-  let g:mapleader = ' '
-  let g:maplocalleader = '\'
+" Palette sourced from https://spec.draculatheme.com
+"   bg       #282a36    bg-dark    #21222c    fg          #f8f8f2
+"   red      #ff5555    orange     #ffb86c    green       #50fa7b
+"   yellow   #f1fa8c    pink       #ff79c6    purple      #bd93f9
+"   cyan     #8be9fd    comment    #6272a4    selection   #44475a
 
-  lua << EOF
-  local telescope_ok, telescope = pcall(require, "telescope")
+set background=dark
 
-  require("lazy").setup({
-    {
-      "nvim-telescope/telescope.nvim",
-      tag = "0.1.8",
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-        {
-          "nvim-telescope/telescope-fzf-native.nvim",
-          build = "make",
-          cond = vim.fn.executable("make") == 1,
-        },
-      },
-      config = function()
-        local t = require("telescope")
-        local builtin = require("telescope.builtin")
-
-        -- rg arguments: hidden files, smart case, exclude build artifacts
-        local rg_args = {
-          "rg", "--color=never", "--no-heading", "--with-filename",
-          "--line-number", "--column", "--smart-case", "--hidden",
-          "--glob=!.git", "--glob=!node_modules", "--glob=!target",
-          "--glob=!__pycache__", "--glob=!dist", "--glob=!*.lock",
-        }
-
-        t.setup({
-          defaults = {
-            vimgrep_arguments = rg_args,
-            file_ignore_patterns = {
-              "node_modules", "target", "__pycache__", "%.git",
-              "%.lock", "%.min.", "%.elc", "%.pyc", "%.o", "%.obj",
-            },
-            layout_strategy = "horizontal",
-            layout_config = {
-              horizontal = { preview_width = 0.55 },
-            },
-            mappings = {
-              n = { ["q"] = "close" },
-              i = { ["<Esc>"] = "close", ["<C-g>"] = "close", ["<C-u>"] = false },
-            },
-            color_devicons = false,
-          },
-          pickers = {
-            find_files = {
-              find_command = {
-                "fd", "--type", "f", "--hidden", "--strip-cwd-prefix",
-                "--exclude", ".git", "--exclude", "node_modules",
-                "--exclude", "target", "--exclude", "__pycache__",
-                "--exclude", "dist",
-              },
-            },
-          },
-        })
-
-        -- Dracula-compatible telescope highlights
-        pcall(t.load_extension, "fzf")
-
-        vim.api.nvim_set_hl(0, "TelescopeSelection", {
-          bg = "#44475a", fg = "#f8f8f2", bold = true,
-        })
-        vim.api.nvim_set_hl(0, "TelescopeMatching", {
-          fg = "#50fa7b", bold = true,
-        })
-        vim.api.nvim_set_hl(0, "TelescopePromptPrefix", {
-          fg = "#bd93f9",
-        })
-        vim.api.nvim_set_hl(0, "TelescopeBorder", {
-          fg = "#6272a4",
-        })
-
-        -- Keybindings
-        local opts = { noremap = true, silent = true }
-        vim.keymap.set("n", "<leader>ff", builtin.find_files,
-          vim.tbl_extend("force", opts, { desc = "Find files" }))
-        vim.keymap.set("n", "<leader>fg", builtin.live_grep,
-          vim.tbl_extend("force", opts, { desc = "Live grep" }))
-        vim.keymap.set("n", "<leader>fb", builtin.buffers,
-          vim.tbl_extend("force", opts, { desc = "Buffers" }))
-        vim.keymap.set("n", "<leader>fr", builtin.oldfiles,
-          vim.tbl_extend("force", opts, { desc = "Recent files" }))
-        vim.keymap.set("n", "<leader>gs", builtin.git_status,
-          vim.tbl_extend("force", opts, { desc = "Git status" }))
-        vim.keymap.set("n", "<leader>gc", builtin.git_commits,
-          vim.tbl_extend("force", opts, { desc = "Git commits" }))
-        vim.keymap.set("n", "<leader>fw", builtin.grep_string,
-          vim.tbl_extend("force", opts, { desc = "Word under cursor" }))
-
-        -- Expose telescope for FindReferences fallback
-        _G.telescope_live_grep_word = function()
-          local word = vim.fn.expand("<cword>")
-          if word == "" then return end
-          builtin.live_grep({ default_text = word })
-        end
-      end,
-    },
-    {
-      "tpope/vim-fugitive",
-      lazy = true,
-    },
-  }, {
-    root = vim.fn.stdpath("data") .. "/lazy",
-    ui = { border = "single" },
-    checker = { enabled = false },
-  })
-EOF
-
-  " Replace grep-based FindReferences with telescope (LSP overrides gr
-  " via LspAttach, so this only fires in non-LSP buffers)
-  nnoremap <silent> gr :call v:lua.telescope_live_grep_word()<CR>
-
+" Enable true color support in terminal (24-bit colors)
+if has('termguicolors')
+  set termguicolors
 endif
+
+" Clear existing highlights before applying theme
+highlight clear
+if exists('syntax_on') | syntax reset | endif
+let g:colors_name = 'Dracula'
+
+" --- Core ---
+hi Normal          guifg=#f8f8f2  guibg=#282a36  gui=NONE
+" Inactive windows slightly darker
+hi NormalNC        guifg=#f8f8f2  guibg=#21222c  gui=NONE
+
+" --- Cursor & Line ---
+hi Cursor          guifg=#282a36  guibg=#f8f8f2  gui=NONE
+hi CursorLine      guifg=NONE     guibg=#44475a  gui=NONE
+hi CursorLineNr    guifg=#f1fa8c  guibg=#44475a  gui=bold
+hi ColorColumn     guifg=NONE     guibg=#21222c  gui=NONE
+
+" --- Gutter ---
+hi LineNr          guifg=#6272a4  guibg=NONE     gui=NONE
+hi SignColumn      guifg=NONE     guibg=#282a36  gui=NONE
+
+" --- Selection & Search ---
+hi Visual          guifg=NONE     guibg=#44475a  gui=NONE
+hi Search          guifg=#282a36  guibg=#f1fa8c  gui=bold
+hi IncSearch       guifg=#282a36  guibg=#8be9fd  gui=bold
+hi MatchParen      guifg=#ff79c6  guibg=NONE     gui=bold,underline
+
+" --- Syntax ---
+hi Comment         guifg=#6272a4  guibg=NONE     gui=italic
+" Purple
+hi Constant        guifg=#bd93f9  guibg=NONE     gui=NONE
+" Yellow
+hi String          guifg=#f1fa8c  guibg=NONE     gui=NONE
+hi Character       guifg=#f1fa8c  guibg=NONE     gui=NONE
+" Orange
+hi Number          guifg=#ffb86c  guibg=NONE     gui=NONE
+hi Boolean         guifg=#ffb86c  guibg=NONE     gui=NONE
+hi Float           guifg=#ffb86c  guibg=NONE     gui=NONE
+hi Identifier      guifg=#f8f8f2  guibg=NONE     gui=NONE
+" Green
+hi Function        guifg=#50fa7b  guibg=NONE     gui=NONE
+" Pink (keywords)
+hi Statement       guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Conditional     guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Repeat          guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Label           guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Operator        guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Keyword         guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Exception       guifg=#ff79c6  guibg=NONE     gui=NONE
+" Pink
+hi PreProc         guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Include         guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Define          guifg=#ff79c6  guibg=NONE     gui=NONE
+hi Macro           guifg=#ff79c6  guibg=NONE     gui=NONE
+" Cyan
+hi Type            guifg=#8be9fd  guibg=NONE     gui=italic
+hi StorageClass    guifg=#8be9fd  guibg=NONE     gui=italic
+hi Structure       guifg=#8be9fd  guibg=NONE     gui=italic
+hi Typedef         guifg=#8be9fd  guibg=NONE     gui=italic
+" Cyan
+hi Special         guifg=#8be9fd  guibg=NONE     gui=NONE
+hi SpecialChar     guifg=#8be9fd  guibg=NONE     gui=NONE
+hi Tag             guifg=#bd93f9  guibg=NONE     gui=NONE
+hi Delimiter       guifg=#f8f8f2  guibg=NONE     gui=NONE
+hi SpecialComment  guifg=#6272a4  guibg=NONE     gui=italic
+hi Debug           guifg=#ff5555  guibg=NONE     gui=NONE
+hi Underlined      guifg=#8be9fd  guibg=NONE     gui=underline
+hi Ignore          guifg=#6272a4  guibg=NONE     gui=NONE
+hi Error           guifg=#ff5555  guibg=NONE     gui=bold
+hi Todo            guifg=#282a36  guibg=#f1fa8c  gui=bold
+
+" --- UI Chrome ---
+hi StatusLine      guifg=#f8f8f2  guibg=#44475a  gui=NONE
+hi StatusLineNC    guifg=#6272a4  guibg=#21222c  gui=NONE
+hi WildMenu        guifg=#282a36  guibg=#bd93f9  gui=bold
+hi Pmenu           guifg=#f8f8f2  guibg=#44475a  gui=NONE
+hi PmenuSel        guifg=#282a36  guibg=#bd93f9  gui=bold
+hi PmenuSbar       guifg=NONE     guibg=#44475a  gui=NONE
+hi PmenuThumb      guifg=NONE     guibg=#bd93f9  gui=NONE
+hi TabLine         guifg=#6272a4  guibg=#21222c  gui=NONE
+hi TabLineSel      guifg=#f8f8f2  guibg=#282a36  gui=bold
+hi TabLineFill     guifg=NONE     guibg=#21222c  gui=NONE
+hi VertSplit       guifg=#6272a4  guibg=#21222c  gui=NONE
+" Neovim 0.6+ uses WinSeparator instead of VertSplit
+hi! link WinSeparator VertSplit
+hi Folded          guifg=#6272a4  guibg=#44475a  gui=italic
+hi FoldColumn      guifg=#6272a4  guibg=#282a36  gui=NONE
+hi NonText         guifg=#44475a  guibg=NONE     gui=NONE
+hi SpecialKey      guifg=#44475a  guibg=NONE     gui=NONE
+hi Title           guifg=#50fa7b  guibg=NONE     gui=bold
+hi Directory       guifg=#bd93f9  guibg=NONE     gui=bold
+
+" --- Diagnostics ---
+hi ErrorMsg        guifg=#ff5555  guibg=NONE     gui=bold
+hi WarningMsg      guifg=#ffb86c  guibg=NONE     gui=NONE
+hi ModeMsg         guifg=#50fa7b  guibg=NONE     gui=bold
+hi MoreMsg         guifg=#50fa7b  guibg=NONE     gui=bold
+hi Question        guifg=#50fa7b  guibg=NONE     gui=NONE
+hi SpellBad        guifg=#ff5555  guibg=NONE     gui=undercurl
+hi SpellCap        guifg=#ffb86c  guibg=NONE     gui=undercurl
+hi SpellRare       guifg=#8be9fd  guibg=NONE     gui=undercurl
+hi SpellLocal      guifg=#ffb86c  guibg=NONE     gui=undercurl
+
+" --- Diff ---
+hi DiffAdd         guifg=#50fa7b  guibg=#1e3626  gui=NONE
+hi DiffChange      guifg=#f1fa8c  guibg=#2b2900  gui=NONE
+hi DiffDelete      guifg=#ff5555  guibg=#2d1212  gui=NONE
+hi DiffText        guifg=#f1fa8c  guibg=#3b3600  gui=bold
+
+" --- Markdown ---
+hi markdownH1                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH2                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH3                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH4                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH5                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownH6                guifg=#bd93f9  guibg=NONE  gui=bold
+hi markdownBold              guifg=#ffb86c  guibg=NONE  gui=bold
+hi markdownItalic            guifg=#f1fa8c  guibg=NONE  gui=italic
+hi markdownCode              guifg=#50fa7b  guibg=NONE  gui=NONE
+hi markdownCodeBlock         guifg=#50fa7b  guibg=NONE  gui=NONE
+hi markdownLinkText          guifg=#8be9fd  guibg=NONE  gui=underline
+hi markdownUrl               guifg=#6272a4  guibg=NONE  gui=NONE
+hi markdownListMarker        guifg=#ff79c6  guibg=NONE  gui=NONE
+hi markdownOrderedListMarker guifg=#ff79c6  guibg=NONE  gui=NONE
+hi markdownBlockquote        guifg=#6272a4  guibg=NONE  gui=NONE
+hi markdownRule              guifg=#6272a4  guibg=NONE  gui=NONE
 
 " -----------------------------------------------------------------------------
 " Display
@@ -525,69 +536,6 @@ endif
 " Ctrl-I: jump forward (xref-go-forward) — built-in
 
 " -----------------------------------------------------------------------------
-" Auto Commands
-" -----------------------------------------------------------------------------
-
-augroup vimrc
-  autocmd!
-
-  " --- Cursor Position ---
-  " Return to last cursor position when reopening a file
-  autocmd BufReadPost *
-    \ if line("'\"") > 0 && line("'\"") <= line("$") |
-    \   execute 'normal! g`"' |
-    \ endif
-
-  " --- Whitespace ---
-  " Strip trailing whitespace on save (skip binary/diff buffers)
-  autocmd BufWritePre *
-    \ if &filetype !~# '\v^(diff|xxd)$' |
-    \   let b:_view = winsaveview() |
-    \   silent! %s/\s\+$//e |
-    \   call winrestview(b:_view) |
-    \   unlet b:_view |
-    \ endif
-
-  " --- Layout ---
-  " Equalize splits when terminal is resized
-  autocmd VimResized * wincmd =
-
-  " --- External Reload ---
-  " Auto-reload file when gaining focus or on idle (external changes)
-  autocmd FocusGained,BufEnter * silent! checktime
-  autocmd CursorHold,CursorHoldI * silent! checktime
-
-augroup END
-
-" -----------------------------------------------------------------------------
-" File Type Overrides
-" -----------------------------------------------------------------------------
-
-augroup vimrc_ft
-  autocmd!
-
-  " --- Indentation ---
-  " Python: 4 spaces
-  autocmd FileType python setlocal tabstop=4 shiftwidth=4
-  " Web files: 2 spaces
-  autocmd FileType javascript,typescript,json,yaml,html,css,scss
-    \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
-  " Go: tabs (convention)
-  autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
-
-  " --- Text Modes ---
-  " Text files: wrap and spell check
-  autocmd FileType markdown,text
-    \ setlocal wrap linebreak nolist
-
-  " --- Git Commits ---
-  " Git commits: 72 char width, spell check
-  autocmd FileType gitcommit
-    \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
-
-augroup END
-
-" -----------------------------------------------------------------------------
 " Status Line
 " -----------------------------------------------------------------------------
 
@@ -621,159 +569,211 @@ set statusline+=\ %3l:%-2c
 set statusline+=\ %3p%%
 
 " -----------------------------------------------------------------------------
-" Syntax Highlighting
+" Plugins (Neovim Only)
 " -----------------------------------------------------------------------------
 
-" Disable treesitter — no parsers installed and Neovim 0.12+ ftplugin
-" calls vim.treesitter.start() which errors without parsers
 if has('nvim')
-  lua vim.treesitter.start = function() end
+  " --- Lazy.nvim Bootstrap ---
+  " Auto-clones from GitHub on first launch. Plugins live in
+  " $XDG_DATA_HOME/nvim/lazy (respects XDG).
+  lua << EOF
+  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+  if not vim.uv.fs_stat(lazypath) then
+    vim.fn.system({
+      "git", "clone", "--filter=blob:none", "--branch=stable",
+      "https://github.com/folke/lazy.nvim.git", lazypath,
+    })
+  end
+  vim.opt.rtp:prepend(lazypath)
+EOF
+
+  " Leader must be set before loading lazy.nvim
+  let g:mapleader = ' '
+  let g:maplocalleader = '\'
+
+  lua << EOF
+  local telescope_ok, telescope = pcall(require, "telescope")
+
+  require("lazy").setup({
+    {
+      "nvim-telescope/telescope.nvim",
+      tag = "0.1.8",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        {
+          "nvim-telescope/telescope-fzf-native.nvim",
+          build = "make",
+          cond = vim.fn.executable("make") == 1,
+        },
+      },
+      config = function()
+        local t = require("telescope")
+        local builtin = require("telescope.builtin")
+
+        -- rg arguments: hidden files, smart case, exclude build artifacts
+        local rg_args = {
+          "rg", "--color=never", "--no-heading", "--with-filename",
+          "--line-number", "--column", "--smart-case", "--hidden",
+          "--glob=!.git", "--glob=!node_modules", "--glob=!target",
+          "--glob=!__pycache__", "--glob=!dist", "--glob=!*.lock",
+        }
+
+        t.setup({
+          defaults = {
+            vimgrep_arguments = rg_args,
+            file_ignore_patterns = {
+              "node_modules", "target", "__pycache__", "%.git",
+              "%.lock", "%.min.", "%.elc", "%.pyc", "%.o", "%.obj",
+            },
+            layout_strategy = "horizontal",
+            layout_config = {
+              horizontal = { preview_width = 0.55 },
+            },
+            mappings = {
+              n = { ["q"] = "close" },
+              i = { ["<Esc>"] = "close", ["<C-g>"] = "close", ["<C-u>"] = false },
+            },
+            color_devicons = false,
+          },
+          pickers = {
+            find_files = {
+              find_command = {
+                "fd", "--type", "f", "--hidden", "--strip-cwd-prefix",
+                "--exclude", ".git", "--exclude", "node_modules",
+                "--exclude", "target", "--exclude", "__pycache__",
+                "--exclude", "dist",
+              },
+            },
+          },
+        })
+
+        -- Dracula-compatible telescope highlights
+        pcall(t.load_extension, "fzf")
+
+        vim.api.nvim_set_hl(0, "TelescopeSelection", {
+          bg = "#44475a", fg = "#f8f8f2", bold = true,
+        })
+        vim.api.nvim_set_hl(0, "TelescopeMatching", {
+          fg = "#50fa7b", bold = true,
+        })
+        vim.api.nvim_set_hl(0, "TelescopePromptPrefix", {
+          fg = "#bd93f9",
+        })
+        vim.api.nvim_set_hl(0, "TelescopeBorder", {
+          fg = "#6272a4",
+        })
+
+        -- Keybindings
+        local opts = { noremap = true, silent = true }
+        vim.keymap.set("n", "<leader>ff", builtin.find_files,
+          vim.tbl_extend("force", opts, { desc = "Find files" }))
+        vim.keymap.set("n", "<leader>fg", builtin.live_grep,
+          vim.tbl_extend("force", opts, { desc = "Live grep" }))
+        vim.keymap.set("n", "<leader>fb", builtin.buffers,
+          vim.tbl_extend("force", opts, { desc = "Buffers" }))
+        vim.keymap.set("n", "<leader>fr", builtin.oldfiles,
+          vim.tbl_extend("force", opts, { desc = "Recent files" }))
+        vim.keymap.set("n", "<leader>gs", builtin.git_status,
+          vim.tbl_extend("force", opts, { desc = "Git status" }))
+        vim.keymap.set("n", "<leader>gc", builtin.git_commits,
+          vim.tbl_extend("force", opts, { desc = "Git commits" }))
+        vim.keymap.set("n", "<leader>fw", builtin.grep_string,
+          vim.tbl_extend("force", opts, { desc = "Word under cursor" }))
+
+        -- Expose telescope for FindReferences fallback
+        _G.telescope_live_grep_word = function()
+          local word = vim.fn.expand("<cword>")
+          if word == "" then return end
+          builtin.live_grep({ default_text = word })
+        end
+      end,
+    },
+    {
+      "tpope/vim-fugitive",
+      lazy = true,
+    },
+    {
+      "nvim-treesitter/nvim-treesitter",
+      build = ":TSUpdate",
+      lazy = false,
+      config = function()
+        require("nvim-treesitter").install({
+          "markdown", "markdown_inline",
+        }):wait(300000)
+      end,
+    },
+    {
+      "nvim-tree/nvim-web-devicons",
+      lazy = true,
+    },
+    {
+      "MeanderingProgrammer/render-markdown.nvim",
+      dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+      ft = "markdown",
+    },
+  }, {
+    root = vim.fn.stdpath("data") .. "/lazy",
+    ui = { border = "single" },
+    checker = { enabled = false },
+  })
+EOF
+
+  " Replace grep-based FindReferences with telescope (LSP overrides gr
+  " via LspAttach, so this only fires in non-LSP buffers)
+  nnoremap <silent> gr :call v:lua.telescope_live_grep_word()<CR>
+
 endif
 
-" Enable syntax highlighting (keeps current colors)
-syntax enable
-" Enable filetype detection, plugins, and indent rules
-filetype plugin indent on
-
 " -----------------------------------------------------------------------------
-" Dracula Color Theme
+" Automation
 " -----------------------------------------------------------------------------
 
-" Palette sourced from https://spec.draculatheme.com
-"   bg       #282a36    bg-dark    #21222c    fg          #f8f8f2
-"   red      #ff5555    orange     #ffb86c    green       #50fa7b
-"   yellow   #f1fa8c    pink       #ff79c6    purple      #bd93f9
-"   cyan     #8be9fd    comment    #6272a4    selection   #44475a
+augroup vimrc
+  autocmd!
 
-set background=dark
+  " --- Cursor Position ---
+  " Return to last cursor position when reopening a file
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   execute 'normal! g`"' |
+    \ endif
 
-" Enable true color support in terminal (24-bit colors)
-if has('termguicolors')
-  set termguicolors
-endif
+  " --- Whitespace ---
+  " Strip trailing whitespace on save (skip binary/diff buffers)
+  autocmd BufWritePre *
+    \ if &filetype !~# '\v^(diff|xxd)$' |
+    \   let b:_view = winsaveview() |
+    \   silent! %s/\s\+$//e |
+    \   call winrestview(b:_view) |
+    \   unlet b:_view |
+    \ endif
 
-" Clear existing highlights before applying theme
-highlight clear
-if exists('syntax_on') | syntax reset | endif
-let g:colors_name = 'Dracula'
+  " --- Layout ---
+  " Equalize splits when terminal is resized
+  autocmd VimResized * wincmd =
 
-" --- Core ---
-hi Normal          guifg=#f8f8f2  guibg=#282a36  gui=NONE
-" Inactive windows slightly darker
-hi NormalNC        guifg=#f8f8f2  guibg=#21222c  gui=NONE
+  " --- External Reload ---
+  " Auto-reload file when gaining focus or on idle (external changes)
+  autocmd FocusGained,BufEnter * silent! checktime
+  autocmd CursorHold,CursorHoldI * silent! checktime
 
-" --- Cursor & Line ---
-hi Cursor          guifg=#282a36  guibg=#f8f8f2  gui=NONE
-hi CursorLine      guifg=NONE     guibg=#44475a  gui=NONE
-hi CursorLineNr    guifg=#f1fa8c  guibg=#44475a  gui=bold
-hi ColorColumn     guifg=NONE     guibg=#21222c  gui=NONE
+  " --- Indentation ---
+  " Python: 4 spaces
+  autocmd FileType python setlocal tabstop=4 shiftwidth=4
+  " Web files: 2 spaces
+  autocmd FileType javascript,typescript,json,yaml,html,css,scss
+    \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
+  " Go: tabs (convention)
+  autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
 
-" --- Gutter ---
-hi LineNr          guifg=#6272a4  guibg=NONE     gui=NONE
-hi SignColumn      guifg=NONE     guibg=#282a36  gui=NONE
+  " --- Text Modes ---
+  " Text files: wrap and spell check
+  autocmd FileType markdown,text
+    \ setlocal wrap linebreak nolist
 
-" --- Selection & Search ---
-hi Visual          guifg=NONE     guibg=#44475a  gui=NONE
-hi Search          guifg=#282a36  guibg=#f1fa8c  gui=bold
-hi IncSearch       guifg=#282a36  guibg=#8be9fd  gui=bold
-hi MatchParen      guifg=#ff79c6  guibg=NONE     gui=bold,underline
+  " --- Git Commits ---
+  " Git commits: 72 char width, spell check
+  autocmd FileType gitcommit
+    \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
 
-" --- Syntax ---
-hi Comment         guifg=#6272a4  guibg=NONE     gui=italic
-" Purple
-hi Constant        guifg=#bd93f9  guibg=NONE     gui=NONE
-" Yellow
-hi String          guifg=#f1fa8c  guibg=NONE     gui=NONE
-hi Character       guifg=#f1fa8c  guibg=NONE     gui=NONE
-" Orange
-hi Number          guifg=#ffb86c  guibg=NONE     gui=NONE
-hi Boolean         guifg=#ffb86c  guibg=NONE     gui=NONE
-hi Float           guifg=#ffb86c  guibg=NONE     gui=NONE
-hi Identifier      guifg=#f8f8f2  guibg=NONE     gui=NONE
-" Green
-hi Function        guifg=#50fa7b  guibg=NONE     gui=NONE
-" Pink (keywords)
-hi Statement       guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Conditional     guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Repeat          guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Label           guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Operator        guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Keyword         guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Exception       guifg=#ff79c6  guibg=NONE     gui=NONE
-" Pink
-hi PreProc         guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Include         guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Define          guifg=#ff79c6  guibg=NONE     gui=NONE
-hi Macro           guifg=#ff79c6  guibg=NONE     gui=NONE
-" Cyan
-hi Type            guifg=#8be9fd  guibg=NONE     gui=italic
-hi StorageClass    guifg=#8be9fd  guibg=NONE     gui=italic
-hi Structure       guifg=#8be9fd  guibg=NONE     gui=italic
-hi Typedef         guifg=#8be9fd  guibg=NONE     gui=italic
-" Cyan
-hi Special         guifg=#8be9fd  guibg=NONE     gui=NONE
-hi SpecialChar     guifg=#8be9fd  guibg=NONE     gui=NONE
-hi Tag             guifg=#bd93f9  guibg=NONE     gui=NONE
-hi Delimiter       guifg=#f8f8f2  guibg=NONE     gui=NONE
-hi SpecialComment  guifg=#6272a4  guibg=NONE     gui=italic
-hi Debug           guifg=#ff5555  guibg=NONE     gui=NONE
-hi Underlined      guifg=#8be9fd  guibg=NONE     gui=underline
-hi Ignore          guifg=#6272a4  guibg=NONE     gui=NONE
-hi Error           guifg=#ff5555  guibg=NONE     gui=bold
-hi Todo            guifg=#282a36  guibg=#f1fa8c  gui=bold
-
-" --- UI Chrome ---
-hi StatusLine      guifg=#f8f8f2  guibg=#44475a  gui=NONE
-hi StatusLineNC    guifg=#6272a4  guibg=#21222c  gui=NONE
-hi WildMenu        guifg=#282a36  guibg=#bd93f9  gui=bold
-hi Pmenu           guifg=#f8f8f2  guibg=#44475a  gui=NONE
-hi PmenuSel        guifg=#282a36  guibg=#bd93f9  gui=bold
-hi PmenuSbar       guifg=NONE     guibg=#44475a  gui=NONE
-hi PmenuThumb      guifg=NONE     guibg=#bd93f9  gui=NONE
-hi TabLine         guifg=#6272a4  guibg=#21222c  gui=NONE
-hi TabLineSel      guifg=#f8f8f2  guibg=#282a36  gui=bold
-hi TabLineFill     guifg=NONE     guibg=#21222c  gui=NONE
-hi VertSplit       guifg=#6272a4  guibg=#21222c  gui=NONE
-" Neovim 0.6+ uses WinSeparator instead of VertSplit
-hi! link WinSeparator VertSplit
-hi Folded          guifg=#6272a4  guibg=#44475a  gui=italic
-hi FoldColumn      guifg=#6272a4  guibg=#282a36  gui=NONE
-hi NonText         guifg=#44475a  guibg=NONE     gui=NONE
-hi SpecialKey      guifg=#44475a  guibg=NONE     gui=NONE
-hi Title           guifg=#50fa7b  guibg=NONE     gui=bold
-hi Directory       guifg=#bd93f9  guibg=NONE     gui=bold
-
-" --- Diagnostics ---
-hi ErrorMsg        guifg=#ff5555  guibg=NONE     gui=bold
-hi WarningMsg      guifg=#ffb86c  guibg=NONE     gui=NONE
-hi ModeMsg         guifg=#50fa7b  guibg=NONE     gui=bold
-hi MoreMsg         guifg=#50fa7b  guibg=NONE     gui=bold
-hi Question        guifg=#50fa7b  guibg=NONE     gui=NONE
-hi SpellBad        guifg=#ff5555  guibg=NONE     gui=undercurl
-hi SpellCap        guifg=#ffb86c  guibg=NONE     gui=undercurl
-hi SpellRare       guifg=#8be9fd  guibg=NONE     gui=undercurl
-hi SpellLocal      guifg=#ffb86c  guibg=NONE     gui=undercurl
-
-" --- Diff ---
-hi DiffAdd         guifg=#50fa7b  guibg=#1e3626  gui=NONE
-hi DiffChange      guifg=#f1fa8c  guibg=#2b2900  gui=NONE
-hi DiffDelete      guifg=#ff5555  guibg=#2d1212  gui=NONE
-hi DiffText        guifg=#f1fa8c  guibg=#3b3600  gui=bold
-
-" --- Markdown ---
-hi markdownH1                guifg=#bd93f9  guibg=NONE  gui=bold
-hi markdownH2                guifg=#bd93f9  guibg=NONE  gui=bold
-hi markdownH3                guifg=#bd93f9  guibg=NONE  gui=bold
-hi markdownH4                guifg=#bd93f9  guibg=NONE  gui=bold
-hi markdownH5                guifg=#bd93f9  guibg=NONE  gui=bold
-hi markdownH6                guifg=#bd93f9  guibg=NONE  gui=bold
-hi markdownBold              guifg=#ffb86c  guibg=NONE  gui=bold
-hi markdownItalic            guifg=#f1fa8c  guibg=NONE  gui=italic
-hi markdownCode              guifg=#50fa7b  guibg=NONE  gui=NONE
-hi markdownCodeBlock         guifg=#50fa7b  guibg=NONE  gui=NONE
-hi markdownLinkText          guifg=#8be9fd  guibg=NONE  gui=underline
-hi markdownUrl               guifg=#6272a4  guibg=NONE  gui=NONE
-hi markdownListMarker        guifg=#ff79c6  guibg=NONE  gui=NONE
-hi markdownOrderedListMarker guifg=#ff79c6  guibg=NONE  gui=NONE
-hi markdownBlockquote        guifg=#6272a4  guibg=NONE  gui=NONE
-hi markdownRule              guifg=#6272a4  guibg=NONE  gui=NONE
+augroup END
