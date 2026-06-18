@@ -356,7 +356,7 @@ _apply_post_fixes() {
   if ! jq '.model = "sonnet[1m]"
     | .env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
     | .env.ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5-turbo"
-    | .env.ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1"
+    | .env.ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.2"
     | .env.ENABLE_TOOL_SEARCH = "0"
     | .env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS = "1"
     | .env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"
