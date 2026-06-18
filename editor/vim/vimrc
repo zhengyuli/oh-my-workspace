@@ -73,11 +73,6 @@ endfor
 " Colors
 " -----------------------------------------------------------------------------
 
-" Enable syntax highlighting (keeps current colors)
-syntax enable
-" Enable filetype detection, plugins, and indent rules
-filetype plugin indent on
-
 " Palette sourced from https://spec.draculatheme.com
 "   bg       #282a36    bg-dark    #21222c    fg          #f8f8f2
 "   red      #ff5555    orange     #ffb86c    green       #50fa7b
@@ -585,6 +580,9 @@ if has('nvim')
     })
   end
   vim.opt.rtp:prepend(lazypath)
+  -- Treesitter parsers live in data/site; must be on rtp before lazy.setup
+  -- so ftplugins can find them when filetype detection triggers
+  vim.opt.rtp:prepend(vim.fn.stdpath("data") .. "/site")
 EOF
 
   " Leader must be set before loading lazy.nvim
@@ -723,6 +721,13 @@ EOF
   nnoremap <silent> gr :call v:lua.telescope_live_grep_word()<CR>
 
 endif
+
+" Enable syntax highlighting and filetype detection after plugins.
+" syntax enable triggers BufReadPost → ftplugins need treesitter parsers;
+" filetype plugin indent on enables ftplugin loading. Both must run
+" after lazy.nvim has loaded nvim-treesitter.
+syntax enable
+filetype plugin indent on
 
 " -----------------------------------------------------------------------------
 " Automation
