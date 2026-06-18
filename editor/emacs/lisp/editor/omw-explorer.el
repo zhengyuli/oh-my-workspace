@@ -1,5 +1,5 @@
 ;;; omw-explorer.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-05-05 14:20:34 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-06-02 14:27:38 Tuesday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; omw-explorer.el - File explorer with Dirvish and dired.
@@ -101,10 +101,13 @@ When enabled, dired-omit-mode is enabled in all dired buffers."
 
 (defun omw/dired-mode-setup ()
   "Apply custom settings for dired mode."
-  (dired-omit-mode (if omw/omit-global-mode 1 -1))
-  ;; Read-only buffers default to hollow cursor; force solid box to match
-  ;; normal editing buffers under doom-dracula.
-  (setq-local cursor-type 'box))
+  (set-face-attribute 'dirvish-hl-line nil
+                      :inherit nil :extend nil
+                      :background nil :foreground "#5DADE2")
+  (set-face-attribute 'dirvish-hl-line-inactive nil
+                      :inherit nil :extend nil
+                      :background nil :foreground nil)
+  (dired-omit-mode (if omw/omit-global-mode 1 -1)))
 
 ;; --- Dired ---
 (use-package dired
