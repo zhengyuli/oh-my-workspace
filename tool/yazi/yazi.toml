@@ -25,6 +25,8 @@
 # -----------------------------------------------------------------------------
 
 [mgr]
+# Layout ratio: [parent, current, preview] — preview widest
+ratio = [1, 3, 4]
 # Natural sort: case-insensitive, e.g. 1.md < 2.md < 10.md
 sort_by = "natural"
 
