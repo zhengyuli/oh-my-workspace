@@ -346,8 +346,10 @@ set lazyredraw
 set updatetime=200
 
 " --- Timing ---
-" 500 ms: enough for <leader>w sequences without blocking <Esc> exit
-set timeoutlen=500
+" 1000 ms for leader key sequences (e.g. <Space>ff)
+" 50 ms for terminal key codes (<Esc>) to stay responsive
+set timeoutlen=1000
+set ttimeoutlen=50
 
 " --- Navigation ---
 " Wrap cursor keys at line boundaries
