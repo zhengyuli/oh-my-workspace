@@ -1,5 +1,5 @@
 ;;; omw-markdown.el -*- lexical-binding: t; -*-
-;; Time-stamp: <2026-03-18 00:00:00 Tuesday by zhengyu.li>
+;; Time-stamp: <2026-06-02 16:51:22 Tuesday by zhengyu.li>
 ;;
 ;; ============================================================================
 ;; omw-markdown.el - Markdown mode with visual formatting and table alignment.
@@ -130,7 +130,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
   (setq-local markdown-enable-math t
               markdown-hide-urls t)
   (auto-fill-mode 1)
-  (visual-fill-column-mode 1)
+  (visual-fill-column-mode -1)
   ;; Graphical valign is more accurate; fall back to text alignment in TTY
   (if (display-graphic-p)
       (valign-mode 1)
@@ -149,7 +149,7 @@ Keys: `header' foreground, `code-bg' and `code-fg' for code blocks.")
         markdown-display-remote-images t
         markdown-enable-wiki-links t
         markdown-indent-on-enter 'indent-and-new-item
-        markdown-fontify-code-blocks-natively t))
+        markdown-fontify-code-blocks-natively nil))
 
 ;; ============================================================================
 ;;; Provide features
