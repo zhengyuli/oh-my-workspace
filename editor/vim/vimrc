@@ -13,9 +13,10 @@
 "   2026-04-04 00:00 zhengyu li <lizhengyu419@outlook.com> created.
 "
 " Commentary:
-"   Minimal Vim configuration using the Dracula color theme. No plugin
-"   manager — Vim is a lightweight fallback editor. XDG paths are
-"   redirected manually via VIMINIT since Vim predates the XDG spec.
+"   Minimal Vim configuration using the Dracula color theme. Vim is a
+"   lightweight fallback editor. Neovim adds lazy.nvim for plugin
+"   management (telescope, fugitive). XDG paths are redirected
+"   manually via VIMINIT since Vim predates the XDG spec.
 "
 " Loaded via: VIMINIT="set nocp | execute 'source' ..." (set in 00-env.zsh)
 " XDG: Manually redirected (Vim predates XDG; VIMINIT bypasses default loader)
@@ -67,6 +68,143 @@ let &undodir = s:data . '/vim/undo'
 for s:dir in [s:state . '/vim', s:data . '/vim/undo']
   if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
 endfor
+
+" -----------------------------------------------------------------------------
+" Plugins (Neovim Only)
+" -----------------------------------------------------------------------------
+
+if has('nvim')
+  " --- Lazy.nvim Bootstrap ---
+  " Auto-clones from GitHub on first launch. Plugins live in
+  " $XDG_DATA_HOME/nvim/lazy (respects XDG).
+  lua << EOF
+  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+  if not vim.uv.fs_stat(lazypath) then
+    vim.fn.system({
+      "git", "clone", "--filter=blob:none", "--branch=stable",
+      "https://github.com/folke/lazy.nvim.git", lazypath,
+    })
+  end
+  vim.opt.rtp:prepend(lazypath)
+EOF
+
+  " Leader must be set before loading lazy.nvim
+  let g:mapleader = ' '
+  let g:maplocalleader = '\'
+
+  lua << EOF
+  local telescope_ok, telescope = pcall(require, "telescope")
+
+  require("lazy").setup({
+    {
+      "nvim-telescope/telescope.nvim",
+      tag = "0.1.8",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        {
+          "nvim-telescope/telescope-fzf-native.nvim",
+          build = "make",
+          cond = vim.fn.executable("make") == 1,
+        },
+      },
+      config = function()
+        local t = require("telescope")
+        local builtin = require("telescope.builtin")
+
+        -- rg arguments: hidden files, smart case, exclude build artifacts
+        local rg_args = {
+          "rg", "--color=never", "--no-heading", "--with-filename",
+          "--line-number", "--column", "--smart-case", "--hidden",
+          "--glob=!.git", "--glob=!node_modules", "--glob=!target",
+          "--glob=!__pycache__", "--glob=!dist", "--glob=!*.lock",
+        }
+
+        t.setup({
+          defaults = {
+            vimgrep_arguments = rg_args,
+            file_ignore_patterns = {
+              "node_modules", "target", "__pycache__", "%.git",
+              "%.lock", "%.min.", "%.elc", "%.pyc", "%.o", "%.obj",
+            },
+            layout_strategy = "horizontal",
+            layout_config = {
+              horizontal = { preview_width = 0.55 },
+            },
+            mappings = {
+              n = { ["q"] = "close" },
+              i = { ["<Esc>"] = "close", ["<C-g>"] = "close", ["<C-u>"] = false },
+            },
+            color_devicons = false,
+          },
+          pickers = {
+            find_files = {
+              find_command = {
+                "fd", "--type", "f", "--hidden", "--strip-cwd-prefix",
+                "--exclude", ".git", "--exclude", "node_modules",
+                "--exclude", "target", "--exclude", "__pycache__",
+                "--exclude", "dist",
+              },
+            },
+          },
+        })
+
+        -- Dracula-compatible telescope highlights
+        pcall(t.load_extension, "fzf")
+
+        vim.api.nvim_set_hl(0, "TelescopeSelection", {
+          bg = "#44475a", fg = "#f8f8f2", bold = true,
+        })
+        vim.api.nvim_set_hl(0, "TelescopeMatching", {
+          fg = "#50fa7b", bold = true,
+        })
+        vim.api.nvim_set_hl(0, "TelescopePromptPrefix", {
+          fg = "#bd93f9",
+        })
+        vim.api.nvim_set_hl(0, "TelescopeBorder", {
+          fg = "#6272a4",
+        })
+
+        -- Keybindings
+        local opts = { noremap = true, silent = true }
+        vim.keymap.set("n", "<leader>ff", builtin.find_files,
+          vim.tbl_extend("force", opts, { desc = "Find files" }))
+        vim.keymap.set("n", "<leader>fg", builtin.live_grep,
+          vim.tbl_extend("force", opts, { desc = "Live grep" }))
+        vim.keymap.set("n", "<leader>fb", builtin.buffers,
+          vim.tbl_extend("force", opts, { desc = "Buffers" }))
+        vim.keymap.set("n", "<leader>fr", builtin.oldfiles,
+          vim.tbl_extend("force", opts, { desc = "Recent files" }))
+        vim.keymap.set("n", "<leader>gs", builtin.git_status,
+          vim.tbl_extend("force", opts, { desc = "Git status" }))
+        vim.keymap.set("n", "<leader>gc", builtin.git_commits,
+          vim.tbl_extend("force", opts, { desc = "Git commits" }))
+        vim.keymap.set("n", "<leader>fw", builtin.grep_string,
+          vim.tbl_extend("force", opts, { desc = "Word under cursor" }))
+
+        -- Expose telescope for FindReferences fallback
+        _G.telescope_live_grep_word = function()
+          local word = vim.fn.expand("<cword>")
+          if word == "" then return end
+          builtin.live_grep({ default_text = word })
+        end
+      end,
+    },
+    {
+      "tpope/vim-fugitive",
+      lazy = true,
+    },
+  }, {
+    root = vim.fn.stdpath("data") .. "/lazy",
+    ui = { border = "single" },
+    checker = { enabled = false },
+  })
+EOF
+
+  " Replace grep-based FindReferences with telescope (LSP overrides gr
+  " via LspAttach, so this only fires in non-LSP buffers)
+  nnoremap <silent> gr :call v:lua.telescope_live_grep_word()<CR>
+
+endif
 
 " -----------------------------------------------------------------------------
 " Display
@@ -363,9 +501,6 @@ if has('nvim-0.11')
   })
 EOF
 
-  " Fallback for non-LSP buffers: grep-based reference search
-  " (buffer-local gr from LspAttach shadows this in LSP buffers)
-  nnoremap <silent> gr :call <SID>FindReferences()<CR>
 else
   " --- Definition & References (Vim) ---
   " ctags :tjump if tags file exists, else built-in gd (local word search)
