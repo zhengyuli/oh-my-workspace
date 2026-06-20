@@ -32,8 +32,6 @@
 " Baseline
 " -----------------------------------------------------------------------------
 
-" Avoid Vi compatibility quirks (e.g., limited regex, no autoindent)
-set nocompatible
 " Security: modelines allow arbitrary commands in file headers
 set nomodeline
 " --- Provider Hosts ---
@@ -46,8 +44,6 @@ let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
 " UTF-8 required for multi-byte characters and modern tooling
 set encoding=utf-8
-" Longer history aids command recall across sessions
-set history=500
 " Sane backspace behavior
 set backspace=indent,eol,start
 
@@ -257,8 +253,6 @@ set matchtime=2
 set laststatus=2
 " Partial command display catches incomplete key sequences early
 set showcmd
-" Fallback ruler when custom statusline is not active
-set ruler
 
 " --- Completion ---
 " Wildmenu provides navigable tab-completion suggestions
@@ -480,8 +474,10 @@ if has('nvim-0.11')
   end
   vim.lsp.enable(vim.tbl_keys(servers))
 
-  -- Delete default gr-prefix keymaps (grr/gri/grn/gra/grt/grx) to avoid
-  -- timeout ambiguity with our shorter gr → references binding.
+  -- Delete default gr-prefix keymaps (grr/gri/grn/gra/grt/grx). They
+  -- duplicate our shorter aliases (gr/gi/<F2>/ga) and are never needed
+  -- once LspAttach installs the short forms. Note: this loses visual-mode
+  -- range code action (gra in x mode) — accept the tradeoff for simplicity.
   for _, key in ipairs({ 'grr', 'gri', 'grn', 'gra', 'grt', 'grx' }) do
     pcall(vim.keymap.del, 'n', key)
     pcall(vim.keymap.del, 'x', key)
@@ -545,11 +541,18 @@ endif
 
 " mode | path [modified][readonly] | type | enc | pos %
 
-" Global scope required — statusline evaluates outside script
+" Global scope required — statusline evaluates outside script.
+" Caches per-buffer: FugitiveHead shells out to git, so calling it on
+" every redraw (cursor move, scroll) adds latency in large repos.
 function! StatuslineGit() abort
-  " Optional: vim-fugitive (https://github.com/tpope/vim-fugitive)
-  " Degrades to empty string when plugin is not installed.
-  return exists('*FugitiveHead') ? '  ' . FugitiveHead() . ' ' : ''
+  if !exists('b:git_branch')
+    let b:git_branch = exists('*FugitiveHead') ? FugitiveHead() : ''
+  endif
+  return b:git_branch == '' ? '' : '  ' . b:git_branch . ' '
+endfunction
+
+function! s:RefreshGitBranch() abort
+  let b:git_branch = exists('*FugitiveHead') ? FugitiveHead() : ''
 endfunction
 
 set statusline=
@@ -592,6 +595,17 @@ if has('nvim')
   -- Treesitter parsers live in data/site; must be on rtp before lazy.setup
   -- so ftplugins can find them when filetype detection triggers
   vim.opt.rtp:prepend(vim.fn.stdpath("data") .. "/site")
+
+  -- Expose for Vimscript gr mapping (non-LSP grep fallback).
+  -- Defined at top level (not inside lazy config) so it works even before
+  -- telescope.nvim is lazy-loaded. Explicit lazy.load ensures the plugin
+  -- and its builtin module are available when called.
+  _G.telescope_live_grep_word = function()
+    require("lazy").load({ plugins = { "telescope.nvim" } })
+    local word = vim.fn.expand("<cword>")
+    if word == "" then return end
+    require("telescope.builtin").live_grep({ default_text = word })
+  end
 EOF
 
   " Leader must be set before loading lazy.nvim
@@ -611,9 +625,21 @@ EOF
           cond = vim.fn.executable("make") == 1,
         },
       },
+      -- Lazy-load on :Telescope command or any of the <leader>fx keys.
+      -- Without a trigger the plugin + plenary + fzf-native load on every
+      -- startup (~400ms wasted). See lazy.nvim spec: cmd/keys fields.
+      cmd = "Telescope",
+      keys = {
+        { "<leader>ff", "<cmd>Telescope find_files<cr>",  desc = "Find files" },
+        { "<leader>fg", "<cmd>Telescope live_grep<cr>",   desc = "Live grep" },
+        { "<leader>fb", "<cmd>Telescope buffers<cr>",     desc = "Buffers" },
+        { "<leader>fr", "<cmd>Telescope oldfiles<cr>",    desc = "Recent files" },
+        { "<leader>gs", "<cmd>Telescope git_status<cr>",  desc = "Git status" },
+        { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Git commits" },
+        { "<leader>fw", "<cmd>Telescope grep_string<cr>", desc = "Word under cursor" },
+      },
       config = function()
         local t = require("telescope")
-        local builtin = require("telescope.builtin")
 
         -- rg arguments: hidden files, smart case, exclude build artifacts
         local rg_args = {
@@ -667,35 +693,14 @@ EOF
         vim.api.nvim_set_hl(0, "TelescopeBorder", {
           fg = "#6272a4",
         })
-
-        -- Keybindings
-        local opts = { noremap = true, silent = true }
-        vim.keymap.set("n", "<leader>ff", builtin.find_files,
-          vim.tbl_extend("force", opts, { desc = "Find files" }))
-        vim.keymap.set("n", "<leader>fg", builtin.live_grep,
-          vim.tbl_extend("force", opts, { desc = "Live grep" }))
-        vim.keymap.set("n", "<leader>fb", builtin.buffers,
-          vim.tbl_extend("force", opts, { desc = "Buffers" }))
-        vim.keymap.set("n", "<leader>fr", builtin.oldfiles,
-          vim.tbl_extend("force", opts, { desc = "Recent files" }))
-        vim.keymap.set("n", "<leader>gs", builtin.git_status,
-          vim.tbl_extend("force", opts, { desc = "Git status" }))
-        vim.keymap.set("n", "<leader>gc", builtin.git_commits,
-          vim.tbl_extend("force", opts, { desc = "Git commits" }))
-        vim.keymap.set("n", "<leader>fw", builtin.grep_string,
-          vim.tbl_extend("force", opts, { desc = "Word under cursor" }))
-
-        -- Expose telescope for FindReferences fallback
-        _G.telescope_live_grep_word = function()
-          local word = vim.fn.expand("<cword>")
-          if word == "" then return end
-          builtin.live_grep({ default_text = word })
-        end
       end,
     },
     {
       "tpope/vim-fugitive",
-      lazy = true,
+      -- Lazy-load on fugitive commands. Without a trigger the plugin
+      -- never loads and StatuslineGit() (which probes FugitiveHead)
+      -- always returns empty.
+      cmd = { "Git", "G", "Gvdiffsplit", "Gedit", "Gsplit", "Gtabedit", "Gclog" },
     },
     {
       "nvim-treesitter/nvim-treesitter",
@@ -704,7 +709,10 @@ EOF
       -- without loading the plugin at runtime.
       cmd = { "TSInstall", "TSInstallSync", "TSUpdate" },
       -- Install parsers once on plugin install/update (LazyVim pattern).
-      build = ":TSInstallSync markdown markdown_inline html yaml latex",
+      -- nvim 0.12 ships built-in parsers for c/vim/vimdoc/lua/query/markdown;
+      -- the list below covers everything else we open day-to-day.
+      build = ":TSInstallSync markdown markdown_inline html yaml latex "
+        .. "python go rust bash json toml css javascript typescript",
     },
     {
       "nvim-tree/nvim-web-devicons",
@@ -750,9 +758,12 @@ augroup vimrc
     \ endif
 
   " --- Whitespace ---
-  " Strip trailing whitespace on save (skip binary/diff buffers)
+  " Strip trailing whitespace on save. Skip special buffers (nofile/help/
+  " terminal buftypes) and filetypes where whitespace is significant
+  " (diff/xxd) or mangled by external tools (gitcommit, man, etc.).
   autocmd BufWritePre *
-    \ if &filetype !~# '\v^(diff|xxd)$' |
+    \ if &buftype !~# '\v^(nofile|help|terminal)$' &&
+    \    &filetype !~# '\v^(diff|xxd|gitcommit|man|oil|neo-tree)$' |
     \   let b:_view = winsaveview() |
     \   silent! %s/\s\+$//e |
     \   call winrestview(b:_view) |
@@ -768,12 +779,20 @@ augroup vimrc
   autocmd FocusGained,BufEnter * silent! checktime
   autocmd CursorHold,CursorHoldI * silent! checktime
 
+  " --- Git Branch Cache ---
+  " Refresh per-buffer branch on enter/focus (see StatuslineGit)
+  autocmd BufEnter,FocusGained * call s:RefreshGitBranch()
+
   " --- Indentation ---
   " Python: 4 spaces
   autocmd FileType python setlocal tabstop=4 shiftwidth=4
-  " Web files: 2 spaces
+  " Web files + scripting: 2 spaces
   autocmd FileType javascript,typescript,json,yaml,html,css,scss
     \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
+  autocmd FileType ruby,lua,vim,zsh,bash,sh
+    \ setlocal tabstop=2 softtabstop=2 shiftwidth=2
+  " Rust: 4 spaces (rustfmt default)
+  autocmd FileType rust setlocal tabstop=4 shiftwidth=4
   " Go: tabs (convention)
   autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
 
@@ -792,8 +811,17 @@ augroup vimrc
   " (:TSInstall). Plugin only loads for install commands; highlighting
   " works via this autocmd without the plugin at runtime.
   " Ref: https://github.com/nvim-treesitter/nvim-treesitter#main-branch
-  autocmd FileType markdown,html,yaml,latex
-    \ lua vim.treesitter.start(0, vim.bo.filetype)
+  "
+  " Register filetype → parser aliases where vim's filetype name differs
+  " from treesitter parser name:
+  "   *.tex → filetype 'tex'/'plaintex', parser 'latex'
+  "   *.sh  → filetype 'sh', parser 'bash'
+  lua << EOF
+vim.treesitter.language.register('latex', {'tex', 'plaintex', 'latex'})
+vim.treesitter.language.register('bash', {'sh', 'bash'})
+EOF
+  autocmd FileType markdown,html,yaml,tex,plaintex,latex,python,go,rust,sh,bash,json,toml,css,javascript,typescript
+    \ lua vim.treesitter.start()
 
   " --- Markdown Regex Syntax ---
   " Disable regex syntax (markdown.vim 676ms + html.vim 477ms chain).
