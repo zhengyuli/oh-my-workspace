@@ -356,8 +356,9 @@ set t_vb=
 " --- Performance ---
 " Skip redraw during macros for smoother playback on large files
 set lazyredraw
-" 200 ms: fast enough for sign column updates, low enough CPU impact
-set updatetime=200
+" 1000 ms: no gitsigns-style plugin needs sub-second sign column refresh.
+" CursorHold fires checktime — 1s cadence is enough for external reload.
+set updatetime=1000
 
 " --- Timing ---
 " 1000 ms for leader key sequences (e.g. <Space>ff)
@@ -598,8 +599,6 @@ EOF
   let g:maplocalleader = '\'
 
   lua << EOF
-  local telescope_ok, telescope = pcall(require, "telescope")
-
   require("lazy").setup({
     {
       "nvim-telescope/telescope.nvim",
@@ -700,14 +699,12 @@ EOF
     },
     {
       "nvim-treesitter/nvim-treesitter",
-      build = ":TSUpdate",
-      lazy = false,
-      config = function()
-        require("nvim-treesitter").install({
-          "markdown", "markdown_inline",
-          "latex", "html", "yaml",
-        }):wait(300000)
-      end,
+      -- Plugin only provides :TSInstall commands. Parsers persist on disk;
+      -- vim.treesitter.start() (built-in nvim 0.11+ API) handles highlighting
+      -- without loading the plugin at runtime.
+      cmd = { "TSInstall", "TSInstallSync", "TSUpdate" },
+      -- Install parsers once on plugin install/update (LazyVim pattern).
+      build = ":TSInstallSync markdown markdown_inline html yaml latex",
     },
     {
       "nvim-tree/nvim-web-devicons",
@@ -789,5 +786,19 @@ augroup vimrc
   " Git commits: 72 char width, spell check
   autocmd FileType gitcommit
     \ setlocal spell spelllang=en_us textwidth=72 colorcolumn=73
+
+  " --- Treesitter ---
+  " Built-in nvim 0.11+ API. Parsers installed by nvim-treesitter plugin
+  " (:TSInstall). Plugin only loads for install commands; highlighting
+  " works via this autocmd without the plugin at runtime.
+  " Ref: https://github.com/nvim-treesitter/nvim-treesitter#main-branch
+  autocmd FileType markdown,html,yaml,latex
+    \ lua vim.treesitter.start(0, vim.bo.filetype)
+
+  " --- Markdown Regex Syntax ---
+  " Disable regex syntax (markdown.vim 676ms + html.vim 477ms chain).
+  " Treesitter highlighting enabled by FileType autocmd above.
+  " ftplugin/markdown.vim still loads (folds, conceal settings intact).
+  autocmd FileType markdown setlocal syntax=
 
 augroup END
